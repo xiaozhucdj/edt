@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center"
+    android:layout_width="540dp"
+    android:layout_height="250dp"
+    android:background="@drawable/img_searbook_bg"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/img_searchbook_title_bg">
+
+        <ImageView
+            android:id="@+id/img_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:paddingRight="25dp"
+            android:src="@drawable/img_serachbook_cancel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="本地搜索图书"
+            android:textColor="@color/text_color_white"
+            android:textSize="24dp" />
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/et_key"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="42dp"
+        android:layout_marginRight="42dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/img_searchbook_et"
+        android:hint="请输入书名关键字"
+        android:maxLength="12"
+        android:paddingLeft="12dp"
+        android:singleLine="true"
+        android:textColor="@color/directory_text"
+        android:textSize="20dp" />
+
+
+    <Button
+        android:id="@+id/btn_search"
+        android:background="@drawable/search_btn_bg_selector"
+        android:textColor="@drawable/search_text_color_selector"
+        android:textSize="24dp"
+        android:text="搜索"
+        android:gravity="center"
+        android:layout_width="456dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="42dp"
+        android:layout_marginRight="42dp"
+        android:layout_marginTop="40dp" />
+
+</LinearLayout>

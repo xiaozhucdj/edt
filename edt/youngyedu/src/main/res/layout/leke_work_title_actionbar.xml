@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/container">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        >
+
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/backIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/le_btn_back_new_selector"
+            android:layout_marginLeft="20dp"
+            />
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/bi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bi_img_btn"
+            android:layout_marginLeft="90dp"
+            />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/zl_magic_theme_info"
+            android:layout_marginLeft="70dp"
+
+            />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/zl_magic_theme_info"
+            android:layout_marginLeft="170dp"
+
+            />
+
+        <ImageView
+            android:id="@+id/xp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/xiangpi_img_btn"
+            android:layout_marginLeft="130dp"
+            />
+
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/nudo1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/chexiao_img_btn"
+            android:layout_marginLeft="180dp"
+            />
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/redo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/fanhui_img_btn"
+            android:layout_marginLeft="230dp"
+            />
+
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/panIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/le_pan_selector"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="140dp"
+
+
+            />
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/bookIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/le_book_selector"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="200dp"
+            />
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/workIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/le_work_selector"
+            android:layout_marginRight="80dp"
+            android:layout_alignParentRight="true"
+            />
+
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/genduo_new_selector"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            />
+
+<View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/zl_black"
+    android:layout_alignParentBottom="true"
+    />
+
+    </RelativeLayout>
+
+
+</FrameLayout>

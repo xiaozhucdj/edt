@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/page_btn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/page_bg_selector"
+    android:textColor="@drawable/page_text_selector"
+    android:textSize="@dimen/page_text_size"
+    android:layout_marginRight="@dimen/page_btn_margin"
+    android:gravity="center"
+    />

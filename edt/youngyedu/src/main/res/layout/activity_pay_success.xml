@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16px"
+        android:text="@string/pay_success"
+        android:textColor="@color/shop_text_black_333333"
+        android:textSize="28px"
+        android:layout_gravity="center_horizontal"/>
+
+    <View android:layout_width="match_parent" android:layout_height="2px" android:layout_marginTop="15px" android:background="@color/zl_black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="50px"
+        android:layout_marginLeft="30px"
+        android:layout_marginRight="30px"
+        android:background="@drawable/black_bond_2_shape"
+        android:paddingTop="35px"
+        android:paddingBottom="35px"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24px"
+            android:text="支付成功"
+            android:textColor="@color/zl_black"
+            />
+        <TextView
+            android:id="@+id/pay_succcess_actvt_money_sum_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20px"
+            android:text="支付金额 : "
+            android:textColor="@color/zl_black"
+            android:layout_marginTop="22px"
+            />
+        <TextView
+            android:id="@+id/pay_succcess_actvt_pay_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20px"
+            android:text="支付时间 : "
+            android:textColor="@color/zl_black"
+            android:layout_marginTop="17px"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20px"
+            android:text="您购买的书已经开始下载"
+            android:textColor="@color/zl_black"
+            android:layout_marginTop="17px"
+            />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="30dp"
+        >
+        <Button
+            android:id="@+id/pay_succcess_actvt_to_schoolbag_btn"
+            android:layout_width="302px"
+            android:layout_height="48px"
+            android:text="去书包查看图书"
+            android:textSize="23px"
+            android:background="@drawable/shop_btn_bg_selector"
+            android:textColor="@drawable/page_text_selector"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            />
+        <Button
+            android:id="@+id/pay_succcess_actvt_to_shop_frontpage_btn"
+            android:layout_width="302px"
+            android:layout_height="48px"
+            android:text="回书城首页"
+            android:textSize="23px"
+            android:background="@drawable/shop_btn_bg_selector"
+            android:textColor="@drawable/page_text_selector"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+</LinearLayout>

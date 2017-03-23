@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="15dp">
+
+    <TextView
+        android:maxLength="4"
+        android:id="@+id/tv_subject"
+        android:layout_width="110dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:background="@drawable/item_bg_select"
+        android:gravity="center"
+        android:textColor="@drawable/item_color_select"
+        android:textSize="22dp" />
+</FrameLayout>

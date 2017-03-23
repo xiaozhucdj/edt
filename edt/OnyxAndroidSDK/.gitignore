@@ -1,0 +1,11 @@
+bin/
+gen/
+obj/
+libs/armeabi/
+.settings/
+.classpath
+.project
+local.windows.properties
+*.iml
+libs/armeabi*/
+build

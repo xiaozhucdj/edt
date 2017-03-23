@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="true"
+    >
+
+    <Button
+        android:textColor="@color/black"
+        android:id="@+id/btn_login"
+        android:text="测试下载"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:textColor="@color/black"
+        android:id="@+id/btn_fileHas"
+        android:text="判断文件是否存在"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:textColor="@color/black"
+        android:id="@+id/btn_deleteFile"
+        android:text="删除下载文件"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:textColor="@color/black"
+        android:id="@+id/btn_breakpoint"
+        android:text="取消下载（测试断点下载是否支持）"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:textColor="@color/black"
+        android:id="@+id/btn_todocount"
+        android:text="测试作业数"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:textColor="@color/black"
+        android:id="@+id/btn_testDrable"
+        android:text="测试drable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:textColor="@color/black"
+        android:id="@+id/btn_size"
+        android:text="测试屏幕大小"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/tv_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>

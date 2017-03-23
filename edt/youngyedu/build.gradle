@@ -1,0 +1,83 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.antfortune.freeline'
+android {
+    signingConfigs {
+        leke_key {
+            keyAlias 'leke'
+            keyPassword 'leke54321'
+            storeFile file('leke_key.jks')
+            storePassword 'leke54321'
+        }
+    }
+    compileSdkVersion 23
+    buildToolsVersion '25.0.0'
+    useLibrary 'org.apache.http.legacy'
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    dataBinding{
+        enabled = true;
+    }
+
+    defaultConfig {
+        applicationId "com.youngy.ui"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+    buildTypes {
+
+        debug {
+            //混淆
+            minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled false
+            // 移除无用的resource文件
+            shrinkResources false
+            //加载默认混淆配置文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //签名
+            signingConfig signingConfigs.leke_key
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //签名
+            signingConfig signingConfigs.leke_key
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
+    compile 'com.google.code.gson:gson:2.7'
+    compile project(':okhttputils')
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.yolanda.nohttp:nohttp:1.0.7'
+    compile project(':OnyxAndroidSDK')
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    compile 'io.reactivex:rxjava:1.2.3'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
+    compile files('libs/commons-net-3.5.jar')
+    compile 'com.google.protobuf:protobuf-java:3.1.0'
+    compile 'com.android.support:design:23.4.0'
+    compile files('libs/volley.jar')
+    compile 'org.sufficientlysecure:html-textview:3.0'
+    compile files('libs/eventbus-2.2.1.jar')
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.google.zxing:core:3.3.0'
+    compile 'com.zhy:autolayout:1.4.5'
+}

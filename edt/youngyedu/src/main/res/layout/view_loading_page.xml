@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <!-- 页面错误 例如 服务器错误 特殊情况一般 不会出现  -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/view_loading_page_error_state" />
+
+    <!-- 页面错误 例如 服务器返回列表为空  -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/view_loading_page_empty_data" />
+
+    <!-- 页面错误 例如 超时 -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/view_loading_page_connect_time_out" />
+
+
+
+    <!-- 页面错误 例如：设备没有链接wifi -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/view_loading_page_no_network_state" />
+
+
+    <!-- 正常进入页面 例如：加载页面，例如：进入书首页 -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/view_loading_page_static_loading_state" />
+
+</FrameLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <TextView
+        android:id="@+id/book_classify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:textSize="@dimen/twenty_four_sp"
+        android:textColor="@color/text_color_black"
+        />
+    <TextView
+        android:id="@+id/book_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/book_classify"
+        android:text="@string/more"
+        android:textSize="@dimen/twenty_sp"
+        android:textColor="@color/text_color_black"
+        />
+    <com.yougy.view.ShopBookLayout
+        android:id="@+id/book_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/book_classify"
+        android:layout_alignLeft="@+id/book_classify"
+        android:layout_alignRight="@+id/book_more"
+        android:layout_marginTop="@dimen/twelve_dp"
+        />
+</RelativeLayout>

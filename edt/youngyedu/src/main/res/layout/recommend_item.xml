@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_result_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/search_result_img"
+        android:layout_width="@dimen/one_hundred_twenty_eight_dp"
+        android:layout_height="@dimen/one_hundred_sixty_eight_dp"
+        android:background="@drawable/img_book_backgroud"
+        android:paddingBottom="@dimen/six_dp"
+        android:paddingLeft="@dimen/two_dp"
+        android:paddingRight="@dimen/six_dp"
+        android:paddingTop="@dimen/two_dp"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/search_result_name"
+        android:layout_width="@dimen/one_hundred_twenty_eight_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:maxEms="7"
+        android:gravity="left"
+        android:text="图书名称"
+        android:textSize="@dimen/eighteen_dp"
+        android:textColor="@color/text_color_black" />
+
+    <TextView
+        android:id="@+id/search_result_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.0"
+        android:textColor="@color/text_color_black"
+        android:textSize="@dimen/eighteen_dp"
+        android:textStyle="bold"
+        />
+</LinearLayout>

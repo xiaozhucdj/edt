@@ -1,0 +1,69 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="cut_screen_text_size">24dp</dimen>
+
+    <dimen name="init_text_margin_top">302dp</dimen>
+    <dimen name="init_text_margin_bottom">130dp</dimen>
+    <dimen name="init_text_size">28sp</dimen>
+    <dimen name="init_button_margin_bottom">80dp</dimen>
+    <dimen name="init_button_text_size">24sp</dimen>
+    <dimen name="init_button_margin_right">75dp</dimen>
+    <dimen name="init_button_margin_left">75dp</dimen>
+
+    <dimen name="identity_title_margin_top">100dp</dimen>
+    <dimen name="identity_list_margin">109dp</dimen>
+    <dimen name="identity_title_margin_bottom">40dp</dimen>
+
+    <dimen name="page_layout_margin_top">20dp</dimen>
+    <dimen name="page_text_size">22sp</dimen>
+    <dimen name="page_btn_margin">20dp</dimen>
+
+    <dimen name="student_list_text_size">24sp</dimen>
+    <dimen name="spinner_width">215dp</dimen>
+    <dimen name="spinner_height">48dp</dimen>
+    <dimen name="spinner_layout_margin">75dp</dimen>
+    <dimen name="spinner_item_text_size">22sp</dimen>
+
+    <dimen name="school_spinner_margin">15dp</dimen>
+    <dimen name="school_spinner_width">285dp</dimen>
+    <dimen name="school_spinner_margin_top">40dp</dimen>
+
+    <dimen name="area_spinner_item_width">169dp</dimen>
+    <dimen name="identity_two_dp">2dp</dimen>
+    <dimen name="identity_one_dp">1dp</dimen>
+    <dimen name="identity_item_text_size">22sp</dimen>
+    <dimen name="start_use_title_margin_top">100dp</dimen>
+    <dimen name="start_use_title_margin_bottom">110dp</dimen>
+    <dimen name="start_use_text_size">24sp</dimen>
+    <dimen name="start_use_margin_top">15dp</dimen>
+    <dimen name="start_use_btn_margin_top">200dp</dimen>
+    <dimen name="loading_text_size">28sp</dimen>
+    <dimen name="load_error_text_margin_top">50dp</dimen>
+    <dimen name="sixty_dp">60dp</dimen>
+    <dimen name="thirty_dp">30dp</dimen>
+    <dimen name="twenty_nine_dp">29dp</dimen>
+    <dimen name="twenty_eight_dp">28dp</dimen>
+    <dimen name="ten_dp">10dp</dimen>
+    <dimen name="twenty_sp">20sp</dimen>
+    <dimen name="fifty_dp">50dp</dimen>
+    <dimen name="eighty_eight_dp">88dp</dimen>
+    <dimen name="thirty_six_dp">36dp</dimen>
+    <dimen name="twenty_two_sp">22sp</dimen>
+    <dimen name="one_dp">1dp</dimen>
+    <dimen name="one_hundred_seventy_dp">170dp</dimen>
+    <dimen name="twenty_dp">20dp</dimen>
+    <dimen name="twenty_four_dp">24dp</dimen>
+    <dimen name="fifteen_dp">15dp</dimen>
+    <dimen name="two_hundred_four_dp">204dp</dimen>
+    <dimen name="one_hundred_twenty_eight_dp">128dp</dimen>
+    <dimen name="one_hundred_sixty_eight_dp">168dp</dimen>
+    <dimen name="six_dp">6dp</dimen>
+    <dimen name="two_dp">2dp</dimen>
+    <dimen name="eight_dp">8dp</dimen>
+    <dimen name="eighteen_dp">18sp</dimen>
+    <dimen name="twenty_four_sp">24sp</dimen>
+    <dimen name="twelve_dp">12dp</dimen>
+    <dimen name="thirty_two_dp">32dp</dimen>
+
+
+</resources>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/rl_down"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/loading_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/loading_study_data"
+            android:textColor="@color/text_color_black"
+            android:textSize="@dimen/init_text_size"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_marginTop="40dp"
+            android:layout_below="@id/loading_data"
+            android:id="@+id/tv_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/directory_text"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/start_use_title_margin_bottom"
+            android:layout_marginTop="@dimen/start_use_title_margin_top"
+            android:gravity="center"
+            android:text="@string/bind_success"
+            android:textColor="@color/text_color_black"
+            android:textSize="@dimen/init_text_size"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/info_school"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/info_school"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/start_use_text_size" />
+
+            <TextView
+                android:id="@+id/info_class"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/start_use_margin_top"
+                android:text="@string/info_class"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/start_use_text_size" />
+
+            <TextView
+                android:id="@+id/info_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/start_use_margin_top"
+                android:text="@string/info_name"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/start_use_text_size" />
+
+            <TextView
+                android:id="@+id/info_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/start_use_margin_top"
+                android:text="@string/info_number"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/start_use_text_size" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/start_use"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/start_use_btn_margin_top"
+            android:background="@drawable/start_use_btn_selector"
+            android:text="@string/start_use"
+            android:textColor="@drawable/start_use_text_selector" />
+    </LinearLayout>
+</FrameLayout>

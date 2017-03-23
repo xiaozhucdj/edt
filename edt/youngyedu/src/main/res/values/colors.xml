@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background">#FFAAAAAA</color>
+    <color name="text_border_focused">#000000</color>
+    <color name="seek_thumb">#2572AC</color>
+
+
+    <!-- yuanye color-->
+    <!-- 黑色-->
+    <color name="black">#333333</color>
+    <!-- 蓝色-->
+    <!-- 浅灰色-->
+    <color name="LightGrey">#E6E6E6</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="marks">#999999</color>
+    <color name="directory_text">#666666</color>
+
+    <color name="text_color_black">#000000</color>
+    <color name="text_color_white">#ffffff</color>
+    <color name="search_color">#999999</color>
+    <color name="snaoshot_color">#d9d9d9</color>
+    <color name="gray_dfdfdf">#ffdfdfdf</color>
+    <color name="gray_db">#dbdbdb</color>
+</resources>

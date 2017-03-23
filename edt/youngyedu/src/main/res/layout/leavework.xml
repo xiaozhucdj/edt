@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="15"
+    tools:context="com.example.xcz.readbook.MainActivity">
+
+ <LinearLayout
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:background="@color/rank_two"
+     android:layout_weight="6"
+     android:gravity="center"
+     android:orientation="horizontal"
+     >
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         android:gravity="center"
+         android:padding="20dp"
+         android:layout_marginRight="30dp"
+         android:background="@drawable/bg_btn_gray_shape"
+         >
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="65%"
+             android:textSize="20dp"
+             />
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="你的作业进度"
+             android:textSize="12dp"
+             />
+     </LinearLayout>
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         android:gravity="center"
+         android:padding="20dp"
+         android:background="@drawable/bg_btn_gray_shape"
+         >
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="65%"
+             android:textSize="20dp"
+             />
+
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="你的作业进度"
+             android:textSize="12dp"
+             />
+     </LinearLayout>
+ </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/rank_one"
+        android:orientation="vertical"
+        android:layout_weight="2"
+        >
+        <com.example.xcz.readbook.will.utils.widget.MultiListView
+            android:id="@+id/leavlistview_id"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            >
+        </com.example.xcz.readbook.will.utils.widget.MultiListView>
+
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@color/zl_translucency_ver_divider"
+        android:layout_weight="7"
+        >
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

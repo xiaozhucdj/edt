@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.yougy.ui.activity"
+    android:installLocation = "preferExternal"
+    >
+
+
+    <!-- 网络 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 网络 -->
+    <!-- 读写SDkard -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- 读写SDkard -->
+    <!-- 允许挂载和反挂载文件系统可移动存储 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
+    <application
+        android:name="com.yougy.common.manager.YougyApplicationManager"
+        android:allowBackup="true"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        <service android:name="com.yougy.home.UploadService" />
+
+        <activity
+            android:name="com.yougy.home.activity.SplashActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.yougy.home.activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.yougy.home.activity.ControlFragmentActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.yougy.home.activity.AccountSetActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity android:name="com.yougy.shop.activity.BookShopActivityDB" />
+
+
+        <activity
+            android:name="com.yougy.shop.activity.PayActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.yougy.init.activity.InitInfoActivity" />
+
+
+        <activity
+            android:name="com.yougy.home.activity.HomeworkActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+
+        <!--确认订单页-->
+        <activity
+            android:name="com.yougy.shop.activity.ConfirmOrderActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <!-- 墨水屏 -->
+        <activity
+            android:name="com.inkscreen.TopicActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name="com.inkscreen.WorkReportActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name="com.inkscreen.LeaveActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+        <activity
+            android:name="com.inkscreen.MainActivityScreen"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+
+        <activity
+            android:name="com.inkscreen.AnswerActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="com.inkscreen.MainActivityScreen"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name="com.inkscreen.MySortActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="com.inkscreen.MainActivityScreen"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name="com.inkscreen.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
+
+        <activity
+            android:name="com.inkscreen.MyWrongActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="com.inkscreen.MainActivityScreen"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
+        <activity
+            android:name="com.inkscreen.MyTobeIsudActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="com.inkscreen.MainActivityScreen"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
+        <activity
+            android:name="com.inkscreen.MyHaslsudActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="com.inkscreen.MainActivityScreen"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name="com.yougy.shop.activity.SearchActivityDb"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <!--商城收藏页-->
+        <activity
+            android:name="com.yougy.shop.activity.NewShopFavoriteActivity"
+            android:screenOrientation="portrait" />
+
+        <!--商城购物车页-->
+        <activity
+            android:name="com.yougy.shop.activity.NewShopCartActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+        <!--商城支付成功页-->
+        <activity
+            android:name="com.yougy.shop.activity.PaySuccessActivity"
+            android:screenOrientation="portrait"
+            />
+
+
+        <activity
+            android:name="com.yougy.shop.activity.NewBookItemDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yougy.shop.activity.NewProbationRedBookActivity"
+            android:screenOrientation="portrait" />
+
+        <!--AutoLayout中需要使用到的设计图大小-->
+        <meta-data android:name="design_width" android:value="825"/>
+        <meta-data android:name="design_height" android:value="1152"/>
+        <!--<meta-data android:name="design_width" android:value="1650"/>-->
+        <!--<meta-data android:name="design_height" android:value="2208"/>-->
+
+    </application>
+</manifest>

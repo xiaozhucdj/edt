@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_white">
+
+    <!-- 添加PDF-->
+    <LinearLayout
+        android:id="@+id/ll_pdfFather"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"></LinearLayout>
+
+
+    <!-- title-->
+    <RelativeLayout
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <ImageButton
+            android:id="@+id/imgbtn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/img_back" />
+
+        <ImageButton
+            android:id="@+id/imgbtn_jumpCar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/imgbtn_back"
+            android:background="@null"
+            android:src="@drawable/icon_gouwuche" />
+        <TextView
+            android:textColor="@color/black"
+            android:textSize="28dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="在线试读" />
+
+        <ImageButton
+            android:id="@+id/imgbtn_addCar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/img_addcar_selsect" />
+
+        <ImageButton
+            android:id="@+id/imgbtn_favor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:layout_toLeftOf="@id/imgbtn_addCar"
+            android:background="@null"
+            android:src="@drawable/img_collect_selsect" />
+
+        <Button
+            android:textSize="20dp"
+            android:textColor="@color/text_color_black"
+            android:background="@drawable/btn_buy_backgroud"
+            android:id="@+id/btn_buy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:layout_toLeftOf="@id/imgbtn_favor"
+            android:text="购买" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ccd9d9d9"
+        android:clickable="true"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/img_pageBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@null"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/edu_img_pageprev_select" />
+
+        <ImageView
+            android:id="@+id/img_pageNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/edu_img_pagenext_select" />
+
+        <com.yougy.view.showView.TextThumbSeekBar
+            android:id="@+id/seekbar_page"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/img_pageNext"
+            android:layout_toRightOf="@id/img_pageBack"
+            android:indeterminate="false"
+            android:maxHeight="8dp"
+            android:minHeight="8dp"
+            android:progressDrawable="@drawable/seekbar_bg_selector"
+            android:thumb="@drawable/seekbar_thumb_selector"
+           />
+    </RelativeLayout>
+
+</RelativeLayout>

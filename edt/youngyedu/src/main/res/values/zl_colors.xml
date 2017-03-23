@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="zl_white">#ffffffff</color>
+    <color name="zl_black">#ff000000</color>
+
+    <!--#4f000000  #59000000-->
+
+    <color name="zl_color_e5">#E5E5E5</color>
+    <color name="zl_color_bbbbb">#BBBBBB</color>
+
+
+    <color name="zl_searchbar_hint">#FF868686</color>
+
+    <color name="zl_text_detail">#666666</color>
+
+    <color name="zl_user_highlight">#ffec8a16</color>
+    <color name="zl_user_point_text">#ff9e9f9f</color>
+
+
+    <color name="zl_magic_theme_gray">#FF868686</color>
+    <color name="zl_magic_theme_info">#FFA9A9A9</color>
+
+    <color name="zl_magic_theme_thin">#FF4D4D4D</color>
+
+    <color name="zl_card_drag_bg">#FFB4B4B4</color>
+
+    <color name="shop_text_black_333333">#ff333333</color>
+
+    <!--<color name="zl_magic_theme_dark_pressed">#AD505050</color>-->
+    <!--<color name="zl_magic_theme_dark">#FF505050</color>-->
+    <!--<color name="zl_magic_theme_option_dark">#FF505050</color>-->
+    <!--<color name="zl_magic_theme_desc_dark">#FF505050</color>-->
+    <!--<color name="zl_magic_theme_info_dark">#AD505050</color>-->
+    <!--<color name="zl_magic_theme_desc_gray">#ff868686</color>-->
+    <!--<color name="zl_magic_theme_desc_gray_pressed">#AD868686</color>-->
+
+    <!--<color name="zl_magic_diver2">#FFB4B4B4</color>-->
+    <!--<color name="zl_translucency_theme_thin_light">#4FD4D4D4</color>-->
+    <!--<color name="zl_magic_theme_desc_green">#FF96d314</color>-->
+    <!--<color name="zl_magic_theme_desc_green_pressed">#ad96d314</color>-->
+    <!--<color name="zl_magic_theme_line_gray">#FFE7E7E7</color>-->
+    <color name="zl_exchange_title">#aaaaaa</color>
+
+    <color name="zl_translucency_hor_divider">#ffe6e6e6</color>
+    <color name="zl_translucency_ver_divider">#27000000</color>
+
+    <color name="rank_one">#ee4f6a</color>
+    <color name="rank_two">#ffb602</color>
+
+    <color name="hui">#666666</color>
+
+    <!--提示框-->
+</resources>

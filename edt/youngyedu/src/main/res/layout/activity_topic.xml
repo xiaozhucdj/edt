@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.xcz.readbook.MainActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用时5'44'"
+            android:padding="10dp"
+
+        />
+        <TextView
+            android:id="@+id/top_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上一题"
+            android:background="@drawable/bg_btn_gray_shape"
+            android:layout_marginRight="5dp"
+            android:padding="10dp"
+            android:layout_toLeftOf="@+id/next_work"
+            />
+        <TextView
+            android:id="@+id/next_work"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="下一题"
+            android:background="@drawable/bg_btn_gray_shape"
+            android:layout_marginRight="12dp"
+            android:padding="10dp"
+            android:layout_toLeftOf="@+id/commit_id"
+            />
+        <TextView
+            android:id="@+id/commit_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="提交作业"
+            android:padding="10dp"
+            android:background="@drawable/bg_btn_gray_shape"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentRight="true"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <com.inkscreen.will.utils.widget.MultiGridView
+            android:id="@+id/subject_id"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:numColumns="10"
+            android:cacheColorHint="#00000000"
+            android:listSelector="@android:color/transparent"
+            android:stretchMode="columnWidth"
+            android:layout_height="120dp">
+        </com.inkscreen.will.utils.widget.MultiGridView>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:orientation="vertical"
+        >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="已知函数。。。。。。。。。。。。。。。"
+        />
+
+        <TextView
+            android:layout_marginTop="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/zl_card_drag_bg"
+            android:textSize="19dp"
+            android:text="请将解题过程写在空白处"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layout_id"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:orientation="vertical"
+        android:background="@drawable/shape_line"
+        android:layout_margin="10dp"
+        >
+        <!--<com.inkscreen.will.utils.widget.TuyaView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/view"-->
+            <!--android:layout_margin="5dp"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--/>-->
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+            <TextView
+                android:id="@+id/clear1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="清除"
+                android:gravity="center_vertical"
+                />
+            <TextView
+                android:id="@+id/save1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="保存"
+                android:gravity="center_vertical"
+                />
+
+            <TextView
+                android:id="@+id/read_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="读取"
+                android:gravity="center_vertical"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

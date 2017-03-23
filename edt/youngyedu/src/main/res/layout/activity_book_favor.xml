@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/text_color_white"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 标题-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp">
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:drawableLeft="@drawable/note_pre_page"
+            android:drawablePadding="10dp"
+            android:text="返回"
+            android:textColor="@color/text_border_focused"
+            android:textSize="20dp" />
+
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="我的收藏"
+            android:textColor="@color/text_border_focused"
+            android:textSize="24dp" />
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="20dp"
+        android:background="@android:color/white"
+        android:id="@+id/recycler_View"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <com.yougy.view.LoadingPage
+        android:id="@+id/loadingPage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:imageResIdWhenConnectTimeout="@drawable/img_error"
+        app:imageResIdWhenEmptyData="@drawable/img_error"
+        app:imageResIdWhenError="@drawable/img_error"
+        app:imageResIdWhenNoNetwork="@drawable/img_error"
+        app:imageResIdWhenStaticLoading="@drawable/img_error"
+        app:textWhenConnectTimeout="@string/text_connect_timeout"
+        app:textWhenEmptyData="@string/text_empty"
+        app:textWhenError="@string/text_error"
+        app:textWhenNoNetwork="@string/text_no_netWork"
+        app:textWhenStaticLoading="@string/text_staticLoading"
+        />
+    </FrameLayout>
+
+</LinearLayout>

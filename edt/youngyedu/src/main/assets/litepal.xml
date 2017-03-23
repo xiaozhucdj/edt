@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<litepal>
+    <dbname value="leke.db" />
+    <version value="7" />
+    <list>
+        <mapping class="com.yougy.home.bean.Book" />
+        <mapping class="com.yougy.home.bean.Photograph" />
+        <mapping class="com.yougy.home.bean.Label" />
+        <mapping class="com.yougy.home.bean.Note" />
+        <mapping class="com.yougy.home.bean.Diagram"/>
+        <mapping class="com.yougy.home.bean.BookMarkInfo"/>
+        <mapping class="com.yougy.home.bean.NoteInfo"/>
+        <mapping class="com.yougy.init.bean.BookInfo"/>
+        <mapping class="com.yougy.home.bean.CacheJsonInfo"/>
+
+    </list>
+</litepal>

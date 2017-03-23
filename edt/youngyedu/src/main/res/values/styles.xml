@@ -1,0 +1,59 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:listDivider">@drawable/divider_bg</item>
+    </style>
+    <style name="MainTabLayout">
+        <item name="tabIndicatorColor">@color/text_border_focused</item>
+        <item name="tabIndicatorHeight">2dp</item>
+    </style>
+    <style name="initLastButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:text">@string/last_step</item>
+        <item name="android:layout_marginBottom">@dimen/init_button_margin_bottom</item>
+        <item name="android:layout_marginLeft">@dimen/init_button_margin_left</item>
+        <item name="android:textSize">@dimen/init_button_text_size</item>
+        <item name="android:textColor">@drawable/init_text_color_selector</item>
+        <item name="android:background">@drawable/init_btn_bg_selector</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="initNextButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:text">@string/next_step</item>
+        <item name="android:layout_marginBottom">@dimen/init_button_margin_bottom</item>
+        <item name="android:layout_marginRight">@dimen/init_button_margin_right</item>
+        <item name="android:textSize">@dimen/init_button_text_size</item>
+        <item name="android:textColor">@drawable/init_text_color_selector</item>
+        <item name="android:background">@drawable/init_btn_bg_selector</item>
+        <item name="android:enabled">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="initTitleStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginTop">@dimen/init_text_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/init_text_margin_bottom</item>
+        <item name="android:textSize">@dimen/init_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_color_black</item>
+    </style>
+
+    <style name="MyCustomDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+
+    </style>
+</resources>

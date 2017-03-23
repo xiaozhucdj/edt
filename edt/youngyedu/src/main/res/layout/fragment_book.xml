@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true">
+
+
+    <LinearLayout
+        android:id="@+id/ll_referenceKey"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_referenceBooks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="全部课外书>>"
+                android:textColor="@color/text_color_black"
+                android:textSize="24dp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/tv_referenceKeyContext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="搜索大的结果"
+                android:textColor="@color/directory_text"
+                android:textSize="24dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="#cccccc" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_referenceResult"
+        android:layout_width="540dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_referenceKey"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/img_search_error_gb"
+        android:minHeight="200dp"
+        android:orientation="vertical"
+        android:paddingBottom="25dp"
+        android:paddingLeft="65dp"
+        android:paddingRight="65dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_referenceResultTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:lineSpacingExtra="12dp"
+            android:text="很抱歉没搜索到大的关键字"
+            android:textColor="@color/text_color_black"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="1.看看输入的文字是否有错误"
+            android:textColor="@color/text_color_black"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="2.调整关键字"
+            android:textColor="@color/text_color_black"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_View"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_referenceKey"
+        android:layout_marginLeft="54dp"
+        android:layout_marginRight="49dp"
+        android:layout_marginTop="40dp"
+        android:background="@android:color/white" />
+
+    <LinearLayout
+        android:id="@+id/ll_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:id="@+id/loading_null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/img_error" />
+        <TextView
+            android:textSize="22dp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:text="亲暂时没有数据哦!"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</RelativeLayout>

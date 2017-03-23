@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/search_first_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/top_layout"
+        android:layout_marginTop="10dp"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:id="@+id/classify_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_first_line"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="32dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/tv_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/classify_bg_selector"
+            android:gravity="center"
+            android:text="@string/all_text"
+            android:textColor="@drawable/classify_color_selector"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/textbook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/classify_bg_selector"
+            android:gravity="center"
+            android:text="@string/textbook"
+            android:textColor="@drawable/classify_color_selector"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/guidebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/classify_bg_selector"
+            android:gravity="center"
+            android:text="@string/reference_book"
+            android:textColor="@drawable/classify_color_selector"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/extrabook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/classify_bg_selector"
+            android:gravity="center"
+            android:text="@string/extra_book"
+            android:textColor="@drawable/classify_color_selector"
+            android:textSize="22sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/search_second_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/classify_layout"
+        android:background="@color/black" />
+
+
+    <RelativeLayout
+        android:id="@+id/top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
+
+        <ImageView
+            android:id="@+id/schoolbag"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="28dp"
+            android:src="@drawable/shubao_img_btn" />
+
+        <ImageView
+            android:id="@+id/cart_go"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="28dp"
+            android:layout_marginRight="32dp"
+            android:src="@drawable/cart" />
+
+        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="28dp"
+            android:layout_marginRight="32dp"
+            android:layout_toLeftOf="@+id/cart_go"
+            android:src="@drawable/cart" />
+
+        <TextView
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/schoolbag"
+            android:layout_alignTop="@+id/schoolbag"
+            android:layout_toLeftOf="@+id/favorite"
+            android:layout_toRightOf="@+id/schoolbag"
+            android:background="@drawable/search_bg"
+            android:drawableLeft="@drawable/search_icon"
+            android:drawablePadding="12dp"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:text="@string/search"
+            android:textColor="@color/search_color"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/spinner_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/classify_layout"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:paddingLeft="32dp">
+
+            <Spinner
+                android:id="@+id/spinner_stage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/spinner_classify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:spinnerMode="dropdown"
+                android:visibility="gone" />
+
+            <CheckBox
+                android:id="@+id/correspond_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:checked="true"
+                android:text="@string/text_correspond"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/filtrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:drawableRight="@drawable/cart"
+                android:text="@string/text_filtrate"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/search_third_line"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/black" />
+    </LinearLayout>
+</RelativeLayout>

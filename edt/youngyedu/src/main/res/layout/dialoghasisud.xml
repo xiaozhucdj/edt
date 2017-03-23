@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="500dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_white_shape"
+
+    tools:context="com.example.xcz.readbook.MainActivity">
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20px"
+            />
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textSize="20px"-->
+        <!--android:src="@drawable/right"-->
+        <!--/>-->
+    <TextView
+        android:id="@+id/linetime_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:padding="10dp"
+        android:textSize="24px"
+        android:gravity="center"
+        android:textColor="@color/zl_black"
+        />
+
+    <TextView
+        android:id="@+id/miaoshu_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="20px"
+        android:gravity="center"
+        android:textColor="@color/hui"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        >
+
+        <Button
+            android:layout_width="130dp"
+            android:layout_height="35dp"
+            android:text="提交"
+            android:textSize="22px"
+            android:gravity="center"
+            android:background="@drawable/radio_market_selector"
+            android:textColor="@color/zl_black"
+            android:visibility="gone"
+            />
+        <Button
+
+            android:id="@+id/sureBtn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="确定"
+            android:gravity="center"
+            android:textSize="22px"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:textColor="@color/zl_black"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/radio_market_selector"
+            />
+        </RelativeLayout>
+
+
+
+</LinearLayout>

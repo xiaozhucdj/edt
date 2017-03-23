@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="colors">
+        <item>#000000</item>
+        <item>#701419</item>
+        <item>#002c5e</item>
+        <item>#004f2d</item>
+        <item>#adad00</item>
+        <item>#55018d</item>
+        <item>#424242</item>
+        <item>#b32027</item>
+        <item>#01568f</item>
+        <item>#067039</item>
+        <item>#cac802</item>
+        <item>#7400c2</item>
+        <item>#808080</item>
+        <item>#e32822</item>
+        <item>#3d90c4</item>
+        <item>#199e4a</item>
+        <item>#e9e701</item>
+        <item>#9000f1</item>
+        <item>#adadad</item>
+        <item>#e36264</item>
+        <item>#82b4d1</item>
+        <item>#84c296</item>
+        <item>#fcfb6b</item>
+        <item>#b852fd</item>
+        <item>#ffffff</item>
+        <item>#f2b3b7</item>
+        <item>#82baff</item>
+        <item>#cae0b6</item>
+        <item>#fffe9d</item>
+        <item>#cc83fd</item>
+    </array>
+
+    <!-- 加载 页面 属性 LoadingPage-->
+    <declare-styleable name="LoadingPage">
+        <!-- Sting  提示内容-->
+        <attr name="textWhenStaticLoading" format="string" />
+        <attr name="textWhenError" format="string" />
+        <attr name="textWhenNoNetwork" format="string" />
+        <attr name="textWhenConnectTimeout" format="string" />
+        <attr name="textWhenEmptyData" format="string" />
+
+        <!--  提示内容,字体颜色-->
+        <attr name="textColorWhenStaticLoading" format="reference" />
+        <attr name="textColorWhenError" format="reference" />
+        <attr name="textColorWhenNoNetwork" format="reference" />
+        <attr name="textColorWhenConnectTimeout" format="reference" />
+        <attr name="textColorWhenEmptyData" format="reference" />
+
+        <!--  错误提示 图片-->
+        <attr name="imageResIdWhenStaticLoading" format="reference" />
+        <attr name="imageResIdWhenError" format="reference" />
+        <attr name="imageResIdWhenNoNetwork" format="reference" />
+        <attr name="imageResIdWhenConnectTimeout" format="reference" />
+        <attr name="imageResIdWhenEmptyData" format="reference" />
+
+    </declare-styleable>
+</resources>
