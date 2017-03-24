@@ -262,9 +262,10 @@ public class LeApiUtils {
             map.put("S_T", AndroidUtils.getInstance().getPrefs("token", null));// 回话token
         }
         map.put("SUBJECT", "math");
-        map.put("DEVICE_TYPE", "ANDROID");
+        map.put("DEVICE_TYPE", "INK_SCREEN");
         map.put("APP", "MATH_STUDENT");
         map.put("VERSION", "1.0.1");
+        map.put("THIRD_PARTY","youngyedu");
         return map;
     }
 
