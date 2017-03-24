@@ -18,7 +18,7 @@ public class Commons {
     /**
      * 外网接口
      */
-    private static final String URL = " http://106.15.45.14:8080/leke_api/android";
+    private static final String URL = "http://api.learningpad.cn:8080/leke_api/android";
 
     public static final String SHOP_URL = "http://192.168.12.7:80/api/bookStore";
     /**
