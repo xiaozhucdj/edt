@@ -73,8 +73,9 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     @BindView(R.id.confirm_order_alipay_btn)
     LinearLayout alipayBtn;
 
-    int orderID;
+    String orderID;
     float orderPrice;
+    String qrStr;
     QRCodeDialog qrCodeDialog;
 
     @Override
@@ -93,10 +94,19 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
             @Override
             public void call(Object o) {
                 if (o instanceof RequirePayOrderProtocol){
-                    RequirePayOrderProtocol protocol = (RequirePayOrderProtocol) o;
-                    orderID = protocol.getOrderId();
-                    orderPrice = protocol.getOrderPrice();
-                    refreshViewSafe();
+                    RequirePayOrderProtocol requirePayOrderProtocol = (RequirePayOrderProtocol) o;
+                    if (requirePayOrderProtocol.getCode() == 200){
+                        RequirePayOrderProtocol protocol = (RequirePayOrderProtocol) o;
+                        orderID = protocol.getOrderId();
+                        orderPrice = protocol.getOrderPrice();
+                        //临时
+                        qrStr = protocol.qrCodeStr;
+
+                        refreshViewSafe();
+                    }
+                    else {
+                        showToastSafe("获取订单信息失败" , Toast.LENGTH_SHORT);
+                    }
                 }
             }
         });
@@ -120,7 +130,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                                         break;
                                     case HAS_FINISH_PAY:
                                         qrCodeDialog.showHint("正在查询订单状态...");
-                                        ProtocolManager.fake_queryBookOrderProtocol(Integer.parseInt(SpUtil.getAccountId())
+                                        ProtocolManager.fake_queryBookOrderProtocol(orderID
                                                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
                                                 , new QueryBookOrderCallBack(ConfirmOrderActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
                                         break;
@@ -143,14 +153,21 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                 }
                 else if (o instanceof OrderBaseResponse){
                     OrderBaseResponse response = (OrderBaseResponse) o;
-                    OrderInfo orderInfo = null;
-                    for (OrderInfo everyInfo : response.getData().get(0).getOrderList()) {
-                        if (everyInfo.getOrderId() == orderID){
-                            orderInfo = everyInfo;
-                            break;
-                        }
-                    }
-                    if (orderInfo != null && orderInfo.getOrderStatus().equals("成功")){
+//                    OrderInfo orderInfo = null;
+//                    for (OrderInfo everyInfo : response.getData().get(0).getOrderList()) {
+//                        if (everyInfo.getOrderId().equals(orderID)){
+//                            orderInfo = everyInfo;
+//                            break;
+//                        }
+//                    }
+//                    if (orderInfo != null && orderInfo.getOrderStatus().equals("成功")){
+//                        loadIntent(ConfirmOrderActivity.this , PaySuccessActivity.class);
+//                        qrCodeDialog.dismiss();
+//                    }
+//                    else {
+//                        qrCodeDialog.showHintAndRetry("支付未成功" , "重试");
+//                    }
+                    if (response.getCode() == 200){
                         loadIntent(ConfirmOrderActivity.this , PaySuccessActivity.class);
                         qrCodeDialog.dismiss();
                     }
@@ -190,9 +207,16 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
         dataBookBean.setBookList(orderBookInfoList);
         dataList.add(dataBookBean);
         request.setData(dataList);
-        ProtocolManager.fake_requirePayOrderProtocol(request
-                , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-                , new RequireOrderCallBack(this , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER , request));
+//        ProtocolManager.fake_requirePayOrderProtocol(request
+//                , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+//                , new RequireOrderCallBack(this , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER , request));
+
+        //根据请求数据算出总价
+        float sum = 0;
+        for (BookInfo bookInfo : orderBookInfoList) {
+            sum = sum + bookInfo.getBookSalePrice();
+        }
+        ProtocolManager.fake_requireQRCode(sum , new RequireOrderCallBack(this , 10086 , request));
     }
 
     @Override
@@ -247,7 +271,14 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
             request.setOrderID(orderID);
             //TODO 此处Protocol_ID还未提供,之后补上
             QueryQRStrCallBack callBack = new QueryQRStrCallBack(this , 1111 , request);
-            ProtocolManager.fake_qureyQRStrProtocol(request , 1111 , callBack);
+//            ProtocolManager.fake_qureyQRStrProtocol(request , 1111 , callBack);
+
+            //临时
+            QueryQRStrProtocol response = new QueryQRStrProtocol();
+                response.setCode(200);
+                response.setMsg("success");
+                response.setQrStr(qrStr);
+            callBack.onResponse(response , 1111);
         }
         else if (i == 1){
 

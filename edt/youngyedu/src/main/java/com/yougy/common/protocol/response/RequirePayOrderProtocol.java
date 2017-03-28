@@ -19,8 +19,10 @@ public class RequirePayOrderProtocol extends BaseData {
      */
 
 
-    int orderId;
+    String orderId;
     float orderPrice;
+    //临时
+    public String qrCodeStr;
 
     public float getOrderPrice() {
         return orderPrice;
@@ -30,11 +32,11 @@ public class RequirePayOrderProtocol extends BaseData {
         this.orderPrice = orderPrice;
     }
 
-    public int getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 }

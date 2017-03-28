@@ -1,6 +1,7 @@
 package com.yougy.common.manager;
 
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.yougy.common.global.Commons;
@@ -43,7 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -716,7 +719,7 @@ public class ProtocolManager {
                         RequirePayOrderProtocol response = new RequirePayOrderProtocol();
                         ArrayList<BookInfo> bookInfos = (ArrayList<BookInfo>) request.getData().get(0).getBookList();
                         //直接写死编号
-                        response.setOrderId(10086);
+                        response.setOrderId("10086");
                         //根据请求数据算出总价
                         float sum = 0;
                         for (BookInfo bookInfo :
@@ -727,6 +730,72 @@ public class ProtocolManager {
                         response.setCode(200);
                         response.setMsg("success");
                         callbac.onResponse(response , protocol_id);
+                    }
+                });
+    }
+
+    /**
+     * 临时接口,把获取订单号和获取二维码结合在一起,以后会拆开,所以暂时先写一个临时接口
+     * @param totalAmount
+     * @param callback
+     */
+    public static void fake_requireQRCode(final float totalAmount , final Callback callback){
+        LogUtils.i("Protocol............. 21. 书城订单下单临时接口.");
+        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(final Subscriber<? super Object> subscriber) {
+                try {
+                    Response response = OkHttpUtils
+                            .post()
+                            .url("http://192.168.12.7:10005/alipay/pay")
+                            .addParams("totalAmount" , String.valueOf(totalAmount))
+                            .build()
+                            .execute();
+                    Log.v("FH" , "onresponse : " + response.toString());
+                    if (response.isSuccessful()){
+                        Log.v("FH" , "1");
+                        subscriber.onNext(response.body().string());
+                    }
+                    else {
+                        Log.v("FH" , "3");
+                        subscriber.onNext(null);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.v("FH" , "2");
+                    subscriber.onNext(null);
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        if (o != null){
+                            String bodyStr = (String) o;
+                            try {
+                                Log.v("FH" , "4 " + bodyStr);
+                                RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
+                                    JSONObject jsonObject = new JSONObject(bodyStr);
+                                    protocol.setOrderId(jsonObject.getString("orderId"));
+                                    protocol.setCode(Integer.parseInt(jsonObject.getString("code")));
+                                    protocol.qrCodeStr = jsonObject.getString("qrcode");
+                                    protocol.setOrderPrice(totalAmount);
+                                    protocol.setMsg("success");
+                                callback.onResponse(protocol , 10086);
+                            } catch (JSONException e) {
+                                Log.v("FH" , "6");
+                                e.printStackTrace();
+                                RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
+                                protocol.setCode(-1);
+                                callback.onResponse(protocol , 10086);
+                            }
+                        }
+                        else {
+                            Log.v("FH" , "5");
+                            RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
+                            protocol.setCode(-1);
+                            callback.onResponse(protocol , 10086);
+                        }
                     }
                 });
     }
@@ -921,47 +990,103 @@ public class ProtocolManager {
     /**
      * 假的书城订单查询的接口(模拟数据用,接口通了以后可以删除)
      */
-    public static void fake_queryBookOrderProtocol(int userId, final int protocol_id, final Callback callbac) {
+    public static void fake_queryBookOrderProtocol(final String orderId, final int protocol_id, final Callback callback) {
         LogUtils.i("Protocol.............  24. 书城订单查询");
         rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
             @Override
-            public void call(Subscriber<? super Object> subscriber) {
+            public void call(final Subscriber<? super Object> subscriber) {
                 try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                    Response response = OkHttpUtils
+                            .post()
+                            .url("http://192.168.12.7:10005/alipay/query")
+                            .addParams("orderId" , orderId)
+                            .build()
+                            .execute();
+                    Log.v("FH" , "onresponse : " + response.toString());
+                    if (response.isSuccessful()){
+                        Log.v("FH" , "1");
+                        subscriber.onNext(response.body().string());
+                    }
+                    else {
+                        Log.v("FH" , "3");
+                        subscriber.onNext(null);
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
+                    Log.v("FH" , "2");
+                    subscriber.onNext(null);
                 }
-                subscriber.onNext(null);
             }
         }).subscribeOn(Schedulers.io())
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        OrderBaseResponse response = new OrderBaseResponse();
-                        response.setCode(200);
-                        response.setMsg("success");
-                        response.setCount(1);
-                        ArrayList<DataOrderBean> dataList = new ArrayList<DataOrderBean>();
-                        DataOrderBean bean = new DataOrderBean();
-                        bean.setCount(1);
-                        ArrayList<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
-                        OrderInfo orderInfo = new OrderInfo();
-                        //模拟有几率失败
-                        orderInfo.setOrderId(Math.random() > 0.4 ? 10086 : 10087);
-                        simulateData.remove(0);
-                        orderInfo.setOrderPrice(8888.88f);
-                        orderInfo.setOrderStatus("成功");
-                        orderInfo.setCount(simulateData.size());
-                        orderInfo.setBookList(simulateData);
-                        orderInfoList.add(orderInfo);
-                        bean.setOrderList(orderInfoList);
-                        dataList.add(bean);
-                        response.setData(dataList);
-                        callbac.onResponse(response , protocol_id);
+                        if (o != null){
+                            String bodyStr = (String) o;
+                            try {
+                                Log.v("FH" , "4 " + bodyStr);
+                                OrderBaseResponse protocol = new OrderBaseResponse();
+                                JSONObject jsonObject = new JSONObject(bodyStr);
+                                protocol.setCode(Integer.parseInt(jsonObject.getString("code")));
+                                protocol.setMsg(jsonObject.getString("msg"));
+                                callback.onResponse(protocol , 10086);
+                            } catch (JSONException e) {
+                                Log.v("FH" , "6");
+                                e.printStackTrace();
+                                RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
+                                protocol.setCode(-1);
+                                callback.onResponse(protocol , 10086);
+                            }
+                        }
+                        else {
+                            Log.v("FH" , "5");
+                            RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
+                            protocol.setCode(-1);
+                            callback.onResponse(protocol , 10086);
+                        }
                     }
                 });
+
+//        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
+//            @Override
+//            public void call(Subscriber<? super Object> subscriber) {
+//                try {
+//                    //模拟网络请求时间
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                subscriber.onNext(null);
+//            }
+//        }).subscribeOn(Schedulers.io())
+//                .subscribe(new Action1<Object>() {
+//                    @Override
+//                    public void call(Object o) {
+//                        OrderBaseResponse response = new OrderBaseResponse();
+//                        response.setCode(200);
+//                        response.setMsg("success");
+//                        response.setCount(1);
+//                        ArrayList<DataOrderBean> dataList = new ArrayList<DataOrderBean>();
+//                        DataOrderBean bean = new DataOrderBean();
+//                        bean.setCount(1);
+//                        ArrayList<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
+//                        OrderInfo orderInfo = new OrderInfo();
+//                        //模拟有几率失败
+//                        orderInfo.setOrderId(Math.random() > 0.4 ? "10086" : "10087");
+//                        simulateData.remove(0);
+//                        orderInfo.setOrderPrice(8888.88f);
+//                        orderInfo.setOrderStatus("成功");
+//                        orderInfo.setCount(simulateData.size());
+//                        orderInfo.setBookList(simulateData);
+//                        orderInfoList.add(orderInfo);
+//                        bean.setOrderList(orderInfoList);
+//                        dataList.add(bean);
+//                        response.setData(dataList);
+//                        callbac.onResponse(response , protocol_id);
+//                    }
+//                });
     }
+
 
     /**
      * 操作BookInfo列表的方法,在指定的BookInfo列表中删除拥有给定的bookInfo列表中bookInfo的项

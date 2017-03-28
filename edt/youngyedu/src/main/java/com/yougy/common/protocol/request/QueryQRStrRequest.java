@@ -7,13 +7,13 @@ package com.yougy.common.protocol.request;
 
 public class QueryQRStrRequest {
     //要付款的订单ID
-    int orderID;
+    String orderID;
 
-    public int getOrderID() {
+    public String getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(int orderID) {
+    public void setOrderID(String orderID) {
         this.orderID = orderID;
     }
 

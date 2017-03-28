@@ -44,6 +44,6 @@ public class QueryBookOrderCallBack extends BaseCallBack<OrderBaseResponse> {
     @Override
     public void onClick() {
         super.onClick();
-        ProtocolManager.fake_queryBookOrderProtocol(Integer.parseInt(SpUtil.getAccountId()) , mProtocol, this);
+        ProtocolManager.fake_queryBookOrderProtocol("11111" , mProtocol, this);
     }
 }

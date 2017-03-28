@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class OrderInfo extends DataSupport {
-    int orderId = -1;
+    String orderId;
     float orderPrice;
     String orderStatus;
     int count;
@@ -53,11 +53,11 @@ public class OrderInfo extends DataSupport {
         return this;
     }
 
-    public int getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public OrderInfo setOrderId(int orderId) {
+    public OrderInfo setOrderId(String orderId) {
         this.orderId = orderId;
         return this;
     }
