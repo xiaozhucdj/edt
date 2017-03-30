@@ -7,7 +7,7 @@ import org.apache.http.protocol.HTTP;
  */
 public class LeApi {
     //http://dev.elanking.com:8088/wiki/pages         http://zuoye.web.dev.uxuebao.com/zy/m/account http://zuoye.web.dev.uxuebao.com/
-    public static final String RELEASE_HOST_NAME = "http://m.web.test.uxuebao.com:8082";
+    public static final String RELEASE_HOST_NAME = "http://preview.yoomath.com";
     public static String HOST_NAME = RELEASE_HOST_NAME;
 
     //public static final String FORM_CONTENT_TYPE = "application/x-www-form-urlencoded; charset=UTF-8";
