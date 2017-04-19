@@ -15,8 +15,17 @@ buildscript {
 
 allprojects {
     repositories {
-
         jcenter()
+        maven { url "https://jitpack.io" }
+        maven { url  "http://dl.bintray.com/dasar/maven" }
+        //文石PDF
+        maven {
+            url "https://dl.bintray.com/onyx-intl/partner"
+            credentials {
+                username = "xiaozhucdj"
+                password = "2a50e0096a2842d3725bcc949c9b8d2b0e40265a"
+            }
+        }
     }
 }
 

@@ -47,7 +47,7 @@ import android.widget.SeekBar;
 
 import com.inkscreen.MainActivityScreen;
 import com.jakewharton.rxbinding.view.RxView;
-import com.onyx.android.sdk.device.EpdController;
+import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.utils.FileUtils;

@@ -27,7 +27,7 @@ import com.artifex.mupdfdemo.OutlineItem;
 import com.artifex.mupdfdemo.pdf.View.MuPDFPageView;
 import com.artifex.mupdfdemo.pdf.bean.OutlineActivityData;
 import com.jakewharton.rxbinding.view.RxView;
-import com.onyx.android.sdk.device.EpdController;
+import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;

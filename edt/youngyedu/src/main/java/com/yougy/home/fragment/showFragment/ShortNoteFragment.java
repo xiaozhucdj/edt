@@ -21,7 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.onyx.android.sdk.device.EpdController;
+import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;

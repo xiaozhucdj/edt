@@ -14,8 +14,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.onyx.android.sdk.device.EpdController;
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.Label;
 import com.yougy.home.bean.Line;
@@ -144,8 +146,8 @@ public class NoteBookView extends View {
         screenHeight = UIUtils.getScreenHeight();
         //这里会测试 LOG screenWidth screenHeight ==0 。理论上不可能为0 除非程序发生了崩溃 继续运行导致的
         if (screenWidth < 0 || screenHeight < 0) {
-            screenWidth = 825;
-            screenHeight = 1152;
+            screenWidth = 960;
+            screenHeight = 1280;
         }
         mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
         // 保存一次一次绘制出来的图形
@@ -163,12 +165,18 @@ public class NoteBookView extends View {
         mBitmapPaint = new Paint(mPaint);
 
         matrix = new Matrix();
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")){
+            matrix.postRotate(90);
+            matrix.postTranslate(UIUtils.getScreenHeight(),0);
+        }else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96")){
+            matrix.postRotate(270);
+            matrix.postTranslate(0, UIUtils.getScreenWidth());
+        }
         //适用于设备N96
-        matrix.postRotate(270);
-        matrix.postTranslate(0, UIUtils.getScreenWidth());
+
         //适用于设备PL107
-//        matrix.postRotate(90);
-//        matrix.postTranslate(1280,0);
+
         EpdController.setStrokeColor(0xff000000);
         EpdController.setStrokeStyle(1);
         EpdController.setStrokeWidth(2.0f);
@@ -465,10 +473,10 @@ public class NoteBookView extends View {
                     int n = event.getHistorySize();
                     for (int i = 0; i < n; i++) {
                         dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
-                        EpdController.quadTo(dst[0], dst[1], EpdController.UpdateMode.DW);
+                        EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
                     }
                     dst = mapPoint(event.getX(), event.getY());
-                    EpdController.quadTo(dst[0], dst[1], EpdController.UpdateMode.DW);
+                    EpdController.quadTo(dst[0], dst[1],UpdateMode.DU);
                 }
                 break;
             case MotionEvent.ACTION_UP:

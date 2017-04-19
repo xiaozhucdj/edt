@@ -62,7 +62,6 @@ dependencies {
     compile project(':okhttputils')
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.yolanda.nohttp:nohttp:1.0.7'
-    compile project(':OnyxAndroidSDK')
     compile 'com.android.support:support-v4:25.0.0'
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.squareup.leakcanary:leakcanary-android:1.5'
@@ -80,4 +79,15 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.google.zxing:core:3.3.0'
     compile 'com.zhy:autolayout:1.4.5'
+
+    //文石手绘
+    compile 'com.onyx.android.sdk:onyxsdk-base:1.3.1'
+    compile 'com.onyx.android.sdk:onyxsdk-scribble:1.0.3'
+    //文石PDF
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.onyx.android.sdk:alreader-engine:1.0.0'
+    compile 'com.onyx.android.sdk:chinese-analyzer:1.0.0'
+    compile 'com.onyx.android.sdk:onyxsdk-reader:1.0.0'
+    compile 'com.onyx.android.sdk:onyxsdk-data:1.0.1'
+    compile "com.jakewharton:disklrucache:2.0.2"
 }

@@ -13,9 +13,9 @@ import android.view.View;
 
 import com.inkscreen.model.DrawPath;
 import com.inkscreen.model.Point;
-import com.onyx.android.sdk.device.EpdController;
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.utils.UIUtils;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -194,10 +194,10 @@ public class PaintView extends View {
                     int n = event.getHistorySize();
                     for (int i = 0; i < n; i++) {
                         dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
-                        EpdController.quadTo(dst[0], dst[1], EpdController.UpdateMode.DW);
+                        EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
                     }
                     dst = mapPoint(event.getX(), event.getY());
-                    EpdController.quadTo(dst[0], dst[1], EpdController.UpdateMode.DW);
+                    EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
                 }
                 break;
             case MotionEvent.ACTION_UP:
