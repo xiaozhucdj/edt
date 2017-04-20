@@ -51,7 +51,9 @@ android {
             signingConfig signingConfigs.leke_key
         }
     }
-
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+    }
 }
 
 dependencies {
