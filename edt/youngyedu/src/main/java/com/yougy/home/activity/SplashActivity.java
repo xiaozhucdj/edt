@@ -47,7 +47,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, callBack);
         } else {
             if ("-1".equalsIgnoreCase(SpUtil.getAccountId())) {
-                Toaster.showDefaultToast(getApplication(), "当前没有网络请，请设置网络", Toast.LENGTH_SHORT);
+                Toaster.showDefaultToast(getApplication(), "当前没有网络请，请设置网络", Toast.LENGTH_LONG);
             } else {
                 jumpActivity(MainActivity.class);
             }
