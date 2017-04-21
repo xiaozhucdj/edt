@@ -218,7 +218,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mRlFolder = (ViewGroup) findViewById(R.id.rl_folder);
         mRlFolder.setOnClickListener(this);
         //TODO:文件夹还为实现 ，暂时关闭点击切换Fragment 功能
-//        mRlFolder.setEnabled(false);
+         mRlFolder.setEnabled(false);
         mTvFolder = (TextView) findViewById(R.id.tv_folder);
         mViewFolder = findViewById(R.id.view_folder);
 
@@ -270,7 +270,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnSearChBook.setOnClickListener(this);
         // 商城
         mBtnBookStore = (Button) this.findViewById(R.id.btn_bookStore);
-        mBtnBookStore.setOnClickListener(this);
+//        mBtnBookStore.setOnClickListener(this);
         //消息中心
         mBtnMsg = (Button) this.findViewById(R.id.btn_msg);
         mBtnMsg.setOnClickListener(this);
