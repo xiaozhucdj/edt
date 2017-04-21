@@ -32,13 +32,12 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.DataBookBean;
-import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.adapter.PromoteBookAdapter;
+import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -155,8 +154,8 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
         mTvBookPublishTime.setText(mBookInfo.getBookPublishTime());
         //作者
         mTvBookAuthor.setText(mBookInfo.getBookAuthor());
-        //文件大小
-        mTvBookDownloadSize.setText(mBookInfo.getBookDownloadSize());
+        //TODO:文件大小
+//        mTvBookDownloadSize.setText(mBookInfo.getBookDownloadSize());
         //价格
         mTvBookSalePrice.setText(mBookInfo.getBookSalePrice() + "");
         //判断是否加入收藏
@@ -212,14 +211,14 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
                 // 加入购车
                 // 图书未购买+图书为付费+图书未被加入购物车三个条件满足，才可有加入购物车操作
                 //TODO:根据 购买日期判断是否需要加入购物车
-                if (StringUtils.isEmpty(mBookInfo.getBookDownload()) && mBookInfo.getBookSalePrice() != 0 && !mBookInfo.isBookInCart()) {
-                    requestAddCarProtocol();
-                }
+//                if (StringUtils.isEmpty(mBookInfo.getBookDownload()) && mBookInfo.getBookSalePrice() != 0 && !mBookInfo.isBookInCart()) {
+//                    requestAddCarProtocol();
+//                }
                 break;
             case R.id.btn_addFavor:
-                //加入收藏夹
-                if (!mBookInfo.isBookInFavor())
-                    requestAddFavorProtocol();
+                //TODO:加入收藏夹
+//                if (!mBookInfo.isBookInFavor())
+//                    requestAddFavorProtocol();
                 break;
             case R.id.btn_read:
                 //跳转在线试读
@@ -330,14 +329,15 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
                         PromoteBookProtocol protocol = (PromoteBookProtocol) o;
                         if (protocol.getData() != null && protocol.getData().get(0) != null && protocol.getData().get(0).getBookList() != null)
                             mBooks.clear();
-                        mBooks.addAll(protocol.getData().get(0).getBookList());
+                        //TODO:add book to books
+//                        mBooks.addAll(protocol.getData().get(0).getBookList());
                         mPromoteBookAdapter.notifyDataSetChanged();
                     } else if (o instanceof AppendBookCartProtocol) {
                         //更新 购车按钮状态
-                        mBookInfo.setBookInCart(true);
+//                        mBookInfo.setBookInCart(true);
                     } else if (o instanceof AppendBookFavorProtocol) {
                         //更新 收藏按钮状态
-                        mBookInfo.setBookInFavor(true);
+//                        mBookInfo.setBookInFavor(true);
                     }
                 }
             }
@@ -372,7 +372,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
         DataBookBean bean = new DataBookBean();
         List<BookInfo> bookInfoList = new ArrayList<>();
         bookInfoList.add(mBookInfo);
-        bean.setBookList(bookInfoList);
+//        bean.setBookList(bookInfoList);
         bean.setCount(bookInfoList.size());
 
         request.setData(list);
@@ -395,7 +395,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
         DataBookBean bean = new DataBookBean();
         List<BookInfo> bookInfoList = new ArrayList<>();
         bookInfoList.add(mBookInfo);
-        bean.setBookList(bookInfoList);
+//        bean.setBookList(bookInfoList);
         bean.setCount(bookInfoList.size());
 
         request.setData(list);
@@ -425,9 +425,9 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
 
             //下载文件
             List<DownInfo> mFiles = new ArrayList<>();
-            DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
-            info.setBookName(mBookInfo.getBookTitle());
-            mFiles.add(info);
+//            DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
+//            info.setBookName(mBookInfo.getBookTitle());
+//            mFiles.add(info);
             downBook(mFiles);
 
         } catch (IOException e) {

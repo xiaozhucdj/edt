@@ -14,22 +14,22 @@
     <!-- 图书 标题 价格信息-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="208dp"
-        android:layout_marginLeft="54dp"
-        android:layout_marginRight="54dp"
-        android:layout_marginTop="40dp">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginRight="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/fourty_px">
 
         <ImageView
             android:id="@+id/img_book_icon"
-            android:layout_width="158dp"
-            android:layout_height="208dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/img_book_backgroud"
-            android:paddingBottom="6dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="6dp"
-            android:paddingTop="2dp"
-            android:scaleType="fitCenter"
+            android:background="@drawable/img_shu"
+            android:paddingLeft="1px"
+            android:paddingRight="5px"
+            android:paddingTop="1px"
+            android:paddingBottom="5px"
+            android:scaleType="fitXY"
             android:src="@drawable/img_book_cover" />
 
 
@@ -37,8 +37,10 @@
             android:id="@+id/ll_bookInfos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_alignBottom="@+id/img_book_icon"
+            android:layout_alignTop="@+id/img_book_icon"
             android:layout_toRightOf="@id/img_book_icon"
+            android:paddingLeft="@dimen/twenty_four_px"
             android:orientation="vertical">
 
             <TextView
@@ -47,74 +49,50 @@
                 android:layout_height="wrap_content"
                 android:text="三年级数学三年级数学三年级数学三年级数学三年级数学"
                 android:textColor="@color/text_color_black"
-                android:textSize="24dp" />
+                android:includeFontPadding = "false"
+                android:gravity="left"
+                android:textSize="@dimen/twenty_four_px" />
 
             <TextView
-                android:layout_marginTop="5dp"
                 android:id="@+id/tv_bookPublisher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="人民教育出版社"
-                android:textColor="@color/black"
-                android:textSize="20dp" />
+                style="@style/bookDetailStyle"
+                android:text="出版社：人民教育出版社" />
 
 
             <TextView
-                android:layout_marginTop="5dp"
                 android:id="@+id/tv_bookAuthor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="鲁迅"
-                android:textColor="@color/black"
-                android:textSize="20dp" />
+                style="@style/bookDetailStyle"
+                android:text="作者：卡勒德" />
 
 
             <TextView
-                android:layout_marginTop="5dp"
                 android:id="@+id/tv_bookPublishTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="2016-10-10"
-                android:textColor="@color/black"
-                android:textSize="20dp" />
+                style="@style/bookDetailStyle"
+                android:text="2016-10-10" />
 
 
             <TextView
-                android:layout_marginTop="5dp"
                 android:id="@+id/tv_bookDownloadSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="文件大小：53.3mb"
-                android:textColor="@color/black"
-                android:textSize="20dp" />
+                style="@style/bookDetailStyle"
+                android:text="文件大小：53.3mb" />
 
 
             <TextView
-                android:layout_marginTop="5dp"
                 android:id="@+id/tv_bookSalePrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="价格:￥88.00"
-                android:textColor="@color/black"
-                android:textSize="20dp" />
+                style="@style/bookDetailStyle"
+                android:text="价格:￥88.00" />
         </LinearLayout>
 
         <Button
-            android:background="@drawable/btn_buy_backgroud"
             android:id="@+id/btn_buy"
-            android:layout_width="200dp"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="10dp"
+            android:layout_alignBottom="@+id/img_book_icon"
+            android:background="@drawable/buy_selector"
             android:gravity="center"
             android:text="￥88购买"
-            android:textColor="@color/text_color_black"
+            android:textColor="@drawable/page_text_selector"
             android:textSize="24dp" />
     </RelativeLayout>
 
@@ -122,106 +100,88 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="54dp"
-        android:layout_marginRight="54dp"
-        android:layout_marginTop="12dp">
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginRight="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/fourty_two_px">
 
         <Button
-            android:textSize="24dp"
             android:id="@+id/btn_addCar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:gravity="center"
             android:text="加入购物车"
-            android:textColor="@drawable/shop_color_btn_selector"
-            android:textStyle="bold" />
+            style="@style/bookOperateStyle"/>
 
         <Button
-            android:textSize="24dp"
             android:id="@+id/btn_addFavor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@null"
-            android:gravity="center"
             android:text="加入收藏夹"
-            android:textColor="@drawable/shop_color_btn_selector"
-            android:textStyle="bold" />
+            android:layout_alignParentRight="true"
+            style="@style/bookOperateStyle"
+            />
 
         <Button
-            android:textSize="24dp"
             android:id="@+id/btn_read"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@null"
-            android:gravity="center"
             android:text="在线试读"
-            android:textColor="@color/text_color_black"
-            android:textStyle="bold" />
+            android:layout_centerInParent="true"
+            style="@style/bookOperateStyle"/>
 
     </RelativeLayout>
 
     <View
 
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginLeft="54dp"
-        android:layout_marginRight="54dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="@dimen/ten_px"
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginRight="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/thirty_two_px"
         android:background="#e0e0e0" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="54dp"
-        android:layout_marginTop="15dp"
-        android:drawableLeft="@drawable/img_back"
-        android:drawablePadding="10dp"
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/twenty_px"
+        android:drawableLeft="@drawable/img_shuxian"
+        android:drawablePadding="@dimen/fifteen_px"
         android:gravity="center"
         android:text="图书详情"
         android:textColor="@color/text_color_black"
-        android:textSize="24dp" />
+        android:textSize="@dimen/twenty_four_px" />
 
-    <TextView
+    <com.yougy.view.AlignTextView
         android:id="@+id/tv_bookDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="54dp"
-        android:layout_marginRight="54dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginRight="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/fifteen_px"
         android:gravity="left"
         android:text="Created by Administrator on 2016/8/24 Created by Administrator on 2016/8/24.Created by Administrator on 2016/8/24.."
         android:textColor="@color/black"
-        android:textSize="18dp" />
+        android:textSize="@dimen/eighteen_px" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginLeft="54dp"
-        android:layout_marginRight="54dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="@dimen/ten_px"
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginRight="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/fifty_dp"
         android:background="#e0e0e0" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="54dp"
-        android:layout_marginTop="15dp"
-        android:drawableLeft="@drawable/img_back"
-        android:drawablePadding="10dp"
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/twenty_px"
+        android:drawableLeft="@drawable/img_shuxian"
+        android:drawablePadding="@dimen/fifteen_px"
         android:gravity="center"
         android:text="相关推荐"
         android:textColor="@color/text_color_black"
-        android:textSize="24dp" />
+        android:textSize="@dimen/twenty_four_px" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_iew"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        />
+        android:layout_marginLeft="@dimen/fifty_four_px"
+        android:layout_marginRight="@dimen/fifty_four_px"
+        android:layout_marginTop="@dimen/fifteen_px" />
 </LinearLayout>

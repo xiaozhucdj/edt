@@ -64,6 +64,14 @@
     <dimen name="twenty_four_sp">24sp</dimen>
     <dimen name="twelve_dp">12dp</dimen>
     <dimen name="thirty_two_dp">32dp</dimen>
-
-
+    <dimen name="fifty_four_px">54px</dimen>
+    <dimen name="fourty_px">40px</dimen>
+    <dimen name="twenty_four_px">24px</dimen>
+    <dimen name="three_px">3px</dimen>
+    <dimen name="twenty_px">20px</dimen>
+    <dimen name="fourty_two_px">42px</dimen>
+    <dimen name="thirty_two_px">32px</dimen>
+    <dimen name="ten_px">10px</dimen>
+    <dimen name="fifteen_px">15px</dimen>
+    <dimen name="eighteen_px">18px</dimen>
 </resources>

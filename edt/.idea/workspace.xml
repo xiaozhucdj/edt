@@ -10,18 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8d7d67b-8c44-4234-a545-3e11e46c2bcc" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/onyx/base/BasePresenter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/onyx/base/BaseView.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/onyx/reader/ReaderContract.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/onyx/reader/ReaderPresenter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/HandlerDirAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/bean/DirectoryModel.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/HandleOnyxReaderFragment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_anniu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_anniu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_shu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_shuxian.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/buy_selector.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/FileContonst.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/FileContonst.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/ControlFragmentActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/ControlFragmentActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/TextThumbSeekBar.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/TextThumbSeekBar.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/org/litepal/LitePalApplication.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/org/litepal/LitePalApplication.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/NewBookItemDetailsActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/NewBookItemDetailsActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" />
     </list>
     <ignored path="edt.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -53,76 +53,67 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="HandleOnyxReaderFragment.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/HandleOnyxReaderFragment.java">
+      <file leaf-file-name="activity_shop_new_book_item_details.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="460" column="32" selection-start-line="460" selection-start-column="19" selection-end-line="460" selection-end-column="32" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ReaderPresenter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/onyx/reader/ReaderPresenter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="739">
-              <caret line="152" column="15" selection-start-line="152" selection-start-column="15" selection-end-line="152" selection-end-column="15" />
+            <state relative-caret-position="699">
+              <caret line="145" column="33" selection-start-line="145" selection-start-column="33" selection-end-line="145" selection-end-column="33" />
               <folding>
-                <element signature="e#5506#5507#0" expanded="true" />
-                <element signature="e#5535#5536#0" expanded="true" />
+                <element signature="e#612#634#0" expanded="true" />
+                <element signature="e#670#692#0" expanded="true" />
+                <element signature="e#726#744#0" expanded="true" />
+                <element signature="e#1618#1641#0" expanded="true" />
+                <element signature="e#2103#2126#0" expanded="true" />
+                <element signature="e#3643#3665#0" expanded="true" />
+                <element signature="e#3701#3723#0" expanded="true" />
+                <element signature="e#3757#3779#0" expanded="true" />
+                <element signature="e#4413#4428#0" expanded="true" />
+                <element signature="e#4463#4485#0" expanded="true" />
+                <element signature="e#4521#4543#0" expanded="true" />
+                <element signature="e#4577#4599#0" expanded="true" />
+                <element signature="e#4778#4800#0" expanded="true" />
+                <element signature="e#4834#4852#0" expanded="true" />
+                <element signature="e#4938#4957#0" expanded="true" />
+                <element signature="e#5322#5344#0" expanded="true" />
+                <element signature="e#5380#5402#0" expanded="true" />
+                <element signature="e#5436#5455#0" expanded="true" />
+                <element signature="e#5692#5712#0" expanded="true" />
+                <element signature="e#5801#5816#0" expanded="true" />
+                <element signature="e#5851#5873#0" expanded="true" />
+                <element signature="e#5909#5931#0" expanded="true" />
+                <element signature="e#5965#5982#0" expanded="true" />
+                <element signature="e#6161#6183#0" expanded="true" />
+                <element signature="e#6217#6235#0" expanded="true" />
+                <element signature="e#6321#6340#0" expanded="true" />
+                <element signature="e#6479#6502#0" expanded="true" />
+                <element signature="e#6713#6735#0" expanded="true" />
+                <element signature="e#6771#6793#0" expanded="true" />
+                <element signature="e#6827#6846#0" expanded="true" />
               </folding>
             </state>
           </provider>
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
         </entry>
       </file>
-      <file leaf-file-name="TextBookFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/TextBookFragment.java">
+      <file leaf-file-name="NewBookItemDetailsActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/NewBookItemDetailsActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="173">
-              <caret line="188" column="6" selection-start-line="188" selection-start-column="6" selection-end-line="188" selection-end-column="51" />
+            <state relative-caret-position="668">
+              <caret line="430" column="29" selection-start-line="430" selection-start-column="29" selection-end-line="430" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#initOtherView#0;class#TextBookFragment#0" expanded="false" />
-                <element signature="class#PageListenerImple#0;class#TextBookFragment#0" expanded="false" />
-                <element signature="method#onPangeFinishListener#0;class#PageListenerImple#0;class#TextBookFragment#0" expanded="false" />
-                <element signature="method#addListener#0;class#TextBookFragment#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java">
+      <file leaf-file-name="dimens.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="143">
-              <caret line="383" column="81" selection-start-line="383" selection-start-column="65" selection-end-line="383" selection-end-column="81" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fragment_base_layout.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_base_layout.xml">
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="opt_layout.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml">
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="89" column="45" selection-start-line="89" selection-start-column="29" selection-end-line="89" selection-end-column="45" />
+            <state relative-caret-position="624">
+              <caret line="75" column="34" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
               <folding />
             </state>
           </provider>
@@ -2747,6 +2738,7 @@
     <option name="modificationStamps">
       <map>
         <entry key="D:\project\LeKe\leke_android\edt" value="7448488062000" />
+        <entry key="D:\project\leke\leke_student\edt" value="5971013888000" />
         <entry key="D:\rongjieWorkSpace\leke_student\leke_android\edt" value="5970403642000" />
       </map>
     </option>
@@ -3305,11 +3297,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/search_click_selector.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout_auto.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/attrs.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/RxJavaDemo.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/BaseCallBack.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/HomeData.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BaseData.java" />
@@ -3356,6 +3343,11 @@
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/TextThumbSeekBar.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/FileContonst.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/HandleOnyxReaderFragment.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/NewBookItemDetailsActivity.java" />
       </list>
     </option>
   </component>
@@ -3376,7 +3368,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="AndroidView" proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -3390,22 +3382,22 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView">
-        <subPane />
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane />
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="AndroidView">
+        <subPane />
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="C:/soft/Android/sdk" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../leke_teacher_android" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="device.picker.selection" value="0123456789ABCDEF" />
     <property name="UI_DESIGNER_EDITOR_MODE.NlPaletteManager-NlPreviewForm.SHOW" value="false" />
     <property name="DEBUGGABLE_DEVICE" value="onyx-n96-0123456789ABCDEF" />
@@ -3423,6 +3415,8 @@
       <recent name="com.yougy.rx_java" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\project\leke\leke_student\edt\youngyedu\src\main\res\drawable-mdpi" />
+      <recent name="D:\project\leke\leke_student\edt\youngyedu\src\main\res\drawable" />
       <recent name="D:\rongjieWorkSpace\leke_student\leke_android\edt\youngyedu\src\main\java\com" />
       <recent name="D:\project\leke\leke_android\edt\youngyedu\src\main\res\drawable-mdpi" />
       <recent name="D:\project\leke\leke_android\edt\youngyedu\src\main\res\layout" />
@@ -3619,31 +3613,6 @@
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="OnyxAndroidSDK" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="filePath" />
-      <option name="vmParameters" />
-      <option name="alternativeJrePath" />
-      <option name="programParameters" />
-      <option name="passParentEnvs" value="true" />
-      <option name="workingDirectory" />
-      <option name="isAlternativeJrePathEnabled" value="false" />
       <envs />
       <method />
     </configuration>
@@ -3858,30 +3827,32 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1696" height="1026" extended-state="0" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34025374" sideWeight="0.4975278" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32845894" sideWeight="0.50247216" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3587082" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6724337" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32964602" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48788926" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48788926" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298731" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3007335" sideWeight="0.48511577" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Freeline" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32641292" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3982002" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18337408" sideWeight="0.51488423" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -3892,8 +3863,6 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Freeline" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32733408" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -3902,15 +3871,15 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32845894" sideWeight="0.50247216" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3587082" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6724337" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3982002" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34025374" sideWeight="0.4975278" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -3925,7 +3894,7 @@
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3007335" sideWeight="0.48511577" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Freeline" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32733408" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32641292" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18337408" sideWeight="0.51488423" order="7" side_tool="true" content_ui="tabs" />
@@ -3974,73 +3943,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/ShopBookLayout.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="42" column="32" selection-start-line="42" selection-start-column="32" selection-end-line="42" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/recommend_item.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="22" column="50" selection-start-line="22" selection-start-column="50" selection-end-line="22" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/ProtocolManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="458" column="37" selection-start-line="458" selection-start-column="37" selection-end-line="458" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout_auto.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="46">
-          <caret line="166" column="0" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
-          <folding>
-            <element signature="e#3721#6275#0" expanded="false" />
-            <element signature="e#9440#14017#0" expanded="false" />
-            <element signature="e#14027#18296#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/ShopBookView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="411">
-          <caret line="38" column="60" selection-start-line="38" selection-start-column="60" selection-end-line="38" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/build/intermediates/data-binding-layout-out/debug/drawable/edu_img_snapshot_common_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="28" selection-start-line="3" selection-start-column="28" selection-end-line="3" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/build/intermediates/data-binding-layout-out/debug/drawable/edu_color_snapshot_common_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="48" selection-start-line="3" selection-start-column="32" selection-end-line="3" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/build/intermediates/data-binding-layout-out/debug/layout/activity_shop_new_book_item_details.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="11" column="51" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -4048,23 +3950,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/OnyxAndroidSDK/build/generated/source/r/debug/com/onyx/android/sdk/R.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="326" column="42" selection-start-line="326" selection-start-column="26" selection-end-line="326" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="11" column="39" selection-start-line="11" selection-start-column="39" selection-end-line="11" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/OnyxAndroidSDK/build/generated/source/r/debug/com/onyx/android/sdk/R.java" />
     <entry file="file://$PROJECT_DIR$/OnyxAndroidSDK/src/main/res/values/colors.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -4091,20 +3977,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2040">
           <caret line="71" column="42" selection-start-line="71" selection-start-column="42" selection-end-line="71" selection-end-column="42" />
-          <folding>
-            <marker date="1492669110000" expanded="true" signature="88:1414" ph="{...}" />
-            <marker date="1492669110000" expanded="true" signature="109:290" ph="{...}" />
-            <marker date="1492669110000" expanded="true" signature="128:284" ph="{...}" />
-            <marker date="1492669110000" expanded="true" signature="403:474" ph="{...}" />
-            <marker date="1492669110000" expanded="true" signature="418:432" ph="{" />
-            <marker date="1492669110000" expanded="true" signature="458:468" ph="}" />
-            <marker date="1492669110000" expanded="true" signature="490:500" ph="{" />
-            <marker date="1492669110000" expanded="true" signature="515:521" ph="}" />
-            <marker date="1492669110000" expanded="true" signature="541:716" ph="{...}" />
-            <marker date="1492669110000" expanded="true" signature="732:1348" ph="{...}" />
-            <marker date="1492669110000" expanded="true" signature="749:1120" ph="{...}" />
-            <marker date="1492669110000" expanded="true" signature="1137:1342" ph="{...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4160,13 +4033,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.android/build-cache/8a45556807da8b742b5b7579856f84289072cef5/output/jars/classes.jar!/android/support/multidex/MultiDexApplication.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$USER_HOME$/.android/build-cache/8a45556807da8b742b5b7579856f84289072cef5/output/jars/classes.jar!/android/support/multidex/MultiDexApplication.class" />
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/YougyApplicationManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-150">
@@ -4176,14 +4043,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/seek_layout.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="269">
           <caret line="9" column="20" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
-          <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/artifex/mupdfdemo/pdf/bean/OutlineActivityData.java">
@@ -4208,14 +4074,14 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/pdf_layout2.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="269">
           <caret line="67" column="36" selection-start-line="67" selection-start-column="36" selection-end-line="67" selection-end-column="36" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/Commons.java">
@@ -4245,25 +4111,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="810">
           <caret line="27" column="28" selection-start-line="27" selection-start-column="28" selection-end-line="27" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/build/generated/source/r/debug/com/yougy/ui/activity/R.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#765363#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/build/generated/source/r/debug/com/yougy/ui/activity/R.java" />
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/SearchResultAdapter1.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
           <caret line="12" column="28" selection-start-line="12" selection-start-column="28" selection-end-line="12" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4272,9 +4127,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="61" column="40" selection-start-line="61" selection-start-column="40" selection-end-line="61" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4282,34 +4134,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-72">
           <caret line="119" column="41" selection-start-line="119" selection-start-column="21" selection-end-line="119" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Android/sdk/sources/android-23/android/widget/ProgressBar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="1409" column="28" selection-start-line="1409" selection-start-column="28" selection-end-line="1409" selection-end-column="28" />
-          <folding>
-            <element signature="e#52698#52699#0" expanded="false" />
-            <element signature="e#52751#52752#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.android/build-cache/4e7be39458f09a6c80cc9063bd6e46202fc5c929/output/jars/classes.jar!/com/onyx/android/sdk/reader/ReaderBaseApp.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/Android/sdk/sources/android-23/android/widget/ProgressBar.java" />
+    <entry file="jar://$USER_HOME$/.android/build-cache/4e7be39458f09a6c80cc9063bd6e46202fc5c929/output/jars/classes.jar!/com/onyx/android/sdk/reader/ReaderBaseApp.class" />
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/org/litepal/LitePalApplication.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="145">
           <caret line="43" column="48" selection-start-line="43" selection-start-column="48" selection-end-line="43" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4317,9 +4150,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="113">
           <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4327,7 +4157,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4335,7 +4164,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4343,61 +4171,116 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
           <caret line="91" column="57" selection-start-line="91" selection-start-column="57" selection-end-line="91" selection-end-column="57" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_base_layout.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
+        <state relative-caret-position="450">
           <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
+        <state relative-caret-position="2225">
           <caret line="89" column="45" selection-start-line="89" selection-start-column="29" selection-end-line="89" selection-end-column="45" />
           <folding />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
+        <state relative-caret-position="7000">
           <caret line="383" column="81" selection-start-line="383" selection-start-column="65" selection-end-line="383" selection-end-column="81" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#17775#17776#0" expanded="false" />
+            <element signature="e#17813#17814#0" expanded="false" />
+            <element signature="e#17939#17940#0" expanded="false" />
+            <element signature="e#17975#17976#0" expanded="false" />
+            <element signature="e#30170#30171#0" expanded="false" />
+            <element signature="e#30214#30215#0" expanded="false" />
+            <element signature="e#32480#32481#0" expanded="false" />
+            <element signature="e#32521#32522#0" expanded="false" />
+            <element signature="e#32571#32572#0" expanded="false" />
+            <element signature="e#32611#32612#0" expanded="false" />
+            <element signature="e#32823#32824#0" expanded="false" />
+            <element signature="e#32864#32865#0" expanded="false" />
+            <element signature="e#32914#32915#0" expanded="false" />
+            <element signature="e#32954#32955#0" expanded="false" />
+            <element signature="e#35874#35875#0" expanded="false" />
+            <element signature="e#35959#35960#0" expanded="false" />
+            <element signature="e#37496#37497#0" expanded="false" />
+            <element signature="e#37565#37566#0" expanded="false" />
+            <element signature="e#37732#37733#0" expanded="false" />
+            <element signature="e#37798#37799#0" expanded="false" />
+            <element signature="e#44670#44671#0" expanded="false" />
+            <element signature="e#44714#44715#0" expanded="false" />
+            <element signature="e#47240#47241#0" expanded="false" />
+            <element signature="e#47270#47271#0" expanded="false" />
+            <element signature="e#48478#48479#0" expanded="false" />
+            <element signature="e#48549#48550#0" expanded="false" />
+            <element signature="e#53347#53348#0" expanded="false" />
+            <element signature="e#53386#53387#0" expanded="false" />
+            <element signature="e#56146#56147#0" expanded="false" />
+            <element signature="e#56230#56231#0" expanded="false" />
+            <element signature="e#57704#57705#0" expanded="false" />
+            <element signature="e#57773#57774#0" expanded="false" />
+            <element signature="e#57940#57941#0" expanded="false" />
+            <element signature="e#58006#58007#0" expanded="false" />
+            <element signature="e#66463#66464#0" expanded="false" />
+            <element signature="e#66506#66507#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/TextBookFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
+        <state relative-caret-position="3075">
           <caret line="188" column="6" selection-start-line="188" selection-start-column="6" selection-end-line="188" selection-end-column="51" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#4008#4009#0" expanded="false" />
+            <element signature="e#4072#4073#0" expanded="false" />
+            <element signature="e#4104#4105#0" expanded="false" />
+            <element signature="e#4154#4155#0" expanded="false" />
+            <element signature="e#4184#4185#0" expanded="false" />
+            <element signature="e#4232#4233#0" expanded="false" />
             <element signature="method#initOtherView#0;class#TextBookFragment#0" expanded="false" />
             <element signature="class#PageListenerImple#0;class#TextBookFragment#0" expanded="false" />
             <element signature="method#onPangeFinishListener#0;class#PageListenerImple#0;class#TextBookFragment#0" expanded="false" />
             <element signature="method#addListener#0;class#TextBookFragment#0" expanded="false" />
+            <element signature="e#11139#11140#0" expanded="false" />
+            <element signature="e#11212#11213#0" expanded="false" />
+            <element signature="e#11409#11410#0" expanded="false" />
+            <element signature="e#11482#11483#0" expanded="false" />
+            <element signature="e#15065#15066#0" expanded="false" />
+            <element signature="e#15122#15123#0" expanded="false" />
+            <element signature="e#15175#15176#0" expanded="false" />
+            <element signature="e#15232#15233#0" expanded="false" />
+            <element signature="e#26057#26058#0" expanded="false" />
+            <element signature="e#26107#26108#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/onyx/reader/ReaderPresenter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="739">
+        <state relative-caret-position="3375">
           <caret line="152" column="15" selection-start-line="152" selection-start-column="15" selection-end-line="152" selection-end-column="15" />
           <folding>
-            <element signature="e#5506#5507#0" expanded="true" />
-            <element signature="e#5535#5536#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1097#1098#0" expanded="false" />
+            <element signature="e#1141#1142#0" expanded="false" />
+            <element signature="e#5323#5324#0" expanded="false" />
+            <element signature="e#5373#5374#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4407,6 +4290,120 @@
         <state relative-caret-position="246">
           <caret line="460" column="32" selection-start-line="460" selection-start-column="19" selection-end-line="460" selection-end-column="32" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/buy_selector.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="676">
+          <caret line="71" column="59" selection-start-line="71" selection-start-column="45" selection-end-line="71" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="624">
+          <caret line="75" column="34" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="699">
+          <caret line="145" column="33" selection-start-line="145" selection-start-column="33" selection-end-line="145" selection-end-column="33" />
+          <folding>
+            <element signature="e#612#634#0" expanded="true" />
+            <element signature="e#670#692#0" expanded="true" />
+            <element signature="e#726#744#0" expanded="true" />
+            <element signature="e#1618#1641#0" expanded="true" />
+            <element signature="e#2103#2126#0" expanded="true" />
+            <element signature="e#3643#3665#0" expanded="true" />
+            <element signature="e#3701#3723#0" expanded="true" />
+            <element signature="e#3757#3779#0" expanded="true" />
+            <element signature="e#4413#4428#0" expanded="true" />
+            <element signature="e#4463#4485#0" expanded="true" />
+            <element signature="e#4521#4543#0" expanded="true" />
+            <element signature="e#4577#4599#0" expanded="true" />
+            <element signature="e#4778#4800#0" expanded="true" />
+            <element signature="e#4834#4852#0" expanded="true" />
+            <element signature="e#4938#4957#0" expanded="true" />
+            <element signature="e#5322#5344#0" expanded="true" />
+            <element signature="e#5380#5402#0" expanded="true" />
+            <element signature="e#5436#5455#0" expanded="true" />
+            <element signature="e#5692#5712#0" expanded="true" />
+            <element signature="e#5801#5816#0" expanded="true" />
+            <element signature="e#5851#5873#0" expanded="true" />
+            <element signature="e#5909#5931#0" expanded="true" />
+            <element signature="e#5965#5982#0" expanded="true" />
+            <element signature="e#6161#6183#0" expanded="true" />
+            <element signature="e#6217#6235#0" expanded="true" />
+            <element signature="e#6321#6340#0" expanded="true" />
+            <element signature="e#6479#6502#0" expanded="true" />
+            <element signature="e#6713#6735#0" expanded="true" />
+            <element signature="e#6771#6793#0" expanded="true" />
+            <element signature="e#6827#6846#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="421">
+          <caret line="27" column="29" selection-start-line="27" selection-start-column="29" selection-end-line="27" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/BookBaseResponse.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/PromoteBookProtocol.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" column="48" selection-start-line="6" selection-start-column="48" selection-end-line="6" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/bean/DataBookBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#410#411#0" expanded="true" />
+            <element signature="e#441#442#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/NewBookItemDetailsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="668">
+          <caret line="430" column="29" selection-start-line="430" selection-start-column="29" selection-end-line="430" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

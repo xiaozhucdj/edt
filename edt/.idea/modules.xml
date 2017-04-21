@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/edt.iml" filepath="$PROJECT_DIR$/edt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/edt.iml" filepath="$PROJECT_DIR$/edt.iml" />
       <module fileurl="file://$PROJECT_DIR$/okhttputils/okhttputils.iml" filepath="$PROJECT_DIR$/okhttputils/okhttputils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/okhttputils/okhttputils.iml" filepath="$PROJECT_DIR$/okhttputils/okhttputils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/youngyedu/youngyedu.iml" filepath="$PROJECT_DIR$/youngyedu/youngyedu.iml" />
       <module fileurl="file://$PROJECT_DIR$/youngyedu/youngyedu.iml" filepath="$PROJECT_DIR$/youngyedu/youngyedu.iml" />
     </modules>
   </component>
