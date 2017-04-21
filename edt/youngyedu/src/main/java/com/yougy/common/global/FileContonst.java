@@ -89,5 +89,6 @@ public class FileContonst {
     /**笔记标记*/
     public final static String NOTE_MARK ="noteMark" ;
 
+    public final  static  boolean OPEN_ONYX_READER = true ;
 
 }

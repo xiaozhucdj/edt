@@ -10,7 +10,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
 
-import com.yougy.common.utils.LogUtils;
 
 
 /**

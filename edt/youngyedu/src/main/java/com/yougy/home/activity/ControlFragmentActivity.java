@@ -16,6 +16,7 @@ import com.yougy.home.bean.NoteInfo;
 import com.yougy.home.fragment.GlobeFragment;
 import com.yougy.home.fragment.showFragment.BaseFragment;
 import com.yougy.home.fragment.showFragment.ExerciseBookFragment;
+import com.yougy.home.fragment.showFragment.HandleOnyxReaderFragment;
 import com.yougy.home.fragment.showFragment.NoteBookFragment;
 import com.yougy.home.fragment.showFragment.TextBookFragment;
 import com.yougy.ui.activity.R;
@@ -150,6 +151,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
      */
     private BaseFragment mFragment;
     private TextBookFragment mTextBookFragment;
+    private HandleOnyxReaderFragment mHandleOnyxReader;
 
     private void toTextBookFragment() {
         //跳转判断条件 根据服务器接口定义
@@ -160,24 +162,41 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         if (mBookId > 0 /***&& mNoteCreator != Integer.parseInt(SpUtil.getAccountId()) && mCategoryId > 0*/) {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            if (null == mTextBookFragment) {
-                mTextBookFragment = new TextBookFragment();
-                if (params.size() > 0) {
-                    mTextBookFragment.setParams(params);
+            if (FileContonst.OPEN_ONYX_READER){
+                if (null == mHandleOnyxReader) {
+                    mHandleOnyxReader = new HandleOnyxReaderFragment();
+                    if (params.size() > 0) {
+                        mHandleOnyxReader.setParams(params);
+                    }
+                    mHandleOnyxReader.setOnSwitcherListener(this);
+                    mHandleOnyxReader.setActivity(this);
+                    ft.add(R.id.container, mHandleOnyxReader);
+                } else {
+                    ft.show(mHandleOnyxReader);
                 }
-                mTextBookFragment.setOnSwitcherListener(this);
-                mTextBookFragment.setActivity(this);
-                ft.add(R.id.container, mTextBookFragment);
-            } else {
-                ft.show(mTextBookFragment);
+                if (mFragment != null && !(mFragment instanceof HandleOnyxReaderFragment)) {
+                    ft.hide(mFragment);
+                }
+                mFragment = mHandleOnyxReader;
+
+            }else{
+                if (null == mTextBookFragment) {
+                    mTextBookFragment = new TextBookFragment();
+                    if (params.size() > 0) {
+                        mTextBookFragment.setParams(params);
+                    }
+                    mTextBookFragment.setOnSwitcherListener(this);
+                    mTextBookFragment.setActivity(this);
+                    ft.add(R.id.container, mTextBookFragment);
+                } else {
+                    ft.show(mTextBookFragment);
+                }
+                if (mFragment != null && !(mFragment instanceof TextBookFragment)) {
+                    ft.hide(mFragment);
+                }
+                mFragment = mTextBookFragment;
             }
-            if (mFragment != null && !(mFragment instanceof TextBookFragment)) {
-                ft.hide(mFragment);
-            }
-          /*  if (mExerciseBookFragment != null) {
-                ft.hide(mExerciseBookFragment);
-            }*/
-            mFragment = mTextBookFragment;
+
             ft.commit();
         }
     }
@@ -274,7 +293,9 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         if (mTextBookFragment != null) {
             mTextBookFragment.leaveScribbleMode(false);
         }
-
+        if (mHandleOnyxReader != null) {
+            mHandleOnyxReader.leaveScribbleMode(false);
+        }
         if (mNoteBookFragment != null) {
             mNoteBookFragment.leaveScribbleMode(false);
         }
@@ -366,6 +387,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
 
         mNoteBookFragment = null;
         mTextBookFragment = null;
+        mHandleOnyxReader = null;
     }
 
     @Override
@@ -379,6 +401,10 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             }
             if (mTextBookFragment != null) {
                 transaction.remove(mTextBookFragment);
+            }
+
+            if (mHandleOnyxReader != null) {
+                transaction.remove(mHandleOnyxReader);
             }
             if (mExerciseBookFragment != null) {
                 transaction.remove(mExerciseBookFragment);

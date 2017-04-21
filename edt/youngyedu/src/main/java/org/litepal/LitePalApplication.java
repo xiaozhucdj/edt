@@ -18,7 +18,8 @@ package org.litepal;
 
 import android.content.Context;
 import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+
+import com.onyx.android.sdk.reader.ReaderBaseApp;
 
 import org.litepal.exceptions.GlobalException;
 
@@ -40,7 +41,7 @@ import org.litepal.exceptions.GlobalException;
  * @author Tony Green
  * @since 1.0
  */
-public class LitePalApplication extends MultiDexApplication {
+public class LitePalApplication extends ReaderBaseApp {
 
 	/**
 	 * Global application context.
