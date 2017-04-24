@@ -89,7 +89,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile 'com.onyx.android.sdk:alreader-engine:1.0.0'
     compile 'com.onyx.android.sdk:chinese-analyzer:1.0.0'
-    compile 'com.onyx.android.sdk:onyxsdk-reader:1.0.0'
-    compile 'com.onyx.android.sdk:onyxsdk-data:1.0.1'
+    compile 'com.onyx.android.sdk:onyxsdk-reader:1.0.2'
+    compile 'com.onyx.android.sdk:onyxsdk-data:1.0.3'
     compile "com.jakewharton:disklrucache:2.0.2"
 }

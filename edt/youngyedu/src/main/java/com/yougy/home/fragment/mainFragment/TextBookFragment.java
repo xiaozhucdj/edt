@@ -103,7 +103,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
-        layout.setScrollEnabled(true);
+        layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
         mBookAdapter = new BookAdapter(getActivity(), mBooks, this);
