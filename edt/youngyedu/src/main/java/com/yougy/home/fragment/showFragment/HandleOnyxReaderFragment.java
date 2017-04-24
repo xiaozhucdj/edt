@@ -22,6 +22,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
+import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContentEntry;
 import com.onyx.reader.ReaderContract;
@@ -418,7 +419,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             initScription.unsubscribe();
         }
 
-        leaveScribbleMode(true);
+        if (mNoteBookView != null) {
+            EpdController.leaveScribbleMode(mNoteBookView);
+        }
         mBackPageBack.setEnabled(false);
         mBackPageNext.setEnabled(false);
         mSeekbarPage.setClickable(false);
@@ -775,7 +778,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      * 重新UI 状态
      */
     private void restViewState() {
-        leaveScribbleMode(true);
+        if (mNoteBookView != null) {
+            EpdController.leaveScribbleMode(mNoteBookView);
+        }
         removerLayerLayout();
         addLayerLayout();
         moveLayerLayout();
