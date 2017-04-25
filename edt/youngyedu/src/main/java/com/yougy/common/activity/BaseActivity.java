@@ -12,10 +12,13 @@ import android.os.Process;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -107,6 +110,12 @@ public abstract class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 //        filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
 //        registerReceiver(receiver, filter);
+        //设置无标题
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //设置全屏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.main);
+
         mMainThreadId = Process.myTid();
         mActivities.add(this);
         init();
@@ -498,7 +507,7 @@ public abstract class BaseActivity extends FragmentActivity {
         mIsPressTwiceToExit = isPressTwiceToExit;
     }
 
-  @Override
+    @Override
     public void onBackPressed() {
         if (!mIsPressTwiceToExit) {
             super.onBackPressed();

@@ -346,13 +346,16 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void freshUI(List<BookInfo> bookInfos) {
+        LogUtils.i("freshUI.....freshUI");
         if (bookInfos!=null && bookInfos.size()>0){
+            LogUtils.i("freshUI.....aaaaaaaaaaaa");
             mServerBooks.clear();
             mServerBooks.addAll(bookInfos);
             initPages(mServerBooks, COUNT_PER_PAGE);
         }
         else{
-            // 数据返回为null
+            LogUtils.i("freshUI.....mLoadingNull");
+            LogUtils.i("mLoadingNull");
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
@@ -562,6 +565,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
                     subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                }else{
+                    mLoadingNull.setVisibility(View.VISIBLE);
                 }
                 subscriber.onCompleted();
             }
