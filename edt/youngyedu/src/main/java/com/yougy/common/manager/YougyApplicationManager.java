@@ -19,6 +19,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.ui.activity.BuildConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
 
 import java.io.BufferedReader;
@@ -121,6 +122,9 @@ public class YougyApplicationManager extends LitePalApplication {
 
     }
 
+    public static void closeDb(){
+        LitePal.getDatabase().close();
+    }
     /**
      * 获取进程号对应的进程名
      *
@@ -149,7 +153,6 @@ public class YougyApplicationManager extends LitePalApplication {
         }
         return null;
     }
-
 
     public static YougyApplicationManager getApp() {
         return mContext;
