@@ -6,6 +6,7 @@ import com.onyx.android.sdk.common.request.BaseCallback;
 import com.onyx.android.sdk.common.request.BaseRequest;
 import com.onyx.android.sdk.reader.common.BaseReaderRequest;
 import com.onyx.android.sdk.reader.host.options.BaseOptions;
+import com.onyx.android.sdk.reader.host.request.CloseRequest;
 import com.onyx.android.sdk.reader.host.request.CreateViewRequest;
 import com.onyx.android.sdk.reader.host.request.GetTableOfContentRequest;
 import com.onyx.android.sdk.reader.host.request.GotoPageRequest;
@@ -132,6 +133,19 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
                     readerView.updateDirectory(request.getReaderUserDataInfo().getTableOfContent());
                 } else {
                     readerView.showThrowable(throwable);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void close() {
+        final CloseRequest closeRequest = new CloseRequest();
+        reader.submitRequest(getContext(), closeRequest, new BaseCallback() {
+            @Override
+            public void done(BaseRequest baseRequest, Throwable throwable) {
+                if(throwable == null) {
+                    //close success
                 }
             }
         });

@@ -125,7 +125,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
-        layout.setScrollEnabled(true);
+        layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
         mNotesAdapter = new NotesAdapter(getActivity(), mNotes);
         mRecyclerView.setAdapter(mNotesAdapter);

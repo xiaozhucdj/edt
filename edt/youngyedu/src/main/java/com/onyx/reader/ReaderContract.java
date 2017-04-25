@@ -30,5 +30,6 @@ public interface ReaderContract {
         void prevScreen();
         Reader getReader();
         void getDirectory();
+        void close();
     }
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yougy.ui.activity"
-    android:installLocation = "auto"
-    >
+    android:installLocation="auto">
 
 
     <!-- 网络 -->
@@ -20,6 +19,13 @@
     <!-- 允许挂载和反挂载文件系统可移动存储 -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!--bugly-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
 
     <application
@@ -84,55 +90,55 @@
         <activity
             android:name="com.inkscreen.TopicActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.inkscreen.WorkReportActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.inkscreen.LeaveActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
         <activity
             android:name="com.inkscreen.MainActivityScreen"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <activity
             android:name="com.inkscreen.AnswerActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.inkscreen.MySortActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.inkscreen.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
 
         <activity
             android:name="com.inkscreen.MyWrongActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
             android:name="com.inkscreen.MyTobeIsudActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
             android:name="com.inkscreen.MyHaslsudActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.yougy.shop.activity.SearchActivityDb"
             android:windowSoftInputMode="stateHidden|adjustPan" />
@@ -144,13 +150,12 @@
         <!--商城购物车页-->
         <activity
             android:name="com.yougy.shop.activity.NewShopCartActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <!--商城支付成功页-->
         <activity
             android:name="com.yougy.shop.activity.PaySuccessActivity"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
 
 
         <activity
@@ -162,8 +167,12 @@
         <service android:name="com.yougy.common.service.DownloadService"/>
         <service android:name="com.yougy.common.service.UploadService"/>
         <!--AutoLayout中需要使用到的设计图大小-->
-        <meta-data android:name="design_width" android:value="825"/>
-        <meta-data android:name="design_height" android:value="1152"/>
+        <meta-data
+            android:name="design_width"
+            android:value="825" />
+        <meta-data
+            android:name="design_height"
+            android:value="1152" />
         <!--<meta-data android:name="design_width" android:value="1650"/>-->
         <!--<meta-data android:name="design_height" android:value="2208"/>-->
 
