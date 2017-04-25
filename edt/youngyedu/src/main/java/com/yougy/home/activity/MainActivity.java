@@ -302,6 +302,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         int clickedViewId = v.getId();
+
         switch (clickedViewId) {
             case R.id.rl_folder:
                 refreshTabBtnState(clickedViewId);
@@ -309,11 +310,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.rl_homework:
+//                XSharedPref.putString(this, "loadApp", "student");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_HOMEWORK_FRAGMENT : FragmentDisplayOption.HOMEWORK_FRAGMENT);
                 break;
 
             case R.id.rl_notes:
+//                XSharedPref.putString(this, "loadApp", "");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_NOTES_FRAGMENT : FragmentDisplayOption.NOTES_FRAGMENT);
                 break;

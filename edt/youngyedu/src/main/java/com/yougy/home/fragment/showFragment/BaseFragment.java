@@ -678,9 +678,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 useNote(label);
                 break;
             case R.id.image:
+               /**
+                彩色设备上没有相册 PL107
                 mLlOtherIcon.setVisibility(View.GONE);
                 view = mImageIv;
-                useLocalPhoto();
+                useLocalPhoto();*/
                 break;
             case R.id.screenshot:
                 if (mFrameLayout!=null){
