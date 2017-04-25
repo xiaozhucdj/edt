@@ -13,12 +13,9 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.home.UploadService;
 import com.yougy.home.bean.StatusInfo;
 import com.yougy.init.activity.InitInfoActivity;
 import com.yougy.ui.activity.R;
-
-import org.litepal.tablemanager.Connector;
 
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
@@ -53,12 +50,6 @@ public class AccountSetActivity extends BaseActivity implements View.OnClickList
             @Override
             public void call(Object o) {
                 if (o instanceof StatusInfo) {
-                    Connector.resetHelper();
-                    SpUtil.changeInitFlag(false);
-
-                    deleteDatabase(UploadService.DATABASE_NAME);
-                    deleteDatabase(UploadService.JOURNAL_NAME);
-                    SpUtil.clearAccount();
                     BaseActivity.finishAll();
                     loadIntent(InitInfoActivity.class);
                 }

@@ -1,20 +1,18 @@
 package com.yougy.common.protocol.callback;
 
 import android.content.Context;
+import android.content.Intent;
 import android.provider.Settings;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.rx.RxBus;
-import com.yougy.common.utils.FtpUtil;
+import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.GsonUtil;
-import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.bean.BindInfo;
 import com.yougy.init.manager.InitManager;
-
-import org.litepal.tablemanager.Connector;
 
 import java.io.File;
 
@@ -24,8 +22,9 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
-import static com.yougy.home.UploadService.DATABASE_NAME;
-import static com.yougy.home.UploadService.JOURNAL_NAME;
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
+
 
 /**
  * Created by jiangliang on 2016/12/14.
@@ -72,14 +71,16 @@ public class BindCallBack extends BaseCallBack<BindInfo> {
                     if (!parent.exists()){
                         parent.mkdir();
                     }
-                    boolean downloadDb = FtpUtil.downLoadFile(dbfile.getAbsolutePath(), DATABASE_NAME);
-                    LogUtils.e("BindCallBack","download result is : " + downloadDb);
+                    Intent intent = new Intent(mWeakReference.get(), DownloadService.class);
+                    mWeakReference.get().startService(intent);
+//                    boolean downloadDb = FtpUtil.downLoadFile(dbfile.getAbsolutePath(), DATABASE_NAME);
+//                    LogUtils.e("BindCallBack","download result is : " + downloadDb);
 //                    boolean downloadJournal = FtpUtil.downLoadFile(journalFile.getAbsolutePath(), JOURNAL_NAME);
 //                    boolean downResult = downloadDb & downloadJournal;
-                    SpUtil.changeInitFlag(downloadDb);
-                    if (!downloadDb){
-                        Connector.getDatabase();
-                    }
+//                    SpUtil.changeInitFlag(downloadDb);
+//                    if (!downloadDb){
+//                        Connector.getDatabase();
+//                    }
                 }
             }).subscribeOn(Schedulers.io()).subscribe();
         }

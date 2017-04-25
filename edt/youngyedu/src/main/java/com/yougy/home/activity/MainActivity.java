@@ -429,7 +429,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
                 }
                 break;
-
         }
     }
 
@@ -891,6 +890,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             public void call(Subscriber<? super Object> subscriber) {
                 LogUtils.i("yuanye 000000000");
                 List<NoteInfo> infos = DataSupport.findAll(NoteInfo.class);
+//                YougyApplicationManager.closeDb();
                 if (infos != null && infos.size() > 0) {
                     mAddInfos = new ArrayList<>();
                     mUpDataInfos = new ArrayList<>();

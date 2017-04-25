@@ -16,6 +16,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
 
 import java.util.concurrent.TimeUnit;
@@ -103,7 +104,9 @@ public class YougyApplicationManager extends LitePalApplication {
 
     }
 
-
+    public static void closeDb(){
+        LitePal.getDatabase().close();
+    }
 
     public static YougyApplicationManager getApp() {
         return mContext;
