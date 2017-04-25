@@ -29,8 +29,6 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
-import com.yougy.shop.bean.DataOrderBean;
-import com.yougy.shop.bean.OrderInfo;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.PostStringBuilder;
 import com.zhy.http.okhttp.callback.Callback;
@@ -44,9 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.Call;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -1119,4 +1115,24 @@ public class ProtocolManager {
         }
         return null;
     }
+
+
+    /**
+     * 1.8
+     * 获取app版本信息
+     * @param callbac
+     */
+    public static void getAppVersion(int protocol_id, Callback callbac) {
+
+        LogUtils.i("Protocol............. 获取app版本信息");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m", "getAppVersion");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        setCommon(Commons.URL_LOGIN, obj.toString(), protocol_id, callbac);
+        setCommon("http://www.moonride.cn:9002/m/sms", obj.toString(), protocol_id, callbac);
+    }
+
 }
