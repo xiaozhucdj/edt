@@ -8,17 +8,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.onyx.android.sdk.utils.DeviceUtils;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
+import com.yougy.common.manager.NetManager;
+import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.AppendNotesRequest;
 import com.yougy.common.protocol.request.UpdateNotesRequest;
 import com.yougy.common.protocol.response.AppendNotesProtocol;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -54,6 +61,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.MediaType;
 import okhttp3.Response;
 import rx.Observable;
@@ -62,7 +70,8 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static android.content.ContentValues.TAG;
+import static com.onyx.android.sdk.utils.DeviceUtils.getBatteryPecentLevel;
+
 
 /**
  * V1
@@ -139,6 +148,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private List<NoteInfo> mAddInfos;
     private List<NoteInfo> mUpDataInfos;
     private Subscription mSub;
+    private ImageView mImgWSysWifi;
+    private ImageView mImgWSysPower;
+    private TextView mTvSysPower;
+    private TextView mTvSysTime;
 
 //    private ImageButton mImgBtnRefresh;
 
@@ -166,6 +179,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        NetManager.getInstance().unregisterReceiver(this);
+        PowerManager.getInstance().unregisterReceiver(this);
         GlobeFragment.getInstance().mAllNotes = null;
         GlobeFragment.getInstance().mNote = null;
         GlobeFragment.getInstance().mAllBook = null;
@@ -214,11 +230,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void initLayout() {
 
         setContentView(R.layout.activity_main_ui);
+        EventBus.getDefault().register(this);
+        NetManager.getInstance().registerReceiver(this);
+        PowerManager.getInstance().registerReceiver(this);
 
+        getBatteryPecentLevel(this);
         mRlFolder = (ViewGroup) findViewById(R.id.rl_folder);
         mRlFolder.setOnClickListener(this);
         //TODO:文件夹还为实现 ，暂时关闭点击切换Fragment 功能
-         mRlFolder.setEnabled(false);
+        mRlFolder.setEnabled(false);
         mTvFolder = (TextView) findViewById(R.id.tv_folder);
         mViewFolder = findViewById(R.id.view_folder);
 
@@ -277,6 +297,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //账号设置
         mBtnAccout = (Button) this.findViewById(R.id.btn_account);
         mBtnAccout.setOnClickListener(this);
+
+        mImgWSysWifi = (ImageView) this.findViewById(R.id.img_wifi);
+        mImgWSysWifi.setOnClickListener(this);
+        mImgWSysPower = (ImageView) this.findViewById(R.id.img_electricity);
+        mTvSysPower = (TextView) this.findViewById(R.id.tv_power);
+        mTvSysTime = (TextView) this.findViewById(R.id.tv_time);
+
+
         //初始化fragment
         initFragment();
 
@@ -288,6 +316,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnRefresh.setOnClickListener(this);
         checkUpdateNote();
     }
+
 
     @Override
     protected void loadData() {
@@ -302,7 +331,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         int clickedViewId = v.getId();
-
+        setSysTime();
         switch (clickedViewId) {
             case R.id.rl_folder:
                 refreshTabBtnState(clickedViewId);
@@ -431,6 +460,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
                 }
+                break;
+
+            case R.id.img_wifi:
+                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
+                NetManager.getInstance().changeWiFi(this, !isConnected);
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected == true? R.drawable.img_wifi_1:R.drawable.img_wifi_0));
                 break;
         }
     }
@@ -861,8 +896,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         LogUtils.i("mian....onStart");
-//        mImgBtnRefresh.setEnabled(true);
+        //显示系统的 WIIF ,TIME ,POWER
+        initSysIcon();
     }
+
+    private void setSysWifi() {
+        if (NetManager.getInstance().isWifiConnected(this)) {
+            int level = NetManager.getInstance().getConnectionInfoRssi(this);
+            // 这个方法。得到的值是一个0到-100的区间值，是一个int型数据，其中0到-50表示信号最好，-50到-70表示信号偏差，
+            //小于-70表示最差，有可能连接不上或者掉线，一般Wifi已断则值为-200。
+            if (level <= 0 && level >= -50) {
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_0));
+            } else if (level < -50 && level >= -70) {
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_4));
+            } else if (level < -70 && level >= -80) {
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_3));
+            } else if (level < -80 && level >= -100) {
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_2));
+            }
+        } else {
+            mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_1));
+        }
+    }
+
+    private void setSysTime() {
+        mTvSysTime.setText(DateUtils.getTimeHHMMString());
+
+    }
+
+    private void initSysIcon() {
+        setSysWifi();
+        setSysTime();
+        setSysPower();
+    }
+
+    private void setSysPower() {
+
+        int level = DeviceUtils.getBatteryPecentLevel(this);
+        mTvSysPower.setText(level + "%");
+        mImgWSysPower.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_2));
+    }
+
 
     @Override
     protected void onPause() {
@@ -937,7 +1011,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onCompleted() {
-                LogUtils.e(TAG, "onCompleted...");
                 dialog.dismiss();
                 mRlTextBook.callOnClick();
             }
@@ -1049,6 +1122,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void onEventMainThread(BaseEvent event) {
+        if (event == null)
+            return;
+
+        if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
+            LogUtils.i("event ...wiif");
+            LogUtils.i("event...ressa..." + NetManager.getInstance().getConnectionInfoRssi(UIUtils.getContext()));
+            LogUtils.i("event...isWifiConnected..." + NetManager.getInstance().isWifiConnected(UIUtils.getContext()));
+            setSysWifi();
+        } else if (EventBusConstant.EVENTBUS_POWER.equals(event.getType())) {
+            LogUtils.i("event ...power");
+            LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
+            LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
+        }
     }
 }
 
