@@ -1,11 +1,16 @@
 package com.yougy.home.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.badoo.mobile.util.WeakHandler;
+import com.thin.downloadmanager.DownloadRequest;
+import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.ProtocolManager;
@@ -19,10 +24,12 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
-import com.yougy.update.DownLoadService;
+import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
 import com.yougy.view.Toaster;
+import com.yougy.view.dialog.DownProgressDialog;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -32,6 +39,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
+
 /**
  * Created by Administrator on 2016/8/25.
  * <p>
@@ -40,6 +48,7 @@ import rx.functions.Action1;
 public class SplashActivity extends BaseActivity implements LoginCallBack.OnJumpListener {
     private ImageView mImgLogo;
     private LoginCallBack callBack;
+    private int lastProgress;
 
     private WeakHandler mHandler = new WeakHandler();
 
@@ -68,6 +77,12 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                 jumpActivity(MainActivity.class);
             }
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadData();
     }
 
     private void login(){
@@ -113,10 +128,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(SplashActivity.this, DownLoadService.class);
-                                intent.putExtra(DownLoadService.DOWNLOAD_URL, url);
-                                intent.putExtra(DownLoadService.ISFOCUS_UPDATE, true);
-                                SplashActivity.this.startService(intent);
+                                doDownLoad(SplashActivity.this,url);
                             }
                         });
                     } else {
@@ -147,4 +159,79 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             }
         });
     }
+
+
+
+    /**
+     * 开始执行下载动作
+     */
+    private void doDownLoad(final Context mContext, final String downloadUrl) {
+
+
+        final DownProgressDialog downProgressDialog = new DownProgressDialog(mContext);
+
+        downProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        downProgressDialog.show();
+        downProgressDialog.setDownProgress("0%");
+
+
+        // 删除下载的apk文件
+        doDeleteDownApk();
+        DownloadManager.getInstance().cancelAll();
+        DownloadManager.downloadId = DownloadManager.getInstance().add(DownloadManager.getDownLoadRequest(mContext, downloadUrl, new DownloadStatusListenerV1() {
+            @Override
+            public void onDownloadComplete(DownloadRequest downloadRequest) {
+
+                // 更新进度条显示
+                downProgressDialog.setDownProgress("100%");
+                downProgressDialog.dismiss();
+
+                // 下载完成，执行安装逻辑
+                doInstallApk(mContext);
+                // 退出App
+                finishAll();
+            }
+
+            @Override
+            public void onDownloadFailed(DownloadRequest downloadRequest, int errorCode, String errorMessage) {
+                downProgressDialog.setDownProgress("更新失败，重新更新下载");
+                // TODO: 2017/4/25
+                downProgressDialog.dismiss();
+                doDownLoad(mContext, downloadUrl);
+            }
+
+            @Override
+            public void onProgress(DownloadRequest downloadRequest, long totalBytes, long downloadedBytes, int progress) {
+                if (lastProgress != progress) {
+                    lastProgress = progress;
+                    String content = downloadedBytes * 100 / totalBytes + "%";
+                    downProgressDialog.setDownProgress(content);
+                }
+            }
+        }));
+    }
+
+
+    /**
+     * 删除下载的apk文件
+     */
+    private static void doDeleteDownApk() {
+        File file = new File(DownloadManager.getApkPath());
+        if (file.exists()) {
+            boolean result = file.delete();
+        } else {
+        }
+    }
+
+    /**
+     * 执行安装apk文件
+     */
+    private static void doInstallApk(Context mContext) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.fromFile(new File(DownloadManager.getApkPath())),
+                "application/vnd.android.package-archive");
+        mContext.startActivity(intent);
+    }
+
 }

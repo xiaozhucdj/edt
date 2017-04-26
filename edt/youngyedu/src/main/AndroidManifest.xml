@@ -175,10 +175,6 @@
             android:value="1152" />
         <!--<meta-data android:name="design_width" android:value="1650"/>-->
         <!--<meta-data android:name="design_height" android:value="2208"/>-->
-        <service
-            android:name="com.yougy.update.DownLoadService"
-            android:enabled="true"
-            android:exported="true"></service>
 
     </application>
 </manifest>
