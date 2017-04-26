@@ -29,6 +29,7 @@
 
 
         <TextView
+            android:layout_marginRight="10dp"
             android:id="@+id/tv_power"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textColor="@color/text_color_white"
-            android:textSize="20dp" />
+            android:textSize="24dp" />
 
     </RelativeLayout>
 

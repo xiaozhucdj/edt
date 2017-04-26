@@ -1,6 +1,7 @@
 package com.yougy.home.activity;
 
 import android.content.Intent;
+import android.os.BatteryManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -927,14 +928,49 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initSysIcon() {
         setSysWifi();
         setSysTime();
-        setSysPower();
+        setSysPower(DeviceUtils.getBatteryPecentLevel(this), BatteryManager.BATTERY_STATUS_NOT_CHARGING);
     }
 
-    private void setSysPower() {
+    private void setSysPower(int level,int state) {
 
-        int level = DeviceUtils.getBatteryPecentLevel(this);
         mTvSysPower.setText(level + "%");
-        mImgWSysPower.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_2));
+        if (level== 0){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_0_black_03:R.drawable.ic_battery_0_black_03  ));
+
+        }else if(level>0 && level<=10 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_10_black_03:R.drawable.ic_battery_10_black_03  ));
+        }
+        else if(level>10 && level<=20 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_20_black_03:R.drawable.ic_battery_20_black_03  ));
+        }  else if(level>20 && level<=30 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_30_black_03:R.drawable.ic_battery_30_black_03  ));
+        }
+        else if(level>30 && level<=40 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_40_black_03:R.drawable.ic_battery_40_black_03  ));
+        }
+
+        else if(level>40 && level<=50 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_50_black_03:R.drawable.ic_battery_50_black_03  ));
+        }
+        else if(level>60 && level<=70 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_60_black_03:R.drawable.ic_battery_60_black_03  ));
+        }
+        else if(level>70 && level<=80 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_70_black_03:R.drawable.ic_battery_70_black_03  ));
+        }
+
+        else if(level>80 && level<=90 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_80_black_03:R.drawable.ic_battery_80_black_03  ));
+        }
+
+        else if(level>90&& level<100 ){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_90_black_03:R.drawable.ic_battery_90_black_03  ));
+        }
+
+        else if(level==100){
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(R.drawable.ic_battery_100_black_03 ));
+        }
+
     }
 
 
@@ -1137,6 +1173,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             LogUtils.i("event ...power");
             LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
             LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
+            setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
         }
     }
 }
