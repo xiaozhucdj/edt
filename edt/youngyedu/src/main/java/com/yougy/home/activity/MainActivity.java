@@ -152,6 +152,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView mImgWSysPower;
     private TextView mTvSysPower;
     private TextView mTvSysTime;
+    private Button mBtnSysSeeting;
 
 //    private ImageButton mImgBtnRefresh;
 
@@ -244,6 +245,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         mRHomework = (ViewGroup) findViewById(R.id.rl_homework);
         mRHomework.setOnClickListener(this);
+        mRHomework.setEnabled(false);
+
         mTvHomework = (TextView) findViewById(R.id.tv_homework);
         mViewHomework = findViewById(R.id.view_homework);
 
@@ -303,11 +306,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mImgWSysPower = (ImageView) this.findViewById(R.id.img_electricity);
         mTvSysPower = (TextView) this.findViewById(R.id.tv_power);
         mTvSysTime = (TextView) this.findViewById(R.id.tv_time);
-
-
+        mBtnSysSeeting = (Button) this.findViewById(R.id.btn_sysSeeting);
+        mBtnSysSeeting.setOnClickListener(this);
         //初始化fragment
         initFragment();
-
         GlobeFragment.getInstance().mAllNotes = mAllNotesFragment;
         GlobeFragment.getInstance().mNote = mNotesFragment;
         GlobeFragment.getInstance().mTextBook = mTextBookFragment;
@@ -466,6 +468,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(this);
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected == true? R.drawable.img_wifi_1:R.drawable.img_wifi_0));
+                break;
+
+            case R.id.btn_sysSeeting:
+//                Intent intent = new Intent(this, DeviceMainSettingActivity.class);
+//                startActivity(intent);
                 break;
         }
     }

@@ -439,6 +439,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/directory_text" />
+
+                <Button
+                    android:id="@+id/btn_sysSeeting"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="系统设置"
+                    android:textColor="@drawable/btn_text_color_select"
+                    android:textSize="24dp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/directory_text" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

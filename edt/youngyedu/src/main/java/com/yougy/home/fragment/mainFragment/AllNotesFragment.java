@@ -27,10 +27,10 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.activity.MainActivity;
+import com.yougy.home.adapter.AllNotesAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
-import com.yougy.home.adapter.SubjectAdapter;
-import com.yougy.home.adapter.NotesAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
 import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.home.bean.NoteInfo;
@@ -122,7 +122,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
     private SubjectAdapter mSubjectAdapter;
     private FitGradeAdapter mFitGradeAdapter;
     private LinearLayout mLlPager;
-    private NotesAdapter mNotesAdapter;
+    private AllNotesAdapter mNotesAdapter;
     private TextView mSubMore;
     private TextView mGradeMore;
 
@@ -274,7 +274,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
         layout.setScrollEnabled(false);
         mNoteView.setLayoutManager(layout);
-        mNotesAdapter = new NotesAdapter(getActivity(), mInfos);
+        mNotesAdapter = new AllNotesAdapter(getActivity(), mInfos);
         mNoteView.setAdapter(mNotesAdapter);
         mNoteView.addOnItemTouchListener(new OnRecyclerItemClickListener(mNoteView) {
             @Override

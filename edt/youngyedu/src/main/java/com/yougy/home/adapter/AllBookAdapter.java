@@ -38,7 +38,7 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
      */
     @Override
     public HolerAllFragmentBook onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = View.inflate(mContext, R.layout.adapter_fragment_book, null);
+        View view = View.inflate(mContext, R.layout.adapter_all_fragment_book, null);
         return new HolerAllFragmentBook(view);
     }
 
