@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.onyx.android.sdk.utils.DeviceUtils;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -928,7 +927,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initSysIcon() {
         setSysWifi();
         setSysTime();
-        setSysPower(DeviceUtils.getBatteryPecentLevel(this), BatteryManager.BATTERY_STATUS_NOT_CHARGING);
+//        setSysPower(DeviceUtils.getBatteryPecentLevel(this), BatteryManager.BATTERY_STATUS_NOT_CHARGING);
     }
 
     private void setSysPower(int level,int state) {
@@ -1164,6 +1163,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (event == null)
             return;
 
+        setSysTime();
         if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
             LogUtils.i("event ...wiif");
             LogUtils.i("event...ressa..." + NetManager.getInstance().getConnectionInfoRssi(UIUtils.getContext()));
