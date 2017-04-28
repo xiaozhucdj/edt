@@ -91,4 +91,8 @@ public class FileContonst {
 
     public final  static  boolean OPEN_ONYX_READER = true ;
 
+
+    public final  static  int  PAGE_COUNTS = 9 ;
+
+    public final  static  int  PAGE_LINES= 3 ;
 }

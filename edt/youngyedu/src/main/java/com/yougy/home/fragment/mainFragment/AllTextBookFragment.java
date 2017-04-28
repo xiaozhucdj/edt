@@ -981,6 +981,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
                 List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.PROTOCOL_ID_All_TEXT_BOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
                     subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                }else{
+                    mLoadingNull.setVisibility(View.VISIBLE);
                 }
                 subscriber.onCompleted();
             }

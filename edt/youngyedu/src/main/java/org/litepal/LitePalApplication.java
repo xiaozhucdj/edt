@@ -19,9 +19,16 @@ package org.litepal;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.onyx.android.sdk.data.DataManager;
 import com.onyx.android.sdk.reader.ReaderBaseApp;
+import com.raizlabs.android.dbflow.config.DatabaseHolder;
+import com.raizlabs.android.dbflow.config.FlowConfig;
+import com.raizlabs.android.dbflow.config.FlowManager;
 
 import org.litepal.exceptions.GlobalException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class of LitePal to make things easier when developers need to use
@@ -37,50 +44,72 @@ import org.litepal.exceptions.GlobalException;
  * Besides if you don't want use the above way, you can also call the LitePal.initialize(Context)
  * method to do the same job. Just remember call this method as early as possible, in Application's onCreate()
  * method will be fine.
- * 
+ *
  * @author Tony Green
  * @since 1.0
  */
 public class LitePalApplication extends ReaderBaseApp {
 
-	/**
-	 * Global application context.
-	 */
-	static Context sContext;
+    /**
+     * Global application context.
+     */
+    static Context sContext;
 
-	/**
-	 * Construct of LitePalApplication. Initialize application context.
-	 */
-	public LitePalApplication() {
-		sContext = this;
-	}
+    /**
+     * Construct of LitePalApplication. Initialize application context.
+     */
+    public LitePalApplication() {
+        sContext = this;
+    }
 
-	/**
-	 * Deprecated. Use {@link litepal.LitePal#initialize(Context)} instead.
-	 * @param context
-	 * 		Application context.
-	 */
-	@Deprecated
-	public static void initialize(Context context) {
-		sContext = context;
-	}
+    /**
+     * Deprecated. Use {@link litepal.LitePal#initialize(Context)} instead.
+     *
+     * @param context Application context.
+     */
+    @Deprecated
+    public static void initialize(Context context) {
+        sContext = context;
+    }
 
-	/**
-	 * Get the global application context.
-	 *
-	 * @return Application context.
-	 * @throws litepal.exceptions.GlobalException
-	 */
-	public static Context getContext() {
-		if (sContext == null) {
-			throw new GlobalException(GlobalException.APPLICATION_CONTEXT_IS_NULL);
-		}
-		return sContext;
-	}
+    /**
+     * Get the global application context.
+     *
+     * @return Application context.
+     * @throws litepal.exceptions.GlobalException
+     */
+    public static Context getContext() {
+        if (sContext == null) {
+            throw new GlobalException(GlobalException.APPLICATION_CONTEXT_IS_NULL);
+        }
+        return sContext;
+    }
 
-	@Override
-	protected void attachBaseContext(Context base) {
-		super.attachBaseContext(base);
-		MultiDex.install(this);
-	}
+//    @Override
+//    protected void attachBaseContext(Context base) {
+//        super.attachBaseContext(base);
+//        MultiDex.install(this);
+//    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        DataManager.init(this, databaseHolderList());
+        initContentProvider(this);
+    }
+
+    private List<Class<? extends DatabaseHolder>> databaseHolderList() {
+        List<Class<? extends DatabaseHolder>> list = new ArrayList<>();
+        // 此处填入其他需要初始化的 database
+        return list;
+    }
+
+    static public void initContentProvider(final Context context) {
+        try {
+            FlowConfig.Builder builder = new FlowConfig.Builder(context);
+            FlowManager.init(builder.build());
+        } catch (Exception e) {
+        }
+    }
 }

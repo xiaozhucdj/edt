@@ -12,11 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import com.yougy.common.protocol.callback.AreaCallBack;
-import com.yougy.common.protocol.callback.SchoolCallBack;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.protocol.callback.AreaCallBack;
+import com.yougy.common.protocol.callback.SchoolCallBack;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.bean.AreaInfo;
@@ -132,6 +132,8 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 LogUtils.e(TAG, "province position is : " + position);
+//                EpdController.invalidate(parent, UpdateMode.GC);
+//                EpdController.setViewDefaultUpdateMode(parent, UpdateMode.GC);
                 mCityInfos.clear();
                 mCityInfos.add(cityInfo);
                 if (position != 0) {

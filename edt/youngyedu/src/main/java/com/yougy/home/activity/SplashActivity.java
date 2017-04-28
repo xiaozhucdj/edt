@@ -64,6 +64,15 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
     @Override
     protected void loadData() {
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        onCheckLogIn();
+    }
+
+    private void onCheckLogIn(){
         if (NetUtils.isNetConnected()) {
             getServerVersion();
             /*//重复绑定会失败，用户可以清空APP数据 ，所以每次都进来登录
@@ -73,10 +82,12 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         } else {
             if ("-1".equalsIgnoreCase(SpUtil.getAccountId())) {
                 Toaster.showDefaultToast(getApplication(), "当前没有网络请，请设置网络", Toast.LENGTH_LONG);
+                //跳转到设置页面
             } else {
                 jumpActivity(MainActivity.class);
             }
         }
+
     }
 
     @Override

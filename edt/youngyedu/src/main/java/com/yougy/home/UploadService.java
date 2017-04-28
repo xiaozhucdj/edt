@@ -13,8 +13,8 @@ import com.yougy.common.utils.SpUtil;
 
 public class UploadService extends IntentService {
     private static final String TAG = "UploadService";
-    public static final String DATABASE_NAME = "leke.db";
-    public static final String JOURNAL_NAME = "leke.db-journal";
+    private static final String DATABASE_NAME = "leke.db";
+    private static final String JOURNAL_NAME = "leke.db-journal";
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.

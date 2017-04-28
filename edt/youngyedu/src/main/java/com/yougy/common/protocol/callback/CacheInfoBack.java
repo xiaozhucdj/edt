@@ -3,9 +3,9 @@ package com.yougy.common.protocol.callback;
 import android.content.ContentValues;
 import android.content.Context;
 
+import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
-import com.yougy.home.UploadService;
 import com.yougy.home.bean.CacheJsonInfo;
 
 import org.litepal.crud.DataSupport;
@@ -28,7 +28,8 @@ public abstract class CacheInfoBack<T> extends BaseCallBack<T> {
     void operateCacheInfo(int id) {
         if (!StringUtils.isEmpty(mJson)) {
             List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", id+"").find(CacheJsonInfo.class);
-            File dbFile = mWeakReference.get().getDatabasePath(UploadService.DATABASE_NAME);
+//            YougyApplicationManager.closeDb();
+            File dbFile = mWeakReference.get().getDatabasePath(AliyunUtil.DATABASE_NAME);
             if (infos != null && infos.size() > 0 && dbFile.exists()) {
                 LogUtils.e("当前 有缓存的JSON ，需要更新");
                 LogUtils.e("aa+" + infos.get(0).getCacheJSON());

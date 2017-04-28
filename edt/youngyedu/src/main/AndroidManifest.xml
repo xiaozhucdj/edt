@@ -165,7 +165,8 @@
         <activity
             android:name="com.yougy.shop.activity.NewProbationRedBookActivity"
             android:screenOrientation="portrait" />
-
+        <service android:name="com.yougy.common.service.DownloadService"/>
+        <service android:name="com.yougy.common.service.UploadService"/>
         <!--AutoLayout中需要使用到的设计图大小-->
         <meta-data
             android:name="design_width"
