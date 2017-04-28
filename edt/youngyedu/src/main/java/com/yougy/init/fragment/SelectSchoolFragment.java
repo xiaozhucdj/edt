@@ -87,7 +87,7 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
         schoolInfo.setSchoolId(Integer.toString(0));
         schoolInfo.setSchoolName("选择学校");
         mSchoolInfos.add(0, schoolInfo);
-        mSchoolAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, mSchoolInfos);
+        mSchoolAdapter = new ArrayAdapter<>(context, R.layout.simple_spinner_item, mSchoolInfos);
         mSchoolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSchoolSpinner.setAdapter(mSchoolAdapter);
 

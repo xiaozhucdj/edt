@@ -66,6 +66,18 @@
         android:paddingRight="@dimen/identity_two_dp"
         android:paddingBottom="@dimen/identity_two_dp"
         />
+    <!--<com.onyx.android.sdk.ui.view.PageRecyclerView-->
+        <!--android:id="@+id/identity_recycler"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="673dp"-->
+        <!--android:layout_alignLeft="@+id/title_layout"-->
+        <!--android:layout_alignRight="@+id/title_layout"-->
+        <!--android:layout_below="@+id/title_layout"-->
+        <!--android:background="@drawable/identity_list_bg"-->
+        <!--android:paddingLeft="@dimen/identity_two_dp"-->
+        <!--android:paddingRight="@dimen/identity_two_dp"-->
+        <!--android:paddingBottom="@dimen/identity_two_dp"-->
+    <!--/>-->
     <LinearLayout
         android:id="@+id/page_layout"
         android:layout_width="match_parent"

@@ -105,11 +105,11 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
         classInfo.setOrgName("选择班级");
         mClassInfos.add(0, classInfo);
 
-        mGradeAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, mGradeInfos);
+        mGradeAdapter = new ArrayAdapter<>(context, R.layout.simple_spinner_item, mGradeInfos);
         mGradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mGradeSpinner.setAdapter(mGradeAdapter);
 
-        mClassAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, mClassInfos);
+        mClassAdapter = new ArrayAdapter<>(context, R.layout.simple_spinner_item, mClassInfos);
         mClassAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mClassSpinner.setAdapter(mClassAdapter);
 

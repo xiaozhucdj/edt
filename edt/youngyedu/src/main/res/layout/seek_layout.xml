@@ -6,7 +6,7 @@
     android:clickable="true">
 
     <TextView
-        android:visibility="invisible"
+        android:visibility="gone"
         android:id="@+id/tv_page_number"
         android:layout_width="150dp"
         android:layout_height="54dp"

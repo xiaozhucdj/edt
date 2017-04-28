@@ -10,6 +10,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -166,10 +168,12 @@ public class NoteBookView extends View {
 
         matrix = new Matrix();
 
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")){
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            LogUtils.e(getClass().getName(), "PL107");
             matrix.postRotate(90);
-            matrix.postTranslate(UIUtils.getScreenHeight(),0);
-        }else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96")){
+            matrix.postTranslate(UIUtils.getScreenHeight(), 0);
+        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96")) {
+            LogUtils.e(getClass().getName(), "N96");
             matrix.postRotate(270);
             matrix.postTranslate(0, UIUtils.getScreenWidth());
         }
@@ -410,9 +414,6 @@ public class NoteBookView extends View {
     private float currentX;
     private float currentY;
     private Line line;
-//    private LinesProto.Line line;
-//    private LinesProto.Line.Builder lineBuilder = LinesProto.Line.newBuilder();
-//    private LinesProto.Point.Builder pointBuilder = LinesProto.Point.newBuilder();
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -450,14 +451,6 @@ public class NoteBookView extends View {
                 line.setColor(dp.paint.getColor());
                 line.setType(dp.paint.getXfermode() == null ? 0 : 1);
                 line.setStart(new Point(x, y));
-//                lineBuilder = LinesProto.Line.newBuilder();
-//                lineBuilder.setWidth(dp.paint.getStrokeWidth());
-//                lineBuilder.setColor(dp.paint.getColor());
-//                lineBuilder.setType(dp.paint.getXfermode() == null ? 0 : 1);
-//                pointBuilder.setX(x);
-//                pointBuilder.setY(y);
-//                lineBuilder.setStart(pointBuilder.build());
-
                 touch_start(x, y);
                 float dst[] = mapPoint(x, y);
                 EpdController.moveTo(dst[0], dst[1], mPaint.getStrokeWidth());
@@ -465,26 +458,27 @@ public class NoteBookView extends View {
             case MotionEvent.ACTION_MOVE:
                 if (x >= 0 && x <= getWidth() && y >= 0 && y <= getHeight()) {
                     touch_move(x, y);
+                    LogUtils.e(TAG, "action move......(x,y) : " + x + ","+y);
                     currentX = x;
                     currentY = y;
                     preX = currentX;
                     preY = currentY;
-
+                    long start = System.currentTimeMillis();
                     int n = event.getHistorySize();
                     for (int i = 0; i < n; i++) {
                         dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
                         EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
                     }
+                    long end = System.currentTimeMillis();
+                    LogUtils.e(TAG, " take time : " + (end - start));
                     dst = mapPoint(event.getX(), event.getY());
-                    EpdController.quadTo(dst[0], dst[1],UpdateMode.DU);
+                    EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 if (line != null) {
                     line.setEnd(new Point(x, y));
                     lines.add(line);
-                    //                lineBuilder.setEnd(pointBuilder.setX(x).setY(y).build());
-                    //                lines.getLineList().add(lineBuilder.build());
                     if (undoNeedUpdate() | redoNeedUpdate()) {
                         EpdController.leaveScribbleMode(this);
                         invalidate();
@@ -495,6 +489,23 @@ public class NoteBookView extends View {
         }
         return true;
     }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            MotionEvent event = (MotionEvent) msg.obj;
+            float dst[];
+            int n = event.getHistorySize();
+            for (int i = 0; i < n; i++) {
+                dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
+                EpdController.quadTo(dst[0], dst[1], UpdateMode.GC);
+            }
+            dst = mapPoint(event.getX(), event.getY());
+            EpdController.quadTo(dst[0], dst[1], UpdateMode.GC);
+
+        }
+    };
 
     private boolean redoNeedUpdate() {
         return redoOptListener != null && redoOptListener.isEnableRedo();

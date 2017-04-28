@@ -7,7 +7,6 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.onyx.android.sdk.ui.view.DisableScrollLinearManager;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.fragment.UserCallBack;
 import com.yougy.common.manager.ProtocolManager;
@@ -120,7 +120,8 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
         mPageLayout = (LinearLayout) view.findViewById(R.id.page_layout);
         mLastStep = (Button) view.findViewById(R.id.last_step);
 
-        mIdentityRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+//        mIdentityRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        mIdentityRecycler.setLayoutManager(new DisableScrollLinearManager(context));
         mLastStep.setOnClickListener(this);
         return view;
     }
@@ -137,7 +138,22 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
                 showComfirmPopWindow();
             }
         });
+//        adapter = new PIdentityAdapter(pageInfos);
         mIdentityRecycler.setAdapter(adapter);
+//        mIdentityRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(mIdentityRecycler){
+//
+//            @Override
+//            public void onItemClick(RecyclerView.ViewHolder vh) {
+//                   identityItemClick(vh.getAdapterPosition());
+//            }
+//        });
+    }
+    private void identityItemClick(int position){
+        user = pageInfos.get(position);
+        InitManager.getInstance().setStudentName(user.getUserRealName());
+        InitManager.getInstance().setStudentNumber(user.getUserNumber());
+        InitManager.getInstance().setStudentId(user.getUserId());
+        showComfirmPopWindow();
     }
 
     private void generateBtn() {
