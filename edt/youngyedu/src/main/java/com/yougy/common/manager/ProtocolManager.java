@@ -1128,11 +1128,11 @@ public class ProtocolManager {
         JSONObject obj = new JSONObject();
         try {
             obj.put("m", "getAppVersion");
+            obj.put("os", "android");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        setCommon(Commons.URL_LOGIN, obj.toString(), protocol_id, callbac);
-        setCommon("http://www.moonride.cn:9002/m/sms", obj.toString(), protocol_id, callbac);
+        setCommon(Commons.VERSION_URL, obj.toString(), protocol_id, callbac);
     }
 
 }

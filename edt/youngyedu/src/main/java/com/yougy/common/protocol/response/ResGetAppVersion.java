@@ -5,7 +5,7 @@ package com.yougy.common.protocol.response;
  */
 
 public class ResGetAppVersion {
-    private String serverVersion;
+    private String appVersion;
     private String appUrl;
 
     public String getAppUrl() {
@@ -16,12 +16,12 @@ public class ResGetAppVersion {
         this.appUrl = appUrl;
     }
 
-    public String getServerVersion() {
-        return serverVersion;
+    public String getAppVersion() {
+        return appVersion;
     }
 
-    public void setServerVersion(String serverVersion) {
-        this.serverVersion = serverVersion;
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
     }
 }
 

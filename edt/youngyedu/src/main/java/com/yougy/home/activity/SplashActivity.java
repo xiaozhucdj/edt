@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -18,6 +17,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.callback.UpdateCallBack;
 import com.yougy.common.protocol.response.ResGetAppVersion;
+import com.yougy.common.protocol.response.VersioinProtocol;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -85,14 +85,14 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         loadData();
     }
 
-    private void login(){
+    private void login() {
         callBack = new LoginCallBack(SplashActivity.this);
         callBack.setOnJumpListener(SplashActivity.this);
         ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, callBack);
     }
 
-    private void getServerVersion(){
-        ProtocolManager.getAppVersion(ProtocolId.PROTOCOL_ID_LOGIN, new UpdateCallBack(SplashActivity.this){
+    private void getServerVersion() {
+        ProtocolManager.getAppVersion(ProtocolId.PROTOCOL_ID_LOGIN, new UpdateCallBack(SplashActivity.this) {
             @Override
             public void onBefore(Request request, int id) {
                 super.onBefore(request, id);
@@ -104,10 +104,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             }
 
             @Override
-            public ResGetAppVersion parseNetworkResponse(Response response, int id) throws Exception {
+            public VersioinProtocol parseNetworkResponse(Response response, int id) throws Exception {
                 String backJson = response.body().string();
                 LogUtils.i("袁野..升级" + backJson);
-                return GsonUtil.fromJson(backJson, ResGetAppVersion.class);
+                return GsonUtil.fromJson(backJson, VersioinProtocol.class);
             }
 
             @Override
@@ -118,24 +118,35 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             }
 
             @Override
-            public void onResponse(ResGetAppVersion response, int id) {
+            public void onResponse(VersioinProtocol response, int id) {
                 if (response != null) {
-                    int serverVersion = Integer.parseInt(response.getServerVersion());
-                    int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
-                    LogUtils.i("袁野 localVersion ==" + localVersion);
-                    final String url = response.getAppUrl();
-                    if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                doDownLoad(SplashActivity.this,url);
-                            }
-                        });
+                    LogUtils.i("袁野 response ==" + response);
+                    if (response.getCode() == 200) {
+                        ResGetAppVersion resGetAppVersion = response.getData();
+
+                        int serverVersion = Integer.parseInt(resGetAppVersion.getAppVersion());
+                        int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
+                        LogUtils.i("袁野 localVersion ==" + localVersion);
+                        final String url = resGetAppVersion.getAppUrl();
+                        if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    doDownLoad(SplashActivity.this, url);
+                                }
+                            });
+                        } else {
+                            login();
+                        }
                     } else {
+                        UIUtils.showToastSafe(response.getMsg(), Toast.LENGTH_SHORT);
                         login();
                     }
+
+
                 } else {
-                    UIUtils.showToastSafe("服务器异常，请退出重试", Toast.LENGTH_SHORT);
+                    UIUtils.showToastSafe("服务器异常，请稍后重试", Toast.LENGTH_SHORT);
+                    login();
                 }
             }
         });
@@ -161,7 +172,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     }
 
 
-
     /**
      * 开始执行下载动作
      */
@@ -170,7 +180,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
         final DownProgressDialog downProgressDialog = new DownProgressDialog(mContext);
 
-        downProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+//        downProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         downProgressDialog.show();
         downProgressDialog.setDownProgress("0%");
 
