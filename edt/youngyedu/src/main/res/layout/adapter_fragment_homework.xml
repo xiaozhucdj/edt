@@ -2,12 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
-android:paddingBottom="30dp">
+android:paddingBottom="42dp">
 
 <ImageView
     android:id="@+id/img_homework_icon"
-    android:layout_width="158dp"
-    android:layout_height="208dp"
+    android:layout_width="200dp"
+    android:layout_height="267dp"
     android:layout_gravity="center"
     android:background="@drawable/img_book_backgroud"
     android:paddingBottom="6dp"
@@ -34,7 +34,7 @@ android:paddingBottom="30dp">
         android:id="@+id/tv_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="150dp"
         android:text="海明威"
         android:textColor="@color/text_color_black"
         android:textSize="24dp"

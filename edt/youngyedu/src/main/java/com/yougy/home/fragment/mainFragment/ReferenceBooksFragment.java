@@ -86,12 +86,12 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 16;
+    private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
 
     /***
      * 搜索结果 显示的页数
      */
-    private static final int COUNT_SEARCH_PAGE = 12;
+    private static final int COUNT_SEARCH_PAGE = FileContonst.PAGE_COUNTS;
     /***
      * 当前翻页的角标
      */
@@ -141,7 +141,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
@@ -346,13 +346,16 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void freshUI(List<BookInfo> bookInfos) {
+        LogUtils.i("freshUI.....freshUI");
         if (bookInfos!=null && bookInfos.size()>0){
+            LogUtils.i("freshUI.....aaaaaaaaaaaa");
             mServerBooks.clear();
             mServerBooks.addAll(bookInfos);
             initPages(mServerBooks, COUNT_PER_PAGE);
         }
         else{
-            // 数据返回为null
+            LogUtils.i("freshUI.....mLoadingNull");
+            LogUtils.i("mLoadingNull");
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
@@ -562,6 +565,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
                     subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                }else{
+                    mLoadingNull.setVisibility(View.VISIBLE);
                 }
                 subscriber.onCompleted();
             }

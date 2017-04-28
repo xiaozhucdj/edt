@@ -167,8 +167,9 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.e("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mLinearLayout.setVisibility(View.VISIBLE);
-                mRlDown.setVisibility(View.GONE);
+//                mLinearLayout.setVisibility(View.VISIBLE);
+//                mRlDown.setVisibility(View.GONE);
+                ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
             }
 
             @Override

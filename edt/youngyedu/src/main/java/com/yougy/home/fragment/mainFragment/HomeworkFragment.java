@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.inkscreen.MainActivityScreen;
@@ -53,7 +54,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 16;
+    private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
     /***
      * 当前翻页的角标
      */
@@ -65,13 +66,15 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     private LinearLayout mLlPager;
     private ViewGroup mLoadingNull;
     private HomewrokCallBack mHomeworkCallBack;
+    private TextView tvErrMsg;
+
     @Override
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
@@ -88,6 +91,9 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mHomeworkAdapter.notifyDataSetChanged();
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+
+        tvErrMsg = (TextView) mRootView.findViewById(R.id.tv_errMsg);
+
         return mRootView;
     }
 
@@ -182,6 +188,9 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             mHomeworkCallBack = new HomewrokCallBack(getActivity(),ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK);
             Log.e(TAG, "query homeWrok from server...");
             ProtocolManager.queryHomeWrokProtocol(Integer.parseInt(SpUtil.getAccountId()), ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK, mHomeworkCallBack);
+        }else{
+            tvErrMsg.setText(UIUtils.getString(R.string.net_not_connection));
+            mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
 

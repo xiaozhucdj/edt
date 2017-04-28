@@ -81,7 +81,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 16;
+    private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
 
     /***
      * 当前翻页的角标
@@ -124,7 +124,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
     private void initNotes() {
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
         mNotesAdapter = new NotesAdapter(getActivity(), mNotes);

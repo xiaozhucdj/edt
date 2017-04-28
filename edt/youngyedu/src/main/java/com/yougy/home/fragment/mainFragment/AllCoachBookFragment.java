@@ -941,6 +941,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                 List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.PROTOCOL_ID_ALL_COACHBOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
                     subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                }else{
+                    mLoadingNull.setVisibility(View.VISIBLE);
                 }
                 subscriber.onCompleted();
             }
