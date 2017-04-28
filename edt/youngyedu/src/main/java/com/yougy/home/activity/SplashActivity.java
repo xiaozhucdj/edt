@@ -1,5 +1,6 @@
 package com.yougy.home.activity;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -83,6 +84,11 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             if ("-1".equalsIgnoreCase(SpUtil.getAccountId())) {
                 Toaster.showDefaultToast(getApplication(), "当前没有网络请，请设置网络", Toast.LENGTH_LONG);
                 //跳转到设置页面
+                //跳转到WIFI
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.onyx.android.settings","com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
+                startActivity(intent);
+
             } else {
                 jumpActivity(MainActivity.class);
             }

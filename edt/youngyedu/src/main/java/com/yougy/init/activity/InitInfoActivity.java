@@ -1,8 +1,11 @@
 package com.yougy.init.activity;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,6 +52,14 @@ public class InitInfoActivity extends BaseActivity {
     private void initId() {
 
         mImgWSysWifi = (ImageView) this.findViewById(R.id.img_wifi);
+        mImgWSysWifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isConnected = NetManager.getInstance().isWifiConnected(InitInfoActivity.this);
+                NetManager.getInstance().changeWiFi(InitInfoActivity.this, !isConnected);
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected == true? R.drawable.img_wifi_1:R.drawable.img_wifi_0));
+            }
+        });
         mImgWSysPower = (ImageView) this.findViewById(R.id.img_electricity);
         mTvSysPower = (TextView) this.findViewById(R.id.tv_power);
         mTvSysTime = (TextView) this.findViewById(R.id.tv_time);
@@ -100,8 +111,9 @@ public class InitInfoActivity extends BaseActivity {
         } else {
             mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_1));
             //跳转到WIFI
-//           Intent intent = new Intent(context, DeviceMainSettingActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.onyx.android.settings","com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
+            startActivity(intent);
         }
     }
 
