@@ -1,5 +1,6 @@
 package com.yougy.home.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.v4.app.Fragment;
@@ -471,8 +472,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.btn_sysSeeting:
-//                Intent intent = new Intent(this, DeviceMainSettingActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.onyx.android.settings","com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
+                startActivity(intent);
                 break;
         }
     }
