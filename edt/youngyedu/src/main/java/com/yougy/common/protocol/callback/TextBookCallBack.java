@@ -1,7 +1,6 @@
 package com.yougy.common.protocol.callback;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -42,11 +41,11 @@ public class TextBookCallBack extends CacheInfoBack<BookShelfProtocol> {
     public void onResponse(BookShelfProtocol response, int id) {
 
         if (response.getCode() == ProtocolId.RET_SUCCESS) {
-            if (response.getBookList() != null && response.getBookList().size() > 0) {
-                Log.e("TextCallBack", "send text book event");
+//            if (response.getBookList() != null && response.getBookList().size() > 0) {
+//                Log.e("TextCallBack", "send text book event");
                 RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
                 rxBus.send(response);
-            }
+//            }
         }
     }
 

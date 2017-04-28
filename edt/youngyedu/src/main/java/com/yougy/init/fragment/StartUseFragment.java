@@ -169,7 +169,9 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
                 DownloadManager.cancel();
 //                mLinearLayout.setVisibility(View.VISIBLE);
 //                mRlDown.setVisibility(View.GONE);
-                ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+                if (getActivity()!=null){
+                    ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+                }
             }
 
             @Override
