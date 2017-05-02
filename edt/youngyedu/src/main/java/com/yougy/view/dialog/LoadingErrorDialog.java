@@ -26,7 +26,7 @@ public class LoadingErrorDialog extends BaseDialog implements View.OnClickListen
     @Override
     protected void init() {
 //        setCancelable(false);
-        setCanceledOnTouchOutside(false);
+//        setCanceledOnTouchOutside(false);
     }
 
     @Override
