@@ -1,6 +1,5 @@
 package com.yougy.init.activity;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.v4.app.FragmentManager;
@@ -111,8 +110,7 @@ public class InitInfoActivity extends BaseActivity {
         } else {
             mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_1));
             //跳转到WIFI
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.onyx.android.settings","com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
+            Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
             startActivity(intent);
         }
     }

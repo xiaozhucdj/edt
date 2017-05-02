@@ -390,8 +390,8 @@ public class UIUtils {
             h  = view.getMeasuredHeight() ;
         }
 
-//        System.out.println("w =="+w);
-//        System.out.println("h =="+h) ;
+        System.out.println("w =="+w);
+        System.out.println("h =="+h) ;
         result[0] = w;
         result[1] = h;
         return  result ;
