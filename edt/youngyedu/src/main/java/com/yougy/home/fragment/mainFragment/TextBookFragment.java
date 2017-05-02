@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.onyx.android.sdk.ui.compat.AppCompatImageViewCollection;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.fragment.BFragment;
@@ -119,7 +120,20 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         mBookAdapter.notifyDataSetChanged();
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        initConfig();
         return mRootView;
+    }
+
+
+    private void initConfig() {
+        // this make all imageView align to even position, just need to initialize once as it is static var
+        // suggest init in your CustomApplication
+        AppCompatImageViewCollection.setAlignView(true);
+        //tip:
+        // and make sure that all the res-drawable-image can't zoom in/out
+        // the ImageView dp match px of image, ref layout/activity_main
+
+        // the special image translated by tool on line : http://oa.o-in.me:9056/login
     }
 
     private void itemClick(int position) {

@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContentEntry;
 import com.onyx.reader.ReaderContract;
@@ -214,6 +215,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     @Override
     public void updatePage(int page, Bitmap bitmap) {
         position = page;
+        EpdController.setViewDefaultUpdateMode(mOnyxImgView, UpdateMode.GC) ;
         mOnyxImgView.setImageBitmap(bitmap);
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
         restViewState();
