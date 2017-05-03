@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.ui.view.DisableScrollLinearManager;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.fragment.UserCallBack;
@@ -110,20 +112,20 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
             }
         }));
     }
-
+    private View rootView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         LogUtils.e(TAG, "onCreateView.....................");
-        View view = inflater.inflate(R.layout.select_identity_layout, container, false);
-        mIdentityRecycler = (RecyclerView) view.findViewById(R.id.identity_recycler);
-        mPageLayout = (LinearLayout) view.findViewById(R.id.page_layout);
-        mLastStep = (Button) view.findViewById(R.id.last_step);
+        rootView = inflater.inflate(R.layout.select_identity_layout, container, false);
+        mIdentityRecycler = (RecyclerView) rootView.findViewById(R.id.identity_recycler);
+        mPageLayout = (LinearLayout) rootView.findViewById(R.id.page_layout);
+        mLastStep = (Button) rootView.findViewById(R.id.last_step);
 
 //        mIdentityRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         mIdentityRecycler.setLayoutManager(new DisableScrollLinearManager(context));
         mLastStep.setOnClickListener(this);
-        return view;
+        return rootView;
     }
 
     private void freshList() {
@@ -218,6 +220,7 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
                     if (clickCount == 0) {
                         clickCount++;
                         reconfirmTv.setVisibility(View.VISIBLE);
+                        EpdController.invalidate(rootView, UpdateMode.GC);
                     } else {
                         SpUtil.saveAccountId(user.getUserId());
                         SpUtil.saveAccountName(user.getUserRealName());

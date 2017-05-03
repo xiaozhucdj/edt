@@ -12,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -120,20 +122,18 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.select_school_layout, container, false);
-        mProvinceSpinner = (Spinner) view.findViewById(R.id.province_spinner);
-        mCitySpinner = (Spinner) view.findViewById(R.id.city_spinner);
-        mAreaSpinner = (Spinner) view.findViewById(R.id.area_spinner);
-        mSchoolSpinner = (Spinner) view.findViewById(R.id.school_spinner);
-        mNextStep = (Button) view.findViewById(R.id.next_step);
+        final View rootView = inflater.inflate(R.layout.select_school_layout, container, false);
+        mProvinceSpinner = (Spinner) rootView.findViewById(R.id.province_spinner);
+        mCitySpinner = (Spinner) rootView.findViewById(R.id.city_spinner);
+        mAreaSpinner = (Spinner) rootView.findViewById(R.id.area_spinner);
+        mSchoolSpinner = (Spinner) rootView.findViewById(R.id.school_spinner);
+        mNextStep = (Button) rootView.findViewById(R.id.next_step);
         mNextStep.setOnClickListener(this);
 
         mProvinceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                LogUtils.e(TAG, "province position is : " + position);
-//                EpdController.invalidate(parent, UpdateMode.GC);
-//                EpdController.setViewDefaultUpdateMode(parent, UpdateMode.GC);
+                EpdController.invalidate(rootView, UpdateMode.GC);
                 mCityInfos.clear();
                 mCityInfos.add(cityInfo);
                 if (position != 0) {
@@ -161,6 +161,7 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 LogUtils.e(TAG, "city position is : " + position);
+                EpdController.invalidate(rootView, UpdateMode.GC);
                 mAreaInfos.clear();
                 mAreaInfos.add(areaInfo);
                 if (position != 0) {
@@ -186,6 +187,7 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 LogUtils.e(TAG, "area position is : " + position);
+                EpdController.invalidate(rootView, UpdateMode.GC);
                 if (position != 0) {
                     selectedArea = mAreaAdapter.getItem(position);
                     SpUtil.saveSelectAreaID(selectedArea.getAreaId());
@@ -206,6 +208,7 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 LogUtils.e(TAG, "school position is : " + position);
+                EpdController.invalidate(rootView, UpdateMode.GC);
                 if (position != 0) {
                     mNextStep.setEnabled(true);
                     SpUtil.saveAccountSchool(mSchoolInfos.get(position).getSchoolName());
@@ -222,7 +225,7 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
             }
         });
 
-        return view;
+        return rootView;
     }
 
     @Override
