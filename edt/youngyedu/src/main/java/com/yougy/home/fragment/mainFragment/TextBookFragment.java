@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.ui.compat.AppCompatImageViewCollection;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
@@ -117,7 +119,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
                 itemClick(vh.getAdapterPosition());
             }
         });
-        mBookAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         initConfig();
@@ -396,12 +398,17 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
                 } else {
                     mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
                 }
-                mBookAdapter.notifyDataSetChanged();
+                notifyDataSetChanged();
+
                 break;
         }
 
     }
 
+    private void notifyDataSetChanged(){
+        mBookAdapter.notifyDataSetChanged();
+        EpdController.invalidate(mRootView, UpdateMode.GC);
+    }
 
     /**
      * 初始化翻页角标
@@ -439,7 +446,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             LogUtils.i("initPages2.."); //小于1页
             mBooks.addAll(mCountBooks.subList(0, mCountBooks.size()));
         }
-        mBookAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     /***

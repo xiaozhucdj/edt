@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -154,6 +156,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView mTvSysPower;
     private TextView mTvSysTime;
     private Button mBtnSysSeeting;
+    private View mRootView;
 
 //    private ImageButton mImgBtnRefresh;
 
@@ -230,8 +233,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initLayout() {
-
-        setContentView(R.layout.activity_main_ui);
+        mRootView = UIUtils.inflate(R.layout.activity_main_ui) ;
+        setContentView(mRootView);
         EventBus.getDefault().register(this);
         NetManager.getInstance().registerReceiver(this);
         PowerManager.getInstance().registerReceiver(this);
@@ -339,41 +342,50 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_folder:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_homework:
 //                XSharedPref.putString(this, "loadApp", "student");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_HOMEWORK_FRAGMENT : FragmentDisplayOption.HOMEWORK_FRAGMENT);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_notes:
 //                XSharedPref.putString(this, "loadApp", "");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_NOTES_FRAGMENT : FragmentDisplayOption.NOTES_FRAGMENT);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_reference_books:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(FragmentDisplayOption.REFERENCE_BOOKS_FRAGMENT);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_coach_book:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_COACH_BOOK_FRAGMENT : FragmentDisplayOption.COACH_BOOK_FRAGMENT);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_text_book:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_TEXT_BOOK_FRAGMENT : FragmentDisplayOption.TEXT_BOOK_FRAGMENT);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.imgBtn_showRight:
                 mFlRight.setVisibility(View.VISIBLE);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
+
                 break;
 
             case R.id.fl_right:
                 mFlRight.setVisibility(View.GONE);
+                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.btn_currentBook:

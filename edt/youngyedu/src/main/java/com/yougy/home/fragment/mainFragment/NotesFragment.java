@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ProtocolManager;
@@ -135,7 +137,12 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
                 noteItemClick(vh.getAdapterPosition());
             }
         });
+        notifyDataSetChanged();
+    }
+
+    private void notifyDataSetChanged(){
         mNotesAdapter.notifyDataSetChanged();
+        EpdController.invalidate(mRootView, UpdateMode.GC);
     }
 
     private void noteItemClick(int position){
@@ -470,7 +477,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         } else {
             mNotes.addAll(mCountInfos.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
         }
-        mNotesAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     /////////////////////////////////testData///////////////////////////////////
@@ -554,7 +561,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             LogUtils.i("initPages2.."); //小于1页
             mNotes.addAll(mCountInfos.subList(0, mCountInfos.size()));
         }
-        mNotesAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     /***
@@ -629,7 +636,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
                     info.setNoteTitle(noteTile);
                 }
                 info.setNoteStyle(noteStyle);
-                mNotesAdapter.notifyDataSetChanged();
+                notifyDataSetChanged();
                 break;
             }
         }

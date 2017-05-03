@@ -215,8 +215,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     @Override
     public void updatePage(int page, Bitmap bitmap) {
         position = page;
-        EpdController.setViewDefaultUpdateMode(mOnyxImgView, UpdateMode.GC) ;
+//        EpdController.setViewDefaultUpdateMode(mOnyxImgView, UpdateMode.GC) ;
         mOnyxImgView.setImageBitmap(bitmap);
+        EpdController.invalidate(mRoot, UpdateMode.GC);
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
         restViewState();
     }
@@ -511,6 +512,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         mRlDirectory.setVisibility(View.GONE);
+
         if (parent.getAdapter() instanceof HandlerDirAdapter) {
             // 保持用户可以看见的 位置 ，因为一个目录会有可能出现很长
             if (position >= 0) {
