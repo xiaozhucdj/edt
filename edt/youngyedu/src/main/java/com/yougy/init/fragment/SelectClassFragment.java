@@ -12,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -119,17 +121,18 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         LogUtils.e(TAG,"onCreateView...........................");
-        View view = inflater.inflate(R.layout.select_class_layout, container, false);
-        mGradeSpinner = (Spinner) view.findViewById(R.id.grade_spinner);
-        mClassSpinner = (Spinner) view.findViewById(R.id.class_spinner);
-        mLastStep = (Button) view.findViewById(R.id.last_step);
-        mNextStep = (Button) view.findViewById(R.id.next_step);
+        final View rootView = inflater.inflate(R.layout.select_class_layout, container, false);
+        mGradeSpinner = (Spinner) rootView.findViewById(R.id.grade_spinner);
+        mClassSpinner = (Spinner) rootView.findViewById(R.id.class_spinner);
+        mLastStep = (Button) rootView.findViewById(R.id.last_step);
+        mNextStep = (Button) rootView.findViewById(R.id.next_step);
         mLastStep.setOnClickListener(this);
         mNextStep.setOnClickListener(this);
 
         mGradeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                EpdController.invalidate(rootView, UpdateMode.GC);
                 mClassInfos.clear();
                 mClassInfos.add(classInfo);
                 mGrade = mGradeAdapter.getItem(position);
@@ -157,6 +160,7 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
         mClassSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                EpdController.invalidate(rootView, UpdateMode.GC);
                 if (position != 0) {
                     mNextStep.setEnabled(true);
                     ClassInfo.Org org = mClassInfos.get(position);
@@ -174,7 +178,7 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
 
             }
         });
-        return view;
+        return rootView;
     }
 
     @Override
