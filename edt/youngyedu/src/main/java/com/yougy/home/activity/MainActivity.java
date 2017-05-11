@@ -342,39 +342,39 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_folder:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_homework:
 //                XSharedPref.putString(this, "loadApp", "student");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_HOMEWORK_FRAGMENT : FragmentDisplayOption.HOMEWORK_FRAGMENT);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_notes:
 //                XSharedPref.putString(this, "loadApp", "");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_NOTES_FRAGMENT : FragmentDisplayOption.NOTES_FRAGMENT);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_reference_books:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(FragmentDisplayOption.REFERENCE_BOOKS_FRAGMENT);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_coach_book:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_COACH_BOOK_FRAGMENT : FragmentDisplayOption.COACH_BOOK_FRAGMENT);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.rl_text_book:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_TEXT_BOOK_FRAGMENT : FragmentDisplayOption.TEXT_BOOK_FRAGMENT);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.imgBtn_showRight:

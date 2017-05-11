@@ -215,10 +215,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     @Override
     public void updatePage(int page, Bitmap bitmap) {
         position = page;
-//        EpdController.setViewDefaultUpdateMode(mOnyxImgView, UpdateMode.GC) ;
-        mOnyxImgView.setImageBitmap(bitmap);
-        EpdController.invalidate(mRoot, UpdateMode.GC);
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
+        EpdController.invalidate(mRoot, UpdateMode.GC);
+        mOnyxImgView.setImageBitmap(bitmap);
         restViewState();
     }
 
