@@ -22,6 +22,7 @@ import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
@@ -74,6 +75,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
     private void onCheckLogIn(){
         if (NetUtils.isNetConnected()) {
+            //设置UUID 为MAC 地址
+            Commons.UUID = SystemUtils.getMacAddress();
+            SpUtil.saveUUID(Commons.UUID);
+            LogUtils.i("mac_splish_" + Commons.UUID);
             getServerVersion();
             /*//重复绑定会失败，用户可以清空APP数据 ，所以每次都进来登录
             callBack = new LoginCallBack(this);

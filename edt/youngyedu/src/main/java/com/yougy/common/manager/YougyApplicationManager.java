@@ -15,6 +15,8 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.ui.activity.BuildConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -24,8 +26,6 @@ import org.litepal.LitePalApplication;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -106,11 +106,11 @@ public class YougyApplicationManager extends LitePalApplication {
         Logger.setDebug(false);// 开始NoHttp的调试模式, 这样就能看到请求过程和日志
         //设备ID
 //       Commons.UUID  = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID); // UUID
-        Commons.UUID  =  getLocalMac();
 //        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().build());
 //        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
 
-
+        Commons.UUID = SpUtil.getUUID();
+        LogUtils.i("mac_application__"+Commons.UUID );
         Context context = getApplicationContext();
         // 获取当前包名
         String packageName = context.getPackageName();
@@ -199,30 +199,5 @@ public class YougyApplicationManager extends LitePalApplication {
 
     public static Looper getMainThreadLooper() {
         return mMainLooper;
-    }
-
-    private  String  getLocalMac() {
-        String mac=null;
-        String str = "";
-        try
-        {
-            Process pp = Runtime.getRuntime().exec("cat /sys/class/net/wlan0/address ");
-            InputStreamReader ir = new InputStreamReader(pp.getInputStream());
-            LineNumberReader input = new LineNumberReader(ir);
-            for (; null != str;)
-            {
-                str = input.readLine();
-                if (str != null)
-                {
-                    mac = str.trim();// 去空格
-                    break;
-                }
-            }
-        } catch (IOException ex) {
-            // 赋予默认值
-            ex.printStackTrace();
-        }
-        return mac;
-
     }
 }
