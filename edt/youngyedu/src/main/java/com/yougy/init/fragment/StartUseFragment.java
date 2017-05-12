@@ -154,8 +154,11 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
+        if (getActivity()!=null){
+            ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+        }
         // 获取订单列表 ，得到下载书条目
-        ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), -1, -1, "", ProtocolId.PROTOCOL_ID_BOOK_SHELF, new BookShelfCallBack(getActivity()));
+//        ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), -1, -1, "", ProtocolId.PROTOCOL_ID_BOOK_SHELF, new BookShelfCallBack(getActivity()));
     }
 
     /***

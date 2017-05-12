@@ -2,8 +2,8 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 import android.content.Intent;
-import android.provider.Settings;
 
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -88,7 +88,7 @@ public class BindCallBack extends BaseCallBack<BindInfo> {
 
     @Override
     public void onClick() {
-        String uuid = Settings.Secure.getString(mWeakReference.get().getContentResolver(), Settings.Secure.ANDROID_ID);
+        String uuid = Commons.UUID;
         ProtocolManager.deviceBindProtocol(InitManager.getInstance().getStudentId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, this);
     }
 }
