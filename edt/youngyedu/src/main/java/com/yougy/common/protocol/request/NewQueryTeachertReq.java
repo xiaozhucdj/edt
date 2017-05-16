@@ -7,15 +7,15 @@ package com.yougy.common.protocol.request;
 
 public class NewQueryTeachertReq extends NewBaseReq {
     /**用户编码*/
-    private  int userId ;
+    private  int userId = -1;
     /**教师工号*/
-    private int userNum ;
+    private int userNum = -1;
     /**教师帐号*/
     private  String userName  ;
     /**教师姓名*/
     private  String userRealName ;
     /**学校编码*/
-    private  int schoolId ;
+    private  int schoolId = -1 ;
     /**设备编码*/
     private  String deviceId;
 

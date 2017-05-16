@@ -2,11 +2,8 @@ package com.yougy.common.protocol.response;
 
 /**
  * Created by Administrator on 2017/5/16.
- * 地区查询
+ * 笔记删除
  */
 
-public class NewQueryAreaRep extends  NewBaseRep {
-    private int count ;
-
+public class NewDeleteNoteRep  extends NewBaseRep{
 }
-

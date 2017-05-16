@@ -7,7 +7,7 @@ package com.yougy.common.protocol.request;
 
 public class NewQueryDeviceReq extends NewBaseReq {
     /**用户编码,是否必须,否*/
-    private int userId ;
+    private int userId  =- 1;
     /**设备编码,是否必须,否*/
     private String deviceId ;
 

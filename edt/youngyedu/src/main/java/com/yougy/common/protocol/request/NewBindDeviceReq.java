@@ -7,7 +7,7 @@ package com.yougy.common.protocol.request;
 
 public class NewBindDeviceReq extends NewBaseReq {
     /**用户编码 ,是否必须 ,s*/
-    private int userId;
+    private int userId = -1;
     /**设备编码 ,是否必须 ,s*/
     private String deviceId ;
 

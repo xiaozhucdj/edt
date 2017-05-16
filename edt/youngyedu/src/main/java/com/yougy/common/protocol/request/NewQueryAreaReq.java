@@ -9,9 +9,9 @@ package com.yougy.common.protocol.request;
 public class NewQueryAreaReq extends NewBaseReq {
 
     /**地区层级*/
-    private int depth ;
+    private int depth  = -1;
     /**地区编码*/
-    private int areaId;
+    private int areaId = -1;
     /**归属地区*/
     private String areaParent ;
 

@@ -5,10 +5,16 @@ import android.widget.Toast;
 import com.yougy.common.global.Commons;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
+import com.yougy.common.protocol.request.NewBookShelfReq;
+import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
+import com.yougy.common.protocol.request.NewInserNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewQueryAreaReq;
 import com.yougy.common.protocol.request.NewQueryDeviceReq;
+import com.yougy.common.protocol.request.NewQueryNoteReq;
+import com.yougy.common.protocol.request.NewQuerySchoolOrgReq;
+import com.yougy.common.protocol.request.NewQuerySchoolReq;
 import com.yougy.common.protocol.request.NewQueryStudentReq;
 import com.yougy.common.protocol.request.NewQueryTeachertReq;
 import com.yougy.common.protocol.request.NewQueryUserReq;
@@ -200,15 +206,60 @@ public class NewProtocolManager {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_QUERY_AREA, callbac);
     }
 
+    /**
+     * 11学校查询
+     * @param req
+     * @param callbac
+     */
+    public static void querySchool(NewQuerySchoolReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_QUERY_SCHOOL, callbac);
+    }
+
+    /**
+     * 12学校查询
+     * @param req
+     * @param callbac
+     */
+    public static void querySchoolOrg(NewQuerySchoolOrgReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_QUERY_SCHOOL_ORG, callbac);
+    }
+
+    /**
+     * 13书架查询
+     * @param req
+     * @param callbac
+     */
+    public static void bookShelf(NewBookShelfReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_BOOK_SHELF, callbac);
+    }
+
+    /**
+     * 14书架查询
+     * @param req
+     * @param callbac
+     */
+    public static void queryNote(NewQueryNoteReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_QUERY_NOTE, callbac);
+    }
 
 
+    /**
+     * 15书架查询
+     * @param req
+     * @param callbac
+     */
+    public static void inserNote(NewInserNoteReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_INSER_NOTE, callbac);
+    }
 
-
-
-
-
-
-
+    /**
+     * 16笔记删除
+     * @param req
+     * @param callbac
+     */
+    public static void deleteNote(NewDeleteNoteReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_DELETE_NOTE, callbac);
+    }
 
     public static class NewProtocolId {
         public static final int ID_VERSION = 1;
@@ -230,5 +281,18 @@ public class NewProtocolManager {
         public static final int ID_QUERY_TEACHER = 9;
 
         public static final int ID_QUERY_AREA= 10 ;
+
+        public static final int ID_QUERY_SCHOOL= 11 ;
+
+        public static final int ID_QUERY_SCHOOL_ORG= 12 ;
+
+        public static final int ID_BOOK_SHELF= 13 ;
+
+        public static final int ID_QUERY_NOTE= 14 ;
+
+        public static final int ID_INSER_NOTE= 15 ;
+
+        public static final int ID_DELETE_NOTE= 16 ;
+
     }
 }

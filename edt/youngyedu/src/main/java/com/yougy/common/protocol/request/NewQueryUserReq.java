@@ -6,7 +6,7 @@ package com.yougy.common.protocol.request;
  */
 
 public class NewQueryUserReq extends NewBaseReq {
-    private int userId ;
+    private int userId = -1 ;
     /**用户帐号*/
     private String userName;
     /**用户姓名*/
