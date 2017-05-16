@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data class=".PicBinding">
+
+        <variable
+            name="binding"
+            type="com.yougy.home.fragment.showFragment.PicFragment" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        >
+
+        <ImageView
+            android:id="@+id/pic_ig"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_above="@+id/pic_ig"
+            android:background="@drawable/img_lable_title"
+            android:layout_alignLeft="@+id/pic_ig"
+            android:layout_alignRight="@+id/pic_ig"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/shrink_ig"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/twenty_eight_dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="33dp"
+                android:onClick="@{binding.shrink}"
+                android:src="@drawable/edu_img_lable_minimize_select" />
+
+            <ImageView
+                android:id="@+id/delete_ig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="33dp"
+                android:onClick="@{binding.delete}"
+                android:src="@drawable/edu_img_lable_delete_select" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</layout>

@@ -1,6 +1,8 @@
 package com.yougy.home.activity;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.v4.app.Fragment;
@@ -12,7 +14,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.onyx.android.sdk.api.device.epd.EpdController;
@@ -436,8 +437,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (NetUtils.isNetConnected()) {
                     loadIntent(BookShopActivityDB.class);
                 } else {
-                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+//                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+                    showDialogNoNet();
                 }
+                mFlRight.setVisibility(View.GONE);
                 break;
 
             case R.id.btn_msg:
@@ -450,9 +453,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (NetUtils.isNetConnected()) {
                     loadIntent(AccountSetActivity.class);
                 } else {
-                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+//                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+                    showDialogNoNet();
                 }
-
+                mFlRight.setVisibility(View.GONE);
 
                 break;
             case R.id.imgBtn_refresh:
@@ -473,24 +477,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         mRefreshListener.onRefreshClickListener();
                     }
                 } else {
-                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+//                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+                    showDialogNoNet();
                 }
+                mFlRight.setVisibility(View.GONE);
                 break;
 
             case R.id.img_wifi:
                 boolean isConnected = NetManager.getInstance().isWifiConnected(this);
                 NetManager.getInstance().changeWiFi(this, !isConnected);
-                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected == true? R.drawable.img_wifi_1:R.drawable.img_wifi_0));
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected? R.drawable.img_wifi_1:R.drawable.img_wifi_0));
                 break;
 
             case R.id.btn_sysSeeting:
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.onyx.android.settings","com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
+                mFlRight.setVisibility(View.GONE);
                 break;
         }
     }
 
+    private void showDialogNoNet(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("该操作需要网络，请设置网络！");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
     /***
      * 切换fragment
      */

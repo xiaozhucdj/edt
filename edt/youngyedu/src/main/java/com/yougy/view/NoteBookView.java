@@ -10,8 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -423,6 +421,16 @@ public class NoteBookView extends View {
         if (!isEnabled() || event.getPointerCount() > 1) {
             return false;
         }
+
+        if (!flagOfErase) {
+            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_UNKNOWN) {
+                setPen();
+            }
+        }
+        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
+            useEraser();
+        }
+
         contentChanged = true;
         float x = event.getX();
         float y = event.getY();
@@ -458,7 +466,7 @@ public class NoteBookView extends View {
             case MotionEvent.ACTION_MOVE:
                 if (x >= 0 && x <= getWidth() && y >= 0 && y <= getHeight()) {
                     touch_move(x, y);
-                    LogUtils.e(TAG, "action move......(x,y) : " + x + ","+y);
+                    LogUtils.e(TAG, "action move......(x,y) : " + x + "," + y);
                     currentX = x;
                     currentY = y;
                     preX = currentX;
@@ -479,7 +487,7 @@ public class NoteBookView extends View {
                 if (line != null) {
                     line.setEnd(new Point(x, y));
                     lines.add(line);
-                    if (undoNeedUpdate() | redoNeedUpdate()) {
+                    if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER | flagOfErase | undoNeedUpdate() | redoNeedUpdate()) {
                         EpdController.leaveScribbleMode(this);
                         invalidate();
                     }
@@ -489,23 +497,6 @@ public class NoteBookView extends View {
         }
         return true;
     }
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            MotionEvent event = (MotionEvent) msg.obj;
-            float dst[];
-            int n = event.getHistorySize();
-            for (int i = 0; i < n; i++) {
-                dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
-                EpdController.quadTo(dst[0], dst[1], UpdateMode.GC);
-            }
-            dst = mapPoint(event.getX(), event.getY());
-            EpdController.quadTo(dst[0], dst[1], UpdateMode.GC);
-
-        }
-    };
 
     private boolean redoNeedUpdate() {
         return redoOptListener != null && redoOptListener.isEnableRedo();
@@ -577,12 +568,15 @@ public class NoteBookView extends View {
     private boolean flagOfErase;
 
     public void useEraser() {
-        flagOfErase = true;
         mPaint.setAntiAlias(true);
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(20);
         setScreenEraser();
+    }
+
+    public void setEraserFlag(boolean flag) {
+        flagOfErase = flag;
     }
 
     private void setScreenPaint() {

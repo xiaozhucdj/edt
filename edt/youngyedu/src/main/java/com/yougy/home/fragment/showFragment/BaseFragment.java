@@ -254,7 +254,27 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     @Override
     protected void handleEvent() {
         handleUploadEvent();
+        handleDeleteEvent();
         super.handleEvent();
+    }
+
+    private void handleDeleteEvent() {
+        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof Photograph) {
+                    final Photograph photo = (Photograph) o;
+                    mFrameLayout.removeView(currentClickedImg);
+                    Observable.create(new Observable.OnSubscribe<Object>() {
+                        @Override
+                        public void call(Subscriber<? super Object> subscriber) {
+                            int count = photo.delete();
+                            LogUtils.e(TAG, "count is : " + count);
+                        }
+                    }).subscribeOn(Schedulers.io()).subscribe();
+                }
+            }
+        }));
     }
 
     private void handleUploadEvent() {
@@ -501,7 +521,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         mImgShowOtherIcon.setOnClickListener(this);
         mImgPaste.setOnClickListener(this);
     }
+
     private boolean isClear = false;
+
     protected void saveContent(boolean inUIThread) {
         if (isClear) {
             mNote.delete();
@@ -598,6 +620,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 setPanDrawStates(2.0f, Color.BLACK, 2, 255);
                 updateStatus(Color.BLACK, 2, 255);
                 mNoteBookView.setPen();
+                mNoteBookView.setEraserFlag(false);
                 break;
             case R.id.pencil:
                 //TODO:设置画笔为铅笔
@@ -631,6 +654,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 isNeedHide = true;
                 //设置橡皮属性
                 mNoteBookView.useEraser();
+                mNoteBookView.setEraserFlag(true);
                 break;
             case R.id.color:
                 view = mColor;
@@ -678,14 +702,14 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 useNote(label);
                 break;
             case R.id.image:
-               /**
-                彩色设备上没有相册 PL107
-                mLlOtherIcon.setVisibility(View.GONE);
-                view = mImageIv;
-                useLocalPhoto();*/
+                /**
+                 彩色设备上没有相册 PL107
+                 mLlOtherIcon.setVisibility(View.GONE);
+                 view = mImageIv;
+                 useLocalPhoto();*/
                 break;
             case R.id.screenshot:
-                if (mFrameLayout!=null){
+                if (mFrameLayout != null) {
                     mLlOtherIcon.setVisibility(View.GONE);
                     isNeedCutScreen = true;
                     view = mScreenshotIv;
@@ -990,6 +1014,15 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         ft.commit();
     }
 
+    protected void usePhoto(Photograph photo) {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        PicFragment picFragment = new PicFragment();
+        picFragment.setPhotoGraph(photo);
+        ft.add(R.id.container, picFragment);
+        ft.commit();
+    }
+
     /**
      * 根据请求代码，得到不同情况下的图片路径，进而进行图片解析和显示
      *
@@ -1041,46 +1074,67 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         }
     }
 
-    protected void addPic(Photograph photo, Bitmap bitmap, FrameLayout.LayoutParams params) {
-        MoveRelativeLayout view = (MoveRelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
-        view.setPhotoGraph(photo);
-        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
-        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
-        imagebtn.setImageBitmap(bitmap);
-        params.width = bitmap.getWidth();
-        params.height = bitmap.getHeight();
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
+    protected void addPic(final Photograph photo, Bitmap bitmap, FrameLayout.LayoutParams params) {
+//        MoveRelativeLayout view = (MoveRelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
+//        view.setPhotoGraph(photo);
+//        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
+//        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
+//        imagebtn.setImageBitmap(bitmap);
+//        params.width = bitmap.getWidth();
+//        params.height = bitmap.getHeight();
+//        deleteBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final MoveRelativeLayout layout = (MoveRelativeLayout) v.getParent();
+//                mFrameLayout.removeView(layout);
+//                Observable.create(new Observable.OnSubscribe<Object>() {
+//                    @Override
+//                    public void call(Subscriber<? super Object> subscriber) {
+//                        Photograph photograph = layout.getPhotoGraph();
+//                        if (null != photograph) {
+//                            int count = photograph.delete();
+//                            LogUtils.e(TAG, "count is : " + count);
+//                        }
+//                    }
+//                }).subscribeOn(Schedulers.io()).subscribe();
+//            }
+//        });
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                deleteBtn.setVisibility(View.VISIBLE);
+//            }
+//        });
+//        view.setOnHideDeleteBtnListener(new MoveRelativeLayout.OnHideDeleteBtnListener() {
+//            @Override
+//            public void hideDeleteBtn() {
+//                deleteBtn.setVisibility(View.GONE);
+//            }
+//        });
+//        mFrameLayout.addView(view, params);
+//        contentChanged = true;
+        final MoveImageView imageView = new MoveImageView(mContext);
+        imageView.setImageResource(R.drawable.img_pic_normal);
+        imageView.setPhotograph(photo);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final MoveRelativeLayout layout = (MoveRelativeLayout) v.getParent();
-                mFrameLayout.removeView(layout);
-                Observable.create(new Observable.OnSubscribe<Object>() {
-                    @Override
-                    public void call(Subscriber<? super Object> subscriber) {
-                        Photograph photograph = layout.getPhotoGraph();
-                        if (null != photograph) {
-                            int count = photograph.delete();
-                            LogUtils.e(TAG, "count is : " + count);
-                        }
-                    }
-                }).subscribeOn(Schedulers.io()).subscribe();
+                LogUtils.e(TAG, "photo is clicked................");
+                currentClickedImg = imageView;
+                imageView.setImageResource(R.drawable.img_pic_normal);
+                EpdController.leaveScribbleMode(mNoteBookView);
+                flag = false;
+                usePhoto(photo);
+                FrameLayout.LayoutParams tmp = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+                curImgViewPosition = new Position(tmp.leftMargin, tmp.topMargin);
             }
         });
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteBtn.setVisibility(View.VISIBLE);
-            }
-        });
-        view.setOnHideDeleteBtnListener(new MoveRelativeLayout.OnHideDeleteBtnListener() {
-            @Override
-            public void hideDeleteBtn() {
-                deleteBtn.setVisibility(View.GONE);
-            }
-        });
-        mFrameLayout.addView(view, params);
-        contentChanged = true;
+        imageView.setUpdateImageViewMapListener(this);
+        mFrameLayout.addView(imageView, params);
+        imageViews.put(new Position(params.leftMargin, params.topMargin), imageView);
     }
+
+    private ImageView currentClickedImg;
 
     protected FrameLayout.LayoutParams createLayoutParams() {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -1377,11 +1431,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     }
 
     protected void addMoveView() {
-        if (mFrameLayout!=null){
+        if (mFrameLayout != null) {
             FrameLayout.LayoutParams params = createLayoutParams();
             MoveView moveView = new MoveView(mContext);
             moveView.setImageResource(R.drawable.icon_label);
-            mFrameLayout.addView(moveView, params) ;
+            mFrameLayout.addView(moveView, params);
         }
     }
 
@@ -1430,7 +1484,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     }
 
     @Override
-    public void updateImageViewMap(final Position position, MoveImageView imageView) {
+    public void updateImageViewMap(final Position position, int type, MoveImageView imageView) {
         leaveScribbleMode(true);
         imageViews.put(position, imageView);
         Observable.create(new Observable.OnSubscribe<Object>() {
@@ -1450,7 +1504,14 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             }
         }).subscribeOn(Schedulers.io()).subscribe();
 
-        imageView.setImageResource(R.drawable.icon_label);
+        switch (type) {
+            case MoveImageView.TYPE_LABEL:
+                imageView.setImageResource(R.drawable.icon_label);
+                break;
+            case MoveImageView.TYPE_PHOTO:
+                imageView.setImageResource(R.drawable.img_pic_normal);
+                break;
+        }
     }
 
     private Diagram getCurrentDiagram(int leftmargin, int topmargin) {
