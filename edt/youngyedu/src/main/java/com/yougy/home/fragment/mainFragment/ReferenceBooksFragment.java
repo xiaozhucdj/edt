@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.fragment.BFragment;
@@ -153,7 +155,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 itemClick(vh.getAdapterPosition());
             }
         });
-        mBookAdapter.notifyDataSetChanged();
+//        mBookAdapter.notifyDataSetChanged();
 
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
 
@@ -385,8 +387,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         } else {
             mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
         }
-        mBookAdapter.notifyDataSetChanged();
-
+//        mBookAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     /**
@@ -424,7 +426,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         } else {
             mBooks.addAll(mCountBooks.subList(0, mCountBooks.size()));
         }
-        mBookAdapter.notifyDataSetChanged();
+//        mBookAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     /***
@@ -806,6 +809,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         if (mSearchDialog!=null){
             mSearchDialog = null ;
         }
+    }
+
+    private void notifyDataSetChanged(){
+        mBookAdapter.notifyDataSetChanged();
+        EpdController.invalidate(mRootView, UpdateMode.GC);
     }
 }
 

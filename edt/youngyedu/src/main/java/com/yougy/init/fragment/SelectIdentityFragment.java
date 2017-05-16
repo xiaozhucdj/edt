@@ -3,7 +3,6 @@ package com.yougy.init.fragment;
 import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +23,7 @@ import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.ui.view.DisableScrollLinearManager;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.fragment.UserCallBack;
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.BindCallBack;
@@ -225,7 +225,7 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
                         SpUtil.saveAccountId(user.getUserId());
                         SpUtil.saveAccountName(user.getUserRealName());
                         SpUtil.saveAccountNumber(user.getUserNumber());
-                        String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                        String uuid = Commons.UUID;
                         ProtocolManager.deviceBindProtocol(user.getUserId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, new BindCallBack(context));
                     }
                 }

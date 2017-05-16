@@ -47,6 +47,8 @@ public class SpUtil {
      */
     private static final String SUBJECT_NAMES = "subjectNames";
     private static final String HISTORY_RECORD = "history_record";
+
+    private static final String UUID = "UUID" ;
     public static void saveLableLocation(int x, int y) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -375,5 +377,18 @@ public class SpUtil {
     public static boolean isInit(){
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(INIT_DOWN,Context.MODE_PRIVATE);
         return sp.getBoolean(FIRST_FLAG,false);
+    }
+
+
+    public static void saveUUID(String uuid) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(UUID, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(UUID, uuid);
+        editor.apply();
+    }
+
+    public static String getUUID() {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(UUID, Context.MODE_PRIVATE);
+        return sp.getString(UUID,"-1") ;
     }
 }

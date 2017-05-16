@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.inkscreen.LeController;
@@ -16,6 +15,8 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.ui.activity.BuildConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -104,11 +105,12 @@ public class YougyApplicationManager extends LitePalApplication {
         Logger.setTag("leke");
         Logger.setDebug(false);// 开始NoHttp的调试模式, 这样就能看到请求过程和日志
         //设备ID
-        Commons.UUID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID); // UUID
+//       Commons.UUID  = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID); // UUID
 //        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().build());
 //        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
 
-
+        Commons.UUID = SpUtil.getUUID();
+        LogUtils.i("mac_application__"+Commons.UUID );
         Context context = getApplicationContext();
         // 获取当前包名
         String packageName = context.getPackageName();
