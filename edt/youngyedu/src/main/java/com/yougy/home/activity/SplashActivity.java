@@ -12,18 +12,17 @@ import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.LoginCallBack;
-import com.yougy.common.protocol.callback.UpdateCallBack;
-import com.yougy.common.protocol.response.ResGetAppVersion;
-import com.yougy.common.protocol.response.VersioinProtocol;
-import com.yougy.common.utils.GsonUtil;
+import com.yougy.common.protocol.callback.NewUpdateCallBack;
+import com.yougy.common.protocol.request.NewGetAppVersionReq;
+import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.SystemUtils;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -34,8 +33,6 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
-import okhttp3.Request;
-import okhttp3.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -78,22 +75,14 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             //设置UUID 为MAC 地址
             Commons.UUID = SystemUtils.getMacAddress();
             SpUtil.saveUUID(Commons.UUID);
-            LogUtils.i("mac_splish_" + Commons.UUID);
             getServerVersion();
-            /*//重复绑定会失败，用户可以清空APP数据 ，所以每次都进来登录
-            callBack = new LoginCallBack(this);
-            callBack.setOnJumpListener(this);
-            ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, callBack);*/
         } else {
             if ("-1".equalsIgnoreCase(SpUtil.getAccountId())) {
-                Toaster.showDefaultToast(getApplication(), "当前没有网络请，请设置网络", Toast.LENGTH_LONG);
-                Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-                startActivity(intent);
+                jumpWifiActivity();
             } else {
                 jumpActivity(MainActivity.class);
             }
         }
-
     }
 
     @Override
@@ -108,7 +97,51 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, callBack);
     }
 
-    private void getServerVersion() {
+    private void getServerVersion(){
+
+        if (!NetUtils.isNetConnected()){
+            jumpWifiActivity();
+        }else{
+            NewProtocolManager.getAppVersion(new NewGetAppVersionReq(),new NewUpdateCallBack(SplashActivity.this){
+                @Override
+                public void onResponse(NewGetAppVersionRep response, int id) {
+                    super.onResponse(response, id);
+                    if (response!=null && response.getCode() ==NewProtocolManager.NewCodeResult.CODE_SUCCESS && response.getData()!=null){
+                        LogUtils.i(SplashActivity.class.getName()+":"+response.getData().toString());
+                        NewGetAppVersionRep.Data data =  response.getData() ;
+                        int serverVersion = Integer.parseInt(data.getVer());
+                        int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
+                        LogUtils.i("袁野 localVersion ==" + localVersion);
+                        final String url = data.getUrl();
+                        if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    doDownLoad(SplashActivity.this, url);
+                                }
+                            });
+                        } else {
+                            login();
+                        }
+                    }else{
+                        login();
+                    }
+                }
+                @Override
+                public void onError(Call call, Exception e, int id) {
+                    login();
+                }
+            });
+        }
+    }
+
+    private void jumpWifiActivity() {
+        Toaster.showDefaultToast(getApplication(), "当前没有网络请，请设置网络", Toast.LENGTH_LONG);
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+    }
+
+ /*   private void getServerVersion() {
         ProtocolManager.getAppVersion(ProtocolId.PROTOCOL_ID_LOGIN, new UpdateCallBack(SplashActivity.this) {
             @Override
             public void onBefore(Request request, int id) {
@@ -167,7 +200,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                 }
             }
         });
-    }
+    }*/
 
 
     @Override

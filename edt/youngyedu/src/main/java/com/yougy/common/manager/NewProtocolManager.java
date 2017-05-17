@@ -7,9 +7,11 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
+import com.yougy.common.protocol.request.NewDeleteUserLogReq;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
 import com.yougy.common.protocol.request.NewInserNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewLogoutReq;
 import com.yougy.common.protocol.request.NewQueryAreaReq;
 import com.yougy.common.protocol.request.NewQueryDeviceReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
@@ -17,6 +19,7 @@ import com.yougy.common.protocol.request.NewQuerySchoolOrgReq;
 import com.yougy.common.protocol.request.NewQuerySchoolReq;
 import com.yougy.common.protocol.request.NewQueryStudentReq;
 import com.yougy.common.protocol.request.NewQueryTeachertReq;
+import com.yougy.common.protocol.request.NewQueryUserLogReq;
 import com.yougy.common.protocol.request.NewQueryUserReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.request.NewUpdateUserReq;
@@ -194,6 +197,41 @@ public class NewProtocolManager {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_QUERY_TEACHER, callbac);
     }
 
+
+    /**
+     * 17日志查询
+     *
+     * @param req
+     * @param callbac
+     */
+    public static void queryUserLog(NewQueryUserLogReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_QUERY_USERLOG, callbac);
+    }
+
+
+
+    /**
+     * 18日志删除
+     *
+     * @param req
+     * @param callbac
+     */
+    public static void deleteUserLog(NewDeleteUserLogReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_DELETE_USERLOG, callbac);
+    }
+
+
+    /**
+     * 19用户退出
+     *
+     * @param req
+     * @param callbac
+     */
+    public static void logout(NewLogoutReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_LOGOUT, callbac);
+    }
+
+
     /////////////////////////////////课堂接口web/classRoom////////////////////////////////////////
 
     /**
@@ -294,5 +332,17 @@ public class NewProtocolManager {
 
         public static final int ID_DELETE_NOTE= 16 ;
 
+        public static final int ID_QUERY_USERLOG= 17 ;
+
+        public static final int ID_DELETE_USERLOG= 18;
+
+        public static final int ID_LOGOUT= 19;
+
+
+
+    }
+
+    public static class NewCodeResult {
+        public static final int CODE_SUCCESS = 200 ;
     }
 }
