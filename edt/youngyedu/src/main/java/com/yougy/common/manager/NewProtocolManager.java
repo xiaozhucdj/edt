@@ -339,14 +339,12 @@ public class NewProtocolManager {
 
         public static final int ID_LOGOUT= 19;
 
-
-
     }
     /***协议返回 code*/
     public static class NewCodeResult {
         public static final int CODE_SUCCESS = 200 ;
     }
-
+    /***缓存id*/
     public static class NewCacheId{
 
     }
