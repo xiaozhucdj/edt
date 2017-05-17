@@ -15,10 +15,12 @@ import android.widget.Spinner;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.fragment.BFragment;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AreaCallBack;
 import com.yougy.common.protocol.callback.SchoolCallBack;
+import com.yougy.common.protocol.request.NewQueryAreaReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.bean.AreaInfo;
@@ -71,7 +73,8 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
         super.onAttach(activity);
         LogUtils.e(TAG, "context is null ? " + (context == null));
         LogUtils.e(TAG, "onAttach.................activity");
-        ProtocolManager.queryAreaProtocol(-1, "", -1, -1, ProtocolId.PROTOCOL_ID_QUERYAREA, new AreaCallBack(context));
+//        ProtocolManager.queryAreaProtocol(-1, "", -1, -1, ProtocolId.PROTOCOL_ID_QUERYAREA, new AreaCallBack(context));
+        NewProtocolManager.queryArea(new NewQueryAreaReq(),new AreaCallBack(context));
     }
 
     @Override

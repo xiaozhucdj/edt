@@ -2,9 +2,8 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
-import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.protocol.response.NewQueryAreaRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -23,7 +22,10 @@ public class AreaCallBack extends BaseCallBack<AreaInfo> {
 
     @Override
     public AreaInfo parseNetworkResponse(Response response, int id) throws Exception {
-        return GsonUtil.fromJson(response.body().string(), AreaInfo.class);
+        String result = response.body().string();
+        LogUtils.e(getClass().getName(),"Area result is : " + result);
+        NewQueryAreaRep
+        return GsonUtil.fromJson(result, AreaInfo.class);
     }
 
     @Override
@@ -36,6 +38,6 @@ public class AreaCallBack extends BaseCallBack<AreaInfo> {
 
     @Override
     public void onClick() {
-        ProtocolManager.queryAreaProtocol(-1, "", -1, -1, ProtocolId.PROTOCOL_ID_QUERYAREA, this);
+//        ProtocolManager.queryAreaProtocol(-1, "", -1, -1, ProtocolId.PROTOCOL_ID_QUERYAREA, this);
     }
 }

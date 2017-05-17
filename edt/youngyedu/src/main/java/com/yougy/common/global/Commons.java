@@ -21,7 +21,7 @@ public class Commons {
     public static final String VERSION_URL = "http://106.15.45.14:10002/version";
 
     public static final String SHOP_URL = "http://192.168.12.7:80/api/bookStore";
-    public static final String NEW_URL = "http://106.15.45.14:10002/web/";
+    public static final String NEW_URL = "http://106.15.45.14:10002/";
 
     /**
      * 花生壳 映射外网 -->每个月限制流量1G
