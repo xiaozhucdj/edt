@@ -337,5 +337,12 @@ public class NewProtocolManager {
         public static final int ID_DELETE_USERLOG= 18;
 
         public static final int ID_LOGOUT= 19;
+
+
+
+    }
+
+    public static class NewCodeResult {
+        public static final int CODE_SUCCESS = 200 ;
     }
 }
