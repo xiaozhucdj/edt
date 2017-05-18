@@ -325,7 +325,7 @@ public class NewProtocolManager {
 
         public static final int ID_QUERY_SCHOOL_ORG= 12 ;
 
-//        public static final int ID_BOOK_SHELF= 13 ;
+        public static final int ID_BOOK_SHELF= 13 ;
 
 //        public static final int ID_QUERY_NOTE= 14 ;
 
@@ -340,12 +340,23 @@ public class NewProtocolManager {
         public static final int ID_LOGOUT= 19;
 
     }
+
+
     /***协议返回 code*/
     public static class NewCodeResult {
         public static final int CODE_SUCCESS = 200 ;
     }
+
+
     /***缓存id*/
     public static class NewCacheId{
-
+        /**当前学期课本*/
+        public static int CODE_CURRENT_BOOK = 5000 ;
+        public static int ALL_CODE_CURRENT_BOOK = 5001 ;
+        /**课外书*/
+        public static int CODE_REFERENCE_BOOK = 5004 ;
+        /**辅导书*/
+        public static final int CODE_COACH_BOOK = 5002;
+        public static final int ALL_CODE_COACH_BOOK = 5003;
     }
 }

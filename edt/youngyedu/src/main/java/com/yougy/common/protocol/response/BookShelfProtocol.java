@@ -11,21 +11,13 @@ import java.util.List;
  */
 public class BookShelfProtocol extends BaseData {
     private int count ;
-    private List<BookInfo> bookList ;
+    private List<BookInfo> data ;
 
     public int getCount() {
         return count;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public List<BookInfo> getBookList() {
-        return bookList;
-    }
-
-    public void setBookList(List<BookInfo> bookList) {
-        this.bookList = bookList;
+    public List<BookInfo> getData() {
+        return data;
     }
 }

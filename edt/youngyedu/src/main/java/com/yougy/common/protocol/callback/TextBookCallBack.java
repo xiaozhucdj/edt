@@ -19,7 +19,6 @@ import okhttp3.Response;
  */
 
 public class TextBookCallBack extends CacheInfoBack<BookShelfProtocol> {
-
     private int mTermIndex;
     private int mCategoryId;
     private int mProtocolId ;
@@ -33,6 +32,7 @@ public class TextBookCallBack extends CacheInfoBack<BookShelfProtocol> {
     public BookShelfProtocol parseNetworkResponse(Response response, int id) throws Exception {
         mJson = response.body().string();
         LogUtils.i("response json ...." + mJson);
+        // 打开缓存
         operateCacheInfo(id);
         return GsonUtil.fromJson(mJson, BookShelfProtocol.class);
     }
@@ -41,20 +41,18 @@ public class TextBookCallBack extends CacheInfoBack<BookShelfProtocol> {
     public void onResponse(BookShelfProtocol response, int id) {
 
         if (response.getCode() == ProtocolId.RET_SUCCESS) {
-//            if (response.getBookList() != null && response.getBookList().size() > 0) {
-//                Log.e("TextCallBack", "send text book event");
                 RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
                 rxBus.send(response);
-//            }
         }
     }
 
     @Override
     public void onError(Call call, Exception e, int id) {
-//        super.onError(call, e, id);
         LogUtils.i("yuanye...请求服务器 加载出错 ---onError");
         /**
-         *  绑定 时候需要 调用非 PROTOCOL_ID_BOOK_SHELF 的id
+         *  当绑定数据的时候我们需要下载全部图书
+         *  当全部下载图书出问题后不需要发消息，直接弹出错误框
+         *  而当本学期下载图书失败的时候需要 使用缓存数据 所以这块的判断需要这么写
          */
         if (id != ProtocolId.PROTOCOL_ID_BOOK_SHELF){
             RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());

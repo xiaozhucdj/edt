@@ -18,10 +18,11 @@ import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.nohttp.DownInfo;
-import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.protocol.callback.NewTextBookCallBack;
+import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.BookShelfProtocol;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
@@ -31,10 +32,10 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.activity.MainActivity;
-import com.yougy.home.adapter.FitGradeAdapter;
-import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.adapter.AllBookAdapter;
+import com.yougy.home.adapter.FitGradeAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
 import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.home.imple.RefreshBooksListener;
@@ -141,9 +142,9 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     private ViewGroup mGroupGrade;
 
     private DownBookDialog mDialog;
-    private com.yougy.common.protocol.callback.TextBookCallBack mTextBookCall;
     private Subscription mSub;
     private ViewGroup mLoadingNull;
+    private NewTextBookCallBack mNewTextBookCallBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -365,11 +366,16 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
-            mTextBookCall = new com.yougy.common.protocol.callback.TextBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_ALL_COACHBOOK);
-            mTextBookCall.setTermIndex(-1);
-            mTextBookCall.setCategoryId(20000);
-            Log.e(TAG, "query book from server...");
-            ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), -1, 20000, "", ProtocolId.PROTOCOL_ID_ALL_COACHBOOK, mTextBookCall);
+            NewBookShelfReq req = new NewBookShelfReq();
+            //设置学生ID
+            req.setUserId(SpUtil.getAccountId());
+            //设置缓存数据ID的key
+            req.setCacheId(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK);
+            //设置年级
+            req.setBookFitGradeName(SpUtil.getGradeName());
+            req.setBookCategoryMatch(20000);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
+            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);;
         } else {
             Log.e(TAG, "query book from database...");
             mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
@@ -921,11 +927,11 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             @Override
             public void call(Object o) {
                 LogUtils.e(TAG,"handleTextBookEvent......");
-                if (o instanceof BookShelfProtocol && !mHide && mTextBookCall != null) { //网数据库存储 协议返回的JSON
+                if (o instanceof BookShelfProtocol && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
                     BookShelfProtocol shelfProtocol = (BookShelfProtocol) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getBookList();
+                    List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
-                } else if(o instanceof String && !mHide && StringUtils.isEquals((String) o,ProtocolId.PROTOCOL_ID_ALL_COACHBOOK+"")){
+                } else if(o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK+"")){
                     LogUtils.i("yuanye...请求服务器 加载出错 ---AllNotesFragment");
                     mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
@@ -938,9 +944,9 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
 
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.PROTOCOL_ID_ALL_COACHBOOK+"").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getData());
                 }else{
                     mLoadingNull.setVisibility(View.VISIBLE);
                 }

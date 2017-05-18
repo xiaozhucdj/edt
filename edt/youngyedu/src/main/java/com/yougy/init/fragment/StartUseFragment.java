@@ -62,7 +62,7 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
     @Override
     protected void handleEvent() {
         handleStartEvent();
-        handleBookShelfEvent();
+//        handleBookShelfEvent();
         super.handleEvent();
     }
 
@@ -100,7 +100,7 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
         }));
     }
 
-    private void handleBookShelfEvent() {
+   /* private void handleBookShelfEvent() {
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
@@ -113,7 +113,7 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
                         mRlDown.setVisibility(View.VISIBLE);
                         mFiles.clear();
 
-                        /***遍历数据  适配 Bean下载*/
+                        *//***遍历数据  适配 Bean下载*//*
                         int index = 1;
                         for (BookInfo bookInfo : bookShelf.getBookList()) {
                             //判断本地是否有此书
@@ -143,7 +143,7 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
             }
         }));
         subscription.add(tapEventEmitter.connect());
-    }
+    }*/
 
     @Nullable
     @Override

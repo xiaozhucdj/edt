@@ -21,11 +21,11 @@ import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.nohttp.DownInfo;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.TextBookCallBack;
+import com.yougy.common.protocol.callback.NewTextBookCallBack;
+import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.BookShelfProtocol;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
@@ -103,8 +103,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      * 搜索的 key
      */
     private String mSearchKey;
-
-
     private ViewGroup mRootView;
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
@@ -133,10 +131,9 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private SearchBookDialog mSearchDialog;
     private DownBookDialog mDialog;
     private BookInfo mDownInfo;
-    private TextBookCallBack mTextBookCall;
     private Subscription mSub;
     private ViewGroup mLoadingNull;
-
+    private NewTextBookCallBack mNewTextBookCallBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -146,7 +143,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
-
         mBookAdapter = new BookAdapter(getActivity(), mBooks, this);
         mRecyclerView.setAdapter(mBookAdapter);
         mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
@@ -155,18 +151,12 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 itemClick(vh.getAdapterPosition());
             }
         });
-//        mBookAdapter.notifyDataSetChanged();
 
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
-
         mLlSearchKeyTitle = (LinearLayout) mRootView.findViewById(R.id.ll_referenceKey);
-
         mLlSearchKeyResut = (LinearLayout) mRootView.findViewById(R.id.ll_referenceResult);
-
-
         mTvAllBooks = (TextView) mRootView.findViewById(R.id.tv_referenceBooks);
         mTvAllBooks.setOnClickListener(this);
-
         /**
          * 搜索结果错误提示关键字
          */
@@ -218,11 +208,9 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         mIsFist = true;
     }
 
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-
         if (mIsFist && !hidden && mCountBooks.size() == 0) {
             loadData();
         }
@@ -247,11 +235,16 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
-            mTextBookCall = new TextBookCallBack(getActivity(),ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK);
-            mTextBookCall.setTermIndex(-1);
-            mTextBookCall.setCategoryId(30000);
-            Log.e(TAG, "query book from server...");
-            ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), -1, 30000, "", ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK, mTextBookCall);
+            NewBookShelfReq req = new NewBookShelfReq();
+            //设置学生ID
+            req.setUserId(SpUtil.getAccountId());
+            //设置缓存数据ID的key
+            req.setCacheId(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK);
+            //设置年级
+            req.setBookFitGradeName("");
+            req.setBookCategoryMatch(30000);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
+            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);
         } else {
             Log.e(TAG, "query book from database...");
             mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
@@ -350,14 +343,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private void freshUI(List<BookInfo> bookInfos) {
         LogUtils.i("freshUI.....freshUI");
         if (bookInfos!=null && bookInfos.size()>0){
-            LogUtils.i("freshUI.....aaaaaaaaaaaa");
             mServerBooks.clear();
             mServerBooks.addAll(bookInfos);
             initPages(mServerBooks, COUNT_PER_PAGE);
         }
         else{
-            LogUtils.i("freshUI.....mLoadingNull");
-            LogUtils.i("mLoadingNull");
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
@@ -367,27 +357,21 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      * 刷新适配器数据
      */
     private void refreshAdapterData(View v) {
-
-
         if ((int) v.getTag() == mPagerIndex) {
             return;
         }
-
         //还原上个按钮状态
         mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
         mPagerIndex = (int) v.getTag();
         //设置当前按钮状态
         mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
-
         //设置page页数数据
         mBooks.clear();
-
         if ((mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
             mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
         } else {
             mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
         }
-//        mBookAdapter.notifyDataSetChanged();
         notifyDataSetChanged();
     }
 
@@ -548,12 +532,13 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof BookShelfProtocol && !mHide && mTextBookCall != null) { //网数据库存储 协议返回的JSON
+                if (o instanceof BookShelfProtocol && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
                     BookShelfProtocol shelfProtocol = (BookShelfProtocol) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getBookList();
+                    List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK+"")){
-                    LogUtils.i("yuanye...请求服务器 加载出错 ---ReferenceBooksFragment");
+
+                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK+"")){
+                    LogUtils.i("使用缓存课本");
                     mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
             }
@@ -564,10 +549,9 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
-
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK+"").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ",NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getData());
                 }else{
                     mLoadingNull.setVisibility(View.VISIBLE);
                 }
