@@ -18,7 +18,8 @@ public class NewQueryNoteReq extends  NewBaseReq {
     /***年级名称*/
     private  String noteFitGradeName ;
 
-
+    /**缓存笔记的ID*/
+    private int cacheId ;
     public NewQueryNoteReq() {
         m = "queryNote" ;
         address = "classRoom" ;
@@ -42,5 +43,13 @@ public class NewQueryNoteReq extends  NewBaseReq {
 
     public void setNoteFitGradeName(String noteFitGradeName) {
         this.noteFitGradeName = noteFitGradeName;
+    }
+
+    public int getCacheId() {
+        return cacheId;
+    }
+
+    public void setCacheId(int cacheId) {
+        this.cacheId = cacheId;
     }
 }

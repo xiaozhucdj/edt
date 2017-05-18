@@ -268,16 +268,16 @@ public class NewProtocolManager {
      * @param callbac
      */
     public static void bookShelf(NewBookShelfReq req, Callback callbac) {
-        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_BOOK_SHELF, callbac);
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), req.getCacheId(), callbac);
     }
 
     /**
-     * 14书架查询
+     * 14 笔记查询
      * @param req
      * @param callbac
      */
     public static void queryNote(NewQueryNoteReq req, Callback callbac) {
-        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_QUERY_NOTE, callbac);
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), req.getCacheId(), callbac);
     }
 
 
@@ -299,6 +299,7 @@ public class NewProtocolManager {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_DELETE_NOTE, callbac);
     }
 
+    /***协议请求 id*/
     public static class NewProtocolId {
         public static final int ID_VERSION = 1;
 
@@ -324,9 +325,9 @@ public class NewProtocolManager {
 
         public static final int ID_QUERY_SCHOOL_ORG= 12 ;
 
-        public static final int ID_BOOK_SHELF= 13 ;
+//        public static final int ID_BOOK_SHELF= 13 ;
 
-        public static final int ID_QUERY_NOTE= 14 ;
+//        public static final int ID_QUERY_NOTE= 14 ;
 
         public static final int ID_INSER_NOTE= 15 ;
 
@@ -338,11 +339,13 @@ public class NewProtocolManager {
 
         public static final int ID_LOGOUT= 19;
 
-
-
     }
-
+    /***协议返回 code*/
     public static class NewCodeResult {
         public static final int CODE_SUCCESS = 200 ;
+    }
+    /***缓存id*/
+    public static class NewCacheId{
+
     }
 }

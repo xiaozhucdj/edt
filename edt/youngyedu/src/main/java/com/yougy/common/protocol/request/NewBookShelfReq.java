@@ -14,7 +14,8 @@ public class NewBookShelfReq extends NewBaseReq{
     private String bookFitGradeName ;
     /**模糊分类编码*/
     private int bookCategoryMatch = -1 ;
-
+    /**缓存图书的ID*/
+    private int cacheId ;
 
     public NewBookShelfReq() {
         m = "bookShelf" ;
@@ -35,5 +36,13 @@ public class NewBookShelfReq extends NewBaseReq{
 
     public void setBookCategoryMatch(int bookCategoryMatch) {
         this.bookCategoryMatch = bookCategoryMatch;
+    }
+
+    public int getCacheId() {
+        return cacheId;
+    }
+
+    public void setCacheId(int cacheId) {
+        this.cacheId = cacheId;
     }
 }
