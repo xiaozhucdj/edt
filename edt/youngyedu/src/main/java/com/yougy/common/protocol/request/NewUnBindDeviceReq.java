@@ -13,7 +13,7 @@ public class NewUnBindDeviceReq  extends NewBaseReq{
     private String deviceId ;
 
     public NewUnBindDeviceReq() {
-        m = "bindDevice" ;
+        m = "unbindDevice" ;
         address = "device" ;
     }
 

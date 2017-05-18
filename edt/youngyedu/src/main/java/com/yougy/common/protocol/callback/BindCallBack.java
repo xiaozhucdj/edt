@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.rx.RxBus;
@@ -53,7 +54,7 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
 
     @Override
     public void onResponse(NewBindDeviceRep response, int id) {
-        if (response != null) {
+        if (response != null&&response.getCode()== ProtocolId.RET_SUCCESS) {
             downloadDb();
             RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(response);

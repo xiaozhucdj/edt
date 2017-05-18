@@ -7,13 +7,15 @@ import android.widget.TextView;
 
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.UnBindCallback;
+import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.common.protocol.response.NewUnBindDeviceRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.home.bean.StatusInfo;
 import com.yougy.init.activity.InitInfoActivity;
 import com.yougy.ui.activity.R;
 
@@ -49,7 +51,7 @@ public class AccountSetActivity extends BaseActivity implements View.OnClickList
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof StatusInfo) {
+                if (o instanceof NewUnBindDeviceRep) {
                     BaseActivity.finishAll();
                     loadIntent(InitInfoActivity.class);
                 }
@@ -110,6 +112,10 @@ public class AccountSetActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.btn_unwrap:
                 ProtocolManager.deviceUnBindProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_UNBIND_DEVICE, new UnBindCallback(this));
+                NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
+                unBindDeviceReq.setDeviceId(Commons.UUID);
+                unBindDeviceReq.setUserId(SpUtil.getAccountId());
+                NewProtocolManager.unbindDevice(unBindDeviceReq,new UnBindCallback(this));
                 break;
         }
     }
