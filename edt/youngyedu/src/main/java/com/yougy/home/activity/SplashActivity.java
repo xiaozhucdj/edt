@@ -13,11 +13,10 @@ import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.callback.NewUpdateCallBack;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -77,7 +76,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             SpUtil.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
-            if ("-1".equalsIgnoreCase(SpUtil.getAccountId())) {
+            if (-1==SpUtil.getAccountId()) {
                 jumpWifiActivity();
             } else {
                 jumpActivity(MainActivity.class);
@@ -94,7 +93,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     private void login() {
         callBack = new LoginCallBack(SplashActivity.this);
         callBack.setOnJumpListener(SplashActivity.this);
-        ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, callBack);
+        NewLoginReq loginReq = new NewLoginReq();
+        loginReq.setDeviceId(Commons.UUID);
+//        ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, callBack);
+        NewProtocolManager.login(loginReq,callBack);
     }
 
     private void getServerVersion(){
@@ -278,8 +280,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     private static void doDeleteDownApk() {
         File file = new File(DownloadManager.getApkPath());
         if (file.exists()) {
-            boolean result = file.delete();
-        } else {
+            file.delete();
         }
     }
 

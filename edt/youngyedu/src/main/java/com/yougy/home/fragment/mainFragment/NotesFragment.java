@@ -170,9 +170,9 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
                         //设置 笔记名字
                         mCreatInfo.setNoteTitle(noteTitle);
                         //笔记所有者
-                        mCreatInfo.setNoteAuthor(Integer.parseInt(SpUtil.getAccountId()));
+                        mCreatInfo.setNoteAuthor(SpUtil.getAccountId());
                         // 笔记创建者
-                        mCreatInfo.setNoteCreator(Integer.parseInt(SpUtil.getAccountId()));
+                        mCreatInfo.setNoteCreator(SpUtil.getAccountId());
                         //设置 笔记类型 ,内部转换对应的int 后期修改
                         mCreatInfo.setNoteStyleOption(mNoteDialog.getNoteOptionStyle());
                         UIUtils.showToastSafe(mCreatInfo.getNoteType() + "", 1);
@@ -356,7 +356,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         if (YougyApplicationManager.isWifiAvailable()) {
             mNoteCallBack = new NoteBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_NOTE);
             mNoteCallBack.setTermIndex(0);
-            ProtocolManager.queryNotesProtocol(Integer.parseInt(SpUtil.getAccountId()), 0, 2, ProtocolId.PROTOCOL_ID_NOTE, mNoteCallBack);
+            ProtocolManager.queryNotesProtocol(SpUtil.getAccountId(), 0, 2, ProtocolId.PROTOCOL_ID_NOTE, mNoteCallBack);
             LogUtils.e(TAG, "query notes from server...");
         } else {
             LogUtils.e(TAG, "query notes from database...");
@@ -596,7 +596,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
     private void creatNoteInfoProtocol() {
         if (NetUtils.isNetConnected()) {
             AppendNotesRequest request = new AppendNotesRequest();
-            request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+            request.setUserId(SpUtil.getAccountId());
             request.setCount(1);
             List<NoteInfo> infos = new ArrayList<>();
             infos.add(mCreatInfo);

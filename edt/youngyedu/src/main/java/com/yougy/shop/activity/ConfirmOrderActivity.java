@@ -22,12 +22,10 @@ import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.OrderBaseResponse;
 import com.yougy.common.protocol.response.QueryQRStrProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderProtocol;
-import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
-import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.QRCodeDialog;
@@ -199,7 +197,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
             orderBookInfoList.addAll(data);
         }
         RequirePayOrderRequest request = new RequirePayOrderRequest();
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
         ArrayList<DataBookBean> dataList = new ArrayList<DataBookBean>();
         DataBookBean dataBookBean = new DataBookBean();

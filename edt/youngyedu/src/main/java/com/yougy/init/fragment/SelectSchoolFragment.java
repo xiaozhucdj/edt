@@ -16,15 +16,14 @@ import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AreaCallBack;
 import com.yougy.common.protocol.callback.SchoolCallBack;
 import com.yougy.common.protocol.request.NewQueryAreaReq;
+import com.yougy.common.protocol.request.NewQuerySchoolReq;
+import com.yougy.common.protocol.response.NewQueryAreaRep;
+import com.yougy.common.protocol.response.NewQuerySchoolRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.init.bean.AreaInfo;
-import com.yougy.init.bean.SchoolInfo;
 import com.yougy.init.manager.InitManager;
 import com.yougy.ui.activity.R;
 
@@ -47,34 +46,30 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
     private Button mNextStep;
     private SelectClassFragment nextFragment;
 
+    private List<NewQuerySchoolRep.School> mSchoolInfos = new ArrayList<>();
+    private List<NewQueryAreaRep.Area> mProvinceInfos = new ArrayList<>();
+    private List<NewQueryAreaRep.Area> mAreaInfos = new ArrayList<>();
+    private List<NewQueryAreaRep.Area> mCityInfos = new ArrayList<>();
 
-    private List<SchoolInfo.School> mSchoolInfos = new ArrayList<>();
-    private List<AreaInfo.Area> mProvinceInfos = new ArrayList<>();
-    private List<AreaInfo.Area> mCityInfos = new ArrayList<>();
-    private List<AreaInfo.Area> mAreaInfos = new ArrayList<>();
+    private ArrayAdapter<NewQueryAreaRep.Area> mProvinceAdapter;
+    private ArrayAdapter<NewQueryAreaRep.Area> mAreaAdapter;
+    private ArrayAdapter<NewQueryAreaRep.Area> mCityAdapter;
+    private ArrayAdapter<NewQuerySchoolRep.School> mSchoolAdapter;
 
-    private ArrayAdapter<AreaInfo.Area> mProvinceAdapter;
-    private ArrayAdapter<AreaInfo.Area> mCityAdapter;
-    private ArrayAdapter<AreaInfo.Area> mAreaAdapter;
-    private ArrayAdapter<SchoolInfo.School> mSchoolAdapter;
+    private HashMap<String, List<NewQueryAreaRep.Area>> mAreaMap = new HashMap<>();
 
-    private HashMap<String, List<AreaInfo.Area>> mAreaMap = new HashMap<>();
-
-
-    private SchoolInfo.School schoolInfo;
-    private AreaInfo.Area provinceInfo;
-    private AreaInfo.Area cityInfo;
-    private AreaInfo.Area areaInfo;
-
-    private AreaInfo.Area selectedArea;
+    private NewQuerySchoolRep.School schoolInfo;
+    private NewQueryAreaRep.Area provinceInfo;
+    private NewQueryAreaRep.Area cityInfo;
+    private NewQueryAreaRep.Area areaInfo;
+    private NewQueryAreaRep.Area selectedArea;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         LogUtils.e(TAG, "context is null ? " + (context == null));
         LogUtils.e(TAG, "onAttach.................activity");
-//        ProtocolManager.queryAreaProtocol(-1, "", -1, -1, ProtocolId.PROTOCOL_ID_QUERYAREA, new AreaCallBack(context));
-        NewProtocolManager.queryArea(new NewQueryAreaReq(),new AreaCallBack(context));
+        NewProtocolManager.queryArea(new NewQueryAreaReq(), new AreaCallBack(context));
     }
 
     @Override
@@ -88,15 +83,15 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         LogUtils.e(TAG, "onViewCreated.........................");
-        schoolInfo = new SchoolInfo.School();
-        schoolInfo.setSchoolId(Integer.toString(0));
+        schoolInfo = new NewQuerySchoolRep.School();
+        schoolInfo.setSchoolId(0);
         schoolInfo.setSchoolName("选择学校");
         mSchoolInfos.add(0, schoolInfo);
         mSchoolAdapter = new ArrayAdapter<>(context, R.layout.simple_spinner_item, mSchoolInfos);
         mSchoolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSchoolSpinner.setAdapter(mSchoolAdapter);
 
-        provinceInfo = new AreaInfo.Area();
+        provinceInfo = new NewQueryAreaRep.Area();
         provinceInfo.setAreaId(Integer.toString(0));
         provinceInfo.setAreaName("选择省份");
         mProvinceInfos.add(0, provinceInfo);
@@ -104,7 +99,7 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
         mProvinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProvinceSpinner.setAdapter(mProvinceAdapter);
 
-        cityInfo = new AreaInfo.Area();
+        cityInfo = new NewQueryAreaRep.Area();
         cityInfo.setAreaId(Integer.toString(0));
         cityInfo.setAreaName("选择市");
         mCityInfos.add(0, cityInfo);
@@ -112,7 +107,7 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
         mCityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCitySpinner.setAdapter(mCityAdapter);
 
-        areaInfo = new AreaInfo.Area();
+        areaInfo = new NewQueryAreaRep.Area();
         areaInfo.setAreaId(Integer.toString(0));
         areaInfo.setAreaName("选择地区");
         mAreaInfos.add(0, areaInfo);
@@ -194,7 +189,9 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
                 if (position != 0) {
                     selectedArea = mAreaAdapter.getItem(position);
                     SpUtil.saveSelectAreaID(selectedArea.getAreaId());
-                    ProtocolManager.querySchoolProtocol(selectedArea.getAreaId(), "", ProtocolId.PROTOCOL_ID_QUERYSCHOOL, new SchoolCallBack(context));
+                    NewQuerySchoolReq schoolReq = new NewQuerySchoolReq();
+                    schoolReq.setSchoolArea(Integer.parseInt(selectedArea.getAreaId()));
+                    NewProtocolManager.querySchool(schoolReq,new SchoolCallBack(context));
                     mSchoolSpinner.setClickable(true);
                 } else {
                     mSchoolSpinner.setClickable(false);
@@ -244,10 +241,9 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
             @Override
             public void call(Object o) {
                 Log.e(TAG, "handleSchoolEvent...");
-                if (o instanceof SchoolInfo) {
-                    Log.e(TAG, "handleSchoolEvent...");
-                    SchoolInfo info = (SchoolInfo) o;
-                    List<SchoolInfo.School> schools = info.getSchoolList();
+                if (o instanceof NewQuerySchoolRep){
+                    NewQuerySchoolRep schoolRep = (NewQuerySchoolRep) o;
+                    List<NewQuerySchoolRep.School> schools = schoolRep.getData();
                     mSchoolInfos.clear();
                     mSchoolInfos.add(schoolInfo);
                     if (schools != null && schools.size() > 0) {
@@ -264,28 +260,26 @@ public class SelectSchoolFragment extends BFragment implements View.OnClickListe
             @Override
             public void call(Object o) {
                 Log.e(TAG, "handleAreaEvent...");
-                if (o instanceof AreaInfo.Area) {
+                if (o instanceof NewQueryAreaRep) {
+                    NewQueryAreaRep area = (NewQueryAreaRep) o;
                     mProvinceInfos.clear();
                     mProvinceInfos.add(provinceInfo);
-                    AreaInfo.Area area = (AreaInfo.Area) o;
-                    for (AreaInfo.Area info : area.getAreaList()) {
-                        AreaInfo.Area spinnerInfo = new AreaInfo.Area();
-                        spinnerInfo.setAreaId(info.getAreaId());
-                        spinnerInfo.setAreaName(info.getAreaName());
-                        mProvinceInfos.add(spinnerInfo);
-                    }
+                    mProvinceInfos.addAll(area.getData());
                     mProvinceAdapter.notifyDataSetChanged();
-                    traverse(area);
+                    for (NewQueryAreaRep.Area info : area.getData()) {
+                        traverse(info);
+                    }
                 }
             }
         }));
     }
 
-    private void traverse(AreaInfo.Area area) {
-        List<AreaInfo.Area> areas = area.getAreaList();
+
+    private void traverse(NewQueryAreaRep.Area area) {
+        List<NewQueryAreaRep.Area> areas = area.getAreaList();
         if (areas != null) {
             mAreaMap.put(area.getAreaId(), areas);
-            for (AreaInfo.Area area1 : areas) {
+            for (NewQueryAreaRep.Area area1 : areas) {
                 traverse(area1);
             }
         }

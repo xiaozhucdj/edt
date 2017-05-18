@@ -88,7 +88,7 @@ public class AllNotesAdapter extends RecyclerView.Adapter<AllNotesAdapter.AllHol
                     mImgIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_note_cover));
                     mImgIcon.setBackgroundDrawable(UIUtils.getDrawable(R.drawable.img_book_backgroud));
                     //判断是否自己添加的笔记
-                    if (mInfos.get(position).getNoteCreator() == Integer.parseInt(SpUtil.getAccountId())) {
+                    if (mInfos.get(position).getNoteCreator() == SpUtil.getAccountId()) {
                         mTvMyTitle.setText(mInfos.get(position).getNoteTitle());
                         setViewVisibility(false);
                         mTvMyTitle.setVisibility(View.VISIBLE);

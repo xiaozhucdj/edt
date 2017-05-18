@@ -13,7 +13,7 @@ public class NewQueryAreaReq extends NewBaseReq {
     /**地区编码*/
     private int areaId = -1;
     /**归属地区*/
-    private String areaParent ;
+    private String areaParent;
 
     public NewQueryAreaReq() {
         m = "queryArea" ;

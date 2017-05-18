@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +16,16 @@ import android.widget.Spinner;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.fragment.BFragment;
-import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.protocol.callback.ClassCallBack;
+import com.yougy.common.protocol.request.NewQuerySchoolOrgReq;
+import com.yougy.common.protocol.response.NewQuerySchoolOrgRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.init.bean.ClassInfo;
 import com.yougy.init.manager.InitManager;
 import com.yougy.ui.activity.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import rx.functions.Action1;
@@ -43,22 +43,35 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
     private SelectIdentityFragment nextFragment;
     private SelectSchoolFragment lastFragment;
 
-    private List<ClassInfo.Org> mGradeInfos = new ArrayList<>();
+//    private List<ClassInfo.Org> mGradeInfos = new ArrayList<>();
 
-    private List<ClassInfo.Org> mClassInfos = new ArrayList<>();
+//    private List<ClassInfo.Org> mClassInfos = new ArrayList<>();
 
-    private HashMap<String, List<ClassInfo.Org>> mOrgMap = new HashMap<>();
+//    private HashMap<String, List<ClassInfo.Org>> mOrgMap = new HashMap<>();
 
-    private ArrayAdapter<ClassInfo.Org> mGradeAdapter;
-    private ArrayAdapter<ClassInfo.Org> mClassAdapter;
-    private ClassInfo.Org gradeInfo;
-    private ClassInfo.Org classInfo;
-    private ClassInfo.Org mGrade;
+//    private ArrayAdapter<ClassInfo.Org> mGradeAdapter;
+//    private ArrayAdapter<ClassInfo.Org> mClassAdapter;
+//    private ClassInfo.Org gradeInfo;
+//    private ClassInfo.Org classInfo;
+//    private ClassInfo.Org mGrade;
+    private List<NewQuerySchoolOrgRep.SchoolOrg> mGradeInfos = new ArrayList<>();
+    private List<NewQuerySchoolOrgRep.SchoolOrg> mClassInfos = new ArrayList<>();
+//    private HashMap<String,List<NewQuerySchoolOrgRep.SchoolOrg>> mOrgMap = new HashMap<>();
+    private SparseArray<List<NewQuerySchoolOrgRep.SchoolOrg>> mOrgMap = new SparseArray<>();
+    private ArrayAdapter<NewQuerySchoolOrgRep.SchoolOrg> mGradeAdapter;
+    private ArrayAdapter<NewQuerySchoolOrgRep.SchoolOrg> mClassAdapter;
+    private NewQuerySchoolOrgRep.SchoolOrg gradeInfo;
+    private NewQuerySchoolOrgRep.SchoolOrg classInfo;
+    private NewQuerySchoolOrgRep.SchoolOrg mGrade;
+
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ProtocolManager.queryClassProtocol(InitManager.getInstance().getSchoolId(), "", ProtocolId.PROTOCOL_ID_QUERYCLASS, new ClassCallBack(context));
+//        ProtocolManager.queryClassProtocol(InitManager.getInstance().getSchoolId(), "", ProtocolId.PROTOCOL_ID_QUERYCLASS, new ClassCallBack(context));
+        NewQuerySchoolOrgReq schoolOrgReq = new NewQuerySchoolOrgReq();
+        schoolOrgReq.setSchoolId(InitManager.getInstance().getSchoolId());
+        NewProtocolManager.querySchoolOrg(schoolOrgReq,new ClassCallBack(context));
     }
 
     @Override
@@ -71,23 +84,41 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof ClassInfo){
-                    ClassInfo classInfo = (ClassInfo) o;
-                    ClassInfo.Org org = classInfo.getOrg();
-                    if (org.getCount() > 0) {
+//                if (o instanceof ClassInfo){
+//                    ClassInfo classInfo = (ClassInfo) o;
+//                    ClassInfo.Org org = classInfo.getOrg();
+//                    if (org.getCount() > 0) {
+//                        mGradeInfos.clear();
+//                        mGradeInfos.add(gradeInfo);
+//                        mOrgMap.clear();
+//                        for (ClassInfo.Org org1 : org.getOrgList()) {
+//                            mGradeInfos.addAll(org1.getOrgList());
+//                            for (ClassInfo.Org info : org1.getOrgList()) {
+//                                mOrgMap.put(info.getOrgId(), info.getOrgList());
+//                            }
+//                        }
+//                        LogUtils.e(TAG, "map is : " + mOrgMap);
+//                        mGradeAdapter.notifyDataSetChanged();
+//                        mGradeSpinner.setSelection(0);
+//                    }
+//                }
+                if (o instanceof NewQuerySchoolOrgRep){
+                    NewQuerySchoolOrgRep orgRep = (NewQuerySchoolOrgRep) o;
+                    List<NewQuerySchoolOrgRep.SchoolOrg> data = orgRep.getData();
+                    if (null!=data&&data.size()>0){
                         mGradeInfos.clear();
                         mGradeInfos.add(gradeInfo);
                         mOrgMap.clear();
-                        for (ClassInfo.Org org1 : org.getOrgList()) {
-                            mGradeInfos.addAll(org1.getOrgList());
-                            for (ClassInfo.Org info : org1.getOrgList()) {
-                                mOrgMap.put(info.getOrgId(), info.getOrgList());
+                        for (NewQuerySchoolOrgRep.SchoolOrg org:orgRep.getData()){
+                            mGradeInfos.addAll(org.getOrgList());
+                            for (NewQuerySchoolOrgRep.SchoolOrg info:org.getOrgList()){
+                                mOrgMap.put(info.getOrgId(),info.getOrgList());
                             }
                         }
-                        LogUtils.e(TAG, "map is : " + mOrgMap);
                         mGradeAdapter.notifyDataSetChanged();
                         mGradeSpinner.setSelection(0);
                     }
+
                 }
             }
         }));
@@ -97,13 +128,14 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         LogUtils.e(TAG,"onActivityCreated...................");
-        gradeInfo = new ClassInfo.Org();
-        gradeInfo.setOrgId(Integer.toString(0));
+//        gradeInfo = new ClassInfo.Org();
+        gradeInfo = new NewQuerySchoolOrgRep.SchoolOrg();
+        gradeInfo.setOrgId(0);
         gradeInfo.setOrgName("选择年级");
         mGradeInfos.add(0, gradeInfo);
 
-        classInfo = new ClassInfo.Org();
-        classInfo.setOrgId(Integer.toString(0));
+        classInfo = new NewQuerySchoolOrgRep.SchoolOrg();
+        classInfo.setOrgId(0);
         classInfo.setOrgName("选择班级");
         mClassInfos.add(0, classInfo);
 
@@ -137,7 +169,8 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
                 mClassInfos.add(classInfo);
                 mGrade = mGradeAdapter.getItem(position);
                 if (position != 0) {
-                    List<ClassInfo.Org> orgs = mOrgMap.get(mGrade.getOrgId());
+//                    List<ClassInfo.Org> orgs = mOrgMap.get(mGrade.getOrgId());
+                    List<NewQuerySchoolOrgRep.SchoolOrg> orgs = mOrgMap.get(mGrade.getOrgId());
                     if (orgs != null) {
                         mClassInfos.addAll(orgs);
                     }
@@ -163,7 +196,8 @@ public class SelectClassFragment extends BFragment implements View.OnClickListen
                 EpdController.invalidate(rootView, UpdateMode.GC);
                 if (position != 0) {
                     mNextStep.setEnabled(true);
-                    ClassInfo.Org org = mClassInfos.get(position);
+//                    ClassInfo.Org org = mClassInfos.get(position);
+                    NewQuerySchoolOrgRep.SchoolOrg org = mClassInfos.get(position);
                     SpUtil.saveAccountClass(mGrade.getOrgName()+org.getOrgName());
                     SpUtil.saveGradeName(mGrade.getOrgName());
                     InitManager.getInstance().setClassId(org.getOrgId());

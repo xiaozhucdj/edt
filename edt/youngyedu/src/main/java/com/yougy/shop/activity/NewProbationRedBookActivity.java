@@ -230,7 +230,7 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
      */
     private void requestCars() {
         QueryBookCartCallBack callBack = new QueryBookCartCallBack(this, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART);
-        ProtocolManager.queryBookCartProtocol(Integer.parseInt(SpUtil.getAccountId()), ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART, callBack);
+        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART, callBack);
     }
 
     @Override
@@ -374,7 +374,7 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
 
         AppendBookCartRequest request = new AppendBookCartRequest();
 
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
 
         List<DataBookBean> list = new ArrayList<>() ;
@@ -400,7 +400,7 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
 
         AppendBookFavorRequest request = new AppendBookFavorRequest();
 
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
 
         List<DataBookBean> list = new ArrayList<>() ;

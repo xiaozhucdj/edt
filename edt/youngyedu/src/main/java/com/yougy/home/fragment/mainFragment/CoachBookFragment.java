@@ -187,7 +187,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             mTextBookCall.setTermIndex(0);
             mTextBookCall.setCategoryId(20000);
             Log.e(TAG, "query book from server...");
-            ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), 0, 20000, "", ProtocolId.PROTOCOL_ID_ALL_COACHBOOK, mTextBookCall);
+            ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), 0, 20000, "", ProtocolId.PROTOCOL_ID_ALL_COACHBOOK, mTextBookCall);
         } else {
             Log.e(TAG, "query book from database...");
             mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());

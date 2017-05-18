@@ -42,6 +42,6 @@ public class BookShelfCallBack extends BaseCallBack<BookShelfProtocol> {
     @Override
     public void onClick() {
         super.onClick();
-        ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), -1, -1, "", ProtocolId.PROTOCOL_ID_BOOK_SHELF, this);
+        ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), -1, -1, "", ProtocolId.PROTOCOL_ID_BOOK_SHELF, this);
     }
 }

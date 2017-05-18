@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.protocol.response.QueryBookCartProtocol;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
@@ -46,6 +45,6 @@ public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartProtocol>
     public void onClick() {
         super.onClick();
         //PROTOCOL_ID_QUERY_BOOK_CART
-        ProtocolManager.queryBookCartProtocol(Integer.parseInt(SpUtil.getAccountId()),  mProtocol, this);
+        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(),  mProtocol, this);
     }
 }

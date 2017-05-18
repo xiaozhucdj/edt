@@ -463,7 +463,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                             subject = "无";
                         }
 
-                        if (StringUtils.isEmpty(noteTitle) && Integer.parseInt(SpUtil.getAccountId()) == mControlActivity.mNoteCreator) {
+                        if (StringUtils.isEmpty(noteTitle) && SpUtil.getAccountId() == mControlActivity.mNoteCreator) {
                             UIUtils.showToastSafe("请填写笔记昵称", Toast.LENGTH_SHORT);
                             return;
                         } else {
@@ -471,9 +471,9 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                                 mUpdateInfo = new NoteInfo();
                                 mUpdateInfo.setNoteId(mControlActivity.mNoteId);
                                 //标题
-                                mUpdateInfo.setNoteTitle(Integer.parseInt(SpUtil.getAccountId()) == mControlActivity.mNoteCreator ? noteTitle : mControlActivity.mNotetitle);
+                                mUpdateInfo.setNoteTitle(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? noteTitle : mControlActivity.mNotetitle);
                                 //学科
-                                mUpdateInfo.setNoteFitSubjectName(Integer.parseInt(SpUtil.getAccountId()) == mControlActivity.mNoteCreator ? subject : mControlActivity.mNoteSubject);
+                                mUpdateInfo.setNoteFitSubjectName(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? subject : mControlActivity.mNoteSubject);
                                 //笔记样式
                                 mUpdateInfo.setNoteStyleOption(mNoteUpdataDialog.getNoteOptionStyle());
                                 updataNoteProtocol();
@@ -496,7 +496,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 });
                 mNoteUpdataDialog.show();
 //                mNoteUpdataDialog.setNoteTypeGone();
-                if (Integer.parseInt(SpUtil.getAccountId()) != mControlActivity.mNoteCreator) {
+                if (SpUtil.getAccountId() != mControlActivity.mNoteCreator) {
                     mNoteUpdataDialog.setEditNameEnable(false);
                     mNoteUpdataDialog.setRecyclerViewGone();
                 }
@@ -516,7 +516,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                     return;
                 }
 
-                if (Integer.parseInt(SpUtil.getAccountId()) == mControlActivity.mNoteCreator) {
+                if (SpUtil.getAccountId() == mControlActivity.mNoteCreator) {
                     if (mDelteDialog == null) {
                         mDelteDialog = new DeleteDialog(getActivity());
                         mDelteDialog.setSureListener(new DeleteDialog.SureListener() {
@@ -583,7 +583,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
 
     private void delteNoteProtocol() {
         RemoveNotesRequest request = new RemoveNotesRequest();
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
         NoteInfo info = new NoteInfo();
         info.setNoteId(mControlActivity.mNoteId);
@@ -636,7 +636,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
     private void updataNoteProtocol() {
 
         UpdateNotesRequest request = new UpdateNotesRequest();
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
 
         List<NoteInfo> infos = new ArrayList<>();

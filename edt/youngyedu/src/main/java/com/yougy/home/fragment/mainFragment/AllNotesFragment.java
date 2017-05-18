@@ -357,7 +357,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         if (YougyApplicationManager.isWifiAvailable()) {
             mNoteCallBack = new NoteBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_ALL_NOTE);
             mNoteCallBack.setTermIndex(-1);
-            ProtocolManager.queryNotesProtocol(Integer.parseInt(SpUtil.getAccountId()), 0, 2, ProtocolId.PROTOCOL_ID_ALL_NOTE, mNoteCallBack);
+            ProtocolManager.queryNotesProtocol(SpUtil.getAccountId(), 0, 2, ProtocolId.PROTOCOL_ID_ALL_NOTE, mNoteCallBack);
             LogUtils.e(TAG, "query notes from server...");
         } else {
             LogUtils.e(TAG, "query notes from database...");
@@ -730,7 +730,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         NoteInfo1.setNoteFitSubjectName("语文");
         NoteInfo1.setNoteFitSubjectId(1);
         //设置笔记创建者
-        NoteInfo1.setNoteAuthor(Integer.parseInt(SpUtil.getAccountId()));
+        NoteInfo1.setNoteAuthor(SpUtil.getAccountId());
         //设置笔记对应书的id
         NoteInfo1.setBookId(-1);
         //设置是否和书绑定
@@ -742,7 +742,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         NoteInfo2.setNoteFitSubjectName("语文");
         NoteInfo2.setNoteFitSubjectId(1);
         //设置笔记创建者
-        NoteInfo2.setNoteAuthor(Integer.parseInt(SpUtil.getAccountId()));
+        NoteInfo2.setNoteAuthor(SpUtil.getAccountId());
         //设置笔记对应书的id
         NoteInfo2.setBookId(-1);
         //设置是否和书绑定

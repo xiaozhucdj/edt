@@ -251,7 +251,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             mTextBookCall.setTermIndex(-1);
             mTextBookCall.setCategoryId(30000);
             Log.e(TAG, "query book from server...");
-            ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), -1, 30000, "", ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK, mTextBookCall);
+            ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), -1, 30000, "", ProtocolId.ROTOCOL_ID_ALL_REFERENCE_BOOK, mTextBookCall);
         } else {
             Log.e(TAG, "query book from database...");
             mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());

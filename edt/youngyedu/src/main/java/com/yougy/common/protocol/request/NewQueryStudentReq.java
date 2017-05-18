@@ -8,19 +8,19 @@ package com.yougy.common.protocol.request;
 
 public class NewQueryStudentReq extends NewBaseReq {
     /**用户编码*/
-    private  int userId;
-    /**学生学号*/
-    private  int userNum ;
-    /**学生帐号*/
-    private  String userName ;
-    /**学生姓名*/
-    private  String userRealName;
-    /**学校编码*/
-    private  int schoolId  ;
-    /**年级编码*/
-    private   int gradeId  ;
+//    private  int userId=-1;
+//    /**学生学号*/
+//    private  int userNum=-1 ;
+//    /**学生帐号*/
+//    private  String userName ;
+//    /**学生姓名*/
+//    private  String userRealName;
+//    /**学校编码*/
+//    private  int schoolId=-1  ;
+//    /**年级编码*/
+//    private   int gradeId=-1  ;
     /***班级编码*/
-    private   int classId  ;
+    private   int classId=-1  ;
     /**设备编码*/
     private   String deviceId ;
 
@@ -29,29 +29,29 @@ public class NewQueryStudentReq extends NewBaseReq {
         address = "users";
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public void setUserNum(int userNum) {
-        this.userNum = userNum;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setUserRealName(String userRealName) {
-        this.userRealName = userRealName;
-    }
-
-    public void setSchoolId(int schoolId) {
-        this.schoolId = schoolId;
-    }
-
-    public void setGradeId(int gradeId) {
-        this.gradeId = gradeId;
-    }
+//    public void setUserId(int userId) {
+//        this.userId = userId;
+//    }
+//
+//    public void setUserNum(int userNum) {
+//        this.userNum = userNum;
+//    }
+//
+//    public void setUserName(String userName) {
+//        this.userName = userName;
+//    }
+//
+//    public void setUserRealName(String userRealName) {
+//        this.userRealName = userRealName;
+//    }
+//
+//    public void setSchoolId(int schoolId) {
+//        this.schoolId = schoolId;
+//    }
+//
+//    public void setGradeId(int gradeId) {
+//        this.gradeId = gradeId;
+//    }
 
     public void setClassId(int classId) {
         this.classId = classId;

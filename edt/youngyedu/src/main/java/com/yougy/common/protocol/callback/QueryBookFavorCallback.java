@@ -45,6 +45,6 @@ public class QueryBookFavorCallback extends BaseCallBack<QueryBookFavorProtocol>
     public void onClick() {
         super.onClick();
         //PROTOCOL_ID_QUERY_BOOK_FAVOR
-        ProtocolManager.queryBookFavorProtocol(Integer.parseInt(SpUtil.getAccountId()), mProtocol, this);
+        ProtocolManager.queryBookFavorProtocol(SpUtil.getAccountId(), mProtocol, this);
     }
 }

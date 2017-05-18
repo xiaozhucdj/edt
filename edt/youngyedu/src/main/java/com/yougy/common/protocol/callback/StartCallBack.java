@@ -4,11 +4,11 @@ import android.content.Context;
 
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.BaseCallBack;
-import com.yougy.common.protocol.response.LogInProtocol;
+import com.yougy.common.protocol.response.NewLoginRep;
+import com.yougy.common.protocol.response.NewQueryStudentRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
-import com.yougy.init.bean.UserInfo;
+import com.yougy.common.utils.LogUtils;
 
 import okhttp3.Request;
 import okhttp3.Response;
@@ -17,7 +17,7 @@ import okhttp3.Response;
  * Created by jiangliang on 2016/12/14.
  */
 
-public class StartCallBack extends BaseCallBack<LogInProtocol> {
+public class StartCallBack extends BaseCallBack<NewLoginRep> {
 
     @Override
     public void onAfter(int id) {
@@ -32,16 +32,17 @@ public class StartCallBack extends BaseCallBack<LogInProtocol> {
     }
 
     @Override
-    public LogInProtocol parseNetworkResponse(Response response, int id) throws Exception {
+    public NewLoginRep parseNetworkResponse(Response response, int id) throws Exception {
         String str = response.body().string();
-        return GsonUtil.fromJson(str,LogInProtocol.class);
+        LogUtils.e(getClass().getName(),"login json is : " + str);
+        return GsonUtil.fromJson(str,NewLoginRep.class);
     }
 
     @Override
-    public void onResponse(LogInProtocol response, int id) {
+    public void onResponse(NewLoginRep response, int id) {
         if (response.getCode() == ProtocolId.RET_SUCCESS) {
-            if (response.getUserList() != null && response.getUserList().get(0) != null) {
-                UserInfo.User user = response.getUserList().get(0);
+            if (response.getCount()>0) {
+                NewQueryStudentRep.User user = response.getData().get(0);
                 RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
                 rxBus.send(user);
             }

@@ -377,7 +377,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             mTextBookCall.setTermIndex(-1);
             mTextBookCall.setCategoryId(10000);
             Log.e(TAG, "query book from server...");
-            ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), -1, 10000, "", ProtocolId.PROTOCOL_ID_All_TEXT_BOOK, mTextBookCall);
+            ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), -1, 10000, "", ProtocolId.PROTOCOL_ID_All_TEXT_BOOK, mTextBookCall);
         } else {
             Log.e(TAG, "query book from database...");
             mSub =  getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());

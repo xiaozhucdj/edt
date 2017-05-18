@@ -187,7 +187,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         if (YougyApplicationManager.isWifiAvailable()) {
             mHomeworkCallBack = new HomewrokCallBack(getActivity(),ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK);
             Log.e(TAG, "query homeWrok from server...");
-            ProtocolManager.queryHomeWrokProtocol(Integer.parseInt(SpUtil.getAccountId()), ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK, mHomeworkCallBack);
+            ProtocolManager.queryHomeWrokProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK, mHomeworkCallBack);
         }else{
             tvErrMsg.setText(UIUtils.getString(R.string.net_not_connection));
             mLoadingNull.setVisibility(View.VISIBLE);

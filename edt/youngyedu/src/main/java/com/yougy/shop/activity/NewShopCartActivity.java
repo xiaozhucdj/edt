@@ -19,7 +19,6 @@ import com.yougy.common.protocol.callback.RemoveBookCartCallBack;
 import com.yougy.common.protocol.request.RemoveBookCartRequest;
 import com.yougy.common.protocol.response.QueryBookCartProtocol;
 import com.yougy.common.protocol.response.RemoveBookCartProtocol;
-import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
@@ -99,7 +98,7 @@ public class NewShopCartActivity extends ShopAutoLayoutBaseActivity implements V
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        ProtocolManager.fake_queryBookCartProtocol(Integer.parseInt(SpUtil.getAccountId())
+        ProtocolManager.fake_queryBookCartProtocol(SpUtil.getAccountId()
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
                 , new QueryBookCartCallBack(NewShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
     }
@@ -161,7 +160,7 @@ public class NewShopCartActivity extends ShopAutoLayoutBaseActivity implements V
                     //删除购物车的回调在这
                     RemoveBookCartProtocol protocal = (RemoveBookCartProtocol) o;
                     if (protocal.getCode() == 200) {
-                        ProtocolManager.fake_queryBookCartProtocol(Integer.parseInt(SpUtil.getAccountId())
+                        ProtocolManager.fake_queryBookCartProtocol(SpUtil.getAccountId()
                                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
                                 , new QueryBookCartCallBack(NewShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
                     }
@@ -173,7 +172,7 @@ public class NewShopCartActivity extends ShopAutoLayoutBaseActivity implements V
 
     @Override
     protected void loadData() {
-        ProtocolManager.fake_queryBookCartProtocol(Integer.parseInt(SpUtil.getAccountId())
+        ProtocolManager.fake_queryBookCartProtocol(SpUtil.getAccountId()
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
                 , new QueryBookCartCallBack(NewShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
     }
@@ -294,7 +293,7 @@ public class NewShopCartActivity extends ShopAutoLayoutBaseActivity implements V
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             RemoveBookCartRequest request = new RemoveBookCartRequest();
-                            request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+                            request.setUserId(SpUtil.getAccountId());
                             request.setCount(1);
                             ArrayList<DataBookBean> dataList = new ArrayList<DataBookBean>();
                             DataBookBean bean = new DataBookBean();
@@ -479,7 +478,7 @@ public class NewShopCartActivity extends ShopAutoLayoutBaseActivity implements V
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RemoveBookCartRequest request = new RemoveBookCartRequest();
-                request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+                request.setUserId(SpUtil.getAccountId());
                 request.setCount(1);
                 ArrayList<DataBookBean> dataList = new ArrayList<DataBookBean>();
                 DataBookBean bean = new DataBookBean();

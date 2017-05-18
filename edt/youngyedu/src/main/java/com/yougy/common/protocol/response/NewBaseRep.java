@@ -7,13 +7,16 @@ package com.yougy.common.protocol.response;
 public class NewBaseRep {
     protected int  code ;
     protected String msg ;
-
+    protected int count;
     public String getMsg() {
         return msg;
     }
 
     public int getCode() {
-
         return code;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

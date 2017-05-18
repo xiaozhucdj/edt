@@ -24,14 +24,15 @@ import com.onyx.android.sdk.ui.view.DisableScrollLinearManager;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.fragment.UserCallBack;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.protocol.callback.BindCallBack;
+import com.yougy.common.protocol.request.NewBindDeviceReq;
+import com.yougy.common.protocol.request.NewQueryStudentReq;
+import com.yougy.common.protocol.response.NewBindDeviceRep;
+import com.yougy.common.protocol.response.NewQueryStudentRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.adapter.IdentityAdapter;
-import com.yougy.init.bean.BindInfo;
-import com.yougy.init.bean.UserInfo;
 import com.yougy.init.manager.InitManager;
 import com.yougy.ui.activity.R;
 
@@ -50,8 +51,9 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
     private LinearLayout mPageLayout;
     private Button mLastStep;
     private int count;
-    private List<UserInfo.User> infos = new ArrayList<>();
-    private List<UserInfo.User> pageInfos = new ArrayList<>();
+    private List<NewQueryStudentRep.User> infos = new ArrayList<>();
+    private List<NewQueryStudentRep.User> pageInfos = new ArrayList<>();
+
     private IdentityAdapter adapter;
     private static final int COUNT_PER_PAGE = 16;
     private List<Button> btns = new ArrayList<>();
@@ -60,7 +62,9 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ProtocolManager.queryUserProtocol(InitManager.getInstance().getClassId(), "", ProtocolId.PROTOCOL_ID_QUERYUSER, new UserCallBack(context));
+        NewQueryStudentReq req = new NewQueryStudentReq();
+        req.setClassId(InitManager.getInstance().getClassId());
+        NewProtocolManager.queryStudent(req, new UserCallBack(context));
     }
 
     @Override
@@ -74,17 +78,17 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof UserInfo) {
-                    UserInfo userInfo = (UserInfo) o;
-                    if (userInfo.getCount() > 0) {
+                if (o instanceof NewQueryStudentRep) {
+                    NewQueryStudentRep studentRep = (NewQueryStudentRep) o;
+                    if (studentRep.getCount() > 0) {
                         infos.clear();
                         pageInfos.clear();
-                        infos.addAll(userInfo.getUsers());
-                        for (int i = 0; i < COUNT_PER_PAGE - userInfo.getCount() % COUNT_PER_PAGE; i++) {
-                            UserInfo.User user = new UserInfo.User();
-                            user.setUserName("");
-                            user.setUserNumber("");
-                            user.setBind(true);
+                        infos.addAll(studentRep.getData());
+                        for (int i = 0; i < COUNT_PER_PAGE - studentRep.getCount() % COUNT_PER_PAGE; i++) {
+                            NewQueryStudentRep.User user = new NewQueryStudentRep.User();
+                            user.setUserRealName("");
+                            user.setUserNum("");
+                            user.setDeviceId("deviceId");
                             infos.add(user);
                         }
                         pageInfos.addAll(infos.subList(0, COUNT_PER_PAGE));
@@ -102,7 +106,7 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof BindInfo) {
+                if (o instanceof NewBindDeviceRep) {
                     if (nextFragment == null) {
                         nextFragment = new StartUseFragment();
                     }
@@ -112,7 +116,9 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
             }
         }));
     }
+
     private View rootView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -133,10 +139,10 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
         adapter.setOnItemClickListener(new IdentityAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                user = pageInfos.get(position);
-                InitManager.getInstance().setStudentName(user.getUserRealName());
-                InitManager.getInstance().setStudentNumber(user.getUserNumber());
-                InitManager.getInstance().setStudentId(user.getUserId());
+                student = pageInfos.get(position);
+                InitManager.getInstance().setStudentName(student.getUserRealName());
+                InitManager.getInstance().setStudentNumber(student.getUserNum());
+                InitManager.getInstance().setStudentId(student.getUserId());
                 showComfirmPopWindow();
             }
         });
@@ -150,11 +156,13 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
 //            }
 //        });
     }
-    private void identityItemClick(int position){
-        user = pageInfos.get(position);
-        InitManager.getInstance().setStudentName(user.getUserRealName());
-        InitManager.getInstance().setStudentNumber(user.getUserNumber());
-        InitManager.getInstance().setStudentId(user.getUserId());
+
+    private void identityItemClick(int position) {
+        student = pageInfos.get(position);
+
+        InitManager.getInstance().setStudentName(student.getUserRealName());
+        InitManager.getInstance().setStudentNumber(student.getUserNum());
+        InitManager.getInstance().setStudentId(student.getUserId());
         showComfirmPopWindow();
     }
 
@@ -200,7 +208,7 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
     private TextView reconfirmTv;
     private int clickCount = 0;
     private StartUseFragment nextFragment;
-    private UserInfo.User user;
+    private NewQueryStudentRep.User student;
 
     private void showComfirmPopWindow() {
         LogUtils.e(TAG, "show pop window..................");
@@ -222,11 +230,15 @@ public class SelectIdentityFragment extends BFragment implements View.OnClickLis
                         reconfirmTv.setVisibility(View.VISIBLE);
                         EpdController.invalidate(rootView, UpdateMode.GC);
                     } else {
-                        SpUtil.saveAccountId(user.getUserId());
-                        SpUtil.saveAccountName(user.getUserRealName());
-                        SpUtil.saveAccountNumber(user.getUserNumber());
+                        SpUtil.saveAccountId(student.getUserId());
+                        SpUtil.saveAccountName(student.getUserRealName());
+                        SpUtil.saveAccountNumber(student.getUserNum());
                         String uuid = Commons.UUID;
-                        ProtocolManager.deviceBindProtocol(user.getUserId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, new BindCallBack(context));
+//                        ProtocolManager.deviceBindProtocol(student.getUserId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, new BindCallBack(context));
+                        NewBindDeviceReq deviceReq = new NewBindDeviceReq();
+                        deviceReq.setDeviceId(uuid);
+                        deviceReq.setUserId(student.getUserId());
+                        NewProtocolManager.bindDevice(deviceReq,new BindCallBack(context));
                     }
                 }
             });

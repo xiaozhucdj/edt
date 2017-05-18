@@ -391,7 +391,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         mExerciseBookIv.setEnabled(mControlActivity.mHomewrokId > 0);
 
 
-        if (mControlActivity.mNoteCreator == Integer.parseInt(SpUtil.getAccountId())) {
+        if (mControlActivity.mNoteCreator == SpUtil.getAccountId()) {
             mNotebookIv.setVisibility(View.GONE);
             mTextbookIv.setVisibility(View.GONE);
             mExerciseBookIv.setVisibility(View.GONE);

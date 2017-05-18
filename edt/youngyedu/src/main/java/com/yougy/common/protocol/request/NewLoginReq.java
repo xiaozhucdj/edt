@@ -14,7 +14,7 @@ public class NewLoginReq  extends  NewBaseReq{
     /**用户令牌*/
     private  String userToken;
     /***设备编码*/
-    private  String deviceId;;
+    private  String deviceId;
 
 
     public NewLoginReq() {

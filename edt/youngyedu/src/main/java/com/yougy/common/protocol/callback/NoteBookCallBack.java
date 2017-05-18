@@ -52,7 +52,7 @@ public class NoteBookCallBack extends CacheInfoBack<QueryNoteProtocol> {
     @Override
     public void onClick() {
         super.onClick();
-        ProtocolManager.queryNotesProtocol(Integer.parseInt(SpUtil.getAccountId()), mTermIndex, 2, mProtocolId, this);
+        ProtocolManager.queryNotesProtocol(SpUtil.getAccountId(), mTermIndex, 2, mProtocolId, this);
     }
 
     public String getJson() {

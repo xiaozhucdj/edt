@@ -50,7 +50,7 @@ public class HomewrokCallBack extends CacheInfoBack<QueryHomewrokProtocol> {
     @Override
     public void onClick() {
         super.onClick();
-        ProtocolManager.queryHomeWrokProtocol(Integer.parseInt(SpUtil.getAccountId()), mProtocolId, this);
+        ProtocolManager.queryHomeWrokProtocol(SpUtil.getAccountId(), mProtocolId, this);
     }
 
     public String getJson() {

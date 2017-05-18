@@ -18,12 +18,14 @@ import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.DownloadManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.BookShelfCallBack;
 import com.yougy.common.protocol.callback.StartCallBack;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.BookShelfProtocol;
+import com.yougy.common.protocol.response.NewQueryStudentRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
@@ -68,13 +70,26 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof UserInfo.User) {
+//                if (o instanceof UserInfo.User) {
+//                    Log.e(TAG,"handleStartEvent...");
+//                    UserInfo.User user = (UserInfo.User) o;
+//                    SpUtil.saveAccountId(Integer.parseInt(user.getUserId()));
+//                    SpUtil.saveAccountSchool(user.getSchoolName());
+//                    SpUtil.saveAccountClass(user.getClassName());
+//                    SpUtil.saveAccountNumber(user.getUserNumber());
+//                    SpUtil.saveGradeName(user.getGradeName());
+//                    SpUtil.saveAccountName(user.getUserRealName());
+//                    SpUtil.saveSubjectNames(user.getSubjectNames());
+//                    startActivity(new Intent(context, MainActivity.class));
+//                    getActivity().finish();
+//                }
+                if (o instanceof NewQueryStudentRep.User) {
                     Log.e(TAG,"handleStartEvent...");
-                    UserInfo.User user = (UserInfo.User) o;
+                    NewQueryStudentRep.User user = (NewQueryStudentRep.User) o;
                     SpUtil.saveAccountId(user.getUserId());
                     SpUtil.saveAccountSchool(user.getSchoolName());
                     SpUtil.saveAccountClass(user.getClassName());
-                    SpUtil.saveAccountNumber(user.getUserNumber());
+                    SpUtil.saveAccountNumber(user.getUserNum());
                     SpUtil.saveGradeName(user.getGradeName());
                     SpUtil.saveAccountName(user.getUserRealName());
                     SpUtil.saveSubjectNames(user.getSubjectNames());
@@ -152,10 +167,15 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
         return view;
     }
 
+    private NewLoginReq loginReq;
+
     @Override
     public void onClick(View v) {
         if (getActivity()!=null){
-            ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+//            ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+            loginReq = new NewLoginReq();
+            loginReq.setDeviceId(Commons.UUID);
+            NewProtocolManager.login(loginReq,new StartCallBack(context));
         }
         // 获取订单列表 ，得到下载书条目
 //        ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), -1, -1, "", ProtocolId.PROTOCOL_ID_BOOK_SHELF, new BookShelfCallBack(getActivity()));
@@ -173,7 +193,8 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
 //                mLinearLayout.setVisibility(View.VISIBLE);
 //                mRlDown.setVisibility(View.GONE);
                 if (getActivity()!=null){
-                    ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+//                    ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+                    NewProtocolManager.login(loginReq,new StartCallBack(context));
                 }
             }
 
@@ -197,7 +218,8 @@ public class StartUseFragment extends BFragment implements View.OnClickListener 
                     UIUtils.showToastSafe("全部下载完成", Toast.LENGTH_LONG);
                     //书全部下载完成后 还需要我们手动去调用一下 绑定 登录  性质不一样 需要我们重新登录接口。
                     //作业可能还需要获取token
-                    ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+//                    ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, new StartCallBack(getActivity()));
+                    NewProtocolManager.login(loginReq,new StartCallBack(context));
                 }
             }
 

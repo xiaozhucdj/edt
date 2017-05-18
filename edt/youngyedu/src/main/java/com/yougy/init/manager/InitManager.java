@@ -13,14 +13,14 @@ import com.yougy.ui.activity.R;
 
 public class InitManager {
     private static InitManager instance;
-    private String mSchoolId;
-    private String mClassId;
+    private int mSchoolId;
+    private int mClassId;
+    private int mGradeId;
     private String mSchoolName;
     private String mClassName;
     private String mStudentName;
     private String mStudentNumber;
-    private String mStudentId;
-    private String mGradeId;
+    private int mStudentId;
     private String mGradeName;
 
     public static final String TAG_SELECT_SCHOOL = "select_school";
@@ -64,11 +64,11 @@ public class InitManager {
         transaction.commit();
     }
 
-    public void setGradeId(String gradeId) {
+    public void setGradeId(int gradeId) {
         mGradeId = gradeId;
     }
 
-    public String getGradeId() {
+    public int getGradeId() {
         return mGradeId;
     }
 
@@ -80,11 +80,11 @@ public class InitManager {
         return mGradeName;
     }
 
-    public void setSchoolId(String schoolId) {
+    public void setSchoolId(int schoolId) {
         mSchoolId = schoolId;
     }
 
-    public String getSchoolId() {
+    public int getSchoolId() {
         return mSchoolId;
     }
 
@@ -96,11 +96,11 @@ public class InitManager {
         return mSchoolName;
     }
 
-    public void setClassId(String classId) {
+    public void setClassId(int classId) {
         mClassId = classId;
     }
 
-    public String getClassId() {
+    public int getClassId() {
         return mClassId;
     }
 
@@ -128,11 +128,11 @@ public class InitManager {
         return mStudentNumber;
     }
 
-    public String getStudentId() {
+    public int getStudentId() {
         return mStudentId;
     }
 
-    public void setStudentId(String mSutdentId) {
+    public void setStudentId(int mSutdentId) {
         this.mStudentId = mSutdentId;
     }
 

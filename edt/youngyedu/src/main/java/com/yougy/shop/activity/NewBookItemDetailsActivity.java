@@ -364,7 +364,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
 
         AppendBookCartRequest request = new AppendBookCartRequest();
 
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
 
         List<DataBookBean> list = new ArrayList<>();
@@ -387,7 +387,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
 
         AppendBookFavorRequest request = new AppendBookFavorRequest();
 
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
 
         List<DataBookBean> list = new ArrayList<>();

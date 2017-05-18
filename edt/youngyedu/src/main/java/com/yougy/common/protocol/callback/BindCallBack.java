@@ -4,15 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.protocol.request.NewBindDeviceReq;
+import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.GsonUtil;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.init.bean.BindInfo;
-import com.yougy.init.manager.InitManager;
 
 import java.io.File;
 
@@ -30,7 +30,7 @@ import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
  * Created by jiangliang on 2016/12/14.
  */
 
-public class BindCallBack extends BaseCallBack<BindInfo> {
+public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
 
     public BindCallBack(Context context) {
         super(context);
@@ -39,19 +39,20 @@ public class BindCallBack extends BaseCallBack<BindInfo> {
     @Override
     public void onError(Call call, Exception e, int id) {
         super.onError(call, e, id);
-        SpUtil.saveAccountId("-1");
+        SpUtil.saveAccountId(-1);
         SpUtil.saveAccountName("");
         SpUtil.saveAccountNumber("");
     }
 
     @Override
-    public BindInfo parseNetworkResponse(Response response, int id) throws Exception {
+    public NewBindDeviceRep parseNetworkResponse(Response response, int id) throws Exception {
         String result = response.body().string();
-        return GsonUtil.fromJson(result, BindInfo.class);
+        LogUtils.e(getClass().getName(),"bind device json is :" + result);
+        return GsonUtil.fromJson(result, NewBindDeviceRep.class);
     }
 
     @Override
-    public void onResponse(BindInfo response, int id) {
+    public void onResponse(NewBindDeviceRep response, int id) {
         if (response != null) {
             downloadDb();
             RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
@@ -89,6 +90,9 @@ public class BindCallBack extends BaseCallBack<BindInfo> {
     @Override
     public void onClick() {
         String uuid = Commons.UUID;
-        ProtocolManager.deviceBindProtocol(InitManager.getInstance().getStudentId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, this);
+//        ProtocolManager.deviceBindProtocol(InitManager.getInstance().getStudentId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, this);
+        NewBindDeviceReq deviceReq = new NewBindDeviceReq();
+        deviceReq.setDeviceId(uuid);
+        NewProtocolManager.bindDevice(deviceReq,this);
     }
 }

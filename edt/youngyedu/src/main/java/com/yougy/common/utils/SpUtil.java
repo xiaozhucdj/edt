@@ -48,7 +48,8 @@ public class SpUtil {
     private static final String SUBJECT_NAMES = "subjectNames";
     private static final String HISTORY_RECORD = "history_record";
 
-    private static final String UUID = "UUID" ;
+    private static final String UUID = "UUID";
+
     public static void saveLableLocation(int x, int y) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -135,7 +136,7 @@ public class SpUtil {
     /***
      * @param values
      */
-    public static void putHistoryRecord( List<String> values) {
+    public static void putHistoryRecord(List<String> values) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(HISTORY_RECORD, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         LinkedHashSet<String> infos = null;
@@ -149,7 +150,7 @@ public class SpUtil {
         editor.apply();
     }
 
-    public static void clearHistoryRecord(){
+    public static void clearHistoryRecord() {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(HISTORY_RECORD, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.clear();
@@ -162,7 +163,7 @@ public class SpUtil {
         List<String> infos = new ArrayList<>();
         if (valus == null || valus.size() < 0) {
             infos.add(UIUtils.getContext().getResources().getString(R.string.no_history_record));
-        }else {
+        } else {
             for (String str : valus) {
                 infos.add(str);
             }
@@ -254,16 +255,16 @@ public class SpUtil {
         return sp.getString(ACCOUNT_NUMBER, "");
     }
 
-    public static void saveAccountId(String id) {
+    public static void saveAccountId(int id) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString(ACCOUNT_ID, id);
+        editor.putInt(ACCOUNT_ID, id);
         editor.apply();
     }
 
-    public static String getAccountId() {
+    public static int getAccountId() {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(ACCOUNT_ID, "-1");
+        return sp.getInt(ACCOUNT_ID, -1);
     }
 
     public static AccountInfo getAccountInfo() {
@@ -272,7 +273,8 @@ public class SpUtil {
         String className = sp.getString(ACCOUNT_CLASS, "");
         String studentName = sp.getString(ACCOUNT_NAME, "");
         String studentNumber = sp.getString(ACCOUNT_NUMBER, "");
-        String id = sp.getString(ACCOUNT_ID, "");
+        int accountId = sp.getInt(ACCOUNT_ID, -1);
+        String id = accountId == -1 ? "" : Integer.toString(accountId);
         AccountInfo info = null;
         if (!TextUtils.isEmpty(schoolName) && !TextUtils.isEmpty(className) && !TextUtils.isEmpty(studentName) && !TextUtils.isEmpty(studentNumber) && !TextUtils.isEmpty(id)) {
             info = new AccountInfo();
@@ -339,44 +341,46 @@ public class SpUtil {
     private static final String AREA = "area";
     private static final String AREA_ID = "area_id";
 
-    public static void saveSelectAreaID(String areaId){
+    public static void saveSelectAreaID(String areaId) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(AREA, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(AREA_ID, areaId);
         editor.apply();
     }
-    public static String getSelectAreaId(){
+
+    public static String getSelectAreaId() {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
         return sp.getString(SUBJECT_NAMES, "");
     }
 
     private static final String CONTENT_CHANGED = "content_changed";
     private static final String FLAG = "flag";
-    public static void changeContent(boolean flag){
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(CONTENT_CHANGED,Context.MODE_PRIVATE);
+
+    public static void changeContent(boolean flag) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(CONTENT_CHANGED, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean(FLAG,flag);
+        editor.putBoolean(FLAG, flag);
         editor.apply();
     }
 
-    public static boolean isContentChanged(){
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(CONTENT_CHANGED,Context.MODE_PRIVATE);
-        return sp.getBoolean(FLAG,false);
+    public static boolean isContentChanged() {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(CONTENT_CHANGED, Context.MODE_PRIVATE);
+        return sp.getBoolean(FLAG, false);
     }
 
     private static final String INIT_DOWN = "init_down";
     private static final String FIRST_FLAG = "first_flag";
 
-    public static void changeInitFlag(boolean flag){
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(INIT_DOWN,Context.MODE_PRIVATE);
+    public static void changeInitFlag(boolean flag) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(INIT_DOWN, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean(FIRST_FLAG,flag);
+        editor.putBoolean(FIRST_FLAG, flag);
         editor.apply();
     }
 
-    public static boolean isInit(){
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(INIT_DOWN,Context.MODE_PRIVATE);
-        return sp.getBoolean(FIRST_FLAG,false);
+    public static boolean isInit() {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(INIT_DOWN, Context.MODE_PRIVATE);
+        return sp.getBoolean(FIRST_FLAG, false);
     }
 
 
@@ -389,6 +393,6 @@ public class SpUtil {
 
     public static String getUUID() {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(UUID, Context.MODE_PRIVATE);
-        return sp.getString(UUID,"-1") ;
+        return sp.getString(UUID, "-1");
     }
 }

@@ -1,13 +1,14 @@
 package com.yougy.init.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.yougy.init.bean.UserInfo;
+import com.yougy.common.protocol.response.NewQueryStudentRep;
 import com.yougy.ui.activity.R;
 
 import java.util.List;
@@ -19,10 +20,10 @@ import java.util.List;
 public class IdentityAdapter extends RecyclerView.Adapter<IdentityHolder> {
     private static final String TAG = "IdentityAdapter";
     private OnItemClickListener listener;
-    private List<UserInfo.User> infos;
-
-    public IdentityAdapter(List<UserInfo.User> infos) {
-        this.infos = infos;
+//    private List<UserInfo.User> infos;
+    private List<NewQueryStudentRep.User> students;
+    public IdentityAdapter(List<NewQueryStudentRep.User> students) {
+        this.students = students;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class IdentityAdapter extends RecyclerView.Adapter<IdentityHolder> {
 
     @Override
     public void onBindViewHolder(IdentityHolder holder, final int position) {
-        holder.bindView(infos.get(position));
+        holder.bindView(students.get(position));
         holder.mIdentityLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,7 +46,7 @@ public class IdentityAdapter extends RecyclerView.Adapter<IdentityHolder> {
 
     @Override
     public int getItemCount() {
-        return infos.size();
+        return students.size();
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -70,10 +71,10 @@ class IdentityHolder extends RecyclerView.ViewHolder {
         mIdentityLayout = (LinearLayout) itemView.findViewById(R.id.identity_item_layout);
     }
 
-    public void bindView(UserInfo.User info) {
-        mNameTv.setText(info.getUserRealName());
-        mNumberTv.setText(info.getUserNumber());
-        if (info.isBind()) {
+    public void bindView(NewQueryStudentRep.User student) {
+        mNameTv.setText(student.getUserRealName());
+        mNumberTv.setText(student.getUserNum());
+        if (!TextUtils.isEmpty(student.getDeviceId())) {
             mIdentityLayout.setEnabled(false);
             mNameTv.setTextColor(mNameTv.getResources().getColor(R.color.marks));
             mNumberTv.setTextColor(mNumberTv.getResources().getColor(R.color.marks));

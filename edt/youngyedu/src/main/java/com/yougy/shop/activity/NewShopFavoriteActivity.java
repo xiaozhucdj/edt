@@ -16,7 +16,6 @@ import com.yougy.common.protocol.callback.RemoveBookFavorCallBack;
 import com.yougy.common.protocol.request.RemoveBookFavorRequest;
 import com.yougy.common.protocol.response.QueryBookFavorProtocol;
 import com.yougy.common.protocol.response.RemoveBookFavorProtocol;
-import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
@@ -24,28 +23,7 @@ import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NewShopBookItem;
 import com.yougy.view.dialog.ConfirmDialog;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.AutoLinearLayout;
-import com.zhy.autolayout.attr.Attrs;
-import com.zhy.autolayout.attr.AutoAttr;
-import com.zhy.autolayout.attr.HeightAttr;
-import com.zhy.autolayout.attr.MarginBottomAttr;
-import com.zhy.autolayout.attr.MarginLeftAttr;
-import com.zhy.autolayout.attr.MarginRightAttr;
-import com.zhy.autolayout.attr.MarginTopAttr;
-import com.zhy.autolayout.attr.MaxHeightAttr;
-import com.zhy.autolayout.attr.MaxWidthAttr;
-import com.zhy.autolayout.attr.MinHeightAttr;
-import com.zhy.autolayout.attr.MinWidthAttr;
-import com.zhy.autolayout.attr.PaddingBottomAttr;
-import com.zhy.autolayout.attr.PaddingLeftAttr;
-import com.zhy.autolayout.attr.PaddingRightAttr;
-import com.zhy.autolayout.attr.PaddingTopAttr;
-import com.zhy.autolayout.attr.TextSizeAttr;
-import com.zhy.autolayout.attr.WidthAttr;
 import com.zhy.autolayout.utils.AutoUtils;
-
-import org.w3c.dom.Attr;
 
 import java.util.ArrayList;
 
@@ -167,7 +145,7 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
                     //删除收藏的回调在这
                     RemoveBookFavorProtocol protocal = (RemoveBookFavorProtocol) o;
                     if (protocal.getCode() == 200) {
-                        ProtocolManager.fake_queryBookFavorProtocol(Integer.parseInt(SpUtil.getAccountId())
+                        ProtocolManager.fake_queryBookFavorProtocol(SpUtil.getAccountId()
                                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR
                                 , new QueryBookFavorCallback(NewShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR));
                     }
@@ -179,7 +157,7 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
 
     @Override
     protected void loadData() {
-        ProtocolManager.fake_queryBookFavorProtocol(Integer.parseInt(SpUtil.getAccountId())
+        ProtocolManager.fake_queryBookFavorProtocol(SpUtil.getAccountId()
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR
                 , new QueryBookFavorCallback(NewShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR));
     }
@@ -295,7 +273,7 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             RemoveBookFavorRequest request = new RemoveBookFavorRequest();
-                            request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+                            request.setUserId(SpUtil.getAccountId());
                             request.setCount(1);
                             ArrayList<DataBookBean> dataList = new ArrayList<DataBookBean>();
                             DataBookBean bean = new DataBookBean();
@@ -454,7 +432,7 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RemoveBookFavorRequest request = new RemoveBookFavorRequest();
-                request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+                request.setUserId(SpUtil.getAccountId());
                 request.setCount(1);
                 ArrayList<DataBookBean> dataList = new ArrayList<DataBookBean>();
                 DataBookBean bean = new DataBookBean();

@@ -139,7 +139,7 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
                 break;
 
             case R.id.btn_todocount:
-                ProtocolManager.getHomework_todo_count(Integer.parseInt(SpUtil.getAccountId()), 1, new Callback() {
+                ProtocolManager.getHomework_todo_count(SpUtil.getAccountId(), 1, new Callback() {
                     @Override
                     public Object parseNetworkResponse(Response response, int id) throws Exception {
                         LogUtils.i("  response.body().string() ==" + response.body().string());

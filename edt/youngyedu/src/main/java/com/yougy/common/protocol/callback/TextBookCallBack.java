@@ -68,7 +68,7 @@ public class TextBookCallBack extends CacheInfoBack<BookShelfProtocol> {
     @Override
     public void onClick() {
         super.onClick();
-        ProtocolManager.bookShelfProtocol(Integer.parseInt(SpUtil.getAccountId()), mTermIndex, mCategoryId, "", mProtocolId, this);
+        ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), mTermIndex, mCategoryId, "", mProtocolId, this);
     }
 
     public  String getJSON(){

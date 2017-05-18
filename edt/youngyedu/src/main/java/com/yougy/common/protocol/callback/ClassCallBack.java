@@ -2,13 +2,13 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.BaseCallBack;
+import com.yougy.common.protocol.request.NewQuerySchoolOrgReq;
+import com.yougy.common.protocol.response.NewQuerySchoolOrgRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
-import com.yougy.init.bean.ClassInfo;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.init.manager.InitManager;
 
 import okhttp3.Response;
@@ -17,24 +17,29 @@ import okhttp3.Response;
  * Created by jiangliang on 2016/12/14.
  */
 
-public class ClassCallBack extends BaseCallBack<ClassInfo> {
+public class ClassCallBack extends BaseCallBack<NewQuerySchoolOrgRep> {
 
     public ClassCallBack(Context context) {
         super(context);
     }
 
     @Override
-    public ClassInfo parseNetworkResponse(Response response, int id) throws Exception {
-        return GsonUtil.fromJson(response.body().string(), ClassInfo.class);
+    public NewQuerySchoolOrgRep parseNetworkResponse(Response response, int id) throws Exception {
+        String json = response.body().string();
+        LogUtils.e(getClass().getName(),"class json : " + json);
+//        return GsonUtil.fromJson(json, ClassInfo.class);
+        return GsonUtil.fromJson(json, NewQuerySchoolOrgRep.class);
     }
 
     @Override
     public void onClick() {
-        ProtocolManager.queryClassProtocol(InitManager.getInstance().getSchoolId(), "", ProtocolId.PROTOCOL_ID_QUERYCLASS, this);
+        NewQuerySchoolOrgReq schoolOrgReq = new NewQuerySchoolOrgReq();
+        schoolOrgReq.setSchoolId(InitManager.getInstance().getSchoolId());
+        NewProtocolManager.querySchoolOrg(schoolOrgReq,this);
     }
 
     @Override
-    public void onResponse(ClassInfo response, int id) {
+    public void onResponse(NewQuerySchoolOrgRep response, int id) {
         if (response != null) {
             RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(response);

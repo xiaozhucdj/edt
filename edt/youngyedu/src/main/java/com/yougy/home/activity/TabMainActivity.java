@@ -277,7 +277,7 @@ public class TabMainActivity extends BaseActivity {
     // 上传 离线添加笔记 列表
     private void addRequestNotes() {
         AppendNotesRequest request = new AppendNotesRequest();
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
         DataNoteBean bean = new DataNoteBean();
         bean.setCount(mAddInfos.size());
@@ -311,7 +311,7 @@ public class TabMainActivity extends BaseActivity {
      */
     private void updaRequestNotes() {
         UpdateNotesRequest request = new UpdateNotesRequest();
-        request.setUserId(Integer.parseInt(SpUtil.getAccountId()));
+        request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
 
         DataNoteBean bean = new DataNoteBean();
