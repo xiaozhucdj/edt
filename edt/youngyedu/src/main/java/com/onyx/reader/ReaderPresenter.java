@@ -35,13 +35,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
 
     @Override
     public void openDocument(String documentPath) {
-        DrmCertificateFactory factory  = new DrmCertificateFactory() ;
-
-//        if (documentPath.contains("0011")){
-//            factory.setKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWA0Rklmj2PNzc9atnUDa/NkyVapDwTVEG1NewIoM2Robl6glxWt9VCNeSdHLHPO4V2hQ1Gk9ToElmva42S/X1GqMLrSbrflcI/7u09bJiMxkBVOsoWdZVqqomC2aeT/3M/1+nNUz6YI/26z5iUYnOB0pgH9pHC7wu+mzUTM32YwIDAQAB");
-//        }else{
-//            factory.setKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIqw5+2CBxEXgFwqqcq8CG8jEyUKMdL1bJl8XgUb30OH15EolX22b4GkIwe7tamoY1lrzzUfcYSnt2t/glBDMQtTSF6NE2cjcNxq3CKRSEDhpy6DN9a8niOnOThMeb8cyPylF7IN+SKFshF8D+0OIToGQ4IRMlcdAMSRqfcUp7aQIDAQAB");
-//        }
+        DrmCertificateFactory factory  = new DrmCertificateFactory(readerView.getViewContext()) ;
         OpenRequest openRequest = new OpenRequest(documentPath, new BaseOptions(),
                 factory  , false);
         getReader().submitRequest(getContext(), openRequest, new BaseCallback() {
