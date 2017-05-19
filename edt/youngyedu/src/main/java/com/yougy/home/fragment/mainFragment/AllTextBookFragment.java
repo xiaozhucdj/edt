@@ -24,7 +24,7 @@ import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
-import com.yougy.common.protocol.response.BookShelfProtocol;
+import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -614,6 +614,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
                     info.setCategoryName(book.getBookFitGradeName());
                     info.setCategoryId(book.getBookFitGradeId());
 
+                    LogUtils.i("book.getBookFitGradeName()"+book.getBookFitGradeName());
+                    LogUtils.i("book.getBookFitGradeId()"+book.getBookFitGradeId());
                     mTreeFitGrade.add(info);
                 }
                 // 设置学科分类
@@ -985,9 +987,14 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
 
                 List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getData());
+                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
                 }else{
-                    mLoadingNull.setVisibility(View.VISIBLE);
+                    UIUtils.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingNull.setVisibility(View.VISIBLE);
+                        }
+                    }) ;
                 }
                 subscriber.onCompleted();
             }
@@ -1046,8 +1053,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof BookShelfProtocol && !mHide &&  mNewTextBookCallBack!=null) { //网数据库存储 协议返回的JSON
-                    BookShelfProtocol shelfProtocol = (BookShelfProtocol) o;
+                if (o instanceof NewBookShelfRep && !mHide &&  mNewTextBookCallBack!=null) { //网数据库存储 协议返回的JSON
+                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
                     List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
                 }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK+"")){

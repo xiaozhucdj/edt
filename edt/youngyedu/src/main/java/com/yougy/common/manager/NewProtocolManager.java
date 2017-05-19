@@ -358,5 +358,8 @@ public class NewProtocolManager {
         /**辅导书*/
         public static final int CODE_COACH_BOOK = 5002;
         public static final int ALL_CODE_COACH_BOOK = 5003;
+        /**笔记*/
+        public static final int CODE_CURRENT_NOTE =5005;
+        public static final int ALL_CODE_NOTE =5006;
     }
 }

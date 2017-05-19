@@ -1,10 +1,12 @@
 package com.yougy.common.protocol.response;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by Administrator on 2017/5/15.
  */
 
-public class NewBaseRep {
+public class NewBaseRep   extends DataSupport {
     protected int  code ;
     protected String msg ;
     protected int count;

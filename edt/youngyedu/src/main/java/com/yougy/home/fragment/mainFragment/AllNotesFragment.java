@@ -14,11 +14,11 @@ import android.widget.TextView;
 
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.NoteBookCallBack;
-import com.yougy.common.protocol.response.QueryNoteProtocol;
+import com.yougy.common.protocol.callback.NewNoteBookCallBack;
+import com.yougy.common.protocol.request.NewQueryNoteReq;
+import com.yougy.common.protocol.response.NewQueryNoteRep;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
@@ -128,9 +128,9 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
 
     private ViewGroup mGroupSub;
     private ViewGroup mGroupGrade;
-    private NoteBookCallBack mNoteCallBack;
     private Subscription mSub;
     private ViewGroup mLoadingNull;
+    private NewNoteBookCallBack mNewNoteBookCallBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -355,9 +355,18 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
      */
     private void getNotes() {
         if (YougyApplicationManager.isWifiAvailable()) {
-            mNoteCallBack = new NoteBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_ALL_NOTE);
+           /* mNoteCallBack = new NoteBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_ALL_NOTE);
             mNoteCallBack.setTermIndex(-1);
-            ProtocolManager.queryNotesProtocol(SpUtil.getAccountId(), 0, 2, ProtocolId.PROTOCOL_ID_ALL_NOTE, mNoteCallBack);
+            ProtocolManager.queryNotesProtocol(SpUtil.getAccountId(), 0, 2, ProtocolId.PROTOCOL_ID_ALL_NOTE, mNoteCallBack);*/
+            NewQueryNoteReq req =  new NewQueryNoteReq() ;
+            //设置学生ID
+            req.setUserId(SpUtil.getAccountId());
+            //设置缓存数据ID的key
+            req.setCacheId(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+            //设置年级
+            req.setNoteFitGradeName("");
+            mNewNoteBookCallBack  = new NewNoteBookCallBack(getActivity() ,req) ;
+            NewProtocolManager.queryNote(req ,mNewNoteBookCallBack);
             LogUtils.e(TAG, "query notes from server...");
         } else {
             LogUtils.e(TAG, "query notes from database...");
@@ -378,11 +387,11 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             @Override
             public void call(Subscriber<? super List<NoteInfo>> subscriber) {
 
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.PROTOCOL_ID_ALL_NOTE+"").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ",NewProtocolManager.NewCacheId.ALL_CODE_NOTE+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
-                    QueryNoteProtocol protocol = GsonUtil.fromJson(infos.get(0).getCacheJSON(), QueryNoteProtocol.class);
-                    if (protocol.getData() != null && protocol.getData().get(0) != null && protocol.getData().get(0).getNoteList().size() > 0)
-                        subscriber.onNext(protocol.getData().get(0).getNoteList());
+                    NewQueryNoteRep protocol = GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewQueryNoteRep.class);
+                    if (protocol!=null && protocol.getData() != null && protocol.getData().size()>0)
+                        subscriber.onNext(protocol.getData());
                 }
                 subscriber.onCompleted();
             }
@@ -405,7 +414,9 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             public void onCompleted() {
                 LogUtils.e(TAG, "onCompleted...");
                 dialog.dismiss();
-
+                if (mServerInfos!=null && mServerInfos.size()<0){
+                    setLoading(View.VISIBLE);
+                }
             }
 
             @Override
@@ -417,10 +428,10 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             @Override
             public void onNext(List<NoteInfo> noteInfos) {
                 if (noteInfos!=null && noteInfos.size()>0){
-                    mLoadingNull.setVisibility(View.GONE);
+                  setLoading(View.GONE);
                     refresh(noteInfos);
                 }else{
-                    mLoadingNull.setVisibility(View.VISIBLE);
+                    setLoading(View.VISIBLE);
                 }
             }
         };
@@ -445,24 +456,31 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof QueryNoteProtocol && !mHide && mNoteCallBack != null) {
-                    QueryNoteProtocol data = (QueryNoteProtocol) o;
-                    List<NoteInfo> notes = data.getData().get(0).getNoteList();
-                    if (notes!=null && notes.size()>0){
-                        mLoadingNull.setVisibility(View.GONE);
-                        refresh(notes);
+                if (o instanceof NewQueryNoteRep && !mHide && mNewNoteBookCallBack != null) {
+                    NewQueryNoteRep data = (NewQueryNoteRep) o;
+                    if (data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && data!=null && data.getData()!=null && data.getData().size()>0){
+                        setLoading(View.GONE);
+                        refresh(data.getData());
                     }else{
-                        mLoadingNull.setVisibility(View.VISIBLE);
+                        setLoading(View.VISIBLE);
                     }
-
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,ProtocolId.PROTOCOL_ID_ALL_NOTE+"")){
-                    LogUtils.i("yuanye...请求服务器 加载出错 ---AllNotesFragment");
+                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.ALL_CODE_NOTE+"")){
+                    LogUtils.i(" onerror 处理 ...........");
                     mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
             }
         }));
     }
 
+
+    private  void  setLoading( final int visibility){
+        UIUtils.post(new Runnable() {
+            @Override
+            public void run() {
+                mLoadingNull.setVisibility(visibility);
+            }
+        }) ;
+    }
 
     ///////////////////////////////////点击事件//////////////////////////////////////
 
