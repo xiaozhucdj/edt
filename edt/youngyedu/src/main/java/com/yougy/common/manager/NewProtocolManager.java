@@ -9,6 +9,7 @@ import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewDeleteUserLogReq;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
+import com.yougy.common.protocol.request.NewInserAllNoteReq;
 import com.yougy.common.protocol.request.NewInserNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewLogoutReq;
@@ -22,6 +23,7 @@ import com.yougy.common.protocol.request.NewQueryTeachertReq;
 import com.yougy.common.protocol.request.NewQueryUserLogReq;
 import com.yougy.common.protocol.request.NewQueryUserReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.NewUpdateUserReq;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -51,7 +53,7 @@ public class NewProtocolManager {
         LogUtils.i("请求id.........id..." + id);
 
         //防止用户的多次请求
-        OkHttpUtils.getInstance().cancelTag(url);
+        OkHttpUtils.getInstance().cancelTag(id);
         //设置请求String
         PostStringBuilder builder = OkHttpUtils.postString();
         //设置地址
@@ -282,7 +284,7 @@ public class NewProtocolManager {
 
 
     /**
-     * 15书架查询
+     * 15添加笔记
      * @param req
      * @param callbac
      */
@@ -298,6 +300,26 @@ public class NewProtocolManager {
     public static void deleteNote(NewDeleteNoteReq req, Callback callbac) {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_DELETE_NOTE, callbac);
     }
+
+
+    /**
+     * 添加笔记 --数组
+     * @param req
+     * @param callbac
+     */
+    public static void inserAllNote(NewInserAllNoteReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_INSER_NOTE, callbac);
+    }
+
+
+    /**20 更新笔记
+     * @param req
+     * @param callbac
+     */
+    public static void updateNote(NewUpdateNoteReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE, callbac);
+    }
+
 
     /***协议请求 id*/
     public static class NewProtocolId {
@@ -338,6 +360,8 @@ public class NewProtocolManager {
         public static final int ID_DELETE_USERLOG= 18;
 
         public static final int ID_LOGOUT= 19;
+
+        public static final int ID_UPDATE_NOTE= 20;
 
     }
 

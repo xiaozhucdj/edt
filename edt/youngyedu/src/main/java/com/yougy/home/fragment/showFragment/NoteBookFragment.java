@@ -13,14 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
-import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.DelteNoteCallBack;
-import com.yougy.common.protocol.callback.UpdaNoteCallBack;
-import com.yougy.common.protocol.request.RemoveNotesRequest;
-import com.yougy.common.protocol.request.UpdateNotesRequest;
-import com.yougy.common.protocol.response.RemoveNoteProtocol;
-import com.yougy.common.protocol.response.UpdaNoteProtocol;
+import com.yougy.common.manager.NewProtocolManager;
+import com.yougy.common.protocol.callback.NewDelteNoteCallBack;
+import com.yougy.common.protocol.callback.NewUpdaNoteCallBack;
+import com.yougy.common.protocol.request.NewDeleteNoteReq;
+import com.yougy.common.protocol.request.NewUpdateNoteReq;
+import com.yougy.common.protocol.response.NewDeleteNoteRep;
+import com.yougy.common.protocol.response.NewUpdateNoteRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
@@ -28,7 +27,6 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.Observable.Observable;
 import com.yougy.home.Observable.Observer;
-import com.yougy.home.bean.DataNoteBean;
 import com.yougy.home.bean.Note;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.rx_subscriber.BaseSubscriber;
@@ -129,8 +127,13 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof UpdaNoteProtocol) {
-                    updataNoteInfo(mUpdateInfo);
+                if (o instanceof NewUpdateNoteRep) {
+                    NewUpdateNoteRep req = (NewUpdateNoteRep) o;
+                    if (req!=null && req.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+                        updataNoteInfo(mUpdateInfo);
+                    }else{
+                       UIUtils.showToastSafe("修改笔记失败",Toast.LENGTH_LONG);
+                    }
                 }
             }
         }));
@@ -169,9 +172,14 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof RemoveNoteProtocol) {
-                    notifyDelete(mControlActivity.mNoteId);
-                    getActivity().finish();
+                if (o instanceof NewDeleteNoteRep ) {
+                    NewDeleteNoteRep rep  = (NewDeleteNoteRep) o;
+                    if (rep!=null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+                        notifyDelete(mControlActivity.mNoteId);
+                        getActivity().finish() ;
+                    }else{
+                        UIUtils.showToastSafe("删除笔记失败",Toast.LENGTH_LONG);
+                    }
                 }
             }
         }));
@@ -582,23 +590,24 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
     //协议删除笔记
 
     private void delteNoteProtocol() {
-        RemoveNotesRequest request = new RemoveNotesRequest();
+      /*  RemoveNotesRequest request = new RemoveNotesRequest();
         request.setUserId(SpUtil.getAccountId());
         request.setCount(1);
         NoteInfo info = new NoteInfo();
         info.setNoteId(mControlActivity.mNoteId);
-
         List<NoteInfo> infos = new ArrayList<>();
         infos.add(info);
         DataNoteBean bean = new DataNoteBean();
         bean.setCount(infos.size());
         bean.setNoteList(infos);
-
         List<DataNoteBean> data = new ArrayList<>();
         data.add(bean);
         request.setData(data);
+        ProtocolManager.removeNotesProtocol(request, ProtocolId.PROTOCOL_ID_REMOVE_NOTES, new DelteNoteCallBack(getActivity(), request));*/
+        NewDeleteNoteReq req = new NewDeleteNoteReq();
+        NewProtocolManager.deleteNote(req ,new NewDelteNoteCallBack(getActivity(),req));
 
-        ProtocolManager.removeNotesProtocol(request, ProtocolId.PROTOCOL_ID_REMOVE_NOTES, new DelteNoteCallBack(getActivity(), request));
+
     }
 
     @Override
@@ -634,24 +643,11 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
      * 更新笔记
      */
     private void updataNoteProtocol() {
-
-        UpdateNotesRequest request = new UpdateNotesRequest();
-        request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-
-        List<NoteInfo> infos = new ArrayList<>();
-        infos.add(mUpdateInfo);
-
-        DataNoteBean bean = new DataNoteBean();
-        bean.setCount(infos.size());
-        bean.setNoteList(infos);
-
-        List<DataNoteBean> data = new ArrayList<>();
-        data.add(bean);
-        request.setData(data);
-
-        ProtocolManager.updateNotesProtocol(request
-                , ProtocolId.PROTOCOL_ID_UPDATE_NOTES, new UpdaNoteCallBack(getActivity(), request));
+        NewUpdateNoteReq req = new NewUpdateNoteReq() ;
+        List<NoteInfo> infos = new ArrayList<>() ;
+        infos.add(mUpdateInfo) ;
+        req.setData(infos);
+        NewProtocolManager.updateNote(req , new NewUpdaNoteCallBack(getActivity() ,req) );
     }
 
     private void saveLastNumber(int number) {

@@ -18,13 +18,12 @@ import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.AppendNotesCallBack;
+import com.yougy.common.protocol.callback.NewAppendNotesCallBack;
 import com.yougy.common.protocol.callback.NewNoteBookCallBack;
-import com.yougy.common.protocol.request.AppendNotesRequest;
+import com.yougy.common.protocol.request.NewInserAllNoteReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
+import com.yougy.common.protocol.response.NewInserAllNoteRep;
 import com.yougy.common.protocol.response.NewQueryNoteRep;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -38,7 +37,6 @@ import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.NotesAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.CacheJsonInfo;
-import com.yougy.home.bean.DataNoteBean;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.ui.activity.R;
@@ -284,10 +282,14 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof Integer) {
-                    int noteId = (int) o;
+                if (o instanceof NewInserAllNoteRep) {
                     LogUtils.e(TAG,"handleAppendNoteEvent..................");
-                    appendNote(noteId);
+                    NewInserAllNoteRep rep = (NewInserAllNoteRep) o;
+                    if (rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+                        appendNote(rep.getData().get(0).getNoteId() );
+                    }else{
+                        UIUtils.showToastSafe("添加笔记失败",Toast.LENGTH_LONG);
+                    }
                 }
             }
         }));
@@ -621,7 +623,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
      */
     private void creatNoteInfoProtocol() {
         if (NetUtils.isNetConnected()) {
-            AppendNotesRequest request = new AppendNotesRequest();
+            /*AppendNotesRequest request = new AppendNotesRequest();
             request.setUserId(SpUtil.getAccountId());
             request.setCount(1);
             List<NoteInfo> infos = new ArrayList<>();
@@ -632,7 +634,13 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             List<DataNoteBean> data = new ArrayList<>();
             data.add(bean);
             request.setData(data);
-            ProtocolManager.appendNotesProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_NOTES, new AppendNotesCallBack(getActivity(), request));
+            ProtocolManager.appendNotesProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_NOTES, new AppendNotesCallBack(getActivity(), request));*/
+            NewInserAllNoteReq req = new NewInserAllNoteReq() ;
+            req.setUserId(SpUtil.getAccountId());
+            List<NoteInfo> infos  = new ArrayList<>() ;
+            infos.add(mCreatInfo) ;
+            req.setData(infos);
+            NewProtocolManager.inserAllNote(req ,new NewAppendNotesCallBack(getActivity(),req));
         } else {
             //保存离线笔记  ，后期 上传到服务器 再次打开APP 无网络需要追加到列表
             mCreatInfo.save();
