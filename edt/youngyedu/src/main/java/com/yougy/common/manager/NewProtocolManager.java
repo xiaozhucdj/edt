@@ -37,7 +37,10 @@ import com.zhy.http.okhttp.request.RequestCall;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import okhttp3.MediaType;
+import okhttp3.Response;
 
 
 /**
@@ -70,6 +73,37 @@ public class NewProtocolManager {
         // 执行请求，
         call.execute(callbac);
     }
+
+    private static Response setCommon(String url, String json, int id ) {
+
+        LogUtils.i("请求地址.......url..." + url);
+        LogUtils.i("请求数据.......json..." + json);
+        LogUtils.i("请求id.........id..." + id);
+
+        //防止用户的多次请求
+        OkHttpUtils.getInstance().cancelTag(id);
+        //设置请求String
+        PostStringBuilder builder = OkHttpUtils.postString();
+        //设置地址
+        builder.url(url);
+        //设置请求内容
+        builder.content(json);
+        //设置类型
+        builder.mediaType(MediaType.parse("application/json; charset=utf-8"));
+        //设置tag,为了 打标志 取消请求
+        builder.tag(url);
+        //根据协议设置ID在回调函数 统一处理
+        builder.id(id);
+        RequestCall call = builder.build();
+        // 执行请求，
+        try {
+            return   call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return  null ;
+        }
+    }
+
 
     /***
      * 解析 仅有公共头的JSON
@@ -319,6 +353,23 @@ public class NewProtocolManager {
     public static void updateNote(NewUpdateNoteReq req, Callback callbac) {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE, callbac);
     }
+
+    /**
+     * 添加笔记 --数组
+     * @param req
+     */
+    public static Response inserAllNote(NewInserAllNoteReq req) {
+        return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_INSER_NOTE);
+    }
+
+
+    /**20 更新笔记  main
+     * @param req
+     */
+    public static Response updateNote(NewUpdateNoteReq req) {
+        return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE);
+    }
+
 
 
     /***协议请求 id*/

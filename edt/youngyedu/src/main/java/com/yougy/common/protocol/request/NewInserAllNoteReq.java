@@ -12,7 +12,7 @@ import java.util.List;
 public class NewInserAllNoteReq extends NewBaseReq {
 
     public NewInserAllNoteReq() {
-        m = "inserNote";
+        m = "insertNote";
         address = "classRoom";
     }
 

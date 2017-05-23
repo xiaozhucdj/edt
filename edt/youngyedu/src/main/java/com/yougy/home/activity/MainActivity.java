@@ -21,14 +21,14 @@ import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
-import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NetManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.request.AppendNotesRequest;
-import com.yougy.common.protocol.request.UpdateNotesRequest;
-import com.yougy.common.protocol.response.AppendNotesProtocol;
+import com.yougy.common.protocol.request.NewInserAllNoteReq;
+import com.yougy.common.protocol.request.NewUpdateNoteReq;
+import com.yougy.common.protocol.response.NewInserAllNoteRep;
+import com.yougy.common.protocol.response.NewUpdateNoteRep;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -36,7 +36,6 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.UploadService;
-import com.yougy.home.bean.DataNoteBean;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.home.fragment.GlobeFragment;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
@@ -54,9 +53,6 @@ import com.yougy.home.imple.SearchReferenceBooksListener;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.LoadingProgressDialog;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.builder.PostStringBuilder;
-import com.zhy.http.okhttp.request.RequestCall;
 
 import org.litepal.crud.DataSupport;
 
@@ -66,7 +62,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import okhttp3.MediaType;
 import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
@@ -75,6 +70,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static com.onyx.android.sdk.utils.DeviceUtils.getBatteryPecentLevel;
+import static com.yougy.common.utils.GsonUtil.fromJson;
 
 
 /**
@@ -234,7 +230,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initLayout() {
-        mRootView = UIUtils.inflate(R.layout.activity_main_ui) ;
+        mRootView = UIUtils.inflate(R.layout.activity_main_ui);
         setContentView(mRootView);
         EventBus.getDefault().register(this);
         NetManager.getInstance().registerReceiver(this);
@@ -321,14 +317,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         GlobeFragment.getInstance().mAllBook = mAllTextBookFragment;
         mBtnRefresh = (Button) this.findViewById(R.id.btn_refresh);
         mBtnRefresh.setOnClickListener(this);
-        checkUpdateNote();
+
     }
 
 
     @Override
     protected void loadData() {
-        LogUtils.i(" screenWidth =" + UIUtils.getScreenWidth());
-        LogUtils.i(" getScreenHeight=" + UIUtils.getScreenHeight());
+        checkUpdateNote();
     }
 
     @Override
@@ -486,19 +481,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.img_wifi:
                 boolean isConnected = NetManager.getInstance().isWifiConnected(this);
                 NetManager.getInstance().changeWiFi(this, !isConnected);
-                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected? R.drawable.img_wifi_1:R.drawable.img_wifi_0));
+                mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
                 break;
 
             case R.id.btn_sysSeeting:
                 Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.onyx.android.settings","com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
+                intent.setComponent(new ComponentName("com.onyx.android.settings", "com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
                 mFlRight.setVisibility(View.GONE);
                 break;
         }
     }
 
-    private void showDialogNoNet(){
+    private void showDialogNoNet() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("该操作需要网络，请设置网络！");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -509,6 +504,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
         builder.create().show();
     }
+
     /***
      * 切换fragment
      */
@@ -934,8 +930,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
-        LogUtils.i("mian....onStart");
-        //显示系统的 WIIF ,TIME ,POWER
         initSysIcon();
     }
 
@@ -969,44 +963,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        setSysPower(DeviceUtils.getBatteryPecentLevel(this), BatteryManager.BATTERY_STATUS_NOT_CHARGING);
     }
 
-    private void setSysPower(int level,int state) {
+    private void setSysPower(int level, int state) {
 
         mTvSysPower.setText(level + "%");
-        if (level== 0){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_0_black_03:R.drawable.ic_battery_0_black_03  ));
+        if (level == 0) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_0_black_03 : R.drawable.ic_battery_0_black_03));
 
-        }else if(level>0 && level<=10 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_10_black_03:R.drawable.ic_battery_10_black_03  ));
-        }
-        else if(level>10 && level<=20 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_20_black_03:R.drawable.ic_battery_20_black_03  ));
-        }  else if(level>20 && level<=30 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_30_black_03:R.drawable.ic_battery_30_black_03  ));
-        }
-        else if(level>30 && level<=40 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_40_black_03:R.drawable.ic_battery_40_black_03  ));
-        }
-
-        else if(level>40 && level<=50 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_50_black_03:R.drawable.ic_battery_50_black_03  ));
-        }
-        else if(level>50 && level<=60 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_60_black_03:R.drawable.ic_battery_60_black_03  ));
-        }
-        else if(level>60 && level<=70){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_70_black_03:R.drawable.ic_battery_70_black_03  ));
-        }
-
-        else if(level>70 && level<=80 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_80_black_03:R.drawable.ic_battery_80_black_03  ));
-        }
-
-        else if(level>80&& level<100 ){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING?R.drawable.ic_battery_charge_90_black_03:R.drawable.ic_battery_90_black_03  ));
-        }
-
-        else if(level==100){
-            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(R.drawable.ic_battery_100_black_03 ));
+        } else if (level > 0 && level <= 10) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_10_black_03 : R.drawable.ic_battery_10_black_03));
+        } else if (level > 10 && level <= 20) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_20_black_03 : R.drawable.ic_battery_20_black_03));
+        } else if (level > 20 && level <= 30) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_30_black_03 : R.drawable.ic_battery_30_black_03));
+        } else if (level > 30 && level <= 40) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_40_black_03 : R.drawable.ic_battery_40_black_03));
+        } else if (level > 40 && level <= 50) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_50_black_03 : R.drawable.ic_battery_50_black_03));
+        } else if (level > 50 && level <= 60) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_60_black_03 : R.drawable.ic_battery_60_black_03));
+        } else if (level > 60 && level <= 70) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_70_black_03 : R.drawable.ic_battery_70_black_03));
+        } else if (level > 70 && level <= 80) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_80_black_03 : R.drawable.ic_battery_80_black_03));
+        } else if (level > 80 && level < 100) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(state == BatteryManager.BATTERY_STATUS_CHARGING ? R.drawable.ic_battery_charge_90_black_03 : R.drawable.ic_battery_90_black_03));
+        } else if (level == 100) {
+            mImgWSysPower.setImageDrawable(UIUtils.getDrawable(R.drawable.ic_battery_100_black_03));
         }
 
     }
@@ -1035,11 +1017,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     private Observable<Object> getObservable() {
-        LogUtils.i("yuanye 111111111");
         return Observable.create(new Observable.OnSubscribe<Object>() {
             @Override
             public void call(Subscriber<? super Object> subscriber) {
-                LogUtils.i("yuanye 000000000");
                 List<NoteInfo> infos = DataSupport.findAll(NoteInfo.class);
                 YougyApplicationManager.closeDb();
                 if (infos != null && infos.size() > 0) {
@@ -1048,24 +1028,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     for (NoteInfo info : infos) {
                         if (info.getNoteId() == -1) {
                             mAddInfos.add(info);
-                            LogUtils.i("yuanye 2222222");
                         } else {
                             mUpDataInfos.add(info);
-                            LogUtils.i("yuanye 3333");
                         }
                     }
-
                     if (mAddInfos.size() > 0) {
                         // 上传离线创建的笔记
-                        LogUtils.i("yuanye 4444");
-                        addRequestNotes();
+                        try {
+                            addRequestNotes(subscriber);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            subscriber.onCompleted();
+                            return;
+                        }
                     } else if (mUpDataInfos.size() > 0) {
                         //更新离线修改的笔记
-                        LogUtils.i("yuanye 7777777777");
-                        updaRequestNotes();
+                        try {
+                            updaRequestNotes(subscriber);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            subscriber.onCompleted();
+                        }
                     }
+                }else{
+                    subscriber.onCompleted();
                 }
-                subscriber.onCompleted();
             }
         });
     }
@@ -1073,14 +1060,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Subscriber<Object> getSubscriber() {
         return new Subscriber<Object>() {
-            LoadingProgressDialog dialog;
+         LoadingProgressDialog dialog;
 
             @Override
             public void onStart() {
                 super.onStart();
-                dialog = new LoadingProgressDialog(MainActivity.this);
-                dialog.show();
-                dialog.setTitle("请求...");
+           dialog = new LoadingProgressDialog(MainActivity.this);
+           dialog.show();
+           dialog.setTitle("请求...");
             }
 
             @Override
@@ -1092,6 +1079,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onError(Throwable e) {
                 dialog.dismiss();
+                e.printStackTrace();
                 mRlTextBook.callOnClick();
             }
 
@@ -1102,100 +1090,50 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     // 上传 离线添加笔记 列表
-    private void addRequestNotes() {
-        AppendNotesRequest request = new AppendNotesRequest();
-        request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-        DataNoteBean bean = new DataNoteBean();
-        bean.setCount(mAddInfos.size());
-        bean.setNoteList(mAddInfos);
-        List<DataNoteBean> data = new ArrayList<>();
-        data.add(bean);
-        request.setData(data);
-        Response response = request(Commons.URL_APPEND_NOTES, GsonUtil.toJson(request), 1);
+    private void addRequestNotes(Subscriber<? super Object> subscriber) throws IOException {
+        NewInserAllNoteReq req = new NewInserAllNoteReq();
+        req.setUserId(SpUtil.getAccountId());
+        req.setData(mAddInfos);
+        Response response = NewProtocolManager.inserAllNote(req);
         if (response != null) {
-            try {
-                String json = response.body().string();
-                LogUtils.i(" 离线添加数据到服务器 返回JSON==" + json);
-                AppendNotesProtocol protocol = GsonUtil.fromJson(json, AppendNotesProtocol.class);
-                if (protocol.getCode() == ProtocolId.RET_SUCCESS) {
-                    //删除数据库
-                    DataSupport.deleteAll(NoteInfo.class, "noteId = ?", "-1");
-                    //上传修改数据
-                    if (mUpDataInfos.size() > 0) {
-                        LogUtils.i("yuanye 555555");
-                        updaRequestNotes();
-                    }
+            String json = response.body().string();
+            NewInserAllNoteRep rep = GsonUtil.fromJson(json, NewInserAllNoteRep.class);
+            if (rep != null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
+                //删除数据库
+                DataSupport.deleteAll(NoteInfo.class, "noteId = ?", "-1");
+                //上传修改数据
+                if (mUpDataInfos.size() > 0) {
+                    updaRequestNotes(subscriber);
+                }else{
+                    subscriber.onCompleted();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            }else{
+                subscriber.onCompleted();
             }
+        }else{
+            subscriber.onCompleted();
         }
     }
 
     /**
      * 上传 离线 修改 笔记 标题 样式 学科等信息
      */
-    private void updaRequestNotes() {
-        UpdateNotesRequest request = new UpdateNotesRequest();
-        request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-
-        DataNoteBean bean = new DataNoteBean();
-        bean.setCount(mUpDataInfos.size());
-        bean.setNoteList(mUpDataInfos);
-
-        List<DataNoteBean> data = new ArrayList<>();
-        data.add(bean);
-        request.setData(data);
-
-        Response response = request(Commons.URL_UPDATE_NOTES, GsonUtil.toJson(request), 2);
+    private void updaRequestNotes(Subscriber<? super Object> subscriber) throws IOException {
+        final NewUpdateNoteReq req = new NewUpdateNoteReq();
+        req.setData(mUpDataInfos);
+        Response response = NewProtocolManager.updateNote(req);
         if (response != null) {
-            try {
-                String json = response.body().string();
-                LogUtils.i(" 离线 修改数据到服务器 返回JSON==" + json);
-                AppendNotesProtocol protocol = GsonUtil.fromJson(json, AppendNotesProtocol.class);
-                if (protocol.getCode() == ProtocolId.RET_SUCCESS) {
-                    //删除数据库
-                    LogUtils.i("yuanye 6666");
-                    DataSupport.deleteAll(NoteInfo.class);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            String json = response.body().string();
+            NewUpdateNoteRep rep = fromJson(json, NewUpdateNoteRep.class);
+            if (rep != null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+                DataSupport.deleteAll(NoteInfo.class);
+                subscriber.onCompleted();
+            }else{
+                subscriber.onCompleted() ;
             }
+        }else{
+                subscriber.onCompleted() ;
         }
-
-    }
-
-    private Response request(String url, String json, int id) {
-
-        LogUtils.i("请求地址.......url..." + url);
-        LogUtils.i("请求数据.......json..." + json);
-        LogUtils.i("请求id.........id..." + id);
-
-        //防止用户的多次请求
-        OkHttpUtils.getInstance().cancelTag(url);
-        //设置请求String
-        PostStringBuilder builder = OkHttpUtils.postString();
-        //设置地址
-        builder.url(url);
-        //设置请求内容
-        builder.content(json);
-        //设置类型
-        builder.mediaType(MediaType.parse("application/json; charset=utf-8"));
-        //设置tag,为了 打标志 取消请求
-        builder.tag(url);
-        //根据协议设置ID在回调函数 统一处理
-        builder.id(id);
-        RequestCall call = builder.build();
-        // 执行请求，
-        try {
-            return call.execute();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public void onEventMainThread(BaseEvent event) {
