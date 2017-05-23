@@ -143,6 +143,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
     }
 
     private void notifyDataSetChanged(){
+        LogUtils.i("notes ..."+mNotes.size());
         mNotesAdapter.notifyDataSetChanged();
         EpdController.invalidate(mRootView, UpdateMode.GC);
     }
