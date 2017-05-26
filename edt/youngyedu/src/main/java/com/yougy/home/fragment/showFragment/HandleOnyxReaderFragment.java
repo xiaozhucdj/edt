@@ -214,6 +214,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     @Override
     public void updatePage(int page, Bitmap bitmap) {
+        LogUtils.i("updatePage");
         position = page;
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
         EpdController.invalidate(mRoot, UpdateMode.GC);
@@ -228,7 +229,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     @Override
     public void showThrowable(Throwable throwable) {
-
+        throwable.printStackTrace();
     }
 
     @Override

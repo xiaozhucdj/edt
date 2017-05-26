@@ -41,12 +41,13 @@ public class DrmCertificateFactory implements ReaderDrmCertificateFactory {
     }
 
     public String getDrmCertificate() {
-        File drmFile = new File("/sdcard/public_key");
-        if (!drmFile.exists() || !drmFile.isFile()) {
-            return null;
-        }
-        return readContentOfFile(drmFile);
+//        File drmFile = new File("/sdcard/public_key");
+//        if (!drmFile.exists() || !drmFile.isFile()) {
+//            return null;
+//        }
+//        return readContentOfFile(drmFile);
 //       return mKeyStart+getPublicKey()+mKeyEnd;
+        return null ;
     }
 
     private String getPublicKey(){

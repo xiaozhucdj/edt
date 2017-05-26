@@ -15,18 +15,17 @@ import android.widget.Toast;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
-import com.onyx.android.sdk.ui.compat.AppCompatImageViewCollection;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.nohttp.DownInfo;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.TextBookCallBack;
-import com.yougy.common.protocol.response.BookShelfProtocol;
+import com.yougy.common.protocol.callback.NewTextBookCallBack;
+import com.yougy.common.protocol.request.NewBookShelfReq;
+import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -69,7 +68,6 @@ import static com.yougy.common.global.FileContonst.PAGE_LINES;
  * 课本
  */
 public class TextBookFragment extends BFragment implements View.OnClickListener, DownBookDialog.DownBookListener, Observer {
-
     /**
      * 适配器 数据
      */
@@ -80,27 +78,23 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
      * 一页数据个数
      */
     private static final int COUNT_PER_PAGE = PAGE_COUNTS;
-
     /***
      * 当前翻页的角标
      */
     private int mPagerIndex;
-
     /***
      * 准备下载的图书
      */
     private BookInfo mDownInfo;
-
     private ViewGroup mRootView;
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
     private boolean mIsFist;
     private LinearLayout mLlPager;
-
     private DownBookDialog mDialog;
-    private TextBookCallBack mTextBookCall;
     private Subscription msb;
     private ViewGroup mLoadingNull;
+    private NewTextBookCallBack mNewTextBookCallBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -122,20 +116,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         notifyDataSetChanged();
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
-        initConfig();
         return mRootView;
-    }
-
-
-    private void initConfig() {
-        // this make all imageView align to even position, just need to initialize once as it is static var
-        // suggest init in your CustomApplication
-        AppCompatImageViewCollection.setAlignView(true);
-        //tip:
-        // and make sure that all the res-drawable-image can't zoom in/out
-        // the ImageView dp match px of image, ref layout/activity_main
-
-        // the special image translated by tool on line : http://oa.o-in.me:9056/login
     }
 
     private void itemClick(int position) {
@@ -188,12 +169,13 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof BookShelfProtocol && !mHide && mTextBookCall != null) { //网数据库存储 协议返回的JSON
-                    BookShelfProtocol shelfProtocol = (BookShelfProtocol) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getBookList();
+                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
+                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
+                    List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, ProtocolId.PROTOCOL_ID_TEXT_BOOK + "")) {
-                    LogUtils.i("yuanye...请求服务器 加载出错 ---TextBook");
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK + "")) {
+                   //请求网络出错
+                    LogUtils.i("使用缓存数据");
                     msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
             }
@@ -247,11 +229,16 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
-            mTextBookCall = new TextBookCallBack(getActivity(), ProtocolId.PROTOCOL_ID_TEXT_BOOK);
-            mTextBookCall.setTermIndex(0);
-            mTextBookCall.setCategoryId(10000);
-            Log.e(TAG, "query book from server...");
-            ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), 0, 10000, "", ProtocolId.PROTOCOL_ID_TEXT_BOOK, mTextBookCall);
+            NewBookShelfReq req = new NewBookShelfReq();
+            //设置学生ID
+            req.setUserId(SpUtil.getAccountId());
+            //设置缓存数据ID的key
+            req.setCacheId(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK);
+            //设置年级
+            req.setBookFitGradeName(SpUtil.getGradeName());
+            req.setBookCategoryMatch(10000);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
+            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);
         } else {
             Log.e(TAG, "query book from database...");
             msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
@@ -262,11 +249,16 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.PROTOCOL_ID_TEXT_BOOK + "").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK+ "").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
                 }else{
-                    mLoadingNull.setVisibility(View.VISIBLE);
+                    UIUtils.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingNull.setVisibility(View.VISIBLE);
+                        }
+                    }) ;
                 }
                 subscriber.onCompleted();
             }
@@ -299,7 +291,6 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
 
             @Override
             public void onNext(List<BookInfo> bookInfos) {
-                LogUtils.e(TAG, "bookInfos is : " + bookInfos);
                 freshUI(bookInfos);
             }
         };

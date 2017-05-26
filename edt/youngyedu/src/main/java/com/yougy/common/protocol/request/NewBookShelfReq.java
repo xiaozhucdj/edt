@@ -8,11 +8,11 @@ package com.yougy.common.protocol.request;
 public class NewBookShelfReq extends NewBaseReq{
     /**用户编码*/
     private int userId = -1 ;
-    /**课程编码*/
+
     private int courseId= -1 ;
     /**对应年级名称*/
     private String bookFitGradeName ;
-    /**模糊分类编码*/
+    /**模糊分类编码 ,10000(课本)，30000(课外书) ,(辅导书20000)*/
     private int bookCategoryMatch = -1 ;
     /**缓存图书的ID*/
     private int cacheId ;

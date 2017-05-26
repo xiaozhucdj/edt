@@ -1,7 +1,6 @@
 package com.yougy.init.bean;
 
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -29,19 +28,29 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 图书编码
      */
-    private int bookId =-1;
+    private int bookId = -1;
     /**
      * 图书名称
      */
     private String bookTitle;
+
+    /**
+     * 图书子标题
+     */
+    private String bookSubtitle;
     /**
      * 图书作者
      */
     private String bookAuthor;
+
+    /**
+     * 图书卷册
+     */
+    private String bookVol;
     /**
      * 图书类别
      */
-    private int bookCategory =-1;
+    private int bookCategory = -1;
     /**
      * 图书的ISBN号
      **/
@@ -49,7 +58,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 图书出版社
      */
-    private int bookPublisher =-1;
+    private int bookPublisher = -1;
     /**
      * 图书出版时间
      */
@@ -57,7 +66,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 图书价格
      */
-    private float bookSalePrice  =-1;
+    private float bookSalePrice = -1;
     /**
      * 图书简介
      */
@@ -99,7 +108,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     /***
      *图书匹配年级索引
      */
-    private int bookFitGradeId  =-1;
+    private int bookFitGradeId = -1;
     /***
      *图书匹配年级名称
      */
@@ -107,21 +116,62 @@ public class BookInfo extends DataSupport implements Parcelable {
     /***
      *图书匹配学科索引
      */
-    private int bookFitSubjectId =-1;
+    private int bookFitSubjectId = -1;
     /***
      *图书匹配学科名称
      */
-    private String bookFitSubjectName ;
+    private String bookFitSubjectName;
 
-    /**笔记ID*/
-    private int bookFitNoteId ;
-    /**笔记标题*/
-    private String bookFitNoteTitle ;
+    /**
+     * 笔记ID
+     */
+    private int bookFitNoteId;
+    /**
+     * 笔记标题
+     */
+    private String bookFitNoteTitle;
 
     /***
      * 笔记类型
      */
-    private int  bookFitNoteStyle =0 ;
+    private int bookFitNoteStyle = 0;
+
+
+    /**
+     * 图书分类名称
+     */
+    private String bookCategoryName;
+
+    /**
+     * 图书出版社名称
+     */
+    private String bookPublisherName;
+
+    /**
+     * 图书版本
+     */
+    private int bookVersion;
+
+    /**
+     * 图书版本名称
+     */
+    private String bookVersionName;
+
+    /**
+     * 图书状态
+     */
+    private String bookStatus;
+
+    /**
+     * 图书状态码
+     */
+    private String bookStatusCode ;
+
+    /**
+     * 对应课程编码
+     */
+    private int  courseId ;
+
 
     public int getNoteStyle() {
         return bookFitNoteStyle;
@@ -335,8 +385,6 @@ public class BookInfo extends DataSupport implements Parcelable {
     }
 
 
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -425,7 +473,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 作业ID
      */
-    private  int   bookFitHomeworkId  ;
+    private int bookFitHomeworkId;
 
     public int getBookFitHomeworkId() {
         return bookFitHomeworkId;

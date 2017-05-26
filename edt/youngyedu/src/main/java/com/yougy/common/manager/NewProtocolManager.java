@@ -12,6 +12,7 @@ import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewDeleteUserLogReq;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
+import com.yougy.common.protocol.request.NewInserAllNoteReq;
 import com.yougy.common.protocol.request.NewInserNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewLogoutReq;
@@ -25,6 +26,7 @@ import com.yougy.common.protocol.request.NewQueryTeachertReq;
 import com.yougy.common.protocol.request.NewQueryUserLogReq;
 import com.yougy.common.protocol.request.NewQueryUserReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.NewUpdateUserReq;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -42,6 +44,7 @@ import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.Response;
+import retrofit2.http.HEAD;
 
 
 /**
@@ -57,7 +60,7 @@ public class NewProtocolManager {
         LogUtils.i("请求id.........id..." + id);
 
         //防止用户的多次请求
-        OkHttpUtils.getInstance().cancelTag(url);
+        OkHttpUtils.getInstance().cancelTag(id);
         //设置请求String
         PostStringBuilder builder = OkHttpUtils.postString();
         //设置地址
@@ -74,6 +77,38 @@ public class NewProtocolManager {
         // 执行请求，
         call.execute(callbac);
     }
+
+    private static Response setCommon(String url, String json, int id ) {
+
+        LogUtils.i("请求地址.......url..." + url);
+        LogUtils.i("请求数据.......json..." + json);
+        LogUtils.i("请求id.........id..." + id);
+
+        //防止用户的多次请求
+        OkHttpUtils.getInstance().cancelTag(id);
+        //设置请求String
+        PostStringBuilder builder = OkHttpUtils.postString();
+        //设置地址
+        builder.url(url);
+        //设置请求内容
+        builder.content(json);
+        //设置类型
+        builder.mediaType(MediaType.parse("application/json; charset=utf-8"));
+        //设置tag,为了 打标志 取消请求
+        builder.tag(url);
+        //根据协议设置ID在回调函数 统一处理
+        builder.id(id);
+        RequestCall call = builder.build();
+        // 执行请求，
+        try {
+            return   call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return  null ;
+        }
+    }
+
+
     private static Response setCommon(String json, int id){
         String url = Commons.SHOP_URL;
         //防止用户的多次请求
@@ -100,6 +135,8 @@ public class NewProtocolManager {
         }
         return response;
     }
+
+
     /***
      * 解析 仅有公共头的JSON
      *
@@ -316,8 +353,12 @@ public class NewProtocolManager {
 
 
     /**
+<<<<<<< HEAD
      * 15书架查询
      *
+=======
+     * 15添加笔记
+>>>>>>> ace7740ad79c510cc6edbc78a73d8bf88f262ea5
      * @param req
      * @param callbac
      */
@@ -361,6 +402,42 @@ public class NewProtocolManager {
     }
 
 
+    /**
+     * 添加笔记 --数组
+     * @param req
+     * @param callbac
+     */
+    public static void inserAllNote(NewInserAllNoteReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_INSER_NOTE, callbac);
+    }
+
+
+    /**20 更新笔记
+     * @param req
+     * @param callbac
+     */
+    public static void updateNote(NewUpdateNoteReq req, Callback callbac) {
+        setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE, callbac);
+    }
+
+    /**
+     * 添加笔记 --数组
+     * @param req
+     */
+    public static Response inserAllNote(NewInserAllNoteReq req) {
+        return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_INSER_NOTE);
+    }
+
+
+    /**20 更新笔记  main
+     * @param req
+     */
+    public static Response updateNote(NewUpdateNoteReq req) {
+        return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE);
+    }
+
+
+
     /***协议请求 id*/
     public static class NewProtocolId {
         public static final int ID_VERSION = 1;
@@ -387,7 +464,7 @@ public class NewProtocolManager {
 
         public static final int ID_QUERY_SCHOOL_ORG = 12;
 
-//        public static final int ID_BOOK_SHELF= 13 ;
+        public static final int ID_BOOK_SHELF= 13 ;
 
 //        public static final int ID_QUERY_NOTE= 14 ;
 
@@ -409,6 +486,8 @@ public class NewProtocolManager {
         public static final int ID_BOOKSHOP_CATEGORY_ALL = 41;
         public static final int ID_BOOKSHOP_BOOK = 42;
 
+        public static final int ID_UPDATE_NOTE= 20;
+
     }
 
     /***协议返回 code*/
@@ -419,5 +498,16 @@ public class NewProtocolManager {
     /***缓存id*/
     public static class NewCacheId {
 
+        /**当前学期课本*/
+        public static int CODE_CURRENT_BOOK = 5000 ;
+        public static int ALL_CODE_CURRENT_BOOK = 5001 ;
+        /**课外书*/
+        public static int CODE_REFERENCE_BOOK = 5004 ;
+        /**辅导书*/
+        public static final int CODE_COACH_BOOK = 5002;
+        public static final int ALL_CODE_COACH_BOOK = 5003;
+        /**笔记*/
+        public static final int CODE_CURRENT_NOTE =5005;
+        public static final int ALL_CODE_NOTE =5006;
     }
 }

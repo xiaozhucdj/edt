@@ -20,12 +20,12 @@ import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.nohttp.DownInfo;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.TextBookCallBack;
-import com.yougy.common.protocol.response.BookShelfProtocol;
+import com.yougy.common.protocol.callback.NewTextBookCallBack;
+import com.yougy.common.protocol.request.NewBookShelfReq;
+import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -88,9 +88,10 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     private LinearLayout mLlPager;
     private BookInfo mDownInfo;
     private DownBookDialog mDialog;
-    private TextBookCallBack mTextBookCall;
+
     private Subscription mSub;
     private ViewGroup mLoadingNull;
+    private NewTextBookCallBack mNewTextBookCallBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -183,11 +184,17 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
-            mTextBookCall = new TextBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_ALL_COACHBOOK);
-            mTextBookCall.setTermIndex(0);
-            mTextBookCall.setCategoryId(20000);
-            Log.e(TAG, "query book from server...");
-            ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), 0, 20000, "", ProtocolId.PROTOCOL_ID_ALL_COACHBOOK, mTextBookCall);
+            NewBookShelfReq req = new NewBookShelfReq();
+            //设置学生ID
+            req.setUserId(SpUtil.getAccountId());
+            //设置缓存数据ID的key
+            req.setCacheId(NewProtocolManager.NewCacheId.CODE_COACH_BOOK);
+            //设置年级
+            req.setBookFitGradeName(SpUtil.getGradeName());
+            req.setBookCategoryMatch(20000);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
+            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);
+
         } else {
             Log.e(TAG, "query book from database...");
             mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
@@ -378,11 +385,11 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof BookShelfProtocol && !mHide &&  mTextBookCall!=null) { //网数据库存储 协议返回的JSON
-                    BookShelfProtocol shelfProtocol = (BookShelfProtocol) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getBookList();
+                if (o instanceof NewBookShelfRep && !mHide &&  mNewTextBookCallBack!=null) { //网数据库存储 协议返回的JSON
+                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
+                    List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,ProtocolId.PROTOCOL_ID_ALL_COACHBOOK+"")){
+                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.CODE_COACH_BOOK+"")){
                     LogUtils.i("yuanye...请求服务器 加载出错 ---CoachBookFragment");
                     mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
@@ -395,11 +402,16 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
 
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", ProtocolId.PROTOCOL_ID_ALL_COACHBOOK+"").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.CODE_COACH_BOOK+"").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), BookShelfProtocol.class).getBookList());
+                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
                 }else{
-                    mLoadingNull.setVisibility(View.VISIBLE);
+                    UIUtils.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingNull.setVisibility(View.VISIBLE);
+                        }
+                    }) ;
                 }
                 subscriber.onCompleted();
             }
@@ -455,7 +467,6 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             mBookAdapter = null ;
         }
     }
-
     private void notifyDataSetChanged(){
         mBookAdapter.notifyDataSetChanged();
         EpdController.invalidate(mRootView, UpdateMode.GC);
