@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
+import com.yougy.common.utils.LogUtils;
 import com.yougy.ui.activity.R;
 
 import java.util.ArrayList;
@@ -233,6 +234,7 @@ public class AlignTextView extends TextView {
     public void setText(CharSequence text, BufferType type) {
         firstCalc = true;
         super.setText(text, type);
+        LogUtils.e(getClass().getName(),"text is : " + text);
     }
 
     @Override
@@ -262,4 +264,6 @@ public class AlignTextView extends TextView {
         originalLineCount = textView.getLineCount();
         originalHeight = textView.getMeasuredHeight();
     }
+
+
 }

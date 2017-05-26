@@ -5,7 +5,6 @@ import android.os.Bundle;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.YougyApplicationManager;
 
-import butterknife.ButterKnife;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
 
@@ -17,18 +16,13 @@ public abstract class ShopBaseActivity extends BaseActivity {
     protected CompositeSubscription subscription;
     protected ConnectableObservable<Object> tapEventEmitter;
     protected String tag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView();
-        ButterKnife.bind(this);
-        tag = this.getClass().getName();
         super.onCreate(savedInstanceState);
+        tag = this.getClass().getName();
     }
 
-    /**
-     * 设置界面布局文件
-     */
-    protected abstract void setContentView();
 
     @Override
     protected void onResume() {

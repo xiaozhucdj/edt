@@ -132,9 +132,12 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     }
 
     @Override
-    protected void initLayout() {
+    protected void setContentView() {
         setContentView(R.layout.activity_main);
+    }
 
+    @Override
+    protected void initLayout() {
     }
 
     @Override

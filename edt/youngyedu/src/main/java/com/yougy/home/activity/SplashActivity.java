@@ -50,12 +50,16 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     private WeakHandler mHandler = new WeakHandler();
 
     @Override
+    protected void setContentView() {
+        setContentView(R.layout.activity_splash);
+    }
+
+    @Override
     protected void init() {
     }
 
     @Override
     protected void initLayout() {
-        setContentView(R.layout.activity_splash);
         mImgLogo = (ImageView) this.findViewById(R.id.img_logo);
     }
 

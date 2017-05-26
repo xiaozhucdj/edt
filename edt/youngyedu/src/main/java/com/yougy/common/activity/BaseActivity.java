@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by Administrator on 2016/8/24.
  */
@@ -102,26 +104,23 @@ public abstract class BaseActivity extends FragmentActivity {
     // ==========================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        if (savedInstanceState!=null){
-//            String FRAGMENTS_TAG = "Android:support:fragments";
-//            savedInstanceState.remove(FRAGMENTS_TAG);
-//        }
+        //设置无标题
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView();
+        //设置全屏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-//        filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-//        registerReceiver(receiver, filter);
-             //设置无标题
-           requestWindowFeature(Window.FEATURE_NO_TITLE);
-            //设置全屏
-           getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        setContentView(R.layout.main);
-
         mMainThreadId = Process.myTid();
         mActivities.add(this);
+        ButterKnife.bind(this);
         init();
         initLayout();
         loadData();
     }
-
+    /**
+     * 设置界面布局文件
+     */
+    protected abstract void setContentView();
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }

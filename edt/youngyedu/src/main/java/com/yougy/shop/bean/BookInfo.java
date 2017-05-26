@@ -10,17 +10,11 @@ import android.os.Parcelable;
 public class BookInfo implements Parcelable{
 
     private String bookId;
-
     private String bookAwards;
-
     private String bookISBN;
-
     private String bookSupplier;
-
     private String bookCreateTime;
-
     private String bookSubtitle;
-
     private String bookTitle;
     private String bookSummary;
     private String bookPublisher;
@@ -36,8 +30,14 @@ public class BookInfo implements Parcelable{
     private String bookPublishTime;
     private String bookPrice;
     private String bookCreator;
-    private String bookKeyword;
-    private String bookCategoryFamily;
+    private String bookKeyWord;
+    private String bookCategoryFamilyName;
+    private String bookCategoryName;
+    private String bookStatusCode;
+    private String bookPublisherName;
+    private int bookCategoryFamily;
+    private String bookVersionName;
+
     public BookInfo(){
 
     }
@@ -63,8 +63,13 @@ public class BookInfo implements Parcelable{
         bookPublishTime = in.readString();
         bookPrice = in.readString();
         bookCreator = in.readString();
-        bookKeyword = in.readString();
-        bookCategoryFamily = in.readString();
+        bookKeyWord = in.readString();
+        bookCategoryFamilyName = in.readString();
+        bookCategoryName = in.readString();
+        bookStatusCode = in.readString();
+        bookPublisherName = in.readString();
+        bookCategoryFamily = in.readInt();
+        bookVersionName = in.readString();
     }
 
     public static final Creator<BookInfo> CREATOR = new Creator<BookInfo>() {
@@ -247,20 +252,69 @@ public class BookInfo implements Parcelable{
         this.bookCreator = bookCreator;
     }
 
-    public String getBookKeyword() {
-        return bookKeyword;
+    public String getBookCategoryFamilyName() {
+        return bookCategoryFamilyName;
     }
 
-    public void setBookKeyword(String bookKeyword) {
-        this.bookKeyword = bookKeyword;
+    public void setBookCategoryFamilyName(String bookCategoryFamilyName) {
+        this.bookCategoryFamilyName = bookCategoryFamilyName;
     }
 
-    public String getBookCategoryFamily() {
+    public String getBookKeyWord() {
+        return bookKeyWord;
+    }
+
+    public void setBookKeyWord(String bookKeyWord) {
+        this.bookKeyWord = bookKeyWord;
+    }
+
+    public String getBookCategoryName() {
+        return bookCategoryName;
+    }
+
+    public void setBookCategoryName(String bookCategoryName) {
+        this.bookCategoryName = bookCategoryName;
+    }
+
+    public String getBookStatusCode() {
+        return bookStatusCode;
+    }
+
+    public void setBookStatusCode(String bookStatusCode) {
+        this.bookStatusCode = bookStatusCode;
+    }
+
+    public String getBookPublisherName() {
+        return bookPublisherName;
+    }
+
+    public void setBookPublisherName(String bookPublisherName) {
+        this.bookPublisherName = bookPublisherName;
+    }
+
+    public int getBookCategoryFamily() {
         return bookCategoryFamily;
     }
 
-    public void setBookCategoryFamily(String bookCategoryFamily) {
+    public void setBookCategoryFamily(int bookCategoryFamily) {
         this.bookCategoryFamily = bookCategoryFamily;
+    }
+
+    public String getBookVersionName() {
+        return bookVersionName;
+    }
+
+    public void setBookVersionName(String bookVersionName) {
+        this.bookVersionName = bookVersionName;
+    }
+
+    @Override
+    public String toString() {
+        return "BookInfo{" +
+                "bookTitle='" + bookTitle + '\'' +
+                ", bookAuthor='" + bookAuthor + '\'' +
+                ", bookCategoryFamilyName='" + bookCategoryFamilyName + '\'' +
+                '}';
     }
 
     @Override
@@ -290,7 +344,12 @@ public class BookInfo implements Parcelable{
         dest.writeString(this.bookPublishTime);
         dest.writeString(this.bookPrice);
         dest.writeString(this.bookCreator);
-        dest.writeString(this.bookKeyword);
-        dest.writeString(this.bookCategoryFamily);
+        dest.writeString(this.bookKeyWord);
+        dest.writeString(this.bookCategoryFamilyName);
+        dest.writeString(this.bookCategoryName);
+        dest.writeString(this.bookStatusCode);
+        dest.writeString(this.bookPublisherName);
+        dest.writeInt(this.bookCategoryFamily);
+        dest.writeString(this.bookVersionName);
     }
 }

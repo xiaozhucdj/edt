@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.inkscreen.LeController;
 import com.inkscreen.utils.NetworkManager;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.common.global.Commons;
@@ -17,7 +16,6 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.ui.activity.BuildConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePal;
@@ -29,6 +27,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+
+//import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * Created by Administrator on 2016/8/24.
@@ -117,10 +117,10 @@ public class YougyApplicationManager extends LitePalApplication {
         // 获取当前进程名
         String processName = getProcessName(android.os.Process.myPid());
         // 设置是否为上报进程
-        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
-        strategy.setUploadProcess(processName == null || processName.equals(packageName));
-        // 初始化Bugly
-        CrashReport.initCrashReport(context, "68d9d03b4a", BuildConfig.DEBUG, strategy);
+//        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
+//        strategy.setUploadProcess(processName == null || processName.equals(packageName));
+//        // 初始化Bugly
+//        CrashReport.initCrashReport(context, "68d9d03b4a", BuildConfig.DEBUG, strategy);
 
     }
 

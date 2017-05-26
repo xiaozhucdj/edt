@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+import com.yougy.common.utils.LogUtils;
+
 /**
  * Created by jiangliang on 2017/3/21.
  */
@@ -37,5 +39,11 @@ public class MyTextView extends TextView {
             canvas.translate(0, fontMetricsInt.top - fontMetricsInt.ascent);
         }
         super.onDraw(canvas);
+    }
+
+    @Override
+    public void setText(CharSequence text, BufferType type) {
+        super.setText(text, type);
+        LogUtils.e(getClass().getName(),"text is : " + text);
     }
 }

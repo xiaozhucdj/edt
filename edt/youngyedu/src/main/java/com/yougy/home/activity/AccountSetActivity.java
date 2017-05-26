@@ -66,9 +66,12 @@ public class AccountSetActivity extends BaseActivity implements View.OnClickList
         LogUtils.e(tag,"onDestroy......");
     }
 
+    protected void setContentView(){
+        setContentView(R.layout.activity_account);
+    }
+
     @Override
     protected void initLayout() {
-        setContentView(R.layout.activity_account);
         mBtnleft = (ImageButton) this.findViewById(R.id.btn_left);
         mBtnRight = (ImageButton) this.findViewById(R.id.img_btn_right);
         mBtnRight.setVisibility(View.GONE);

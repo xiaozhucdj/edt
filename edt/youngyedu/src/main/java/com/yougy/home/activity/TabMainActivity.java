@@ -142,8 +142,13 @@ public class TabMainActivity extends BaseActivity {
     }
 
     @Override
-    protected void initLayout() {
+    protected void setContentView() {
         setContentView(R.layout.tab_main_layout);
+    }
+
+    @Override
+    protected void initLayout() {
+
         ButterKnife.bind(this);
         mTvClassName.setText(SpUtil.getAccountClass());
         mTvUserName.setText(SpUtil.getAccountName());

@@ -41,6 +41,7 @@ public class ShopBookLayout extends LinearLayout {
         LogUtils.e("ShopBookLayout", "updateView.................info's size : " + infos.size());
         for (int i = 0; i < infos.size(); i++) {
             shopBookViews[i].updateView(infos.get(i));
+            shopBookViews[i].setVisibility(View.VISIBLE);
         }
     }
 }

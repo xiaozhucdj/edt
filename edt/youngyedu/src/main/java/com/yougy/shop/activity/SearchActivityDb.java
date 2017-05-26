@@ -14,12 +14,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yougy.common.bean.Result;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ResultUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.rx_subscriber.ShopSubscriber;
 import com.yougy.shop.adapter.SearchResultAdapter1;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.callback.QueryBookCallBack;
@@ -136,7 +139,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     protected void init() {
         Intent intent = getIntent();
         bookName = intent.getStringExtra("search_key");
-        categoryId = intent.getIntExtra("categoryId",-1);
+        categoryId = intent.getIntExtra("categoryId", -1);
         mStageList = new ArrayList<>();
         mStageList.add(mAllGrade);
         mStageList.addAll(Arrays.asList(mStages));
@@ -152,7 +155,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             if (index == 1) {
                 pageBtn.setSelected(true);
             }
-            pageBtn.setText(Integer.toString(index));
+            pageBtn.setText(index+"");
             btns.add(pageBtn);
             final int page = index - 1;
             pageBtn.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +192,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         binding.subjectWrap.setVerticalMargin(20);
         binding.versionWrap.setHorizontalMargin(40);
         binding.versionWrap.setVerticalMargin(20);
+        LogUtils.e(tag,"version is : " + mVersions.length);
         for (final String version : mVersions) {
             final TextView tv = (TextView) View.inflate(this, R.layout.text_view, null);
             tv.setText(version);
@@ -203,6 +207,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.versionWrap.addView(tv);
         }
 
+        LogUtils.e(tag,"subject is : " + mSubjects.length);
         for (final String subject : mSubjects) {
             final TextView tv = (TextView) View.inflate(this, R.layout.text_view, null);
             tv.setText(subject);
@@ -241,7 +246,10 @@ public class SearchActivityDb extends ShopBaseActivity {
         Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                Response response = ProtocolManager.queryBookProtocol(SpUtil.getUserId(), bookName, categoryId, 0, 0);
+//                Response response = ProtocolManager.queryBookProtocol(SpUtil.getUserId(), bookName, categoryId, 0, 0);
+                NewBookStoreBookReq req = new NewBookStoreBookReq();
+                req.setBookTitle(bookName);
+                Response response = NewProtocolManager.queryBook(req);
                 if (response.isSuccessful()) {
                     try {
                         String json = response.body().string();
@@ -258,17 +266,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<BookInfo>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
+                .subscribe(new ShopSubscriber<List<BookInfo>>(this) {
                     @Override
                     public void onNext(List<BookInfo> bookInfos) {
                         LogUtils.e(tag, "bookinfos' size : " + bookInfos.size());

@@ -234,8 +234,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initLayout() {
-        mRootView = UIUtils.inflate(R.layout.activity_main_ui) ;
-        setContentView(mRootView);
         EventBus.getDefault().register(this);
         NetManager.getInstance().registerReceiver(this);
         PowerManager.getInstance().registerReceiver(this);
@@ -298,7 +296,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnSearChBook.setOnClickListener(this);
         // 商城
         mBtnBookStore = (Button) this.findViewById(R.id.btn_bookStore);
-//        mBtnBookStore.setOnClickListener(this);
+        mBtnBookStore.setOnClickListener(this);
         //消息中心
         mBtnMsg = (Button) this.findViewById(R.id.btn_msg);
         mBtnMsg.setOnClickListener(this);
@@ -433,7 +431,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.btn_bookStore:
-                LogUtils.i("书城");
+                LogUtils.e(getClass().getName(),"书城");
                 if (NetUtils.isNetConnected()) {
                     loadIntent(BookShopActivityDB.class);
                 } else {
@@ -1011,6 +1009,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
+
+    @Override
+    protected void setContentView() {
+        mRootView = UIUtils.inflate(R.layout.activity_main_ui) ;
+        setContentView(mRootView);
+    }
 
     @Override
     protected void onPause() {

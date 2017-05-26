@@ -8,6 +8,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.view.ShopBookItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +18,6 @@ public class BookShopAdapter extends RecyclerView.Adapter<BookShopHolder> {
 
     private List<String> mClassifies;
     private List<List<BookInfo>> infos;
-
     public BookShopAdapter(List<String> classifies, List<List<BookInfo>> infos) {
         LogUtils.e("BookShopAdapter", "classifies' size : " + classifies.size() + "... infos' size : " + infos.size());
         mClassifies = classifies;
@@ -62,8 +62,14 @@ class BookShopHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindView(String classify, List<BookInfo> infos, int position) {
-        LogUtils.e("BookShopAdapter","bindView......");
-        mShopBookItem.updateView(classify, infos, position);
+        LogUtils.e("BookShopAdapter", "bindView...... classify : " + classify + ",infos' size : " + infos.size());
+        List<BookInfo> ifs = new ArrayList<>();
+        if (infos.size() > 5) {
+            ifs.addAll(infos.subList(0, 5));
+        } else {
+            ifs.addAll(infos);
+        }
+        mShopBookItem.updateView(classify, ifs, position);
     }
 
     public static BookShopHolder create(ViewGroup parent, BookShopAdapter.OnMoreClickListener listener) {

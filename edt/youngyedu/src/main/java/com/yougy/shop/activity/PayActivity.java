@@ -30,6 +30,11 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     private AdapterActivityPayBooks mAdapter;
 
     @Override
+    protected void setContentView() {
+        setContentView(R.layout.activity_pay);
+    }
+
+    @Override
     protected void init() {
         initInfos();
     }
@@ -52,7 +57,6 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initLayout() {
-        setContentView(R.layout.activity_pay);
 
         mBtnBack = (Button) this.findViewById(R.id.btn_back);
         mBtnBack.setOnClickListener(this);

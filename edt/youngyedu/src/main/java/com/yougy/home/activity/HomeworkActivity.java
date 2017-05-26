@@ -9,14 +9,17 @@ import com.yougy.ui.activity.R;
 
 public class HomeworkActivity extends BaseActivity {
     @Override
+    protected void setContentView() {
+        setContentView(R.layout.activity_homewrok);
+    }
+
+    @Override
     protected void init() {
 
     }
 
     @Override
     protected void initLayout() {
-
-        setContentView(R.layout.activity_homewrok);
     }
 
     @Override

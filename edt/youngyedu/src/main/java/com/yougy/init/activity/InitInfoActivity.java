@@ -39,7 +39,7 @@ public class InitInfoActivity extends BaseActivity {
 
     @Override
     protected void initLayout() {
-        setContentView(R.layout.init_layout);
+
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.container, new SelectSchoolFragment(), InitManager.TAG_SELECT_SCHOOL);
@@ -77,6 +77,11 @@ public class InitInfoActivity extends BaseActivity {
     @Override
     protected void refreshView() {
 
+    }
+
+    @Override
+    protected void setContentView() {
+        setContentView(R.layout.init_layout);
     }
 
     @Override

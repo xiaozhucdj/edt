@@ -20,7 +20,7 @@ public class Commons {
     public static final String URL = "http://106.15.45.14:8080/leke_api/android";
     public static final String VERSION_URL = "http://106.15.45.14:10002/version";
 
-    public static final String SHOP_URL = "http://192.168.12.7:80/api/bookStore";
+    public static final String SHOP_URL = "http://106.15.45.14:10002/bookStore";
     public static final String NEW_URL = "http://106.15.45.14:10002/";
 
     /**

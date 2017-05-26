@@ -158,21 +158,28 @@
                     android:orientation="horizontal"
                     android:paddingLeft="30px">
 
-                    <Spinner
-                        android:id="@+id/spinner_stage"
+                    <Button
+                        android:id="@+id/stage_button"
                         android:layout_width="170px"
                         android:layout_height="wrap_content"
                         android:background="@drawable/img_xiala"
-                        android:spinnerMode="dropdown" />
+                        android:onClick="@{activity.stageClick}"
+                        android:textSize="20px"
+                        android:paddingLeft="5px"
+                        android:gravity="center_vertical"
+                        />
 
-                    <Spinner
-                        android:id="@+id/spinner_classify"
+                    <Button
+                        android:id="@+id/classify_button"
                         android:layout_width="170px"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30px"
                         android:layout_marginRight="30px"
                         android:background="@drawable/img_xiala"
-                        android:spinnerMode="dropdown"
+                        android:onClick="@{activity.classifyClick}"
+                        android:textSize="20px"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="5px"
                         android:visibility="gone" />
 
                     <CheckBox
@@ -313,6 +320,24 @@
                     android:layout_marginTop="20px"
                     android:background="@color/black" />
             </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/stage_recycler"
+                android:layout_width="170px"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30px"
+                android:background="@drawable/identity_list_bg"
+                android:paddingLeft="5px"
+                android:paddingTop="5px"
+                android:paddingBottom="5px"
+                android:visibility="gone" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/classify_recycler"
+                android:layout_width="170px"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="230px"
+                android:background="@drawable/identity_list_bg"
+                android:visibility="gone" />
         </FrameLayout>
 
         <RelativeLayout
@@ -327,8 +352,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60px"
                 android:paddingLeft="30px"
-                android:paddingRight="30px"
-                >
+                android:paddingRight="30px">
 
                 <TextView
                     android:id="@+id/search_or_cancel_tv"
@@ -337,10 +361,10 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="28px"
-                    android:textSize="24px"
-                    android:textColor="@color/text_color_black"
                     android:onClick="@{activity.clickSearchOrCancelTv}"
-                    android:text="搜索" />
+                    android:text="搜索"
+                    android:textColor="@color/text_color_black"
+                    android:textSize="24px" />
 
                 <EditText
                     android:id="@+id/search_et"
@@ -367,40 +391,39 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/search_fourth_line"
-                >
+                android:layout_below="@+id/search_fourth_line">
 
                 <TextView
                     android:id="@+id/search_history_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:textColor="@color/text_color_black"
-                    android:layout_marginTop="20px"
                     android:layout_marginLeft="30px"
+                    android:layout_marginTop="20px"
+                    android:text="@string/record_of_search"
+                    android:textColor="@color/text_color_black"
                     android:textSize="24px"
-                    android:textStyle="bold"
-                    android:text="@string/record_of_search" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/clear_history_record"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:onClick="@{activity.clearHistoryRecord}"
-                    android:layout_marginTop="23px"
                     android:layout_marginRight="30px"
-                    android:textSize="22px"
+                    android:layout_marginTop="23px"
+                    android:onClick="@{activity.clearHistoryRecord}"
+                    android:text="@string/clear_record"
                     android:textColor="@color/text_color_black"
-                    android:text="@string/clear_record" />
+                    android:textSize="22px" />
 
                 <LinearLayout
                     android:id="@+id/history_record_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/search_history_tv"
-                    android:layout_marginTop="30px"
                     android:layout_marginLeft="40px"
+                    android:layout_marginTop="30px"
                     android:orientation="vertical" />
 
                 <View

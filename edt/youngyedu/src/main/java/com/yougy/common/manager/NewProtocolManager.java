@@ -6,6 +6,9 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
+import com.yougy.common.protocol.request.NewBookStoreBookReq;
+import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
+import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewDeleteUserLogReq;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
@@ -35,7 +38,10 @@ import com.zhy.http.okhttp.request.RequestCall;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import okhttp3.MediaType;
+import okhttp3.Response;
 
 
 /**
@@ -68,7 +74,32 @@ public class NewProtocolManager {
         // 执行请求，
         call.execute(callbac);
     }
-
+    private static Response setCommon(String json, int id){
+        String url = Commons.SHOP_URL;
+        //防止用户的多次请求
+//        OkHttpUtils.getInstance().cancelTag(url);
+        //设置请求String
+        PostStringBuilder builder = OkHttpUtils.postString();
+        //设置地址
+        builder.url(url);
+        //设置请求内容
+        builder.content(json);
+        //设置类型
+        builder.mediaType(MediaType.parse("application/json; charset=utf-8"));
+        //设置tag,为了 打标志 取消请求
+        builder.tag(url);
+        //根据协议设置ID在回调函数 统一处理
+        builder.id(id);
+        RequestCall call = builder.build();
+        // 执行请求，
+        Response response = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
     /***
      * 解析 仅有公共头的JSON
      *
@@ -209,7 +240,6 @@ public class NewProtocolManager {
     }
 
 
-
     /**
      * 18日志删除
      *
@@ -246,6 +276,7 @@ public class NewProtocolManager {
 
     /**
      * 11学校查询
+     *
      * @param req
      * @param callbac
      */
@@ -255,6 +286,7 @@ public class NewProtocolManager {
 
     /**
      * 12学校查询
+     *
      * @param req
      * @param callbac
      */
@@ -264,6 +296,7 @@ public class NewProtocolManager {
 
     /**
      * 13书架查询
+     *
      * @param req
      * @param callbac
      */
@@ -273,6 +306,7 @@ public class NewProtocolManager {
 
     /**
      * 14 笔记查询
+     *
      * @param req
      * @param callbac
      */
@@ -283,6 +317,7 @@ public class NewProtocolManager {
 
     /**
      * 15书架查询
+     *
      * @param req
      * @param callbac
      */
@@ -292,12 +327,39 @@ public class NewProtocolManager {
 
     /**
      * 16笔记删除
+     *
      * @param req
      * @param callbac
      */
     public static void deleteNote(NewDeleteNoteReq req, Callback callbac) {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_DELETE_NOTE, callbac);
     }
+
+    /**
+     * 书城接口
+     */
+
+    /**
+     * 17 书城首页
+     */
+    public static Response queryBookShopHome(NewBookStoreHomeReq req) {
+        return setCommon(GsonUtil.toJson(req), NewProtocolId.ID_BOOKSHOP_HOME);
+    }
+
+    /**
+     * 18 图书分类查询
+     */
+    public static Response queryBookCategory(NewBookStoreCategoryReq req) {
+        return setCommon(GsonUtil.toJson(req), NewProtocolId.ID_BOOKSHOP_CATEGORY_ALL);
+    }
+
+    /**
+     * 图书查询
+     */
+    public static Response queryBook(NewBookStoreBookReq req){
+        return setCommon(GsonUtil.toJson(req),NewProtocolId.ID_BOOKSHOP_BOOK);
+    }
+
 
     /***协议请求 id*/
     public static class NewProtocolId {
@@ -319,33 +381,43 @@ public class NewProtocolManager {
 
         public static final int ID_QUERY_TEACHER = 9;
 
-        public static final int ID_QUERY_AREA= 10 ;
+        public static final int ID_QUERY_AREA = 10;
 
-        public static final int ID_QUERY_SCHOOL= 11 ;
+        public static final int ID_QUERY_SCHOOL = 11;
 
-        public static final int ID_QUERY_SCHOOL_ORG= 12 ;
+        public static final int ID_QUERY_SCHOOL_ORG = 12;
 
 //        public static final int ID_BOOK_SHELF= 13 ;
 
 //        public static final int ID_QUERY_NOTE= 14 ;
 
-        public static final int ID_INSER_NOTE= 15 ;
+        public static final int ID_INSER_NOTE = 15;
 
-        public static final int ID_DELETE_NOTE= 16 ;
+        public static final int ID_DELETE_NOTE = 16;
 
-        public static final int ID_QUERY_USERLOG= 17 ;
+        public static final int ID_QUERY_USERLOG = 17;
 
-        public static final int ID_DELETE_USERLOG= 18;
+        public static final int ID_DELETE_USERLOG = 18;
 
-        public static final int ID_LOGOUT= 19;
+        public static final int ID_LOGOUT = 19;
+
+
+        /**
+         * 书城ID
+         */
+        public static final int ID_BOOKSHOP_HOME = 40;
+        public static final int ID_BOOKSHOP_CATEGORY_ALL = 41;
+        public static final int ID_BOOKSHOP_BOOK = 42;
 
     }
+
     /***协议返回 code*/
     public static class NewCodeResult {
-        public static final int CODE_SUCCESS = 200 ;
+        public static final int CODE_SUCCESS = 200;
     }
+
     /***缓存id*/
-    public static class NewCacheId{
+    public static class NewCacheId {
 
     }
 }

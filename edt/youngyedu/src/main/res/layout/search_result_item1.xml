@@ -71,7 +71,7 @@
             android:ellipsize="end"
             android:maxEms="50"
             />
-        <TextView
+        <com.yougy.view.MyTextView
             android:id="@+id/book_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
             android:textSize="18px"
             android:textColor="@color/black"
             />
-        <TextView
+        <com.yougy.view.MyTextView
             android:id="@+id/book_classify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
