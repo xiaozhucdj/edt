@@ -44,7 +44,6 @@ import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.Response;
-import retrofit2.http.HEAD;
 
 
 /**
@@ -353,12 +352,7 @@ public class NewProtocolManager {
 
 
     /**
-<<<<<<< HEAD
-     * 15书架查询
-     *
-=======
      * 15添加笔记
->>>>>>> ace7740ad79c510cc6edbc78a73d8bf88f262ea5
      * @param req
      * @param callbac
      */

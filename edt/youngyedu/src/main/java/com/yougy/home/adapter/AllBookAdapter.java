@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.yougy.common.manager.ImageLoaderManager;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
@@ -82,21 +81,12 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
     }
 
     private void refreshImg(ImageView view, String url) {
-        int w = view.getMeasuredWidth();
-        int h = view.getMeasuredHeight();
-
-        if (w == 0 || h == 0) {
-            //测量控件大小
-            int result[] = UIUtils.getViewWidthAndHeight(view);
-            w = result[0];
-            h = result[1];
-        }
         ImageLoaderManager.getInstance().loadImageFragment(mFragment,
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                w,
-                h,
+                158,
+                208,
                 view);
     }
 }

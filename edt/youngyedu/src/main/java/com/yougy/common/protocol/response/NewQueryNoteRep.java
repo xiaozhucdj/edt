@@ -14,4 +14,8 @@ public class NewQueryNoteRep extends NewBaseRep {
     public List<NoteInfo> getData() {
         return data;
     }
+
+    public void setData(List<NoteInfo> data) {
+        this.data = data;
+    }
 }

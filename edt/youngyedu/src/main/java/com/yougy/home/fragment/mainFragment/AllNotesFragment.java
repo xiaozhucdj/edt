@@ -54,6 +54,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+import static com.yougy.common.manager.NewProtocolManager.NewCacheId.ALL_CODE_NOTE;
+
 /**
  * Created by Administrator on 2016/7/12.
  * 笔记
@@ -362,7 +364,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+            req.setCacheId(ALL_CODE_NOTE);
             //设置年级
             req.setNoteFitGradeName("");
             mNewNoteBookCallBack  = new NewNoteBookCallBack(getActivity() ,req) ;
@@ -382,21 +384,49 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         }
     }
 
+
+
+
     private Observable<List<NoteInfo>> getNotesObserver() {
         return Observable.create(new Observable.OnSubscribe<List<NoteInfo>>() {
             @Override
             public void call(Subscriber<? super List<NoteInfo>> subscriber) {
-
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ",NewProtocolManager.NewCacheId.ALL_CODE_NOTE+"").find(CacheJsonInfo.class);
+                //缓存JSON
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.ALL_CODE_NOTE+"").find(CacheJsonInfo.class);
+                //离线数据
+                List<NoteInfo> offLines = DataSupport.findAll(NoteInfo.class);
                 if (infos != null && infos.size() > 0) {
                     NewQueryNoteRep protocol = GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewQueryNoteRep.class);
-                    if (protocol!=null && protocol.getData() != null && protocol.getData().size()>0)
-                        subscriber.onNext(protocol.getData());
+                    if ( protocol!=null && protocol.getData()!=null && protocol.getData().size()>0) {
+                        List<NoteInfo> noteCaches = protocol.getData() ;
+                        if (offLines != null && offLines.size() > 0) {
+                            //添加离线笔记
+                            for (NoteInfo noteInfo : offLines) {
+                                if (noteInfo.getNoteId() == -1) {
+                                    LogUtils.i("发现 离线笔记 ");
+                                    LogUtils.i("...4");
+                                    noteCaches.add(noteInfo);
+                                }
+                            }
+                        }
+                        subscriber.onNext(noteCaches);
+                    }
+
+                } else if (offLines != null && offLines.size() > 0) {
+                    //没有缓存的JSON 那么可以肯定 都是离线创建的笔记
+                    subscriber.onNext(offLines);
                 }
                 subscriber.onCompleted();
             }
         });
     }
+
+
+
+
+
+
+
 
     private Subscriber<List<NoteInfo>> getSubscriber() {
         return new Subscriber<List<NoteInfo>>() {
@@ -464,7 +494,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
                     }else{
                         setLoading(View.VISIBLE);
                     }
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.ALL_CODE_NOTE+"")){
+                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, ALL_CODE_NOTE+"")){
                     LogUtils.i(" onerror 处理 ...........");
                     mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
