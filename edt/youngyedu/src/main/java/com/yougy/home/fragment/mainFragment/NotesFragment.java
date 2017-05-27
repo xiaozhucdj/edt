@@ -303,17 +303,16 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
                 if (o instanceof NewQueryNoteRep && !mHide && mNewNoteBookCallBack != null) {
                     NewQueryNoteRep data = (NewQueryNoteRep) o;
                      if (data!=null && data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS  ){
-                         setLoading(View.GONE);
                          if ( data.getData() != null && data.getData().size() > 0 ) {
                              List<NoteInfo> notes = data.getData();
                              mServerInfos.clear();
                              mServerInfos.addAll(notes);
                          }
                          //添加addItem
-                         mServerInfos.add(addCreatNoteItem());
+                         if (!mServerInfos.contains(addCreatNoteItem())){
+                             mServerInfos.add(addCreatNoteItem());
+                         }
                          refresh();
-                     }else{
-                         setLoading(View.VISIBLE);
                      }
                 }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE+"")){
                     LogUtils.i("使用缓存数据");
@@ -324,14 +323,6 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
     }
 
 
-    private  void  setLoading( final int visibility){
-        UIUtils.post(new Runnable() {
-            @Override
-            public void run() {
-                mLoadingNull.setVisibility(visibility);
-            }
-        }) ;
-    }
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
         intent.putExtras(extras);
@@ -453,7 +444,6 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             public void onCompleted() {
                 Log.e(TAG, "onCompleted...");
                 dialog.dismiss();
-                setLoading(View.GONE);
                 if (mServerInfos!=null && mServerInfos.size()<0){
                     mServerInfos.add(addCreatNoteItem());
                     refresh();

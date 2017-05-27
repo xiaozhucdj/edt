@@ -9,6 +9,12 @@ import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.response.NewQueryNoteRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.home.bean.NoteInfo;
+
+import org.litepal.crud.DataSupport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -31,7 +37,24 @@ public class NewNoteBookCallBack extends CacheInfoBack<NewQueryNoteRep> {
         LogUtils.i("note json ===" + mJson);
         NewQueryNoteRep rep =   new Gson().fromJson(mJson, NewQueryNoteRep.class);
         if (rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+            //缓存JSON
             operateCacheInfo(id);
+            //查询离线笔记
+            if (rep.getData() == null){
+                List<NoteInfo> data = new ArrayList<>() ;
+                rep.setData(data );
+            }
+            //查询缓存数据库
+            List<NoteInfo> offLines = DataSupport.findAll(NoteInfo.class);
+            if (offLines != null && offLines.size() > 0) {
+                //添加离线笔记
+                for (NoteInfo noteInfo : offLines) {
+                    if (noteInfo.getNoteId() == -1) {
+                        LogUtils.i("call..back 中添加离线笔记");
+                        rep.getData().add(noteInfo);
+                    }
+                }
+            }
         }
         return rep ;
     }
