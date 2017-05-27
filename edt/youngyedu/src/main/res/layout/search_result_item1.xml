@@ -92,7 +92,7 @@
             android:layout_alignBottom="@+id/book_img"
             android:layout_marginRight="100px"
             android:gravity="center"
-            android:text="@{bookInfo.bookCategoryFamily}"
+            android:text="@{Integer.toString(bookInfo.bookCategoryFamily)}"
             android:background="@drawable/img_normal_filtrate"
             />
         <View

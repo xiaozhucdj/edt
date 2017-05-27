@@ -85,48 +85,6 @@ public class SearchActivityDb extends ShopBaseActivity {
         binding.setActivity(this);
     }
 
-    @Override
-    protected void handleEvent() {
-        handleQueryBookEvent();
-        super.handleEvent();
-    }
-
-    private void handleQueryBookEvent() {
-//        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-//            @Override
-//            public void call(Object o) {
-//                if (o instanceof QueryBookInfo) {
-//                    QueryBookInfo info = (QueryBookInfo) o;
-//                    if (info.getBookList() == null || info.getBookList().size() == 0) {
-//                        binding.noResult.setVisibility(View.VISIBLE);
-////                        binding.searchTv.setText(mSearchText);
-//                        mSearchFlag = true;
-//                    } else {
-//                        mSearchFlag = false;
-////                        binding.searchTv.setText(mFiltrateText);
-//                        mBookInfos = info.getBookList();
-//                        if (mBookInfos != null) {
-//                            if (mBookInfos.size() >= COUNT_PER_PAGE) {
-//                                mPageInfos.addAll(mBookInfos.subList(0, COUNT_PER_PAGE));
-//                            } else {
-//                                mPageInfos.addAll(mBookInfos);
-//                            }
-//                        }
-//                        generateBtn();
-//                        mAdapter = new SearchResultAdapter1(mPageInfos);
-//                        binding.resultRecycler.setAdapter(mAdapter);
-//                        binding.resultRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.resultRecycler) {
-//                            @Override
-//                            public void onItemClick(RecyclerView.ViewHolder vh) {
-//                                itemClick(vh.getAdapterPosition());
-//                            }
-//                        });
-//                    }
-//                }
-//            }
-//        }));
-    }
-
     private void itemClick(int position) {
         BookInfo info = mPageInfos.get(position);
         LogUtils.e(tag, "onItemClick......" + info.getBookTitle());

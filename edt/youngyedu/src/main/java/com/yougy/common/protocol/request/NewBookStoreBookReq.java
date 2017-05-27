@@ -10,6 +10,8 @@ public class NewBookStoreBookReq extends NewBaseReq {
     private int bookId = -1;
     private int bookCategory = -1;
     private int bookCategoryMatch = -1;
+    private int userId = -1;
+    private int bookVersion = -1;
     private String bookTitle = "";
 
     public NewBookStoreBookReq(){
@@ -46,5 +48,21 @@ public class NewBookStoreBookReq extends NewBaseReq {
 
     public void setBookTitle(String bookTitle) {
         this.bookTitle = bookTitle;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getBookVersion() {
+        return bookVersion;
+    }
+
+    public void setBookVersion(int bookVersion) {
+        this.bookVersion = bookVersion;
     }
 }

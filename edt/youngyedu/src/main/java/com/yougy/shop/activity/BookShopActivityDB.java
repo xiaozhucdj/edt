@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
 import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.utils.LogUtils;
@@ -645,6 +646,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private void refreshSingleClassifyRecycler(List<BookInfo> infos) {
+        LogUtils.e(tag,"refreshSingleClassifyRecycler..............");
         generateBtn(infos);
         if (mPageInfos.size() > 0) {
             mPageInfos.clear();
@@ -711,7 +713,9 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void showSpinnerLayout() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
-            binding.stageButton.setText(gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay());
+            mStage = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
+            binding.stageButton.setText(mStage);
+            setCompositeText();
         }
     }
 
@@ -791,6 +795,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         generateSubjectLayout(subjectInfos);
     }
 
+    private int bookCategory;
+
     private void generateSubjectLayout(List<CategoryInfo> subjectInfos) {
         binding.subjectWrap.removeAllViews();
         for (int i = 0; i < subjectInfos.size(); i++) {
@@ -807,6 +813,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                         }
                     }
                     subjectTv.setSelected(true);
+                    bookCategory = info.getCategoryId();
+                    mSubject = info.getCategoryDisplay();
                     generateVersionLayout(info);
                 }
             });
@@ -818,7 +826,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.versionWrap.removeAllViews();
         List<CategoryInfo> versionInfos = versionSparseArray.get(info.getCategoryId());
         for (int j = 0; j < versionInfos.size(); j++) {
-            CategoryInfo versionInfo = versionInfos.get(j);
+            final CategoryInfo versionInfo = versionInfos.get(j);
             final TextView versionTv = (TextView) View.inflate(BookShopActivityDB.this, R.layout.text_view, null);
             versionTv.setText(versionInfo.getCategoryDisplay());
             versionTv.setOnClickListener(new View.OnClickListener() {
@@ -830,13 +838,56 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                             child.setSelected(false);
                         }
                     }
+                    LogUtils.e(tag, "category id : " + bookCategory + ",version id : " + versionInfo.getCategoryId());
+                    mVersion = versionInfo.getCategoryDisplay();
                     versionTv.setSelected(true);
+                    int bookVersion = versionInfo.getCategoryId();
+                    //TODO:图书查询接口
+                    NewBookStoreBookReq req = new NewBookStoreBookReq();
+                    req.setBookCategory(bookCategory);
+                    req.setBookVersion(bookVersion);
+                    queryBookByVersion(req);
+
                 }
             });
             binding.versionWrap.addView(versionTv);
         }
         binding.versionLayout.setVisibility(View.VISIBLE);
     }
+
+    private void queryBookByVersion(final NewBookStoreBookReq req) {
+        Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
+            @Override
+            public void call(Subscriber<? super List<BookInfo>> subscriber) {
+                Response response = NewProtocolManager.queryBook(req);
+                try {
+                    String resultJson = response.body().string();
+                    LogUtils.e(tag, "result Json : " + resultJson);
+                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
+                    if (result.getCode() == 200) {
+                        if (!subscriber.isUnsubscribed()){
+                            subscriber.onNext(result.getData());
+                            subscriber.onCompleted();
+                        }
+                    } else {
+                        subscriber.onError(new Throwable());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShopSubscriber<List<BookInfo>>(this) {
+                    @Override
+                    public void onNext(List<BookInfo> bookInfos) {
+                        setCompositeText();
+                        hideFiltrateLayout();
+                        refreshSingleClassifyRecycler(bookInfos);
+                    }
+                });
+    }
+
 
     /**
      * 显示只显示学校版本

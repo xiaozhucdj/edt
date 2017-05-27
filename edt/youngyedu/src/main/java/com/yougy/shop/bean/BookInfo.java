@@ -35,7 +35,7 @@ public class BookInfo implements Parcelable{
     private String bookCategoryName;
     private String bookStatusCode;
     private String bookPublisherName;
-    private int bookCategoryFamily;
+    private  int bookCategoryFamily;
     private String bookVersionName;
 
     public BookInfo(){
