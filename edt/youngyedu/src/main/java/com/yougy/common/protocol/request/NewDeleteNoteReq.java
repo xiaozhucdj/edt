@@ -17,15 +17,15 @@ public class NewDeleteNoteReq extends NewBaseReq {
         address = "classRoom";
     }
 
-    public int getUserId() {
-        return userId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public int getNoteId() {
-        return noteId;
+    public void setNoteId(int noteId) {
+        this.noteId = noteId;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 }

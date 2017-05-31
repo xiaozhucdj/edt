@@ -605,9 +605,9 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         request.setData(data);
         ProtocolManager.removeNotesProtocol(request, ProtocolId.PROTOCOL_ID_REMOVE_NOTES, new DelteNoteCallBack(getActivity(), request));*/
         NewDeleteNoteReq req = new NewDeleteNoteReq();
+        req.setUserId(SpUtil.getAccountId());
+        req.setNoteId(mControlActivity.mNoteId);
         NewProtocolManager.deleteNote(req ,new NewDelteNoteCallBack(getActivity(),req));
-
-
     }
 
     @Override

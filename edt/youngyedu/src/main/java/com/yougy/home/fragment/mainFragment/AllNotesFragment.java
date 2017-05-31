@@ -306,7 +306,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         //笔记学科
         extras.putString(FileContonst.NOTE_SUBJECT_NAME, info.getNoteFitSubjectName());
         //笔记类型
-        extras.putInt(FileContonst.NOTE_MARK, info.getNoteStyle());
+        extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
         //内部ID
         extras.putLong(FileContonst.NOTE_MARK, info.getNoteMark());
         //作业ID
@@ -325,6 +325,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (mIsFist && !hidden && mServerInfos.size() == 0 || FileContonst.globeIsAdd) {
+            FileContonst.globeIsAdd = false ;
             loadData();
         }
         if (!hidden) {
