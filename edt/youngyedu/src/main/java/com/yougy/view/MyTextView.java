@@ -43,7 +43,7 @@ public class MyTextView extends TextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
+        LogUtils.e(getClass().getName(),this + "text is : " + text);
         super.setText(text, type);
-        LogUtils.e(getClass().getName(),"text is : " + text);
     }
 }

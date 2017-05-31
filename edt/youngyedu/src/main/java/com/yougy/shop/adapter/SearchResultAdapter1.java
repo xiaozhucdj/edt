@@ -1,5 +1,4 @@
 package com.yougy.shop.adapter;
-
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,7 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.SearchResult;
 
 import java.util.List;
+
 
 /**
  * Created by jiangliang on 2017/3/2.
@@ -50,12 +50,12 @@ public class SearchResultAdapter1 extends RecyclerView.Adapter<SearchResultAdapt
             bookSummary = infoSummary;
         }
         if (TextUtils.isEmpty(bookSummary)){
-            bookSummary = ".............";
+            bookSummary = "暂无简介";
         }
         LogUtils.e(getClass().getName(),"bookSummary is : " + bookSummary);
         LogUtils.e(getClass().getName(),"book info : " + mBookInfos.get(position));
         if (TextUtils.isEmpty(bookInfo.getBookAuthor())){
-            bookInfo.setBookAuthor(".................");
+            bookInfo.setBookAuthor("无名氏。。。");
         }
         LogUtils.e(getClass().getName(),"book info : " + bookInfo);
         holder.getBinding().setVariable(BR.bookInfo, bookInfo);
