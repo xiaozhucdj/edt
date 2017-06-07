@@ -644,6 +644,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
      */
     private void updataNoteProtocol() {
         NewUpdateNoteReq req = new NewUpdateNoteReq() ;
+        req.setUserId(SpUtil.getAccountId());
         List<NoteInfo> infos = new ArrayList<>() ;
         infos.add(mUpdateInfo) ;
         req.setData(infos);

@@ -42,6 +42,7 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
 import com.yougy.home.bean.CacheJsonInfo;
+import com.yougy.home.bean.NoteInfo;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -1073,6 +1074,22 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         if (event.getType().equalsIgnoreCase(EventBusConstant.all_text_book)) {
             LogUtils.i("type .." + EventBusConstant.all_text_book);
             loadData();
+        }else if (event.getType().equalsIgnoreCase(EventBusConstant.alter_note)) {
+            LogUtils.i("type .." + EventBusConstant.alter_note);
+            // 用户自己创建的笔记 不需要做处理
+            NoteInfo noteInfo = (NoteInfo) event.getExtraData();
+            if (noteInfo.getNoteId() < 0 || noteInfo.getNoteMark() > 0) {
+                return;
+            }
+            // 后台对应的笔记只会修改样式
+            if (mBooks != null && mBooks.size() > 0) {
+                for (BookInfo info : mBooks) {
+                    if (info.getBookFitNoteId() == noteInfo.getNoteId()) {
+                        info.setNoteStyle(noteInfo.getNoteStyle());
+                        break;
+                    }
+                }
+            }
         }
     }
 }
