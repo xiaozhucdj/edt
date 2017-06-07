@@ -5,11 +5,23 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.utils.DataCacheUtils;
+import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.StringUtils;
+import com.yougy.home.bean.NoteInfo;
+import com.yougy.init.bean.BookInfo;
 
+import java.util.List;
+
+import de.greenrobot.event.EventBus;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
+
+import static com.yougy.common.utils.GsonUtil.fromNotes;
 
 /**
  * Created by jiangliang on 2016/12/12.
@@ -31,6 +43,7 @@ public abstract class BFragment extends Fragment {
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(context).toObserverable().publish();
         handleEvent();
+        EventBus.getDefault().register(this);
     }
 
     protected void handleEvent() {
@@ -72,6 +85,7 @@ public abstract class BFragment extends Fragment {
         }
         subscription = null;
         tapEventEmitter = null;
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -93,5 +107,43 @@ public abstract class BFragment extends Fragment {
             }
             tapEventEmitter = null;
         }
+    }
+
+
+    public void onEventMainThread(BaseEvent event) {
+        if (event == null)
+            return;
+    }
+
+    protected List<BookInfo> getCacheBooks(String key){
+        List<BookInfo> books = null;
+        String json = DataCacheUtils.getString(getActivity(), key);
+        LogUtils.i("json..."+json);
+        if (!StringUtils.isEmpty(json)) {
+            books = GsonUtil.fromBooks(json);
+        }
+        return books;
+    }
+
+    /**
+     * 获取缓存笔记的JSON+离线的JSON
+     */
+    protected List<NoteInfo> getCacheNotes(String key) {
+        List<NoteInfo> notes = null;
+        String json = DataCacheUtils.getString(getActivity(), key);
+        if (!StringUtils.isEmpty(json)) {
+            notes = fromNotes(json);
+        }
+        // 离线添加的笔记
+        String offLineAddStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
+        if (!StringUtils.isEmpty(offLineAddStr)) {
+            if (notes != null) {
+                notes.addAll(fromNotes(offLineAddStr));
+            } else {
+                notes = fromNotes(offLineAddStr);
+                LogUtils.i("缓存没有 服务器的数据，当前显示的结果是 离线添加的笔记");
+            }
+        }
+        return notes;
     }
 }

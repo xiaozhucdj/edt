@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
@@ -34,14 +36,12 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.AllBookAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
 import com.yougy.home.bean.CacheJsonInfo;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -58,10 +58,7 @@ import java.util.TreeSet;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 import static android.view.View.GONE;
@@ -74,7 +71,7 @@ import static android.view.View.inflate;
  * 全部课本本
  * 注意 adapter 对应的 list  ，并且集合赋值 “= ”切记不要使用
  */
-public class AllTextBookFragment extends BFragment implements OnClickListener, DownBookDialog.DownBookListener,Observer {
+public class AllTextBookFragment extends BFragment implements OnClickListener, DownBookDialog.DownBookListener, Observer {
     //////////////////////////////////////集合数据/////////////////////////////////////////////////////
     /**
      * 适配器 数据
@@ -148,7 +145,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
 
     private ViewGroup mGroupSub;
     private ViewGroup mGroupGrade;
-    private Subscription mSub;
+    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
 
@@ -173,7 +170,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
 
         mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
         mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
-        mLoadingNull = (ViewGroup)mRootView.findViewById(R.id.loading_null) ;
+        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         return mRootView;
     }
 
@@ -198,7 +195,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         mFitGradeAdapter.notifyDataSetChanged();
     }
 
-    private void fitItemClick(int position){
+    private void fitItemClick(int position) {
         LogUtils.i("position.....onClickGradeListener..." + position);
         //多次重复点击按钮
         if (position == mFitGradeIndex) {
@@ -231,6 +228,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         refreshAdapterData(mBookFitGrade.get(position).getCategoryName(), true);
         LogUtils.i("position....onClickGradeListener....last");
     }
+
     /**
      * 初始化科目
      */
@@ -252,7 +250,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         mSubjectAdapter.notifyDataSetChanged();
     }
 
-    private void subjectItemClick(int position){
+    private void subjectItemClick(int position) {
         LogUtils.i("position.....onClickSubListener..." + position);
         //多次重复点击按钮
         if (position == mSubjectIndex) {
@@ -323,7 +321,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
             //笔记类型
             extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId()) ;
+            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
 
@@ -353,22 +351,6 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         if (mIsFist && !hidden && mServerBooks.size() == 0) {
             loadData();
         }
-        if (!hidden) {
-            LogUtils.i("当前--全部课本");
-            setRefreshListener();
-        }
-    }
-
-    private void setRefreshListener() {
-     SearchImple imple =  new SearchImple() ;
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class  SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-            loadData();
-        }
     }
 
     private void loadData() {
@@ -377,23 +359,25 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
             //设置年级
             req.setBookFitGradeName("");
             req.setBookCategoryMatch(10000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
+            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
         } else {
             Log.e(TAG, "query book from database...");
-            mSub =  getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
+//            mSub =  getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mSub != null) {
-            mSub.unsubscribe();
-        }
+//        if (mSub != null) {
+//            mSub.unsubscribe();
+//        }
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -464,12 +448,12 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
 
             case R.id.tv_subjectMore:
 
-                int  tagSub = (int) mSubMore.getTag();
-                if (tagSub==0){
+                int tagSub = (int) mSubMore.getTag();
+                if (tagSub == 0) {
                     setMoreSize(mGroupSub);
                     mSubMore.setTag(1);
                     mSubMore.setSelected(true);
-                }else if (tagSub ==1){
+                } else if (tagSub == 1) {
                     setLineSize(mGroupSub);
                     mSubMore.setTag(0);
                     mSubMore.setSelected(false);
@@ -478,13 +462,13 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
                 break;
 
             case R.id.tv_gradeMore:
-                int  tagGrade = (int) mGradeMore.getTag();
-                if (tagGrade==0){
+                int tagGrade = (int) mGradeMore.getTag();
+                if (tagGrade == 0) {
                     setMoreSize(mGroupGrade);
                     mGradeMore.setTag(1);
                     mGradeMore.setSelected(true);
 
-                }else if (tagGrade ==1){
+                } else if (tagGrade == 1) {
                     setLineSize(mGroupGrade);
                     mGradeMore.setTag(0);
                     mGradeMore.setSelected(false);
@@ -531,7 +515,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
 
             @Override
             public void onProgress(int what, int progress, long fileCount) {
-                mDialog.setTitle(String.format(getString(R.string.down_book_loading), progress +"%" ));
+                mDialog.setTitle(String.format(getString(R.string.down_book_loading), progress + "%"));
             }
 
             @Override
@@ -614,8 +598,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
                     info.setCategoryName(book.getBookFitGradeName());
                     info.setCategoryId(book.getBookFitGradeId());
 
-                    LogUtils.i("book.getBookFitGradeName()"+book.getBookFitGradeName());
-                    LogUtils.i("book.getBookFitGradeId()"+book.getBookFitGradeId());
+                    LogUtils.i("book.getBookFitGradeName()" + book.getBookFitGradeName());
+                    LogUtils.i("book.getBookFitGradeId()" + book.getBookFitGradeId());
                     mTreeFitGrade.add(info);
                 }
                 // 设置学科分类
@@ -935,12 +919,13 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
 
     /**
      * 设置一行item 显示大小
+     *
      * @param view
      */
-    private void setLineSize(ViewGroup view ){
+    private void setLineSize(ViewGroup view) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 60);
-        if (view == mGroupSub){
-            params.setMargins(0,15,0,0);
+        if (view == mGroupSub) {
+            params.setMargins(0, 15, 0, 0);
         }
         view.setLayoutParams(params);
     }
@@ -948,10 +933,10 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     /**
      * 设置全部大小
      */
-    private void  setMoreSize(ViewGroup view  ){
+    private void setMoreSize(ViewGroup view) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        if (view == mGroupSub){
-            params.setMargins(0,15,0,0);
+        if (view == mGroupSub) {
+            params.setMargins(0, 15, 0, 0);
         }
         view.setLayoutParams(params);
     }
@@ -961,7 +946,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     public void updataNote(long noteId, int noteStyle, String subject, String noteTile) {
 
         LogUtils.i("更新笔记");
-        if (mServerBooks == null || mServerBooks.size()<0){
+        if (mServerBooks == null || mServerBooks.size() < 0) {
             return;
         }
         for (BookInfo info : mServerBooks) {
@@ -971,7 +956,6 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             }
         }
     }
-
 
 
     @Override
@@ -985,16 +969,16 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
 
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK+"").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK + "").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
                     subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
-                }else{
+                } else {
                     UIUtils.post(new Runnable() {
                         @Override
                         public void run() {
                             mLoadingNull.setVisibility(View.VISIBLE);
                         }
-                    }) ;
+                    });
                 }
                 subscriber.onCompleted();
             }
@@ -1032,13 +1016,12 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     }
 
     private void freshUI(List<BookInfo> bookInfos) {
-        if (bookInfos!=null && bookInfos.size()>0){
+        if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
             mServerBooks.addAll(bookInfos);
             refreshFirstAdapterData();
-        }
-        else {
+        } else {
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
@@ -1053,32 +1036,43 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof NewBookShelfRep && !mHide &&  mNewTextBookCallBack!=null) { //网数据库存储 协议返回的JSON
+                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
                     NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
                     List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK+"")){
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK + "")) {
                     LogUtils.i("yuanye...请求服务器 加载出错 ---AllTextBookFragment");
-                    mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
+//                    mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
             }
         }));
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mFitGradeView =null;
-        mBookView =null;
-        mSubjectView =null;
-        if (mAdaptetFragmentAllTextBook!=null){
-            mAdaptetFragmentAllTextBook = null ;
+        mFitGradeView = null;
+        mBookView = null;
+        mSubjectView = null;
+        if (mAdaptetFragmentAllTextBook != null) {
+            mAdaptetFragmentAllTextBook = null;
         }
 
-        if (mSubjectAdapter !=null){
-            mSubjectAdapter = null ;
+        if (mSubjectAdapter != null) {
+            mSubjectAdapter = null;
         }
-        if (mFitGradeAdapter !=null){
-            mFitGradeAdapter = null ;
+        if (mFitGradeAdapter != null) {
+            mFitGradeAdapter = null;
+        }
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.all_text_book)) {
+            LogUtils.i("type .." + EventBusConstant.all_text_book);
+            loadData();
         }
     }
 }

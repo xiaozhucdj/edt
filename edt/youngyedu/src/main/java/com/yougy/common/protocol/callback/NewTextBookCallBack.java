@@ -7,8 +7,10 @@ import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.rx.RxBus;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.UIUtils;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -31,7 +33,14 @@ public class NewTextBookCallBack extends CacheInfoBack<NewBookShelfRep> {
         //打开缓存判断
         NewBookShelfRep protocol=  GsonUtil.fromJson(mJson, NewBookShelfRep.class);
        if (protocol!=null && protocol.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
-           operateCacheInfo(id);
+            //operateCacheInfo(id);
+           //文件方式 缓存 JSON
+
+           if (protocol.getData()!=null && protocol.getData().size()>0){
+               DataCacheUtils.putString(UIUtils.getContext(), id+"", GsonUtil.toJson(protocol.getData()));
+           }else{
+               DataCacheUtils.putString(UIUtils.getContext(), id+"", "");
+           }
        }
         return protocol ;
     }

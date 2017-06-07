@@ -17,17 +17,17 @@ import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
@@ -35,29 +35,18 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.home.bean.CacheJsonInfo;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.DownBookDialog;
-import com.yougy.view.dialog.LoadingProgressDialog;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 import static com.yougy.common.global.FileContonst.PAGE_COUNTS;
@@ -92,7 +81,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     private boolean mIsFist;
     private LinearLayout mLlPager;
     private DownBookDialog mDialog;
-    private Subscription msb;
+    //    private Subscription msb;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
 
@@ -101,7 +90,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),PAGE_LINES);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
@@ -169,14 +158,15 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
+                //展示数据,服务器返回
+                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) {
                     NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
                     List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
                 } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK + "")) {
-                   //请求网络出错
-                    LogUtils.i("使用缓存数据");
-                    msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    //服务请求错误
+//                    msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
                 }
             }
         }));
@@ -208,44 +198,29 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         if (mIsFist && !hidden && mCountBooks.size() == 0) {
             loadData();
         }
-        if (!hidden) {
-            LogUtils.i("当前--本学期课本");
-            setRefreshListener();
-        }
     }
 
-
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-            loadData();
-        }
-    }
 
     private void loadData() {
-        if (YougyApplicationManager.isWifiAvailable()) {
+        if (NetUtils.isNetConnected()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
             //设置年级
             req.setBookFitGradeName(SpUtil.getGradeName());
             req.setBookCategoryMatch(10000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
+            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
         } else {
             Log.e(TAG, "query book from database...");
-            msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
+//            msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
 
-    private Observable<List<BookInfo>> getObservable() {
+   /* private Observable<List<BookInfo>> getObservable() {
         return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
@@ -264,8 +239,8 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             }
         });
     }
-
-    private Subscriber<List<BookInfo>> getSubscriber() {
+*/
+/*    private Subscriber<List<BookInfo>> getSubscriber() {
         return new Subscriber<List<BookInfo>>() {
             LoadingProgressDialog dialog;
 
@@ -294,7 +269,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
                 freshUI(bookInfos);
             }
         };
-    }
+    }*/
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
@@ -396,7 +371,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
 
     }
 
-    private void notifyDataSetChanged(){
+    private void notifyDataSetChanged() {
         mBookAdapter.notifyDataSetChanged();
         EpdController.invalidate(mRootView, UpdateMode.GC);
     }
@@ -488,9 +463,9 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (msb != null) {
+/*        if (msb != null) {
             msb.unsubscribe();
-        }
+        }*/
     }
 
     @Override
@@ -499,6 +474,16 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         mRecyclerView = null;
         if (mBookAdapter != null) {
             mBookAdapter = null;
+        }
+    }
+
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.current_text_book)) {
+            LogUtils.i("type .." + EventBusConstant.current_text_book);
+            loadData();
         }
     }
 }

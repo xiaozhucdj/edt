@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
@@ -19,40 +21,28 @@ import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.callback.NewNoteBookCallBack;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.response.NewQueryNoteRep;
-import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.AllNotesAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
-import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.home.bean.NoteInfo;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
-import com.yougy.view.dialog.LoadingProgressDialog;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static com.yougy.common.manager.NewProtocolManager.NewCacheId.ALL_CODE_NOTE;
 
@@ -130,7 +120,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
 
     private ViewGroup mGroupSub;
     private ViewGroup mGroupGrade;
-    private Subscription mSub;
+    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewNoteBookCallBack mNewNoteBookCallBack;
 
@@ -157,7 +147,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
 
         mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
         mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
-        mLoadingNull = (ViewGroup)mRootView.findViewById(R.id.loading_null) ;
+        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         return mRootView;
     }
 
@@ -287,7 +277,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         mNotesAdapter.notifyDataSetChanged();
     }
 
-    private void noteItemClick(int position){
+    private void noteItemClick(int position) {
         NoteInfo info = mInfos.get(position);
         LogUtils.i("noteinfo ....." + info.toString());
         Bundle extras = new Bundle();
@@ -310,7 +300,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         //内部ID
         extras.putLong(FileContonst.NOTE_MARK, info.getNoteMark());
         //作业ID
-        extras.putInt(FileContonst.HOME_WROK_ID, info.getNoteFitHomeworkId()) ;
+        extras.putInt(FileContonst.HOME_WROK_ID, info.getNoteFitHomeworkId());
         loadIntentWithExtras(ControlFragmentActivity.class, extras);
     }
 
@@ -325,28 +315,10 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (mIsFist && !hidden && mServerInfos.size() == 0 || FileContonst.globeIsAdd) {
-            FileContonst.globeIsAdd = false ;
-            loadData();
-        }
-        if (!hidden) {
-            LogUtils.i("当前--全部笔记");
-            setRefreshListener();
-        }
-    }
-
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
+            FileContonst.globeIsAdd = false;
             loadData();
         }
     }
-
-
     private void loadData() {
 //        initTestData();
         //设置数据
@@ -358,37 +330,41 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
      */
     private void getNotes() {
         if (YougyApplicationManager.isWifiAvailable()) {
-           /* mNoteCallBack = new NoteBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_ALL_NOTE);
-            mNoteCallBack.setTermIndex(-1);
-            ProtocolManager.queryNotesProtocol(SpUtil.getAccountId(), 0, 2, ProtocolId.PROTOCOL_ID_ALL_NOTE, mNoteCallBack);*/
-            NewQueryNoteReq req =  new NewQueryNoteReq() ;
+            NewQueryNoteReq req = new NewQueryNoteReq();
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(ALL_CODE_NOTE);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_NOTE));
             //设置年级
             req.setNoteFitGradeName("");
-            mNewNoteBookCallBack  = new NewNoteBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.queryNote(req ,mNewNoteBookCallBack);
+            mNewNoteBookCallBack = new NewNoteBookCallBack(getActivity(), req);
+            NewProtocolManager.queryNote(req, mNewNoteBookCallBack);
             LogUtils.e(TAG, "query notes from server...");
         } else {
             LogUtils.e(TAG, "query notes from database...");
-            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+//            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            if (infos != null && infos.size() > 0) {
+                setLoading(View.GONE);
+                refresh(infos);
+            } else {
+                setLoading(View.VISIBLE);
+            }
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mSub != null) {
-            mSub.unsubscribe();
-        }
+//        if (mSub != null) {
+//            mSub.unsubscribe();
+//        }
     }
 
 
 
 
-    private Observable<List<NoteInfo>> getNotesObserver() {
+  /*  private Observable<List<NoteInfo>> getNotesObserver() {
         return Observable.create(new Observable.OnSubscribe<List<NoteInfo>>() {
             @Override
             public void call(Subscriber<? super List<NoteInfo>> subscriber) {
@@ -420,15 +396,9 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
                 subscriber.onCompleted();
             }
         });
-    }
+    }*/
 
-
-
-
-
-
-
-
+/*
     private Subscriber<List<NoteInfo>> getSubscriber() {
         return new Subscriber<List<NoteInfo>>() {
             LoadingProgressDialog dialog;
@@ -467,6 +437,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             }
         };
     }
+*/
 
     private void refresh(List<NoteInfo> infos) {
         mServerInfos.clear();
@@ -489,28 +460,34 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             public void call(Object o) {
                 if (o instanceof NewQueryNoteRep && !mHide && mNewNoteBookCallBack != null) {
                     NewQueryNoteRep data = (NewQueryNoteRep) o;
-                    if (data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && data!=null && data.getData()!=null && data.getData().size()>0){
+                    if (data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && data != null && data.getData() != null && data.getData().size() > 0) {
                         setLoading(View.GONE);
                         refresh(data.getData());
-                    }else{
+                    } else {
                         setLoading(View.VISIBLE);
                     }
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, ALL_CODE_NOTE+"")){
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, ALL_CODE_NOTE + "")) {
                     LogUtils.i(" onerror 处理 ...........");
-                    mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+                    if (infos != null && infos.size() > 0) {
+                        setLoading(View.GONE);
+                        refresh(infos);
+                    } else {
+                        setLoading(View.VISIBLE);
+                    }
                 }
             }
         }));
     }
 
 
-    private  void  setLoading( final int visibility){
+    private void setLoading(final int visibility) {
         UIUtils.post(new Runnable() {
             @Override
             public void run() {
                 mLoadingNull.setVisibility(visibility);
             }
-        }) ;
+        });
     }
 
     ///////////////////////////////////点击事件//////////////////////////////////////
@@ -1034,6 +1011,15 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
 
         if (mNotesAdapter != null) {
             mNotesAdapter = null;
+        }
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.all_notes)) {
+            LogUtils.i("type .." + EventBusConstant.all_notes);
+            loadData();
         }
     }
 }

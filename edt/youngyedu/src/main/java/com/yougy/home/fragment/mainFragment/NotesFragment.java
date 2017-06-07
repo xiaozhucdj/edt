@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import android.widget.Toast;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
@@ -25,6 +26,7 @@ import com.yougy.common.protocol.request.NewInserAllNoteReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.response.NewInserAllNoteRep;
 import com.yougy.common.protocol.response.NewQueryNoteRep;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -33,29 +35,19 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.NotesAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.home.bean.NoteInfo;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.CreatNoteDialog;
-import com.yougy.view.dialog.LoadingProgressDialog;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -108,7 +100,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
     private CreatNoteDialog mNoteDialog;
     private boolean mIsFist;
     private LinearLayout mLlPager;
-    private Subscription mSub;
+    //    private Subscription mSub;
     private NewNoteBookCallBack mNewNoteBookCallBack;
     private ViewGroup mLoadingNull;
 
@@ -118,7 +110,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_notes, null);
         initNotes();
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
-        mLoadingNull = (ViewGroup)mRootView.findViewById(R.id.loading_null) ;
+        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         return mRootView;
     }
 
@@ -142,13 +134,13 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         notifyDataSetChanged();
     }
 
-    private void notifyDataSetChanged(){
-        LogUtils.i("notes ..."+mNotes.size());
+    private void notifyDataSetChanged() {
+        LogUtils.i("notes ..." + mNotes.size());
         mNotesAdapter.notifyDataSetChanged();
         EpdController.invalidate(mRootView, UpdateMode.GC);
     }
 
-    private void noteItemClick(int position){
+    private void noteItemClick(int position) {
         NoteInfo info = mNotes.get(position);
         if (info.isAddView()) {
             //TODO:弹出框
@@ -227,7 +219,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             //内部ID
             extras.putLong(FileContonst.NOTE_MARK, info.getNoteMark());
             //作业ID
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getNoteFitHomeworkId()) ;
+            extras.putInt(FileContonst.HOME_WROK_ID, info.getNoteFitHomeworkId());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         }
     }
@@ -276,7 +268,8 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             page(mCounts);
         }
         //设置添加了笔记
-        FileContonst.globeIsAdd = true;
+        BaseEvent baseEvent = new BaseEvent(EventBusConstant.add_note, mCreatInfo);
+        EventBus.getDefault().post(baseEvent);
     }
 
     private void handleAppendNoteEvent() {
@@ -284,12 +277,15 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             @Override
             public void call(Object o) {
                 if (o instanceof NewInserAllNoteRep) {
-                    LogUtils.e(TAG,"handleAppendNoteEvent..................");
+                    LogUtils.e(TAG, "handleAppendNoteEvent..................");
                     NewInserAllNoteRep rep = (NewInserAllNoteRep) o;
-                    if (rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
-                        appendNote(rep.getData().get(0).getNoteId() );
-                    }else{
-                        UIUtils.showToastSafe("添加笔记失败",Toast.LENGTH_LONG);
+                    if (rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
+                        //缓存中 当前 全部 笔记添加 ，以防止无网络的时候使用上次缓存数据
+                        addCacheData(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, mCreatInfo);
+                        addCacheData(NewProtocolManager.NewCacheId.ALL_CODE_NOTE, mCreatInfo);
+                        appendNote(rep.getData().get(0).getNoteId());
+                    } else {
+                        UIUtils.showToastSafe("添加笔记失败", Toast.LENGTH_LONG);
                     }
                 }
             }
@@ -302,21 +298,29 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             public void call(Object o) {
                 if (o instanceof NewQueryNoteRep && !mHide && mNewNoteBookCallBack != null) {
                     NewQueryNoteRep data = (NewQueryNoteRep) o;
-                     if (data!=null && data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS  ){
-                         if ( data.getData() != null && data.getData().size() > 0 ) {
-                             List<NoteInfo> notes = data.getData();
-                             mServerInfos.clear();
-                             mServerInfos.addAll(notes);
-                         }
-                         //添加addItem
-                         if (!mServerInfos.contains(addCreatNoteItem())){
-                             mServerInfos.add(addCreatNoteItem());
-                         }
-                         refresh();
-                     }
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE+"")){
+                    if (data != null && data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
+                        if (data.getData() != null && data.getData().size() > 0) {
+                            List<NoteInfo> notes = data.getData();
+                            mServerInfos.clear();
+                            mServerInfos.addAll(notes);
+                        }
+                        //添加addItem
+                        if (!mServerInfos.contains(addCreatNoteItem())) {
+                            mServerInfos.add(addCreatNoteItem());
+                        }
+                        refresh();
+                    }
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE + "")) {
                     LogUtils.i("使用缓存数据");
-                    mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+
+                    List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+                    mServerInfos.clear();
+                    if (infos != null) {
+                        mServerInfos.addAll(infos);
+                    }
+                    mServerInfos.add(addCreatNoteItem());
+
+//                    mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
             }
         }));
@@ -341,22 +345,6 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         if (mIsFist && !hidden && mServerInfos.size() == 0) {
             loadData();
         }
-        if (!hidden) {
-            LogUtils.i("当前--本学期 笔记");
-            setRefreshListener();
-        }
-    }
-
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    private class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-            loadData();
-        }
     }
 
 
@@ -369,43 +357,51 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
      */
     private void getNotes() {
         if (YougyApplicationManager.isWifiAvailable()) {
-            NewQueryNoteReq req =  new NewQueryNoteReq() ;
+            NewQueryNoteReq req = new NewQueryNoteReq();
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE));
             //设置年级
             req.setNoteFitGradeName(SpUtil.getGradeName());
-            mNewNoteBookCallBack  = new NewNoteBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.queryNote(req ,mNewNoteBookCallBack);
+            mNewNoteBookCallBack = new NewNoteBookCallBack(getActivity(), req);
+            NewProtocolManager.queryNote(req, mNewNoteBookCallBack);
 
         } else {
             LogUtils.e(TAG, "query notes from database...");
-            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+            ;
+            mServerInfos.clear();
+            if (infos != null) {
+                mServerInfos.addAll(infos);
+            }
+            mServerInfos.add(addCreatNoteItem());
+            refresh();
+//            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mSub != null) {
-            mSub.unsubscribe();
-        }
+//        if (mSub != null) {
+//            mSub.unsubscribe();
+//        }
     }
 
 
-    private Observable<List<NoteInfo>> getNotesObserver() {
+   /* private Observable<List<NoteInfo>> getNotesObserver() {
         return Observable.create(new Observable.OnSubscribe<List<NoteInfo>>() {
             @Override
             public void call(Subscriber<? super List<NoteInfo>> subscriber) {
                 //缓存JSON
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE+"").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE + "").find(CacheJsonInfo.class);
                 //离线数据
                 List<NoteInfo> offLines = DataSupport.findAll(NoteInfo.class);
                 if (infos != null && infos.size() > 0) {
                     NewQueryNoteRep protocol = GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewQueryNoteRep.class);
-                    if ( protocol!=null && protocol.getData()!=null && protocol.getData().size()>0) {
-                        List<NoteInfo> noteCaches = protocol.getData() ;
+                    if (protocol != null && protocol.getData() != null && protocol.getData().size() > 0) {
+                        List<NoteInfo> noteCaches = protocol.getData();
                         if (offLines != null && offLines.size() > 0) {
                             //添加离线笔记
                             for (NoteInfo noteInfo : offLines) {
@@ -426,7 +422,8 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
                 subscriber.onCompleted();
             }
         });
-    }
+    }*/
+/*
 
     private Subscriber<List<NoteInfo>> getSubscriber() {
         return new Subscriber<List<NoteInfo>>() {
@@ -465,6 +462,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
             }
         };
     }
+*/
 
     @Override
     public void onClick(View v) {
@@ -614,29 +612,31 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
      */
     private void creatNoteInfoProtocol() {
         if (NetUtils.isNetConnected()) {
-            /*AppendNotesRequest request = new AppendNotesRequest();
-            request.setUserId(SpUtil.getAccountId());
-            request.setCount(1);
+            NewInserAllNoteReq req = new NewInserAllNoteReq();
+            req.setUserId(SpUtil.getAccountId());
             List<NoteInfo> infos = new ArrayList<>();
             infos.add(mCreatInfo);
-            DataNoteBean bean = new DataNoteBean();
-            bean.setCount(infos.size());
-            bean.setNoteList(infos);
-            List<DataNoteBean> data = new ArrayList<>();
-            data.add(bean);
-            request.setData(data);
-            ProtocolManager.appendNotesProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_NOTES, new AppendNotesCallBack(getActivity(), request));*/
-            NewInserAllNoteReq req = new NewInserAllNoteReq() ;
-            req.setUserId(SpUtil.getAccountId());
-            List<NoteInfo> infos  = new ArrayList<>() ;
-            infos.add(mCreatInfo) ;
             req.setData(infos);
-            NewProtocolManager.inserAllNote(req ,new NewAppendNotesCallBack(getActivity(),req));
+            NewProtocolManager.inserAllNote(req, new NewAppendNotesCallBack(getActivity(), req));
         } else {
-            //保存离线笔记  ，后期 上传到服务器 再次打开APP 无网络需要追加到列表
-            mCreatInfo.save();
+            //添加离线笔记
+            addCacheData(NewProtocolManager.OffLineId.OFF_LINE_ADD, mCreatInfo);
             appendNote(-1);
         }
+    }
+
+    private void addCacheData(String key, NoteInfo noteModel) {
+        LogUtils.i("添加笔记 当前没有网络");
+        // 缓存离线笔记
+        String str = DataCacheUtils.getString(getActivity(), key);
+        List<NoteInfo> notes;
+        if (!StringUtils.isEmpty(str)) {
+            notes = GsonUtil.fromNotes(str);
+        } else {
+            notes = new ArrayList<>();
+        }
+        notes.add(noteModel);
+        DataCacheUtils.putString(getActivity(), key, GsonUtil.toJson(notes));
     }
 
     /***
@@ -702,6 +702,16 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         mRecyclerView = null;
         if (mNotesAdapter != null) {
             mNotesAdapter = null;
+        }
+    }
+
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.current_note)) {
+            LogUtils.i("type .." + EventBusConstant.current_note);
+            loadData();
         }
     }
 }

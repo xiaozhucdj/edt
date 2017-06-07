@@ -48,8 +48,6 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
-import com.yougy.home.imple.RefreshBooksListener;
-import com.yougy.home.imple.SearchReferenceBooksListener;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -57,7 +55,6 @@ import com.yougy.view.dialog.LoadingProgressDialog;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,22 +206,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (mSub != null) {
             mSub.unsubscribe();
         }
-        if (mRefreshListener != null) {
-            mRefreshListener = null;
-        }
-
-        if (mSearchListener != null) {
-            mSearchListener = null;
-        }
-
-        if (serachWeakReference != null) {
-            serachWeakReference = null;
-        }
-
-        if (refreshWeakReference != null) {
-            refreshWeakReference = null;
-        }
-
         super.onDestroy();
     }
 
@@ -421,14 +402,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.btn_serchBook:
                 LogUtils.i("搜索课外书");
+                BaseEvent baseEvent = new BaseEvent(EventBusConstant.serch_reference, "");
+                EventBus.getDefault().post(baseEvent);
                 mFlRight.setVisibility(View.GONE);
-                if (mSearchListener != null) {
-                    mSearchListener.onSearchClickListener();
-                }
+
+
                 break;
 
             case R.id.btn_bookStore:
-                LogUtils.e(getClass().getName(),"书城");
+                LogUtils.e(getClass().getName(), "书城");
                 if (NetUtils.isNetConnected()) {
                     loadIntent(BookShopActivityDB.class);
                 } else {
@@ -468,11 +450,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");
                 if (NetUtils.isNetConnected()) {
-                    if (mRefreshListener != null) {
-                        mRefreshListener.onRefreshClickListener();
-                    }
+                    postEvent();
                 } else {
-//                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
                     showDialogNoNet();
                 }
                 mFlRight.setVisibility(View.GONE);
@@ -491,6 +470,48 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mFlRight.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    private void postEvent() {
+        String type = "";
+        switch (mDisplayOption) {
+            case TEXT_BOOK_FRAGMENT:
+                type = EventBusConstant.current_text_book;
+                break;
+
+            case ALL_TEXT_BOOK_FRAGMENT:
+                type = EventBusConstant.all_text_book;
+                break;
+
+            case COACH_BOOK_FRAGMENT:
+                type = EventBusConstant.current_coach_book;
+                break;
+
+            case ALL_COACH_BOOK_FRAGMENT:
+                type = EventBusConstant.all_coach_book;
+                break;
+
+            case REFERENCE_BOOKS_FRAGMENT:
+                type = EventBusConstant.current_reference_book;
+                break;
+
+            case NOTES_FRAGMENT:
+                type = EventBusConstant.current_note;
+                break;
+            case ALL_NOTES_FRAGMENT:
+                type = EventBusConstant.all_notes;
+                break;
+            case HOMEWORK_FRAGMENT:
+                type = EventBusConstant.current_home_work;
+                break;
+            case ALL_HOMEWORK_FRAGMENT:
+                type = EventBusConstant.all_home_work;
+                break;
+        }
+
+        LogUtils.i("刷新" + type);
+        BaseEvent baseEvent = new BaseEvent(type, "");
+        EventBus.getDefault().post(baseEvent);
     }
 
     private void showDialogNoNet() {
@@ -865,7 +886,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mViewTextBook.setVisibility(isTextBookFragment == true ? showView : hideView);
     }
 
-    private enum FragmentDisplayOption {
+    public enum FragmentDisplayOption {
         /**
          * 课本
          */
@@ -906,25 +927,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
          * 文件夹
          */
         FOLDER_FRAGMENT
-    }
-
-
-    public SearchReferenceBooksListener mSearchListener;
-    private WeakReference<SearchReferenceBooksListener> serachWeakReference;
-
-
-    public void setSearchListener(SearchReferenceBooksListener listener) {
-        serachWeakReference = new WeakReference<>(listener);
-        mSearchListener = listener;
-    }
-
-    public RefreshBooksListener mRefreshListener;
-    private WeakReference<RefreshBooksListener> refreshWeakReference;
-
-
-    public void setRefreshListener(RefreshBooksListener listener) {
-        refreshWeakReference = new WeakReference<>(listener);
-        mRefreshListener = listener;
     }
 
     @Override
@@ -996,7 +998,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void setContentView() {
-        mRootView = UIUtils.inflate(R.layout.activity_main_ui) ;
+        mRootView = UIUtils.inflate(R.layout.activity_main_ui);
         setContentView(mRootView);
     }
 
@@ -1042,7 +1044,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         // 上传离线创建的笔记
                         try {
                             addRequestNotes(subscriber);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                             subscriber.onCompleted();
                             return;
@@ -1051,12 +1053,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         //更新离线修改的笔记
                         try {
                             updaRequestNotes(subscriber);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                             subscriber.onCompleted();
                         }
                     }
-                }else{
+                } else {
                     subscriber.onCompleted();
                 }
             }
@@ -1066,14 +1068,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Subscriber<Object> getSubscriber() {
         return new Subscriber<Object>() {
-         LoadingProgressDialog dialog;
+            LoadingProgressDialog dialog;
 
             @Override
             public void onStart() {
                 super.onStart();
-           dialog = new LoadingProgressDialog(MainActivity.this);
-           dialog.show();
-           dialog.setTitle("请求...");
+                dialog = new LoadingProgressDialog(MainActivity.this);
+                dialog.show();
+                dialog.setTitle("请求...");
             }
 
             @Override
@@ -1110,13 +1112,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //上传修改数据
                 if (mUpDataInfos.size() > 0) {
                     updaRequestNotes(subscriber);
-                }else{
+                } else {
                     subscriber.onCompleted();
                 }
-            }else{
+            } else {
                 subscriber.onCompleted();
             }
-        }else{
+        } else {
             subscriber.onCompleted();
         }
     }
@@ -1131,14 +1133,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (response != null) {
             String json = response.body().string();
             NewUpdateNoteRep rep = fromJson(json, NewUpdateNoteRep.class);
-            if (rep != null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+            if (rep != null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
                 DataSupport.deleteAll(NoteInfo.class);
                 subscriber.onCompleted();
-            }else{
-                subscriber.onCompleted() ;
+            } else {
+                subscriber.onCompleted();
             }
-        }else{
-                subscriber.onCompleted() ;
+        } else {
+            subscriber.onCompleted();
         }
     }
 

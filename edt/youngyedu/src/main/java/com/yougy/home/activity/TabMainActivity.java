@@ -25,8 +25,6 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.MainPagerAdapter;
 import com.yougy.home.bean.DataNoteBean;
 import com.yougy.home.bean.NoteInfo;
-import com.yougy.home.imple.RefreshBooksListener;
-import com.yougy.home.imple.SearchReferenceBooksListener;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -36,7 +34,6 @@ import com.zhy.http.okhttp.request.RequestCall;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,23 +95,23 @@ public class TabMainActivity extends BaseActivity {
     private Subscription mSub;
     private List<NoteInfo> mAddInfos;
     private List<NoteInfo> mUpDataInfos;
-
-    public SearchReferenceBooksListener mSearchListener;
-    private WeakReference<SearchReferenceBooksListener> serachWeakReference;
-
-    public void setSearchListener(SearchReferenceBooksListener listener) {
-        serachWeakReference = new WeakReference<>(listener);
-        mSearchListener = listener;
-    }
-
-    public RefreshBooksListener mRefreshListener;
-    private WeakReference<RefreshBooksListener> refreshWeakReference;
-
-
-    public void setRefreshListener(RefreshBooksListener listener) {
-        refreshWeakReference = new WeakReference<>(listener);
-        mRefreshListener = listener;
-    }
+//
+//    public SearchReferenceBooksListener mSearchListener;
+//    private WeakReference<SearchReferenceBooksListener> serachWeakReference;
+//
+//    public void setSearchListener(SearchReferenceBooksListener listener) {
+//        serachWeakReference = new WeakReference<>(listener);
+//        mSearchListener = listener;
+//    }
+//
+//    public RefreshBooksListener mRefreshListener;
+//    private WeakReference<RefreshBooksListener> refreshWeakReference;
+//
+//
+//    public void setRefreshListener(RefreshBooksListener listener) {
+//        refreshWeakReference = new WeakReference<>(listener);
+//        mRefreshListener = listener;
+//    }
 
     @Override
     protected void init() {
@@ -127,18 +124,18 @@ public class TabMainActivity extends BaseActivity {
         if (mSub != null) {
             mSub.unsubscribe();
         }
-        if (mRefreshListener != null) {
-            mRefreshListener = null;
-        }
-        if (mSearchListener != null) {
-            mSearchListener = null;
-        }
-        if (serachWeakReference != null) {
-            serachWeakReference = null;
-        }
-        if (refreshWeakReference != null) {
-            refreshWeakReference = null;
-        }
+//        if (mRefreshListener != null) {
+//            mRefreshListener = null;
+//        }
+//        if (mSearchListener != null) {
+//            mSearchListener = null;
+//        }
+//        if (serachWeakReference != null) {
+//            serachWeakReference = null;
+//        }
+//        if (refreshWeakReference != null) {
+//            refreshWeakReference = null;
+//        }
     }
 
     @Override
@@ -217,9 +214,9 @@ public class TabMainActivity extends BaseActivity {
                 break;
             case R.id.btn_serchBook:
                 mFlRight.setVisibility(View.GONE);
-                if (mSearchListener != null) {
-                    mSearchListener.onSearchClickListener();
-                }
+//                if (mSearchListener != null) {
+//                    mSearchListener.onSearchClickListener();
+//                }
                 break;
             case R.id.btn_bookStore:
                 break;
@@ -234,9 +231,9 @@ public class TabMainActivity extends BaseActivity {
                 break;
             case R.id.btn_refresh:
                 if (NetUtils.isNetConnected()) {
-                    if (mRefreshListener != null) {
-                        mRefreshListener.onRefreshClickListener();
-                    }
+//                    if (mRefreshListener != null) {
+//                        mRefreshListener.onRefreshClickListener();
+//                    }
                 } else {
                     UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
                 }

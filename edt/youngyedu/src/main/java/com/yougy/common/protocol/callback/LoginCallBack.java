@@ -14,7 +14,6 @@ import com.yougy.common.protocol.response.NewQueryStudentRep;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.StringUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.init.activity.InitInfoActivity;
 
@@ -55,9 +54,9 @@ public class LoginCallBack extends BaseCallBack<NewLoginRep> {
                 SpUtil.saveAccountNumber(user.getUserNum());
                 SpUtil.saveGradeName(user.getGradeName());
                 SpUtil.saveAccountName(user.getUserRealName());
-                if (StringUtils.isEmpty(user.getSubjectNames())){
+             /*   if (StringUtils.isEmpty(user.getSubjectNames())){
                     user.setSubjectNames("语文,数学,外语");
-                }
+                }*/
                 SpUtil.saveSubjectNames(user.getSubjectNames());
             }
             if (listener != null) {
