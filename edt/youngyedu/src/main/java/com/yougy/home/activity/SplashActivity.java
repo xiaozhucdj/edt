@@ -88,11 +88,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         }
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        loadData();
-    }
 
     private void login() {
         callBack = new LoginCallBack(SplashActivity.this);
