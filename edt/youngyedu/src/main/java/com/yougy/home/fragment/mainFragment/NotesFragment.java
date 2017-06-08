@@ -603,7 +603,6 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
     }
 
     private void addCacheData(String key, NoteInfo noteModel) {
-        LogUtils.i("添加笔记 当前没有网络");
         // 缓存离线笔记
         String str = DataCacheUtils.getString(getActivity(), key);
         List<NoteInfo> notes;
