@@ -25,6 +25,7 @@
         android:layout_marginTop="20dp" />
 
     <LinearLayout
+        android:id="@+id/ll_term"
         android:background="@color/text_color_white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,6 +91,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:visibility="invisible"
                 android:id="@+id/tv_subjectMore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -112,13 +114,13 @@
                 android:layout_toLeftOf="@id/tv_subjectMore"
                 android:layout_toRightOf="@id/tv_subject" />
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/black" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/ll_term"
+        android:background="@color/black" />
 
     <LinearLayout
         android:id="@+id/ll_page"

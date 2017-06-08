@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yolanda.nohttp.Headers;
@@ -135,6 +136,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
+    private LinearLayout llTerm;
+    private boolean mIsPackUp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -146,21 +149,21 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
 
 
-        mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
+   /*     mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
         mSubMore.setTag(0);
         mSubMore.setEnabled(false);
-        mSubMore.setOnClickListener(this);
+        mSubMore.setOnClickListener(this);*/
 
         mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
-        mGradeMore.setEnabled(false);
-        mGradeMore.setTag(0);
+/*        mGradeMore.setEnabled(false);
+        mGradeMore.setTag(0);*/
         mGradeMore.setOnClickListener(this);
 
 
         mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
         mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
-
+        llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
         return mRootView;
     }
 
@@ -185,6 +188,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }
 
     private void fitItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickGradeListener..." + position);
         //多次重复点击按钮
         if (position == mFitGradeIndex) {
@@ -240,6 +245,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }
 
     private void subjectItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickSubListener..." + position);
         //多次重复点击按钮
         if (position == mSubjectIndex) {
@@ -259,6 +266,11 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mBookFitGrade.get(mFitGradeIndex).setSelect(false);
             mFitGradeIndex = -1;
             mFitGradeAdapter.notifyDataSetChanged();
+        }else{
+            for (BookCategory bookCategory : mBookFitGrade) {
+                bookCategory.setSelect(false);
+            }
+            mFitGradeAdapter.notifyDataSetChanged() ;
         }
         //替换position
         mSubjectIndex = position;
@@ -437,7 +449,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
             case R.id.tv_subjectMore:
 
-                int tagSub = (int) mSubMore.getTag();
+         /*       int tagSub = (int) mSubMore.getTag();
                 if (tagSub == 0) {
                     setMoreSize(mGroupSub);
                     mSubMore.setTag(1);
@@ -446,11 +458,13 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                     setLineSize(mGroupSub);
                     mSubMore.setTag(0);
                     mSubMore.setSelected(false);
-                }
+                }*/
 
                 break;
             case R.id.tv_gradeMore:
-                int tagGrade = (int) mGradeMore.getTag();
+                mIsPackUp = !mIsPackUp;
+                setLlTermSize();
+       /*         int tagGrade = (int) mGradeMore.getTag();
                 if (tagGrade == 0) {
                     setMoreSize(mGroupGrade);
                     mGradeMore.setTag(1);
@@ -460,10 +474,21 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                     setLineSize(mGroupGrade);
                     mGradeMore.setTag(0);
                     mGradeMore.setSelected(false);
-                }
+                }*/
                 break;
         }
 
+    }
+
+    private void setLlTermSize() {
+        RelativeLayout.LayoutParams params;
+        if (mIsPackUp) {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+        } else {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        }
+        llTerm.setLayoutParams(params);
+        mGradeMore.setSelected(mIsPackUp);
     }
 
     //取消下载
@@ -592,7 +617,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mBookItemTile.setText(SpUtil.getGradeName() + "课本");
 
             //显示隐藏更多
-            if (mBookFitGrade.size() > 4) {
+          /*  if (mBookFitGrade.size() > 4) {
                 mGradeMore.setVisibility(View.VISIBLE);
                 mGradeMore.setEnabled(true);
             } else {
@@ -608,7 +633,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             }
             //设置最小值大小
             setLineSize(mGroupSub);
-            setLineSize(mGroupGrade);
+            setLineSize(mGroupGrade);*/
 
         } else {
             LogUtils.i("当前还没有书");
