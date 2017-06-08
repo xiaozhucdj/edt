@@ -30,7 +30,6 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.UploadService;
-import com.yougy.home.bean.NoteInfo;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
 import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
 import com.yougy.home.fragment.mainFragment.AllNotesFragment;
@@ -44,10 +43,7 @@ import com.yougy.home.fragment.mainFragment.TextBookFragment;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 
-import java.util.List;
-
 import de.greenrobot.event.EventBus;
-import rx.Subscription;
 
 import static com.onyx.android.sdk.utils.DeviceUtils.getBatteryPecentLevel;
 
@@ -124,9 +120,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     // Fragment 切换条目的状态选项 ，可以判断 侧边栏目UI 状态
     private FragmentDisplayOption mDisplayOption;
     private Button mBtnRefresh;
-    private List<NoteInfo> mAddInfos;
-    private List<NoteInfo> mUpDataInfos;
-    private Subscription mSub;
     private ImageView mImgWSysWifi;
     private ImageView mImgWSysPower;
     private TextView mTvSysPower;
@@ -179,10 +172,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         if (YougyApplicationManager.isWifiAvailable() && SpUtil.isContentChanged()) {
             startService(new Intent(this, UploadService.class));
-        }
-
-        if (mSub != null) {
-            mSub.unsubscribe();
         }
         super.onDestroy();
     }
