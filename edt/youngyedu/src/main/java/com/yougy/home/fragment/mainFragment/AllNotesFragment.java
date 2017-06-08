@@ -32,7 +32,6 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.AllNotesAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
@@ -59,7 +58,7 @@ import static com.yougy.common.manager.NewProtocolManager.NewCacheId.ALL_CODE_NO
  * Created by Administrator on 2016/7/12.
  * 笔记
  */
-public class AllNotesFragment extends BFragment implements View.OnClickListener, Observer {//, BookMarksDialog.DialogClickFinsihListener {
+public class AllNotesFragment extends BFragment implements View.OnClickListener {//, BookMarksDialog.DialogClickFinsihListener {
     private static final String TAG = "AllNotesFragment";
     //////////////////////////////////////集合数据/////////////////////////////////////////////////////
     /**
@@ -936,45 +935,6 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         refreshFirstAdapterData();
     }
 
-    @Override
-    public void updataNote(long noteId, int noteStyle, String subject, String noteTile) {
-        LogUtils.i("修改全部笔记");
-
-        LogUtils.i("更新笔记");
-        if (mServerInfos == null || mServerInfos.size() < 0) {
-            return;
-        }
-
-        for (NoteInfo info : mServerInfos) {
-            if (info.getNoteId() == noteId || info.getNoteMark() == noteId) {
-                if (!StringUtils.isEmpty(noteTile)) {
-                    info.setNoteTitle(noteTile);
-                }
-                if (!StringUtils.isEmpty(subject)) {
-                    info.setNoteFitSubjectName(subject);
-                }
-
-                info.setNoteStyle(noteStyle);
-                mNotesAdapter.notifyDataSetChanged();
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void removeNote(int noteId) {
-        LogUtils.i("删除全部笔记");
-        if (mServerInfos == null || mServerInfos.size() < 0) {
-            return;
-        }
-        for (NoteInfo info : mServerInfos) {
-            if (info.getNoteId() == noteId) {
-                mServerInfos.remove(info);
-                refreshFirstAdapterData();
-                break;
-            }
-        }
-    }
 
 
     /**

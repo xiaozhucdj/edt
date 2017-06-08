@@ -34,7 +34,6 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.AllBookAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
@@ -72,7 +71,7 @@ import static android.view.View.inflate;
  * 全部课本本
  * 注意 adapter 对应的 list  ，并且集合赋值 “= ”切记不要使用
  */
-public class AllTextBookFragment extends BFragment implements OnClickListener, DownBookDialog.DownBookListener, Observer {
+public class AllTextBookFragment extends BFragment implements OnClickListener, DownBookDialog.DownBookListener {
     //////////////////////////////////////集合数据/////////////////////////////////////////////////////
     /**
      * 适配器 数据
@@ -941,29 +940,6 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         }
         view.setLayoutParams(params);
     }
-
-
-    @Override
-    public void updataNote(long noteId, int noteStyle, String subject, String noteTile) {
-
-        LogUtils.i("更新笔记");
-        if (mServerBooks == null || mServerBooks.size() < 0) {
-            return;
-        }
-        for (BookInfo info : mServerBooks) {
-            if (info.getBookFitNoteId() == noteId) {
-                info.setNoteStyle(noteStyle);
-                break;
-            }
-        }
-    }
-
-
-    @Override
-    public void removeNote(int noteId) {
-
-    }
-
 
     private Observable<List<BookInfo>> getObservable() {
         return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {

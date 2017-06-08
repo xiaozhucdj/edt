@@ -31,7 +31,6 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.UploadService;
 import com.yougy.home.bean.NoteInfo;
-import com.yougy.home.fragment.GlobeFragment;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
 import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
 import com.yougy.home.fragment.mainFragment.AllNotesFragment;
@@ -164,10 +163,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         EventBus.getDefault().unregister(this);
         NetManager.getInstance().unregisterReceiver(this);
         PowerManager.getInstance().unregisterReceiver(this);
-        GlobeFragment.getInstance().mAllNotes = null;
-        GlobeFragment.getInstance().mNote = null;
-        GlobeFragment.getInstance().mAllBook = null;
-        GlobeFragment.getInstance().mTextBook = null;
         Glide.get(this).clearMemory();
         mCoachBookFragment = null;
         mHomeworkFragment = null;
@@ -275,10 +270,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnSysSeeting.setOnClickListener(this);
         //初始化fragment
         initFragment();
-        GlobeFragment.getInstance().mAllNotes = mAllNotesFragment;
-        GlobeFragment.getInstance().mNote = mNotesFragment;
-        GlobeFragment.getInstance().mTextBook = mTextBookFragment;
-        GlobeFragment.getInstance().mAllBook = mAllTextBookFragment;
         mBtnRefresh = (Button) this.findViewById(R.id.btn_refresh);
         mBtnRefresh.setOnClickListener(this);
 

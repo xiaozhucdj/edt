@@ -33,7 +33,6 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -57,7 +56,7 @@ import static com.yougy.common.global.FileContonst.PAGE_LINES;
  * Created by Administrator on 2016/7/12.
  * 课本
  */
-public class TextBookFragment extends BFragment implements View.OnClickListener, DownBookDialog.DownBookListener, Observer {
+public class TextBookFragment extends BFragment implements View.OnClickListener, DownBookDialog.DownBookListener {
     /**
      * 适配器 数据
      */
@@ -437,28 +436,6 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             pageBtn.setOnClickListener(this);
             mLlPager.addView(pageBtn, params);
         }
-    }
-
-
-    @Override
-    public void updataNote(long noteId, int noteStyle, String subject, String noteTile) {
-
-        LogUtils.i("更新笔记");
-        if (mBooks == null || mBooks.size() < 0) {
-            return;
-        }
-
-        for (BookInfo info : mBooks) {
-            if (info.getBookFitNoteId() == noteId) {
-                info.setNoteStyle(noteStyle);
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void removeNote(int noteId) {
-
     }
 
     @Override

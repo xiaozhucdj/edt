@@ -35,7 +35,6 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.NotesAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -58,7 +57,7 @@ import rx.functions.Action1;
  * Created by Administrator on 2016/7/12.
  * 笔记
  */
-public class NotesFragment extends BFragment implements View.OnClickListener, Observer {//, BookMarksDialog.DialogClickFinsihListener {
+public class NotesFragment extends BFragment implements View.OnClickListener {//, BookMarksDialog.DialogClickFinsihListener {
 
     private static final String TAG = "NotesFragment";
     ////////////////////////////data///////////////////////////////////////
@@ -617,62 +616,6 @@ public class NotesFragment extends BFragment implements View.OnClickListener, Ob
         DataCacheUtils.putString(getActivity(), key, GsonUtil.toJson(notes));
     }
 
-    /***
-     * 修改笔记
-     *
-     * @param noteId    笔记id
-     * @param noteStyle 笔记样式
-     * @param subject   学科
-     * @param noteTile  标题
-     */
-
-    @Override
-    public void updataNote(long noteId, int noteStyle, String subject, String noteTile) {
-        LogUtils.i("更新笔记");
-        if (mServerInfos == null || mServerInfos.size() < 0) {
-            return;
-        }
-
-        for (NoteInfo info : mServerInfos) {
-            if (info.getNoteId() == noteId || info.getNoteMark() == noteId) {
-                if (!StringUtils.isEmpty(noteTile)) {
-                    info.setNoteTitle(noteTile);
-                }
-                info.setNoteStyle(noteStyle);
-                notifyDataSetChanged();
-                break;
-            }
-        }
-    }
-
-    /**
-     * 删除笔记
-     *
-     * @param noteId 笔记id
-     */
-    @Override
-    public void removeNote(int noteId) {
-        LogUtils.i("删除笔记");
-        if (mServerInfos == null || mServerInfos.size() < 0) {
-            return;
-        }
-        for (NoteInfo info : mServerInfos) {
-            if (info.getNoteId() == noteId) {
-                LogUtils.i("测试成功了");
-                mServerInfos.remove(info);
-                //刷新数据
-                refresh();
-                //设置删除后翻页角标
-                //删除之前 5个 ，当前位置4
-                //当前5个 当前位置5  ，5只有1item 删除后=4 那么当前位置==4
-                page(mCounts - mDelteIndex > 0 ? mDelteIndex : mCounts);
-                if (mCounts < mDelteIndex) {
-                    mDelteIndex = mCounts;
-                }
-                break;
-            }
-        }
-    }
 
     @Override
     public void onDestroyView() {
