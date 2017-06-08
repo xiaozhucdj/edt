@@ -336,6 +336,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             //笔记类型
             extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
+            extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
 
