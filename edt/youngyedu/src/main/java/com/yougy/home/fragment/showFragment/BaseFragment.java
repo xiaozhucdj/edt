@@ -1075,44 +1075,6 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     }
 
     protected void addPic(final Photograph photo, Bitmap bitmap, FrameLayout.LayoutParams params) {
-//        MoveRelativeLayout view = (MoveRelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
-//        view.setPhotoGraph(photo);
-//        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
-//        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
-//        imagebtn.setImageBitmap(bitmap);
-//        params.width = bitmap.getWidth();
-//        params.height = bitmap.getHeight();
-//        deleteBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final MoveRelativeLayout layout = (MoveRelativeLayout) v.getParent();
-//                mFrameLayout.removeView(layout);
-//                Observable.create(new Observable.OnSubscribe<Object>() {
-//                    @Override
-//                    public void call(Subscriber<? super Object> subscriber) {
-//                        Photograph photograph = layout.getPhotoGraph();
-//                        if (null != photograph) {
-//                            int count = photograph.delete();
-//                            LogUtils.e(TAG, "count is : " + count);
-//                        }
-//                    }
-//                }).subscribeOn(Schedulers.io()).subscribe();
-//            }
-//        });
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                deleteBtn.setVisibility(View.VISIBLE);
-//            }
-//        });
-//        view.setOnHideDeleteBtnListener(new MoveRelativeLayout.OnHideDeleteBtnListener() {
-//            @Override
-//            public void hideDeleteBtn() {
-//                deleteBtn.setVisibility(View.GONE);
-//            }
-//        });
-//        mFrameLayout.addView(view, params);
-//        contentChanged = true;
         final MoveImageView imageView = new MoveImageView(mContext);
         imageView.setImageResource(R.drawable.img_pic_normal);
         imageView.setPhotograph(photo);
@@ -1492,14 +1454,17 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             public void call(Subscriber<? super Object> subscriber) {
                 Label tmp = getCurrentLabel(position.getLeftMargin(), position.getTopMargin());
                 if (null != tmp) {
-                    int updatecount = tmp.update(tmp.getId());
-                    LogUtils.e(TAG, "update count is : " + updatecount);
+                    tmp.update(tmp.getId());
                 }
+
                 Diagram diagram = getCurrentDiagram(position.getLeftMargin(), position.getTopMargin());
-                LogUtils.e(TAG, "diagram is null ? " + (diagram == null));
                 if (null != diagram) {
-                    int result = diagram.update(diagram.getId());
-                    LogUtils.e(TAG, "update image view result is : " + result);
+                    diagram.update(diagram.getId());
+                }
+
+                Photograph photo = getCurrentPhotograph(position.getLeftMargin(), position.getTopMargin());
+                if (null != photo) {
+                    photo.update(photo.getId());
                 }
             }
         }).subscribeOn(Schedulers.io()).subscribe();
@@ -1512,6 +1477,16 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 imageView.setImageResource(R.drawable.img_pic_normal);
                 break;
         }
+    }
+
+    private Photograph getCurrentPhotograph(int leftmargin, int topmargin) {
+        Photograph tmp = null;
+        for (Photograph photo : mNote.getPhotographList()) {
+            if (photo.getLeftMargin() == leftmargin && photo.getTopMargin() == topmargin) {
+                tmp = photo;
+            }
+        }
+        return tmp;
     }
 
     private Diagram getCurrentDiagram(int leftmargin, int topmargin) {

@@ -61,8 +61,6 @@ public class NoteBookView extends View {
 
     private List<Line> lines = new ArrayList<>();
     private List<Line> undoLines = new ArrayList<>();
-//    private LinesProto.Lines lines = LinesProto.Lines.newBuilder().build();
-//    private LinesProto.Lines undoLines = LinesProto.Lines.newBuilder().build();
     /**
      * 历史保存在sd卡上的 位图 ，主要解决 前进后退 情况画板 不会还原问题 2016 09 23
      */
@@ -262,7 +260,6 @@ public class NoteBookView extends View {
             float dx = Math.abs(x - mX);
             float dy = Math.abs(mY - y);
             if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-//                line.getPointList().add(pointBuilder.setX(x).setY(y).build());
                 line.getPoints().add(new Point(x, y));
                 mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
                 mX = x;
@@ -318,8 +315,6 @@ public class NoteBookView extends View {
      * undo的核心思想就是将画布清空，将索引在保存下来的Path路径中进行递减，重新将索引之前的所有路径画在画布上面。
      */
     public void undo() {
-//        int size = lines.getLineCount() - 1;
-//        undoLines.getLineList().add(lines.getLineList().remove(size));
         undoLines.add(lines.remove(lines.size() - 1));
         contentChanged = true;
         flag = true;
@@ -348,8 +343,6 @@ public class NoteBookView extends View {
      */
     public void redo() {
         lines.add(undoLines.remove(undoLines.size() - 1));
-//        int size = undoLines.getLineCount() - 1;
-//        lines.getLineList().add(undoLines.getLineList().remove(size));
         contentChanged = true;
         flag = true;
         index++;
@@ -390,11 +383,9 @@ public class NoteBookView extends View {
         note.getLines().addAll(lines);
         note.obj2Bytes();
         if (!note.isSaved()) {
-//            note.getLineJson();
             note.save();
         } else {
             ContentValues values = new ContentValues();
-//            values.put("linejson", note.getLineJson());
             values.put("bytes", note.getBytes());
             DataSupport.update(Note.class, values, note.getId());
         }
