@@ -37,7 +37,7 @@ public class QueryQRStrCallBack extends BaseCallBack<QueryQRStrProtocol> {
 
     @Override
     public void onResponse(QueryQRStrProtocol response, int id) {
-        Log.e("QueryBookCartCallBack", "send QueryBookCartProtocol event");
+        Log.e("QueryBookCartCallBack", "send QueryBookCartRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

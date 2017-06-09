@@ -36,6 +36,7 @@ import com.yougy.shop.adapter.BookShopAdapter;
 import com.yougy.shop.adapter.RecyclerAdapter;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CategoryInfo;
+import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.ShopBinding;
 import com.yougy.view.CustomLinearLayoutManager;
@@ -473,12 +474,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     public void clickCartGo(View view) {
         hideRecycler();
-        loadIntent(NewShopCartActivity.class);
+        loadIntent(ShopCartActivity.class);
     }
 
     public void clickFavorite(View view) {
         hideRecycler();
-        loadIntent(NewShopFavoriteActivity.class);
+        loadIntent(ShopFavoriteActivity.class);
     }
 
     public void search(View view) {
@@ -664,9 +665,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private void itemClick(BookInfo bookInfo) {
-        Bundle extras = new Bundle();
-        extras.putParcelable("book_info", bookInfo);
-        loadIntentWithExtras(NewBookItemDetailsActivity.class, extras);
+        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , Integer.parseInt(bookInfo.getBookId()));
     }
 
     private void resetComposite() {

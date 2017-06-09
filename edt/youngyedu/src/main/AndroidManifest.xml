@@ -146,12 +146,12 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <!--商城收藏页-->
         <activity
-            android:name="com.yougy.shop.activity.NewShopFavoriteActivity"
+            android:name="com.yougy.shop.activity.ShopFavoriteActivity"
             android:screenOrientation="portrait" />
 
         <!--商城购物车页-->
         <activity
-            android:name="com.yougy.shop.activity.NewShopCartActivity"
+            android:name="com.yougy.shop.activity.ShopCartActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <!--商城支付成功页-->
@@ -161,7 +161,7 @@
 
 
         <activity
-            android:name="com.yougy.shop.activity.NewBookItemDetailsActivity"
+            android:name="com.yougy.shop.activity.ShopBookDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.yougy.shop.activity.NewProbationRedBookActivity"

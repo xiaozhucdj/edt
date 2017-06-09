@@ -461,6 +461,12 @@ public abstract class AutoLayoutBaseActivity extends AutoLayoutActivity {
         startActivity(intent);
     }
 
+    public void loadIntentWithExtra (Class<? extends Activity> cls , String key , int value){
+        Intent intent = new Intent(this , cls);
+        intent.putExtra(key , value);
+        startActivity(intent);
+    }
+
 
     /**
      * 获取Intent数据以及初始化本地数据

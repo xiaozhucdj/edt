@@ -10,7 +10,6 @@ import org.litepal.crud.DataSupport;
  */
 
 public class BaseData extends DataSupport {
-    @SerializedName("ret")
     protected int code;
     protected String msg;
 

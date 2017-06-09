@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.shop.bean.BookInfo;
+import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
 import java.util.List;
