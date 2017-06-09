@@ -88,11 +88,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         }
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        loadData();
-    }
 
     private void login() {
         callBack = new LoginCallBack(SplashActivity.this);
@@ -147,66 +142,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         startActivity(intent);
     }
 
- /*   private void getServerVersion() {
-        ProtocolManager.getAppVersion(ProtocolId.PROTOCOL_ID_LOGIN, new UpdateCallBack(SplashActivity.this) {
-            @Override
-            public void onBefore(Request request, int id) {
-                super.onBefore(request, id);
-            }
-
-            @Override
-            public void onAfter(int id) {
-                super.onAfter(id);
-            }
-
-            @Override
-            public VersioinProtocol parseNetworkResponse(Response response, int id) throws Exception {
-                String backJson = response.body().string();
-                LogUtils.i("袁野..升级" + backJson);
-                return GsonUtil.fromJson(backJson, VersioinProtocol.class);
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                LogUtils.i("袁野backJson error 升级==" + e.toString());
-                //升级接口请求失败时对页面进行跳转。
-                login();
-            }
-
-            @Override
-            public void onResponse(VersioinProtocol response, int id) {
-                if (response != null) {
-                    LogUtils.i("袁野 response ==" + response);
-                    if (response.getCode() == 200) {
-                        ResGetAppVersion resGetAppVersion = response.getData();
-
-                        int serverVersion = Integer.parseInt(resGetAppVersion.getAppVersion());
-                        int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
-                        LogUtils.i("袁野 localVersion ==" + localVersion);
-                        final String url = resGetAppVersion.getAppUrl();
-                        if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    doDownLoad(SplashActivity.this, url);
-                                }
-                            });
-                        } else {
-                            login();
-                        }
-                    } else {
-                        UIUtils.showToastSafe(response.getMsg(), Toast.LENGTH_SHORT);
-                        login();
-                    }
-
-
-                } else {
-                    UIUtils.showToastSafe("服务器异常，请稍后重试", Toast.LENGTH_SHORT);
-                    login();
-                }
-            }
-        });
-    }*/
 
 
     @Override

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.DialogNoteSubjectAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -112,17 +113,20 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
         layout.setScrollEnabled(true);
         mRecyclerView.setLayoutManager(layout);
 
-        //添加无学科
+        //TODO:暂时去掉无
         DialogNoteSubjectInfo fist = new DialogNoteSubjectInfo();
         fist.setSubject("无");
-        mInfos.add(fist);
+         mInfos.add(fist);
 
-        String[] subs = SpUtil.getSubjectNames().split(",");
-        for (String str : subs) {
-            DialogNoteSubjectInfo info = new DialogNoteSubjectInfo();
-            info.setSubject(str);
-            mInfos.add(info);
+        if (!StringUtils.isEmpty(SpUtil.getSubjectNames())){
+            String[] subs = SpUtil.getSubjectNames().split(",");
+            for (String str : subs) {
+                DialogNoteSubjectInfo info = new DialogNoteSubjectInfo();
+                info.setSubject(str);
+                mInfos.add(info);
+            }
         }
+
 
         mAdaptet = new DialogNoteSubjectAdapter(mInfos);
         mRecyclerView.setAdapter(mAdaptet);

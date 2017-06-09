@@ -13,7 +13,6 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.home.bean.NoteInfo;
-import com.yougy.home.fragment.GlobeFragment;
 import com.yougy.home.fragment.showFragment.BaseFragment;
 import com.yougy.home.fragment.showFragment.ExerciseBookFragment;
 import com.yougy.home.fragment.showFragment.HandleOnyxReaderFragment;
@@ -63,7 +62,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     /**
      * 图书对应的笔记ID
      */
-    public int mNoteId;
+    public int mNoteId = -1;
     /**
      * 图书id
      */
@@ -99,7 +98,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     /**
      * 笔记内部ID
      */
-    public long mNoteMark;
+    public long mNoteMark = -1;
     public int mHomewrokId;
 
     @Override
@@ -233,10 +232,6 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
                 mNoteBookFragment.setNoteInfo(info);
                 mNoteBookFragment.setActivity(this);
                 mNoteBookFragment.setOnSwitcherListener(this);
-                mNoteBookFragment.addObserver(GlobeFragment.getInstance().mNote);
-                mNoteBookFragment.addObserver(GlobeFragment.getInstance().mAllNotes);
-                mNoteBookFragment.addObserver(GlobeFragment.getInstance().mTextBook);
-                mNoteBookFragment.addObserver(GlobeFragment.getInstance().mAllBook);
                 ft.add(R.id.container, mNoteBookFragment);
             } else {
                 ft.show(mNoteBookFragment);

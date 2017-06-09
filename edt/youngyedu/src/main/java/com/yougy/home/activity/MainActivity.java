@@ -22,22 +22,14 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NetManager;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.request.NewInserAllNoteReq;
-import com.yougy.common.protocol.request.NewUpdateNoteReq;
-import com.yougy.common.protocol.response.NewInserAllNoteRep;
-import com.yougy.common.protocol.response.NewUpdateNoteRep;
 import com.yougy.common.utils.DateUtils;
-import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.UploadService;
-import com.yougy.home.bean.NoteInfo;
-import com.yougy.home.fragment.GlobeFragment;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
 import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
 import com.yougy.home.fragment.mainFragment.AllNotesFragment;
@@ -48,29 +40,12 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
-import com.yougy.home.imple.RefreshBooksListener;
-import com.yougy.home.imple.SearchReferenceBooksListener;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
-import com.yougy.view.dialog.LoadingProgressDialog;
-
-import org.litepal.crud.DataSupport;
-
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import okhttp3.Response;
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import static com.onyx.android.sdk.utils.DeviceUtils.getBatteryPecentLevel;
-import static com.yougy.common.utils.GsonUtil.fromJson;
 
 
 /**
@@ -145,9 +120,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     // Fragment 切换条目的状态选项 ，可以判断 侧边栏目UI 状态
     private FragmentDisplayOption mDisplayOption;
     private Button mBtnRefresh;
-    private List<NoteInfo> mAddInfos;
-    private List<NoteInfo> mUpDataInfos;
-    private Subscription mSub;
     private ImageView mImgWSysWifi;
     private ImageView mImgWSysPower;
     private TextView mTvSysPower;
@@ -184,10 +156,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         EventBus.getDefault().unregister(this);
         NetManager.getInstance().unregisterReceiver(this);
         PowerManager.getInstance().unregisterReceiver(this);
-        GlobeFragment.getInstance().mAllNotes = null;
-        GlobeFragment.getInstance().mNote = null;
-        GlobeFragment.getInstance().mAllBook = null;
-        GlobeFragment.getInstance().mTextBook = null;
         Glide.get(this).clearMemory();
         mCoachBookFragment = null;
         mHomeworkFragment = null;
@@ -205,26 +173,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (YougyApplicationManager.isWifiAvailable() && SpUtil.isContentChanged()) {
             startService(new Intent(this, UploadService.class));
         }
-
-        if (mSub != null) {
-            mSub.unsubscribe();
-        }
-        if (mRefreshListener != null) {
-            mRefreshListener = null;
-        }
-
-        if (mSearchListener != null) {
-            mSearchListener = null;
-        }
-
-        if (serachWeakReference != null) {
-            serachWeakReference = null;
-        }
-
-        if (refreshWeakReference != null) {
-            refreshWeakReference = null;
-        }
-
         super.onDestroy();
     }
 
@@ -311,10 +259,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnSysSeeting.setOnClickListener(this);
         //初始化fragment
         initFragment();
-        GlobeFragment.getInstance().mAllNotes = mAllNotesFragment;
-        GlobeFragment.getInstance().mNote = mNotesFragment;
-        GlobeFragment.getInstance().mTextBook = mTextBookFragment;
-        GlobeFragment.getInstance().mAllBook = mAllTextBookFragment;
         mBtnRefresh = (Button) this.findViewById(R.id.btn_refresh);
         mBtnRefresh.setOnClickListener(this);
 
@@ -323,7 +267,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
-        checkUpdateNote();
+        mRlTextBook.callOnClick();
     }
 
     @Override
@@ -421,14 +365,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.btn_serchBook:
                 LogUtils.i("搜索课外书");
+                BaseEvent baseEvent = new BaseEvent(EventBusConstant.serch_reference, "");
+                EventBus.getDefault().post(baseEvent);
                 mFlRight.setVisibility(View.GONE);
-                if (mSearchListener != null) {
-                    mSearchListener.onSearchClickListener();
-                }
+
+
                 break;
 
             case R.id.btn_bookStore:
-                LogUtils.e(getClass().getName(),"书城");
+                LogUtils.e(getClass().getName(), "书城");
                 if (NetUtils.isNetConnected()) {
                     loadIntent(BookShopActivityDB.class);
                 } else {
@@ -468,11 +413,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");
                 if (NetUtils.isNetConnected()) {
-                    if (mRefreshListener != null) {
-                        mRefreshListener.onRefreshClickListener();
-                    }
+                    postEvent();
                 } else {
-//                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
                     showDialogNoNet();
                 }
                 mFlRight.setVisibility(View.GONE);
@@ -491,6 +433,48 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mFlRight.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    private void postEvent() {
+        String type = "";
+        switch (mDisplayOption) {
+            case TEXT_BOOK_FRAGMENT:
+                type = EventBusConstant.current_text_book;
+                break;
+
+            case ALL_TEXT_BOOK_FRAGMENT:
+                type = EventBusConstant.all_text_book;
+                break;
+
+            case COACH_BOOK_FRAGMENT:
+                type = EventBusConstant.current_coach_book;
+                break;
+
+            case ALL_COACH_BOOK_FRAGMENT:
+                type = EventBusConstant.all_coach_book;
+                break;
+
+            case REFERENCE_BOOKS_FRAGMENT:
+                type = EventBusConstant.current_reference_book;
+                break;
+
+            case NOTES_FRAGMENT:
+                type = EventBusConstant.current_note;
+                break;
+            case ALL_NOTES_FRAGMENT:
+                type = EventBusConstant.all_notes;
+                break;
+            case HOMEWORK_FRAGMENT:
+                type = EventBusConstant.current_home_work;
+                break;
+            case ALL_HOMEWORK_FRAGMENT:
+                type = EventBusConstant.all_home_work;
+                break;
+        }
+
+        LogUtils.i("刷新" + type);
+        BaseEvent baseEvent = new BaseEvent(type, "");
+        EventBus.getDefault().post(baseEvent);
     }
 
     private void showDialogNoNet() {
@@ -865,7 +849,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mViewTextBook.setVisibility(isTextBookFragment == true ? showView : hideView);
     }
 
-    private enum FragmentDisplayOption {
+    public enum FragmentDisplayOption {
         /**
          * 课本
          */
@@ -908,25 +892,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         FOLDER_FRAGMENT
     }
 
-
-    public SearchReferenceBooksListener mSearchListener;
-    private WeakReference<SearchReferenceBooksListener> serachWeakReference;
-
-
-    public void setSearchListener(SearchReferenceBooksListener listener) {
-        serachWeakReference = new WeakReference<>(listener);
-        mSearchListener = listener;
-    }
-
-    public RefreshBooksListener mRefreshListener;
-    private WeakReference<RefreshBooksListener> refreshWeakReference;
-
-
-    public void setRefreshListener(RefreshBooksListener listener) {
-        refreshWeakReference = new WeakReference<>(listener);
-        mRefreshListener = listener;
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -960,7 +925,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initSysIcon() {
         setSysWifi();
         setSysTime();
-//        setSysPower(DeviceUtils.getBatteryPecentLevel(this), BatteryManager.BATTERY_STATUS_NOT_CHARGING);
     }
 
     private void setSysPower(int level, int state) {
@@ -996,7 +960,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void setContentView() {
-        mRootView = UIUtils.inflate(R.layout.activity_main_ui) ;
+        mRootView = UIUtils.inflate(R.layout.activity_main_ui);
         setContentView(mRootView);
     }
 
@@ -1005,140 +969,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onPause();
         if (isFinishing()) {
             removeFragments();
-        }
-//        mImgBtnRefresh.setEnabled(false);
-    }
-
-    /***
-     * 检查离线笔记是否需要同步到服务器
-     */
-    private void checkUpdateNote() {
-        if (NetUtils.isNetConnected()) {
-            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
-        } else {
-            //设置当前的课本为第一个显示fragment的
-            mRlTextBook.callOnClick();
-        }
-    }
-
-
-    private Observable<Object> getObservable() {
-        return Observable.create(new Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                List<NoteInfo> infos = DataSupport.findAll(NoteInfo.class);
-                YougyApplicationManager.closeDb();
-                if (infos != null && infos.size() > 0) {
-                    mAddInfos = new ArrayList<>();
-                    mUpDataInfos = new ArrayList<>();
-                    for (NoteInfo info : infos) {
-                        if (info.getNoteId() == -1) {
-                            mAddInfos.add(info);
-                        } else {
-                            mUpDataInfos.add(info);
-                        }
-                    }
-                    if (mAddInfos.size() > 0) {
-                        // 上传离线创建的笔记
-                        try {
-                            addRequestNotes(subscriber);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            subscriber.onCompleted();
-                            return;
-                        }
-                    } else if (mUpDataInfos.size() > 0) {
-                        //更新离线修改的笔记
-                        try {
-                            updaRequestNotes(subscriber);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            subscriber.onCompleted();
-                        }
-                    }
-                }else{
-                    subscriber.onCompleted();
-                }
-            }
-        });
-    }
-
-
-    private Subscriber<Object> getSubscriber() {
-        return new Subscriber<Object>() {
-         LoadingProgressDialog dialog;
-
-            @Override
-            public void onStart() {
-                super.onStart();
-           dialog = new LoadingProgressDialog(MainActivity.this);
-           dialog.show();
-           dialog.setTitle("请求...");
-            }
-
-            @Override
-            public void onCompleted() {
-                dialog.dismiss();
-                mRlTextBook.callOnClick();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                dialog.dismiss();
-                e.printStackTrace();
-                mRlTextBook.callOnClick();
-            }
-
-            @Override
-            public void onNext(Object o) {
-            }
-        };
-    }
-
-    // 上传 离线添加笔记 列表
-    private void addRequestNotes(Subscriber<? super Object> subscriber) throws IOException {
-        NewInserAllNoteReq req = new NewInserAllNoteReq();
-        req.setUserId(SpUtil.getAccountId());
-        req.setData(mAddInfos);
-        Response response = NewProtocolManager.inserAllNote(req);
-        if (response != null) {
-            String json = response.body().string();
-            NewInserAllNoteRep rep = GsonUtil.fromJson(json, NewInserAllNoteRep.class);
-            if (rep != null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
-                //删除数据库
-                DataSupport.deleteAll(NoteInfo.class, "noteId = ?", "-1");
-                //上传修改数据
-                if (mUpDataInfos.size() > 0) {
-                    updaRequestNotes(subscriber);
-                }else{
-                    subscriber.onCompleted();
-                }
-            }else{
-                subscriber.onCompleted();
-            }
-        }else{
-            subscriber.onCompleted();
-        }
-    }
-
-    /**
-     * 上传 离线 修改 笔记 标题 样式 学科等信息
-     */
-    private void updaRequestNotes(Subscriber<? super Object> subscriber) throws IOException {
-        final NewUpdateNoteReq req = new NewUpdateNoteReq();
-        req.setData(mUpDataInfos);
-        Response response = NewProtocolManager.updateNote(req);
-        if (response != null) {
-            String json = response.body().string();
-            NewUpdateNoteRep rep = fromJson(json, NewUpdateNoteRep.class);
-            if (rep != null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
-                DataSupport.deleteAll(NoteInfo.class);
-                subscriber.onCompleted();
-            }else{
-                subscriber.onCompleted() ;
-            }
-        }else{
-                subscriber.onCompleted() ;
         }
     }
 

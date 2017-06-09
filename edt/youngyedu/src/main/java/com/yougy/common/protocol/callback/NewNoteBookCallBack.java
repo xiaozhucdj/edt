@@ -8,16 +8,20 @@ import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.response.NewQueryNoteRep;
 import com.yougy.common.rx.RxBus;
+import com.yougy.common.utils.DataCacheUtils;
+import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.NoteInfo;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Response;
+
+import static com.yougy.common.utils.GsonUtil.fromNotes;
 
 /**
  * Created by Administrator on 2017/5/19.
@@ -37,28 +41,37 @@ public class NewNoteBookCallBack extends CacheInfoBack<NewQueryNoteRep> {
         LogUtils.i("note json ===" + mJson);
         NewQueryNoteRep rep =   new Gson().fromJson(mJson, NewQueryNoteRep.class);
         if (rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
-            //缓存JSON
-            operateCacheInfo(id);
-            //查询离线笔记
-            if (rep.getData() == null){
-                List<NoteInfo> data = new ArrayList<>() ;
-                rep.setData(data );
+            //缓存笔记JSON
+            if (rep.getData()!=null && rep.getData().size()>0){
+                DataCacheUtils.putString(UIUtils.getContext(), id+"", GsonUtil.toJson(rep.getData()));
+            }else{
+                DataCacheUtils.putString(UIUtils.getContext(), id+"", "");
             }
-            //查询缓存数据库
-            List<NoteInfo> offLines = DataSupport.findAll(NoteInfo.class);
-            if (offLines != null && offLines.size() > 0) {
-                //添加离线笔记
-                for (NoteInfo noteInfo : offLines) {
-                    if (noteInfo.getNoteId() == -1) {
-                        LogUtils.i("call..back 中添加离线笔记");
-                        rep.getData().add(noteInfo);
-                    }
-                }
+        }
+
+        //查询离线笔记 ,并且添加到对尾
+        List<NoteInfo> infos =  getOnffLine() ;
+        if (infos!=null && infos.size()>0){
+            if (rep.getData() == null){
+                rep.setData(infos) ;
+            }else{
+                rep.getData().addAll(infos) ;
             }
         }
         return rep ;
     }
 
+    private List<NoteInfo> getOnffLine() {
+        // 离线添加的笔记
+        String offLineAddStr = DataCacheUtils.getString(UIUtils.getContext(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
+        List<NoteInfo> books = new ArrayList<>();
+        if (!StringUtils.isEmpty(offLineAddStr)) {
+            if (books != null) {
+                books.addAll(fromNotes(offLineAddStr));
+            }
+        }
+        return books;
+    }
     @Override
     public void onResponse(NewQueryNoteRep response, int id) {
             RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());

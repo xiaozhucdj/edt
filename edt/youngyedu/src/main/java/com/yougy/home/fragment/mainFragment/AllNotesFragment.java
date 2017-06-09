@@ -10,49 +10,48 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.protocol.callback.NewNoteBookCallBack;
+import com.yougy.common.protocol.request.NewInserAllNoteReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
+import com.yougy.common.protocol.request.NewUpdateNoteReq;
+import com.yougy.common.protocol.response.NewInserAllNoteRep;
 import com.yougy.common.protocol.response.NewQueryNoteRep;
+import com.yougy.common.protocol.response.NewUpdateNoteRep;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.Observable.Observer;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.AllNotesAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
-import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.home.bean.NoteInfo;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
-import com.yougy.view.dialog.LoadingProgressDialog;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
+import okhttp3.Call;
+import okhttp3.Response;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static com.yougy.common.manager.NewProtocolManager.NewCacheId.ALL_CODE_NOTE;
 
@@ -60,7 +59,7 @@ import static com.yougy.common.manager.NewProtocolManager.NewCacheId.ALL_CODE_NO
  * Created by Administrator on 2016/7/12.
  * 笔记
  */
-public class AllNotesFragment extends BFragment implements View.OnClickListener, Observer {//, BookMarksDialog.DialogClickFinsihListener {
+public class AllNotesFragment extends BFragment implements View.OnClickListener {//, BookMarksDialog.DialogClickFinsihListener {
     private static final String TAG = "AllNotesFragment";
     //////////////////////////////////////集合数据/////////////////////////////////////////////////////
     /**
@@ -130,9 +129,13 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
 
     private ViewGroup mGroupSub;
     private ViewGroup mGroupGrade;
-    private Subscription mSub;
+    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewNoteBookCallBack mNewNoteBookCallBack;
+    private String mAddStr;
+    private String mUpdataStr;
+    private boolean mIsPackUp;
+    private LinearLayout llTerm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -144,20 +147,21 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
 
 
-        mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
+/*        mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
         mSubMore.setEnabled(false);
         mSubMore.setTag(0);
-        mSubMore.setOnClickListener(this);
+        mSubMore.setOnClickListener(this);*/
 
         mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
-        mGradeMore.setEnabled(false);
-        mGradeMore.setTag(0);
+      /*  mGradeMore.setEnabled(false);
+        mGradeMore.setTag(0);*/
         mGradeMore.setOnClickListener(this);
 
 
         mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
         mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
-        mLoadingNull = (ViewGroup)mRootView.findViewById(R.id.loading_null) ;
+        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
         return mRootView;
     }
 
@@ -182,6 +186,8 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
     }
 
     private void fitItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickGradeListener..." + position);
         //多次重复点击按钮
         if (position == mFitGradeIndex) {
@@ -236,6 +242,8 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
     }
 
     private void subjectItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickSubListener..." + position);
         //多次重复点击按钮
         if (position == mSubjectIndex) {
@@ -255,6 +263,11 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             mBookFitGrade.get(mFitGradeIndex).setSelect(false);
             mFitGradeIndex = -1;
             mFitGradeAdapter.notifyDataSetChanged();
+        }else{
+            for (BookCategory bookCategory : mBookFitGrade) {
+                bookCategory.setSelect(false);
+            }
+            mFitGradeAdapter.notifyDataSetChanged() ;
         }
         //替换position
         mSubjectIndex = position;
@@ -287,7 +300,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         mNotesAdapter.notifyDataSetChanged();
     }
 
-    private void noteItemClick(int position){
+    private void noteItemClick(int position) {
         NoteInfo info = mInfos.get(position);
         LogUtils.i("noteinfo ....." + info.toString());
         Bundle extras = new Bundle();
@@ -306,11 +319,11 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         //笔记学科
         extras.putString(FileContonst.NOTE_SUBJECT_NAME, info.getNoteFitSubjectName());
         //笔记类型
-        extras.putInt(FileContonst.NOTE_MARK, info.getNoteStyle());
+        extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
         //内部ID
         extras.putLong(FileContonst.NOTE_MARK, info.getNoteMark());
         //作业ID
-        extras.putInt(FileContonst.HOME_WROK_ID, info.getNoteFitHomeworkId()) ;
+        extras.putInt(FileContonst.HOME_WROK_ID, info.getNoteFitHomeworkId());
         loadIntentWithExtras(ControlFragmentActivity.class, extras);
     }
 
@@ -320,151 +333,129 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         mIsFist = true;
     }
 
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mServerInfos.size() == 0 || FileContonst.globeIsAdd) {
-            loadData();
-        }
-        if (!hidden) {
-            LogUtils.i("当前--全部笔记");
-            setRefreshListener();
-        }
-    }
-
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
+        if (mIsFist && !hidden && mServerInfos.size() == 0 ) {
             loadData();
         }
     }
-
-
     private void loadData() {
-//        initTestData();
-        //设置数据
-        getNotes();
+        if (NetUtils.isNetConnected()){
+            mAddStr = DataCacheUtils.getString(UIUtils.getContext(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
+            mUpdataStr = DataCacheUtils.getString(UIUtils.getContext(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA);
+            if (!StringUtils.isEmpty(mAddStr)) {
+                LogUtils.i("网络请求 离线添加笔记");
+                requestOffLineAddNote();
+            } else if (!StringUtils.isEmpty(mUpdataStr)) {
+                LogUtils.i("网络请求 离线更新笔记");
+                requestOffLineUpdataNote();
+            } else {
+                LogUtils.i("获取本学期笔记列表");
+                getNotes();
+            }
+        }else{
+            getNotes();
+        }
+    }
+
+    /**更新离线修改的笔记*/
+    private void requestOffLineUpdataNote() {
+        NewUpdateNoteReq req = new NewUpdateNoteReq();
+        req.setUserId(SpUtil.getAccountId());
+        req.setData(GsonUtil.fromNotes(mUpdataStr));
+        NewProtocolManager.updateNote(req ,  new BaseCallBack<NewUpdateNoteRep>(getActivity()){
+
+            @Override
+            public NewUpdateNoteRep parseNetworkResponse(Response response, int id) throws Exception {
+                String str = response.body().string();
+                System.out.println("response json ...." + str);
+                return GsonUtil.fromJson(str, NewUpdateNoteRep.class);
+            }
+
+            @Override
+            public void onResponse(NewUpdateNoteRep response, int id) {
+                mUpdataStr = "";
+                DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA, "");
+                getNotes();
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                getNotes();
+            }
+        } );
+    }
+
+    /**离线上传笔记*/
+    private void requestOffLineAddNote() {
+        NewInserAllNoteReq req = new NewInserAllNoteReq();
+        req.setUserId(SpUtil.getAccountId());
+        req.setData(GsonUtil.fromNotes(mAddStr));
+        NewProtocolManager.inserAllNote(req, new BaseCallBack<NewInserAllNoteRep>(getActivity()) {
+            @Override
+            public NewInserAllNoteRep parseNetworkResponse(Response response, int id) throws Exception {
+                String json = response.body().string() ;
+                LogUtils.i("respons add notes json =="+json);
+                return GsonUtil.fromJson(json,NewInserAllNoteRep.class) ;
+            }
+
+            @Override
+            public void onResponse(NewInserAllNoteRep response, int id) {
+                //判断是否有离线修改的笔记
+                if (response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+                    mAddStr = "";
+                    DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, "");
+                    if (!StringUtils.isEmpty(mUpdataStr)) {
+                        LogUtils.i("网络请求 离线更新笔记");
+                        requestOffLineUpdataNote();
+                    } else {
+                        LogUtils.i("获取本学期笔记列表");
+                        getNotes();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                //判断是否有离线修改的笔记
+                if (!StringUtils.isEmpty(mUpdataStr)) {
+                    LogUtils.i("网络请求 离线更新笔记");
+                    requestOffLineUpdataNote();
+                } else {
+                    LogUtils.i("获取本学期笔记列表");
+                    getNotes();
+                }
+            }
+        });
     }
 
     /***
      * 获取服务器笔记列表
      */
     private void getNotes() {
-        if (YougyApplicationManager.isWifiAvailable()) {
-           /* mNoteCallBack = new NoteBookCallBack(getActivity(),ProtocolId.PROTOCOL_ID_ALL_NOTE);
-            mNoteCallBack.setTermIndex(-1);
-            ProtocolManager.queryNotesProtocol(SpUtil.getAccountId(), 0, 2, ProtocolId.PROTOCOL_ID_ALL_NOTE, mNoteCallBack);*/
-            NewQueryNoteReq req =  new NewQueryNoteReq() ;
+        if (NetUtils.isNetConnected()) {
+            NewQueryNoteReq req = new NewQueryNoteReq();
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(ALL_CODE_NOTE);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_NOTE));
             //设置年级
             req.setNoteFitGradeName("");
-            mNewNoteBookCallBack  = new NewNoteBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.queryNote(req ,mNewNoteBookCallBack);
+            mNewNoteBookCallBack = new NewNoteBookCallBack(getActivity(), req);
+            NewProtocolManager.queryNote(req, mNewNoteBookCallBack);
             LogUtils.e(TAG, "query notes from server...");
         } else {
             LogUtils.e(TAG, "query notes from database...");
-            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+//            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            if (infos != null && infos.size() > 0) {
+                setLoading(View.GONE);
+                refresh(infos);
+            } else {
+                setLoading(View.VISIBLE);
+            }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mSub != null) {
-            mSub.unsubscribe();
-        }
-    }
-
-
-
-
-    private Observable<List<NoteInfo>> getNotesObserver() {
-        return Observable.create(new Observable.OnSubscribe<List<NoteInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<NoteInfo>> subscriber) {
-                //缓存JSON
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.ALL_CODE_NOTE+"").find(CacheJsonInfo.class);
-                //离线数据
-                List<NoteInfo> offLines = DataSupport.findAll(NoteInfo.class);
-                if (infos != null && infos.size() > 0) {
-                    NewQueryNoteRep protocol = GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewQueryNoteRep.class);
-                    if ( protocol!=null && protocol.getData()!=null && protocol.getData().size()>0) {
-                        List<NoteInfo> noteCaches = protocol.getData() ;
-                        if (offLines != null && offLines.size() > 0) {
-                            //添加离线笔记
-                            for (NoteInfo noteInfo : offLines) {
-                                if (noteInfo.getNoteId() == -1) {
-                                    LogUtils.i("发现 离线笔记 ");
-                                    LogUtils.i("...4");
-                                    noteCaches.add(noteInfo);
-                                }
-                            }
-                        }
-                        subscriber.onNext(noteCaches);
-                    }
-
-                } else if (offLines != null && offLines.size() > 0) {
-                    //没有缓存的JSON 那么可以肯定 都是离线创建的笔记
-                    subscriber.onNext(offLines);
-                }
-                subscriber.onCompleted();
-            }
-        });
-    }
-
-
-
-
-
-
-
-
-    private Subscriber<List<NoteInfo>> getSubscriber() {
-        return new Subscriber<List<NoteInfo>>() {
-            LoadingProgressDialog dialog;
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                dialog = new LoadingProgressDialog(getActivity());
-                dialog.show();
-                dialog.setTitle("数据加载中...");
-            }
-
-            @Override
-            public void onCompleted() {
-                LogUtils.e(TAG, "onCompleted...");
-                dialog.dismiss();
-                if (mServerInfos!=null && mServerInfos.size()<0){
-                    setLoading(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                LogUtils.e(TAG, "onError...");
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onNext(List<NoteInfo> noteInfos) {
-                if (noteInfos!=null && noteInfos.size()>0){
-                  setLoading(View.GONE);
-                    refresh(noteInfos);
-                }else{
-                    setLoading(View.VISIBLE);
-                }
-            }
-        };
     }
 
     private void refresh(List<NoteInfo> infos) {
@@ -473,7 +464,6 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         refreshFirstAdapterData();
     }
 
-
     @Override
     protected void handleEvent() {
 
@@ -481,35 +471,40 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         super.handleEvent();
     }
 
-
     private void handleNoteBookEvent() {
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
                 if (o instanceof NewQueryNoteRep && !mHide && mNewNoteBookCallBack != null) {
                     NewQueryNoteRep data = (NewQueryNoteRep) o;
-                    if (data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && data!=null && data.getData()!=null && data.getData().size()>0){
+                    if (data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && data != null && data.getData() != null && data.getData().size() > 0) {
                         setLoading(View.GONE);
                         refresh(data.getData());
-                    }else{
+                    } else {
                         setLoading(View.VISIBLE);
                     }
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, ALL_CODE_NOTE+"")){
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, ALL_CODE_NOTE + "")) {
                     LogUtils.i(" onerror 处理 ...........");
-                    mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+                    if (infos != null && infos.size() > 0) {
+                        setLoading(View.GONE);
+                        refresh(infos);
+                    } else {
+                        setLoading(View.VISIBLE);
+                    }
                 }
             }
         }));
     }
 
 
-    private  void  setLoading( final int visibility){
+    private void setLoading(final int visibility) {
         UIUtils.post(new Runnable() {
             @Override
             public void run() {
                 mLoadingNull.setVisibility(visibility);
             }
-        }) ;
+        });
     }
 
     ///////////////////////////////////点击事件//////////////////////////////////////
@@ -587,7 +582,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             mBookItemTile.setText(SpUtil.getGradeName() + "课本");
 
 
-            if (mBookFitGrade.size() > 4) {
+         /*   if (mBookFitGrade.size() > 4) {
                 mGradeMore.setVisibility(View.VISIBLE);
                 mGradeMore.setEnabled(true);
             } else {
@@ -603,7 +598,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
             }
             //设置最小值大小
             setLineSize(mGroupSub);
-            setLineSize(mGroupGrade);
+            setLineSize(mGroupGrade);*/
         } else {
             LogUtils.i("当前还没有书");
         }
@@ -702,6 +697,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
 
 
             case R.id.tv_subjectMore:
+/*
 
                 int tagSub = (int) mSubMore.getTag();
                 if (tagSub == 0) {
@@ -713,11 +709,14 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
                     mSubMore.setTag(0);
                     mSubMore.setSelected(false);
                 }
+*/
 
                 break;
 
             case R.id.tv_gradeMore:
-                int tagGrade = (int) mGradeMore.getTag();
+                mIsPackUp = !mIsPackUp;
+                setLlTermSize() ;
+     /*           int tagGrade = (int) mGradeMore.getTag();
                 if (tagGrade == 0) {
                     setMoreSize(mGroupGrade);
                     mGradeMore.setTag(1);
@@ -727,9 +726,20 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
                     setLineSize(mGroupGrade);
                     mGradeMore.setTag(0);
                     mGradeMore.setSelected(false);
-                }
+                }*/
                 break;
         }
+    }
+
+    private void setLlTermSize() {
+        RelativeLayout.LayoutParams params;
+        if (mIsPackUp) {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+        } else {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        }
+        llTerm.setLayoutParams(params);
+        mGradeMore.setSelected(mIsPackUp);
     }
 
 
@@ -953,45 +963,6 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
         refreshFirstAdapterData();
     }
 
-    @Override
-    public void updataNote(long noteId, int noteStyle, String subject, String noteTile) {
-        LogUtils.i("修改全部笔记");
-
-        LogUtils.i("更新笔记");
-        if (mServerInfos == null || mServerInfos.size() < 0) {
-            return;
-        }
-
-        for (NoteInfo info : mServerInfos) {
-            if (info.getNoteId() == noteId || info.getNoteMark() == noteId) {
-                if (!StringUtils.isEmpty(noteTile)) {
-                    info.setNoteTitle(noteTile);
-                }
-                if (!StringUtils.isEmpty(subject)) {
-                    info.setNoteFitSubjectName(subject);
-                }
-
-                info.setNoteStyle(noteStyle);
-                mNotesAdapter.notifyDataSetChanged();
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void removeNote(int noteId) {
-        LogUtils.i("删除全部笔记");
-        if (mServerInfos == null || mServerInfos.size() < 0) {
-            return;
-        }
-        for (NoteInfo info : mServerInfos) {
-            if (info.getNoteId() == noteId) {
-                mServerInfos.remove(info);
-                refreshFirstAdapterData();
-                break;
-            }
-        }
-    }
 
 
     /**
@@ -1033,6 +1004,95 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener,
 
         if (mNotesAdapter != null) {
             mNotesAdapter = null;
+        }
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.all_notes)) {
+            LogUtils.i("type .." + EventBusConstant.all_notes);
+            loadData();
+        }else if (event.getType().equalsIgnoreCase(EventBusConstant.add_note)) {
+            LogUtils.i("type .." + EventBusConstant.add_note);
+            NoteInfo noteInfo = (NoteInfo) event.getExtraData();
+            mServerInfos.add(noteInfo);
+            if (mServerInfos.size()>0){
+                setLoading(View.GONE);
+            }else{
+                setLoading(View.VISIBLE);
+            }
+            refreshFirstAdapterData() ;
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.delete_note)) {
+            LogUtils.i("type .." + EventBusConstant.delete_note);
+            NoteInfo noteInfo = (NoteInfo) event.getExtraData();
+            if (mServerInfos != null && mServerInfos.size() > 0) {
+                //笔记内部ID 和 服务器ID 怕出相同的值 理论上不会出现相同的值
+                if (noteInfo.getNoteId() > 0) {
+                    for (NoteInfo noteModel : mServerInfos) {
+                        if (noteModel.getNoteId() == noteInfo.getNoteId()) {
+                            mServerInfos.remove(noteModel);
+                            if (mServerInfos.size()>0){
+                                mLoadingNull.setVisibility(View.GONE);
+                            }else{
+                                mLoadingNull.setVisibility(View.VISIBLE);
+                            }
+                            refreshFirstAdapterData();
+                            break;
+                        }
+                    }
+                } else { // 本地离线笔记
+                    for (NoteInfo noteModel : mServerInfos) {
+                        if (noteModel.getNoteMark() == noteInfo.getNoteMark()) {
+                            mServerInfos.remove(noteModel);
+                            if (mServerInfos.size()>0){
+                                mLoadingNull.setVisibility(View.GONE);
+                            }else{
+                                mLoadingNull.setVisibility(View.VISIBLE);
+                            }
+
+                            refreshFirstAdapterData();
+                            break;
+                        }
+                    }
+                }
+            }
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.alter_note)) {
+            LogUtils.i("type .." + EventBusConstant.alter_note);
+
+            NoteInfo noteInfo = (NoteInfo) event.getExtraData();
+            // 服务器有ID的笔记
+            if (mServerInfos != null && mServerInfos.size() > 0) {
+                if (noteInfo.getNoteId() > 0 && noteInfo.getNoteMark() <= 0) {
+                    for (NoteInfo noteModel : mServerInfos) {
+                        if (noteModel.getNoteId() == noteInfo.getNoteId()) {
+                            noteModel.setNoteStyle(noteInfo.getNoteStyle());
+                            refreshFirstAdapterData();
+                            break;
+                        }
+                    }
+                } else { // 本地离线笔记 或者后台创建的笔记
+                    for (NoteInfo noteModel : mServerInfos) {
+                        if (noteModel.getNoteMark() == noteInfo.getNoteMark()) {
+                            noteModel.setNoteStyle(noteInfo.getNoteStyle());
+                            //学科修改了 需要更新所以的操作
+                            if (!noteModel.getNoteFitSubjectName().equalsIgnoreCase(noteInfo.getNoteFitSubjectName())) {
+                                noteModel.setNoteFitSubjectName(noteInfo.getNoteFitSubjectName());
+                                LogUtils.i("getNoteFitSubjectName =="+noteInfo.getNoteFitSubjectName());
+                                refreshFirstAdapterData();
+                                break;
+                            }
+                            //当且进度笔记修改了 需要刷新
+                            if (!noteModel.getNoteTitle().equalsIgnoreCase(noteInfo.getNoteTitle())) {
+                                noteModel.setNoteTitle(noteInfo.getNoteTitle());
+                                mNotesAdapter.notifyDataSetChanged();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

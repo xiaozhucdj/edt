@@ -338,7 +338,7 @@
     <LinearLayout
         android:id="@+id/ll_OtherIcon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="230dp"
         android:layout_gravity="right"
         android:layout_marginRight="10dp"
         android:layout_marginTop="60dp"
@@ -367,7 +367,7 @@
         <!--android:src="@drawable/tupian_img_btn"-->
         <ImageView
             android:id="@+id/image"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"

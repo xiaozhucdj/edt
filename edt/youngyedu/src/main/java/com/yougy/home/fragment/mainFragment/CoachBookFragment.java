@@ -17,6 +17,8 @@ import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
@@ -27,36 +29,24 @@ import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.home.bean.CacheJsonInfo;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.DownBookDialog;
-import com.yougy.view.dialog.LoadingProgressDialog;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 
@@ -89,7 +79,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     private BookInfo mDownInfo;
     private DownBookDialog mDialog;
 
-    private Subscription mSub;
+//    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
 
@@ -163,23 +153,6 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
         if (mIsFist && !hidden && mCountBooks.size() == 0) {
             loadData();
         }
-        if (!hidden) {
-            LogUtils.i("当前--辅导书");
-            setRefreshListener();
-        }
-    }
-
-
-    private void setRefreshListener() {
-     SearchImple imple =  new SearchImple() ;
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class  SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-            loadData();
-        }
     }
 
     private void loadData() {
@@ -188,7 +161,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(NewProtocolManager.NewCacheId.CODE_COACH_BOOK);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
             //设置年级
             req.setBookFitGradeName(SpUtil.getGradeName());
             req.setBookCategoryMatch(20000);
@@ -197,15 +170,16 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
 
         } else {
             Log.e(TAG, "query book from database...");
-            mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
+//            mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mSub != null) {
-            mSub.unsubscribe();
-        }
+//        if (mSub != null) {
+//            mSub.unsubscribe();
+//        }
     }
 
     /***
@@ -391,13 +365,14 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
                     freshUI(bookInfos);
                 }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.CODE_COACH_BOOK+"")){
                     LogUtils.i("yuanye...请求服务器 加载出错 ---CoachBookFragment");
-                    mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+//                    mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    freshUI(getCacheBooks( NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
                 }
             }
         }));
     }
 
-    private Observable<List<BookInfo>> getObservable() {
+   /* private Observable<List<BookInfo>> getObservable() {
         return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
@@ -446,7 +421,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
                 freshUI(bookInfos);
             }
         };
-    }
+    }*/
 
     private void freshUI(List<BookInfo> bookInfos) {
         if (bookInfos!=null && bookInfos.size()>0){
@@ -470,5 +445,14 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     private void notifyDataSetChanged(){
         mBookAdapter.notifyDataSetChanged();
         EpdController.invalidate(mRootView, UpdateMode.GC);
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.current_coach_book)) {
+            LogUtils.i("type .." + EventBusConstant.current_coach_book);
+            loadData();
+        }
     }
 }

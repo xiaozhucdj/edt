@@ -125,7 +125,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 笔记ID
      */
-    private int bookFitNoteId;
+    private int bookFitNoteId =-1;
     /**
      * 笔记标题
      */

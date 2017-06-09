@@ -25,11 +25,9 @@ import com.yougy.common.protocol.response.QueryHomewrokProtocol;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.HomeWorkBean;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -165,23 +163,8 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         if (mIsFist && !hidden && mCountBooks.size() == 0) {
             loadData();
         }
-        if (!hidden) {
-            LogUtils.i("当前作业");
-            setRefreshListener();
-        }
     }
 
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-            loadData();
-        }
-    }
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
@@ -193,9 +176,6 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
-
-
-
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);

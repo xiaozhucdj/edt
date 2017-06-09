@@ -11,10 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
@@ -25,40 +28,28 @@ import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.AllBookAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
-import com.yougy.home.bean.CacheJsonInfo;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.DownBookDialog;
-import com.yougy.view.dialog.LoadingProgressDialog;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 
@@ -142,9 +133,11 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     private ViewGroup mGroupGrade;
 
     private DownBookDialog mDialog;
-    private Subscription mSub;
+    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
+    private LinearLayout llTerm;
+    private boolean mIsPackUp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -156,21 +149,21 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
 
 
-        mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
+   /*     mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
         mSubMore.setTag(0);
         mSubMore.setEnabled(false);
-        mSubMore.setOnClickListener(this);
+        mSubMore.setOnClickListener(this);*/
 
         mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
-        mGradeMore.setEnabled(false);
-        mGradeMore.setTag(0);
+/*        mGradeMore.setEnabled(false);
+        mGradeMore.setTag(0);*/
         mGradeMore.setOnClickListener(this);
 
 
         mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
         mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
-        mLoadingNull = (ViewGroup)mRootView.findViewById(R.id.loading_null) ;
-
+        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
         return mRootView;
     }
 
@@ -193,7 +186,10 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         });
         mFitGradeAdapter.notifyDataSetChanged();
     }
-    private void fitItemClick(int position){
+
+    private void fitItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickGradeListener..." + position);
         //多次重复点击按钮
         if (position == mFitGradeIndex) {
@@ -226,6 +222,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         refreshAdapterData(mBookFitGrade.get(position).getCategoryName(), true);
         LogUtils.i("position....onClickGradeListener....last");
     }
+
     /**
      * 初始化科目
      */
@@ -247,7 +244,9 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         mSubjectAdapter.notifyDataSetChanged();
     }
 
-    private void subjectItemClick(int position){
+    private void subjectItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickSubListener..." + position);
         //多次重复点击按钮
         if (position == mSubjectIndex) {
@@ -267,6 +266,11 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mBookFitGrade.get(mFitGradeIndex).setSelect(false);
             mFitGradeIndex = -1;
             mFitGradeAdapter.notifyDataSetChanged();
+        }else{
+            for (BookCategory bookCategory : mBookFitGrade) {
+                bookCategory.setSelect(false);
+            }
+            mFitGradeAdapter.notifyDataSetChanged() ;
         }
         //替换position
         mSubjectIndex = position;
@@ -299,7 +303,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         mAdaptetFragmentAllTextBook.notifyDataSetChanged();
     }
 
-    private void bookItemClick(int position){
+    private void bookItemClick(int position) {
         BookInfo info = mBooks.get(position);
         mDownInfo = info;
         LogUtils.i("book id ....." + info.toString());
@@ -317,7 +321,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             //分类码
             extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
             //作业ID
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId()) ;
+            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (mDialog == null) {
@@ -345,24 +349,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         if (mIsFist && !hidden && mServerBooks.size() == 0) {
             loadData();
         }
-        if (!hidden) {
-            LogUtils.i("当前--全部辅导书");
-            setRefreshListener();
-        }
-
     }
 
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-            loadData();
-        }
-    }
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
@@ -370,24 +358,26 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
             //设置年级
             req.setBookFitGradeName("");
             req.setBookCategoryMatch(20000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);;
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
+            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
+            ;
         } else {
             Log.e(TAG, "query book from database...");
-            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
+//            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mSub != null) {
+      /*  if (mSub != null) {
             mSub.unsubscribe();
-        }
+        }*/
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -459,7 +449,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
             case R.id.tv_subjectMore:
 
-                int tagSub = (int) mSubMore.getTag();
+         /*       int tagSub = (int) mSubMore.getTag();
                 if (tagSub == 0) {
                     setMoreSize(mGroupSub);
                     mSubMore.setTag(1);
@@ -468,11 +458,13 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                     setLineSize(mGroupSub);
                     mSubMore.setTag(0);
                     mSubMore.setSelected(false);
-                }
+                }*/
 
                 break;
             case R.id.tv_gradeMore:
-                int tagGrade = (int) mGradeMore.getTag();
+                mIsPackUp = !mIsPackUp;
+                setLlTermSize();
+       /*         int tagGrade = (int) mGradeMore.getTag();
                 if (tagGrade == 0) {
                     setMoreSize(mGroupGrade);
                     mGradeMore.setTag(1);
@@ -482,10 +474,21 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                     setLineSize(mGroupGrade);
                     mGradeMore.setTag(0);
                     mGradeMore.setSelected(false);
-                }
+                }*/
                 break;
         }
 
+    }
+
+    private void setLlTermSize() {
+        RelativeLayout.LayoutParams params;
+        if (mIsPackUp) {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+        } else {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        }
+        llTerm.setLayoutParams(params);
+        mGradeMore.setSelected(mIsPackUp);
     }
 
     //取消下载
@@ -614,7 +617,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mBookItemTile.setText(SpUtil.getGradeName() + "课本");
 
             //显示隐藏更多
-            if (mBookFitGrade.size() > 4) {
+          /*  if (mBookFitGrade.size() > 4) {
                 mGradeMore.setVisibility(View.VISIBLE);
                 mGradeMore.setEnabled(true);
             } else {
@@ -630,7 +633,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             }
             //设置最小值大小
             setLineSize(mGroupSub);
-            setLineSize(mGroupGrade);
+            setLineSize(mGroupGrade);*/
 
         } else {
             LogUtils.i("当前还没有书");
@@ -926,19 +929,20 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                LogUtils.e(TAG,"handleTextBookEvent......");
+                LogUtils.e(TAG, "handleTextBookEvent......");
                 if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
                     NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
                     List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
-                } else if(o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK+"")){
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK + "")) {
                     LogUtils.i("yuanye...请求服务器 加载出错 ---AllNotesFragment");
-                    mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
+//                    mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
             }
         }));
     }
-
+/*
     private Observable<List<BookInfo>> getObservable() {
         return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
@@ -988,15 +992,15 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                 freshUI(bookInfos);
             }
         };
-    }
+    }*/
 
     private void freshUI(List<BookInfo> bookInfos) {
-        if (bookInfos!=null && bookInfos.size()>0){
+        if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
             mServerBooks.addAll(bookInfos);
             refreshFirstAdapterData();
-        }else{
+        } else {
             mLoadingNull.setVisibility(View.VISIBLE);
         }
 
@@ -1009,15 +1013,24 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         mFitGradeView = null;
         mSubjectView = null;
         mBookView = null;
-        if (null!=mAdaptetFragmentAllTextBook){
-            mAdaptetFragmentAllTextBook=null ;
+        if (null != mAdaptetFragmentAllTextBook) {
+            mAdaptetFragmentAllTextBook = null;
         }
-        if (null!= mSubjectAdapter){
-            mSubjectAdapter =null ;
+        if (null != mSubjectAdapter) {
+            mSubjectAdapter = null;
         }
 
-        if (null!= mFitGradeAdapter){
-            mFitGradeAdapter =null ;
+        if (null != mFitGradeAdapter) {
+            mFitGradeAdapter = null;
+        }
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.all_coach_book)) {
+            LogUtils.i("type .." + EventBusConstant.all_coach_book);
+            loadData();
         }
     }
 }

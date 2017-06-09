@@ -20,8 +20,6 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.activity.MainActivity;
-import com.yougy.home.imple.RefreshBooksListener;
 import com.yougy.ui.activity.R;
 import com.zhy.http.okhttp.callback.Callback;
 
@@ -91,26 +89,9 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-
         super.onHiddenChanged(hidden);
-
-        if (!hidden) {
-            LogUtils.i("当前---文件夹");
-            setRefreshListener();
-        }
     }
 
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-//            loadData();
-        }
-    }
 
     @Override
     public void onClick(View v) {

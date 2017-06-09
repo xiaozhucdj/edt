@@ -1,6 +1,5 @@
 package com.yougy.home.fragment.showFragment;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -13,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.protocol.callback.NewDelteNoteCallBack;
 import com.yougy.common.protocol.callback.NewUpdaNoteCallBack;
@@ -20,15 +21,16 @@ import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.response.NewDeleteNoteRep;
 import com.yougy.common.protocol.response.NewUpdateNoteRep;
+import com.yougy.common.utils.DataCacheUtils;
+import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.Observable.Observable;
-import com.yougy.home.Observable.Observer;
 import com.yougy.home.bean.Note;
 import com.yougy.home.bean.NoteInfo;
+import com.yougy.init.bean.BookInfo;
 import com.yougy.rx_subscriber.BaseSubscriber;
 import com.yougy.ui.activity.R;
 import com.yougy.view.controlView.ControlView;
@@ -44,17 +46,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+import static com.yougy.common.utils.GsonUtil.fromNotes;
+
 
 /**
  * Created by jiangliang on 2016/7/14.
  */
-public class NoteBookFragment extends BaseFragment implements ControlView.PagerChangerListener, Observable {
+public class NoteBookFragment extends BaseFragment implements ControlView.PagerChangerListener {
 
     private static final String TAG = "NoteBookFragment";
     // 控制点击左右切换View
@@ -76,10 +81,6 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
     public void setNoteInfo(NoteInfo noteInfo) {
         this.noteInfo = noteInfo;
         Log.e(TAG, "note info is : " + this.noteInfo);
-    }
-
-    private void uploadNote() {
-
     }
 
 
@@ -130,7 +131,79 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 if (o instanceof NewUpdateNoteRep) {
                     NewUpdateNoteRep req = (NewUpdateNoteRep) o;
                     if (req!=null && req.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+//
+                        //更新缓存数据 ,说明
+                        if (mControlActivity.mNoteMark <= 0) { //服务器独立创建的笔记
+                            //更新课本
+                            String cutterBookStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK);
+                            String allCutterBookStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK);
+
+                            if (!StringUtils.isEmpty(cutterBookStr)) {
+                                List<BookInfo> cutterS = GsonUtil.fromBooks(cutterBookStr);
+                                for (BookInfo model : cutterS) {
+                                    if (model.getBookFitNoteId() == mControlActivity.mNoteId) {
+                                        model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                                        DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK, GsonUtil.toJson(cutterS));
+                                        break;
+                                    }
+                                }
+                            }
+
+
+                            if (!StringUtils.isEmpty(allCutterBookStr)) {
+                                List<BookInfo> allCutterS = GsonUtil.fromBooks(allCutterBookStr);
+                                for (BookInfo model : allCutterS) {
+                                    if (model.getBookFitNoteId() == mControlActivity.mNoteId) {
+                                        model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                                        DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK, GsonUtil.toJson(allCutterS));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        //更新笔记
+                        String cutterStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+                        String allCutterStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+                        //当前笔记 替换和修改缓存
+                        if (!StringUtils.isEmpty(cutterStr)) {
+                            List<NoteInfo> cutterS = GsonUtil.fromNotes(cutterStr);
+                            for (NoteInfo model : cutterS) {
+                                if (model.getNoteId() == mControlActivity.mNoteId) {
+                                    if (mControlActivity.mNoteMark <= 0) {
+                                        model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                                    } else {
+                                        model.setNoteTitle(mUpdateInfo.getNoteTitle());
+                                        model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                                        model.setNoteFitSubjectName(mUpdateInfo.getNoteFitSubjectName());
+                                    }
+                                    DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, GsonUtil.toJson(cutterS));
+                                    break;
+                                }
+                            }
+                        }
+                        //全部笔记
+                        if (!StringUtils.isEmpty(allCutterStr)) {
+                            List<NoteInfo> allCutterS = GsonUtil.fromNotes(allCutterStr);
+                            for (NoteInfo model : allCutterS) {
+                                if (model.getNoteId() == mControlActivity.mNoteId) {
+
+                                    if (mControlActivity.mNoteMark <= 0) {
+                                        model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                                    } else {
+                                        model.setNoteTitle(mUpdateInfo.getNoteTitle());
+                                        model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                                        model.setNoteFitSubjectName(mUpdateInfo.getNoteFitSubjectName());
+                                    }
+                                    DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE, GsonUtil.toJson(allCutterS));
+                                    break;
+                                }
+                            }
+                        }
+                        //更新当前内存数据
                         updataNoteInfo(mUpdateInfo);
+                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.alter_note, mUpdateInfo);
+                        EventBus.getDefault().post(baseEvent);
                     }else{
                        UIUtils.showToastSafe("修改笔记失败",Toast.LENGTH_LONG);
                     }
@@ -154,18 +227,6 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
          */
         mNote.setNoteStyle(mControlActivity.mNoteStyle);
         setNoteStyle(mControlActivity.mNoteStyle);
-
-        long id ;
-        if (mControlActivity.mNoteId> 0){
-            id = mControlActivity.mNoteId;
-        }else{
-            id =  mControlActivity.mNoteMark;
-        }
-
-
-        notifyChange(id , mControlActivity.mNoteStyle,
-                mControlActivity.mNoteSubject, mControlActivity.mNotetitle);
-
     }
 
     private void handleRemoveEvent() {
@@ -175,8 +236,40 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 if (o instanceof NewDeleteNoteRep ) {
                     NewDeleteNoteRep rep  = (NewDeleteNoteRep) o;
                     if (rep!=null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
-                        notifyDelete(mControlActivity.mNoteId);
-                        getActivity().finish() ;
+
+                        //删除缓存中的当前笔记 包含该bean
+                        String cutterStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+                        if (!StringUtils.isEmpty(cutterStr)) {
+                            List<NoteInfo> cutters = GsonUtil.fromNotes(cutterStr);
+                            for (NoteInfo model : cutters) {
+                                if (model.getNoteId() == mControlActivity.mNoteId) {
+                                    cutters.remove(model);
+                                    DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, GsonUtil.toJson(cutters));
+                                    break;
+                                }
+                            }
+                        }
+
+                        //删除缓存中全部笔记 包含的 bean
+                        String allStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+                        if (!StringUtils.isEmpty(allStr)) {
+                            List<NoteInfo> alls = fromNotes(allStr);
+                            for (NoteInfo model : alls) {
+                                if (model.getNoteId() ==  mControlActivity.mNoteId) {
+                                    alls.remove(model);
+                                    DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.ALL_CODE_NOTE, GsonUtil.toJson(alls));
+                                    break;
+                                }
+
+                            }
+                        }
+                        //通知fragmentUI
+                        NoteInfo model = new NoteInfo();
+                        model.setNoteId(mControlActivity.mNoteId);
+                        model.setNoteMark(mControlActivity.mNoteMark);
+                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.delete_note, model);
+                        EventBus.getDefault().post(baseEvent);
+                        getActivity().finish();
                     }else{
                         UIUtils.showToastSafe("删除笔记失败",Toast.LENGTH_LONG);
                     }
@@ -453,10 +546,8 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
     public void onClick(View v) {
         LogUtils.e(TAG, "onclick............");
         super.onClick(v);
-        //mIsIntercept 字段是判断 点击 手势 画笔 ，截图 对事件的拦截 是否交给操作左右切换
         switch (v.getId()) {
             case R.id.img_updataNote:
-
                 if (mNoteUpdataDialog == null) {
                     mNoteUpdataDialog = new CreatNoteDialog(getActivity());
                 }
@@ -466,29 +557,29 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                     public void onCreatListener() {
                         String noteTitle = mNoteUpdataDialog.getEditName();
                         String subject = mNoteUpdataDialog.getStrSubject();
-
                         if (StringUtils.isEmpty(subject)) {
                             subject = "无";
                         }
-
                         if (StringUtils.isEmpty(noteTitle) && SpUtil.getAccountId() == mControlActivity.mNoteCreator) {
                             UIUtils.showToastSafe("请填写笔记昵称", Toast.LENGTH_SHORT);
                             return;
-                        } else {
-                            if (NetUtils.isNetConnected() && mControlActivity.mNoteId > 0) {
-                                mUpdateInfo = new NoteInfo();
-                                mUpdateInfo.setNoteId(mControlActivity.mNoteId);
-                                //标题
-                                mUpdateInfo.setNoteTitle(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? noteTitle : mControlActivity.mNotetitle);
-                                //学科
-                                mUpdateInfo.setNoteFitSubjectName(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? subject : mControlActivity.mNoteSubject);
-                                //笔记样式
-                                mUpdateInfo.setNoteStyleOption(mNoteUpdataDialog.getNoteOptionStyle());
-                                updataNoteProtocol();
-                            } else {
-                                //修改本地添加笔记
-                                updateInfoForLocal();
-                            }
+                        }
+
+                        mUpdateInfo = new NoteInfo();
+                        mUpdateInfo.setNoteId(mControlActivity.mNoteId);
+                        //标题 ,后台创建笔记不可以修改名称
+                        mUpdateInfo.setNoteTitle(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? noteTitle : mControlActivity.mNotetitle);
+                        //学科 ，后台创建笔记不可以修改学科
+                        mUpdateInfo.setNoteFitSubjectName(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? subject : mControlActivity.mNoteSubject);
+                        //笔记样式
+                        mUpdateInfo.setNoteStyleOption(mNoteUpdataDialog.getNoteOptionStyle());
+                        mUpdateInfo.setNoteMark(mControlActivity.mNoteMark);
+
+                        if (NetUtils.isNetConnected() && mControlActivity.mNoteId > 0) { //上传服务器已经有的笔记
+                            updataNoteProtocol();
+                        } else { //当前没有网络 或者笔记ID
+                            //修改本地添加笔记
+                            updateInfoForLocal();
                         }
                         if (mNoteUpdataDialog.isShowing()) {
                             mNoteUpdataDialog.dismiss();
@@ -511,18 +602,9 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 mNoteUpdataDialog.setNoteName(mControlActivity.mNotetitle);
                 mNoteUpdataDialog.setBtnName("保存");
                 mNoteUpdataDialog.setTitle("修改笔记");
-
                 break;
 
             case R.id.img_deleteNote:
-                if (!NetUtils.isNetConnected()) {
-                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
-                    return;
-                }
-
-                if (mControlActivity.mNoteId < 0) {
-                    return;
-                }
 
                 if (SpUtil.getAccountId() == mControlActivity.mNoteCreator) {
                     if (mDelteDialog == null) {
@@ -530,6 +612,35 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                         mDelteDialog.setSureListener(new DeleteDialog.SureListener() {
                             @Override
                             public void onSureClick() {
+                                //删除本地数据
+                                if (mControlActivity.mNoteId <0 ){
+                                    String addStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
+                                    //判断离线添加是否有数据 并且外面传来的参数是离线添加的数据
+                                    if (!StringUtils.isEmpty(addStr) && mControlActivity.mNoteMark != -1) {
+                                        // 获取到离线数据
+                                        List<NoteInfo> tabNoteModels = fromNotes(addStr);
+                                        //遍历数据  删除对应的数据bean
+                                        for (NoteInfo model : tabNoteModels) {
+                                            if (model.getNoteMark() == mControlActivity.mNoteMark) {
+                                                //删除本地数据
+                                                tabNoteModels.remove(model);
+                                                //重新放到ADD 缓存
+                                                DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, GsonUtil.toJson(tabNoteModels));
+                                                // 通知相关Fragment
+                                                BaseEvent baseEvent = new BaseEvent(EventBusConstant.delete_note, model);
+                                                EventBus.getDefault().post(baseEvent);
+                                                getActivity().finish();
+                                                break;
+                                            }
+                                        }
+
+                                    }
+                                    return;
+                                }
+                                if (!NetUtils.isNetConnected()) { //当前笔记都是服务器存着的ID的 所以在没网的时候是不允许用户删除的 否则会 业务逻辑更加复杂。
+                                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+                                    return;
+                                }
                                 delteNoteProtocol();
                             }
                         });
@@ -538,7 +649,6 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 }
                 break;
         }
-//        mControlView.setIntercept(mIsIntercept);
     }
 
 
@@ -558,56 +668,17 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         initCurrentNote();
     }
 
-    /***
-     * 观察者
-     */
-    private List<Observer> mObservers = new ArrayList<>();
 
-    @Override
-    public void addObserver(Observer observer) {
-        mObservers.add(observer);
-    }
 
-    @Override
-    public void removeObserver(Observer observer) {
 
-    }
-
-    @Override
-    public void notifyChange(long noteId, int noteStyle, String subject, String noteTile) {
-        for (Observer observer : mObservers) {
-            observer.updataNote(noteId, noteStyle, subject, noteTile);
-        }
-    }
-
-    @Override
-    public void notifyDelete(int noteId) {
-        for (Observer observer : mObservers) {
-            observer.removeNote(noteId);
-        }
-    }
 
     //协议删除笔记
 
     private void delteNoteProtocol() {
-      /*  RemoveNotesRequest request = new RemoveNotesRequest();
-        request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-        NoteInfo info = new NoteInfo();
-        info.setNoteId(mControlActivity.mNoteId);
-        List<NoteInfo> infos = new ArrayList<>();
-        infos.add(info);
-        DataNoteBean bean = new DataNoteBean();
-        bean.setCount(infos.size());
-        bean.setNoteList(infos);
-        List<DataNoteBean> data = new ArrayList<>();
-        data.add(bean);
-        request.setData(data);
-        ProtocolManager.removeNotesProtocol(request, ProtocolId.PROTOCOL_ID_REMOVE_NOTES, new DelteNoteCallBack(getActivity(), request));*/
         NewDeleteNoteReq req = new NewDeleteNoteReq();
+        req.setUserId(SpUtil.getAccountId());
+        req.setNoteId(mControlActivity.mNoteId);
         NewProtocolManager.deleteNote(req ,new NewDelteNoteCallBack(getActivity(),req));
-
-
     }
 
     @Override
@@ -644,6 +715,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
      */
     private void updataNoteProtocol() {
         NewUpdateNoteReq req = new NewUpdateNoteReq() ;
+        req.setUserId(SpUtil.getAccountId());
         List<NoteInfo> infos = new ArrayList<>() ;
         infos.add(mUpdateInfo) ;
         req.setData(infos);
@@ -661,108 +733,93 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences("note_last_number", Context.MODE_PRIVATE);
         return sp.getInt(fileName, 0);
     }
-    /***
-     * 更新本地数据
+
+
+    /**
+     * 没有网络 或者 ID <0 离线添加的笔记
+     * 更新
      */
     private void updateInfoForLocal() {
-        rx.Observable<NoteInfo> observable = rx.Observable.create(new rx.Observable.OnSubscribe<NoteInfo>() {
-            @Override
-            public void call(Subscriber<? super NoteInfo> subscriber) {
+        if (mControlActivity.mNoteId > 0) { // 服务器存着的ID 更新
+            String updataStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA);
+            if (!StringUtils.isEmpty(updataStr)) {
 
-                if (mControlActivity.mNoteId > 0) {
-                    //修改服务器创建离线笔记
-                    LogUtils.i("修改服务器创建离线笔记");
-                    List<NoteInfo> infos = DataSupport.where("noteId = ? ", mControlActivity.mNoteId + "").find(NoteInfo.class);
-                    //查询数据库
-                    if (infos != null && infos.size() > 0) {
-                        LogUtils.i("本地有ID 更新数据库");
-                        NoteInfo info = infos.get(0);
-                        ContentValues values = new ContentValues();
-                        if (!StringUtils.isEmpty(mNoteUpdataDialog.getEditName())) {
-                            values.put("noteTitle", mNoteUpdataDialog.getEditName());
-                            info.setNoteTitle(  mNoteUpdataDialog.getEditName());
+                List<NoteInfo> cutterS = GsonUtil.fromNotes(updataStr);
+                for (NoteInfo model : cutterS) {
+                    if (model.getNoteId() == mControlActivity.mNoteId) {
+                        if (mControlActivity.mNoteMark <= 0) {
+                            model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                        } else {
+                            model.setNoteTitle(mUpdateInfo.getNoteTitle());
+                            model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                            model.setNoteFitSubjectName(mUpdateInfo.getNoteFitSubjectName());
                         }
-
-                        if (!StringUtils.isEmpty(mNoteUpdataDialog.getStrSubject())) {
-                            values.put("noteFitSubjectName", mNoteUpdataDialog.getStrSubject());
-                            info.setNoteFitSubjectName( mNoteUpdataDialog.getStrSubject());
-                        }
-                        values.put("noteStyle", info.setNoteStyleOption(mNoteUpdataDialog.getNoteOptionStyle()) );
-                        DataSupport.updateAll(NoteInfo.class, values, "noteId = ? ", info.getNoteId() + "");
-                        subscriber.onNext(info);
-                    } else {
-                        LogUtils.i("本地有ID 创建一条数据");
-                        NoteInfo info = new NoteInfo();
-                        info.setNoteId(mControlActivity.mNoteId);
-                        if (!StringUtils.isEmpty(mNoteUpdataDialog.getEditName())) {
-                            info.setNoteTitle(mNoteUpdataDialog.getEditName());
-                        }
-
-                        if (!StringUtils.isEmpty(mNoteUpdataDialog.getStrSubject())) {
-                            info.setNoteFitSubjectName(mNoteUpdataDialog.getStrSubject());
-                        }
-                        info.setNoteStyleOption(mNoteUpdataDialog.getNoteOptionStyle());
-                        info.save();
-                        subscriber.onNext(info);
-                    }
-
-                } else {
-                    //修改离线添加笔记,相当更新信息
-                    LogUtils.i("查询数据库 离线添加的笔记是否在数据库中存在");
-                    List<NoteInfo> infos = DataSupport.where("noteMark = ? ", mControlActivity.mNoteMark + "").find(NoteInfo.class);
-                    if (infos != null && infos.size() > 0) {
-                        LogUtils.i("离线创建 更新数据库");
-                        NoteInfo info = infos.get(0);
-                        ContentValues values = new ContentValues();
-
-                        if (!StringUtils.isEmpty(mNoteUpdataDialog.getEditName())) {
-                            values.put("noteTitle", mNoteUpdataDialog.getEditName());
-                            info.setNoteTitle( mNoteUpdataDialog.getEditName());
-                        }
-
-                        if (!StringUtils.isEmpty(mNoteUpdataDialog.getStrSubject())) {
-                            values.put("noteFitSubjectName", mNoteUpdataDialog.getStrSubject());
-                            info.setNoteTitle( mNoteUpdataDialog.getStrSubject());
-                        }
-                        values.put("noteStyle", info.setNoteStyleOption(mNoteUpdataDialog.getNoteOptionStyle()) );
-                        DataSupport.updateAll(NoteInfo.class, values, "noteMark = ? ", info.getNoteMark() + "");
-                        subscriber.onNext(info);
+                        DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA, GsonUtil.toJson(cutterS));
+                        break;
                     }
                 }
-                subscriber.onCompleted();
-            }
-        });
-
-        Subscriber<NoteInfo> subscriber = new Subscriber<NoteInfo>() {
-            LoadingProgressDialog dialog;
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                dialog = new LoadingProgressDialog(getActivity());
-                dialog.show();
-                dialog.setTitle("请求...");
+            } else {
+                List<NoteInfo> cutterS = new ArrayList<>();
+                cutterS.add(mUpdateInfo);
+                DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA, GsonUtil.toJson(cutterS));
             }
 
-            @Override
-            public void onCompleted() {
-                LogUtils.e(TAG, "onCompleted...");
-                dialog.dismiss();
 
-
+            //更新笔记
+            String cutterStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+            String allCutterStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+            //当前笔记 替换和修改缓存
+            if (!StringUtils.isEmpty(cutterStr)) {
+                List<NoteInfo> cutterS = GsonUtil.fromNotes(cutterStr);
+                for (NoteInfo model : cutterS) {
+                    if (model.getNoteId() == mControlActivity.mNoteId) {
+                        if (mControlActivity.mNoteMark <= 0) {
+                            model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                        } else {
+                            model.setNoteTitle(mUpdateInfo.getNoteTitle());
+                            model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                            model.setNoteFitSubjectName(mUpdateInfo.getNoteFitSubjectName());
+                        }
+                        DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, GsonUtil.toJson(cutterS));
+                        break;
+                    }
+                }
             }
-
-            public void onError(Throwable e) {
-                dialog.dismiss();
+            //全部笔记
+            if (!StringUtils.isEmpty(allCutterStr)) {
+                List<NoteInfo> allCutterS = GsonUtil.fromNotes(allCutterStr);
+                for (NoteInfo model : allCutterS) {
+                    if (model.getNoteId() == mControlActivity.mNoteId) {
+                        if (mControlActivity.mNoteMark <= 0) {
+                            model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                        } else {
+                            model.setNoteTitle(mUpdateInfo.getNoteTitle());
+                            model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                            model.setNoteFitSubjectName(mUpdateInfo.getNoteFitSubjectName());
+                        }
+                        DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE, GsonUtil.toJson(allCutterS));
+                        break;
+                    }
+                }
             }
-
-            @Override
-            public void onNext(NoteInfo noteInfo) {
-                updataNoteInfo(noteInfo);
+        } else { //本地更新
+            String offLineStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
+            if (!StringUtils.isEmpty(offLineStr)) {
+                List<NoteInfo> notes = GsonUtil.fromNotes(offLineStr);
+                for (NoteInfo model : notes) {
+                    if (model.getNoteMark() == mControlActivity.mNoteMark) {
+                        model.setNoteStyle(mUpdateInfo.getNoteStyle());
+                        model.setNoteTitle(mUpdateInfo.getNoteTitle());
+                        model.setNoteFitSubjectName(mUpdateInfo.getNoteFitSubjectName());
+                        DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, GsonUtil.toJson(notes));
+                        break;
+                    }
+                }
             }
-        };
-
-        mUpdateSub = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(subscriber);
+        }
+        updataNoteInfo(mUpdateInfo);
+        BaseEvent baseEvent = new BaseEvent(EventBusConstant.alter_note, mUpdateInfo);
+        EventBus.getDefault().post(baseEvent);
     }
 
     @Override

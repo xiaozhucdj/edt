@@ -18,6 +18,8 @@ import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
@@ -35,12 +37,9 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.CacheJsonInfo;
-import com.yougy.home.imple.RefreshBooksListener;
-import com.yougy.home.imple.SearchReferenceBooksListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -56,10 +55,7 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 
@@ -131,7 +127,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private SearchBookDialog mSearchDialog;
     private DownBookDialog mDialog;
     private BookInfo mDownInfo;
-    private Subscription mSub;
+    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
 
@@ -162,8 +158,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
          */
         mTvSerachKeyContext = (TextView) mRootView.findViewById(R.id.tv_referenceKeyContext);
         mTvSerachErrorTitle = (TextView) mRootView.findViewById(R.id.tv_referenceResultTitle);
-        /**设置搜索的点击事件*/
-        setSearchListener();
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         return mRootView;
     }
@@ -185,7 +179,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             extras.putInt(FileContonst.BOOK_ID, info.getBookId());
             //分类码
             extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId()) ;
+            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (NetUtils.isNetConnected()) {
@@ -214,24 +208,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         if (mIsFist && !hidden && mCountBooks.size() == 0) {
             loadData();
         }
-        if (!hidden) {
-            LogUtils.i("当前--课外书");
-            /** 刷新列表*/
-            setRefreshListener();
-        }
     }
 
-    private void setRefreshListener() {
-        SearchImple imple = new SearchImple();
-        ((MainActivity) getActivity()).setRefreshListener(imple);
-    }
-
-    class SearchImple implements RefreshBooksListener {
-        @Override
-        public void onRefreshClickListener() {
-            loadData();
-        }
-    }
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
@@ -239,24 +217,25 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             //设置学生ID
             req.setUserId(SpUtil.getAccountId());
             //设置缓存数据ID的key
-            req.setCacheId(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK);
+            req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
             //设置年级
             req.setBookFitGradeName("");
             req.setBookCategoryMatch(30000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
+            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
         } else {
             Log.e(TAG, "query book from database...");
-            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+            freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
+//            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mSub != null) {
-            mSub.unsubscribe();
-        }
+//        if (mSub != null) {
+//            mSub.unsubscribe();
+//        }
     }
 
     /***
@@ -342,12 +321,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     private void freshUI(List<BookInfo> bookInfos) {
         LogUtils.i("freshUI.....freshUI");
-        if (bookInfos!=null && bookInfos.size()>0){
+        if (bookInfos != null && bookInfos.size() > 0) {
             mServerBooks.clear();
             mServerBooks.addAll(bookInfos);
             initPages(mServerBooks, COUNT_PER_PAGE);
-        }
-        else{
+        } else {
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
@@ -438,47 +416,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         }
     }
 
-    /**
-     * 监听搜索
-     */
-    private void setSearchListener() {
-        SearchReferenceBooksListenerImple imple = new SearchReferenceBooksListenerImple();
-        ((MainActivity) getActivity()).setSearchListener(imple);
-    }
-
-
-    private class SearchReferenceBooksListenerImple implements SearchReferenceBooksListener {
-
-        @Override
-        public void onSearchClickListener() {
-
-            if (mServerBooks.size() < 0) {
-                UIUtils.showToastSafe("你还没有购买课外书", Toast.LENGTH_SHORT);
-                return;
-            }
-
-            if (mSearchDialog == null) {
-                mSearchDialog = new SearchBookDialog(getActivity());
-                mSearchDialog.setSearchListener(new SearchBookDialog.SearchListener() {
-                    @Override
-                    public void searClick() {
-                        if (!StringUtils.isEmpty(mSearchDialog.getSearchKey())) {
-                            mSearchKey = mSearchDialog.getSearchKey();
-
-                            setSearchView(mSearchKey);
-                            mSearchDialog.dismiss();
-                        } else {
-                            UIUtils.showToastSafe("请输入搜索内容", Toast.LENGTH_SHORT);
-                        }
-                    }
-                });
-            }
-            if (!mSearchDialog.isShowing()) {
-                mSearchDialog.show();
-            }
-        }
-    }
-
     /***
      * 设置搜索
      *
@@ -537,9 +474,10 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                     List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
 
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK+"")){
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK + "")) {
                     LogUtils.i("使用缓存课本");
-                    mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+//                   mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
+                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
                 }
             }
         }));
@@ -549,16 +487,16 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ",NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK+"").find(CacheJsonInfo.class);
+                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK + "").find(CacheJsonInfo.class);
                 if (infos != null && infos.size() > 0) {
                     subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
-                }else{
+                } else {
                     UIUtils.post(new Runnable() {
                         @Override
                         public void run() {
                             mLoadingNull.setVisibility(View.VISIBLE);
                         }
-                    }) ;
+                    });
 
                 }
                 subscriber.onCompleted();
@@ -792,18 +730,52 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRecyclerView =null;
-        if (mBookAdapter !=null){
-            mBookAdapter = null ;
+        mRecyclerView = null;
+        if (mBookAdapter != null) {
+            mBookAdapter = null;
         }
-        if (mSearchDialog!=null){
-            mSearchDialog = null ;
+        if (mSearchDialog != null) {
+            mSearchDialog = null;
         }
     }
 
-    private void notifyDataSetChanged(){
+    private void notifyDataSetChanged() {
         mBookAdapter.notifyDataSetChanged();
         EpdController.invalidate(mRootView, UpdateMode.GC);
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.current_reference_book)) {
+            LogUtils.i("type .." + EventBusConstant.current_reference_book);
+            loadData();
+        }else if(event.getType().equalsIgnoreCase(EventBusConstant.serch_reference)) {
+            LogUtils.i("type .." + EventBusConstant.serch_reference);
+            if (mServerBooks.size() < 0) {
+                UIUtils.showToastSafe("你还没有购买课外书", Toast.LENGTH_SHORT);
+                return;
+            }
+            if (mSearchDialog == null) {
+                mSearchDialog = new SearchBookDialog(getActivity());
+                mSearchDialog.setSearchListener(new SearchBookDialog.SearchListener() {
+                    @Override
+                    public void searClick() {
+                        if (!StringUtils.isEmpty(mSearchDialog.getSearchKey())) {
+                            mSearchKey = mSearchDialog.getSearchKey();
+
+                            setSearchView(mSearchKey);
+                            mSearchDialog.dismiss();
+                        } else {
+                            UIUtils.showToastSafe("请输入搜索内容", Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+            }
+            if (!mSearchDialog.isShowing()) {
+                mSearchDialog.show();
+            }
+        }
     }
 }
 
