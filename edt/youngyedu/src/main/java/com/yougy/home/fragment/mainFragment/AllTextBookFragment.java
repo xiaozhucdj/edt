@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -148,6 +149,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
+    private boolean mIsPackUp;
+    private LinearLayout llTerm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -159,18 +162,19 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
 
         mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
-        mSubMore.setEnabled(false);
+       /* mSubMore.setEnabled(false);
         mSubMore.setTag(0);
-        mSubMore.setOnClickListener(this);
+        mSubMore.setOnClickListener(this);*/
 
         mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
-        mGradeMore.setEnabled(false);
-        mGradeMore.setTag(0);
+//        mGradeMore.setTag(0);
         mGradeMore.setOnClickListener(this);
 
         mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
         mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
+
         return mRootView;
     }
 
@@ -196,6 +200,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     }
 
     private void fitItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickGradeListener..." + position);
         //多次重复点击按钮
         if (position == mFitGradeIndex) {
@@ -233,6 +239,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
      * 初始化科目
      */
     private void initSubjectAdapter() {
+
         mSubjectView = (RecyclerView) mRootView.findViewById(R.id.recycler_subject);
         mSubjectView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
@@ -251,6 +258,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     }
 
     private void subjectItemClick(int position) {
+        mIsPackUp = true;
+        setLlTermSize();
         LogUtils.i("position.....onClickSubListener..." + position);
         //多次重复点击按钮
         if (position == mSubjectIndex) {
@@ -270,6 +279,11 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             mBookFitGrade.get(mFitGradeIndex).setSelect(false);
             mFitGradeIndex = -1;
             mFitGradeAdapter.notifyDataSetChanged();
+        }else{
+            for (BookCategory bookCategory : mBookFitGrade) {
+                bookCategory.setSelect(false);
+            }
+            mFitGradeAdapter.notifyDataSetChanged() ;
         }
         //替换position
         mSubjectIndex = position;
@@ -322,6 +336,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             //笔记类型
             extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
+            extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
 
@@ -446,36 +461,50 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
                 mAdaptetFragmentAllTextBook.notifyDataSetChanged();
                 break;
 
-            case R.id.tv_subjectMore:
-
-                int tagSub = (int) mSubMore.getTag();
-                if (tagSub == 0) {
-                    setMoreSize(mGroupSub);
-                    mSubMore.setTag(1);
-                    mSubMore.setSelected(true);
-                } else if (tagSub == 1) {
-                    setLineSize(mGroupSub);
-                    mSubMore.setTag(0);
-                    mSubMore.setSelected(false);
-                }
-
-                break;
+//            case R.id.tv_subjectMore:
+//
+//                int tagSub = (int) mSubMore.getTag();
+//                if (tagSub == 0) {
+//                    setMoreSize(mGroupSub);
+//                    mSubMore.setTag(1);
+//                    mSubMore.setSelected(true);
+//                } else if (tagSub == 1) {
+//                    setLineSize(mGroupSub);
+//                    mSubMore.setTag(0);
+//                    mSubMore.setSelected(false);
+//                }
+//
+//                break;
 
             case R.id.tv_gradeMore:
-                int tagGrade = (int) mGradeMore.getTag();
-                if (tagGrade == 0) {
-                    setMoreSize(mGroupGrade);
-                    mGradeMore.setTag(1);
-                    mGradeMore.setSelected(true);
+                mIsPackUp = !mIsPackUp;
+                setLlTermSize();
 
-                } else if (tagGrade == 1) {
-                    setLineSize(mGroupGrade);
-                    mGradeMore.setTag(0);
-                    mGradeMore.setSelected(false);
-                }
+//                int tagGrade = (int) mGradeMore.getTag();
+//                if (tagGrade == 0) {
+//                    setMoreSize(mGroupGrade);
+//                    mGradeMore.setTag(1);
+//                    mGradeMore.setSelected(true);
+//
+//                } else if (tagGrade == 1) {
+//                    setLineSize(mGroupGrade);
+//                    mGradeMore.setTag(0);
+//                    mGradeMore.setSelected(false);
+//                }
                 break;
         }
 
+    }
+
+    private void setLlTermSize() {
+        RelativeLayout.LayoutParams params;
+        if (mIsPackUp) {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+        } else {
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        }
+        llTerm.setLayoutParams(params);
+        mGradeMore.setSelected(mIsPackUp);
     }
 
     @Override
@@ -641,7 +670,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             initPages();
             mBookItemTile.setText(SpUtil.getGradeName() + "课本");
             //显示隐藏更多
-            if (mBookFitGrade.size() > 4) {
+     /*       if (mBookFitGrade.size() > 4) {
                 mGradeMore.setVisibility(View.VISIBLE);
                 mGradeMore.setEnabled(true);
             } else {
@@ -657,7 +686,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             }
             //设置最小值大小
             setLineSize(mGroupSub);
-            setLineSize(mGroupGrade);
+            setLineSize(mGroupGrade);*/
 
         } else {
             LogUtils.i("当前还没有书");

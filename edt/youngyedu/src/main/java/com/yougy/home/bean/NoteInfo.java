@@ -74,7 +74,7 @@ public class NoteInfo extends DataSupport implements Serializable{
     /***
      * 关联图书编码
      */
-    @SerializedName("noteFitBookId")
+    @SerializedName("courseBookId")
     private int bookId = -1;
     /**
      * 关联分类编码

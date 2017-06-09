@@ -94,6 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
+            android:clickable="true"
             android:orientation="horizontal">
 
             <View
@@ -109,37 +110,22 @@
                 android:clickable="true"
                 android:paddingTop="30px"
                 >
-
-                <LinearLayout
-                    android:id="@+id/grade_layout"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/cancel_filtrate"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="30px">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/grade_text"
-                        android:textColor="@color/text_color_black"
-                        android:textSize="24px" />
-
-                    <Spinner
-                        android:id="@+id/stage_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="25px"
-                        android:background="@drawable/img_xiala"
-                        android:spinnerMode="dropdown" />
-                </LinearLayout>
-
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/edu_img_lable_delete_select"
+                    android:layout_margin="@dimen/twenty_px"
+                    android:onClick="@{activity.cancel}"
+                    />
                 <RelativeLayout
                     android:id="@+id/classify_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/grade_layout"
                     android:layout_marginLeft="30px"
-                    android:layout_marginTop="30px">
+                    >
 
                     <TextView
                         android:id="@+id/classify_tv"
@@ -190,12 +176,39 @@
                         android:text="@string/extra_book"
                         android:textColor="@drawable/search_color_selector" />
                 </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/grade_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_below="@+id/classify_layout"
+                    android:visibility="gone"
+                    android:layout_marginTop="30px"
+                    android:paddingLeft="30px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/grade_text"
+                        android:textColor="@color/text_color_black"
+                        android:textSize="24px" />
+
+                    <Spinner
+                        android:id="@+id/stage_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25px"
+                        android:background="@drawable/img_xiala"
+                        android:spinnerMode="dropdown" />
+                </LinearLayout>
+
+
 
                 <LinearLayout
                     android:id="@+id/subject_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/classify_layout"
+                    android:layout_below="@+id/grade_layout"
                     android:layout_marginTop="30px"
                     android:layout_marginLeft="30px"
                     android:orientation="vertical"

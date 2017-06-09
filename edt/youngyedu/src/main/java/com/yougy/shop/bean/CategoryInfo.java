@@ -64,4 +64,9 @@ public class CategoryInfo{
     public void setChilds(List<CategoryInfo> childs) {
         this.childs = childs;
     }
+
+    @Override
+    public String toString() {
+        return categoryDisplay;
+    }
 }

@@ -131,6 +131,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
 
             //作业ID
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
+            extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (NetUtils.isNetConnected()) {
