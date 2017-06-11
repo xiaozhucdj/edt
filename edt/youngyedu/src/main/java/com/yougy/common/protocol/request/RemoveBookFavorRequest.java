@@ -1,23 +1,50 @@
 package com.yougy.common.protocol.request;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Created by Administrator on 2017/2/16.
+ * Created by FH on 2017/6/8.
  * 移除收藏
  */
 
-public class RemoveBookFavorRequest extends BookBaseRequest {
-    /**
-     * 请求参数
+public class RemoveBookFavorRequest{
+    private String m = "removeFavor";
+    private int userId;
+    private List<BookIdObj> data = new ArrayList<BookIdObj>();
 
-     {
-     "userId": xxx,
-     "count": 1,
-     "data": [
-     {
-     "count": 1,
-     "bookList": []
-     }
-     ]
-     }
-     */
+    public String getM() {
+        return m;
+    }
+
+    public RemoveBookFavorRequest setM(String m) {
+        this.m = m;
+        return this;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public RemoveBookFavorRequest setUserId(int userId) {
+        this.userId = userId;
+        return this;
+    }
+
+    public List<BookIdObj> getData() {
+        return data;
+    }
+
+    public RemoveBookFavorRequest setData(List<BookIdObj> data) {
+        this.data = data;
+        return this;
+    }
+
+    public static class BookIdObj{
+        int bookId;
+
+        public BookIdObj(int bookId) {
+            this.bookId = bookId;
+        }
+    }
 }

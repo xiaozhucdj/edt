@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.response.QueryBookFavorProtocol;
+import com.yougy.common.protocol.response.QueryBookFavorRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -18,7 +18,7 @@ import okhttp3.Response;
  * 查询收藏
  */
 
-public class QueryBookFavorCallback extends BaseCallBack<QueryBookFavorProtocol> {
+public class QueryBookFavorCallback extends BaseCallBack<QueryBookFavorRep> {
     private int mProtocol;
 
     public QueryBookFavorCallback(Context context, int protocol) {
@@ -27,16 +27,16 @@ public class QueryBookFavorCallback extends BaseCallBack<QueryBookFavorProtocol>
     }
 
     @Override
-    public QueryBookFavorProtocol parseNetworkResponse(Response response, int id) throws Exception {
+    public QueryBookFavorRep parseNetworkResponse(Response response, int id) throws Exception {
         String backJson = response.body().string();
         LogUtils.i("response json ...." + backJson);
-        return GsonUtil.fromJson(backJson, QueryBookFavorProtocol.class);
+        return GsonUtil.fromJson(backJson, QueryBookFavorRep.class);
     }
 
 
     @Override
-    public void onResponse(QueryBookFavorProtocol response, int id) {
-        Log.e("QueryBookFavorProtocol", "send QueryBookFavorProtocol event");
+    public void onResponse(QueryBookFavorRep response, int id) {
+        Log.e("QueryBookFavorRep", "send QueryBookFavorRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

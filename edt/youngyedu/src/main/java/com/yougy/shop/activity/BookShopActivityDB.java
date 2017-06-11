@@ -36,6 +36,7 @@ import com.yougy.shop.adapter.BookShopAdapter;
 import com.yougy.shop.adapter.RecyclerAdapter;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CategoryInfo;
+import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.ShopBinding;
 import com.yougy.view.CustomLinearLayoutManager;
@@ -139,13 +140,14 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     protected void refreshView() {
 
     }
-
+    public static List<CategoryInfo> grades = new ArrayList<>();
     private void handleCategoryInfo(List<CategoryInfo> categories) {
         for (int i = 0; i < categories.size(); i++) {
             CategoryInfo level1 = categories.get(i);
             mClassifies.add(level1.getCategoryDisplay());
             mClassifyIds.put(i, level1.getCategoryId());
             gradeSparseArray.put(level1.getCategoryId(), level1.getChilds());
+            grades.add(level1);
             for (int j = 0; j < level1.getChilds().size(); j++) {
                 CategoryInfo level2 = level1.getChilds().get(j);
                 subjectSparseArray.put(level2.getCategoryId(), level2.getChilds());
@@ -174,10 +176,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                         LogUtils.e(tag, "category info : " + resultJson);
                         Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
                         List<CategoryInfo> categories = result.getData();
+                        LogUtils.e(tag, "categories' size : " + categories.size());
                         subscriber.onNext(categories);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    LogUtils.e(tag,"IOException : " + e.getMessage());
                 }
             }
         });
@@ -400,7 +404,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                     mBookAdapter.notifyDataSetChanged();
                 }
             });
-            binding.pageNumberLayout.addView(pageBtn, params);
+            binding.pageNumberLayout.addView(pageLayout, params);
         }
     }
 
@@ -473,12 +477,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     public void clickCartGo(View view) {
         hideRecycler();
-        loadIntent(NewShopCartActivity.class);
+        loadIntent(ShopCartActivity.class);
     }
 
     public void clickFavorite(View view) {
         hideRecycler();
-        loadIntent(NewShopFavoriteActivity.class);
+        loadIntent(ShopFavoriteActivity.class);
     }
 
     public void search(View view) {
@@ -664,9 +668,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private void itemClick(BookInfo bookInfo) {
-        Bundle extras = new Bundle();
-        extras.putParcelable("book_info", bookInfo);
-        loadIntentWithExtras(NewBookItemDetailsActivity.class, extras);
+        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , Integer.parseInt(bookInfo.getBookId()));
     }
 
     private void resetComposite() {

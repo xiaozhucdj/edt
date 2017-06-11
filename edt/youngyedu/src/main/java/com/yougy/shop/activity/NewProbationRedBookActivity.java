@@ -247,8 +247,8 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-              /*  if (o instanceof QueryBookCartProtocol) {
-                    QueryBookCartProtocol protocol = (QueryBookCartProtocol) o;
+              /*  if (o instanceof QueryBookCartRep) {
+                    QueryBookCartRep protocol = (QueryBookCartRep) o;
                     int carsCount = protocol.getCount();
                     //TODO:UI 提示购物车数量
                 }else*/ if (o instanceof AppendBookCartProtocol) {

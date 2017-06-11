@@ -107,6 +107,11 @@ public class ProtocolId {
      */
     public static final int PROTOCOL_ID_QUERY_HOME_WROK = 2029;
 
+    /**
+     * 29. 查询 商城图书详情
+     */
+    public static final int PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL = 2030;
+
 
     ////////////////////////////////////请求协议 笔记相关 3000ID//////////////////////////////////
     /***

@@ -3,6 +3,8 @@ package com.yougy.shop.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -28,16 +30,20 @@ import com.yougy.common.protocol.request.PromoteBookRequest;
 import com.yougy.common.protocol.response.AppendBookCartProtocol;
 import com.yougy.common.protocol.response.AppendBookFavorProtocol;
 import com.yougy.common.protocol.response.PromoteBookProtocol;
+import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.DataBookBean;
+import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.adapter.PromoteBookAdapter;
-import com.yougy.shop.bean.BookInfo;
+import com.yougy.shop.callback.QueryBookCallBack;
+import com.yougy.shop.callback.QueryShopBookDetailCallBack;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -54,11 +60,11 @@ import butterknife.OnClick;
 import rx.functions.Action1;
 
 /**
- * Created by Administrator on 2017/2/8.
- * 新_图书详情页
+ * Created by FH on 2017/6/9.
+ * 图书详情页
  */
 
-public class NewBookItemDetailsActivity extends ShopBaseActivity implements DownBookDialog.DownBookListener {
+public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBookDialog.DownBookListener {
     ////////////////////View//////////////////////////////////////////////////////
     @BindView(R.id.btn_left)
     ImageButton mBtnLeft;
@@ -119,6 +125,8 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
     private List<BookInfo> mBooks = new ArrayList<>();
     private DownBookDialog mDialog;
 
+    private int bookId;
+
 
     /***
      * 初始化布局
@@ -133,10 +141,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
      */
     @Override
     protected void init() {
-        if (null != getIntent().getExtras()) {
-            mBookInfo = getIntent().getParcelableExtra(ShopGloble.JUMP_BOOK_KEY);
-            LogUtils.e(tag,mBookInfo.getBookTitle());
-        }
+        bookId = getIntent().getIntExtra(ShopGloble.BOOK_ID , -1);
     }
 
     /**
@@ -144,28 +149,6 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
      */
     @Override
     protected void initLayout() {
-        //图片
-        refreshImg(mImgBookIcon, mBookInfo.getBookCover());
-        //标题
-        mTvTitle.setText(mBookInfo.getBookTitle());
-        //出版社
-        mTvBookPublisher.setText(mBookInfo.getBookPublisher()+"");
-        //出版时间
-        mTvBookPublishTime.setText(mBookInfo.getBookPublishTime());
-        //作者
-        mTvBookAuthor.setText(mBookInfo.getBookAuthor());
-        //TODO:文件大小
-//        mTvBookDownloadSize.setText(mBookInfo.getBookDownloadSize());
-        //价格
-        mTvBookSalePrice.setText(mBookInfo.getBookSalePrice() + "");
-        //判断是否加入收藏
-        //mBtnAddFavor.setSelected(mBookInfo.isBookInFavor());
-        //判断是否加入购物车
-        //mBtnAddCar.setSelected(mBookInfo.isBookInCart());
-        //购买按钮价格
-        mBtnBuy.setText(mBookInfo.getBookSalePrice() + "");
-        //图书详情
-        mTvBookDetails.setText(mBookInfo.getBookSummary());
         //初始化推荐列表
         initRecycler();
     }
@@ -175,10 +158,8 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
      */
     @Override
     protected void loadData() {
-        //获取图书 推荐
-        PromoteBookRequest request = new PromoteBookRequest();
-        PromoteBookCallBack callBack = new PromoteBookCallBack(this, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK, request);
-        ProtocolManager.promoteBookProtocol(request, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK, callBack);
+        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getUserId() , bookId
+                , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , new QueryShopBookDetailCallBack(this , bookId));
     }
 
     /**
@@ -186,6 +167,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
      */
     @Override
     protected void refreshView() {
+
     }
 
     @OnClick({R.id.btn_left, R.id.img_btn_right, R.id.btn_buy, R.id.btn_addCar, R.id.btn_addFavor, R.id.btn_read})
@@ -196,7 +178,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
                 break;
             case R.id.img_btn_right:
                 //进入购物车
-                loadIntent(NewShopCartActivity.class);
+                loadIntent(ShopCartActivity.class);
                 break;
             case R.id.btn_buy:
                 //跳转 购买页面
@@ -265,7 +247,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
         }
 
 
-        ImageLoaderManager.getInstance().loadImageActivity(NewBookItemDetailsActivity.this,
+        ImageLoaderManager.getInstance().loadImageActivity(ShopBookDetailsActivity.this,
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
@@ -303,24 +285,12 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
      */
     private void itemClick(int position) {
         if (mBooks.size() > 0) {
-            Bundle extras = new Bundle();
-            extras.putParcelable(ShopGloble.JUMP_BOOK_KEY, mBooks.get(position));
-            Intent intent = new Intent(this, NewBookItemDetailsActivity.class);
-            intent.putExtras(extras);
-            startActivity(intent);
+            loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , mBooks.get(position).getBookId());
         }
     }
 
     @Override
     protected void handleEvent() {
-        handlePromoteBookEvent();
-        super.handleEvent();
-    }
-
-    /***
-     * 获取推荐图书的协议回调 ，在Recycler 显示
-     */
-    private void handlePromoteBookEvent() {
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
@@ -340,9 +310,52 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
 //                        mBookInfo.setBookInFavor(true);
                     }
                 }
+                else if (o instanceof QueryShopBookDetailRep){
+                    QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
+                    if (rep.getData() != null){
+                        mBookInfo = rep.getData().get(0);
+                        //图片
+                        refreshImg(mImgBookIcon, mBookInfo.getBookCover());
+                        //标题
+                        mTvTitle.setText("图书详情");
+                        //图书名称
+                        mTvBookName.setText(mBookInfo.getBookTitle());
+                        //出版社
+                        mTvBookPublisher.setText("出版社 : " + mBookInfo.getBookPublisher());
+                        //作者
+                        mTvBookAuthor.setText("作者 : " + mBookInfo.getBookAuthor());
+                        //出版时间
+                        mTvBookPublishTime.setText("出版时间 : " + mBookInfo.getBookPublishTime());
+                        //TODO:文件大小
+                        mTvBookDownloadSize.setText("文件大小 : " + "TODO");
+                        //价格
+                        mTvBookSalePrice.setText("￥" + mBookInfo.getBookSalePrice());
+                        //购买按钮价格
+                        mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
+                        //图书详情
+                        mTvBookDetails.setText(mBookInfo.getBookSummary());
+                        //在线试读是否可点
+                        if (TextUtils.isEmpty(mBookInfo.getBookPreview())){
+                            mBtnRead.setEnabled(false);
+                        }
+                        else {
+                            mBtnRead.setEnabled(true);
+                        }
+//                        //获取图书 推荐
+//                        PromoteBookRequest request = new PromoteBookRequest();
+//                        PromoteBookCallBack callBack = new PromoteBookCallBack(ShopBookDetailsActivity.this, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK, request);
+//                        ProtocolManager.promoteBookProtocol(request, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK, callBack);
+                    }
+                    else {
+                        ToastUtil.showToast(getApplicationContext() , "获取图书详情失败");
+                        Log.v("FH" , "获取图书详情失败");
+                    }
+                }
             }
         }));
+        super.handleEvent();
     }
+
 
 
     @Override
@@ -372,7 +385,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
         DataBookBean bean = new DataBookBean();
         List<BookInfo> bookInfoList = new ArrayList<>();
         bookInfoList.add(mBookInfo);
-//        bean.setBookList(bookInfoList);
+//        bean.setBookList(favorList);
         bean.setCount(bookInfoList.size());
 
         request.setData(list);
@@ -395,7 +408,7 @@ public class NewBookItemDetailsActivity extends ShopBaseActivity implements Down
         DataBookBean bean = new DataBookBean();
         List<BookInfo> bookInfoList = new ArrayList<>();
         bookInfoList.add(mBookInfo);
-//        bean.setBookList(bookInfoList);
+//        bean.setBookList(favorList);
         bean.setCount(bookInfoList.size());
 
         request.setData(list);

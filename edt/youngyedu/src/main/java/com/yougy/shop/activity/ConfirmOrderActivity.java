@@ -138,7 +138,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                                         break;
                                     case OK:
                                         qrCodeDialog.dismiss();
-                                        loadIntent(NewShopCartActivity.class);
+                                        loadIntent(ShopCartActivity.class);
                                         break;
                                 }
                             }

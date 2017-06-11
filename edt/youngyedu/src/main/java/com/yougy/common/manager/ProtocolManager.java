@@ -17,17 +17,12 @@ import com.yougy.common.protocol.request.RemoveNotesRequest;
 import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.request.UpdateNotesRequest;
 import com.yougy.common.protocol.response.OrderBaseResponse;
-import com.yougy.common.protocol.response.QueryBookCartProtocol;
-import com.yougy.common.protocol.response.QueryBookFavorProtocol;
 import com.yougy.common.protocol.response.QueryQRStrProtocol;
-import com.yougy.common.protocol.response.RemoveBookCartProtocol;
-import com.yougy.common.protocol.response.RemoveBookFavorProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderProtocol;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.PostStringBuilder;
@@ -39,7 +34,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -553,7 +547,7 @@ public class ProtocolManager {
      */
     public static void removeBookCartProtocol(RemoveBookCartRequest request , int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............19. 书城购物车移除");
-        setCommon(Commons.URL_BOOK_CART_REMOVE, GsonUtil.toJson(request), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
 
 
@@ -569,11 +563,12 @@ public class ProtocolManager {
         LogUtils.i("Protocol.............20. 书城购物车查询");
         JSONObject obj = new JSONObject();
         try {
+            obj.put("m" , "queryCart");
             obj.put("userId", userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setCommon(Commons.URL_BOOK_CART_QUERY, obj.toString(), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
     /**
@@ -625,7 +620,7 @@ public class ProtocolManager {
      */
     public static void bookFavorRemoveProtocol(RemoveBookFavorRequest request, int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............26. 书城收藏移除.");
-        setCommon(Commons.URL_BOOK_COLLECT_REMOVE, GsonUtil.toJson(request), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
     /**
      * 27. 书城收藏查询
@@ -636,11 +631,12 @@ public class ProtocolManager {
         LogUtils.i("Protocol............27. 书城收藏查询");
         JSONObject obj = new JSONObject();
         try {
+            obj.put("m" , "queryFavor");
             obj.put("userId", userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setCommon(Commons.URL_BOOK_COLLECT_QUERY, obj.toString(), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
     /**
@@ -675,6 +671,23 @@ public class ProtocolManager {
             e.printStackTrace();
         }
         setCommon(Commons.URL_QUERY_HOMEWORK, obj.toString(), protocol_id, callbac);
+    }
+
+    /***
+     * 根据图书id和用户id以用户视角查询商城图书详情
+     *
+     */
+    public static void queryShopBookDetailByIdProtocol(int userId, int bookId , int protocol_id, Callback callbac) {
+        LogUtils.i("Protocol.............  根据图书id和用户id以用户视角查询商城图书详情");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m","queryBook");
+            obj.put("userId", userId);
+            obj.put("bookId", bookId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
     /**
@@ -814,136 +827,6 @@ public class ProtocolManager {
             bookInfo.setBookCover("http://img3.imgtn.bdimg.com/it/u=4204844413,210602442&fm=11&gp=0.jpg");
             simulateData.add(bookInfo);
         }
-    }
-
-    /**
-     * 书城收藏查询假的实现(模拟数据用,接口通了以后可以删除)
-     *
-     */
-    public static void fake_queryBookFavorProtocol(int userId, final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol............27. 书城收藏查询");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        QueryBookFavorProtocol response = new QueryBookFavorProtocol();
-                        List<DataBookBean> list = new ArrayList<DataBookBean>() ;
-                        DataBookBean bean = new DataBookBean() ;
-                        bean.setCount(simulateData.size());
-                        bean.setBookList(simulateData);
-                        list.add(bean) ;
-                        response.setData(list);
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 书城收藏移除假的实现(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_bookFavorRemoveProtocol(final RemoveBookFavorRequest request, final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............26. 书城收藏移除.");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        ArrayList<BookInfo> toDelteBookInfos = (ArrayList<BookInfo>) request.getData().get(0).getBookList();
-                        removeBooksByID(simulateData, toDelteBookInfos);
-                        RemoveBookFavorProtocol response = new RemoveBookFavorProtocol();
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 书城购物车查询假的实现(模拟数据用,接口通了以后可以删除)
-     *
-     */
-    public static void fake_queryBookCartProtocol(int userId, final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............20. 书城购物车查询");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        QueryBookCartProtocol response = new QueryBookCartProtocol();
-                        List<DataBookBean> list = new ArrayList<DataBookBean>() ;
-                        DataBookBean bean = new DataBookBean() ;
-                        bean.setCount(simulateData.size());
-                        bean.setBookList(simulateData);
-                        list.add(bean) ;
-                        response.setData(list);
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 书城购物车移除假的实现(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_removeBookCartProtocol(final RemoveBookCartRequest request , final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............19. 书城购物车移除");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        ArrayList<BookInfo> toDelteBookInfos = (ArrayList<BookInfo>) request.getData().get(0).getBookList();
-                        removeBooksByID(simulateData, toDelteBookInfos);
-                        RemoveBookCartProtocol response = new RemoveBookCartProtocol();
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
     }
 
     /**
