@@ -23,10 +23,8 @@ import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
 import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
-import com.yougy.common.protocol.callback.PromoteBookCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
 import com.yougy.common.protocol.request.AppendBookFavorRequest;
-import com.yougy.common.protocol.request.PromoteBookRequest;
 import com.yougy.common.protocol.response.AppendBookCartProtocol;
 import com.yougy.common.protocol.response.AppendBookFavorProtocol;
 import com.yougy.common.protocol.response.PromoteBookProtocol;
@@ -42,7 +40,6 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.adapter.PromoteBookAdapter;
-import com.yougy.shop.callback.QueryBookCallBack;
 import com.yougy.shop.callback.QueryShopBookDetailCallBack;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
@@ -457,7 +454,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
 
