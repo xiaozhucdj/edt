@@ -282,8 +282,9 @@ public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements 
                 break;
             case R.id.shop_favorite_select_all_checkbox:
                 boolean setCheck = !selectAllCheckbox.isSelected();
-                for (NewShopBookItem everyItem : bookItems) {
-                    everyItem.setChecked(setCheck, true);
+                for (int i = 0 ; i < bookItems.size() && i < favorList.size(); i++){
+                    NewShopBookItem everyItem = bookItems.get(i);
+                    everyItem.setChecked(setCheck , true);
                 }
                 break;
             case R.id.shop_page_page_btn:
@@ -321,7 +322,8 @@ public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements 
      */
     private boolean isAllChecked(){
         boolean allChecked = true;
-        for (NewShopBookItem item : bookItems) {
+        for (int i = 0 ; i < bookItems.size() && i < favorList.size() ; i++){
+            NewShopBookItem item = bookItems.get(i);
             if (!item.isChecked()) {
                 allChecked = false;
                 break;

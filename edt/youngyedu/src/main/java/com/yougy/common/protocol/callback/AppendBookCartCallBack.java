@@ -5,13 +5,11 @@ import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
-import com.yougy.common.protocol.response.AppendBookCartProtocol;
+import com.yougy.common.protocol.response.AppendBookCartRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
 
 import okhttp3.Response;
 
@@ -20,7 +18,7 @@ import okhttp3.Response;
  * 添加购物车
  */
 
-public class AppendBookCartCallBack extends BaseCallBack<AppendBookCartProtocol> {
+public class AppendBookCartCallBack extends BaseCallBack<AppendBookCartRep> {
     private final int mProtocol;
     private final AppendBookCartRequest mRequest;
 
@@ -31,16 +29,16 @@ public class AppendBookCartCallBack extends BaseCallBack<AppendBookCartProtocol>
     }
 
     @Override
-    public AppendBookCartProtocol parseNetworkResponse(Response response, int id) throws Exception {
+    public AppendBookCartRep parseNetworkResponse(Response response, int id) throws Exception {
         String backJson = response.body().string();
         LogUtils.i("response json ...." + backJson);
-        return GsonUtil.fromJson(backJson, AppendBookCartProtocol.class);
+        return GsonUtil.fromJson(backJson, AppendBookCartRep.class);
 
     }
 
     @Override
-    public void onResponse(AppendBookCartProtocol response, int id) {
-        Log.e("PromoteBookCallBack", "send AppendBookCartCallback event");
+    public void onResponse(AppendBookCartRep response, int id) {
+        Log.e("AppendBookCartCallBack", "send AppendBookCartRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

@@ -4,12 +4,14 @@ package com.yougy.shop.activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.artifex.mupdfdemo.MuPDFCore;
@@ -23,17 +25,19 @@ import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
 import com.yougy.common.protocol.request.AppendBookFavorRequest;
-import com.yougy.common.protocol.response.AppendBookCartProtocol;
-import com.yougy.common.protocol.response.AppendBookFavorProtocol;
+import com.yougy.common.protocol.response.AppendBookCartRep;
+import com.yougy.common.protocol.response.AppendBookFavorRep;
+import com.yougy.common.protocol.response.QueryBookCartRep;
+import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.bean.DataBookBean;
 import com.yougy.home.imple.PageListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.rx_subscriber.BaseSubscriber;
+import com.yougy.common.protocol.callback.QueryShopBookDetailCallBack;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.showView.TextThumbSeekBar;
@@ -47,14 +51,12 @@ import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
-import static com.yougy.ui.activity.R.id.btn_buy;
-
 /**
  * Created by Administrator on 2017/2/14.
  * 试读PDF ，需要把试读的pdf 下载到本地阅读
  */
 
-public class NewProbationRedBookActivity extends ShopBaseActivity {
+public class ProbationReadBookActivity extends ShopBaseActivity {
 
     @BindView(R.id.ll_pdfFather)
     LinearLayout mLlPdfFather;
@@ -66,7 +68,7 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
     ImageButton mImgbtnAddCar;
     @BindView(R.id.imgbtn_favor)
     ImageButton mImgbtnFavor;
-    @BindView(btn_buy)
+    @BindView(R.id.btn_buy)
     Button mBtnBuy;
     @BindView(R.id.img_pageBack)
     ImageView mImgPageBack;
@@ -74,6 +76,8 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
     ImageView mImgPageNext;
     @BindView(R.id.seekbar_page)
     TextThumbSeekBar mSeekbarPage;
+    @BindView(R.id.cart_count_tv)
+    TextView cartCountTV;
 
     private BookInfo mBookInfo;
 
@@ -93,6 +97,8 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
     private MuPDFPageView mPdfView;
     private PageListenerImple mPageListenerImple;
 
+    public int bookId;
+
     /***
      * 当前显示页数
      */
@@ -109,9 +115,7 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
 
     @Override
     protected void init() {
-        if (null != getIntent().getExtras()) {
-            mBookInfo = getIntent().getExtras().getParcelable(ShopGloble.JUMP_BOOK_KEY);
-        }
+        bookId = getIntent().getIntExtra(ShopGloble.BOOK_ID , -1);
     }
 
     @Override
@@ -147,50 +151,55 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             }
         });
-
     }
-
 
     @Override
     protected void loadData() {
-        // 获取购物车列表 只为了读取购物车个数 显示在UI上
-//        requestCars();
-        //加载PDF
-
-
-        mBtnBuy.setText("￥"+mBookInfo.getBookSalePrice()+"购买");
         requestPageTask(mCurrentPage);
     }
 
-    @Override
-    protected void refreshView() {
-
+    protected void refreshData(){
+        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId() , bookId
+                , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , new QueryShopBookDetailCallBack(this , bookId));
+        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
+                , new QueryBookCartCallBack(this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        refreshData();
+    }
 
+    @Override
+    protected void refreshView() {}
 
-    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, btn_buy})
+    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, R.id.btn_buy})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgbtn_back:
                 this.finish();
                 break;
             case R.id.imgbtn_jumpCar:
-                //TODO:进入购物车页面
+                loadIntent(ShopCartActivity.class);
                 break;
             case R.id.imgbtn_addCar:
-                //加入购车
-                // 图书未购买+图书为付费+图书未被加入购物车三个条件满足，才可有加入购物车操作
-                if (StringUtils.isEmpty(mBookInfo.getBookDownload()) && mBookInfo.getBookSalePrice() != 0 && !mBookInfo.isBookInCart()) {
-                    requestAddCarProtocol();
+                if (mBookInfo.isBookInCart() || mBookInfo.isBookInShelf()){
+                    ToastUtil.showToast(getApplicationContext() , "本书已在购物车里或已经购买过!");
+                }
+                else {
+                    addBooksToCar(new ArrayList<BookInfo>(){{add(mBookInfo);}});
                 }
                 break;
             case R.id.imgbtn_favor:
-                //加入收藏夹
-                if (!mBookInfo.isBookInFavor())
-                    requestAddFavorProtocol();
+                if (mBookInfo.isBookInFavor()){
+                    ToastUtil.showToast(getApplicationContext() , "本书已在收藏里");
+                }
+                else {
+                    addBooksToFavor(new ArrayList<BookInfo>(){{add(mBookInfo);}});
+                }
                 break;
-            case btn_buy:
+            case R.id.btn_buy:
                 //TODO:进购买页面
                 Bundle extra = new Bundle();
                 ArrayList<BookInfo> infos = new ArrayList<>() ;
@@ -206,7 +215,7 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
      * 初始化PDF
      */
     private void initPDF() {
-        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + bookId + ".pdf";
         mCore = openFile(mProbationUrl);
         if (mCore != null) {
             mPdfCounts = mCore.countPages();
@@ -221,45 +230,57 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
     /***
      * 初始化布局参数
      */
-    private void initViewData() {
-
-    }
-
-    /***
-     * 获取购物车
-     */
-    private void requestCars() {
-        QueryBookCartCallBack callBack = new QueryBookCartCallBack(this, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART);
-        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART, callBack);
-    }
+    private void initViewData() {}
 
     @Override
     protected void handleEvent() {
-        responseHandleEvent();
-        super.handleEvent();
-    }
-
-    /**
-     * 协议回调
-     */
-
-    private void responseHandleEvent() {
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-              /*  if (o instanceof QueryBookCartRep) {
-                    QueryBookCartRep protocol = (QueryBookCartRep) o;
-                    int carsCount = protocol.getCount();
-                    //TODO:UI 提示购物车数量
-                }else*/ if (o instanceof AppendBookCartProtocol) {
-                    //更新 购车按钮状态
-                    mBookInfo.setBookInCart(true);
-                } else if (o instanceof AppendBookFavorProtocol) {
-                    //更新 收藏按钮状态
-                    mBookInfo.setBookInFavor(true);
+                if (o instanceof AppendBookCartRep) {
+                    AppendBookCartRep rep = (AppendBookCartRep) o;
+                    if (rep.getCode() == 200){
+                        ToastUtil.showToast(getApplicationContext() , "添加到购物车成功");
+                        refreshData();
+                    }
+                    else {
+                        ToastUtil.showToast(getApplicationContext() , "添加到购物车失败");
+                    }
+                } else if (o instanceof AppendBookFavorRep) {
+                    AppendBookFavorRep rep = (AppendBookFavorRep) o;
+                    if (rep.getCode() == 200){
+                        ToastUtil.showToast(getApplicationContext() , "添加到收藏成功");
+                        refreshData();
+                    }
+                    else {
+                        ToastUtil.showToast(getApplicationContext() , "添加到收藏失败");
+                    }
+                } else if (o instanceof QueryShopBookDetailRep){
+                    QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
+                    if (rep.getData() != null){
+                        mBookInfo = rep.getData().get(0);
+                        mBtnBuy.setText("￥"+mBookInfo.getBookSalePrice()+"购买");
+                    }
+                    else {
+                        ToastUtil.showToast(getApplicationContext() , "获取图书详情失败");
+                        Log.v("FH" , "获取图书详情失败");
+                    }
+                }
+                else if (o instanceof QueryBookCartRep){
+                    QueryBookCartRep rep = (QueryBookCartRep) o;
+                    if (rep.getCode() != 200){
+                        ToastUtil.showToast(getApplicationContext() , "获取购物车个数失败");
+                    }
+                    else if (rep.getData() != null && rep.getData().size() != 0){
+                        cartCountTV.setText("" + rep.getData().size());
+                    }
+                    else {
+                        cartCountTV.setText("0");
+                    }
                 }
             }
         }));
+        super.handleEvent();
     }
 
     //////////////////////////////////////////解析PDF////////////////////////////////////////////////////
@@ -366,53 +387,30 @@ public class NewProbationRedBookActivity extends ShopBaseActivity {
         }
     }
 
-
     /***
      * 添加购物车
      */
-    private void requestAddCarProtocol() {
-
+    private void addBooksToCar(List<BookInfo> bookInfoList) {
         AppendBookCartRequest request = new AppendBookCartRequest();
-
         request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-
-        List<DataBookBean> list = new ArrayList<>() ;
-
-        DataBookBean bean = new DataBookBean();
-        List<BookInfo> bookInfoList = new ArrayList<>() ;
-        bookInfoList.add(mBookInfo) ;
-        bean.setBookList(bookInfoList);
-        bean.setCount(bookInfoList.size());
-
-        request.setData(list);
-
-        AppendBookCartCallBack call = new AppendBookCartCallBack(this, ProtocolId.PROTOCOL_ID_APPEND_BOOK_CART, request);
-
+        for (BookInfo bookInfo :
+                bookInfoList) {
+            request.getData().add(new AppendBookCartRequest.BookIdObj(bookInfo.getBookId()));
+        }
+        AppendBookCartCallBack call = new AppendBookCartCallBack(this, ProtocolId.PROTOCOL_ID_APPEND_BOOK_CART,request);
         ProtocolManager.appendBookCartProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_CART, call);
     }
-
     /***
      * 添加收藏
      */
-    private void requestAddFavorProtocol() {
-
-
+    private void addBooksToFavor(List<BookInfo> bookInfoList) {
         AppendBookFavorRequest request = new AppendBookFavorRequest();
-
         request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-
-        List<DataBookBean> list = new ArrayList<>() ;
-
-        DataBookBean bean = new DataBookBean();
-        List<BookInfo> bookInfoList = new ArrayList<>() ;
-        bookInfoList.add(mBookInfo) ;
-        bean.setBookList(bookInfoList);
-        bean.setCount(bookInfoList.size());
-
-        request.setData(list);
+        for (BookInfo bookInfo :
+                bookInfoList) {
+            request.getData().add(new AppendBookFavorRequest.BookIdObj(bookInfo.getBookId()));
+        }
         AppendBookFavorCallBack call = new AppendBookFavorCallBack(this, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, request);
-        ProtocolManager.bookFavorAppendProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, call);
+        ProtocolManager.appendBookFavorProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, call);
     }
 }

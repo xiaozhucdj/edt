@@ -25,4 +25,6 @@ public class ShopGloble {
 
     public static final String BOOK_ID = "book_id";
 
+    public static final String ORDER = "order";
+
 }

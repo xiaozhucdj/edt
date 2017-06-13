@@ -2,6 +2,7 @@ package com.yougy.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,6 +25,8 @@ public class ConfirmDialog extends BaseDialog {
     Button confirmBtn;
     @BindView(R.id.confirm_dialog_cancle_btn)
     Button cancleBtn;
+    String cancleBtnText;
+    String confirmBtnText;
 
     Dialog.OnClickListener confirmBtnListener;
 
@@ -35,14 +38,25 @@ public class ConfirmDialog extends BaseDialog {
 
     @Override
     protected void init() {
+    }
 
+    public ConfirmDialog setCancleBtnText(String cancleBtnText) {
+        this.cancleBtnText = cancleBtnText;
+        return this;
+    }
+
+    public ConfirmDialog setConfirmBtnText(String confirmBtnText) {
+        this.confirmBtnText = confirmBtnText;
+        return this;
     }
 
     @Override
     protected void initLayout() {
         setContentView(R.layout.confirm_dialog_layout);
         ButterKnife.bind(this);
-        titleTv.setText(msg);
+        if (!TextUtils.isEmpty(msg))titleTv.setText(msg);
+        if (!TextUtils.isEmpty(cancleBtnText))cancleBtn.setText(cancleBtnText);
+        if (!TextUtils.isEmpty(confirmBtnText))confirmBtn.setText(confirmBtnText);
     }
 
     @OnClick({R.id.confirm_dialog_confirm_btn, R.id.confirm_dialog_cancle_btn})

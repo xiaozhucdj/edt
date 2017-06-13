@@ -55,7 +55,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(getContext(), ShopBookDetailsActivity.class);
-        intent.putExtra(ShopGloble.BOOK_ID , mInfo.getBookId());
+        intent.putExtra(ShopGloble.BOOK_ID , Integer.parseInt(mInfo.getBookId()));
         getContext().startActivity(intent);
         LogUtils.e("ShopBookView","onClick................." + mInfo.getBookTitle());
     }
