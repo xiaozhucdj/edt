@@ -533,7 +533,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
                 mDialog.getBtnConfirm().setVisibility(VISIBLE);
             }
 

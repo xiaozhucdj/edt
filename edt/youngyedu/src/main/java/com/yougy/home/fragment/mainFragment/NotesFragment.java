@@ -286,9 +286,10 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                     NewInserAllNoteRep rep = (NewInserAllNoteRep) o;
                     if (rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
                         //缓存中 当前 全部 笔记添加 ，以防止无网络的时候使用上次缓存数据
+                        appendNote(rep.getData().get(0).getNoteId());
                         addCacheData(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, mCreatInfo);
                         addCacheData(NewProtocolManager.NewCacheId.ALL_CODE_NOTE, mCreatInfo);
-                        appendNote(rep.getData().get(0).getNoteId());
+
                     } else {
                         UIUtils.showToastSafe("添加笔记失败", Toast.LENGTH_LONG);
                     }

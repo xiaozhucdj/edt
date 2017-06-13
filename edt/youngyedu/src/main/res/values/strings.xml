@@ -47,6 +47,7 @@
     <string name="search_result_context">您搜索的关键词:\&#34;%1$s\&#034; 的结果</string>
     <string name="search_error_title">很抱歉,没有找到与\&#034;%1$s\&#034;相关的课外书</string>
     <string name="down_book_defult">该书尚未下载 ,现在开始下载 ?</string>
+    <string name="down_book_error">该书下载失败 ,请重新下载?</string>
     <string name="down_book_loading">图书下载中%1$s</string>
     <string name="search">搜索</string>
     <item name="is_scale_size_tag" type="id" />

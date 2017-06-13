@@ -259,7 +259,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.confirm_order_back_btn:
-                finish();
+                onBackPressed();
                 break;
             case R.id.confirm_order_wechat_pay_btn:
                 showToastSafe("微信支付即将开通,敬请期待" , Toast.LENGTH_SHORT);
