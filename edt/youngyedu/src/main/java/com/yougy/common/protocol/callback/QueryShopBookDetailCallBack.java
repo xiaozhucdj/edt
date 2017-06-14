@@ -1,15 +1,14 @@
-package com.yougy.shop.callback;
+package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.BaseCallBack;
+import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.shop.bean.QueryBookInfo;
 
 import okhttp3.Response;
 
@@ -17,7 +16,7 @@ import okhttp3.Response;
  * Created by FH on 2017/6/9.
  */
 
-public class QueryShopBookDetailCallBack extends BaseCallBack<QueryBookInfo>{
+public class QueryShopBookDetailCallBack extends BaseCallBack<QueryShopBookDetailRep>{
 
     private int bookId;
 
@@ -36,13 +35,13 @@ public class QueryShopBookDetailCallBack extends BaseCallBack<QueryBookInfo>{
     }
 
     @Override
-    public QueryBookInfo parseNetworkResponse(Response response, int id) throws Exception {
+    public QueryShopBookDetailRep parseNetworkResponse(Response response, int id) throws Exception {
         String str = response.body().string();
-        return GsonUtil.fromJson(str,QueryBookInfo.class);
+        return GsonUtil.fromJson(str,QueryShopBookDetailRep.class);
     }
 
     @Override
-    public void onResponse(QueryBookInfo response, int id) {
+    public void onResponse(QueryShopBookDetailRep response, int id) {
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

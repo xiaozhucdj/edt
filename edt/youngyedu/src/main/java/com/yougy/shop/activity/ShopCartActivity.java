@@ -16,10 +16,15 @@ import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
 import com.yougy.common.protocol.callback.RemoveBookCartCallBack;
+import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.RemoveBookCartRequest;
+import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.protocol.response.RemoveBookCartProtocol;
+import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.ToastUtil;
+import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
@@ -84,7 +89,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     @Override
     protected void setContentView() {
-        setContentView(R.layout.activity_new_shop_cart);
+        setContentView(R.layout.activity_shop_cart);
     }
 
     @Override
@@ -154,6 +159,31 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                         ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId()
                                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
                                 , new QueryBookCartCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
+                    }
+                }
+                else if (o instanceof RequirePayOrderRep){
+                    RequirePayOrderRep rep = (RequirePayOrderRep) o;
+                    if (rep.getCode() == 200){
+                        RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
+
+                        orderObj.setBookList(new ArrayList<BookInfo>(){
+                            {
+                                for (CartItem cartItem : checkedCartItemList) {
+                                    BookInfo bookInfo = new BookInfo();
+                                    bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
+                                    bookInfo.setBookCover(cartItem.getBookCover());
+                                    bookInfo.setBookTitle(cartItem.getBookTitle());
+                                    add(bookInfo);
+                                }
+                            }
+                        });
+                        Intent intent = new Intent(ShopCartActivity.this , ConfirmOrderActivity.class);
+                        intent.putExtra(ShopGloble.ORDER , orderObj);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        ToastUtil.showToast(getApplicationContext() , "下单失败");
                     }
                 }
             }
@@ -298,8 +328,9 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                 break;
             case R.id.shop_cart_select_all_checkbox:
                 boolean setCheck = !selectAllCheckbox.isSelected();
-                for (NewShopBookItem everyItem : bookItems) {
-                    everyItem.setChecked(setCheck, true);
+                for (int i = 0 ; i < bookItems.size() && i < cartItemList.size(); i++){
+                    NewShopBookItem everyItem = bookItems.get(i);
+                    everyItem.setChecked(setCheck , true);
                 }
                 break;
             case R.id.shop_cart_checkout_btn:
@@ -307,9 +338,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                     showToastSafe(R.string.nothing_to_checkout , Toast.LENGTH_SHORT);
                 }
                 else {
-                    Bundle extra = new Bundle();
-                    extra.putParcelableArrayList("orderBookList" , checkedCartItemList);
-                    loadIntentWithExtras(ConfirmOrderActivity.class , extra);
+                    requestOrder();
                 }
                 break;
             case R.id.shop_page_page_btn:
@@ -341,13 +370,25 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
         }
     }
 
+
+    private void requestOrder (){
+        RequirePayOrderRequest request = new RequirePayOrderRequest();
+        request.setOrderOwner(SpUtil.getAccountId());
+        for (CartItem cartItem : checkedCartItemList) {
+            request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
+        }
+        ProtocolManager.requirePayOrderProtocol(request , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                , new RequireOrderCallBack(this , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER , request));
+    }
+
     /**
      * 判断是否本页中所有item都被选中
      * @return 如果所有item都被选中,返回true,只要有任意一个没有被选中,返回false.
      */
     private boolean isAllChecked() {
         boolean allChecked = true;
-        for (NewShopBookItem item : bookItems) {
+        for (int i = 0 ; i < bookItems.size() && i < cartItemList.size() ; i++){
+            NewShopBookItem item = bookItems.get(i);
             if (!item.isChecked()) {
                 allChecked = false;
                 break;

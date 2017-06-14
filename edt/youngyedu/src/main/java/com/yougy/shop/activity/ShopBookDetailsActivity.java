@@ -1,7 +1,7 @@
 package com.yougy.shop.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,12 +23,17 @@ import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
 import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
+import com.yougy.common.protocol.callback.PromoteBookCallBack;
+import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
 import com.yougy.common.protocol.request.AppendBookFavorRequest;
-import com.yougy.common.protocol.response.AppendBookCartProtocol;
-import com.yougy.common.protocol.response.AppendBookFavorProtocol;
-import com.yougy.common.protocol.response.PromoteBookProtocol;
+import com.yougy.common.protocol.request.PromoteBookRequest;
+import com.yougy.common.protocol.request.RequirePayOrderRequest;
+import com.yougy.common.protocol.response.AppendBookCartRep;
+import com.yougy.common.protocol.response.AppendBookFavorRep;
+import com.yougy.common.protocol.response.PromoteBookRep;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
+import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -37,14 +42,14 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.adapter.PromoteBookAdapter;
-import com.yougy.shop.callback.QueryShopBookDetailCallBack;
+import com.yougy.common.protocol.callback.QueryShopBookDetailCallBack;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownBookDialog;
 
 import java.io.File;
@@ -154,9 +159,17 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
      * 加载网络数据 或者其他
      */
     @Override
-    protected void loadData() {
-        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getUserId() , bookId
+    protected void loadData() {}
+
+    private void refreshData (){
+        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId() , bookId
                 , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , new QueryShopBookDetailCallBack(this , bookId));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        refreshData();
     }
 
     /**
@@ -178,35 +191,39 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 loadIntent(ShopCartActivity.class);
                 break;
             case R.id.btn_buy:
-                //跳转 购买页面
-                Bundle extra = new Bundle();
-                ArrayList<BookInfo> infos = new ArrayList<>() ;
-                infos.add(mBookInfo) ;
-                extra.putParcelableArrayList(ShopGloble.JUMP_ORDER_CONFIRM_BOOK_LIST_KEY , infos);
-                loadIntentWithExtras(ConfirmOrderActivity.class , extra);
-                this.finish();
+                requestOrder();
                 break;
             case R.id.btn_addCar:
-                // 加入购车
-                // 图书未购买+图书为付费+图书未被加入购物车三个条件满足，才可有加入购物车操作
-                //TODO:根据 购买日期判断是否需要加入购物车
-//                if (StringUtils.isEmpty(mBookInfo.getBookDownload()) && mBookInfo.getBookSalePrice() != 0 && !mBookInfo.isBookInCart()) {
-//                    requestAddCarProtocol();
-//                }
+                if (mBookInfo.isBookInCart() || mBookInfo.isBookInShelf()){
+                    ToastUtil.showToast(getApplicationContext() , "本书已在购物车里或已经购买过!");
+                }
+                else {
+                    addBooksToCar(new ArrayList<BookInfo>(){{add(mBookInfo);}});
+                }
                 break;
             case R.id.btn_addFavor:
-                //TODO:加入收藏夹
-//                if (!mBookInfo.isBookInFavor())
-//                    requestAddFavorProtocol();
+                if (mBookInfo.isBookInFavor()){
+                    ToastUtil.showToast(getApplicationContext() , "本书已在收藏里");
+                }
+                else {
+                    addBooksToFavor(new ArrayList<BookInfo>(){{add(mBookInfo);}});
+                }
                 break;
             case R.id.btn_read:
+                if (mBookInfo.isBookInShelf()){
+                    new ConfirmDialog(this, "您好,您已经购买过该图书", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).setConfirmBtnText("在书包打开").setCancleBtnText("取消下").show();
+                    return;
+                }
                 //跳转在线试读
                 String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
                 if (FileUtils.exists(probationUrl)) {
-                    Bundle extras = new Bundle();
-                    extras.putParcelable(ShopGloble.JUMP_BOOK_KEY, mBookInfo);
-                    Intent intent = new Intent(BaseActivity.getCurrentActivity(), NewProbationRedBookActivity.class);
-                    intent.putExtras(extras);
+                    Intent intent = new Intent(BaseActivity.getCurrentActivity(), ProbationReadBookActivity.class);
+                    intent.putExtra(ShopGloble.BOOK_ID , mBookInfo.getBookId());
                     BaseActivity.getCurrentActivity().startActivity(intent);
                 } else {
                     LogUtils.i("试读文件不存在");
@@ -292,60 +309,94 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             @Override
             public void call(Object o) {
                 if (!mActivityHide) {
-                    if (o instanceof PromoteBookProtocol) {
-                        PromoteBookProtocol protocol = (PromoteBookProtocol) o;
-                        if (protocol.getData() != null && protocol.getData().get(0) != null && protocol.getData().get(0).getBookList() != null)
-                            mBooks.clear();
-                        //TODO:add book to books
-//                        mBooks.addAll(protocol.getData().get(0).getBookList());
-                        mPromoteBookAdapter.notifyDataSetChanged();
-                    } else if (o instanceof AppendBookCartProtocol) {
-                        //更新 购车按钮状态
-//                        mBookInfo.setBookInCart(true);
-                    } else if (o instanceof AppendBookFavorProtocol) {
-                        //更新 收藏按钮状态
-//                        mBookInfo.setBookInFavor(true);
-                    }
-                }
-                else if (o instanceof QueryShopBookDetailRep){
-                    QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
-                    if (rep.getData() != null){
-                        mBookInfo = rep.getData().get(0);
-                        //图片
-                        refreshImg(mImgBookIcon, mBookInfo.getBookCover());
-                        //标题
-                        mTvTitle.setText("图书详情");
-                        //图书名称
-                        mTvBookName.setText(mBookInfo.getBookTitle());
-                        //出版社
-                        mTvBookPublisher.setText("出版社 : " + mBookInfo.getBookPublisher());
-                        //作者
-                        mTvBookAuthor.setText("作者 : " + mBookInfo.getBookAuthor());
-                        //出版时间
-                        mTvBookPublishTime.setText("出版时间 : " + mBookInfo.getBookPublishTime());
-                        //TODO:文件大小
-                        mTvBookDownloadSize.setText("文件大小 : " + "TODO");
-                        //价格
-                        mTvBookSalePrice.setText("￥" + mBookInfo.getBookSalePrice());
-                        //购买按钮价格
-                        mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
-                        //图书详情
-                        mTvBookDetails.setText(mBookInfo.getBookSummary());
-                        //在线试读是否可点
-                        if (TextUtils.isEmpty(mBookInfo.getBookPreview())){
-                            mBtnRead.setEnabled(false);
+                    if (o instanceof AppendBookCartRep) {
+                        AppendBookCartRep rep = (AppendBookCartRep) o;
+                        if (rep.getCode() == 200){
+                            ToastUtil.showToast(getApplicationContext() , "添加到购物车成功");
+                            refreshData();
                         }
                         else {
-                            mBtnRead.setEnabled(true);
+                            ToastUtil.showToast(getApplicationContext() , "添加到购物车失败");
                         }
+                    } else if (o instanceof AppendBookFavorRep) {
+                        AppendBookFavorRep rep = (AppendBookFavorRep) o;
+                        if (rep.getCode() == 200){
+                            ToastUtil.showToast(getApplicationContext() , "添加到收藏成功");
+                            refreshData();
+                        }
+                        else {
+                            ToastUtil.showToast(getApplicationContext() , "添加到收藏失败");
+                        }
+                    } else if (o instanceof QueryShopBookDetailRep){
+                        QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
+                        if (rep.getData() != null){
+                            mBookInfo = rep.getData().get(0);
+                            requestPromoteBook();
+                            //图片
+                            refreshImg(mImgBookIcon, mBookInfo.getBookCover());
+                            //标题
+                            mTvTitle.setText("图书详情");
+                            //图书名称
+                            mTvBookName.setText(mBookInfo.getBookTitle());
+                            //出版社
+                            mTvBookPublisher.setText("出版社 : " + mBookInfo.getBookPublisherName());
+                            //作者
+                            mTvBookAuthor.setText("作者 : " + mBookInfo.getBookAuthor());
+                            //出版时间
+                            mTvBookPublishTime.setText("出版时间 : " + mBookInfo.getBookPublishTime());
+                            //TODO:文件大小
+                            mTvBookDownloadSize.setText("文件大小 : " + "TODO");
+                            //价格
+                            mTvBookSalePrice.setText("￥" + mBookInfo.getBookSalePrice());
+                            //购买按钮价格
+                            mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
+                            //图书详情
+                            mTvBookDetails.setText(mBookInfo.getBookSummary());
+                            //在线试读是否可点
+                            if (TextUtils.isEmpty(mBookInfo.getBookPreview())){
+                                mBtnRead.setEnabled(false);
+                            }
+                            else {
+                                mBtnRead.setEnabled(true);
+                            }
 //                        //获取图书 推荐
 //                        PromoteBookRequest request = new PromoteBookRequest();
 //                        PromoteBookCallBack callBack = new PromoteBookCallBack(ShopBookDetailsActivity.this, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK, request);
 //                        ProtocolManager.promoteBookProtocol(request, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK, callBack);
+                        }
+                        else {
+                            ToastUtil.showToast(getApplicationContext() , "获取图书详情失败");
+                            Log.v("FH" , "获取图书详情失败");
+                        }
                     }
-                    else {
-                        ToastUtil.showToast(getApplicationContext() , "获取图书详情失败");
-                        Log.v("FH" , "获取图书详情失败");
+                    else if (o instanceof RequirePayOrderRep){
+                        RequirePayOrderRep rep = (RequirePayOrderRep) o;
+                        if (rep.getCode() == 200){
+                            RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
+                            orderObj.setBookList(new ArrayList<BookInfo>(){
+                                {
+                                    add(mBookInfo);
+                                }
+                            });
+                            Intent intent = new Intent(ShopBookDetailsActivity.this , ConfirmOrderActivity.class);
+                            intent.putExtra(ShopGloble.ORDER , orderObj);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else {
+                            ToastUtil.showToast(getApplicationContext() , "下单失败");
+                        }
+                    }
+                    else if (o instanceof PromoteBookRep){
+                        PromoteBookRep rep = (PromoteBookRep) o;
+                        if (rep.getCode() == 200){
+                            mBooks.clear();
+                            mBooks.addAll(rep.getData());
+                            mPromoteBookAdapter.notifyDataSetChanged();
+                        }
+                        else {
+                            ToastUtil.showToast(getApplicationContext() , "获取推荐图书失败");
+                        }
                     }
                 }
             }
@@ -353,6 +404,11 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         super.handleEvent();
     }
 
+    private void requestPromoteBook(){
+        PromoteBookRequest request = new PromoteBookRequest(mBookInfo.getBookId());
+        ProtocolManager.promoteBookProtocol(request , ProtocolId.PROTOCOL_ID_PROMOTE_BOOK
+                , new PromoteBookCallBack(this , request));
+    }
 
 
     @Override
@@ -367,50 +423,39 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         mActivityHide = true;
     }
 
-    /***
-     * 添加购物车
-     */
-    private void requestAddCarProtocol() {
-
-        AppendBookCartRequest request = new AppendBookCartRequest();
-
-        request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-
-        List<DataBookBean> list = new ArrayList<>();
-
-        DataBookBean bean = new DataBookBean();
-        List<BookInfo> bookInfoList = new ArrayList<>();
-        bookInfoList.add(mBookInfo);
-//        bean.setBookList(favorList);
-        bean.setCount(bookInfoList.size());
-
-        request.setData(list);
-        AppendBookCartCallBack call = new AppendBookCartCallBack(this, ProtocolId.PROTOCOL_ID_APPEND_BOOK_CART,request);
-        ProtocolManager.appendBookCartProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_CART, call);
+    private void requestOrder (){
+        RequirePayOrderRequest request = new RequirePayOrderRequest();
+        request.setOrderOwner(SpUtil.getAccountId());
+        request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
+        ProtocolManager.requirePayOrderProtocol(request , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                , new RequireOrderCallBack(this , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER , request));
     }
 
     /***
+     * 添加购物车
+     */
+    private void addBooksToCar(List<BookInfo> bookInfoList) {
+        AppendBookCartRequest request = new AppendBookCartRequest();
+        request.setUserId(SpUtil.getAccountId());
+        for (BookInfo bookInfo :
+                bookInfoList) {
+            request.getData().add(new AppendBookCartRequest.BookIdObj(bookInfo.getBookId()));
+        }
+        AppendBookCartCallBack call = new AppendBookCartCallBack(this, ProtocolId.PROTOCOL_ID_APPEND_BOOK_CART,request);
+        ProtocolManager.appendBookCartProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_CART, call);
+    }
+    /***
      * 添加收藏
      */
-    private void requestAddFavorProtocol() {
-
+    private void addBooksToFavor(List<BookInfo> bookInfoList) {
         AppendBookFavorRequest request = new AppendBookFavorRequest();
-
         request.setUserId(SpUtil.getAccountId());
-        request.setCount(1);
-
-        List<DataBookBean> list = new ArrayList<>();
-
-        DataBookBean bean = new DataBookBean();
-        List<BookInfo> bookInfoList = new ArrayList<>();
-        bookInfoList.add(mBookInfo);
-//        bean.setBookList(favorList);
-        bean.setCount(bookInfoList.size());
-
-        request.setData(list);
+        for (BookInfo bookInfo :
+                bookInfoList) {
+            request.getData().add(new AppendBookFavorRequest.BookIdObj(bookInfo.getBookId()));
+        }
         AppendBookFavorCallBack call = new AppendBookFavorCallBack(this, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, request);
-        ProtocolManager.bookFavorAppendProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, call);
+        ProtocolManager.appendBookFavorProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, call);
     }
 
     @Override
@@ -454,7 +499,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
 

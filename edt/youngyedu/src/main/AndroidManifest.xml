@@ -69,10 +69,6 @@
         <activity android:name="com.yougy.shop.activity.BookShopActivityDB" />
 
 
-        <activity
-            android:name="com.yougy.shop.activity.PayActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
         <activity android:name="com.yougy.init.activity.InitInfoActivity" />
 
 
@@ -164,7 +160,7 @@
             android:name="com.yougy.shop.activity.ShopBookDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.yougy.shop.activity.NewProbationRedBookActivity"
+            android:name="com.yougy.shop.activity.ProbationReadBookActivity"
             android:screenOrientation="portrait" />
         <service android:name="com.yougy.common.service.DownloadService"/>
         <service android:name="com.yougy.common.service.UploadService"/>
