@@ -251,6 +251,8 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 setDirectoryList2(entry, mDirectoryList, 0);
             }
             setShowDirectory();
+        }else{
+            setMarkAndDirectoryClickTextChange(true);
         }
     }
     private void setDirectoryList2(ReaderDocumentTableOfContentEntry entry, List<DirectoryModel> modelList, int level) {
@@ -615,7 +617,14 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      */
     public void showDirectory() {
         mRlDirectory.setVisibility(View.VISIBLE);
-        if (mDirectoryList.size()>0){
+        if (mBookMarkBtn.isSelected() && mBookMarkAdapter!=null){
+            mInfos.clear();
+            if (mBookMarks.size() > 0) {
+                mInfos.addAll(new ArrayList<>(mBookMarks.values()));
+            }
+            mBookMarkAdapter.notifyDataSetChanged();
+        }
+       else if (mDirectoryList.size()>0){
             setShowDirectory();
         }else{
             getReaderPresenter().getDirectory();
