@@ -482,4 +482,12 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             }
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mIsRefresh){
+            loadData();
+        }
+    }
 }

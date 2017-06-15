@@ -1098,4 +1098,13 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             }
         }
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mIsRefresh){
+            loadData();
+        }
+    }
 }

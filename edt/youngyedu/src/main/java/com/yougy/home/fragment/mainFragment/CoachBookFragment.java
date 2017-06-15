@@ -456,4 +456,12 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             loadData();
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mIsRefresh){
+            loadData();
+        }
+    }
 }

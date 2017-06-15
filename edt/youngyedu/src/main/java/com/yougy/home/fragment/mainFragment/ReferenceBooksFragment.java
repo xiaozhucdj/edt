@@ -778,6 +778,15 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             }
         }
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mIsRefresh){
+            loadData();
+        }
+    }
 }
 
 

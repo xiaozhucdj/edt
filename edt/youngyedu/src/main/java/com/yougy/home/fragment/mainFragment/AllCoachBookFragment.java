@@ -1035,4 +1035,13 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             loadData();
         }
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mIsRefresh){
+            loadData();
+        }
+    }
 }
