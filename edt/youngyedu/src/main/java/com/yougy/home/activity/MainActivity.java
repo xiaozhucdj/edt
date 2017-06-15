@@ -987,6 +987,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
             LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
             setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
+        }else if(EventBusConstant.need_refresh.equalsIgnoreCase(event.getType())){
+            mRlTextBook.callOnClick();
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.current_text_book, "");
+            EventBus.getDefault().post(baseEvent);
         }
     }
 }

@@ -266,11 +266,11 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mBookFitGrade.get(mFitGradeIndex).setSelect(false);
             mFitGradeIndex = -1;
             mFitGradeAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             for (BookCategory bookCategory : mBookFitGrade) {
                 bookCategory.setSelect(false);
             }
-            mFitGradeAdapter.notifyDataSetChanged() ;
+            mFitGradeAdapter.notifyDataSetChanged();
         }
         //替换position
         mSubjectIndex = position;
@@ -346,7 +346,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if ((mIsFist && !hidden && mServerBooks.size() == 0) || mIsRefresh ) {
+        if ((mIsFist && !hidden && mServerBooks.size() == 0) || mIsRefresh) {
             loadData();
         }
     }
@@ -996,7 +996,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }*/
 
     private void freshUI(List<BookInfo> bookInfos) {
-        mIsRefresh =false ;
+        mNewTextBookCallBack = null ;
+        mIsRefresh = false;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
@@ -1032,14 +1033,6 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EventBusConstant.all_coach_book)) {
             LogUtils.i("type .." + EventBusConstant.all_coach_book);
-            loadData();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mIsRefresh){
             loadData();
         }
     }

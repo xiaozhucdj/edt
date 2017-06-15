@@ -1023,6 +1023,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     }
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mNewTextBookCallBack = null ;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
@@ -1100,11 +1101,4 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mIsRefresh){
-            loadData();
-        }
-    }
 }

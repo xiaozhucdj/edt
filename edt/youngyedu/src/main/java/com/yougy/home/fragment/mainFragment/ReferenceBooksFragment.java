@@ -320,6 +320,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mNewTextBookCallBack = null ;
         mIsRefresh =false ;
         LogUtils.i("freshUI.....freshUI");
         if (bookInfos != null && bookInfos.size() > 0) {
@@ -780,13 +781,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mIsRefresh){
-            loadData();
-        }
-    }
 }
 
 

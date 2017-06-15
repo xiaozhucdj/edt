@@ -425,6 +425,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
 
     private void freshUI(List<BookInfo> bookInfos) {
         mIsRefresh =false ;
+        mNewTextBookCallBack = null ;
         if (bookInfos!=null && bookInfos.size()>0){
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
@@ -457,11 +458,4 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mIsRefresh){
-            loadData();
-        }
-    }
 }
