@@ -167,7 +167,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         //seek
         mRl_page = (RelativeLayout) mRoot.findViewById(R.id.rl_page);
         mSeekbarPage = (TextThumbSeekBar) mRoot.findViewById(R.id.seekbar_page);
-        mRoot.findViewById(R.id.tv_page_number).setVisibility(View.INVISIBLE);
+        mRoot.findViewById(R.id.tv_page_number).setVisibility(View.GONE);
         mBookMarkImg = (ImageView) mRoot.findViewById(R.id.bookmark);
         mDirectoryImg = (ImageView) mRoot.findViewById(R.id.directory);
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
@@ -702,7 +702,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         LogUtils.e(TAG, " Note is : " + note);
         initNoteView();
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.setMargins(0, 60, 0, 111);
+        params.setMargins(0, 60, 0, 62);
         mFrameLayout.addView(mNoteBookView, params);
         mControlView.addView(mFrameLayout, 1);
         initScription = getLinesObservable(note)

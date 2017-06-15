@@ -405,7 +405,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         }
 //       mNoteBookView.setBackgroundResource(R.drawable.biji_canvas_bg);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.setMargins(0, 60, 0, 111);
+        params.setMargins(0, 60, 0, 62);
         mFrameLayout.addView(mNoteBookView, params);
         if (flag) {
             mControlView.addView(mFrameLayout, 0);
