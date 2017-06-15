@@ -205,7 +205,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mCountBooks.size() == 0) {
+        if((mIsFist && !hidden && mCountBooks.size() == 0)|| mIsRefresh ) {
             loadData();
         }
     }
@@ -320,6 +320,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mIsRefresh =false ;
         LogUtils.i("freshUI.....freshUI");
         if (bookInfos != null && bookInfos.size() > 0) {
             mServerBooks.clear();

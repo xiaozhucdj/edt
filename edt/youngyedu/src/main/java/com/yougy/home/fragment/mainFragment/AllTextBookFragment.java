@@ -363,12 +363,13 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mServerBooks.size() == 0) {
+        if ((mIsFist && !hidden && mServerBooks.size() == 0)|| mIsRefresh ) {
             loadData();
         }
     }
 
     private void loadData() {
+        mIsRefresh =false ;
         if (YougyApplicationManager.isWifiAvailable()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID

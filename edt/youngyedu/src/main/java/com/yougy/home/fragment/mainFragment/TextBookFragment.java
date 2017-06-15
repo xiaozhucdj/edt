@@ -180,6 +180,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     }
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mIsRefresh =false ;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
@@ -196,7 +197,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         LogUtils.e(TAG, "onHiddenChanged......");
-        if (mIsFist && !hidden && mCountBooks.size() == 0) {
+        if ((mIsFist && !hidden && mCountBooks.size() == 0 )|| mIsRefresh ) {
             loadData();
         }
     }

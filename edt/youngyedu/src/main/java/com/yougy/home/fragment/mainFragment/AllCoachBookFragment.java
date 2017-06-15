@@ -346,7 +346,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mServerBooks.size() == 0) {
+        if ((mIsFist && !hidden && mServerBooks.size() == 0) || mIsRefresh ) {
             loadData();
         }
     }
@@ -364,8 +364,9 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             req.setBookCategoryMatch(20000);
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
-            ;
+
         } else {
+
             Log.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
 //            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
@@ -995,6 +996,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }*/
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mIsRefresh =false ;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
