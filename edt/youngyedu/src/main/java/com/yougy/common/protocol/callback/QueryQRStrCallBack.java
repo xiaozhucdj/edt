@@ -6,7 +6,7 @@ import android.util.Log;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.request.QueryQRStrRequest;
-import com.yougy.common.protocol.response.QueryQRStrProtocol;
+import com.yougy.common.protocol.response.QueryQRStrRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -18,25 +18,24 @@ import okhttp3.Response;
  * 获取生成支付二维码的str的callBack
  */
 
-public class QueryQRStrCallBack extends BaseCallBack<QueryQRStrProtocol> {
-
+public class QueryQRStrCallBack extends BaseCallBack<QueryQRStrRep> {
     private int mProtocol;
     private QueryQRStrRequest mRequest ;
     public QueryQRStrCallBack(Context context, int protocol , QueryQRStrRequest request) {
         super(context);
-        mProtocol =protocol ;
+        mProtocol = protocol ;
         mRequest = request;
     }
 
     @Override
-    public QueryQRStrProtocol parseNetworkResponse(Response response, int id) throws Exception {
+    public QueryQRStrRep parseNetworkResponse(Response response, int id) throws Exception {
         String backJson = response.body().string();
         LogUtils.i("response json ...." + backJson);
-        return GsonUtil.fromJson(backJson, QueryQRStrProtocol.class);
+        return GsonUtil.fromJson(backJson, QueryQRStrRep.class);
     }
 
     @Override
-    public void onResponse(QueryQRStrProtocol response, int id) {
+    public void onResponse(QueryQRStrRep response, int id) {
         Log.e("QueryBookCartCallBack", "send QueryBookCartRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
@@ -45,6 +44,6 @@ public class QueryQRStrCallBack extends BaseCallBack<QueryQRStrProtocol> {
     @Override
     public void onClick() {
         super.onClick();
-        ProtocolManager.fake_qureyQRStrProtocol(mRequest , mProtocol, this);
+        ProtocolManager.qureyQRStrProtocol(mRequest , mProtocol, this);
     }
 }

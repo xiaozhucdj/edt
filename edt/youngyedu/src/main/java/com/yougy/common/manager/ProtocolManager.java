@@ -1,7 +1,6 @@
 package com.yougy.common.manager;
 
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.yougy.common.global.Commons;
@@ -16,12 +15,8 @@ import com.yougy.common.protocol.request.RemoveBookFavorRequest;
 import com.yougy.common.protocol.request.RemoveNotesRequest;
 import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.request.UpdateNotesRequest;
-import com.yougy.common.protocol.response.OrderBaseResponse;
-import com.yougy.common.protocol.response.QueryQRStrProtocol;
-import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
@@ -39,9 +34,6 @@ import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.Response;
-import rx.Subscriber;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2016/8/4.
@@ -689,6 +681,11 @@ public class ProtocolManager {
         setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
+    public static void qureyQRStrProtocol(final QueryQRStrRequest request , final int protocol_id, final Callback callbac) {
+        LogUtils.i("Protocol............. 31 获取支付二维码字符串");
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
+    }
+
     /**
      * 1获取作业总数
      * @param :userId
@@ -726,141 +723,17 @@ public class ProtocolManager {
         }
     }
 
-    /**
-     * 假的获取支付二维码字符串接口(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_qureyQRStrProtocol(final QueryQRStrRequest request , final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............获取支付二维码字符串");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        QueryQRStrProtocol response = new QueryQRStrProtocol();
-                        //模拟有几率失败
-                        double d = Math.random();
-                        if (d > 0.1){
-                            response.setCode(200);
-                            response.setMsg("success");
-                            response.setQrStr("just for test , nothing here");
-                        }
-                        else {
-                            response.setCode(400);
-                            response.setMsg("fail!");
-                        }
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 假的书城订单查询的接口(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_queryBookOrderProtocol(final String orderId, final int protocol_id, final Callback callback) {
-        LogUtils.i("Protocol.............  24. 书城订单查询");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(final Subscriber<? super Object> subscriber) {
-                try {
-                    Response response = OkHttpUtils
-                            .post()
-                            .url("http://192.168.12.7:10005/alipay/query")
-                            .addParams("orderId" , orderId)
-                            .build()
-                            .execute();
-                    Log.v("FH" , "onresponse : " + response.toString());
-                    if (response.isSuccessful()){
-                        Log.v("FH" , "1");
-                        subscriber.onNext(response.body().string());
-                    }
-                    else {
-                        Log.v("FH" , "3");
-                        subscriber.onNext(null);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.v("FH" , "2");
-                    subscriber.onNext(null);
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        if (o != null){
-                            String bodyStr = (String) o;
-                            try {
-                                Log.v("FH" , "4 " + bodyStr);
-                                OrderBaseResponse protocol = new OrderBaseResponse();
-                                JSONObject jsonObject = new JSONObject(bodyStr);
-                                protocol.setCode(Integer.parseInt(jsonObject.getString("code")));
-                                protocol.setMsg(jsonObject.getString("msg"));
-                                callback.onResponse(protocol , 10086);
-                            } catch (JSONException e) {
-                                Log.v("FH" , "6");
-                                e.printStackTrace();
-                                RequirePayOrderRep protocol = new RequirePayOrderRep();
-                                protocol.setCode(-1);
-                                callback.onResponse(protocol , 10086);
-                            }
-                        }
-                        else {
-                            Log.v("FH" , "5");
-                            RequirePayOrderRep protocol = new RequirePayOrderRep();
-                            protocol.setCode(-1);
-                            callback.onResponse(protocol , 10086);
-                        }
-                    }
-                });
-
-//        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-//            @Override
-//            public void call(Subscriber<? super Object> subscriber) {
-//                try {
-//                    //模拟网络请求时间
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                subscriber.onNext(null);
-//            }
-//        }).subscribeOn(Schedulers.io())
-//                .subscribe(new Action1<Object>() {
-//                    @Override
-//                    public void call(Object o) {
-//                        OrderBaseResponse response = new OrderBaseResponse();
-//                        response.setCode(200);
-//                        response.setMsg("success");
-//                        response.setCount(1);
-//                        ArrayList<DataOrderBean> dataList = new ArrayList<DataOrderBean>();
-//                        DataOrderBean bean = new DataOrderBean();
-//                        bean.setCount(1);
-//                        ArrayList<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
-//                        OrderInfo orderInfo = new OrderInfo();
-//                        //模拟有几率失败
-//                        orderInfo.setOrderId(Math.random() > 0.4 ? "10086" : "10087");
-//                        simulateData.remove(0);
-//                        orderInfo.setOrderPrice(8888.88f);
-//                        orderInfo.setOrderStatus("成功");
-//                        orderInfo.setCount(simulateData.size());
-//                        orderInfo.setBookList(simulateData);
-//                        orderInfoList.add(orderInfo);
-//                        bean.setOrderList(orderInfoList);
-//                        dataList.add(bean);
-//                        response.setData(dataList);
-//                        callbac.onResponse(response , protocol_id);
-//                    }
-//                });
+    public static void isOrderPaySuccessProtocol(String orderId, int orderOwner , int protocol_id, Callback callback) {
+        LogUtils.i("Protocol............. 32 查询订单支付是否成功");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m" , "closeOrder");
+            obj.put("orderId" , orderId);
+            obj.put("orderOwner" , orderOwner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        setCommon(Commons.SHOP_URL , obj.toString() , protocol_id , callback);
     }
 
 

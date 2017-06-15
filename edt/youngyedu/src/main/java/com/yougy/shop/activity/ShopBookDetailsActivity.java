@@ -191,7 +191,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 loadIntent(ShopCartActivity.class);
                 break;
             case R.id.btn_buy:
-                requestOrder();
+                if (mBookInfo.isBookInShelf()){
+                    ToastUtil.showToast(getApplicationContext() , "这本书已经购买过");
+                }
+                else {
+                    requestOrder();
+                }
                 break;
             case R.id.btn_addCar:
                 if (mBookInfo.isBookInCart() || mBookInfo.isBookInShelf()){
@@ -214,9 +219,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     new ConfirmDialog(this, "您好,您已经购买过该图书", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();
+                            finish();//TODO
                         }
-                    }).setConfirmBtnText("在书包打开").setCancleBtnText("取消下").show();
+                    }).setConfirmBtnText("在书包打开").setCancleBtnText("取消").show();
                     return;
                 }
                 //跳转在线试读
