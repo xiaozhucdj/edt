@@ -6,8 +6,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.yougy.common.activity.BaseActivity;
-import com.yougy.common.eventbus.BaseEvent;
-import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -19,7 +17,6 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.init.activity.InitInfoActivity;
 import com.yougy.ui.activity.R;
 
-import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
@@ -114,8 +111,8 @@ public class AccountSetActivity extends BaseActivity implements View.OnClickList
             case R.id.btn_left:
                 this.finish();
 
-                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, "");
-                EventBus.getDefault().post(baseEvent);
+//                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, "");
+//                EventBus.getDefault().post(baseEvent);
                 break;
             case R.id.btn_unwrap:
 //                ProtocolManager.deviceUnBindProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_UNBIND_DEVICE, new UnBindCallback(this));
