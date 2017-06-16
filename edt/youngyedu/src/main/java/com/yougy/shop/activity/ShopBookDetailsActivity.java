@@ -485,9 +485,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
             //下载文件
             List<DownInfo> mFiles = new ArrayList<>();
-//            DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
-//            info.setBookName(mBookInfo.getBookTitle());
-//            mFiles.add(info);
+            DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
+            info.setBookName(mBookInfo.getBookTitle());
+            mFiles.add(info);
             downBook(mFiles);
 
         } catch (IOException e) {
@@ -504,7 +504,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
 
