@@ -205,8 +205,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if((mIsFist && !hidden && mCountBooks.size() == 0)|| mIsRefresh ) {
-            loadData();
+        LogUtils.i("yuanye ...ke");
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 

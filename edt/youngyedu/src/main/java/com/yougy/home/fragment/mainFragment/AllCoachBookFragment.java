@@ -346,8 +346,10 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if ((mIsFist && !hidden && mServerBooks.size() == 0) || mIsRefresh) {
-            loadData();
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 
@@ -996,7 +998,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }*/
 
     private void freshUI(List<BookInfo> bookInfos) {
-        mNewTextBookCallBack = null ;
+        mNewTextBookCallBack = null;
         mIsRefresh = false;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);

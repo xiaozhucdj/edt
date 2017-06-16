@@ -363,8 +363,10 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if ((mIsFist && !hidden && mServerBooks.size() == 0)|| mIsRefresh ) {
-            loadData();
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 

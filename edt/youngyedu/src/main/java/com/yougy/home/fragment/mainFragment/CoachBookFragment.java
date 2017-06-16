@@ -148,10 +148,12 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-
         super.onHiddenChanged(hidden);
-        if ((mIsFist && !hidden && mCountBooks.size() == 0)|| mIsRefresh ) {
-            loadData();
+        LogUtils.i("yuanye ....coach");
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 
