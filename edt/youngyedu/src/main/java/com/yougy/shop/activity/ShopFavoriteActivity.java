@@ -18,6 +18,7 @@ import com.yougy.common.protocol.response.QueryBookFavorRep;
 import com.yougy.common.protocol.response.RemoveBookFavorProtocol;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.shop.bean.Favor;
+import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NewShopBookItem;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -392,9 +393,7 @@ public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements 
      */
     @Override
     public void onItemClick(int position) {
-//        Bundle extra = new Bundle();
-//        extra.putParcelable(ShopGloble.JUMP_BOOK_KEY, favorList.get(position));
-//        loadIntentWithExtras(ShopBookDetailsActivity.class, extra);
+        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , favorList.get(position).getBookId());
     }
 
     /**

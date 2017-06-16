@@ -40,6 +40,7 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.init.bean.BookInfo;
@@ -219,9 +220,10 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     new ConfirmDialog(this, "您好,您已经购买过该图书", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();//TODO
+                            loadIntentWithSpecificFlag(MainActivity.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
                         }
-                    }).setConfirmBtnText("在书包打开").setCancleBtnText("取消").show();
+                    }).setConfirmBtnText("在书包查看").setCancleBtnText("取消").show();
                     return;
                 }
                 //跳转在线试读
@@ -289,7 +291,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-                BookAdapter.HolerFragmentBook bookHolder = (BookAdapter.HolerFragmentBook) vh;
+                PromoteBookAdapter.HolerPromoteBook bookHolder = (PromoteBookAdapter.HolerPromoteBook) vh;
                 int position = bookHolder.getAdapterPosition();
                 itemClick(position);
             }
