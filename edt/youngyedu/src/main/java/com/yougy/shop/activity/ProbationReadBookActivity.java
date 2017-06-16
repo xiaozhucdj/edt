@@ -1,6 +1,7 @@
 package com.yougy.shop.activity;
 
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,12 +24,15 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
 import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
+import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
 import com.yougy.common.protocol.request.AppendBookFavorRequest;
+import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.AppendBookCartRep;
 import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
+import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
@@ -52,7 +56,7 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 /**
- * Created by Administrator on 2017/2/14.
+ * Created by FH on 2017/2/14.
  * 试读PDF ，需要把试读的pdf 下载到本地阅读
  */
 
@@ -97,8 +101,6 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
     private MuPDFPageView mPdfView;
     private PageListenerImple mPageListenerImple;
 
-    public int bookId;
-
     /***
      * 当前显示页数
      */
@@ -115,7 +117,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
 
     @Override
     protected void init() {
-        bookId = getIntent().getIntExtra(ShopGloble.BOOK_ID , -1);
+        mBookInfo = getIntent().getParcelableExtra(ShopGloble.BOOK_INFO);
     }
 
     @Override
@@ -159,8 +161,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
     }
 
     protected void refreshData(){
-        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId() , bookId
-                , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , new QueryShopBookDetailCallBack(this , bookId));
+        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId() , mBookInfo.getBookId()
+                , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , new QueryShopBookDetailCallBack(this , mBookInfo.getBookId()));
         ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
                 , new QueryBookCartCallBack(this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
     }
@@ -200,13 +202,12 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
                 }
                 break;
             case R.id.btn_buy:
-                //TODO:进购买页面
-                Bundle extra = new Bundle();
-                ArrayList<BookInfo> infos = new ArrayList<>() ;
-                infos.add(mBookInfo) ;
-                extra.putParcelableArrayList(ShopGloble.JUMP_ORDER_CONFIRM_BOOK_LIST_KEY , infos);
-                loadIntentWithExtras(ConfirmOrderActivity.class , extra);
-                this.finish();
+                if (mBookInfo.isBookInShelf()){
+                    ToastUtil.showToast(getApplicationContext() , "这本书已经购买过");
+                }
+                else {
+                    requestOrder();
+                }
                 break;
         }
     }
@@ -215,7 +216,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
      * 初始化PDF
      */
     private void initPDF() {
-        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + bookId + ".pdf";
+        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
         mCore = openFile(mProbationUrl);
         if (mCore != null) {
             mPdfCounts = mCore.countPages();
@@ -225,6 +226,14 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
             mPdfView.setPageListener(mPageListenerImple);
             mLlPdfFather.addView(mPdfView, 0);
         }
+    }
+
+    private void requestOrder (){
+        RequirePayOrderRequest request = new RequirePayOrderRequest();
+        request.setOrderOwner(SpUtil.getAccountId());
+        request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
+        ProtocolManager.requirePayOrderProtocol(request , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                , new RequireOrderCallBack(this , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER , request));
     }
 
     /***
@@ -241,7 +250,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
                     AppendBookCartRep rep = (AppendBookCartRep) o;
                     if (rep.getCode() == 200){
                         ToastUtil.showToast(getApplicationContext() , "添加到购物车成功");
-                        refreshData();
+                        mBookInfo.setBookInCart(true);
+                        cartCountTV.setText((Integer.parseInt(cartCountTV.getText().toString()) + 1) + "");
                     }
                     else {
                         ToastUtil.showToast(getApplicationContext() , "添加到购物车失败");
@@ -250,7 +260,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
                     AppendBookFavorRep rep = (AppendBookFavorRep) o;
                     if (rep.getCode() == 200){
                         ToastUtil.showToast(getApplicationContext() , "添加到收藏成功");
-                        refreshData();
+                        mBookInfo.setBookInFavor(true);
                     }
                     else {
                         ToastUtil.showToast(getApplicationContext() , "添加到收藏失败");
@@ -276,6 +286,24 @@ public class ProbationReadBookActivity extends ShopBaseActivity {
                     }
                     else {
                         cartCountTV.setText("0");
+                    }
+                }
+                else if (o instanceof RequirePayOrderRep){
+                    RequirePayOrderRep rep = (RequirePayOrderRep) o;
+                    if (rep.getCode() == 200){
+                        RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
+                        orderObj.setBookList(new ArrayList<BookInfo>(){
+                            {
+                                add(mBookInfo);
+                            }
+                        });
+                        Intent intent = new Intent(ProbationReadBookActivity.this , ConfirmOrderActivity.class);
+                        intent.putExtra(ShopGloble.ORDER , orderObj);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        ToastUtil.showToast(getApplicationContext() , "下单失败");
                     }
                 }
             }

@@ -78,7 +78,6 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     LinearLayout alipayBtn;
 
     RequirePayOrderRep.OrderObj order;
-    String qrStr;
     QRCodeDialog qrCodeDialog;
 
     @Override

@@ -13,7 +13,12 @@
         android:id="@+id/order_book_item_img"
         android:layout_width="128px"
         android:layout_height="167px"
-        android:background="@android:color/black"
+        android:background="@drawable/img_shu"
+        android:paddingLeft="1px"
+        android:paddingRight="5px"
+        android:paddingTop="1px"
+        android:paddingBottom="5px"
+        android:scaleType="fitXY"
         />
     <TextView
         android:id="@+id/order_book_item_book_name_tv"

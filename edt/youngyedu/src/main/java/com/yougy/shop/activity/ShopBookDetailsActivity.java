@@ -41,7 +41,6 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
-import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.adapter.PromoteBookAdapter;
@@ -230,8 +229,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
                 if (FileUtils.exists(probationUrl)) {
                     Intent intent = new Intent(BaseActivity.getCurrentActivity(), ProbationReadBookActivity.class);
-                    intent.putExtra(ShopGloble.BOOK_ID , mBookInfo.getBookId());
-                    BaseActivity.getCurrentActivity().startActivity(intent);
+                    intent.putExtra(ShopGloble.BOOK_INFO , mBookInfo);
+                    startActivity(intent);
                 } else {
                     LogUtils.i("试读文件不存在");
                     if (NetUtils.isNetConnected()) {
@@ -320,7 +319,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         AppendBookCartRep rep = (AppendBookCartRep) o;
                         if (rep.getCode() == 200){
                             ToastUtil.showToast(getApplicationContext() , "添加到购物车成功");
-                            refreshData();
+                            mBookInfo.setBookInCart(true);
                         }
                         else {
                             ToastUtil.showToast(getApplicationContext() , "添加到购物车失败");
@@ -329,7 +328,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         AppendBookFavorRep rep = (AppendBookFavorRep) o;
                         if (rep.getCode() == 200){
                             ToastUtil.showToast(getApplicationContext() , "添加到收藏成功");
-                            refreshData();
+                            mBookInfo.setBookInFavor(true);
                         }
                         else {
                             ToastUtil.showToast(getApplicationContext() , "添加到收藏失败");
@@ -338,7 +337,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
                         if (rep.getData() != null){
                             mBookInfo = rep.getData().get(0);
-                            requestPromoteBook();
+                            if (mBooks == null || mBooks.size() ==0){
+                                requestPromoteBook();
+                            }
                             //图片
                             refreshImg(mImgBookIcon, mBookInfo.getBookCover());
                             //标题
@@ -487,9 +488,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
             //下载文件
             List<DownInfo> mFiles = new ArrayList<>();
-//            DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
-//            info.setBookName(mBookInfo.getBookTitle());
-//            mFiles.add(info);
+            DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
+            info.setBookName(mBookInfo.getBookTitle());
+            mFiles.add(info);
             downBook(mFiles);
 
         } catch (IOException e) {
