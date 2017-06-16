@@ -78,6 +78,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     LinearLayout alipayBtn;
 
     RequirePayOrderRep.OrderObj order;
+    String qrStr;
     QRCodeDialog qrCodeDialog;
 
     @Override
@@ -167,7 +168,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                     CancelBookOrderRep rep = (CancelBookOrderRep) o;
                     if (rep.getCode() == 200){
                         ToastUtil.showToast(getApplicationContext() , "取消订单成功");
-                        ConfirmOrderActivity.super.onBackPressed();
+                        loadIntentWithSpecificFlag(BookShopActivityDB.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     }
                     else {
                         ToastUtil.showToast(getApplicationContext() , "取消订单失败");
