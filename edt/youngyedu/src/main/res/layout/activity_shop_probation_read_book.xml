@@ -144,7 +144,8 @@
             android:maxHeight="8dp"
             android:minHeight="8dp"
             android:progressDrawable="@drawable/seekbar_bg_selector"
-            android:thumb="@drawable/seekbar_thumb_selector" />
+            android:thumb="@drawable/seekbar_thumb_selector"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </RelativeLayout>
