@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.Label;
 import com.yougy.home.bean.Photograph;
 import com.yougy.home.bean.Position;
@@ -20,7 +22,8 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
     private float mStartX;
     private float mStartY;
     private static final String TAG = "MoveImageView";
-
+    private int screenHeight;
+    private int screenWidth;
     public MoveImageView(Context context) {
         super(context);
         init();
@@ -49,6 +52,8 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
 
     private void init() {
         mGestureDetector = new GestureDetector(getContext(), new MyOnGestureListener());
+        screenHeight = UIUtils.getScreenHeight();
+        screenWidth = UIUtils.getScreenWidth();
         setOnTouchListener(this);
     }
 
@@ -95,8 +100,22 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
     private void updateWindowPosition() {
         viewGroup = (FrameLayout) getParent();
         params = (FrameLayout.LayoutParams) getLayoutParams();
-        params.leftMargin = (int) mStartX;
-        params.topMargin = (int) mStartY;
+        int y = screenHeight - 61;
+        LogUtils.e(getClass().getName(), "leftmargin : " + mStartX + ",topmargin : " + mStartY + ",Y:" + y);
+        int x = screenWidth - 50;
+        if (mStartX < x) {
+            params.leftMargin = (int) mStartX;
+        } else {
+            params.leftMargin = x;
+        }
+        if (mStartY < 60) {
+            params.topMargin = 60;
+        } else if (mStartY > y) {
+            LogUtils.e(getClass().getName(), "startY..................." + mStartY);
+            params.topMargin = y - 50;
+        } else {
+            params.topMargin = (int) mStartY;
+        }
 
         setLayoutParams(params);
         if (null != label) {
