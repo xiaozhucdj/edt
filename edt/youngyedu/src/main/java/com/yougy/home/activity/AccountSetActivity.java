@@ -110,6 +110,9 @@ public class AccountSetActivity extends BaseActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.btn_left:
                 this.finish();
+
+//                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, "");
+//                EventBus.getDefault().post(baseEvent);
                 break;
             case R.id.btn_unwrap:
 //                ProtocolManager.deviceUnBindProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_UNBIND_DEVICE, new UnBindCallback(this));

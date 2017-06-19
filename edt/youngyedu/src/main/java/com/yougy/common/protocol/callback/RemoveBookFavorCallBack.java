@@ -24,7 +24,7 @@ public class RemoveBookFavorCallBack extends BaseCallBack<RemoveBookFavorProtoco
 
     public RemoveBookFavorCallBack(Context context, int protocol, RemoveBookFavorRequest request) {
         super(context);
-        mRequest=   request ;
+        mRequest = request;
         mProtocol = protocol;
     }
 

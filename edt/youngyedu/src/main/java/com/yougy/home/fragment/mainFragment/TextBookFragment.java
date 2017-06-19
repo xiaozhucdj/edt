@@ -180,6 +180,8 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     }
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mIsRefresh = false;
+        mNewTextBookCallBack = null;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
@@ -196,13 +198,17 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         LogUtils.e(TAG, "onHiddenChanged......");
-        if (mIsFist && !hidden && mCountBooks.size() == 0) {
-            loadData();
+        LogUtils.i("yuanye ...text");
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 
 
     private void loadData() {
+        LogUtils.i("yuanye////////load");
         if (NetUtils.isNetConnected()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
@@ -312,7 +318,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
 
@@ -463,7 +469,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         if (event.getType().equalsIgnoreCase(EventBusConstant.current_text_book)) {
             LogUtils.i("type .." + EventBusConstant.current_text_book);
             loadData();
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.alter_note)) {
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.alter_note)) {
             LogUtils.i("type .." + EventBusConstant.alter_note);
             // 用户自己创建的笔记 不需要做处理
             NoteInfo noteInfo = (NoteInfo) event.getExtraData();
@@ -481,4 +487,5 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             }
         }
     }
+
 }

@@ -1,7 +1,7 @@
 package com.yougy.shop.activity;
 
 import android.content.DialogInterface;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -14,11 +14,10 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.QueryBookFavorCallback;
 import com.yougy.common.protocol.callback.RemoveBookFavorCallBack;
 import com.yougy.common.protocol.request.RemoveBookFavorRequest;
-import com.yougy.common.protocol.response.QueryBookFavorProtocol;
+import com.yougy.common.protocol.response.QueryBookFavorRep;
 import com.yougy.common.protocol.response.RemoveBookFavorProtocol;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.home.bean.DataBookBean;
-import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.bean.Favor;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NewShopBookItem;
@@ -29,18 +28,17 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/2/13.
  */
 
-public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements View.OnClickListener , NewShopBookItem.OnItemActionListener {
+public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements View.OnClickListener , NewShopBookItem.OnItemActionListener {
     //本地数据缓存
-    ArrayList<BookInfo> bookInfoList = new ArrayList<BookInfo>();
+    ArrayList<Favor> favorList = new ArrayList<Favor>();
     //已选条目
-    ArrayList<BookInfo> checkedBookInfoList = new ArrayList<BookInfo>();
+    ArrayList<Favor> checkedFavorList = new ArrayList<Favor>();
     //每次最多展示的页数
     final int ONCE_SHOW_PAGE_NUM = 5;
     //每一页的条数
@@ -105,27 +103,26 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
         tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof QueryBookFavorProtocol) {
+                Log.v("FH" , "-----------------" + o);
+                if (o instanceof QueryBookFavorRep) {
                     //获取收藏列表的回调在这
-                    QueryBookFavorProtocol protocol = (QueryBookFavorProtocol) o;
-                    if (protocol.getData() != null && protocol.getData().get(0) != null
-                            && protocol.getData().get(0).getBookList() != null
-                            ) {
-                        bookInfoList.clear();
-                        bookInfoList.addAll(protocol.getData().get(0).getBookList());
+                    QueryBookFavorRep protocol = (QueryBookFavorRep) o;
+                    favorList.clear();
+                    if (protocol.getData() != null) {
+                        favorList.addAll(protocol.getData());
                     }
                     //如果已选中的某些项在新的数据中不存在,则删除它们
-                    for (int i = 0 ; i < checkedBookInfoList.size() ; ) {
-                        BookInfo checkedInfo = checkedBookInfoList.get(i);
-                        if (findBookByID(bookInfoList , checkedInfo.getBookId()) == null){
-                            checkedBookInfoList.remove(checkedInfo);
+                    for (int i = 0 ; i < checkedFavorList.size() ; ) {
+                        Favor favor = checkedFavorList.get(i);
+                        if (findFavorByID(favorList, favor.getBookId()) == null){
+                            checkedFavorList.remove(favor);
                             continue;
                         }
                         i++;
                     }
                     //如果之前选中的页号在新的数据中已经不存在了,则把选中的页号确定为最后一页.
-                    if (bookInfoList.size() <= currentSelectedPageIndex * ITEM_NUM){
-                        currentSelectedPageIndex = (bookInfoList.size() - 1) / ITEM_NUM;
+                    if (favorList.size() <= currentSelectedPageIndex * ITEM_NUM){
+                        currentSelectedPageIndex = (favorList.size() - 1) / ITEM_NUM;
                         if (currentSelectedPageIndex < 0){
                             currentSelectedPageIndex = 0;
                         }
@@ -136,18 +133,17 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
                     needRefreshItems = true;
                     refreshViewSafe();
                 }
-            }
-        });
-        tapEventEmitter.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof RemoveBookFavorProtocol){
+                else if (o instanceof RemoveBookFavorProtocol){
                     //删除收藏的回调在这
                     RemoveBookFavorProtocol protocal = (RemoveBookFavorProtocol) o;
                     if (protocal.getCode() == 200) {
-                        ProtocolManager.fake_queryBookFavorProtocol(SpUtil.getAccountId()
+                        Log.v("FH" , "---------------------删除成功");
+                        ProtocolManager.queryBookFavorProtocol(SpUtil.getAccountId()
                                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR
-                                , new QueryBookFavorCallback(NewShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR));
+                                , new QueryBookFavorCallback(ShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR));
+                    }
+                    else {
+                        Log.v("FH" , "---------------------删除失败");
                     }
                 }
             }
@@ -157,15 +153,15 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
 
     @Override
     protected void loadData() {
-        ProtocolManager.fake_queryBookFavorProtocol(SpUtil.getAccountId()
+        ProtocolManager.queryBookFavorProtocol(SpUtil.getAccountId()
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR
-                , new QueryBookFavorCallback(NewShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR));
+                , new QueryBookFavorCallback(ShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_FAVOR));
     }
 
     @Override
     protected void refreshView() {
         pageBtnContainer.removeAllViews();
-        if (bookInfoList.size() == 0) {
+        if (favorList.size() == 0) {
             //隐藏所有之前的item,并且显示没有收藏的提示
             fillItems(0 , -1);
             emptyLayout.setVisibility(View.VISIBLE);
@@ -179,8 +175,8 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
             boolean showForward = (currentShowFirstPageIndex == 0 ? false : true);
             //是否显示>>向后按钮
             boolean showNext;
-            if (bookInfoList.size() <= (currentShowFirstPageIndex + ONCE_SHOW_PAGE_NUM) * ITEM_NUM){
-                lastShowBookIndex = bookInfoList.size() - 1;
+            if (favorList.size() <= (currentShowFirstPageIndex + ONCE_SHOW_PAGE_NUM) * ITEM_NUM){
+                lastShowBookIndex = favorList.size() - 1;
                 showNext = false;
             }
             else {
@@ -211,9 +207,9 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
         boolean allCheck = true;
         for (int i = startIndex, j = 0; j < bookItems.size(); i++, j++) {
             if (i <= endIndex) {
-                BookInfo bookInfo = bookInfoList.get(i);
-                bookItems.get(j).setBookInfo(bookInfo);
-                boolean checked = (findBookByID(checkedBookInfoList , bookInfo.getBookId()) == null) ? false : true;
+                Favor favor = favorList.get(i);
+                bookItems.get(j).setData(favor);
+                boolean checked = (findFavorByID(checkedFavorList, favor.getBookId()) == null) ? false : true;
                 if (!checked) {
                     allCheck = false;
                 }
@@ -226,7 +222,7 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
                     bookItems.get(j).setIsLast(false);
                 }
             } else {
-                bookItems.get(j).setBookInfo(null);
+                bookItems.get(j).setData(null);
             }
         }
         //设置全选按钮的选中状态
@@ -235,29 +231,29 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
 
     /**
      * 操作BookInfo列表的方法,在列表中查找拥有指定bookID的BookInfo
-     * @param bookInfoList 要查找的BookInfo列表
+     * @param favorList 要查找的BookInfo列表
      * @param bookID 指定的bookID
      * @return 如果找到,则返回该BookInfo,如果有多个,返回第一个,如果没有,返回null.
      */
-    public BookInfo findBookByID(ArrayList<BookInfo> bookInfoList, int bookID) {
-        for (BookInfo bookInfo : bookInfoList) {
-            if (bookInfo.getBookId() == bookID) {
-                return bookInfo;
+    public Favor findFavorByID(ArrayList<Favor> favorList, int bookID) {
+        for (Favor favor : favorList) {
+            if (favor.getBookId() == bookID) {
+                return favor;
             }
         }
         return null;
     }
     /**
      * 操作BookInfo列表的方法,在指定的BookInfo列表中删除拥有给定的bookInfo列表中bookInfo的项
-     * @param fromBookInfoList 在其中删除的BookInfo列表
-     * @param toRemoveBookInfoList 指定的bookInfo列表
+     * @param fromFavorList 在其中删除的BookInfo列表
+     * @param toRemoveFavorList 指定的bookInfo列表
      * @return 返回删除后的BookInfo列表
      */
-    public void removeBooksByID(ArrayList<BookInfo> fromBookInfoList, ArrayList<BookInfo> toRemoveBookInfoList) {
-        for (BookInfo toRemoveBookInfo : toRemoveBookInfoList) {
-            BookInfo bookInfo = findBookByID(fromBookInfoList, toRemoveBookInfo.getBookId());
-            if (bookInfo != null) {
-                fromBookInfoList.remove(bookInfo);
+    public void removeBooksByID(ArrayList<Favor> fromFavorList, ArrayList<Favor> toRemoveFavorList) {
+        for (Favor toRemoveFavor : toRemoveFavorList) {
+            Favor favor = findFavorByID(fromFavorList, toRemoveFavor.getBookId());
+            if (favor != null) {
+                fromFavorList.remove(favor);
             }
         }
     }
@@ -268,22 +264,18 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
                 finish();
                 break;
             case R.id.shop_favorite_delete_btn:
-                if (checkedBookInfoList.size() > 0 ){
-                    new ConfirmDialog(this, "确实要删除这" + checkedBookInfoList.size() +"本书吗?", new DialogInterface.OnClickListener() {
+                if (checkedFavorList.size() > 0 ){
+                    new ConfirmDialog(this, "确实要删除这" + checkedFavorList.size() +"本书吗?", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             RemoveBookFavorRequest request = new RemoveBookFavorRequest();
                             request.setUserId(SpUtil.getAccountId());
-                            request.setCount(1);
-                            ArrayList<DataBookBean> dataList = new ArrayList<DataBookBean>();
-                            DataBookBean bean = new DataBookBean();
-                            bean.setCount(checkedBookInfoList.size());
-                            bean.setBookList(checkedBookInfoList);
-                            dataList.add(bean);
-                            request.setData(dataList);
-                            ProtocolManager.fake_bookFavorRemoveProtocol(request
+                            for (Favor favor : checkedFavorList) {
+                                request.getData().add(new RemoveBookFavorRequest.BookIdObj(favor.getBookId()));
+                            }
+                            ProtocolManager.bookFavorRemoveProtocol(request
                                     , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_FAVOR
-                                    , new RemoveBookFavorCallBack(NewShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_FAVOR , request));
+                                    , new RemoveBookFavorCallBack(ShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_FAVOR , request));
                             dialog.dismiss();
                         }
                     }).show();
@@ -291,8 +283,9 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
                 break;
             case R.id.shop_favorite_select_all_checkbox:
                 boolean setCheck = !selectAllCheckbox.isSelected();
-                for (NewShopBookItem everyItem : bookItems) {
-                    everyItem.setChecked(setCheck, true);
+                for (int i = 0 ; i < bookItems.size() && i < favorList.size(); i++){
+                    NewShopBookItem everyItem = bookItems.get(i);
+                    everyItem.setChecked(setCheck , true);
                 }
                 break;
             case R.id.shop_page_page_btn:
@@ -330,7 +323,8 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
      */
     private boolean isAllChecked(){
         boolean allChecked = true;
-        for (NewShopBookItem item : bookItems) {
+        for (int i = 0 ; i < bookItems.size() && i < favorList.size() ; i++){
+            NewShopBookItem item = bookItems.get(i);
             if (!item.isChecked()) {
                 allChecked = false;
                 break;
@@ -344,10 +338,10 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
      * @param pageIndex 制定的页序号
      */
     private void toPage(int pageIndex) {
-        if ((pageIndex + 1) * bookItems.size() < bookInfoList.size()) {
+        if ((pageIndex + 1) * bookItems.size() < favorList.size()) {
             fillItems(pageIndex * bookItems.size(), (pageIndex + 1) * bookItems.size() - 1);
         } else {
-            fillItems(pageIndex * bookItems.size(), bookInfoList.size() - 1);
+            fillItems(pageIndex * bookItems.size(), favorList.size() - 1);
         }
     }
 
@@ -399,9 +393,7 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
      */
     @Override
     public void onItemClick(int position) {
-        Bundle extra = new Bundle();
-        extra.putParcelable(ShopGloble.JUMP_BOOK_KEY, bookInfoList.get(position));
-        loadIntentWithExtras(NewBookItemDetailsActivity.class, extra);
+        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , favorList.get(position).getBookId());
     }
 
     /**
@@ -411,13 +403,13 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
      */
     @Override
     public void onCheckedChanged(int position, boolean checked) {
-        BookInfo bookInfo = bookInfoList.get(position);
+        Favor favor = favorList.get(position);
         if (checked) {
-            checkedBookInfoList.add(bookInfo);
+            checkedFavorList.add(favor);
         } else {
-            ArrayList<BookInfo> toRemoveList = new ArrayList<BookInfo>();
-            toRemoveList.add(bookInfo);
-            removeBooksByID(checkedBookInfoList, toRemoveList);
+            ArrayList<Favor> toRemoveList = new ArrayList<Favor>();
+            toRemoveList.add(favor);
+            removeBooksByID(checkedFavorList, toRemoveList);
         }
         selectAllCheckbox.setSelected(checked && isAllChecked());
     }
@@ -433,17 +425,10 @@ public class NewShopFavoriteActivity extends ShopAutoLayoutBaseActivity implemen
             public void onClick(DialogInterface dialog, int which) {
                 RemoveBookFavorRequest request = new RemoveBookFavorRequest();
                 request.setUserId(SpUtil.getAccountId());
-                request.setCount(1);
-                ArrayList<DataBookBean> dataList = new ArrayList<DataBookBean>();
-                DataBookBean bean = new DataBookBean();
-                bean.setCount(1);
-                bean.setBookList(new ArrayList<BookInfo>(bookInfoList.subList(position , position + 1)));
-                dataList.add(bean);
-                request.setData(dataList);
-
-                ProtocolManager.fake_bookFavorRemoveProtocol(request
+                request.getData().add(new RemoveBookFavorRequest.BookIdObj(favorList.get(position).getBookId()));
+                ProtocolManager.bookFavorRemoveProtocol(request
                         , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_FAVOR
-                        , new RemoveBookFavorCallBack(NewShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_FAVOR , request));
+                        , new RemoveBookFavorCallBack(ShopFavoriteActivity.this , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_FAVOR , request));
                 dialog.dismiss();
             }
         }).show();

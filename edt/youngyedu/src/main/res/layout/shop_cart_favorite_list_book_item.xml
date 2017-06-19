@@ -20,6 +20,12 @@
         android:layout_marginLeft="30px"
         android:layout_toRightOf="@id/shop_book_item_checkbox"
         android:layout_centerVertical="true"
+        android:background="@drawable/img_shu"
+        android:paddingLeft="1px"
+        android:paddingRight="5px"
+        android:paddingTop="1px"
+        android:paddingBottom="5px"
+        android:scaleType="fitXY"
         />
     <LinearLayout
         android:id="@+id/shop_book_item_text_group"

@@ -6,15 +6,45 @@ package com.yougy.common.protocol.request;
  */
 
 public class QueryQRStrRequest {
-    //要付款的订单ID
-    String orderID;
+    String m = "checkOrder";
+    String orderId;
+    int orderOwner;
+    double orderPrice;
+    int payMethod;
 
-    public String getOrderID() {
-        return orderID;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
+    public QueryQRStrRequest setOrderId(String orderId) {
+        this.orderId = orderId;
+        return this;
     }
 
+    public int getOrderOwner() {
+        return orderOwner;
+    }
+
+    public QueryQRStrRequest setOrderOwner(int orderOwner) {
+        this.orderOwner = orderOwner;
+        return this;
+    }
+
+    public double getOrderPrice() {
+        return orderPrice;
+    }
+
+    public QueryQRStrRequest setOrderPrice(double orderPrice) {
+        this.orderPrice = orderPrice;
+        return this;
+    }
+
+    public int getPayMethod() {
+        return payMethod;
+    }
+
+    public QueryQRStrRequest setPayMethod(int payMethod) {
+        this.payMethod = payMethod;
+        return this;
+    }
 }

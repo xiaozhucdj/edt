@@ -72,9 +72,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     private void itemClick(int position) {
         BookInfo info = mPageInfos.get(position);
         LogUtils.e(tag, "onItemClick......" + info.getBookTitle());
-        Bundle extras = new Bundle();
-        extras.putParcelable(ShopGloble.JUMP_BOOK_KEY, info);
-        loadIntentWithExtras(NewBookItemDetailsActivity.class, extras);
+        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , Integer.parseInt(info.getBookId()));
     }
 
     @Override

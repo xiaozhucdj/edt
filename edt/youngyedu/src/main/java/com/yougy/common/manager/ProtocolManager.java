@@ -1,7 +1,6 @@
 package com.yougy.common.manager;
 
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.yougy.common.global.Commons;
@@ -16,18 +15,10 @@ import com.yougy.common.protocol.request.RemoveBookFavorRequest;
 import com.yougy.common.protocol.request.RemoveNotesRequest;
 import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.request.UpdateNotesRequest;
-import com.yougy.common.protocol.response.OrderBaseResponse;
-import com.yougy.common.protocol.response.QueryBookCartProtocol;
-import com.yougy.common.protocol.response.QueryBookFavorProtocol;
-import com.yougy.common.protocol.response.QueryQRStrProtocol;
-import com.yougy.common.protocol.response.RemoveBookCartProtocol;
-import com.yougy.common.protocol.response.RemoveBookFavorProtocol;
-import com.yougy.common.protocol.response.RequirePayOrderProtocol;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.bean.DataBookBean;
 import com.yougy.init.bean.BookInfo;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.PostStringBuilder;
@@ -39,14 +30,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.Response;
-import rx.Subscriber;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2016/8/4.
@@ -70,7 +57,8 @@ public class ProtocolManager {
         LogUtils.i("请求id.........id..." + id);
 
         //防止用户的多次请求
-        OkHttpUtils.getInstance().cancelTag(url);
+        // 由于新接口的url很多都是一样的,只是以m做功能区分,因此这个防止请求不能用了
+//        OkHttpUtils.getInstance().cancelTag(url);
         //设置请求String
         PostStringBuilder builder = OkHttpUtils.postString();
         //设置地址
@@ -475,21 +463,9 @@ public class ProtocolManager {
      */
     public static void promoteBookProtocol(PromoteBookRequest request, int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............16.书城图书推荐.");
-        setCommon(Commons.URL_BOOK_PROMOTE,GsonUtil.toJson(request) , protocol_id, callbac);
+        setCommon(Commons.SHOP_URL,GsonUtil.toJson(request) , protocol_id, callbac);
     }
 
-    public static Response promoteBookProtocol(int userId,int bookId,int pageCur,int pageSize){
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("userId", userId);
-            obj.put("bookId", bookId);
-            obj.put("pageCur", pageCur);
-            obj.put("pageSize", pageSize);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return setCommon(obj.toString(),ProtocolId.PROTOCOL_ID_PROMOTE_BOOK);
-    }
     /***
      * 17. 书城图书首页
      *
@@ -542,7 +518,7 @@ public class ProtocolManager {
      */
     public static void appendBookCartProtocol(AppendBookCartRequest request , int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............18书城购物车追加");
-        setCommon(Commons.URL_BOOK_CART_APPEND, GsonUtil.toJson(request), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
 
     /***
@@ -553,7 +529,7 @@ public class ProtocolManager {
      */
     public static void removeBookCartProtocol(RemoveBookCartRequest request , int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............19. 书城购物车移除");
-        setCommon(Commons.URL_BOOK_CART_REMOVE, GsonUtil.toJson(request), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
 
 
@@ -569,11 +545,12 @@ public class ProtocolManager {
         LogUtils.i("Protocol.............20. 书城购物车查询");
         JSONObject obj = new JSONObject();
         try {
+            obj.put("m" , "queryCart");
             obj.put("userId", userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setCommon(Commons.URL_BOOK_CART_QUERY, obj.toString(), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
     /**
@@ -581,14 +558,23 @@ public class ProtocolManager {
      */
     public static void requirePayOrderProtocol(RequirePayOrderRequest request, int protocol_id, Callback callbac) {
         LogUtils.i("Protocol............. 21. 书城订单下单.");
-        setCommon(Commons.URL_BOOK_ORDER_REQUIRE , GsonUtil.toJson(request) , protocol_id , callbac);
+        setCommon(Commons.SHOP_URL , GsonUtil.toJson(request) , protocol_id , callbac);
     }
 
     /**
      * 22. 书城订单取消
      */
-    public static void cancelPayOrderProtocol() {
+    public static void cancelPayOrderProtocol(String orderId , int orderOwner , int protocal_id, Callback callback) {
         LogUtils.i("Protocol.............22. 书城订单取消");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m" , "cancelOrder");
+            obj.put("orderId" , orderId);
+            obj.put("orderOwner" , orderOwner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        setCommon(Commons.SHOP_URL , obj.toString() , protocal_id , callback);
     }
 
     /**
@@ -612,9 +598,9 @@ public class ProtocolManager {
      * @param protocol_id 协议id
      * @param callbac     协议回调函数
      */
-    public static void bookFavorAppendProtocol(AppendBookFavorRequest request, int protocol_id, Callback callbac) {
+    public static void appendBookFavorProtocol(AppendBookFavorRequest request, int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............25. 书城收藏追加 ");
-        setCommon(Commons.URL_BOOK_COLLECT_APPEND, GsonUtil.toJson(request), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
 
 
@@ -625,7 +611,7 @@ public class ProtocolManager {
      */
     public static void bookFavorRemoveProtocol(RemoveBookFavorRequest request, int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............26. 书城收藏移除.");
-        setCommon(Commons.URL_BOOK_COLLECT_REMOVE, GsonUtil.toJson(request), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
     /**
      * 27. 书城收藏查询
@@ -636,11 +622,12 @@ public class ProtocolManager {
         LogUtils.i("Protocol............27. 书城收藏查询");
         JSONObject obj = new JSONObject();
         try {
+            obj.put("m" , "queryFavor");
             obj.put("userId", userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setCommon(Commons.URL_BOOK_COLLECT_QUERY, obj.toString(), protocol_id, callbac);
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
     /**
@@ -677,6 +664,28 @@ public class ProtocolManager {
         setCommon(Commons.URL_QUERY_HOMEWORK, obj.toString(), protocol_id, callbac);
     }
 
+    /***
+     * 根据图书id和用户id以用户视角查询商城图书详情
+     *
+     */
+    public static void queryShopBookDetailByIdProtocol(int userId, int bookId , int protocol_id, Callback callbac) {
+        LogUtils.i("Protocol.............  根据图书id和用户id以用户视角查询商城图书详情");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m","queryBook");
+            obj.put("userId", userId);
+            obj.put("bookId", bookId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
+    }
+
+    public static void qureyQRStrProtocol(final QueryQRStrRequest request , final int protocol_id, final Callback callbac) {
+        LogUtils.i("Protocol............. 31 获取支付二维码字符串");
+        setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
+    }
+
     /**
      * 1获取作业总数
      * @param :userId
@@ -692,109 +701,7 @@ public class ProtocolManager {
         setCommon(Commons.HOMEWORK_TODO_COUNT, obj.toString(), protocol_id, callbac);
     }
 
-    /**
-     * 假数据书城订单下单(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_requirePayOrderProtocol(final RequirePayOrderRequest request, final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol............. 21. 书城订单下单.");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络延迟1s
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        RequirePayOrderProtocol response = new RequirePayOrderProtocol();
-                        ArrayList<BookInfo> bookInfos = (ArrayList<BookInfo>) request.getData().get(0).getBookList();
-                        //直接写死编号
-                        response.setOrderId("10086");
-                        //根据请求数据算出总价
-                        float sum = 0;
-                        for (BookInfo bookInfo :
-                                bookInfos) {
-                            sum = sum + bookInfo.getBookSalePrice();
-                        }
-                        response.setOrderPrice(sum);
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
 
-    /**
-     * 临时接口,把获取订单号和获取二维码结合在一起,以后会拆开,所以暂时先写一个临时接口
-     * @param totalAmount
-     * @param callback
-     */
-    public static void fake_requireQRCode(final float totalAmount , final Callback callback){
-        LogUtils.i("Protocol............. 21. 书城订单下单临时接口.");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(final Subscriber<? super Object> subscriber) {
-                try {
-                    Response response = OkHttpUtils
-                            .post()
-                            .url("http://192.168.12.7:10005/alipay/pay")
-                            .addParams("totalAmount" , String.valueOf(totalAmount))
-                            .build()
-                            .execute();
-                    Log.v("FH" , "onresponse : " + response.toString());
-                    if (response.isSuccessful()){
-                        Log.v("FH" , "1");
-                        subscriber.onNext(response.body().string());
-                    }
-                    else {
-                        Log.v("FH" , "3");
-                        subscriber.onNext(null);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.v("FH" , "2");
-                    subscriber.onNext(null);
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        if (o != null){
-                            String bodyStr = (String) o;
-                            try {
-                                Log.v("FH" , "4 " + bodyStr);
-                                RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
-                                    JSONObject jsonObject = new JSONObject(bodyStr);
-                                    protocol.setOrderId(jsonObject.getString("orderId"));
-                                    protocol.setCode(Integer.parseInt(jsonObject.getString("code")));
-                                    protocol.qrCodeStr = jsonObject.getString("qrcode");
-                                    protocol.setOrderPrice(totalAmount);
-                                    protocol.setMsg("success");
-                                callback.onResponse(protocol , 10086);
-                            } catch (JSONException e) {
-                                Log.v("FH" , "6");
-                                e.printStackTrace();
-                                RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
-                                protocol.setCode(-1);
-                                callback.onResponse(protocol , 10086);
-                            }
-                        }
-                        else {
-                            Log.v("FH" , "5");
-                            RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
-                            protocol.setCode(-1);
-                            callback.onResponse(protocol , 10086);
-                        }
-                    }
-                });
-    }
 
 
     //模拟数据,后期接口通了可删除
@@ -816,271 +723,17 @@ public class ProtocolManager {
         }
     }
 
-    /**
-     * 书城收藏查询假的实现(模拟数据用,接口通了以后可以删除)
-     *
-     */
-    public static void fake_queryBookFavorProtocol(int userId, final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol............27. 书城收藏查询");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        QueryBookFavorProtocol response = new QueryBookFavorProtocol();
-                        List<DataBookBean> list = new ArrayList<DataBookBean>() ;
-                        DataBookBean bean = new DataBookBean() ;
-                        bean.setCount(simulateData.size());
-                        bean.setBookList(simulateData);
-                        list.add(bean) ;
-                        response.setData(list);
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 书城收藏移除假的实现(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_bookFavorRemoveProtocol(final RemoveBookFavorRequest request, final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............26. 书城收藏移除.");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        ArrayList<BookInfo> toDelteBookInfos = (ArrayList<BookInfo>) request.getData().get(0).getBookList();
-                        removeBooksByID(simulateData, toDelteBookInfos);
-                        RemoveBookFavorProtocol response = new RemoveBookFavorProtocol();
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 书城购物车查询假的实现(模拟数据用,接口通了以后可以删除)
-     *
-     */
-    public static void fake_queryBookCartProtocol(int userId, final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............20. 书城购物车查询");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        QueryBookCartProtocol response = new QueryBookCartProtocol();
-                        List<DataBookBean> list = new ArrayList<DataBookBean>() ;
-                        DataBookBean bean = new DataBookBean() ;
-                        bean.setCount(simulateData.size());
-                        bean.setBookList(simulateData);
-                        list.add(bean) ;
-                        response.setData(list);
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 书城购物车移除假的实现(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_removeBookCartProtocol(final RemoveBookCartRequest request , final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............19. 书城购物车移除");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        ArrayList<BookInfo> toDelteBookInfos = (ArrayList<BookInfo>) request.getData().get(0).getBookList();
-                        removeBooksByID(simulateData, toDelteBookInfos);
-                        RemoveBookCartProtocol response = new RemoveBookCartProtocol();
-                        response.setCode(200);
-                        response.setMsg("success");
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 假的获取支付二维码字符串接口(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_qureyQRStrProtocol(final QueryQRStrRequest request , final int protocol_id, final Callback callbac) {
-        LogUtils.i("Protocol.............获取支付二维码字符串");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                try {
-                    //模拟网络请求时间
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        QueryQRStrProtocol response = new QueryQRStrProtocol();
-                        //模拟有几率失败
-                        double d = Math.random();
-                        if (d > 0.1){
-                            response.setCode(200);
-                            response.setMsg("success");
-                            response.setQrStr("just for test , nothing here");
-                        }
-                        else {
-                            response.setCode(400);
-                            response.setMsg("fail!");
-                        }
-                        callbac.onResponse(response , protocol_id);
-                    }
-                });
-    }
-
-    /**
-     * 假的书城订单查询的接口(模拟数据用,接口通了以后可以删除)
-     */
-    public static void fake_queryBookOrderProtocol(final String orderId, final int protocol_id, final Callback callback) {
-        LogUtils.i("Protocol.............  24. 书城订单查询");
-        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(final Subscriber<? super Object> subscriber) {
-                try {
-                    Response response = OkHttpUtils
-                            .post()
-                            .url("http://192.168.12.7:10005/alipay/query")
-                            .addParams("orderId" , orderId)
-                            .build()
-                            .execute();
-                    Log.v("FH" , "onresponse : " + response.toString());
-                    if (response.isSuccessful()){
-                        Log.v("FH" , "1");
-                        subscriber.onNext(response.body().string());
-                    }
-                    else {
-                        Log.v("FH" , "3");
-                        subscriber.onNext(null);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.v("FH" , "2");
-                    subscriber.onNext(null);
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        if (o != null){
-                            String bodyStr = (String) o;
-                            try {
-                                Log.v("FH" , "4 " + bodyStr);
-                                OrderBaseResponse protocol = new OrderBaseResponse();
-                                JSONObject jsonObject = new JSONObject(bodyStr);
-                                protocol.setCode(Integer.parseInt(jsonObject.getString("code")));
-                                protocol.setMsg(jsonObject.getString("msg"));
-                                callback.onResponse(protocol , 10086);
-                            } catch (JSONException e) {
-                                Log.v("FH" , "6");
-                                e.printStackTrace();
-                                RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
-                                protocol.setCode(-1);
-                                callback.onResponse(protocol , 10086);
-                            }
-                        }
-                        else {
-                            Log.v("FH" , "5");
-                            RequirePayOrderProtocol protocol = new RequirePayOrderProtocol();
-                            protocol.setCode(-1);
-                            callback.onResponse(protocol , 10086);
-                        }
-                    }
-                });
-
-//        rx.Observable.create(new rx.Observable.OnSubscribe<Object>() {
-//            @Override
-//            public void call(Subscriber<? super Object> subscriber) {
-//                try {
-//                    //模拟网络请求时间
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                subscriber.onNext(null);
-//            }
-//        }).subscribeOn(Schedulers.io())
-//                .subscribe(new Action1<Object>() {
-//                    @Override
-//                    public void call(Object o) {
-//                        OrderBaseResponse response = new OrderBaseResponse();
-//                        response.setCode(200);
-//                        response.setMsg("success");
-//                        response.setCount(1);
-//                        ArrayList<DataOrderBean> dataList = new ArrayList<DataOrderBean>();
-//                        DataOrderBean bean = new DataOrderBean();
-//                        bean.setCount(1);
-//                        ArrayList<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
-//                        OrderInfo orderInfo = new OrderInfo();
-//                        //模拟有几率失败
-//                        orderInfo.setOrderId(Math.random() > 0.4 ? "10086" : "10087");
-//                        simulateData.remove(0);
-//                        orderInfo.setOrderPrice(8888.88f);
-//                        orderInfo.setOrderStatus("成功");
-//                        orderInfo.setCount(simulateData.size());
-//                        orderInfo.setBookList(simulateData);
-//                        orderInfoList.add(orderInfo);
-//                        bean.setOrderList(orderInfoList);
-//                        dataList.add(bean);
-//                        response.setData(dataList);
-//                        callbac.onResponse(response , protocol_id);
-//                    }
-//                });
+    public static void isOrderPaySuccessProtocol(String orderId, int orderOwner , int protocol_id, Callback callback) {
+        LogUtils.i("Protocol............. 32 查询订单支付是否成功");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m" , "closeOrder");
+            obj.put("orderId" , orderId);
+            obj.put("orderOwner" , orderOwner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        setCommon(Commons.SHOP_URL , obj.toString() , protocol_id , callback);
     }
 
 

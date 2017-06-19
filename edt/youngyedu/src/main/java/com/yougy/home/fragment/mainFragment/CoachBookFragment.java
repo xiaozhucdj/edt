@@ -148,10 +148,12 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mCountBooks.size() == 0) {
-            loadData();
+        LogUtils.i("yuanye ....coach");
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 
@@ -191,7 +193,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
 
@@ -424,6 +426,8 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     }*/
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mIsRefresh =false ;
+        mNewTextBookCallBack = null ;
         if (bookInfos!=null && bookInfos.size()>0){
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
@@ -455,4 +459,5 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             loadData();
         }
     }
+
 }

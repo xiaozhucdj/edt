@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.bean.CartItem;
+import com.yougy.shop.bean.Favor;
 import com.yougy.ui.activity.R;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -40,7 +42,7 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
     public View separatorLine;
 
     Context mContext;
-    BookInfo mBookInfo;
+    Object mData;
     OnItemActionListener mOnItemActionListener;
     int position = -1;
 
@@ -101,17 +103,27 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
         }
     }
 
-    public void setBookInfo(BookInfo bookInfo){
-        mBookInfo = bookInfo;
-        if (bookInfo == null){
+    public void setData(Object data){
+        mData = data;
+        if (data == null){
             setVisibility(GONE);
         }
         else {
             setVisibility(VISIBLE);
-            bookNameTv.setText(bookInfo.getBookTitle());
-            bookAuthorTv.setText("作者:" + bookInfo.getBookAuthor());
-            bookPriceTv.setText("价格:￥" + bookInfo.getBookSalePrice());
-            refreshImg(bookImgview , bookInfo.getBookCover());
+            if (data instanceof Favor){
+                Favor favor = (Favor) data;
+                bookNameTv.setText(favor.getBookTitle());
+                bookAuthorTv.setText("作者:" + favor.getBookAuthor());
+                bookPriceTv.setText("价格:￥" + "TODO");
+                refreshImg(bookImgview , favor.getBookCover());
+            }
+            else if (data instanceof CartItem){
+                CartItem cartItem = (CartItem) data;
+                bookNameTv.setText(cartItem.getBookTitle());
+                bookAuthorTv.setText("作者:" + cartItem.getBookAuthor());
+                bookPriceTv.setText("价格:￥" + cartItem.getBookSalePrice());
+                refreshImg(bookImgview , cartItem.getBookCover());
+            }
         }
     }
 

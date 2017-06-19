@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20px"
-            android:text="您购买的书已经开始下载"
+            android:text="请在书包内点击图书开始下载"
             android:textColor="@color/zl_black"
             android:layout_marginTop="17px"
             />

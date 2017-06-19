@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.response.QueryBookCartProtocol;
+import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -18,7 +18,7 @@ import okhttp3.Response;
  * 查询购物车
  */
 
-public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartProtocol> {
+public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartRep> {
 
     private int mProtocol;
 
@@ -28,15 +28,15 @@ public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartProtocol>
     }
 
     @Override
-    public QueryBookCartProtocol parseNetworkResponse(Response response, int id) throws Exception {
+    public QueryBookCartRep parseNetworkResponse(Response response, int id) throws Exception {
         String backJson = response.body().string();
         LogUtils.i("response json ...." + backJson);
-        return GsonUtil.fromJson(backJson, QueryBookCartProtocol.class);
+        return GsonUtil.fromJson(backJson, QueryBookCartRep.class);
     }
 
     @Override
-    public void onResponse(QueryBookCartProtocol response, int id) {
-        Log.e("QueryBookCartCallBack", "send QueryBookCartProtocol event");
+    public void onResponse(QueryBookCartRep response, int id) {
+        Log.e("QueryBookCartCallBack", "send QueryBookCartRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

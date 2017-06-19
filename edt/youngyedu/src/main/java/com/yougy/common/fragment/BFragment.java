@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DataCacheUtils;
@@ -33,6 +34,8 @@ public abstract class BFragment extends Fragment {
     protected ConnectableObservable<Object> tapEventEmitter;
     protected Context context;
     private String tag;
+
+    protected boolean mIsRefresh ;
 
     @Override
     public void onAttach(Activity activity) {
@@ -113,6 +116,9 @@ public abstract class BFragment extends Fragment {
     public void onEventMainThread(BaseEvent event) {
         if (event == null)
             return;
+        if (event.getType().equalsIgnoreCase(EventBusConstant.need_refresh)){
+            mIsRefresh = true ;
+        }
     }
 
     protected List<BookInfo> getCacheBooks(String key){

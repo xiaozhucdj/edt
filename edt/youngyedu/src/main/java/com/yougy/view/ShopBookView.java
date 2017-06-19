@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.shop.activity.NewBookItemDetailsActivity;
+import com.yougy.shop.activity.ShopBookDetailsActivity;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
@@ -54,8 +54,8 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(getContext(), NewBookItemDetailsActivity.class);
-        intent.putExtra(ShopGloble.JUMP_BOOK_KEY,mInfo);
+        Intent intent = new Intent(getContext(), ShopBookDetailsActivity.class);
+        intent.putExtra(ShopGloble.BOOK_ID , Integer.parseInt(mInfo.getBookId()));
         getContext().startActivity(intent);
         LogUtils.e("ShopBookView","onClick................." + mInfo.getBookTitle());
     }

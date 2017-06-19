@@ -5,7 +5,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.common.utils.DateUtil;
+import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.home.activity.MainActivity;
+import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 
 import butterknife.BindView;
@@ -26,6 +30,7 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
     @BindView(R.id.pay_succcess_actvt_to_shop_frontpage_btn)
     Button toShopFrontpageBtn;
 
+    RequirePayOrderRep.OrderObj order;
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_pay_success);
@@ -33,7 +38,7 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
 
     @Override
     protected void init() {
-
+        order = getIntent().getParcelableExtra(ShopGloble.ORDER);
     }
 
     @Override
@@ -43,6 +48,8 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
 
     @Override
     protected void loadData() {
+        moneySumTv.setText("支付金额 : ￥" + order.getOrderPrice());
+        payTimeTv.setText("支付时间 :　" + DateUtils.getCalendarAndTimeString());
 
     }
 

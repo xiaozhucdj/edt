@@ -1,6 +1,7 @@
 package com.yougy.shop.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.yougy.common.activity.AutoLayoutBaseActivity;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -32,6 +33,7 @@ public abstract class ShopAutoLayoutBaseActivity extends AutoLayoutBaseActivity 
 
     @Override
     protected void onResume() {
+        Log.v("FH" , "=== onResume");
         super.onResume();
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
@@ -44,6 +46,7 @@ public abstract class ShopAutoLayoutBaseActivity extends AutoLayoutBaseActivity 
 
     @Override
     protected void onStop() {
+        Log.v("FH" , "=== onStop");
         super.onStop();
         if (subscription != null) {
             subscription.clear();

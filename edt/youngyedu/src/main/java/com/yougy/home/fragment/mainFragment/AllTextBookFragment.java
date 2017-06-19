@@ -363,12 +363,15 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mServerBooks.size() == 0) {
-            loadData();
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 
     private void loadData() {
+        mIsRefresh =false ;
         if (YougyApplicationManager.isWifiAvailable()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
@@ -533,7 +536,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
                 mDialog.getBtnConfirm().setVisibility(VISIBLE);
             }
 
@@ -1022,6 +1025,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     }
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mNewTextBookCallBack = null ;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
@@ -1097,4 +1101,6 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
             }
         }
     }
+
+
 }

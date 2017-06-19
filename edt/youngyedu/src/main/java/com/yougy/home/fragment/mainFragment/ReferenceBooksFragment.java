@@ -205,8 +205,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mCountBooks.size() == 0) {
-            loadData();
+        LogUtils.i("yuanye ...ke");
+        if (!hidden) {
+            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+                loadData();
+            }
         }
     }
 
@@ -247,7 +250,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
 
@@ -320,6 +323,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void freshUI(List<BookInfo> bookInfos) {
+        mNewTextBookCallBack = null ;
+        mIsRefresh =false ;
         LogUtils.i("freshUI.....freshUI");
         if (bookInfos != null && bookInfos.size() > 0) {
             mServerBooks.clear();
@@ -777,6 +782,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             }
         }
     }
+
+
 }
 
 

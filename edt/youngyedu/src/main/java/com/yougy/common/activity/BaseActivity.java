@@ -467,6 +467,18 @@ public abstract class BaseActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    public void loadIntentWithExtra (Class<? extends Activity> cls , String key , int value){
+        Intent intent = new Intent(this , cls);
+        intent.putExtra(key , value);
+        startActivity(intent);
+    }
+
+    public void loadIntentWithSpecificFlag(Class<?> cls , int flag){
+        Intent intent = new Intent(this , cls);
+        intent.setFlags(flag);
+        startActivity(intent);
+    }
+
 
     /**
      * 获取Intent数据以及初始化本地数据

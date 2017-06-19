@@ -59,6 +59,7 @@ public class BookInfo extends DataSupport implements Parcelable {
      * 图书出版社
      */
     private int bookPublisher = -1;
+
     /**
      * 图书出版时间
      */
@@ -66,7 +67,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 图书价格
      */
-    private float bookSalePrice = -1;
+    private double bookSalePrice = -1;
     /**
      * 图书简介
      */
@@ -100,6 +101,8 @@ public class BookInfo extends DataSupport implements Parcelable {
      * 图书在购物车内
      */
     private boolean bookInCart;
+
+    private boolean bookInShelf;
     /**
      * 图书在收藏内
      */
@@ -229,6 +232,15 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookInFavor = bookInFavor;
     }
 
+    public boolean isBookInShelf() {
+        return bookInShelf;
+    }
+
+    public BookInfo setBookInShelf(boolean bookInShelf) {
+        this.bookInShelf = bookInShelf;
+        return this;
+    }
+
     public int getBookFitNoteId() {
         return bookFitNoteId;
     }
@@ -245,6 +257,14 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookFitNoteTitle = bookFitNoteTitle;
     }
 
+    public String getBookPublisherName() {
+        return bookPublisherName;
+    }
+
+    public BookInfo setBookPublisherName(String bookPublisherName) {
+        this.bookPublisherName = bookPublisherName;
+        return this;
+    }
 
     ///////////////////////////////////////////////////////////
     /**
@@ -308,11 +328,11 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookPublishTime = bookPublishTime;
     }
 
-    public float getBookSalePrice() {
+    public double getBookSalePrice() {
         return bookSalePrice;
     }
 
-    public void setBookSalePrice(float bookSalePrice) {
+    public void setBookSalePrice(double bookSalePrice) {
         this.bookSalePrice = bookSalePrice;
     }
 
@@ -395,7 +415,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         if (bookId != info.bookId) return false;
         if (bookCategory != info.bookCategory) return false;
         if (bookPublisher != info.bookPublisher) return false;
-        if (Float.compare(info.bookSalePrice, bookSalePrice) != 0) return false;
+        if (Double.compare(info.bookSalePrice, bookSalePrice) != 0) return false;
         if (bookInCart != info.bookInCart) return false;
         if (bookInFavor != info.bookInFavor) return false;
         if (bookFitGradeId != info.bookFitGradeId) return false;
@@ -442,7 +462,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         result = 31 * result + (bookISBN != null ? bookISBN.hashCode() : 0);
         result = 31 * result + bookPublisher;
         result = 31 * result + (bookPublishTime != null ? bookPublishTime.hashCode() : 0);
-        result = 31 * result + (bookSalePrice != +0.0f ? Float.floatToIntBits(bookSalePrice) : 0);
+        result = (int) (31 * result + (bookSalePrice != +0.0f ? Double.doubleToLongBits(bookSalePrice) : 0));
         result = 31 * result + (bookSummary != null ? bookSummary.hashCode() : 0);
         result = 31 * result + (bookCover != null ? bookCover.hashCode() : 0);
         result = 31 * result + (bookCoverSize != null ? bookCoverSize.hashCode() : 0);
@@ -514,7 +534,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeString(this.bookISBN);
         dest.writeInt(this.bookPublisher);
         dest.writeString(this.bookPublishTime);
-        dest.writeFloat(this.bookSalePrice);
+        dest.writeDouble(this.bookSalePrice);
         dest.writeString(this.bookSummary);
         dest.writeString(this.bookCover);
         dest.writeString(this.bookCoverSize);
@@ -533,6 +553,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeInt(this.bookFitNoteStyle);
         dest.writeByte(this.isCheck ? (byte) 1 : (byte) 0);
         dest.writeInt(this.bookFitHomeworkId);
+        dest.writeString(this.bookPublisherName);
     }
 
     protected BookInfo(Parcel in) {
@@ -543,7 +564,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookISBN = in.readString();
         this.bookPublisher = in.readInt();
         this.bookPublishTime = in.readString();
-        this.bookSalePrice = in.readFloat();
+        this.bookSalePrice = in.readDouble();
         this.bookSummary = in.readString();
         this.bookCover = in.readString();
         this.bookCoverSize = in.readString();
@@ -562,6 +583,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookFitNoteStyle = in.readInt();
         this.isCheck = in.readByte() != 0;
         this.bookFitHomeworkId = in.readInt();
+        this.bookPublisherName = in.readString();
     }
 
     public static final Parcelable.Creator<BookInfo> CREATOR = new Parcelable.Creator<BookInfo>() {

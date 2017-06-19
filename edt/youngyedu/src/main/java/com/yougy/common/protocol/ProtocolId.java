@@ -107,6 +107,21 @@ public class ProtocolId {
      */
     public static final int PROTOCOL_ID_QUERY_HOME_WROK = 2029;
 
+    /**
+     * 30. 查询 商城图书详情
+     */
+    public static final int PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL = 2030;
+
+    /**
+     * 31. 获取订单支付二维码
+     */
+    public static final int PROTOCOL_ID_QUERY_QR_CODE = 2031;
+
+    /**
+     * 32. 查询订单是否支付成功
+     */
+    public static final int PROTOCOL_ID_IS_ORDER_PAY_SUCCESS = 2032;
+
 
     ////////////////////////////////////请求协议 笔记相关 3000ID//////////////////////////////////
     /***

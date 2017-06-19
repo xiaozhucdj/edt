@@ -108,20 +108,25 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                 public void onResponse(NewGetAppVersionRep response, int id) {
                     super.onResponse(response, id);
                     if (response!=null && response.getCode() ==NewProtocolManager.NewCodeResult.CODE_SUCCESS && response.getData()!=null){
-                        LogUtils.i(SplashActivity.class.getName()+":"+response.getData().toString());
-                        NewGetAppVersionRep.Data data =  response.getData() ;
-                        int serverVersion = Integer.parseInt(data.getVer());
-                        int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
-                        LogUtils.i("袁野 localVersion ==" + localVersion);
-                        final String url = data.getUrl();
-                        if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    doDownLoad(SplashActivity.this, url);
-                                }
-                            });
-                        } else {
+                        try {
+                            LogUtils.i(SplashActivity.class.getName()+":"+response.getData().toString());
+                            NewGetAppVersionRep.Data data =  response.getData() ;
+                            int serverVersion = Integer.parseInt(data.getVer());
+                            int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
+                            LogUtils.i("袁野 localVersion ==" + localVersion);
+                            final String url = data.getUrl();
+                            if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        doDownLoad(SplashActivity.this, url);
+                                    }
+                                });
+                            } else {
+                                login();
+                            }
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
                             login();
                         }
                     }else{
