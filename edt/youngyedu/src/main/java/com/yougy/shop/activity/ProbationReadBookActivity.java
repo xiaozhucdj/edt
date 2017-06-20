@@ -196,6 +196,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 break;
             case R.id.imgbtn_jumpCar:
                 loadIntent(ShopCartActivity.class);
+                this.finish();
                 break;
             case R.id.imgbtn_addCar:
                 if (mBookInfo.isBookInCart() || mBookInfo.isBookInShelf()) {
