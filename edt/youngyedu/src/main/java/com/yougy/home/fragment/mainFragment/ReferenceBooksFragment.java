@@ -130,6 +130,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
+    private int mDownPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -163,6 +164,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     }
 
     private void itemClick(int position) {
+        mDownPosition = position ;
         BookInfo info = mBooks.get(position);
         mDownInfo = info;
         LogUtils.i("book id ....." + info.toString());
@@ -191,7 +193,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
                 mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
             } else {
-                UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+                showmUiPromptDialog(R.string.jump_to_net);
             }
         }
     }
@@ -269,6 +271,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             public void onFinish(int what, String filePath) {
                 if (DownloadManager.isFinish()) {
                     mDialog.dismiss();
+                    //直接进入下载的图书
+                    itemClick(mDownPosition);
                 }
             }
 
@@ -323,8 +327,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void freshUI(List<BookInfo> bookInfos) {
-        mNewTextBookCallBack = null ;
-        mIsRefresh =false ;
+        mNewTextBookCallBack = null;
+        mIsRefresh = false;
         LogUtils.i("freshUI.....freshUI");
         if (bookInfos != null && bookInfos.size() > 0) {
             mServerBooks.clear();
@@ -481,7 +485,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
                 } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK + "")) {
                     LogUtils.i("使用缓存课本");
-//                   mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                     freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
                 }
             }
@@ -540,198 +543,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     }
 
 
-    ///////////////////////////////测试假数据///////////////////////////////////////
-
-    /***
-     * 5个年级
-     * 2个学科 ：
-     */
-    private void testData() {
-        BookInfo bookInfo1 = new BookInfo();
-        //设置图片
-        bookInfo1.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo1.setBookFitGradeName("小学一年级");
-        bookInfo1.setBookFitGradeId(1);
-        bookInfo1.setBookFitSubjectName("语文");
-        bookInfo1.setBookFitSubjectId(1);
-        bookInfo1.setBookTitle("老人与海");
-
-        BookInfo bookInfo2 = new BookInfo();
-        bookInfo2.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo2.setBookFitGradeName("小学二年级");
-        bookInfo2.setBookFitGradeId(2);
-        bookInfo2.setBookFitSubjectName("语文");
-        bookInfo2.setBookFitSubjectId(1);
-        bookInfo2.setBookTitle("老人与海2");
-
-        BookInfo bookInfo3 = new BookInfo();
-        //设置图片
-        bookInfo3.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo3.setBookFitGradeName("小学三年级");
-        bookInfo3.setBookFitGradeId(3);
-        bookInfo3.setBookFitSubjectName("数学");
-        bookInfo3.setBookFitSubjectId(2);
-        bookInfo3.setBookTitle("老人与海3");
-
-        BookInfo bookInfo4 = new BookInfo();
-        //设置图片
-        bookInfo4.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo4.setBookFitGradeName("小学四年级");
-        bookInfo4.setBookFitGradeId(4);
-        bookInfo4.setBookFitSubjectName("数学");
-        bookInfo4.setBookFitSubjectId(2);
-        bookInfo4.setBookTitle("老人与海4");
-
-        BookInfo bookInfo5 = new BookInfo();
-        bookInfo5.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo5.setBookFitGradeName("小学四年级");
-        bookInfo5.setBookFitGradeId(4);
-        bookInfo5.setBookFitSubjectName("数学");
-        bookInfo5.setBookFitSubjectId(2);
-        bookInfo5.setBookTitle("老人与海5");
-
-        BookInfo bookInfo6 = new BookInfo();
-        bookInfo6.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo6.setBookFitGradeName("小学六年级");
-        bookInfo6.setBookFitGradeId(6);
-        bookInfo6.setBookFitSubjectName("数学");
-        bookInfo6.setBookFitSubjectId(2);
-        bookInfo6.setBookTitle("老人与海6");
-
-        BookInfo bookInfo7 = new BookInfo();
-        bookInfo7.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo7.setBookFitGradeName("小学六年级");
-        bookInfo7.setBookFitGradeId(6);
-        bookInfo7.setBookFitSubjectName("数学");
-        bookInfo7.setBookFitSubjectId(2);
-        bookInfo7.setBookTitle("老人与海7");
-
-        BookInfo bookInfo8 = new BookInfo();
-        bookInfo8.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo8.setBookFitGradeName("小学六年级");
-        bookInfo8.setBookFitGradeId(6);
-        bookInfo8.setBookFitSubjectName("数学");
-        bookInfo8.setBookFitSubjectId(2);
-        bookInfo8.setBookTitle("老人与海8");
-
-        BookInfo bookInfo9 = new BookInfo();
-        bookInfo9.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo9.setBookFitGradeName("小学六年级");
-        bookInfo9.setBookFitGradeId(6);
-        bookInfo9.setBookFitSubjectName("数学");
-        bookInfo9.setBookFitSubjectId(2);
-        bookInfo9.setBookTitle("老人与海9");
-
-        BookInfo bookInfo10 = new BookInfo();
-        bookInfo10.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo10.setBookFitGradeName("小学六年级");
-        bookInfo10.setBookFitGradeId(6);
-        bookInfo10.setBookFitSubjectName("数学");
-        bookInfo10.setBookFitSubjectId(2);
-        bookInfo10.setBookTitle("老人与海10");
-
-
-        BookInfo bookInfo11 = new BookInfo();
-        bookInfo11.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo11.setBookFitGradeName("小学六年级");
-        bookInfo11.setBookFitGradeId(6);
-        bookInfo11.setBookFitSubjectName("数学");
-        bookInfo11.setBookFitSubjectId(2);
-        bookInfo11.setBookTitle("老人与海11");
-
-        BookInfo bookInfo12 = new BookInfo();
-        bookInfo12.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo12.setBookFitGradeName("小学六年级");
-        bookInfo12.setBookFitGradeId(6);
-        bookInfo12.setBookFitSubjectName("数学");
-        bookInfo12.setBookFitSubjectId(2);
-        bookInfo12.setBookTitle("老人与海12");
-
-        BookInfo bookInfo13 = new BookInfo();
-        bookInfo13.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo13.setBookFitGradeName("小学六年级");
-        bookInfo13.setBookFitGradeId(6);
-        bookInfo13.setBookFitSubjectName("数学");
-        bookInfo13.setBookFitSubjectId(2);
-        bookInfo13.setBookTitle("老人与海13");
-
-        BookInfo bookInfo14 = new BookInfo();
-        bookInfo14.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo14.setBookFitGradeName("小学六年级");
-        bookInfo14.setBookFitGradeId(6);
-        bookInfo14.setBookFitSubjectName("数学");
-        bookInfo14.setBookFitSubjectId(2);
-        bookInfo14.setBookTitle("袁野日记14");
-
-        BookInfo bookInfo15 = new BookInfo();
-        bookInfo15.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo15.setBookFitGradeName("小学六年级");
-        bookInfo15.setBookFitGradeId(6);
-        bookInfo15.setBookFitSubjectName("数学");
-        bookInfo15.setBookFitSubjectId(2);
-        bookInfo15.setBookTitle("袁野日记15");
-
-        BookInfo bookInfo16 = new BookInfo();
-        bookInfo16.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo16.setBookFitGradeName("小学六年级");
-        bookInfo16.setBookFitGradeId(6);
-        bookInfo16.setBookFitSubjectName("数学");
-        bookInfo16.setBookFitSubjectId(2);
-        bookInfo16.setBookTitle("袁野日记16");
-
-        mServerBooks.add(bookInfo1);
-        mServerBooks.add(bookInfo2);
-        mServerBooks.add(bookInfo3);
-        mServerBooks.add(bookInfo4);
-        mServerBooks.add(bookInfo5);
-        mServerBooks.add(bookInfo6);
-        mServerBooks.add(bookInfo7);
-        mServerBooks.add(bookInfo8);
-        mServerBooks.add(bookInfo9);
-        mServerBooks.add(bookInfo10);
-        mServerBooks.add(bookInfo11);
-        mServerBooks.add(bookInfo12);
-        mServerBooks.add(bookInfo13);
-        mServerBooks.add(bookInfo14);
-        mServerBooks.add(bookInfo15);
-        mServerBooks.add(bookInfo16);
-//-----------------------------------------------
-        mServerBooks.add(bookInfo1);
-        mServerBooks.add(bookInfo2);
-        mServerBooks.add(bookInfo3);
-        mServerBooks.add(bookInfo4);
-        mServerBooks.add(bookInfo5);
-        mServerBooks.add(bookInfo6);
-        mServerBooks.add(bookInfo7);
-        mServerBooks.add(bookInfo8);
-        mServerBooks.add(bookInfo9);
-        mServerBooks.add(bookInfo10);
-        mServerBooks.add(bookInfo11);
-        mServerBooks.add(bookInfo12);
-        mServerBooks.add(bookInfo13);
-        mServerBooks.add(bookInfo14);
-        mServerBooks.add(bookInfo15);
-        mServerBooks.add(bookInfo16);
-//-----------------------------------------------
-        mServerBooks.add(bookInfo1);
-        mServerBooks.add(bookInfo2);
-        mServerBooks.add(bookInfo3);
-        mServerBooks.add(bookInfo4);
-        mServerBooks.add(bookInfo5);
-        mServerBooks.add(bookInfo6);
-        mServerBooks.add(bookInfo7);
-        mServerBooks.add(bookInfo8);
-        mServerBooks.add(bookInfo9);
-        mServerBooks.add(bookInfo10);
-        mServerBooks.add(bookInfo11);
-        mServerBooks.add(bookInfo12);
-        mServerBooks.add(bookInfo13);
-        mServerBooks.add(bookInfo14);
-        mServerBooks.add(bookInfo15);
-        mServerBooks.add(bookInfo16);
-        initPages(mServerBooks, COUNT_PER_PAGE);
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -755,7 +566,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         if (event.getType().equalsIgnoreCase(EventBusConstant.current_reference_book)) {
             LogUtils.i("type .." + EventBusConstant.current_reference_book);
             loadData();
-        }else if(event.getType().equalsIgnoreCase(EventBusConstant.serch_reference)) {
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.serch_reference)) {
             LogUtils.i("type .." + EventBusConstant.serch_reference);
             if (mServerBooks.size() < 0) {
                 UIUtils.showToastSafe("你还没有购买课外书", Toast.LENGTH_SHORT);
@@ -783,7 +594,19 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         }
     }
 
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
 
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
+    }
 }
 
 

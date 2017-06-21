@@ -15,6 +15,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.view.dialog.UiPromptDialog;
 
 import java.util.List;
 
@@ -28,14 +29,15 @@ import static com.yougy.common.utils.GsonUtil.fromNotes;
  * Created by jiangliang on 2016/12/12.
  */
 
-public abstract class BFragment extends Fragment {
+public abstract class BFragment extends Fragment implements UiPromptDialog.Listener {
     public boolean mHide;
     protected CompositeSubscription subscription;
     protected ConnectableObservable<Object> tapEventEmitter;
     protected Context context;
     private String tag;
 
-    protected boolean mIsRefresh ;
+    protected boolean mIsRefresh;
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -103,7 +105,7 @@ public abstract class BFragment extends Fragment {
             subscription = new CompositeSubscription();
             tapEventEmitter = YougyApplicationManager.getRxBus(context).toObserverable().publish();
             handleEvent();
-        }else{
+        } else {
             if (subscription != null) {
                 subscription.clear();
                 subscription = null;
@@ -116,15 +118,15 @@ public abstract class BFragment extends Fragment {
     public void onEventMainThread(BaseEvent event) {
         if (event == null)
             return;
-        if (event.getType().equalsIgnoreCase(EventBusConstant.need_refresh)){
-            mIsRefresh = true ;
+        if (event.getType().equalsIgnoreCase(EventBusConstant.need_refresh)) {
+            mIsRefresh = true;
         }
     }
 
-    protected List<BookInfo> getCacheBooks(String key){
+    protected List<BookInfo> getCacheBooks(String key) {
         List<BookInfo> books = null;
         String json = DataCacheUtils.getString(getActivity(), key);
-        LogUtils.i("json..."+json);
+        LogUtils.i("json..." + json);
         if (!StringUtils.isEmpty(json)) {
             books = GsonUtil.fromBooks(json);
         }
@@ -151,5 +153,43 @@ public abstract class BFragment extends Fragment {
             }
         }
         return notes;
+    }
+
+    protected UiPromptDialog mUiPromptDialog;
+
+    protected void showmUiPromptDialog(String title) {
+
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(title);
+
+    }
+
+    /**显示UI提示的对话框*/
+    protected void showmUiPromptDialog(int resID) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(resID);
+    }
+
+
+    protected void dissMissUiPromptDialog( ) {
+        if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
+            mUiPromptDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onUiCancelListener() {
+    }
+
+    @Override
+    public void onUiDetermineListener() {
     }
 }

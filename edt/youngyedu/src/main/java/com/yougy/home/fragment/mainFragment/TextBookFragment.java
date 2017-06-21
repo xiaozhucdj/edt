@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
@@ -84,6 +83,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     //    private Subscription msb;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
+    private int mDownPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -109,6 +109,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     }
 
     private void itemClick(int position) {
+        mDownPosition = position ;
         BookInfo info = mBooks.get(position);
         mDownInfo = info;
         String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
@@ -128,7 +129,6 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
             extras.putInt(FileContonst.NOTE_SUBJECT_ID, info.getBookFitSubjectId());
             extras.putString(FileContonst.NOTE_SUBJECT_NAME, info.getBookFitSubjectName());
-
             //作业ID
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
             extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
@@ -143,7 +143,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
                 mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
             } else {
-                UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+                showmUiPromptDialog(R.string.jump_to_net);
             }
         }
     }
@@ -166,7 +166,6 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
                     freshUI(bookInfos);
                 } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK + "")) {
                     //服务请求错误
-//                    msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                     freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
                 }
             }
@@ -193,7 +192,6 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         }
     }
 
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -205,7 +203,6 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             }
         }
     }
-
 
     private void loadData() {
         LogUtils.i("yuanye////////load");
@@ -223,60 +220,9 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         } else {
             Log.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
-//            msb = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
 
-   /* private Observable<List<BookInfo>> getObservable() {
-        return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK+ "").find(CacheJsonInfo.class);
-                if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
-                }else{
-                    UIUtils.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLoadingNull.setVisibility(View.VISIBLE);
-                        }
-                    }) ;
-                }
-                subscriber.onCompleted();
-            }
-        });
-    }
-*/
-/*    private Subscriber<List<BookInfo>> getSubscriber() {
-        return new Subscriber<List<BookInfo>>() {
-            LoadingProgressDialog dialog;
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                dialog = new LoadingProgressDialog(getActivity());
-                dialog.show();
-                dialog.setTitle("数据加载中...");
-            }
-
-            @Override
-            public void onCompleted() {
-                Log.e(TAG, "onCompleted...");
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e(TAG, "onCompleted...");
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onNext(List<BookInfo> bookInfos) {
-                freshUI(bookInfos);
-            }
-        };
-    }*/
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
@@ -337,6 +283,8 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
             public void onFinish(int what, String filePath) {
                 if (DownloadManager.isFinish()) {
                     mDialog.dismiss();
+                    //直接进入下载的图书
+                    itemClick(mDownPosition);
                 }
             }
 
@@ -448,9 +396,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-/*        if (msb != null) {
-            msb.unsubscribe();
-        }*/
+
     }
 
     @Override
@@ -488,4 +434,17 @@ public class TextBookFragment extends BFragment implements View.OnClickListener,
         }
     }
 
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
+    }
 }
