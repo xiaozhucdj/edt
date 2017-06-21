@@ -17,6 +17,7 @@
         android:textStyle="bold" />
 
     <RelativeLayout
+        android:id="@+id/rl_cancelAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="42dp"
@@ -37,10 +38,10 @@
             android:textStyle="bold" />
 
         <Button
-            android:layout_alignParentLeft="true"
             android:id="@+id/btn_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
 
             android:background="@drawable/img_down_book_cancel"
             android:gravity="center"
@@ -49,6 +50,31 @@
             android:textSize="24dp"
             android:textStyle="bold" />
 
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rl_center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="42dp"
+        android:layout_marginRight="42dp"
+        android:layout_marginTop="55dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_centerConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/img_down_book_cancel"
+            android:gravity="center"
+            android:paddingLeft="60dp"
+            android:paddingRight="60dp"
+            android:text="确定"
+            android:textColor="@color/text_color_black"
+            android:textSize="24dp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
 </LinearLayout>
