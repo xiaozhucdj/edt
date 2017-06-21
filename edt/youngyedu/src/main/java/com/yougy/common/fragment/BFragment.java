@@ -165,7 +165,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         }
         mUiPromptDialog.show();
         mUiPromptDialog.setTitle(title);
-
+        mUiPromptDialog.setDialogStyle(false);
     }
 
     /**显示UI提示的对话框*/
@@ -176,6 +176,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         }
         mUiPromptDialog.show();
         mUiPromptDialog.setTitle(resID);
+        mUiPromptDialog.setDialogStyle(false);
     }
 
 
@@ -191,5 +192,10 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
     @Override
     public void onUiDetermineListener() {
+    }
+
+    @Override
+    public void onUiCenterDetermineListener() {
+
     }
 }
