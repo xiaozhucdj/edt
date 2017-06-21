@@ -46,9 +46,13 @@ public abstract class ShopSubscriber<T> extends Subscriber<T> implements Loading
             loadingDialog.dismiss();
         }
     }
-
+    public abstract void require();
     @Override
     public void onClick() {
+        if (isUnsubscribed()){
+            unsubscribe();
+        }
+        require();
         if (loadErrorDialog.isShowing()) {
             loadErrorDialog.dismiss();
         }

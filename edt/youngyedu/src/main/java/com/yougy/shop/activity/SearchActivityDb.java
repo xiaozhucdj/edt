@@ -2,7 +2,6 @@ package com.yougy.shop.activity;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -72,7 +71,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     private void itemClick(int position) {
         BookInfo info = mPageInfos.get(position);
         LogUtils.e(tag, "onItemClick......" + info.getBookTitle());
-        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , Integer.parseInt(info.getBookId()));
+        loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, Integer.parseInt(info.getBookId()));
     }
 
     @Override
@@ -231,7 +230,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     private void queryBook(final NewBookStoreBookReq req) {
-        Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
+        Observable<List<BookInfo>> observable = Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
                 Response response = NewProtocolManager.queryBook(req);
@@ -253,14 +252,23 @@ public class SearchActivityDb extends ShopBaseActivity {
                 }
             }
         }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShopSubscriber<List<BookInfo>>(this) {
-                    @Override
-                    public void onNext(List<BookInfo> bookInfos) {
-                        LogUtils.e(tag, "bookinfos' size : " + bookInfos.size());
-                        refreshResultView(bookInfos);
-                    }
-                });
+                .observeOn(AndroidSchedulers.mainThread());
+
+        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
+
+            @Override
+            public void onNext(List<BookInfo> bookInfos) {
+                LogUtils.e(tag, "bookinfos' size : " + bookInfos.size());
+                refreshResultView(bookInfos);
+            }
+
+            @Override
+            public void require() {
+                queryBook(req);
+            }
+        };
+
+        observable.subscribe(subscriber);
     }
 
     private void refreshResultView(List<BookInfo> bookInfos) {
