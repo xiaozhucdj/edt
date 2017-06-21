@@ -150,6 +150,12 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                     //请求刷新items和下方合计栏.
                     needRefreshItems = true;
                     refreshViewSafe();
+                    if (cartItemList.size() == 0){
+                        deleteBtn.setVisibility(View.INVISIBLE);
+                    }
+                    else {
+                        deleteBtn.setVisibility(View.VISIBLE);
+                    }
                 }
                 else if (o instanceof RemoveBookCartProtocol){
                     //删除购物车的回调在这

@@ -77,6 +77,7 @@ import com.yougy.view.controlView.ControlView;
 import com.yougy.view.decoration.DividerGridItemDecoration;
 import com.yougy.view.showView.MoveImageView;
 import com.yougy.view.showView.MoveRelativeLayout;
+import com.yougy.view.showView.MoveRelativeLayout1;
 import com.yougy.view.showView.MoveView;
 import com.yougy.view.showView.MyFrameLayout;
 import com.yougy.view.showView.ScreenShotView;
@@ -1075,25 +1076,62 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     }
 
     protected void addPic(final Photograph photo, Bitmap bitmap, FrameLayout.LayoutParams params) {
-        final MoveImageView imageView = new MoveImageView(mContext);
-        imageView.setImageResource(R.drawable.img_pic_normal);
-        imageView.setPhotograph(photo);
-        imageView.setOnClickListener(new View.OnClickListener() {
+//        final MoveImageView imageView = new MoveImageView(mContext);
+//        imageView.setImageResource(R.drawable.img_pic_normal);
+//        imageView.setPhotograph(photo);
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                LogUtils.e(TAG, "photo is clicked................");
+//                currentClickedImg = imageView;
+//                imageView.setImageResource(R.drawable.img_pic_normal);
+//                EpdController.leaveScribbleMode(mNoteBookView);
+//                flag = false;
+//                usePhoto(photo);
+//                FrameLayout.LayoutParams tmp = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+//                curImgViewPosition = new Position(tmp.leftMargin, tmp.topMargin);
+//            }
+//        });
+//        imageView.setUpdateImageViewMapListener(this);
+//        mFrameLayout.addView(imageView, params);
+//        imageViews.put(new Position(params.leftMargin, params.topMargin), imageView);
+        MoveRelativeLayout1 view = (MoveRelativeLayout1) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
+        view.setPhotoGraph(photo);
+        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
+        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
+        imagebtn.setImageBitmap(bitmap);
+        params.width = bitmap.getWidth();
+        params.height = bitmap.getHeight();
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogUtils.e(TAG, "photo is clicked................");
-                currentClickedImg = imageView;
-                imageView.setImageResource(R.drawable.img_pic_normal);
-                EpdController.leaveScribbleMode(mNoteBookView);
-                flag = false;
-                usePhoto(photo);
-                FrameLayout.LayoutParams tmp = (FrameLayout.LayoutParams) imageView.getLayoutParams();
-                curImgViewPosition = new Position(tmp.leftMargin, tmp.topMargin);
+                final MoveRelativeLayout1 layout = (MoveRelativeLayout1) v.getParent();
+                mFrameLayout.removeView(layout);
+                Observable.create(new Observable.OnSubscribe<Object>() {
+                    @Override
+                    public void call(Subscriber<? super Object> subscriber) {
+                        Photograph photograph = layout.getPhotoGraph();
+                        if (null != photograph) {
+                            int count = photograph.delete();
+                            LogUtils.e(TAG, "count is : " + count);
+                        }
+                    }
+                }).subscribeOn(Schedulers.io()).subscribe();
             }
         });
-        imageView.setUpdateImageViewMapListener(this);
-        mFrameLayout.addView(imageView, params);
-        imageViews.put(new Position(params.leftMargin, params.topMargin), imageView);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteBtn.setVisibility(View.VISIBLE);
+            }
+        });
+        view.setOnHideDeleteBtnListener(new MoveRelativeLayout1.OnHideDeleteBtnListener() {
+            @Override
+            public void hideDeleteBtn() {
+                deleteBtn.setVisibility(View.GONE);
+            }
+        });
+        mFrameLayout.addView(view, params);
     }
 
     private ImageView currentClickedImg;

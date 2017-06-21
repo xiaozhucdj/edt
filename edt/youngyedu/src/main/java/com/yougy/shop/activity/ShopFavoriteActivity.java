@@ -132,6 +132,12 @@ public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements 
                     //请求刷新items
                     needRefreshItems = true;
                     refreshViewSafe();
+                    if (favorList.size() == 0){
+                        deleteBtn.setVisibility(View.INVISIBLE);
+                    }
+                    else {
+                        deleteBtn.setVisibility(View.VISIBLE);
+                    }
                 }
                 else if (o instanceof RemoveBookFavorProtocol){
                     //删除收藏的回调在这

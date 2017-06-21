@@ -2,6 +2,7 @@ package com.yougy.shop.activity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.yougy.common.activity.AutoLayoutBaseActivity;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -23,6 +24,7 @@ public abstract class ShopAutoLayoutBaseActivity extends AutoLayoutBaseActivity 
         setContentView();
         ButterKnife.bind(this);
         tag = this.getClass().getName();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
     }
 
