@@ -29,6 +29,7 @@ import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
@@ -126,18 +127,15 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     private FitGradeAdapter mFitGradeAdapter;
     private LinearLayout mLlPager;
     private BookInfo mDownInfo;
-    private TextView mSubMore;
     private TextView mGradeMore;
 
-    private ViewGroup mGroupSub;
-    private ViewGroup mGroupGrade;
 
     private DownBookDialog mDialog;
-    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
     private LinearLayout llTerm;
     private boolean mIsPackUp;
+    private int mDownPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -147,21 +145,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         initSubjectAdapter();
         initBookAdapter();
         mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
-
-
-   /*     mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
-        mSubMore.setTag(0);
-        mSubMore.setEnabled(false);
-        mSubMore.setOnClickListener(this);*/
-
         mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
-/*        mGradeMore.setEnabled(false);
-        mGradeMore.setTag(0);*/
         mGradeMore.setOnClickListener(this);
-
-
-        mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
-        mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
         return mRootView;
@@ -304,6 +289,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }
 
     private void bookItemClick(int position) {
+        mDownPosition = position ;
         BookInfo info = mBooks.get(position);
         mDownInfo = info;
         LogUtils.i("book id ....." + info.toString());
@@ -324,15 +310,17 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
-            if (mDialog == null) {
-                mDialog = new DownBookDialog(getActivity());
-                mDialog.setListener(this);
+            if (NetUtils.isNetConnected()) {
+                if (mDialog == null) {
+                    mDialog = new DownBookDialog(getActivity());
+                    mDialog.setListener(this);
+                }
+                mDialog.show();
+                mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
+                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+            } else {
+                showCancelAndDetermineDialog(R.string.jump_to_net);
             }
-            mDialog.show();
-            mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
-            mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
-
-
         }
     }
 
@@ -371,16 +359,12 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
             Log.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
-//            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-      /*  if (mSub != null) {
-            mSub.unsubscribe();
-        }*/
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -449,35 +433,9 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                 mAdaptetFragmentAllTextBook.notifyDataSetChanged();
                 break;
 
-
-            case R.id.tv_subjectMore:
-
-         /*       int tagSub = (int) mSubMore.getTag();
-                if (tagSub == 0) {
-                    setMoreSize(mGroupSub);
-                    mSubMore.setTag(1);
-                    mSubMore.setSelected(true);
-                } else if (tagSub == 1) {
-                    setLineSize(mGroupSub);
-                    mSubMore.setTag(0);
-                    mSubMore.setSelected(false);
-                }*/
-
-                break;
             case R.id.tv_gradeMore:
                 mIsPackUp = !mIsPackUp;
                 setLlTermSize();
-       /*         int tagGrade = (int) mGradeMore.getTag();
-                if (tagGrade == 0) {
-                    setMoreSize(mGroupGrade);
-                    mGradeMore.setTag(1);
-                    mGradeMore.setSelected(true);
-
-                } else if (tagGrade == 1) {
-                    setLineSize(mGroupGrade);
-                    mGradeMore.setTag(0);
-                    mGradeMore.setSelected(false);
-                }*/
                 break;
         }
 
@@ -541,6 +499,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             public void onFinish(int what, String filePath) {
                 if (DownloadManager.isFinish()) {
                     mDialog.dismiss();
+                    //直接进入下载的图书
+                    bookItemClick(mDownPosition);
                 }
             }
 
@@ -618,26 +578,6 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
             mBookItemTile.setText(SpUtil.getGradeName() + "课本");
-
-            //显示隐藏更多
-          /*  if (mBookFitGrade.size() > 4) {
-                mGradeMore.setVisibility(View.VISIBLE);
-                mGradeMore.setEnabled(true);
-            } else {
-                mGradeMore.setVisibility(View.INVISIBLE);
-                mGradeMore.setEnabled(false);
-            }
-            if (mBookSubject.size() > 4) {
-                mSubMore.setVisibility(View.VISIBLE);
-                mSubMore.setEnabled(true);
-            } else {
-                mSubMore.setVisibility(View.INVISIBLE);
-                mSubMore.setEnabled(false);
-            }
-            //设置最小值大小
-            setLineSize(mGroupSub);
-            setLineSize(mGroupGrade);*/
-
         } else {
             LogUtils.i("当前还没有书");
         }
@@ -707,217 +647,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }
 
 
-    ///////////////////////////////测试假数据///////////////////////////////////////
-
-    /***
-     * 5个年级
-     * 2个学科 ：
-     */
-    private void testData() {
-        BookInfo bookInfo1 = new BookInfo();
-        //设置图片
-        bookInfo1.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo1.setBookFitGradeName("小学一年级");
-        bookInfo1.setBookFitGradeId(1);
-        bookInfo1.setBookFitSubjectName("语文");
-        bookInfo1.setBookFitSubjectId(1);
-
-        BookInfo bookInfo2 = new BookInfo();
-        bookInfo2.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo2.setBookFitGradeName("小学二年级");
-        bookInfo2.setBookFitGradeId(2);
-        bookInfo2.setBookFitSubjectName("语文");
-        bookInfo2.setBookFitSubjectId(1);
-
-        BookInfo bookInfo3 = new BookInfo();
-        //设置图片
-        bookInfo3.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo3.setBookFitGradeName("小学三年级");
-        bookInfo3.setBookFitGradeId(3);
-        bookInfo3.setBookFitSubjectName("数学");
-        bookInfo3.setBookFitSubjectId(2);
-
-        BookInfo bookInfo4 = new BookInfo();
-        //设置图片
-        bookInfo4.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo4.setBookFitGradeName("小学四年级");
-        bookInfo4.setBookFitGradeId(4);
-        bookInfo4.setBookFitSubjectName("数学");
-        bookInfo4.setBookFitSubjectId(2);
 
 
-        BookInfo bookInfo5 = new BookInfo();
-        bookInfo5.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo5.setBookFitGradeName("小学四年级");
-        bookInfo5.setBookFitGradeId(4);
-        bookInfo5.setBookFitSubjectName("数学");
-        bookInfo5.setBookFitSubjectId(2);
-
-        BookInfo bookInfo6 = new BookInfo();
-        bookInfo6.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo6.setBookFitGradeName("小学六年级");
-        bookInfo6.setBookFitGradeId(6);
-        bookInfo6.setBookFitSubjectName("数学");
-        bookInfo6.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo7 = new BookInfo();
-        bookInfo7.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo7.setBookFitGradeName("小学六年级");
-        bookInfo7.setBookFitGradeId(6);
-        bookInfo7.setBookFitSubjectName("数学");
-        bookInfo7.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo8 = new BookInfo();
-        bookInfo8.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo8.setBookFitGradeName("小学六年级");
-        bookInfo8.setBookFitGradeId(6);
-        bookInfo8.setBookFitSubjectName("数学");
-        bookInfo8.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo9 = new BookInfo();
-        bookInfo9.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo9.setBookFitGradeName("小学六年级");
-        bookInfo9.setBookFitGradeId(6);
-        bookInfo9.setBookFitSubjectName("数学");
-        bookInfo9.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo10 = new BookInfo();
-        bookInfo10.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo10.setBookFitGradeName("小学六年级");
-        bookInfo10.setBookFitGradeId(6);
-        bookInfo10.setBookFitSubjectName("数学");
-        bookInfo10.setBookFitSubjectId(2);
-
-        BookInfo bookInfo11 = new BookInfo();
-        bookInfo11.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo11.setBookFitGradeName("小学六年级");
-        bookInfo11.setBookFitGradeId(6);
-        bookInfo11.setBookFitSubjectName("数学");
-        bookInfo11.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo12 = new BookInfo();
-        bookInfo12.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo12.setBookFitGradeName("小学六年级");
-        bookInfo12.setBookFitGradeId(6);
-        bookInfo12.setBookFitSubjectName("数学");
-        bookInfo12.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo13 = new BookInfo();
-        bookInfo13.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo13.setBookFitGradeName("小学六年级");
-        bookInfo13.setBookFitGradeId(6);
-        bookInfo13.setBookFitSubjectName("数学");
-        bookInfo13.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo14 = new BookInfo();
-        bookInfo14.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo14.setBookFitGradeName("小学六年级");
-        bookInfo14.setBookFitGradeId(6);
-        bookInfo14.setBookFitSubjectName("数学");
-        bookInfo14.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo15 = new BookInfo();
-        bookInfo15.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo15.setBookFitGradeName("小学六年级");
-        bookInfo15.setBookFitGradeId(6);
-        bookInfo15.setBookFitSubjectName("数学");
-        bookInfo15.setBookFitSubjectId(2);
-
-
-        BookInfo bookInfo16 = new BookInfo();
-        bookInfo16.setBookCover("http://192.168.12.2:8080/leke_platform/bookimgs/img20161031114500.png");
-        bookInfo16.setBookFitGradeName("小学六年级");
-        bookInfo16.setBookFitGradeId(6);
-        bookInfo16.setBookFitSubjectName("数学");
-        bookInfo16.setBookFitSubjectId(2);
-
-
-        mServerBooks.add(bookInfo1);
-        mServerBooks.add(bookInfo2);
-        mServerBooks.add(bookInfo3);
-        mServerBooks.add(bookInfo4);
-        mServerBooks.add(bookInfo5);
-        mServerBooks.add(bookInfo6);
-        mServerBooks.add(bookInfo7);
-        mServerBooks.add(bookInfo8);
-        mServerBooks.add(bookInfo9);
-        mServerBooks.add(bookInfo10);
-        mServerBooks.add(bookInfo11);
-        mServerBooks.add(bookInfo12);
-        mServerBooks.add(bookInfo13);
-        mServerBooks.add(bookInfo14);
-        mServerBooks.add(bookInfo15);
-        mServerBooks.add(bookInfo16);
-//-----------------------------------------------
-        mServerBooks.add(bookInfo1);
-        mServerBooks.add(bookInfo2);
-        mServerBooks.add(bookInfo3);
-        mServerBooks.add(bookInfo4);
-        mServerBooks.add(bookInfo5);
-        mServerBooks.add(bookInfo6);
-        mServerBooks.add(bookInfo7);
-        mServerBooks.add(bookInfo8);
-        mServerBooks.add(bookInfo9);
-        mServerBooks.add(bookInfo10);
-        mServerBooks.add(bookInfo11);
-        mServerBooks.add(bookInfo12);
-        mServerBooks.add(bookInfo13);
-        mServerBooks.add(bookInfo14);
-        mServerBooks.add(bookInfo15);
-        mServerBooks.add(bookInfo16);
-//-----------------------------------------------
-        mServerBooks.add(bookInfo1);
-        mServerBooks.add(bookInfo2);
-        mServerBooks.add(bookInfo3);
-        mServerBooks.add(bookInfo4);
-        mServerBooks.add(bookInfo5);
-        mServerBooks.add(bookInfo6);
-        mServerBooks.add(bookInfo7);
-        mServerBooks.add(bookInfo8);
-        mServerBooks.add(bookInfo9);
-        mServerBooks.add(bookInfo10);
-        mServerBooks.add(bookInfo11);
-        mServerBooks.add(bookInfo12);
-        mServerBooks.add(bookInfo13);
-        mServerBooks.add(bookInfo14);
-        mServerBooks.add(bookInfo15);
-        mServerBooks.add(bookInfo16);
-
-
-        refreshFirstAdapterData();
-    }
-
-    /**
-     * 设置一行item 显示大小
-     *
-     * @param view
-     */
-    private void setLineSize(ViewGroup view) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 60);
-        if (view == mGroupSub) {
-            params.setMargins(0, 15, 0, 0);
-        }
-        view.setLayoutParams(params);
-    }
-
-    /**
-     * 设置全部大小
-     */
-    private void setMoreSize(ViewGroup view) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        if (view == mGroupSub) {
-            params.setMargins(0, 15, 0, 0);
-        }
-        view.setLayoutParams(params);
-    }
 
 
     //////////////////////////RX////////////////////////////////////////////
@@ -940,62 +671,12 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                 } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK + "")) {
                     LogUtils.i("yuanye...请求服务器 加载出错 ---AllNotesFragment");
                     freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
-//                    mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
                 }
             }
         }));
     }
-/*
-    private Observable<List<BookInfo>> getObservable() {
-        return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<BookInfo>> subscriber) {
 
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK+"").find(CacheJsonInfo.class);
-                if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
-                }else{
-                    UIUtils.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLoadingNull.setVisibility(View.VISIBLE);
-                        }
-                    }) ;
-                }
-                subscriber.onCompleted();
-            }
-        });
-    }
 
-    private Subscriber<List<BookInfo>> getSubscriber() {
-        return new Subscriber<List<BookInfo>>() {
-            LoadingProgressDialog dialog;
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                dialog = new LoadingProgressDialog(getActivity());
-                dialog.show();
-                dialog.setTitle("数据加载中...");
-            }
-
-            @Override
-            public void onCompleted() {
-                Log.e(TAG, "onCompleted...");
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(List<BookInfo> bookInfos) {
-                freshUI(bookInfos);
-            }
-        };
-    }*/
 
     private void freshUI(List<BookInfo> bookInfos) {
         mNewTextBookCallBack = null;
@@ -1014,7 +695,6 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
         mFitGradeView = null;
         mSubjectView = null;
         mBookView = null;
@@ -1037,5 +717,19 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             LogUtils.i("type .." + EventBusConstant.all_coach_book);
             loadData();
         }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
     }
 }

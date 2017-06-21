@@ -86,6 +86,8 @@
     <string name="record_of_search">搜索历史</string>
     <string name="clear_record">清空历史记录</string>
 
+    <string name="jump_to_net">当前没有网络,是否链接网络?</string>
+
     <string-array name="titles">
         <item>课本</item>
         <item>辅导书</item>
