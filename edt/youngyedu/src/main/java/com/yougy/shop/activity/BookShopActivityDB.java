@@ -56,6 +56,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
+import static rx.Observable.create;
+
 
 /**
  * Created by jiangliang on 2017/3/2.
@@ -114,7 +116,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     @Override
     protected void loadData() {
         mHistoryRecords = SpUtil.getHistoryRecord();
-        Observable.zip(getCategoryInfo(), getHomeInfo(), new Func2<List<CategoryInfo>, List<BookInfo>, List<BookInfo>>() {
+        Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), new Func2<List<CategoryInfo>, List<BookInfo>, List<BookInfo>>() {
 
             @Override
             public List<BookInfo> call(List<CategoryInfo> categoryInfos, List<BookInfo> bookInfos) {
@@ -124,15 +126,22 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 return bookInfos;
             }
         }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShopSubscriber<List<BookInfo>>(this) {
-                    @Override
-                    public void onNext(List<BookInfo> bookInfos) {
-                        LogUtils.e(tag, "book infos' size : " + bookInfos.size());
-                        handleHomeInfo(bookInfos);
-                        onCompleted();
-                    }
-                });
+                .observeOn(AndroidSchedulers.mainThread());
+        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this){
+
+            @Override
+            public void onNext(List<BookInfo> bookInfos) {
+                LogUtils.e(tag, "book infos' size : " + bookInfos.size());
+                handleHomeInfo(bookInfos);
+                onCompleted();
+            }
+
+            @Override
+            public void require() {
+                loadData();
+            }
+        };
+        observable.subscribe(subscriber);
     }
 
 
@@ -166,7 +175,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取分类数据
      */
     private Observable<List<CategoryInfo>> getCategoryInfo() {
-        return Observable.create(new Observable.OnSubscribe<List<CategoryInfo>>() {
+        return create(new Observable.OnSubscribe<List<CategoryInfo>>() {
             @Override
             public void call(Subscriber<? super List<CategoryInfo>> subscriber) {
                 try {
@@ -214,7 +223,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取首页数据
      */
     private Observable<List<BookInfo>> getHomeInfo() {
-        return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
+        return create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
                 Response response = NewProtocolManager.queryBookShopHome(new NewBookStoreHomeReq());
@@ -236,7 +245,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 根据类别获取图书信息
      */
     private void getSingleBookInfo() {
-        Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
+        Observable<List<BookInfo>> observable = Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
                 LogUtils.e(tag, "classify id : " + mClassifyId);
@@ -256,25 +265,31 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
             }
         }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShopSubscriber<List<BookInfo>>(this) {
-                    @Override
-                    public void onNext(List<com.yougy.shop.bean.BookInfo> bookInfos) {
-                        LogUtils.e(tag, "book infos' size : " + bookInfos.size());
-                        refreshSingleClassifyRecycler(bookInfos);
-                        switch (mClassifyPosition) {
-                            case 0:
-                                textbooks = bookInfos;
-                                break;
-                            case 1:
-                                guidbooks = bookInfos;
-                                break;
-                            case 2:
-                                extrabooks = bookInfos;
-                                break;
-                        }
-                    }
-                });
+                .observeOn(AndroidSchedulers.mainThread());
+        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
+            @Override
+            public void require() {
+                getSingleBookInfo();
+            }
+
+            @Override
+            public void onNext(List<BookInfo> bookInfos) {
+                LogUtils.e(tag, "book infos' size : " + bookInfos.size());
+                refreshSingleClassifyRecycler(bookInfos);
+                switch (mClassifyPosition) {
+                    case 0:
+                        textbooks = bookInfos;
+                        break;
+                    case 1:
+                        guidbooks = bookInfos;
+                        break;
+                    case 2:
+                        extrabooks = bookInfos;
+                        break;
+                }
+            }
+        };
+        observable.subscribe(subscriber);
     }
 
 
@@ -858,7 +873,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private void queryBookByVersion(final NewBookStoreBookReq req) {
-        Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
+        Observable<List<BookInfo>> observable = create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {
                 Response response = NewProtocolManager.queryBook(req);
@@ -879,15 +894,23 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 }
             }
         }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShopSubscriber<List<BookInfo>>(this) {
-                    @Override
-                    public void onNext(List<BookInfo> bookInfos) {
-                        setCompositeText();
-                        hideFiltrateLayout();
-                        refreshSingleClassifyRecycler(bookInfos);
-                    }
-                });
+                .observeOn(AndroidSchedulers.mainThread());
+
+        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
+            @Override
+            public void require() {
+                queryBookByVersion(req);
+            }
+
+            @Override
+            public void onNext(List<BookInfo> bookInfos) {
+                setCompositeText();
+                hideFiltrateLayout();
+                refreshSingleClassifyRecycler(bookInfos);
+            }
+        };
+        observable.subscribe(subscriber);
+
     }
 
 

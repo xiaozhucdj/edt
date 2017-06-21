@@ -22,8 +22,8 @@ public class LoadingProgressDialog extends BaseDialog {
 
     @Override
     protected void init() {
-        setCancelable(false);
-        setCanceledOnTouchOutside(false);
+//        setCancelable(false);
+//        setCanceledOnTouchOutside(false);
     }
 
     @Override
