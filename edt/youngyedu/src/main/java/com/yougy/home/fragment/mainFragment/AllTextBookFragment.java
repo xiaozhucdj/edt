@@ -343,7 +343,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
                 mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
             } else {
-                showmUiPromptDialog(R.string.jump_to_net);
+                showCancelAndDetermineDialog(R.string.jump_to_net);
             }
         }
     }

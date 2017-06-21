@@ -157,7 +157,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
     protected UiPromptDialog mUiPromptDialog;
 
-    protected void showmUiPromptDialog(String title) {
+    protected void showCancelAndDetermineDialog(String title) {
 
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
@@ -169,7 +169,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
     /**显示UI提示的对话框*/
-    protected void showmUiPromptDialog(int resID) {
+    protected void showCancelAndDetermineDialog(int resID) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);

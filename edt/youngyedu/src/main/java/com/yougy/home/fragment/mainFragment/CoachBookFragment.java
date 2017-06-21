@@ -135,7 +135,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
                 mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
             } else {
-                showmUiPromptDialog(R.string.jump_to_net);
+                showCancelAndDetermineDialog(R.string.jump_to_net);
             }
 
         }

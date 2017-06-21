@@ -193,7 +193,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
                 mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
             } else {
-                showmUiPromptDialog(R.string.jump_to_net);
+                showCancelAndDetermineDialog(R.string.jump_to_net);
             }
         }
     }
