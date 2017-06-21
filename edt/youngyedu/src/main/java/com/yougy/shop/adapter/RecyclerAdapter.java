@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.yougy.common.utils.LogUtils;
 import com.yougy.shop.bean.CategoryInfo;
+import com.yougy.ui.activity.R;
 
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         void bindView(CategoryInfo info) {
             textView.setTextSize(20);
+            textView.setTextColor(textView.getContext().getResources().getColor(R.color.text_color_black));
             textView.setText(info.getCategoryDisplay());
         }
 
