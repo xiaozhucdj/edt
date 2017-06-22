@@ -24,6 +24,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
 import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
 import com.yougy.common.protocol.callback.PromoteBookCallBack;
+import com.yougy.common.protocol.callback.QueryShopBookDetailCallBack;
 import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
 import com.yougy.common.protocol.request.AppendBookFavorRequest;
@@ -44,7 +45,6 @@ import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.adapter.PromoteBookAdapter;
-import com.yougy.common.protocol.callback.QueryShopBookDetailCallBack;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -162,8 +162,13 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     protected void loadData() {}
 
     private void refreshData (){
-        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId() , bookId
-                , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , new QueryShopBookDetailCallBack(this , bookId));
+
+        if (NetUtils.isNetConnected()){
+            ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId() , bookId
+                    , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , new QueryShopBookDetailCallBack(this , bookId));
+        }else{
+
+        }
     }
 
     @Override
@@ -192,23 +197,25 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 break;
             case R.id.btn_buy:
                 if (mBookInfo.isBookInShelf()){
-                    ToastUtil.showToast(getApplicationContext() , "这本书已经购买过");
+                    showCenterDetermineDialog(R.string.books_already_buy);
                 }
                 else {
                     requestOrder();
                 }
                 break;
             case R.id.btn_addCar:
-                if (mBookInfo.isBookInCart() || mBookInfo.isBookInShelf()){
-                    ToastUtil.showToast(getApplicationContext() , "本书已在购物车里或已经购买过!");
-                }
-                else {
+
+                if (mBookInfo.isBookInCart()){
+                    showCenterDetermineDialog(R.string.books_already_add_car);
+                }else if( mBookInfo.isBookInShelf()){
+                    showCenterDetermineDialog(R.string.books_already_buy);
+                } else {
                     addBooksToCar(new ArrayList<BookInfo>(){{add(mBookInfo);}});
                 }
                 break;
             case R.id.btn_addFavor:
                 if (mBookInfo.isBookInFavor()){
-                    ToastUtil.showToast(getApplicationContext() , "本书已在收藏里");
+                    showCenterDetermineDialog(R.string.books_already_add_collection);
                 }
                 else {
                     addBooksToFavor(new ArrayList<BookInfo>(){{add(mBookInfo);}});
@@ -318,20 +325,20 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     if (o instanceof AppendBookCartRep) {
                         AppendBookCartRep rep = (AppendBookCartRep) o;
                         if (rep.getCode() == 200){
-                            ToastUtil.showToast(getApplicationContext() , "添加到购物车成功");
+//                            ToastUtil.showToast(getApplicationContext() , "添加到购物车成功");
                             mBookInfo.setBookInCart(true);
                         }
                         else {
-                            ToastUtil.showToast(getApplicationContext() , "添加到购物车失败");
+                            showCenterDetermineDialog(R.string.books_add_car_fail);
                         }
                     } else if (o instanceof AppendBookFavorRep) {
                         AppendBookFavorRep rep = (AppendBookFavorRep) o;
                         if (rep.getCode() == 200){
-                            ToastUtil.showToast(getApplicationContext() , "添加到收藏成功");
+//                            ToastUtil.showToast(getApplicationContext() , "添加到收藏成功");
                             mBookInfo.setBookInFavor(true);
                         }
                         else {
-                            ToastUtil.showToast(getApplicationContext() , "添加到收藏失败");
+                            showCenterDetermineDialog(R.string.books_add_collection_fail);
                         }
                     } else if (o instanceof QueryShopBookDetailRep){
                         QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
@@ -352,8 +359,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             mTvBookAuthor.setText("作者 : " + mBookInfo.getBookAuthor());
                             //出版时间
                             mTvBookPublishTime.setText("出版时间 : " + mBookInfo.getBookPublishTime());
-                            //TODO:文件大小
-                            mTvBookDownloadSize.setText("文件大小 : " + "TODO");
+                            mTvBookDownloadSize.setText("文件大小 :");
                             //价格
                             mTvBookSalePrice.setText("￥" + mBookInfo.getBookSalePrice());
                             //购买按钮价格
@@ -373,7 +379,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 //                        ProtocolManager.promoteBookProtocol(request, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK, callBack);
                         }
                         else {
-                            ToastUtil.showToast(getApplicationContext() , "获取图书详情失败");
+                            showCenterDetermineDialog(R.string.books_request_details_fail);
                             Log.v("FH" , "获取图书详情失败");
                         }
                     }
@@ -392,7 +398,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             finish();
                         }
                         else {
-                            ToastUtil.showToast(getApplicationContext() , "下单失败");
+                            showCenterDetermineDialog(R.string.books_request_order_fail);
                         }
                     }
                     else if (o instanceof PromoteBookRep){
@@ -403,7 +409,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             mPromoteBookAdapter.notifyDataSetChanged();
                         }
                         else {
-                            ToastUtil.showToast(getApplicationContext() , "获取推荐图书失败");
+                            ToastUtil.showToast(getApplicationContext() , "");
+                            showCenterDetermineDialog(R.string.books_request_recommended_fail);
                         }
                     }
                 }
