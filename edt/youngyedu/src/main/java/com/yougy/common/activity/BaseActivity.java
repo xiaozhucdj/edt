@@ -20,6 +20,7 @@ import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.LoadingProgressDialog;
+import com.yougy.view.dialog.UiPromptDialog;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import butterknife.ButterKnife;
 /**
  * Created by yuanye 2016/08/22
  */
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends FragmentActivity implements UiPromptDialog.Listener {
     protected String tag = getClass().getName();
     /**
      * UI 线程ID
@@ -694,5 +695,70 @@ public abstract class BaseActivity extends FragmentActivity {
             intent.setAction("android.intent.action.VIEW");
         }
         BaseActivity.this.startActivity(intent);
+    }
+
+    protected UiPromptDialog mUiPromptDialog;
+
+    protected void showCancelAndDetermineDialog(String title) {
+
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(title);
+        mUiPromptDialog.setDialogStyle(false);
+    }
+
+    /**显示UI提示的对话框*/
+    protected void showCancelAndDetermineDialog(int resID) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(resID);
+        mUiPromptDialog.setDialogStyle(false);
+    }
+
+    protected void showCenterDetermineDialog(String title) {
+
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(title);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    /**显示UI提示的对话框*/
+    protected void showCenterDetermineDialog(int resID) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(resID);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    protected void dissMissUiPromptDialog( ) {
+        if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
+            mUiPromptDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onUiCancelListener() {
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+    }
+
+    @Override
+    public void onUiCenterDetermineListener() {
+
     }
 }
