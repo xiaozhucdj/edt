@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
@@ -163,7 +162,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                     }
 
                     if (StringUtils.isEmpty(noteTitle)) {
-                        UIUtils.showToastSafe("亲 你还没有 创建笔记 昵称", Toast.LENGTH_SHORT);
+                        showCenterDetermineDialog(R.string.note_name_null);
                         return;
                     } else {
                         mCreatInfo = new NoteInfo();
@@ -175,7 +174,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                         mCreatInfo.setNoteCreator(SpUtil.getAccountId());
                         //设置 笔记类型 ,内部转换对应的int 后期修改
                         mCreatInfo.setNoteStyleOption(mNoteDialog.getNoteOptionStyle());
-                        UIUtils.showToastSafe(mCreatInfo.getNoteType() + "", 1);
+//                        UIUtils.showToastSafe(mCreatInfo.getNoteType() + "", 1);
                         //笔记年级
                         mCreatInfo.setNoteFitGradeName(SpUtil.getGradeName());
                         //笔记学科
@@ -291,7 +290,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                         addCacheData(NewProtocolManager.NewCacheId.ALL_CODE_NOTE, mCreatInfo);
 
                     } else {
-                        UIUtils.showToastSafe("添加笔记失败", Toast.LENGTH_LONG);
+                        showCenterDetermineDialog(R.string.add_note_fail);
                     }
                 }
             }
@@ -470,7 +469,6 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
             }
             mServerInfos.add(addCreatNoteItem());
             refresh();
-//            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
 
@@ -698,5 +696,11 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                 }
             }
         }
+    }
+
+    @Override
+    public void onUiCenterDetermineListener() {
+        super.onUiCenterDetermineListener();
+        dissMissUiPromptDialog();
     }
 }
