@@ -179,6 +179,27 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         mUiPromptDialog.setDialogStyle(false);
     }
 
+    protected void showCenterDetermineDialog(String title) {
+
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(title);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    /**显示UI提示的对话框*/
+    protected void showCenterDetermineDialog(int resID) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTitle(resID);
+        mUiPromptDialog.setDialogStyle(true);
+    }
 
     protected void dissMissUiPromptDialog( ) {
         if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
