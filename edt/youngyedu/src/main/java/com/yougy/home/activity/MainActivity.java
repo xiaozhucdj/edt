@@ -1,8 +1,6 @@
 package com.yougy.home.activity;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.v4.app.Fragment;
@@ -377,8 +375,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (NetUtils.isNetConnected()) {
                     loadIntent(BookShopActivityDB.class);
                 } else {
-//                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
-                    showDialogNoNet();
+                    showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
                 mFlRight.setVisibility(View.GONE);
                 break;
@@ -393,29 +390,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (NetUtils.isNetConnected()) {
                     loadIntent(AccountSetActivity.class);
                 } else {
-//                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
-                    showDialogNoNet();
+                    showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
                 mFlRight.setVisibility(View.GONE);
 
                 break;
-            case R.id.imgBtn_refresh:
-    /*            LogUtils.i("刷新列表");
-                if (NetUtils.isNetConnected()) {
-                    if (mRefreshListener != null) {
-                        mRefreshListener.onRefreshClickListener();
-                    }
-                } else {
-                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
-                }*/
-                break;
-
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");
                 if (NetUtils.isNetConnected()) {
                     postEvent();
                 } else {
-                    showDialogNoNet();
+                    showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
                 mFlRight.setVisibility(View.GONE);
                 break;
@@ -477,17 +462,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         EventBus.getDefault().post(baseEvent);
     }
 
-    private void showDialogNoNet() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("该操作需要网络，请设置网络！");
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
-    }
 
     /***
      * 切换fragment
@@ -990,6 +964,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }else if(EventBusConstant.need_refresh.equalsIgnoreCase(event.getType())){
             postEvent();
         }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCenterDetermineListener() {
+        super.onUiCenterDetermineListener();
     }
 }
 
