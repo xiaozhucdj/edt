@@ -127,7 +127,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this){
+        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
 
             @Override
             public void onNext(List<BookInfo> bookInfos) {
@@ -149,7 +149,9 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     protected void refreshView() {
 
     }
+
     public static List<CategoryInfo> grades = new ArrayList<>();
+
     private void handleCategoryInfo(List<CategoryInfo> categories) {
         for (int i = 0; i < categories.size(); i++) {
             CategoryInfo level1 = categories.get(i);
@@ -190,7 +192,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    LogUtils.e(tag,"IOException : " + e.getMessage());
+                    LogUtils.e(tag, "IOException : " + e.getMessage());
                 }
             }
         });
@@ -665,7 +667,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private void refreshSingleClassifyRecycler(List<BookInfo> infos) {
-        LogUtils.e(tag,"refreshSingleClassifyRecycler..............");
+        LogUtils.e(tag, "refreshSingleClassifyRecycler..............");
         generateBtn(infos);
         if (mPageInfos.size() > 0) {
             mPageInfos.clear();
@@ -680,10 +682,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 itemClick(mBookAdapter.getItemBook(vh.getAdapterPosition()));
             }
         });
+        binding.emptyTv.setVisibility(infos.size() == 0 ? View.VISIBLE : View.GONE);
     }
 
     private void itemClick(BookInfo bookInfo) {
-        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , Integer.parseInt(bookInfo.getBookId()));
+        loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, Integer.parseInt(bookInfo.getBookId()));
     }
 
     private void resetComposite() {
@@ -842,6 +845,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void generateVersionLayout(CategoryInfo info) {
         binding.versionWrap.removeAllViews();
         List<CategoryInfo> versionInfos = versionSparseArray.get(info.getCategoryId());
+        LogUtils.e(tag,"version's size : " + versionInfos.size());
         for (int j = 0; j < versionInfos.size(); j++) {
             final CategoryInfo versionInfo = versionInfos.get(j);
             final TextView versionTv = (TextView) View.inflate(BookShopActivityDB.this, R.layout.text_view, null);
@@ -849,7 +853,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             versionTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    for (int i = 0; i < binding.subjectWrap.getChildCount(); i++) {
+                    for (int i = 0; i < binding.versionWrap.getChildCount(); i++) {
                         View child = binding.versionWrap.getChildAt(i);
                         if (child.isSelected()) {
                             child.setSelected(false);
@@ -882,7 +886,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                     LogUtils.e(tag, "result Json : " + resultJson);
                     Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
                     if (result.getCode() == 200) {
-                        if (!subscriber.isUnsubscribed()){
+                        if (!subscriber.isUnsubscribed()) {
                             subscriber.onNext(result.getData());
                             subscriber.onCompleted();
                         }
