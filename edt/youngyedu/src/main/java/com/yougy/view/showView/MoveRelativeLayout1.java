@@ -82,9 +82,9 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
     private FrameLayout.LayoutParams params;
     private void updateWindowPosition() {
         params = (FrameLayout.LayoutParams) getLayoutParams();
-        int y = screenHeight - 61;
+        int y = screenHeight - getHeight();
         LogUtils.e(getClass().getName(), "leftmargin : " + mStartX + ",topmargin : " + mStartY + ",Y:" + y);
-        int x = screenWidth - 50;
+        int x = screenWidth - getWidth();
         if (mStartX < x) {
             params.leftMargin = (int) mStartX;
         } else {
@@ -94,7 +94,7 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
             params.topMargin = 60;
         } else if (mStartY > y) {
             LogUtils.e(getClass().getName(), "startY..................." + mStartY);
-            params.topMargin = y - 50;
+            params.topMargin = y - 60;
         } else {
             params.topMargin = (int) mStartY;
         }

@@ -12,7 +12,7 @@
   <component name="ChangeListManager">
     <list default="true" id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/RecyclerAdapter.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/RecyclerAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MoveRelativeLayout1.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MoveRelativeLayout1.java" />
     </list>
     <ignored path="edt.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -81,24 +81,12 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="BookShopActivityDB.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java">
+      <file leaf-file-name="MoveRelativeLayout1.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MoveRelativeLayout1.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="569" column="42" selection-start-line="569" selection-start-column="42" selection-end-line="569" selection-end-column="42" />
+            <state relative-caret-position="450">
+              <caret line="96" column="36" selection-start-line="96" selection-start-column="36" selection-end-line="96" selection-end-column="36" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RecyclerAdapter.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/RecyclerAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="679">
-              <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -3336,7 +3324,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/RemoveBookFavorCallBack.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopAutoLayoutBaseActivity.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BaseData.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/NewShopFavoriteActivity.java" />
@@ -3387,6 +3374,7 @@
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/TextBookFragment.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/RecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MoveRelativeLayout1.java" />
       </list>
     </option>
   </component>
@@ -3421,14 +3409,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches">
-        <subPane />
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView">
-        <subPane />
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -3595,7 +3575,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="shop" />
+              <option name="myItemId" value="view" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3633,11 +3613,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="shop" />
+              <option name="myItemId" value="view" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="activity" />
+              <option name="myItemId" value="showView" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3673,6 +3653,14 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="AndroidView">
+        <subPane />
+      </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Scratches">
+        <subPane />
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -3680,6 +3668,7 @@
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="device.picker.selection" value="0123456789ABCDEF" />
     <property name="SearchEverywhereHistoryKey" value="Confirm&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/activity/ConfirmOrderActivity.java&#10;shopcartfav&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/res/layout/shop_cart_favorite_list_book_item.xml&#10;orderbookinfo&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/res/layout/order_book_info_item.xml&#10;comtitlelay&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/res/layout/commcon_title_layout.xml&#10;acshopneb&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml&#10;ShopGlo&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/globle/ShopGloble.java&#10;ShopCar&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java&#10;Shop&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java&#10;Base&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/activity/AutoLayoutBaseActivity.java&#10;BookInfo&#9;PSI&#9;JAVA://com.yougy.init.bean.BookInfo&#10;Bookinfo&#9;PSI&#9;JAVA://com.yougy.shop.bean.BookInfo&#10;NetMa&#9;PSI&#9;JAVA://com.yougy.common.manager.NetManager&#10;Shopcart&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java&#10;ShopFav&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/activity/ShopFavoriteActivity.java&#10;RemoveB&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/protocol/request/RemoveBookCartRequest.java&#10;Remove&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/protocol/request/RemoveBookFavorRequest.java&#10;QueryBookFav&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/protocol/response/QueryBookFavorProtocol.java&#10;NewSh&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/activity/NewShopCartActivity.java&#10;Favor&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/shop/activity/NewShopFavoriteActivity.java&#10;NewShop&#9;PSI&#9;JAVA://com.yougy.shop.activity.NewShopFavoriteActivity&#10;Cart&#9;PSI&#9;JAVA://com.yougy.shop.activity.NewShopCartActivity&#10;updataNote&#9;PSI&#9;JAVA://com.yougy.home.fragment.showFragment.NoteBookFragment#updataNoteInfo&#10;mControlActivity&#9;PSI&#9;JAVA://com.yougy.home.fragment.showFragment.BaseFragment#mControlActivity&#10;newp&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/common/manager/NewProtocolManager.java&#10;NewDeleteNoteReq&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/common/protocol/request/NewDeleteNoteReq.java&#10;NewDeleteNoteRep&#9;PSI&#9;JAVA://com.yougy.common.protocol.response.NewDeleteNoteRep&#10;NewInserAllNoteRep&#9;PSI&#9;JAVA://com.yougy.common.protocol.response.NewInserAllNoteRep&#10;NewQueryNoteRep&#9;PSI&#9;JAVA://com.yougy.common.protocol.response.NewQueryNoteRep&#10;AppendNotesCallBack&#9;PSI&#9;JAVA://com.yougy.common.protocol.callback.AppendNotesCallBack&#10;DelteNoteCallBack&#9;PSI&#9;JAVA://com.yougy.common.protocol.callback.DelteNoteCallBack&#10;UpdaNoteCallBack&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/common/protocol/callback/UpdaNoteCallBack.java&#10;NoteBookCallBack&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/common/protocol/callback/NoteBookCallBack.java&#10;TextBookCallBack&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/common/protocol/callback/TextBookCallBack.java&#10;NewQueryUserRep&#9;PSI&#9;JAVA://com.yougy.common.protocol.response.NewQueryUserRep" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -4335,16 +4324,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/FileContonst.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
@@ -4459,7 +4438,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="413">
           <caret line="27" column="31" selection-start-line="27" selection-start-column="31" selection-end-line="27" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4474,7 +4452,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="279">
           <caret line="20" column="11" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4482,7 +4459,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="410">
           <caret line="990" column="0" selection-start-line="990" selection-start-column="0" selection-end-line="990" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4635,7 +4611,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="95" column="0" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4650,7 +4625,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="159">
           <caret line="145" column="1" selection-start-line="145" selection-start-column="1" selection-end-line="146" selection-end-column="30" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4658,9 +4632,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="699">
           <caret line="192" column="41" selection-start-line="192" selection-start-column="41" selection-end-line="192" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4668,9 +4639,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4678,11 +4646,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17200">
           <caret line="747" column="5" selection-start-line="747" selection-start-column="5" selection-end-line="747" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#13928#13929#0" expanded="false" />
-            <element signature="e#13961#13962#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4690,10 +4653,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4375">
           <caret line="175" column="25" selection-start-line="175" selection-start-column="25" selection-end-line="175" selection-end-column="25" />
-          <folding>
-            <element signature="e#13013#13014#0" expanded="false" />
-            <element signature="e#13046#13047#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4701,13 +4660,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5475">
           <caret line="276" column="0" selection-start-line="276" selection-start-column="0" selection-end-line="277" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#17721#17722#0" expanded="false" />
-            <element signature="e#17817#17818#0" expanded="false" />
-            <element signature="e#18657#18658#0" expanded="false" />
-            <element signature="e#18707#18708#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4715,7 +4667,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
           <caret line="403" column="5" selection-start-line="403" selection-start-column="5" selection-end-line="403" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4723,9 +4674,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="419">
           <caret line="145" column="36" selection-start-line="145" selection-start-column="36" selection-end-line="145" selection-end-column="36" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4733,6 +4681,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="279">
           <caret line="88" column="45" selection-start-line="88" selection-start-column="45" selection-end-line="88" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/RecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="755">
+          <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -4744,13 +4702,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/RecyclerAdapter.java">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MoveRelativeLayout1.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="679">
-          <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="450">
+          <caret line="96" column="36" selection-start-line="96" selection-start-column="36" selection-end-line="96" selection-end-column="36" />
+          <folding />
         </state>
       </provider>
     </entry>
