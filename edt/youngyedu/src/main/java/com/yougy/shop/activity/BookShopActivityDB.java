@@ -522,6 +522,15 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         } else {
             binding.filtrateLayout.setVisibility(View.VISIBLE);
         }
+        if (binding.filtrateEmpty.getVisibility() == View.VISIBLE) {
+            binding.filtrateEmpty.setVisibility(View.GONE);
+        }
+        for (int j = 0; j < binding.subjectWrap.getChildCount(); j++) {
+            View v = binding.subjectWrap.getChildAt(j);
+            if (v.isSelected()) {
+                v.setSelected(false);
+            }
+        }
     }
 
     public void clickSearchOrCancelTv(View view) {
@@ -796,6 +805,9 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         if (binding.versionLayout.getVisibility() == View.VISIBLE) {
             binding.versionLayout.setVisibility(View.GONE);
         }
+        if (binding.filtrateEmpty.getVisibility() == View.VISIBLE) {
+            binding.filtrateEmpty.setVisibility(View.GONE);
+        }
 
     }
 
@@ -873,6 +885,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             });
             binding.versionWrap.addView(versionTv);
         }
+        binding.filtrateEmpty.setVisibility(View.VISIBLE);
         binding.versionLayout.setVisibility(View.VISIBLE);
     }
 
@@ -950,5 +963,9 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 extrabookSelected();
                 break;
         }
+    }
+
+    public void clickEmpty(View view) {
+        hideFiltrateLayout();
     }
 }
