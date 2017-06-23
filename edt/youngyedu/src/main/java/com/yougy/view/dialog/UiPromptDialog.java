@@ -73,7 +73,6 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
     }
 
 
-
     @Override
     public void onClick(View v) {
 
@@ -104,6 +103,7 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
         void onUiCancelListener();
 
         void onUiDetermineListener();
+
         void onUiCenterDetermineListener();
     }
 
@@ -119,8 +119,36 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
         mTvTitle.setText(resID);
     }
 
-    public void setDialogStyle(boolean isCenter){
-        mRlCancelAndConfirm.setVisibility(isCenter == true? View.GONE: View.VISIBLE);
-        mRlCenter.setVisibility(isCenter == false?View.GONE: View.VISIBLE);
+
+    public void setDialogStyle(boolean isCenter) {
+        mRlCancelAndConfirm.setVisibility(isCenter == true ? View.GONE : View.VISIBLE);
+        mRlCenter.setVisibility(isCenter == false ? View.GONE : View.VISIBLE);
+    }
+
+    private int tag = 0;
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
+    }
+
+    public void set(int resID) {
+        mTvTitle.setText(resID);
+    }
+
+
+    public void setCancel(int resId) {
+        mBtnCancel.setText(resId);
+    }
+
+    public void setConfirm(int resId) {
+        mBtnConfirm.setText(resId);
+    }
+
+    public void setCenterConfirm(int resId) {
+        mBtnCenterConfirm.setText(resId);
     }
 }
