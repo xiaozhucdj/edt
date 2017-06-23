@@ -1,7 +1,6 @@
 package com.yougy.common.activity;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -681,67 +680,147 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         }
     }
 
-    /**
-     * 设置网络
-     */
-    protected void jumpSettingWifi() {
-        Intent intent = null;
-        if (android.os.Build.VERSION.SDK_INT > 10) {
-            intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-        } else {
-            intent = new Intent();
-            ComponentName component = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
-            intent.setComponent(component);
-            intent.setAction("android.intent.action.VIEW");
-        }
-        BaseActivity.this.startActivity(intent);
-    }
 
     protected UiPromptDialog mUiPromptDialog;
 
-    protected void showCancelAndDetermineDialog(String title) {
+    protected UiPromptDialog getUiPromptDialog(){
+        return mUiPromptDialog ;
+    }
+    //---------------------------------CancelAndDetermine--------------------------------------------
 
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showCancelAndDetermineDialog(int titleId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
         }
         mUiPromptDialog.show();
-        mUiPromptDialog.setTitle(title);
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
         mUiPromptDialog.setDialogStyle(false);
     }
 
-    /**显示UI提示的对话框*/
-    protected void showCancelAndDetermineDialog(int resID) {
+    /**
+     *
+     * @param titleId  标题
+     * @param cancleId  取消按钮
+     * @param determineId 确定按钮
+     */
+    protected void showCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
         }
         mUiPromptDialog.show();
-        mUiPromptDialog.setTitle(resID);
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
         mUiPromptDialog.setDialogStyle(false);
     }
 
-    protected void showCenterDetermineDialog(String title) {
 
+    protected void showTagCancelAndDetermineDialog(int titleId ,int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
         }
         mUiPromptDialog.show();
-        mUiPromptDialog.setTitle(title);
-        mUiPromptDialog.setDialogStyle(true);
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setDialogStyle(false);
     }
 
-    /**显示UI提示的对话框*/
-    protected void showCenterDetermineDialog(int resID) {
+
+
+    /**
+     *
+     * @param titleId  标题
+     * @param cancleId  取消按钮
+     * @param determineId 确定按钮
+     * @param tag        tag 处理分类
+     */
+    protected void showTagCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId,int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
         }
         mUiPromptDialog.show();
-        mUiPromptDialog.setTitle(resID);
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setCancel(cancleId);
+        mUiPromptDialog.setConfirm(determineId);
+        mUiPromptDialog.setDialogStyle(false);
+    }
+
+
+    //---------------------------------CenterDetermine--------------------------------------------
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showCenterDetermineDialog(int titleId) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
         mUiPromptDialog.setDialogStyle(true);
     }
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showCenterDetermineDialog(int titleId ,int confirmId) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setCenterConfirm(confirmId);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showTagCenterDetermineDialog(int titleId,int tag) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showTagCenterDetermineDialog(int titleId ,int confirmId,int tag) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setCenterConfirm(confirmId);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+
+    //---------------------------------dissmiss--------------------------------------------
 
     protected void dissMissUiPromptDialog( ) {
         if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
@@ -749,6 +828,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         }
     }
 
+    //---------------------------------listener--------------------------------------------
     @Override
     public void onUiCancelListener() {
     }

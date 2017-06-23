@@ -91,14 +91,20 @@
     <string name="updata_note_fail">更新笔记失败</string>
     <string name="note_name_null">请填写笔记昵称</string>
     <string name="add_note_fail">添加笔记失败</string>
-    <string name="books_already_buy">这本书已经购买过</string>
-    <string name="books_already_add_car">已在购物车</string>
+    <string name="books_already_buy">您已经购买过该图书</string>
+    <string name="books_already_add_car">已加入购物车</string>
     <string name="books_already_add_collection">已收藏</string>
     <string name="books_add_car_fail">添加到购物车失败</string>
     <string name="books_add_collection_fail">添加到收藏失败</string>
     <string name="books_request_details_fail">获取图书详情失败</string>
     <string name="books_request_order_fail">下单失败</string>
     <string name="books_request_recommended_fail">获取推荐图书失败</string>
+    <string name="books_reader">阅读</string>
+    <string name="books_add_car_success">添加到购物车成功</string>
+    <string name="books_add_collection_success">添加到收藏成功</string>
+    <string name="retry">重试</string>
+    <string name="play_package">在书包打开</string>
+
 
     <string-array name="titles">
         <item>课本</item>
