@@ -632,7 +632,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             extras.putString(FileContonst.NOTE_TITLE, mBookInfo.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
-            downBookDialog();
+//            downBookDialog();
             //跳转到书包
             loadIntentWithSpecificFlag(MainActivity.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             finish();
