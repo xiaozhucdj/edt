@@ -600,7 +600,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         super.onUiDetermineListener();
         // 获取图书详情 ，无网络
         if (getUiPromptDialog().getTag() == mTagForRequestDetailsNoNet || getUiPromptDialog().getTag() == mTagNoNet) {
-            jumpToNet();
+          jumpTonet();
             //打开PDF
         } else if (getUiPromptDialog().getTag() == mTagBookReader) {
             jumpToControlFragmentActivity();
@@ -639,11 +639,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             loadIntentWithSpecificFlag(MainActivity.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             finish();
         }
-    }
-
-    private void jumpToNet() {
-        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-        startActivity(intent);
     }
 
     private void setBtnCarState() {
