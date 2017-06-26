@@ -9,6 +9,7 @@ import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.shop.activity.ConfirmOrderActivity;
 
 import okhttp3.Response;
 
@@ -48,5 +49,11 @@ public class IsOrderPaySuccessCallBack extends BaseCallBack<IsOrderPaySuccessRep
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
         ProtocolManager.isOrderPaySuccessProtocol(orderId , orderOwner , mProtocol, this);
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        ((ConfirmOrderActivity) mContext).finish();
     }
 }

@@ -19,6 +19,7 @@ import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.ResultUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.rx_subscriber.ShopSubscriber;
@@ -230,6 +231,12 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     private void queryBook(final NewBookStoreBookReq req) {
+
+        if (!NetUtils.isNetConnected()){
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+            return;
+        }
+
         Observable<List<BookInfo>> observable = Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
             @Override
             public void call(Subscriber<? super List<BookInfo>> subscriber) {

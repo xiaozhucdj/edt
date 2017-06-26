@@ -10,6 +10,7 @@ import com.yougy.common.protocol.response.QueryQRStrRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.shop.activity.ConfirmOrderActivity;
 
 import okhttp3.Response;
 
@@ -45,5 +46,11 @@ public class QueryQRStrCallBack extends BaseCallBack<QueryQRStrRep> {
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
         ProtocolManager.qureyQRStrProtocol(mRequest , mProtocol, this);
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        ((ConfirmOrderActivity) mContext).finish();
     }
 }

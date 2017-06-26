@@ -589,7 +589,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     @Override
     public void onUiCancelListener() {
         super.onUiCancelListener();
-        dissMissUiPromptDialog();
         // 获取图书详情 ，无网络
         if (getUiPromptDialog().getTag() == mTagForRequestDetailsNoNet || getUiPromptDialog().getTag() == mTagForRequestDetailsFail) {
             this.finish();
@@ -599,7 +598,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        dissMissUiPromptDialog();
         // 获取图书详情 ，无网络
         if (getUiPromptDialog().getTag() == mTagForRequestDetailsNoNet || getUiPromptDialog().getTag() == mTagNoNet) {
             jumpToNet();
@@ -641,12 +639,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             loadIntentWithSpecificFlag(MainActivity.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             finish();
         }
-    }
-
-    @Override
-    public void onUiCenterDetermineListener() {
-        super.onUiCenterDetermineListener();
-        dissMissUiPromptDialog();
     }
 
     private void jumpToNet() {
