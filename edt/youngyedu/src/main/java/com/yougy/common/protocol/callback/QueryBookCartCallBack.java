@@ -41,10 +41,10 @@ public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartRep> {
         rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
-        //PROTOCOL_ID_QUERY_BOOK_CART
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(),  mProtocol, this);
     }
 }

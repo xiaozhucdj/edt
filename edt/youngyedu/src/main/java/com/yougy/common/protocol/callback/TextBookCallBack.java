@@ -64,8 +64,8 @@ public class TextBookCallBack extends CacheInfoBack<BookShelfProtocol> {
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), mTermIndex, mCategoryId, "", mProtocolId, this);
     }
 

@@ -242,16 +242,20 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }
                 break;
             case R.id.btn_read:
+                LogUtils.i("aaaaaaaaaaaa");
                 if (mBookInfo.isBookInShelf()) {
                     showReaderForPackage();
+                    LogUtils.i("bbbbbbbbb");
                     return;
                 }
                 //跳转在线试读
                 String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
                 if (FileUtils.exists(probationUrl)) {
+                    LogUtils.i("cccccccccc");
                     jumpProbationActivity();
                 } else {
                     LogUtils.i("试读文件不存在");
+                    LogUtils.i("dddddddddd");
                     downBookDialog();
                 }
                 break;

@@ -21,22 +21,25 @@ public class SchoolCallBack extends BaseCallBack<NewQuerySchoolRep> {
     public SchoolCallBack(Context context) {
         super(context);
     }
+
     @Override
     public NewQuerySchoolRep parseNetworkResponse(Response response, int id) throws Exception {
         String json = response.body().string();
-        LogUtils.e(getClass().getName(),"school call back json : " + json);
+        LogUtils.e(getClass().getName(), "school call back json : " + json);
         return GsonUtil.fromJson(json, NewQuerySchoolRep.class);
     }
 
+
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.querySchoolProtocol(SpUtil.getSelectAreaId(), "", ProtocolId.PROTOCOL_ID_QUERYSCHOOL, this);
     }
 
     @Override
     public void onResponse(NewQuerySchoolRep response, int id) {
-            RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
-            rxBus.send(response);
-            LogUtils.e("SchoolCallBack","onResponse................");
+        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        rxBus.send(response);
+        LogUtils.e("SchoolCallBack", "onResponse................");
     }
 }

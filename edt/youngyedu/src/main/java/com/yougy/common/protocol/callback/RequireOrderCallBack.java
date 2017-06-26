@@ -42,9 +42,10 @@ public class RequireOrderCallBack extends BaseCallBack<RequirePayOrderRep> {
         rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.requirePayOrderProtocol(mRequest, mProtocol, this);
     }
 }

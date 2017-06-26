@@ -133,8 +133,10 @@ public class LoginRjCallBack extends BaseCallBack<LogInProtocol> {
 
     }
 
+
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, this);
     }
 

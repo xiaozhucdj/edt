@@ -6,11 +6,9 @@ import android.util.Log;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
-import com.yougy.common.protocol.response.OrderBaseResponse;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
 
 import okhttp3.Response;
 
@@ -45,9 +43,10 @@ public class IsOrderPaySuccessCallBack extends BaseCallBack<IsOrderPaySuccessRep
         rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.isOrderPaySuccessProtocol(orderId , orderOwner , mProtocol, this);
     }
 }

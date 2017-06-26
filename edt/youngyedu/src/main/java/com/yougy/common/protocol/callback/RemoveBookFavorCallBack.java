@@ -44,9 +44,8 @@ public class RemoveBookFavorCallBack extends BaseCallBack<RemoveBookFavorProtoco
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
-        //PROTOCOL_ID_REMOVE_BOOK_FAVOR
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.bookFavorRemoveProtocol(mRequest, mProtocol, this);
     }
 }
