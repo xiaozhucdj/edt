@@ -662,6 +662,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private void setBtnFavorState() {
+        if (mBookInfo.isBookInFavor())
         mBtnAddFavor.setText(R.string.books_already_add_collection);
         mBtnAddFavor.setTextColor(UIUtils.getColor(R.color.directory_text));
     }
