@@ -266,7 +266,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
         if (FileUtils.exists(filePath)) {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.books_reader, mTagBookReader);
-        }else{
+        } else {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.play_package, mTagBookReader);
         }
     }
@@ -638,7 +638,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         } else {
 //            downBookDialog();
             //跳转到书包
-            loadIntentWithSpecificFlag(MainActivity.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            loadIntentWithSpecificFlag(MainActivity.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             finish();
         }
     }
@@ -662,8 +662,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private void setBtnFavorState() {
-        if (mBookInfo.isBookInFavor())
-        mBtnAddFavor.setText(R.string.books_already_add_collection);
-        mBtnAddFavor.setTextColor(UIUtils.getColor(R.color.directory_text));
+        if (mBookInfo.isBookInFavor()) {
+            mBtnAddFavor.setText(R.string.books_already_add_collection);
+            mBtnAddFavor.setTextColor(UIUtils.getColor(R.color.directory_text));
+        }
     }
 }
