@@ -109,6 +109,8 @@
     <string name="cancle_collection_fail">取消收藏失败</string>
     <string name="remove_car_all">确实要移除这本%1$s书么？</string>
     <string name="remove_car">确实要移除%1$s这本书么？</string>
+    <string name="cancel_order_fail">取消订单失败</string>
+
 
     <string-array name="titles">
         <item>课本</item>

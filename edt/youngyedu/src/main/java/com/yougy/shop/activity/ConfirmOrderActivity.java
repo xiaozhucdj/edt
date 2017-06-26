@@ -82,6 +82,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     String qrStr;
     QRCodeDialog qrCodeDialog;
     private int mTagForNoNet = 1;
+    private int mTagForCancelOrder = 2;
 
     @Override
     protected void setContentView() {
@@ -169,10 +170,9 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                         } else if (o instanceof CancelBookOrderRep) {
                             CancelBookOrderRep rep = (CancelBookOrderRep) o;
                             if (rep.getCode() == 200) {
-                                ToastUtil.showToast(getApplicationContext(), "取消订单成功");
                                 loadIntentWithSpecificFlag(BookShopActivityDB.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                             } else {
-                                ToastUtil.showToast(getApplicationContext(), "取消订单失败");
+                                showTagCancelAndDetermineDialog(R.string.cancel_order_fail, mTagForCancelOrder);
                             }
                         }
                     }
@@ -433,12 +433,17 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
 
     @Override
     public void onBackPressed() {
+        cancelOrder();
+    }
+
+    private void cancelOrder() {
         if (!NetUtils.isNetConnected()) {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
         ProtocolManager.cancelPayOrderProtocol(order.getOrderId(), SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
                 , new CancelBookOrderCallBack(this, ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER, order.getOrderId(), SpUtil.getAccountId()));
+
     }
 
     @Override
@@ -446,7 +451,8 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
         super.onUiDetermineListener();
         if (mUiPromptDialog.getTag() == mTagForNoNet) {
             jumpTonet();
+        } else if (mUiPromptDialog.getTag() == mTagForCancelOrder) {
+            cancelOrder();
         }
     }
-
 }
