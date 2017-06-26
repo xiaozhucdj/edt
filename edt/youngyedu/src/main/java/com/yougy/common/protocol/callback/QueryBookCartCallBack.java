@@ -10,6 +10,7 @@ import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.shop.activity.ShopCartActivity;
 
 import okhttp3.Response;
 
@@ -46,5 +47,11 @@ public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartRep> {
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
         ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(),  mProtocol, this);
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        ((ShopCartActivity)mContext).finish();
     }
 }

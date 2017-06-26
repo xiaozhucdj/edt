@@ -44,7 +44,7 @@ public class CartItem implements Parcelable {
     private String bookAuthor;
     private String bookSubtitle;
     private String bookStatus;
-    private int bookPrice;
+    private double bookPrice;
     private String bookCover;
     private String userRealName;
 
@@ -168,11 +168,11 @@ public class CartItem implements Parcelable {
         this.bookStatus = bookStatus;
     }
 
-    public int getBookPrice() {
+    public double getBookPrice() {
         return bookPrice;
     }
 
-    public void setBookPrice(int bookPrice) {
+    public void setBookPrice(double bookPrice) {
         this.bookPrice = bookPrice;
     }
 
@@ -215,7 +215,7 @@ public class CartItem implements Parcelable {
         dest.writeString(this.bookAuthor);
         dest.writeString(this.bookSubtitle);
         dest.writeString(this.bookStatus);
-        dest.writeInt(this.bookPrice);
+        dest.writeDouble(this.bookPrice);
         dest.writeString(this.bookCover);
         dest.writeString(this.userRealName);
     }
@@ -239,7 +239,7 @@ public class CartItem implements Parcelable {
         this.bookAuthor = in.readString();
         this.bookSubtitle = in.readString();
         this.bookStatus = in.readString();
-        this.bookPrice = in.readInt();
+        this.bookPrice = in.readDouble();
         this.bookCover = in.readString();
         this.userRealName = in.readString();
     }

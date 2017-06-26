@@ -94,7 +94,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
     @Override
     protected void init() {
         //初始化假数据
-        ProtocolManager.initSimulateData();
+//        ProtocolManager.initSimulateData();
     }
 
     @Override
