@@ -300,14 +300,16 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     //---------------------------------listener--------------------------------------------
     @Override
     public void onUiCancelListener() {
+        dissMissUiPromptDialog();
     }
 
     @Override
     public void onUiDetermineListener() {
+        dissMissUiPromptDialog();
     }
 
     @Override
     public void onUiCenterDetermineListener() {
-
+        dissMissUiPromptDialog();
     }
 }

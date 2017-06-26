@@ -830,24 +830,9 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         }
     }
 
-
-
-
-    @Override
-    public void onUiCancelListener() {
-        dissMissUiPromptDialog();
-    }
-
     @Override
     public void onUiDetermineListener() {
-        dissMissUiPromptDialog();
         Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
         startActivity(intent);
-        dissMissUiPromptDialog();
-    }
-
-    @Override
-    public void onUiCenterDetermineListener() {
-        dissMissUiPromptDialog();
     }
 }
