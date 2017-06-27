@@ -164,16 +164,16 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                         qrCodeDialog.showHintAndRetry("支付未成功" , "重试");
                     }
                 }
-                else if (o instanceof CancelBookOrderRep){
-                    CancelBookOrderRep rep = (CancelBookOrderRep) o;
-                    if (rep.getCode() == 200){
-                        ToastUtil.showToast(getApplicationContext() , "取消订单成功");
-                        loadIntentWithSpecificFlag(BookShopActivityDB.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    }
-                    else {
-                        ToastUtil.showToast(getApplicationContext() , "取消订单失败");
-                    }
-                }
+//                else if (o instanceof CancelBookOrderRep){
+//                    CancelBookOrderRep rep = (CancelBookOrderRep) o;
+//                    if (rep.getCode() == 200){
+//                        ToastUtil.showToast(getApplicationContext() , "取消订单成功");
+//                        loadIntentWithSpecificFlag(BookShopActivityDB.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                    }
+//                    else {
+//                        ToastUtil.showToast(getApplicationContext() , "取消订单失败");
+//                    }
+//                }
             }
         });
         super.handleEvent();
@@ -232,7 +232,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
         }
         //刷新订单编号,订单金额UI
         orderCodeTv.setText("订单编号 : " + order.getOrderId());
-        orderPriceTv.setText("订单金额 :　" + order.getOrderPrice() + "元");
+        orderPriceTv.setText("订单金额 :　￥" + order.getOrderPrice());
         //刷新下方本地订单总价格和订单书本数
         orderInfoTv.setText("共" + orderBookInfoList.size() + "本书 , 总计 : " + getCheckedBookPriceSum() + "元");
     }
@@ -424,9 +424,9 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        ProtocolManager.cancelPayOrderProtocol(order.getOrderId() , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
-                , new CancelBookOrderCallBack(this , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , order.getOrderId() , SpUtil.getAccountId()));
-    }
+//    @Override
+//    public void onBackPressed() {
+//        ProtocolManager.cancelPayOrderProtocol(order.getOrderId() , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
+//                , new CancelBookOrderCallBack(this , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , order.getOrderId() , SpUtil.getAccountId()));
+//    }
 }
