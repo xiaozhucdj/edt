@@ -110,6 +110,8 @@
     <string name="remove_car_all">确实要移除这本%1$s书么？</string>
     <string name="remove_car">确实要移除%1$s这本书么？</string>
     <string name="cancel_order_fail">取消订单失败</string>
+    <string name="no_buy_book">你还没有购买课外书</string>
+    <string name="input_seartch_context">请输入搜索内容</string>
 
 
     <string-array name="titles">
