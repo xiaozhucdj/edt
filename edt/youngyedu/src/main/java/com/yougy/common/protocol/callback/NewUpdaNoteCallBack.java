@@ -37,9 +37,10 @@ public class NewUpdaNoteCallBack extends BaseCallBack<NewUpdateNoteRep> {
             rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         NewProtocolManager.updateNote(updateNoteReq ,this);
     }
 }

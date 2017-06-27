@@ -41,8 +41,10 @@ public class QueryBookCallBack extends BaseCallBack<QueryBookInfo>{
         rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.queryBookProtocol(SpUtil.getUserId(),bookName,-1,0,0, ProtocolId.PROTOCOL_ID_QUERY_BOOK,this);
     }
 }

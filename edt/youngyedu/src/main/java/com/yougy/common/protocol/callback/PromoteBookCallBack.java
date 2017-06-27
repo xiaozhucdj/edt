@@ -6,7 +6,6 @@ import android.util.Log;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.protocol.request.PromoteBookRequest;
 import com.yougy.common.protocol.response.PromoteBookRep;
 import com.yougy.common.rx.RxBus;
@@ -40,9 +39,10 @@ public class PromoteBookCallBack extends BaseCallBack<PromoteBookRep> {
         rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.promoteBookProtocol(request, ProtocolId.PROTOCOL_ID_PROMOTE_BOOK,this);
     }
 }

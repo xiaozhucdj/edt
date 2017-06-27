@@ -36,9 +36,10 @@ public class NewDelteNoteCallBack   extends BaseCallBack<NewDeleteNoteRep>{
             rxBus.send(response);
         }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         NewProtocolManager.deleteNote(deleteNoteRep,this);
     }
 }

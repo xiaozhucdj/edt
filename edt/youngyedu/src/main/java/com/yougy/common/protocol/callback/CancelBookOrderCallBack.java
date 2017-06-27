@@ -5,12 +5,11 @@ import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.request.AppendBookFavorRequest;
-import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.protocol.response.CancelBookOrderRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.shop.activity.ConfirmOrderActivity;
 
 import okhttp3.Response;
 
@@ -46,9 +45,16 @@ public class CancelBookOrderCallBack extends BaseCallBack<CancelBookOrderRep> {
 
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.cancelPayOrderProtocol(orderId, orderOwner , mProtocol, this);
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        ((ConfirmOrderActivity) mContext).finish();
     }
 }

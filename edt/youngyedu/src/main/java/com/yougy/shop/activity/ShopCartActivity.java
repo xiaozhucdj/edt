@@ -1,6 +1,5 @@
 package com.yougy.shop.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -21,6 +19,7 @@ import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.protocol.response.RemoveBookCartProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.init.bean.BookInfo;
@@ -28,7 +27,6 @@ import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NewShopBookItem;
-import com.yougy.view.dialog.ConfirmDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -54,7 +52,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
     //当前展示的第一页页号(从0开始)
     int currentShowFirstPageIndex = 0;
     //当前选定的的页码序号(从0开始)
-    int currentSelectedPageIndex= 0;
+    int currentSelectedPageIndex = 0;
 
     @BindView(R.id.shop_cart_back_btn)
     ImageView backBtn;//后退按钮
@@ -85,6 +83,10 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     //是否需要刷新items
     boolean needRefreshItems = false;
+    private int mTagForNoNet = 1;
+    private int mTagForRemoveAllBook = 2;
+    private int mRemovePosition;
+    private int mTagForRemoveBook = 3;
 
     @Override
     protected void setContentView() {
@@ -94,16 +96,15 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
     @Override
     protected void init() {
         //初始化假数据
-        ProtocolManager.initSimulateData();
+//        ProtocolManager.initSimulateData();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId()
-                , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
-                , new QueryBookCartCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
+        loadData();
     }
+
 
     @Override
     protected void initLayout() {
@@ -130,18 +131,18 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                         cartItemList.addAll(protocol.getData());
                     }
                     //如果已选中的某些项在新的数据中不存在,则删除它们
-                    for (int i = 0 ; i < checkedCartItemList.size() ; ) {
+                    for (int i = 0; i < checkedCartItemList.size(); ) {
                         CartItem checkedCartItem = checkedCartItemList.get(i);
-                        if (findCartItemByID(cartItemList, checkedCartItem.getBookId()) == null){
+                        if (findCartItemByID(cartItemList, checkedCartItem.getBookId()) == null) {
                             checkedCartItemList.remove(checkedCartItem);
                             continue;
                         }
                         i++;
                     }
                     //如果之前选中的页号在新的数据中已经不存在了,则把选中的页号确定为最后一页.
-                    if (cartItemList.size() <= currentSelectedPageIndex * ITEM_NUM){
+                    if (cartItemList.size() <= currentSelectedPageIndex * ITEM_NUM) {
                         currentSelectedPageIndex = (cartItemList.size() - 1) / ITEM_NUM;
-                        if (currentSelectedPageIndex < 0){
+                        if (currentSelectedPageIndex < 0) {
                             currentSelectedPageIndex = 0;
                         }
                     }
@@ -150,28 +151,23 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                     //请求刷新items和下方合计栏.
                     needRefreshItems = true;
                     refreshViewSafe();
-                    if (cartItemList.size() == 0){
+                    if (cartItemList.size() == 0) {
                         deleteBtn.setVisibility(View.INVISIBLE);
-                    }
-                    else {
+                    } else {
                         deleteBtn.setVisibility(View.VISIBLE);
                     }
-                }
-                else if (o instanceof RemoveBookCartProtocol){
+                } else if (o instanceof RemoveBookCartProtocol) {
                     //删除购物车的回调在这
                     RemoveBookCartProtocol protocal = (RemoveBookCartProtocol) o;
                     if (protocal.getCode() == 200) {
-                        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId()
-                                , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
-                                , new QueryBookCartCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
+                        loadData();
                     }
-                }
-                else if (o instanceof RequirePayOrderRep){
+                } else if (o instanceof RequirePayOrderRep) {
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
-                    if (rep.getCode() == 200){
+                    if (rep.getCode() == 200) {
                         RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
 
-                        orderObj.setBookList(new ArrayList<BookInfo>(){
+                        orderObj.setBookList(new ArrayList<BookInfo>() {
                             {
                                 for (CartItem cartItem : checkedCartItemList) {
                                     BookInfo bookInfo = new BookInfo();
@@ -182,13 +178,12 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                                 }
                             }
                         });
-                        Intent intent = new Intent(ShopCartActivity.this , ConfirmOrderActivity.class);
-                        intent.putExtra(ShopGloble.ORDER , orderObj);
+                        Intent intent = new Intent(ShopCartActivity.this, ConfirmOrderActivity.class);
+                        intent.putExtra(ShopGloble.ORDER, orderObj);
                         startActivity(intent);
                         finish();
-                    }
-                    else {
-                        ToastUtil.showToast(getApplicationContext() , "下单失败");
+                    } else {
+                        ToastUtil.showToast(getApplicationContext(), "下单失败");
                     }
                 }
             }
@@ -198,17 +193,22 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     @Override
     protected void loadData() {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
         ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId()
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
-                , new QueryBookCartCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
+                , new QueryBookCartCallBack(ShopCartActivity.this, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
     }
 
 
     /**
      * 操作CartItem列表的方法,CartItem
+     *
      * @param cartItemList 要查找的CartItem列表
-     * @param bookID 指定的bookID
-     * @return 如果找到,则返回该CartItem,如果有多个,返回第一个,如果没有,返回null.
+     * @param bookID       指定的bookID
+     * @return 如果找到, 则返回该CartItem, 如果有多个, 返回第一个, 如果没有, 返回null.
      */
     public CartItem findCartItemByID(ArrayList<CartItem> cartItemList, int bookID) {
         for (CartItem cartItem : cartItemList) {
@@ -218,9 +218,11 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
         }
         return null;
     }
+
     /**
      * 操作CartItem列表的方法,在指定的CartItem列表中删除拥有给定的CartItem列表中CartItem的项
-     * @param fromCartItemList 在其中删除的CartItem列表
+     *
+     * @param fromCartItemList     在其中删除的CartItem列表
      * @param toRemoveCartItemList 指定的CartItem列表
      * @return 返回删除后的CartItem列表
      */
@@ -250,18 +252,17 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
             boolean showForward = (currentShowFirstPageIndex == 0 ? false : true);
             //是否显示>>向后按钮
             boolean showNext;
-            if (cartItemList.size() <= (currentShowFirstPageIndex + ONCE_SHOW_PAGE_NUM) * ITEM_NUM){
+            if (cartItemList.size() <= (currentShowFirstPageIndex + ONCE_SHOW_PAGE_NUM) * ITEM_NUM) {
                 lastShowBookIndex = cartItemList.size() - 1;
                 showNext = false;
-            }
-            else {
+            } else {
                 lastShowBookIndex = (currentShowFirstPageIndex + ONCE_SHOW_PAGE_NUM) * ITEM_NUM - 1;
                 showNext = true;
             }
             showPageNumEnd = lastShowBookIndex / ITEM_NUM + 1;
-            addBtns(currentShowFirstPageIndex + 1, showPageNumEnd , showForward, showNext);
+            addBtns(currentShowFirstPageIndex + 1, showPageNumEnd, showForward, showNext);
             //如果需要刷新,则刷新items和下方合计按钮文字
-            if (needRefreshItems){
+            if (needRefreshItems) {
                 toPage(currentSelectedPageIndex);
                 sumTextview.setText("合计 : ￥" + getCheckedBookPriceSum());
                 checkoutBtn.setText("结算(" + checkedCartItemList.size() + ")");
@@ -277,8 +278,9 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     /**
      * 根据当前显示的bookInfo信息填充items
+     *
      * @param startIndex 要显示的多个bookInfo在本地缓存中的开始位置
-     * @param endIndex 要显示的多个bookInfo在本地缓存中的结束位置
+     * @param endIndex   要显示的多个bookInfo在本地缓存中的结束位置
      */
     private void fillItems(int startIndex, int endIndex) {
         boolean allCheck = true;
@@ -314,35 +316,28 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                 finish();
                 break;
             case R.id.shop_cart_delete_btn:
-                if (checkedCartItemList.size() > 0){
-                    new ConfirmDialog(this, "确实要删除这" + checkedCartItemList.size() +  "本书吗?" , new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            RemoveBookCartRequest request = new RemoveBookCartRequest();
-                            request.setUserId(SpUtil.getAccountId());
-                            for (CartItem cartItem : checkedCartItemList) {
-                                request.getData().add(new RemoveBookCartRequest.BookIdObj(cartItem.getBookId()));
-                            }
-                            ProtocolManager.removeBookCartProtocol(request
-                                    , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART
-                                    , new RemoveBookCartCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART , request));
-                            dialog.dismiss();
-                        }
-                    }).show();
+                if (checkedCartItemList.size() > 0) {
+                    if (!NetUtils.isNetConnected()) {
+                        showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+                        return;
+                    }
+
+                    String formatC = getResources().getString(R.string.remove_car_all);
+                    String resultC = String.format(formatC, checkedCartItemList.size() + "");
+                    showTagCancelAndDetermineDialog(resultC, mTagForRemoveAllBook);
                 }
                 break;
             case R.id.shop_cart_select_all_checkbox:
                 boolean setCheck = !selectAllCheckbox.isSelected();
-                for (int i = 0 ; i < bookItems.size() && i < cartItemList.size(); i++){
+                for (int i = 0; i < bookItems.size() && i < cartItemList.size(); i++) {
                     NewShopBookItem everyItem = bookItems.get(i);
-                    everyItem.setChecked(setCheck , true);
+                    everyItem.setChecked(setCheck, true);
                 }
                 break;
             case R.id.shop_cart_checkout_btn:
-                if (checkedCartItemList.size() == 0){
-                    showToastSafe(R.string.nothing_to_checkout , Toast.LENGTH_SHORT);
-                }
-                else {
+                if (checkedCartItemList.size() == 0) {
+                    showCenterDetermineDialog(R.string.nothing_to_checkout);
+                } else {
                     requestOrder();
                 }
                 break;
@@ -363,36 +358,39 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                             btn.setSelected(false);
                         }
                         btn = (TextView) pageBtnContainer.findViewWithTag(i);
-                        if (btn != null){
+                        if (btn != null) {
                             btn.setSelected(true);
                         }
                         currentSelectedPageIndex = i - 1;
                         toPage(i - 1);
                         break;
-
                 }
                 break;
         }
     }
 
-
-    private void requestOrder (){
+    private void requestOrder() {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
         RequirePayOrderRequest request = new RequirePayOrderRequest();
         request.setOrderOwner(SpUtil.getAccountId());
         for (CartItem cartItem : checkedCartItemList) {
             request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
         }
-        ProtocolManager.requirePayOrderProtocol(request , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-                , new RequireOrderCallBack(this , ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER , request));
+        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                , new RequireOrderCallBack(this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
     }
 
     /**
      * 判断是否本页中所有item都被选中
-     * @return 如果所有item都被选中,返回true,只要有任意一个没有被选中,返回false.
+     *
+     * @return 如果所有item都被选中, 返回true, 只要有任意一个没有被选中, 返回false.
      */
     private boolean isAllChecked() {
         boolean allChecked = true;
-        for (int i = 0 ; i < bookItems.size() && i < cartItemList.size() ; i++){
+        for (int i = 0; i < bookItems.size() && i < cartItemList.size(); i++) {
             NewShopBookItem item = bookItems.get(i);
             if (!item.isChecked()) {
                 allChecked = false;
@@ -404,6 +402,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     /**
      * 切换到制定的页(只更新items)
+     *
      * @param pageIndex 制定的页序号
      */
     private void toPage(int pageIndex) {
@@ -416,14 +415,15 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     /**
      * 添加多个按钮
+     *
      * @param firstBtnNum 要添加的第一个按钮的序号
-     * @param lastBtnNum 要添加的最后一个按钮的序号
-     * @param hasForward 是否添加向前按钮
-     * @param hasNext 是否添加向后按钮
+     * @param lastBtnNum  要添加的最后一个按钮的序号
+     * @param hasForward  是否添加向前按钮
+     * @param hasNext     是否添加向后按钮
      */
     private void addBtns(int firstBtnNum, int lastBtnNum, boolean hasForward, boolean hasNext) {
         if (hasForward) addBtn(-1);
-        for (int index = firstBtnNum; index <= lastBtnNum ; index++) {
+        for (int index = firstBtnNum; index <= lastBtnNum; index++) {
             addBtn(index);
         }
         if (hasNext) addBtn(-2);
@@ -458,9 +458,10 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     /**
      * 计算已选的bookInfo的总价格
+     *
      * @return 总价格
      */
-    private double getCheckedBookPriceSum(){
+    private double getCheckedBookPriceSum() {
         double sum = 0;
         for (CartItem cartItem : checkedCartItemList) {
             sum = sum + cartItem.getBookSalePrice();
@@ -470,20 +471,21 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     /**
      * item被点击的回调
+     *
      * @param position 被点击的item的数据在本地缓存中的位置.
      */
     @Override
     public void onItemClick(int position) {
-        loadIntentWithExtra(ShopBookDetailsActivity.class , ShopGloble.BOOK_ID , cartItemList.get(position).getBookId());
+        loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, cartItemList.get(position).getBookId());
     }
 
 
     /**
      * item中的勾选框被选中或取消时的回调
+     *
      * @param position 被点击的item的数据在本地缓存中的位置.
-     * @param checked true时被选中,false时被取消
+     * @param checked  true时被选中,false时被取消
      */
-
     @Override
     public void onCheckedChanged(int position, boolean checked) {
         CartItem cartItem = cartItemList.get(position);
@@ -501,21 +503,47 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
 
     /**
      * item中的按钮被点击时的回调
+     *
      * @param position 被点击的item的数据在本地缓存中的位置.
      */
     @Override
     public void onBtnClick(final int position) {
-        new ConfirmDialog(this, "确定要删除这本书吗?", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                RemoveBookCartRequest request = new RemoveBookCartRequest();
-                request.setUserId(SpUtil.getAccountId());
-                request.getData().add(new RemoveBookCartRequest.BookIdObj(cartItemList.get(position).getBookId()));
-                ProtocolManager.removeBookCartProtocol(request
-                        , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART
-                        , new RemoveBookCartCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART , request));
-                dialog.dismiss();
+        mRemovePosition = position;
+
+        if (checkedCartItemList.size() > 0) {
+            if (!NetUtils.isNetConnected()) {
+                showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+                return;
             }
-        }).show();
+
+            String formatC = getResources().getString(R.string.remove_car);
+            String resultC = String.format(formatC, cartItemList.get(position).getBookTitle());
+            showTagCancelAndDetermineDialog(resultC, mTagForRemoveBook);
+        }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        if (mUiPromptDialog.getTag() == mTagForRemoveAllBook) {
+            RemoveBookCartRequest request = new RemoveBookCartRequest();
+            request.setUserId(SpUtil.getAccountId());
+            for (CartItem cartItem : checkedCartItemList) {
+                request.getData().add(new RemoveBookCartRequest.BookIdObj(cartItem.getBookId()));
+            }
+            ProtocolManager.removeBookCartProtocol(request
+                    , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART
+                    , new RemoveBookCartCallBack(ShopCartActivity.this, ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART, request));
+        } else if (mUiPromptDialog.getTag() == mTagForRemoveBook) {
+            RemoveBookCartRequest request = new RemoveBookCartRequest();
+            request.setUserId(SpUtil.getAccountId());
+            request.getData().add(new RemoveBookCartRequest.BookIdObj(cartItemList.get(mRemovePosition).getBookId()));
+            ProtocolManager.removeBookCartProtocol(request
+                    , ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART
+                    , new RemoveBookCartCallBack(ShopCartActivity.this, ProtocolId.PROTOCOL_ID_REMOVE_BOOK_CART, request));
+
+        } else if (mUiPromptDialog.getTag() == mTagForNoNet) {
+            jumpTonet();
+        }
     }
 }

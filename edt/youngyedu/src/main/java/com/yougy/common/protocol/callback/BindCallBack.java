@@ -89,7 +89,8 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     }
 
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         String uuid = Commons.UUID;
 //        ProtocolManager.deviceBindProtocol(InitManager.getInstance().getStudentId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, this);
         NewBindDeviceReq deviceReq = new NewBindDeviceReq();

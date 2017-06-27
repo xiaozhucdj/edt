@@ -63,9 +63,10 @@ public class NewTextBookCallBack extends CacheInfoBack<NewBookShelfRep> {
         }
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         NewProtocolManager.bookShelf(shelfReq,this);
     }
 }

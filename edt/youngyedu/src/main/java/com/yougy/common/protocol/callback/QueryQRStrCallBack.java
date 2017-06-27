@@ -42,8 +42,14 @@ public class QueryQRStrCallBack extends BaseCallBack<QueryQRStrRep> {
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.qureyQRStrProtocol(mRequest , mProtocol, this);
     }
+
+//    @Override
+//    public void onUiCancelListener() {
+//        super.onUiCancelListener();
+//        ((ConfirmOrderActivity) mContext).finish();
+//    }
 }

@@ -242,16 +242,20 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }
                 break;
             case R.id.btn_read:
+                LogUtils.i("aaaaaaaaaaaa");
                 if (mBookInfo.isBookInShelf()) {
                     showReaderForPackage();
+                    LogUtils.i("bbbbbbbbb");
                     return;
                 }
                 //跳转在线试读
                 String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
                 if (FileUtils.exists(probationUrl)) {
+                    LogUtils.i("cccccccccc");
                     jumpProbationActivity();
                 } else {
                     LogUtils.i("试读文件不存在");
+                    LogUtils.i("dddddddddd");
                     downBookDialog();
                 }
                 break;
@@ -262,7 +266,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
         if (FileUtils.exists(filePath)) {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.books_reader, mTagBookReader);
-        }else{
+        } else {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.play_package, mTagBookReader);
         }
     }
@@ -585,7 +589,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     @Override
     public void onUiCancelListener() {
         super.onUiCancelListener();
-        dissMissUiPromptDialog();
         // 获取图书详情 ，无网络
         if (getUiPromptDialog().getTag() == mTagForRequestDetailsNoNet || getUiPromptDialog().getTag() == mTagForRequestDetailsFail) {
             this.finish();
@@ -595,10 +598,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        dissMissUiPromptDialog();
         // 获取图书详情 ，无网络
         if (getUiPromptDialog().getTag() == mTagForRequestDetailsNoNet || getUiPromptDialog().getTag() == mTagNoNet) {
-            jumpToNet();
+          jumpTonet();
             //打开PDF
         } else if (getUiPromptDialog().getTag() == mTagBookReader) {
             jumpToControlFragmentActivity();
@@ -632,22 +634,11 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             extras.putString(FileContonst.NOTE_TITLE, mBookInfo.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
-            downBookDialog();
+//            downBookDialog();
             //跳转到书包
-            loadIntentWithSpecificFlag(MainActivity.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            loadIntentWithSpecificFlag(MainActivity.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             finish();
         }
-    }
-
-    @Override
-    public void onUiCenterDetermineListener() {
-        super.onUiCenterDetermineListener();
-        dissMissUiPromptDialog();
-    }
-
-    private void jumpToNet() {
-        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-        startActivity(intent);
     }
 
     private void setBtnCarState() {
@@ -658,7 +649,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private void setBtnFavorState() {
-        mBtnAddFavor.setText(R.string.books_already_add_collection);
-        mBtnAddFavor.setTextColor(UIUtils.getColor(R.color.directory_text));
+        if (mBookInfo.isBookInFavor()) {
+            mBtnAddFavor.setText(R.string.books_already_add_collection);
+            mBtnAddFavor.setTextColor(UIUtils.getColor(R.color.directory_text));
+        }
     }
 }

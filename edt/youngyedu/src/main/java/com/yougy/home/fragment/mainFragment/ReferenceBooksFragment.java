@@ -569,7 +569,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         } else if (event.getType().equalsIgnoreCase(EventBusConstant.serch_reference)) {
             LogUtils.i("type .." + EventBusConstant.serch_reference);
             if (mServerBooks.size() < 0) {
-                UIUtils.showToastSafe("你还没有购买课外书", Toast.LENGTH_SHORT);
+                showCenterDetermineDialog(R.string.no_buy_book);
                 return;
             }
             if (mSearchDialog == null) {
@@ -583,7 +583,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                             setSearchView(mSearchKey);
                             mSearchDialog.dismiss();
                         } else {
-                            UIUtils.showToastSafe("请输入搜索内容", Toast.LENGTH_SHORT);
+                            showCenterDetermineDialog(R.string.input_seartch_context);
                         }
                     }
                 });

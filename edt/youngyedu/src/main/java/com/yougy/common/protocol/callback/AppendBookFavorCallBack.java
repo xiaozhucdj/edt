@@ -44,8 +44,8 @@ public class AppendBookFavorCallBack extends BaseCallBack<AppendBookFavorRep> {
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.appendBookFavorProtocol(mRequest, mProtocol, this);
     }
 }

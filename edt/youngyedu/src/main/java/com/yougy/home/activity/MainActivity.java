@@ -969,20 +969,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-        startActivity(intent);
-        dissMissUiPromptDialog();
-    }
-
-    @Override
-    public void onUiCancelListener() {
-        super.onUiCancelListener();
-        dissMissUiPromptDialog();
-    }
-
-    @Override
-    public void onUiCenterDetermineListener() {
-        super.onUiCenterDetermineListener();
+        jumpTonet();
     }
 }
 

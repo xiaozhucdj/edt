@@ -37,6 +37,7 @@ import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -91,6 +92,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     private int mPageSliderRes;
     private View mRootView;
     private int mCurrentMarksPage = 0;
+    private int mTagForNoNet = 1;
 
     /////////////////////////////////Files///////////////////////////
 
@@ -172,6 +174,11 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
 
     protected void refreshData() {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
+
         ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId(), mBookInfo.getBookId()
                 , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL, new QueryShopBookDetailCallBack(this, mBookInfo.getBookId()));
         ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
@@ -199,8 +206,10 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 this.finish();
                 break;
             case R.id.imgbtn_addCar:
-                if (mBookInfo.isBookInCart() || mBookInfo.isBookInShelf()) {
-                    ToastUtil.showToast(getApplicationContext(), "本书已在购物车里或已经购买过!");
+                if (mBookInfo.isBookInCart()) {
+                    showCenterDetermineDialog(R.string.books_already_add_car);
+                } else if (mBookInfo.isBookInShelf()) {
+                    showCenterDetermineDialog(R.string.books_already_buy);
                 } else {
                     addBooksToCar(new ArrayList<BookInfo>() {{
                         add(mBookInfo);
@@ -209,7 +218,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 break;
             case R.id.imgbtn_favor:
                 if (mBookInfo.isBookInFavor()) {
-                    ToastUtil.showToast(getApplicationContext(), "本书已在收藏里");
+                    showCenterDetermineDialog(R.string.books_already_add_collection);
                 } else {
                     addBooksToFavor(new ArrayList<BookInfo>() {{
                         add(mBookInfo);
@@ -218,7 +227,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 break;
             case R.id.btn_buy:
                 if (mBookInfo.isBookInShelf()) {
-                    ToastUtil.showToast(getApplicationContext(), "这本书已经购买过");
+                    showCenterDetermineDialog(R.string.books_already_buy);
                 } else {
                     requestOrder();
                 }
@@ -228,6 +237,10 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
 
     private void requestOrder() {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
         RequirePayOrderRequest request = new RequirePayOrderRequest();
         request.setOrderOwner(SpUtil.getAccountId());
         request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
@@ -307,6 +320,11 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
      * 添加购物车
      */
     private void addBooksToCar(List<BookInfo> bookInfoList) {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
+
         AppendBookCartRequest request = new AppendBookCartRequest();
         request.setUserId(SpUtil.getAccountId());
         for (BookInfo bookInfo :
@@ -321,6 +339,10 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
      * 添加收藏
      */
     private void addBooksToFavor(List<BookInfo> bookInfoList) {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
         AppendBookFavorRequest request = new AppendBookFavorRequest();
         request.setUserId(SpUtil.getAccountId());
         for (BookInfo bookInfo :
@@ -419,5 +441,14 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         }
         mCurrentMarksPage = position;
         getReaderPresenter().gotoPage(position);
+    }
+
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        if (mUiPromptDialog.getTag() == mTagForNoNet) {
+            jumpTonet();
+        }
     }
 }

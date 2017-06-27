@@ -33,8 +33,10 @@ public class AreaCallBack extends BaseCallBack<NewQueryAreaRep> {
         rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         NewProtocolManager.queryArea(new NewQueryAreaReq(), this);
     }
 }

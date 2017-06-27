@@ -10,7 +10,6 @@ import com.yougy.common.protocol.response.RemoveBookCartProtocol;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
 
 import okhttp3.Response;
 
@@ -42,10 +41,10 @@ public class RemoveBookCartCallBack extends BaseCallBack<RemoveBookCartProtocol>
         rxBus.send(response);
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
-        //PROTOCOL_ID_REMOVE_BOOK_CART
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.removeBookCartProtocol(mRequest, mProtocol, this);
     }
 }

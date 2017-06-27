@@ -831,14 +831,21 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     //---------------------------------listener--------------------------------------------
     @Override
     public void onUiCancelListener() {
+        dissMissUiPromptDialog();
     }
 
     @Override
     public void onUiDetermineListener() {
+        dissMissUiPromptDialog();
     }
 
     @Override
     public void onUiCenterDetermineListener() {
+        dissMissUiPromptDialog();
+    }
 
+    public void jumpTonet(){
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
     }
 }

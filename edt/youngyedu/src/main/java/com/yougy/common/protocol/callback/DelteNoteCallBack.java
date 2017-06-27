@@ -39,8 +39,8 @@ public class DelteNoteCallBack extends BaseCallBack<RemoveNoteProtocol> {
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.removeNotesProtocol(mRequest, ProtocolId.PROTOCOL_ID_REMOVE_NOTES, this);
     }
 }

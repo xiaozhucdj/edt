@@ -50,8 +50,8 @@ public class AppendNotesCallBack extends BaseCallBack<AppendNotesProtocol> {
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.appendNotesProtocol(mRequest, ProtocolId.PROTOCOL_ID_APPEND_NOTES, this);
     }
 }
