@@ -34,6 +34,7 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
     public void setDiagram(Diagram diagram) {
         this.diagram = diagram;
     }
+
     public void setPhotoGraph(Photograph photo) {
         this.photo = photo;
     }
@@ -51,12 +52,14 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
         super(context, attrs);
         init();
     }
-    private void init(){
+
+    private void init() {
         mGestureDetector = new GestureDetector(getContext(), new MyOnGestureListener());
         screenHeight = UIUtils.getScreenHeight();
         screenWidth = UIUtils.getScreenWidth();
         setOnTouchListener(this);
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -80,11 +83,12 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
     }
 
     private FrameLayout.LayoutParams params;
+
     private void updateWindowPosition() {
         params = (FrameLayout.LayoutParams) getLayoutParams();
-        int y = screenHeight - 61;
+        int y = screenHeight - getHeight();
         LogUtils.e(getClass().getName(), "leftmargin : " + mStartX + ",topmargin : " + mStartY + ",Y:" + y);
-        int x = screenWidth - 50;
+        int x = screenWidth - getWidth();
         if (mStartX < x) {
             params.leftMargin = (int) mStartX;
         } else {
@@ -94,12 +98,12 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
             params.topMargin = 60;
         } else if (mStartY > y) {
             LogUtils.e(getClass().getName(), "startY..................." + mStartY);
-            params.topMargin = y - 50;
+            params.topMargin = y - 60;
         } else {
             params.topMargin = (int) mStartY;
         }
         setLayoutParams(params);
-
+        setPadding(0, 0, 0, 0);
         if (null != photo) {
             photo.setLeftMargin(params.leftMargin);
             photo.setTopMargin(params.topMargin);
@@ -126,13 +130,16 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
             onHideDeleteBtnListener.hideDeleteBtn();
         }
     }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
+
     private class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDown(MotionEvent e) {
+            setPadding(2, 2, 2, 2);
             mStartX = e.getRawX();
             mStartY = e.getRawY();
             return true;
@@ -144,11 +151,13 @@ public class MoveRelativeLayout1 extends RelativeLayout implements View.OnTouchL
             mStartY = e2.getRawY();
             return true;
         }
+
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             performClick();
             return true;
         }
+
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             updateWindowPosition();

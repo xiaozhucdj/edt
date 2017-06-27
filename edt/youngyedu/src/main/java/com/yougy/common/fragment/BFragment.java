@@ -154,30 +154,142 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         }
         return notes;
     }
-
     protected UiPromptDialog mUiPromptDialog;
+    //---------------------------------CancelAndDetermine--------------------------------------------
 
-    protected void showCancelAndDetermineDialog(String title) {
-
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showCancelAndDetermineDialog(int titleId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
         }
         mUiPromptDialog.show();
-        mUiPromptDialog.setTitle(title);
-
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setDialogStyle(false);
     }
 
-    /**显示UI提示的对话框*/
-    protected void showCancelAndDetermineDialog(int resID) {
+    /**
+     *
+     * @param titleId  标题
+     * @param cancleId  取消按钮
+     * @param determineId 确定按钮
+     */
+    protected void showCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
         }
         mUiPromptDialog.show();
-        mUiPromptDialog.setTitle(resID);
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setDialogStyle(false);
     }
 
+
+    protected void showTagCancelAndDetermineDialog(int titleId ,int tag) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setDialogStyle(false);
+    }
+
+
+
+    /**
+     *
+     * @param titleId  标题
+     * @param cancleId  取消按钮
+     * @param determineId 确定按钮
+     * @param tag        tag 处理分类
+     */
+    protected void showTagCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId,int tag) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setCancel(cancleId);
+        mUiPromptDialog.setConfirm(determineId);
+        mUiPromptDialog.setDialogStyle(false);
+    }
+
+
+    //---------------------------------CenterDetermine--------------------------------------------
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showCenterDetermineDialog(int titleId) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showCenterDetermineDialog(int titleId ,int confirmId) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setCenterConfirm(confirmId);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showTagCenterDetermineDialog(int titleId,int tag) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+    /**
+     *
+     * @param titleId 标题
+     */
+    protected void showTagCenterDetermineDialog(int titleId ,int confirmId,int tag) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(getActivity());
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(titleId);
+        mUiPromptDialog.setCenterConfirm(confirmId);
+        mUiPromptDialog.setDialogStyle(true);
+    }
+
+
+    //---------------------------------dissmiss--------------------------------------------
 
     protected void dissMissUiPromptDialog( ) {
         if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
@@ -185,11 +297,19 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         }
     }
 
+    //---------------------------------listener--------------------------------------------
     @Override
     public void onUiCancelListener() {
+        dissMissUiPromptDialog();
     }
 
     @Override
     public void onUiDetermineListener() {
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCenterDetermineListener() {
+        dissMissUiPromptDialog();
     }
 }

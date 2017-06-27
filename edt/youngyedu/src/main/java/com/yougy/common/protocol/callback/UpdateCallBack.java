@@ -23,10 +23,10 @@ public class UpdateCallBack extends BaseCallBack<VersioinProtocol> {
     }
 
 
-    @Override
-    public void onClick() {
+//    @Override
+//    public void onClick() {
 //        ProtocolManager.queryClassProtocol(InitManager.getInstance().getSchoolId(), "", ProtocolId.PROTOCOL_ID_QUERYCLASS, this);
-    }
+//    }
 
     @Override
     public void onResponse(VersioinProtocol response, int id) {

@@ -30,8 +30,8 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
     @Override
     public NewUnBindDeviceRep parseNetworkResponse(Response response, int id) throws Exception {
         String json = response.body().string();
-        LogUtils.e(getClass().getName(),"unbind json is : " + json);
-        if (response.isSuccessful()){
+        LogUtils.e(getClass().getName(), "unbind json is : " + json);
+        if (response.isSuccessful()) {
 //            String path = mWeakReference.get().getDatabasePath(DATABASE_NAME).getAbsolutePath();
 //            boolean uploadDb = FtpUtil.uploadFile(path, DATABASE_NAME);
 //            if (uploadDb) {
@@ -40,7 +40,7 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
             Intent intent = new Intent(mWeakReference.get(), UploadService.class);
             mWeakReference.get().startService(intent);
         }
-        return GsonUtil.fromJson(json,NewUnBindDeviceRep.class);
+        return GsonUtil.fromJson(json, NewUnBindDeviceRep.class);
     }
 
     @Override
@@ -52,13 +52,13 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
         }
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
-//        ProtocolManager.deviceUnBindProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_UNBIND_DEVICE, this);
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
         unBindDeviceReq.setDeviceId(Commons.UUID);
         unBindDeviceReq.setUserId(SpUtil.getUserId());
-        NewProtocolManager.unbindDevice(unBindDeviceReq,this);
+        NewProtocolManager.unbindDevice(unBindDeviceReq, this);
     }
 }

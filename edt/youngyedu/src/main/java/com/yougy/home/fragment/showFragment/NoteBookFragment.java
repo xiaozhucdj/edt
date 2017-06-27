@@ -1,6 +1,7 @@
 package com.yougy.home.fragment.showFragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -9,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.yougy.common.eventbus.BaseEvent;
@@ -205,7 +205,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                         BaseEvent baseEvent = new BaseEvent(EventBusConstant.alter_note, mUpdateInfo);
                         EventBus.getDefault().post(baseEvent);
                     }else{
-                       UIUtils.showToastSafe("修改笔记失败",Toast.LENGTH_LONG);
+                        showCenterDetermineDialog(R.string.updata_note_fail);
                     }
                 }
             }
@@ -271,7 +271,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                         EventBus.getDefault().post(baseEvent);
                         getActivity().finish();
                     }else{
-                        UIUtils.showToastSafe("删除笔记失败",Toast.LENGTH_LONG);
+                        showCenterDetermineDialog(R.string.delete_note_fail);
                     }
                 }
             }
@@ -561,7 +561,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                             subject = "无";
                         }
                         if (StringUtils.isEmpty(noteTitle) && SpUtil.getAccountId() == mControlActivity.mNoteCreator) {
-                            UIUtils.showToastSafe("请填写笔记昵称", Toast.LENGTH_SHORT);
+                            showCenterDetermineDialog(R.string.note_name_null);
                             return;
                         }
 
@@ -638,7 +638,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                                     return;
                                 }
                                 if (!NetUtils.isNetConnected()) { //当前笔记都是服务器存着的ID的 所以在没网的时候是不允许用户删除的 否则会 业务逻辑更加复杂。
-                                    UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
+                                    showCancelAndDetermineDialog(R.string.jump_to_net);
                                     return;
                                 }
                                 delteNoteProtocol();
@@ -828,5 +828,11 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         if (mUpdateSub != null) {
             initScription.unsubscribe();
         }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
     }
 }

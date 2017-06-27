@@ -25,6 +25,7 @@ import com.yougy.common.protocol.response.CancelBookOrderRep;
 import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
 import com.yougy.common.protocol.response.QueryQRStrRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -80,6 +81,8 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     RequirePayOrderRep.OrderObj order;
     String qrStr;
     QRCodeDialog qrCodeDialog;
+    private int mTagForNoNet = 1;
+    private int mTagForCancelOrder = 2;
 
     @Override
     protected void setContentView() {
@@ -89,8 +92,8 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     @Override
     protected void init() {
         order = getIntent().getParcelableExtra(ShopGloble.ORDER);
-        if (order == null){
-            ToastUtil.showToast(getApplicationContext() , "order信息错误");
+        if (order == null) {
+            ToastUtil.showToast(getApplicationContext(), "order信息错误");
         }
         orderBookInfoList.addAll(order.getBookList());
     }
@@ -99,89 +102,88 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     protected void handleEvent() {
         tapEventEmitter.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof QueryQRStrRep){
-                    QueryQRStrRep rep = (QueryQRStrRep) o;
-                    String qrcode;
-                    if (rep.getCode() == 200
-                            && rep.getData() != null
-                            && rep.getData().size() != 0
-                            && !TextUtils.isEmpty(rep.getData().get(0).getQrcode())){
-                        qrcode = rep.getData().get(0).getQrcode();
-                        qrCodeDialog = new QRCodeDialog(ConfirmOrderActivity.this
+                    @Override
+                    public void call(Object o) {
+                        if (o instanceof QueryQRStrRep) {
+                            QueryQRStrRep rep = (QueryQRStrRep) o;
+                            String qrcode;
+                            if (rep.getCode() == 200
+                                    && rep.getData() != null
+                                    && rep.getData().size() != 0
+                                    && !TextUtils.isEmpty(rep.getData().get(0).getQrcode())) {
+                                qrcode = rep.getData().get(0).getQrcode();
+                                qrCodeDialog = new QRCodeDialog(ConfirmOrderActivity.this
 //                                , protocol.getQrStr()
-                                , qrcode
-                                , "请使用手机打开支付宝扫一扫"
-                                , new QRCodeDialog.OnBtnClickListener() {
+                                        , qrcode
+                                        , "请使用手机打开支付宝扫一扫"
+                                        , new QRCodeDialog.OnBtnClickListener() {
 
-                            @Override
-                            public void onBtnClick(QRCodeDialog.FUNCTION function) {
-                                switch (function){
-                                    case CANCLE:
-                                        qrCodeDialog.dismiss();
-                                        break;
-                                    case HAS_FINISH_PAY:
-                                        qrCodeDialog.showHint("正在查询订单状态...");
-                                        ProtocolManager.isOrderPaySuccessProtocol(order.getOrderId()
-                                                , SpUtil.getAccountId()
-                                                , ProtocolId.PROTOCOL_ID_IS_ORDER_PAY_SUCCESS
-                                                , new IsOrderPaySuccessCallBack(ConfirmOrderActivity.this
-                                                        , order.getOrderId()
+                                    @Override
+                                    public void onBtnClick(QRCodeDialog.FUNCTION function) {
+                                        switch (function) {
+                                            case CANCLE:
+                                                qrCodeDialog.dismiss();
+                                                break;
+                                            case HAS_FINISH_PAY:
+                                                qrCodeDialog.showHint("正在查询订单状态...");
+                                                if (!NetUtils.isNetConnected()) {
+                                                    showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+                                                    return;
+                                                }
+                                                ProtocolManager.isOrderPaySuccessProtocol(order.getOrderId()
                                                         , SpUtil.getAccountId()
-                                                        , ProtocolId.PROTOCOL_ID_IS_ORDER_PAY_SUCCESS));
-                                        break;
-                                    case RETRY:
-                                        qrCodeDialog.dismiss();
-                                        queryQRStr(PAY_ALIPAY);
-                                        break;
-                                    case OK:
-                                        qrCodeDialog.dismiss();
-                                        loadIntent(ShopCartActivity.class);
-                                        break;
-                                }
+                                                        , ProtocolId.PROTOCOL_ID_IS_ORDER_PAY_SUCCESS
+                                                        , new IsOrderPaySuccessCallBack(ConfirmOrderActivity.this
+                                                                , order.getOrderId()
+                                                                , SpUtil.getAccountId()
+                                                                , ProtocolId.PROTOCOL_ID_IS_ORDER_PAY_SUCCESS));
+                                                break;
+                                            case RETRY:
+                                                qrCodeDialog.dismiss();
+                                                queryQRStr(PAY_ALIPAY);
+                                                break;
+                                            case OK:
+                                                qrCodeDialog.dismiss();
+                                                loadIntent(ShopCartActivity.class);
+                                                break;
+                                        }
+                                    }
+                                });
+                                qrCodeDialog.show();
+                            } else {
+                                showToastSafe("请求支付二维码失败,请稍后重试...", Toast.LENGTH_SHORT);
                             }
-                        });
-                         qrCodeDialog.show();
+                        } else if (o instanceof IsOrderPaySuccessRep) {
+                            IsOrderPaySuccessRep rep = (IsOrderPaySuccessRep) o;
+                            if (rep.getCode() == 200) {
+                                Intent intent = new Intent(ConfirmOrderActivity.this, PaySuccessActivity.class);
+                                intent.putExtra(ShopGloble.ORDER, order);
+                                startActivity(intent);
+                                //通知主界面刷新
+                                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                                EventBus.getDefault().post(baseEvent);
+                                qrCodeDialog.dismiss();
+                                finish();
+                            } else {
+                                qrCodeDialog.showHintAndRetry("支付未成功", "重试");
+                            }
+                        }
+//                            else if (o instanceof CancelBookOrderRep) {
+//                            CancelBookOrderRep rep = (CancelBookOrderRep) o;
+//                            if (rep.getCode() == 200) {
+//                                loadIntentWithSpecificFlag(BookShopActivityDB.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                            } else {
+//                                showTagCancelAndDetermineDialog(R.string.cancel_order_fail, mTagForCancelOrder);
+//                            }
+//                        }
                     }
-                    else {
-                        showToastSafe("请求支付二维码失败,请稍后重试..." , Toast.LENGTH_SHORT);
-                    }
-                }
-                else if (o instanceof IsOrderPaySuccessRep){
-                    IsOrderPaySuccessRep rep = (IsOrderPaySuccessRep) o;
-                    if (rep.getCode() == 200){
-                        Intent intent = new Intent(ConfirmOrderActivity.this , PaySuccessActivity.class);
-                        intent.putExtra(ShopGloble.ORDER , order);
-                        startActivity(intent);
-                        //通知主界面刷新
-                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
-                        EventBus.getDefault().post(baseEvent);
-                        qrCodeDialog.dismiss();
-                        finish();
-                    }
-                    else {
-                        qrCodeDialog.showHintAndRetry("支付未成功" , "重试");
-                    }
-                }
-//                else if (o instanceof CancelBookOrderRep){
-//                    CancelBookOrderRep rep = (CancelBookOrderRep) o;
-//                    if (rep.getCode() == 200){
-//                        ToastUtil.showToast(getApplicationContext() , "取消订单成功");
-//                        loadIntentWithSpecificFlag(BookShopActivityDB.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//                    }
-//                    else {
-//                        ToastUtil.showToast(getApplicationContext() , "取消订单失败");
-//                    }
-//                }
-            }
-        });
+                });
         super.handleEvent();
     }
 
     @Override
     protected void initLayout() {
-        orderRecyclerview.setLayoutManager(new GridLayoutManager(this, BOOK_INFO_MAX_ROW){
+        orderRecyclerview.setLayoutManager(new GridLayoutManager(this, BOOK_INFO_MAX_ROW) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -239,22 +241,27 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
 
     /**
      * 向服务器请求支付二维码串
+     *
      * @param i 请求的支付渠道, 0代表支付宝,1代表微信支付
      */
-    private void queryQRStr(int i){
-        if (i == PAY_ALIPAY){
+    private void queryQRStr(int i) {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
+        if (i == PAY_ALIPAY) {
             QueryQRStrRequest request = new QueryQRStrRequest();
             request.setOrderId(order.getOrderId());
             request.setOrderOwner(SpUtil.getAccountId());
             request.setOrderPrice(order.getOrderPrice());
             request.setPayMethod(PAY_ALIPAY);
-            QueryQRStrCallBack callBack = new QueryQRStrCallBack(this , ProtocolId.PROTOCOL_ID_QUERY_QR_CODE , request);
-            ProtocolManager.qureyQRStrProtocol(request , ProtocolId.PROTOCOL_ID_QUERY_QR_CODE , callBack);
-        }
-        else if (i == 1){
+            QueryQRStrCallBack callBack = new QueryQRStrCallBack(this, ProtocolId.PROTOCOL_ID_QUERY_QR_CODE, request);
+            ProtocolManager.qureyQRStrProtocol(request, ProtocolId.PROTOCOL_ID_QUERY_QR_CODE, callBack);
+        } else if (i == 1) {
 
         }
     }
+
     @OnClick({R.id.confirm_order_back_btn, R.id.confirm_order_wechat_pay_btn, R.id.confirm_order_alipay_btn})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -262,7 +269,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                 onBackPressed();
                 break;
             case R.id.confirm_order_wechat_pay_btn:
-                showToastSafe("微信支付即将开通,敬请期待" , Toast.LENGTH_SHORT);
+                showToastSafe("微信支付即将开通,敬请期待", Toast.LENGTH_SHORT);
                 break;
             case R.id.confirm_order_alipay_btn:
                 queryQRStr(PAY_ALIPAY);
@@ -310,9 +317,10 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
 
     /**
      * 计算bookInfo的总价格
+     *
      * @return 总价格
      */
-    private double getCheckedBookPriceSum(){
+    private double getCheckedBookPriceSum() {
         double sum = 0;
         for (BookInfo bookInfo : orderBookInfoList) {
             sum = sum + bookInfo.getBookSalePrice();
@@ -330,7 +338,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
      */
     private void addBtns(int firstBtnNum, int lastBtnNum, boolean hasForward, boolean hasNext) {
         if (hasForward) addBtn(-1);
-        for (int index = firstBtnNum ; index <= lastBtnNum ; index++) {
+        for (int index = firstBtnNum; index <= lastBtnNum; index++) {
             addBtn(index);
         }
         if (hasNext) addBtn(-2);
@@ -373,11 +381,11 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
             w = result[0];
             h = result[1];
         }
-        if (w == 0 || h == 0){
-            view.measure(View.MeasureSpec.makeMeasureSpec(view.getLayoutParams().width , View.MeasureSpec.EXACTLY)
-                    , View.MeasureSpec.makeMeasureSpec(view.getLayoutParams().height , View.MeasureSpec.EXACTLY));
-            w  = view.getMeasuredWidth() ;
-            h  = view.getMeasuredHeight() ;
+        if (w == 0 || h == 0) {
+            view.measure(View.MeasureSpec.makeMeasureSpec(view.getLayoutParams().width, View.MeasureSpec.EXACTLY)
+                    , View.MeasureSpec.makeMeasureSpec(view.getLayoutParams().height, View.MeasureSpec.EXACTLY));
+            w = view.getMeasuredWidth();
+            h = view.getMeasuredHeight();
         }
         ImageLoaderManager.getInstance().loadImageContext(this,
                 url,
@@ -400,7 +408,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
         public void onBindViewHolder(BookInfoViewHolder holder, int position) {
             holder.bookNameTv.setText(mdata.get(position).getBookTitle());
             holder.bookPriceTv.setText("￥" + mdata.get(position).getBookSalePrice());
-            refreshImg(holder.bookImg , mdata.get(position).getBookCover());
+            refreshImg(holder.bookImg, mdata.get(position).getBookCover());
         }
 
         @Override
@@ -418,15 +426,34 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
 
             public BookInfoViewHolder(View itemView) {
                 super(itemView);
-                ButterKnife.bind(this , itemView);
+                ButterKnife.bind(this, itemView);
                 AutoUtils.auto(itemView);
             }
         }
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        ProtocolManager.cancelPayOrderProtocol(order.getOrderId() , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
-//                , new CancelBookOrderCallBack(this , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , order.getOrderId() , SpUtil.getAccountId()));
-//    }
+    @Override
+    public void onBackPressed() {
+        cancelOrder();
+    }
+
+    private void cancelOrder() {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            return;
+        }
+        ProtocolManager.cancelPayOrderProtocol(order.getOrderId(), SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
+                , new CancelBookOrderCallBack(this, ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER, order.getOrderId(), SpUtil.getAccountId()));
+
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        if (mUiPromptDialog.getTag() == mTagForNoNet) {
+            jumpTonet();
+        } else if (mUiPromptDialog.getTag() == mTagForCancelOrder) {
+            cancelOrder();
+        }
+    }
 }

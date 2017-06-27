@@ -39,7 +39,8 @@ public class BookCategoryCallBack extends BaseCallBack<CategoryInfo> {
     }
 
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.queryBookCategoryProtocol(SpUtil.getUserId(),-1, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CATEGORY,this);
     }
 }

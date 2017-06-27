@@ -44,8 +44,8 @@ public class AppendBookCartCallBack extends BaseCallBack<AppendBookCartRep> {
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.appendBookCartProtocol(mRequest, mProtocol, this);
     }
 }

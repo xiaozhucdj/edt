@@ -2,6 +2,7 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -47,7 +48,14 @@ public class QueryShopBookDetailCallBack extends BaseCallBack<QueryShopBookDetai
     }
 
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getUserId(), bookId , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , this);
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        ( (BaseActivity)mContext).finish();
     }
 }

@@ -39,11 +39,11 @@ public class UpdaNoteCallBack extends BaseCallBack<UpdaNoteProtocol> {
         }
     }
 
+
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         ProtocolManager.updateNotesProtocol(mRequest
                 , ProtocolId.PROTOCOL_ID_UPDATE_NOTES, this);
     }
-
 }

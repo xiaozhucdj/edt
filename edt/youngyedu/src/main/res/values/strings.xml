@@ -87,6 +87,32 @@
     <string name="clear_record">清空历史记录</string>
 
     <string name="jump_to_net">当前没有网络,是否链接网络?</string>
+    <string name="delete_note_fail">删除笔记失败</string>
+    <string name="updata_note_fail">更新笔记失败</string>
+    <string name="note_name_null">请填写笔记昵称</string>
+    <string name="add_note_fail">添加笔记失败</string>
+    <string name="books_already_buy">您已经购买过该图书</string>
+    <string name="books_already_add_car">已加入购物车</string>
+    <string name="books_already_add_collection">已收藏</string>
+    <string name="books_add_car_fail">添加到购物车失败</string>
+    <string name="books_add_collection_fail">添加到收藏失败</string>
+    <string name="books_request_details_fail">获取图书详情失败</string>
+    <string name="books_request_order_fail">下单失败</string>
+    <string name="books_request_recommended_fail">获取推荐图书失败</string>
+    <string name="books_reader">阅读</string>
+    <string name="books_add_car_success">添加到购物车成功</string>
+    <string name="books_add_collection_success">添加到收藏成功</string>
+    <string name="retry">重试</string>
+    <string name="play_package">在书包打开</string>
+    <string name="cancle_collection_book">确实要取消收藏%1$s这本书么？</string>
+    <string name="cancle_collection_all_book">确实要取消收藏这本%1$s书么？</string>
+    <string name="cancle_collection_fail">取消收藏失败</string>
+    <string name="remove_car_all">确实要移除这本%1$s书么？</string>
+    <string name="remove_car">确实要移除%1$s这本书么？</string>
+    <string name="cancel_order_fail">取消订单失败</string>
+    <string name="no_buy_book">你还没有购买课外书</string>
+    <string name="input_seartch_context">请输入搜索内容</string>
+
 
     <string-array name="titles">
         <item>课本</item>

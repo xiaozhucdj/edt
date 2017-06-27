@@ -32,7 +32,8 @@ public class ClassCallBack extends BaseCallBack<NewQuerySchoolOrgRep> {
     }
 
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
         NewQuerySchoolOrgReq schoolOrgReq = new NewQuerySchoolOrgReq();
         schoolOrgReq.setSchoolId(InitManager.getInstance().getSchoolId());
         NewProtocolManager.querySchoolOrg(schoolOrgReq,this);

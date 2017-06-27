@@ -7,6 +7,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
@@ -21,6 +22,9 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
     private TextView mTvTitle;
     private Button mBtnCancel;
     private Button mBtnConfirm;
+    private Button mBtnCenterConfirm;
+    private RelativeLayout mRlCancelAndConfirm;
+    private RelativeLayout mRlCenter;
 
     public UiPromptDialog(Context context) {
         super(context);
@@ -50,6 +54,13 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
 
         mBtnConfirm = (Button) this.findViewById(R.id.btn_confirm);
         mBtnConfirm.setOnClickListener(this);
+
+
+        mRlCancelAndConfirm = (RelativeLayout) this.findViewById(R.id.rl_cancelAndConfirm);
+        mRlCenter = (RelativeLayout) this.findViewById(R.id.rl_center);
+        mBtnCenterConfirm = (Button) this.findViewById(R.id.btn_centerConfirm);
+        mBtnCenterConfirm.setOnClickListener(this);
+
     }
 
     @Override
@@ -60,7 +71,6 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
         int width = (int) (display.getWidth() * getWidthScale());
         window.setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
     }
-
 
 
     @Override
@@ -78,6 +88,12 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
                     mListener.onUiDetermineListener();
                 }
                 break;
+
+            case R.id.btn_centerConfirm:
+                if (mListener != null) {
+                    mListener.onUiCenterDetermineListener();
+                }
+                break;
         }
     }
 
@@ -87,6 +103,8 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
         void onUiCancelListener();
 
         void onUiDetermineListener();
+
+        void onUiCenterDetermineListener();
     }
 
     public void setListener(Listener listener) {
@@ -99,5 +117,38 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
 
     public void setTitle(int resID) {
         mTvTitle.setText(resID);
+    }
+
+
+    public void setDialogStyle(boolean isCenter) {
+        mRlCancelAndConfirm.setVisibility(isCenter == true ? View.GONE : View.VISIBLE);
+        mRlCenter.setVisibility(isCenter == false ? View.GONE : View.VISIBLE);
+    }
+
+    private int tag = 0;
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
+    }
+
+    public void set(int resID) {
+        mTvTitle.setText(resID);
+    }
+
+
+    public void setCancel(int resId) {
+        mBtnCancel.setText(resId);
+    }
+
+    public void setConfirm(int resId) {
+        mBtnConfirm.setText(resId);
+    }
+
+    public void setCenterConfirm(int resId) {
+        mBtnCenterConfirm.setText(resId);
     }
 }

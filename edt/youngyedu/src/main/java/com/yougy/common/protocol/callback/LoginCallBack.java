@@ -71,7 +71,7 @@ public class LoginCallBack extends BaseCallBack<NewLoginRep> {
     }
 
     @Override
-    public void onClick() {
+    public void onUiDetermineListener() {
         ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, this);
     }
 
