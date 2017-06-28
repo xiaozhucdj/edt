@@ -1,5 +1,6 @@
 package com.yougy.shop.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
@@ -22,10 +24,13 @@ import butterknife.ButterKnife;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
 
+    private   static Context mContext;
     private List<BookInfo> infos;
 
-    public BookAdapter(List<BookInfo> infos) {
+
+    public BookAdapter(List<BookInfo> infos , Context context ) {
         this.infos = infos;
+        mContext = context ;
     }
 
     @Override
@@ -66,10 +71,19 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
             searchResultName.setText(info.getBookTitle());
 //            searchResultPrice.setText(Float.toString(info.getBookSalePrice()));
             searchResultPrice.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price),info.getBookSalePrice()));
+            ImageLoaderManager.getInstance().loadImageContext(mContext,
+                   info.getBookCover(),
+                    R.drawable.img_book_cover,
+                    R.drawable.img_book_cover,
+                    128,
+                    168,
+                    searchResultImg);
         }
 
         public static BookHolder create(ViewGroup parent) {
             return new BookHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recommend_item, parent, false));
         }
     }
+
+
 }
