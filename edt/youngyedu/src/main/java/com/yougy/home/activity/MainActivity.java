@@ -38,6 +38,7 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
+import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 
@@ -388,7 +389,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 LogUtils.i("账号设置");
 
                 if (NetUtils.isNetConnected()) {
-                    loadIntent(AccountSetActivity.class);
+                    loadIntent(SettingMainActivity.class);
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }

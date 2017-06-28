@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="112px"
+        android:paddingRight="112px">
+
+        <ImageView
+            android:layout_width="160px"
+            android:layout_height="160px"
+            android:background="@color/black"
+            android:layout_marginTop="150px"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="欢迎使用乐课"
+            android:textColor="@color/gray_666666"
+            android:textSize="24px"
+            android:layout_marginTop="20px"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rounded_rectangle_black_border_login"
+            android:orientation="horizontal"
+            android:layout_marginTop="165px"
+            android:gravity="center_vertical"
+            >
+            <ImageView
+                android:layout_width="25px"
+                android:layout_height="28px"
+                android:background="@drawable/icon_account"
+                android:layout_margin="15px"
+                />
+            <View
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="@color/black"/>
+            <EditText
+                android:id="@+id/account_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入乐课账号"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray_999999"
+                android:textSize="24px"
+                android:layout_marginLeft="15px"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rounded_rectangle_black_border_login"
+            android:orientation="horizontal"
+            android:layout_marginTop="35px"
+            android:gravity="center_vertical"
+            >
+            <ImageView
+                android:layout_width="25px"
+                android:layout_height="28px"
+                android:background="@drawable/icon_pwd"
+                android:layout_margin="15px"
+                />
+            <View
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="@color/black"/>
+            <EditText
+                android:id="@+id/pwd_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入密码"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray_999999"
+                android:textSize="24px"
+                android:layout_marginLeft="15px"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:clickable="true"
+            android:onClick="forgetPwd"
+            android:text="忘记密码?"
+            android:textColor="@color/gray_999999"
+            android:textSize="18px"
+            android:layout_marginTop="20px"
+            />
+
+        <TextView
+            android:id="@+id/login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="60px"
+            android:layout_marginTop="20px"
+            android:background="@color/black"
+            android:clickable="true"
+            android:gravity="center"
+            android:minHeight="0px"
+            android:minWidth="0px"
+            android:onClick="login"
+            android:text="登录"
+            android:textColor="@color/white"
+            android:textSize="28px"
+            />
+    </LinearLayout>
+</layout>

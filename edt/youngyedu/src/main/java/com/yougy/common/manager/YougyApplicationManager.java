@@ -16,6 +16,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
+import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePal;
@@ -121,6 +122,9 @@ public class YougyApplicationManager extends LitePalApplication {
 //        strategy.setUploadProcess(processName == null || processName.equals(packageName));
 //        // 初始化Bugly
 //        CrashReport.initCrashReport(context, "68d9d03b4a", BuildConfig.DEBUG, strategy);
+
+        //AutoLayout初始化
+        AutoLayoutConifg.getInstance().init(this);
 
     }
 

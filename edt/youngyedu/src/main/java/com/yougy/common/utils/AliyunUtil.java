@@ -46,7 +46,7 @@ public class AliyunUtil {
     private AliyunUtil() {
         OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(accessKeyId, accessKeySecret);
         filePath = YougyApplicationManager.getContext().getDatabasePath(DATABASE_NAME).getAbsolutePath();
-        objectKey = "leke" + File.separator + SpUtil.getAccountInfo().getId() + File.separator + DATABASE_NAME;
+        objectKey = "leke" + File.separator + SpUtil.getUserId() + File.separator + DATABASE_NAME;
         ClientConfiguration conf = new ClientConfiguration();
         conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
@@ -90,7 +90,7 @@ public class AliyunUtil {
                 LogUtils.e("AliyunUtil", "onFailure ServiceException : " + e.getMessage());
             }
         });
-        SpUtil.clearAccount();
+        SpUtil.clearSP();
     }
 
 

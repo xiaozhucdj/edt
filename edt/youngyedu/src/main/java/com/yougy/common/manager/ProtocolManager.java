@@ -224,42 +224,6 @@ public class ProtocolManager {
 
 
     /**
-     * 5.设备绑定
-     *
-     * @param userId:用户编码
-     * @param deviceId:设备编码
-     * @param protocol_id:  协议ID
-     * @param callbac:      协议回调函数
-     */
-    public static void deviceBindProtocol(String userId, String deviceId, int protocol_id, Callback callbac) {
-        LogUtils.i("Protocol............. 5.设备绑定");
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("userId", userId);
-            obj.put("deviceId", deviceId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        setCommon(Commons.URL_DEVICE_BIND, obj.toString(), protocol_id, callbac);
-    }
-
-
-    /**
-     * 6.设备解绑
-     */
-    public static void deviceUnBindProtocol(String deviceId, int protocol_id, Callback callback) {
-        LogUtils.i("Protocol............. 6.设备解绑");
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("deviceId", deviceId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        setCommon(Commons.URL_UNBIND_DEVICE, obj.toString(), protocol_id, callback);
-    }
-
-
-    /**
      * 7. 用户登录
      *
      * @param deviceId:设备编码
