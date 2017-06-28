@@ -17,8 +17,9 @@ import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.response.NewUnBindDeviceRep;
 import com.yougy.common.service.UploadService;
+import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -41,10 +42,12 @@ public class SettingMainActivity extends BaseActivity {
     protected ConnectableObservable<Object> tapEventEmitter;
 
     ActivitySettingBinding binding;
+    private int mTagNoNet = 1;
+    private int mTagUnbindFail = 2;
 
     @Override
     protected void setContentView() {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_setting , null , false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_setting, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
@@ -74,22 +77,21 @@ public class SettingMainActivity extends BaseActivity {
             @Override
             public void call(Object o) {
                 if (o instanceof NewUnBindDeviceRep) {
-                  if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                      Intent intent = new Intent(getApplicationContext(), UploadService.class);
-                      startService(intent);
-                      SpUtil.clearSP();
-                      ToastUtil.showToast(getApplicationContext(), "解绑成功!");
-                      finishAll();
-                      loadIntent(LoginActivity.class);
-                  }
-                  else {
-                      ToastUtil.showToast(getApplicationContext(), "解绑失败 : " + ((NewUnBindDeviceRep) o).getMsg());
-                  }
+                    if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
+                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
+                        startService(intent);
+                        SpUtil.clearSP();
+                        showCenterDetermineDialog(R.string.unbind_success);
+                    } else {
+                        LogUtils.i("unbind fail ..." + getString(R.string.unbind_success) + ((NewUnBindDeviceRep) o).getMsg());
+                        showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
+                    }
                 }
             }
         }));
         subscription.add(tapEventEmitter.connect());
     }
+
     @Override
     public void init() {
     }
@@ -126,20 +128,48 @@ public class SettingMainActivity extends BaseActivity {
         }
     }
 
-    public void unBind(View view){
-        new ConfirmDialog(this, "确定解绑该账号吗?" , "账号解绑后,存储在本设备上的资料都将遗失,\n请慎重操作"
-                , "解绑" , "取消" , new DialogInterface.OnClickListener() {
+    public void unBind(View view) {
+
+        new ConfirmDialog(this, "确定解绑该账号吗?", "账号解绑后,存储在本设备上的资料都将遗失,\n请慎重操作"
+                , "解绑", "取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
-                unBindDeviceReq.setDeviceId(Commons.UUID);
-                NewProtocolManager.unbindDevice(unBindDeviceReq , new UnBindCallback(SettingMainActivity.this));
+                unBindRequest();
             }
         }).show();
     }
 
-    public void changePwd(View view){
+    private void unBindRequest() {
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+            return;
+        }
+
+        NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
+        unBindDeviceReq.setDeviceId(Commons.UUID);
+        NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
+    }
+
+    public void changePwd(View view) {
         new ChangePwdDialog(this).show();
     }
 
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        if (mTagNoNet == mUiPromptDialog.getTag()) {
+            jumpTonet();
+
+        } else if (mTagUnbindFail == mUiPromptDialog.getTag()) {
+            unBindRequest();
+        }
+    }
+
+    @Override
+    public void onUiCenterDetermineListener() {
+        super.onUiCenterDetermineListener();
+        finishAll();
+        loadIntent(LoginActivity.class);
+    }
 }

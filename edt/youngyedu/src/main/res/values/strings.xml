@@ -112,7 +112,8 @@
     <string name="cancel_order_fail">取消订单失败</string>
     <string name="no_buy_book">你还没有购买课外书</string>
     <string name="input_seartch_context">请输入搜索内容</string>
-
+    <string name="unbind_success">解绑成功</string>
+    <string name="unbind_fail">解绑失败</string>
 
     <string-array name="titles">
         <item>课本</item>
