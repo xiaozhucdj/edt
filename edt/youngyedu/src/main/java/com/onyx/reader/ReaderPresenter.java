@@ -33,9 +33,20 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
         this.readerView = readerView;
     }
 
+    String bookforNumber = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDSwehg/hFz+VCKc9mAYVSPclL+vbqD9YuVVF4zed7ZgJbl3Tg7e3DnHb/uRXK0t+BEl40UtaGguIFWbgOVySlrGSp8Z81EAB37ZoVU30Rqy0LP" ;
+    String springKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCWEMKTmfN38grscTip5OsjWayRat2g6uAuLkb1TMFTg1NRrdgchoCxsyG8NCMz3diCTJnl2Bg5dkKHpszCrajCiQO+ki6J3WU889+O4l1kMaG54lwrWIsIZJNgJmQ9GGl/DY4OAhV6Lg0rY6mymdHzEPeJiaBWed5VUxAXp58FQQIDAQAB" ;
     @Override
     public void openDocument(String documentPath) {
         DrmCertificateFactory factory  = new DrmCertificateFactory(readerView.getViewContext()) ;
+
+//        if (documentPath.contains("7245022")){
+//            factory.setKey(bookforNumber);
+//        }else if(documentPath.contains("7244705")){
+//            factory.setKey(springKey);
+//        }else{
+//            factory.setKey("");
+//        }
+
         OpenRequest openRequest = new OpenRequest(documentPath, new BaseOptions(),
                 factory  , false);
         getReader().submitRequest(getContext(), openRequest, new BaseCallback() {

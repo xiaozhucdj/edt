@@ -1112,6 +1112,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                     public void call(Subscriber<? super Object> subscriber) {
                         Photograph photograph = layout.getPhotoGraph();
                         if (null != photograph) {
+                            mNote.getPhotographList().remove(photograph);
                             int count = photograph.delete();
                             LogUtils.e(TAG, "count is : " + count);
                         }
