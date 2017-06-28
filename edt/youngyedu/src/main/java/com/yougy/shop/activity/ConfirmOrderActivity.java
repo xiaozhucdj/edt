@@ -167,14 +167,15 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                             } else {
                                 qrCodeDialog.showHintAndRetry("支付未成功", "重试");
                             }
-                        } else if (o instanceof CancelBookOrderRep) {
-                            CancelBookOrderRep rep = (CancelBookOrderRep) o;
-                            if (rep.getCode() == 200) {
-                                loadIntentWithSpecificFlag(BookShopActivityDB.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            } else {
-                                showTagCancelAndDetermineDialog(R.string.cancel_order_fail, mTagForCancelOrder);
-                            }
                         }
+//                            else if (o instanceof CancelBookOrderRep) {
+//                            CancelBookOrderRep rep = (CancelBookOrderRep) o;
+//                            if (rep.getCode() == 200) {
+//                                loadIntentWithSpecificFlag(BookShopActivityDB.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                            } else {
+//                                showTagCancelAndDetermineDialog(R.string.cancel_order_fail, mTagForCancelOrder);
+//                            }
+//                        }
                     }
                 });
         super.handleEvent();
@@ -233,7 +234,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
         }
         //刷新订单编号,订单金额UI
         orderCodeTv.setText("订单编号 : " + order.getOrderId());
-        orderPriceTv.setText("订单金额 :　" + order.getOrderPrice() + "元");
+        orderPriceTv.setText("订单金额 :　￥" + order.getOrderPrice());
         //刷新下方本地订单总价格和订单书本数
         orderInfoTv.setText("共" + orderBookInfoList.size() + "本书 , 总计 : " + getCheckedBookPriceSum() + "元");
     }
