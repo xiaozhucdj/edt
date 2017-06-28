@@ -21,7 +21,6 @@ import com.yougy.common.protocol.callback.CancelBookOrderCallBack;
 import com.yougy.common.protocol.callback.IsOrderPaySuccessCallBack;
 import com.yougy.common.protocol.callback.QueryQRStrCallBack;
 import com.yougy.common.protocol.request.QueryQRStrRequest;
-import com.yougy.common.protocol.response.CancelBookOrderRep;
 import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
 import com.yougy.common.protocol.response.QueryQRStrRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
@@ -432,10 +431,10 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        cancelOrder();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        cancelOrder();
+//    }
 
     private void cancelOrder() {
         if (!NetUtils.isNetConnected()) {
