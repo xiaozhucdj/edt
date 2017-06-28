@@ -25,6 +25,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.MainPagerAdapter;
 import com.yougy.home.bean.DataNoteBean;
 import com.yougy.home.bean.NoteInfo;
+import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -224,7 +225,7 @@ public class TabMainActivity extends BaseActivity {
                 break;
             case R.id.btn_account:
                 if (NetUtils.isNetConnected()) {
-                    loadIntent(AccountSetActivity.class);
+                    loadIntent(SettingMainActivity.class);
                 } else {
                     UIUtils.showToastSafe(R.string.net_not_connection, Toast.LENGTH_SHORT);
                 }

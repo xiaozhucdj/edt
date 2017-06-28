@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="60px"
+            >
+            <ImageButton
+                android:id="@+id/back_btn"
+                android:layout_width="60px"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:src="@drawable/img_normal_fanhui"
+                android:scaleType="fitXY"
+                android:paddingLeft="30px"
+                android:paddingTop="15px"
+                android:paddingBottom="15px"
+                android:onClick="onClick"
+                />
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="账号设置"
+                android:textColor="@color/black"
+                android:textSize="26px" />
+        </RelativeLayout>
+        <View android:layout_width="match_parent" android:layout_height="2dp" android:background="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray_f2f2f2"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingTop="60px"
+            android:paddingBottom="40px"
+            >
+            <ImageView
+                android:id="@+id/avatar_imv"
+                android:layout_width="165px"
+                android:layout_height="165px"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="姓名:XXXXX"
+                    android:textSize="22px"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="30px"
+                    />
+                <TextView
+                    android:id="@+id/school_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="学校:XXXXXXXXXXXXXXXXXX"
+                    android:textSize="22px"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="20px"
+                    />
+                <TextView
+                    android:id="@+id/class_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="班级:XXXXXXXXXXXXXXX"
+                    android:textSize="22px"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="20px"
+                    />
+                <TextView
+                    android:id="@+id/num_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="编号:XXXXXXXXXXXXXXXXX"
+                    android:textSize="22px"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="20px"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="2dp" android:background="@color/black" />
+
+        
+        <TextView
+            android:id="@+id/change_pwd_btn"
+            android:layout_width="match_parent"
+            android:layout_height="60px"
+            android:text="修改开机密码"
+            android:textSize="24px"
+            android:textColor="@color/black"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="changePwd"
+            />
+        <View android:layout_width="match_parent" android:layout_height="2dp" android:background="@color/black" />
+        <TextView
+            android:id="@+id/unbind_btn"
+            android:layout_width="match_parent"
+            android:layout_height="60px"
+            android:text="将该账号与设备解绑"
+            android:textSize="24px"
+            android:textColor="@color/black"
+            android:clickable="true"
+            android:background="@color/gray_dbdbdb"
+            android:gravity="center"
+            android:onClick="unBind"
+            />
+        <View android:layout_width="match_parent" android:layout_height="2dp" android:background="@color/black" />
+
+    </LinearLayout>
+</layout>
