@@ -382,7 +382,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             mTvBookAuthor.setText("作者 : " + mBookInfo.getBookAuthor());
                             //出版时间
                             mTvBookPublishTime.setText("出版时间 : " + mBookInfo.getBookPublishTime());
-                            mTvBookDownloadSize.setText("文件大小 :");
+                            //文件大小
+                            mTvBookDownloadSize.setText("文件大小 :"+mBookInfo.getBookDownloadSize());
                             //价格
                             mTvBookSalePrice.setText("￥" + mBookInfo.getBookSalePrice());
                             //购买按钮价格

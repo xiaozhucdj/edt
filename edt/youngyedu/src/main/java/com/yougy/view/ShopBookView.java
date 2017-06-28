@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.shop.activity.ShopBookDetailsActivity;
@@ -24,6 +25,8 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
     private TextView mBookNameTv;
     private TextView mBookPriceTv;
     private BookInfo mInfo;
+    private Context mContext;
+
     public ShopBookView(Context context) {
         super(context);
         init(context);
@@ -36,6 +39,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
 
 
     private void init(Context context){
+         mContext= context ;
         View.inflate(context, R.layout.recommend_item,this);
         mBookIv = (ImageView) findViewById(R.id.search_result_img);
         mBookNameTv = (TextView) findViewById(R.id.search_result_name);
@@ -49,6 +53,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
         mBookIv.setImageResource(R.drawable.cart_book);
         mBookNameTv.setText(info.getBookTitle());
         mBookPriceTv.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price),info.getBookSalePrice()));
+        refreshImg(mBookIv ,info.getBookCover());
     }
 
 
@@ -58,5 +63,15 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
         intent.putExtra(ShopGloble.BOOK_ID , Integer.parseInt(mInfo.getBookId()));
         getContext().startActivity(intent);
         LogUtils.e("ShopBookView","onClick................." + mInfo.getBookTitle());
+    }
+
+    private void refreshImg(ImageView view, String url) {
+        ImageLoaderManager.getInstance().loadImageContext(mContext,
+                url,
+                R.drawable.img_book_cover,
+                R.drawable.img_book_cover,
+                128,
+                168,
+                view);
     }
 }

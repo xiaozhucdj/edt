@@ -6,6 +6,7 @@ import android.net.wifi.WifiManager;
 
 import com.onyx.android.sdk.reader.api.ReaderDrmCertificateFactory;
 import com.onyx.android.sdk.utils.FileUtils;
+import com.yougy.common.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,8 +22,8 @@ public class DrmCertificateFactory implements ReaderDrmCertificateFactory {
     private  Context context;
     private String mKeyStart = "-----BEGIN PUBLIC KEY-----\n";
     private String mKeyEnd = "\n-----END PUBLIC KEY-----";
-    private String mPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIqw5+2CBxEXgFwqqcq8CG8jEyUKMdL1bJl8XgUb30OH15EolX22b4GkIwe7tamoY1lrzzUfcYSnt2t/glBDMQtTSF6NE2cjcNxq3CKRSEDhpy6DN9a8niOnOThMeb8cyPylF7IN+SKFshF8D+0OIToGQ4IRMlcdAMSRqfcUp7aQIDAQAB";
-
+//    private String mPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIqw5+2CBxEXgFwqqcq8CG8jEyUKMdL1bJl8XgUb30OH15EolX22b4GkIwe7tamoY1lrzzUfcYSnt2t/glBDMQtTSF6NE2cjcNxq3CKRSEDhpy6DN9a8niOnOThMeb8cyPylF7IN+SKFshF8D+0OIToGQ4IRMlcdAMSRqfcUp7aQIDAQAB";
+    private String mPublicKey ;
 
     public DrmCertificateFactory(Context context) {
         this.context = context;
@@ -46,8 +47,10 @@ public class DrmCertificateFactory implements ReaderDrmCertificateFactory {
 //            return null;
 //        }
 //        return readContentOfFile(drmFile);
-//       return mKeyStart+getPublicKey()+mKeyEnd;
-        return null ;
+        if (!StringUtils.isEmpty(getPublicKey())){
+           return mKeyStart+getPublicKey()+mKeyEnd;
+        }
+      return  null ;
     }
 
     private String getPublicKey(){
