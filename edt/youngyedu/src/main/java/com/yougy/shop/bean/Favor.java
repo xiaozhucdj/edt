@@ -40,6 +40,17 @@ public class Favor {
     private String bookCollectTime;
     private String userRealName;
 
+    public double getBookSalePrice() {
+        return bookSalePrice;
+    }
+
+    public void setBookSalePrice(double bookSalePrice) {
+        this.bookSalePrice = bookSalePrice;
+    }
+
+    private double bookSalePrice;
+
+
     public String getBookTitle() {
         return bookTitle;
     }

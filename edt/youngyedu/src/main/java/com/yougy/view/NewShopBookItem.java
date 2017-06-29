@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yougy.common.manager.ImageLoaderManager;
-import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.Favor;
 import com.yougy.ui.activity.R;
@@ -114,7 +113,7 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
                 Favor favor = (Favor) data;
                 bookNameTv.setText(favor.getBookTitle());
                 bookAuthorTv.setText("作者:" + favor.getBookAuthor());
-                bookPriceTv.setText("价格:￥" + "TODO");
+                bookPriceTv.setText("价格:￥" +  favor.getBookSalePrice());
                 refreshImg(bookImgview , favor.getBookCover());
             }
             else if (data instanceof CartItem){
