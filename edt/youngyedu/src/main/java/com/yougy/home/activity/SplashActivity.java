@@ -48,7 +48,6 @@ import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
 
-
 /**
  * Created by FH on 2016/8/25.
  * <p>
@@ -59,10 +58,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     protected ConnectableObservable<Object> tapEventEmitter;
 
     private ImageView mImgLogo;
-//    private LoginCallBack callBack;
     private int lastProgress;
-
-
 
     private WeakHandler mHandler = new WeakHandler();
 
@@ -92,45 +88,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                     if (((NewLoginRep) o).getCode()== ProtocolId.RET_SUCCESS && ((NewLoginRep) o).getCount()>0) {
                         Log.v("FH", "自动登录成功");
                         SpUtil.saveStudent(((NewLoginRep) o).getData().get(0));
-                        if (TextUtils.isEmpty(SpUtil.getLocalLockPwd())){
-                            Log.v("FH" , "没有发现localLock的本地储存密码,重置密码并通知用户");
-                            new HintDialog(SplashActivity.this
-                                    , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
-                                    , "确定"
-                                    , new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    SpUtil.setLocalLockPwd("123456");
-                                    loadIntent(LocalLockActivity.class);
-                                    finish();
-                                }
-                            }).show();
-                        }
-                        else {
-                            Log.v("FH" , "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
-                            jumpActivity(LocalLockActivity.class);
-                        }
+                        checkLocalLockAndJump();
                     }
                     else {
                         Log.v("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
-                        jumpActivity(LoginActivity.class);
-                    }
-                }
-                else if (o instanceof LoginCallBack.Error){
-                    if (!((LoginCallBack.Error) o).mUiPromptDialog.isShowing()) {
-                        ((LoginCallBack.Error) o).mUiPromptDialog.show();
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setDialogStyle(false);
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setCancel(R.string.cancel);
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setConfirm(R.string.retry);
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setTitle(R.string.text_connect_timeout);
-                    }
-                    Log.v("FH" , "自动登录失败原因:网络错误" + ((LoginCallBack.Error) o).e.getMessage());
-                    if (!TextUtils.isEmpty(SpUtil.getLocalLockPwd())){
-                        Log.v("FH" , "网络错误导致登录失败:本机有之前的本机锁密码,跳转到本地锁界面");
-                        jumpActivity(LocalLockActivity.class);
-                    }
-                    else {
-                        Log.v("FH" , "网络错误导致登录失败:本机没有之前的本机锁密码,跳转到用户名密码登录界面");
                         jumpActivity(LoginActivity.class);
                     }
                 }
@@ -144,68 +105,80 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     protected void setContentView() {
         setContentView(R.layout.activity_splash);
     }
-
     @Override
     protected void init() {
     }
-
     @Override
     protected void initLayout() {
         mImgLogo = (ImageView) this.findViewById(R.id.img_logo);
     }
-
     @Override
     protected void loadData() {
     }
-
     @Override
     protected void onStart() {
         super.onStart();
-//        if (Commons.UUID == null){
-//            Log.v("FH", "UUID 为空,重新获取UUID");
-//            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":" , "");
-//            SpUtil.saveUUID(Commons.UUID);
-//        }
-//        if (Commons.UUID == null){
-//            ToastUtil.showToast(getApplicationContext() , "获取UUID失败,程序退出");
-//            finishAll();
-//        }
-//        else {
-            onCheckLogIn();
-//        }
+        onCheckLogIn();
     }
-
     private void onCheckLogIn(){
+        Log.v("FH" , "开始检测版本更新...");
         if (NetUtils.isNetConnected()) {
-            Log.v("FH", "有网络,开始检测版本更新...");
+            Log.v("FH", "有网络,更新UUID");
             Commons.UUID = SystemUtils.getMacAddress().replaceAll(":" , "") ;
             SpUtil.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
-            Log.v("FH", "没有网络,跳转到wifi设置");
             if (-1==SpUtil.getAccountId()) {
+                Log.v("FH", "没有网络,没有之前的登录信息,跳转到wifi设置");
                 jumpWifiActivity();
             }else{
-                jumpActivity(MainActivity.class);
+                Log.v("FH", "没有网络,有之前的登录信息");
+                checkLocalLockAndJump();
             }
         }
     }
 
 
+    private void checkLocalLockAndJump(){
+        if (TextUtils.isEmpty(SpUtil.getLocalLockPwd())){
+            Log.v("FH" , "没有发现localLock的本地储存密码,重置密码并通知用户");
+            new HintDialog(SplashActivity.this
+                    , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
+                    , "确定"
+                    , new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    SpUtil.setLocalLockPwd("123456");
+                    loadIntent(LocalLockActivity.class);
+                    finish();
+                }
+            }).show();
+        }
+        else {
+            Log.v("FH" , "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
+            jumpActivity(LocalLockActivity.class);
+        }
+    }
+
     private void login() {
-//        callBack = new LoginCallBack(SplashActivity.this);
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
         NewProtocolManager.login(loginReq,new LoginCallBack(this){
             @Override
-            public void onBefore(Request request, int id) {
-//                super.onBefore(request, id);
-            }
-
+            public void onBefore(Request request, int id) {}
             @Override
-            public void onAfter(int id) {
-//                super.onAfter(id);
-            }
+            public void onAfter(int id) {}
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.v("FH" , "自动登录失败原因:其他错误:" + e.getMessage());
+                if (-1==SpUtil.getAccountId()) {
+                    Log.v("FH", "自动登录失败,没有之前的登录信息,跳转到wifi设置");
+                    jumpWifiActivity();
+                }
+                else {
+                    Log.v("FH", "自动登录失败,有之前的登录信息");
+                    checkLocalLockAndJump();
+                }            }
         });
     }
 
@@ -268,9 +241,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         Observable.timer(2000, TimeUnit.MILLISECONDS).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-//                if (callBack != null) {
-//                    callBack.hideLoadingDialog();
-//                }
                 loadIntent(SplashActivity.this, clazz);
                 SplashActivity.this.finish();
             }
