@@ -28,7 +28,6 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.SystemUtils;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.ui.activity.R;
@@ -37,12 +36,12 @@ import com.yougy.update.VersionUtils;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.DownProgressDialog;
 import com.yougy.view.dialog.HintDialog;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.Request;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -60,7 +59,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     protected ConnectableObservable<Object> tapEventEmitter;
 
     private ImageView mImgLogo;
-    private LoginCallBack callBack;
+//    private LoginCallBack callBack;
     private int lastProgress;
 
 
@@ -162,36 +161,52 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     @Override
     protected void onStart() {
         super.onStart();
-        if (Commons.UUID == null){
-            Log.v("FH", "UUID 为空,重新获取UUID");
-            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":" , "");
-            SpUtil.saveUUID(Commons.UUID);
-        }
-        if (Commons.UUID == null){
-            ToastUtil.showToast(getApplicationContext() , "获取UUID失败,程序退出");
-            finishAll();
-        }
-        else {
+//        if (Commons.UUID == null){
+//            Log.v("FH", "UUID 为空,重新获取UUID");
+//            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":" , "");
+//            SpUtil.saveUUID(Commons.UUID);
+//        }
+//        if (Commons.UUID == null){
+//            ToastUtil.showToast(getApplicationContext() , "获取UUID失败,程序退出");
+//            finishAll();
+//        }
+//        else {
             onCheckLogIn();
-        }
+//        }
     }
 
     private void onCheckLogIn(){
         if (NetUtils.isNetConnected()) {
             Log.v("FH", "有网络,开始检测版本更新...");
+            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":" , "") ;
+            SpUtil.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
             Log.v("FH", "没有网络,跳转到wifi设置");
-            jumpWifiActivity();
+            if (-1==SpUtil.getAccountId()) {
+                jumpWifiActivity();
+            }else{
+                jumpActivity(MainActivity.class);
+            }
         }
     }
 
 
     private void login() {
-        callBack = new LoginCallBack(SplashActivity.this);
+//        callBack = new LoginCallBack(SplashActivity.this);
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
-        NewProtocolManager.login(loginReq,callBack);
+        NewProtocolManager.login(loginReq,new LoginCallBack(this){
+            @Override
+            public void onBefore(Request request, int id) {
+//                super.onBefore(request, id);
+            }
+
+            @Override
+            public void onAfter(int id) {
+//                super.onAfter(id);
+            }
+        });
     }
 
     private void getServerVersion(){
@@ -253,9 +268,9 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         Observable.timer(2000, TimeUnit.MILLISECONDS).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-                if (callBack != null) {
-                    callBack.hideLoadingDialog();
-                }
+//                if (callBack != null) {
+//                    callBack.hideLoadingDialog();
+//                }
                 loadIntent(SplashActivity.this, clazz);
                 SplashActivity.this.finish();
             }
