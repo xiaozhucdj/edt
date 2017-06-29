@@ -42,9 +42,6 @@ import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import de.greenrobot.event.EventBus;
 
 import static com.onyx.android.sdk.utils.DeviceUtils.getBatteryPecentLevel;
@@ -385,26 +382,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.btn_msg:
-                LogUtils.i("消息中心");
-                JSONObject object = new JSONObject();
-                try {
-                    object.put("123", "123");
-                    object.put("1234", "1234");
-                    object.put("123", "123");
-                    object.put("123", "123");
-                    String josn = object.toString();
-                    LogUtils.i("json ==" + josn);
-
-                    JSONObject object1 = new JSONObject(josn);
-                    object1.put("12345","123456") ;
-                    String key = object1.getString("123");
-                    LogUtils.i("setkey ==" + object1.toString());
-                    LogUtils.i("gets .." + key);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
                 break;
 
             case R.id.btn_account:

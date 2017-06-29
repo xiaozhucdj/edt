@@ -653,7 +653,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     public void onDestroyView() {
         super.onDestroyView();
-        if (!mSubDb.isUnsubscribed()) {
+        if (mSubDb!=null&&!mSubDb.isUnsubscribed()) {
             mSubDb.unsubscribe();
         }
         mSubDb = null;

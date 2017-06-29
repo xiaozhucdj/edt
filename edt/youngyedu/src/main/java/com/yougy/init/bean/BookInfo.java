@@ -178,10 +178,10 @@ public class BookInfo extends DataSupport implements Parcelable {
 
 
     /**图书密码*/
-    private  String downloadkey  = "";
+    private  String bookDownloadKey  = "";
 
     public String getDownloadkey() {
-        return downloadkey;
+        return bookDownloadKey;
     }
 
     public int getNoteStyle() {
@@ -569,7 +569,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeString(this.bookStatus);
         dest.writeString(this.bookStatusCode);
         dest.writeInt(this.courseId);
-        dest.writeString(this.downloadkey);
+        dest.writeString(this.bookDownloadKey);
         dest.writeByte(this.isCheck ? (byte) 1 : (byte) 0);
         dest.writeInt(this.bookFitHomeworkId);
         dest.writeString(this.bookFitHomeworkTitle);
@@ -610,7 +610,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookStatus = in.readString();
         this.bookStatusCode = in.readString();
         this.courseId = in.readInt();
-        this.downloadkey = in.readString();
+        this.bookDownloadKey = in.readString();
         this.isCheck = in.readByte() != 0;
         this.bookFitHomeworkId = in.readInt();
         this.bookFitHomeworkTitle = in.readString();
