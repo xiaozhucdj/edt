@@ -96,15 +96,6 @@ public class LoginActivity extends BaseActivity {
                         ToastUtil.showToast(getApplicationContext() , "登录失败:用户名密码错误");
                     }
                 }
-                else if (o instanceof LoginCallBack.Error){
-                    if (!((LoginCallBack.Error) o).mUiPromptDialog.isShowing()) {
-                        ((LoginCallBack.Error) o).mUiPromptDialog.show();
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setDialogStyle(false);
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setCancel(R.string.cancel);
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setConfirm(R.string.retry);
-                        ((LoginCallBack.Error) o).mUiPromptDialog.setTitle(R.string.text_connect_timeout);
-                    }
-                }
             }
         }));
         subscription.add(tapEventEmitter.connect());
