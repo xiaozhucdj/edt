@@ -17,7 +17,14 @@ import com.onyx.android.sdk.reader.host.request.PreviousScreenRequest;
 import com.onyx.android.sdk.reader.host.wrapper.Reader;
 import com.onyx.android.sdk.reader.utils.PagePositionUtils;
 import com.onyx.data.DrmCertificateFactory;
+import com.yougy.common.global.FileContonst;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.UIUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by ming on 2017/4/1.
@@ -33,19 +40,20 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
         this.readerView = readerView;
     }
 
-    String bookforNumber = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDSwehg/hFz+VCKc9mAYVSPclL+vbqD9YuVVF4zed7ZgJbl3Tg7e3DnHb/uRXK0t+BEl40UtaGguIFWbgOVySlrGSp8Z81EAB37ZoVU30Rqy0LP" ;
-    String springKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCWEMKTmfN38grscTip5OsjWayRat2g6uAuLkb1TMFTg1NRrdgchoCxsyG8NCMz3diCTJnl2Bg5dkKHpszCrajCiQO+ki6J3WU889+O4l1kMaG54lwrWIsIZJNgJmQ9GGl/DY4OAhV6Lg0rY6mymdHzEPeJiaBWed5VUxAXp58FQQIDAQAB" ;
     @Override
-    public void openDocument(String documentPath) {
+    public void openDocument(String documentPath ,String bookId) {
         DrmCertificateFactory factory  = new DrmCertificateFactory(readerView.getViewContext()) ;
-
-//        if (documentPath.contains("7245022")){
-//            factory.setKey(bookforNumber);
-//        }else if(documentPath.contains("7244705")){
-//            factory.setKey(springKey);
-//        }else{
-//            factory.setKey("");
-//        }
+        if (!StringUtils.isEmpty(bookId)){
+            String keys=  DataCacheUtils.getString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY) ;
+            if (!StringUtils.isEmpty(keys) && keys.contains(bookId)){
+                try {
+                    JSONObject object = new JSONObject(keys)  ;
+                    factory.setKey(object.getString(bookId));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         OpenRequest openRequest = new OpenRequest(documentPath, new BaseOptions(),
                 factory  , false);

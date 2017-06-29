@@ -170,11 +170,19 @@ public class BookInfo extends DataSupport implements Parcelable {
      */
     private String bookStatusCode ;
 
+
     /**
      * 对应课程编码
      */
     private int  courseId ;
 
+
+    /**图书密码*/
+    private  String downloadkey  = "";
+
+    public String getDownloadkey() {
+        return downloadkey;
+    }
 
     public int getNoteStyle() {
         return bookFitNoteStyle;
@@ -529,7 +537,9 @@ public class BookInfo extends DataSupport implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.bookId);
         dest.writeString(this.bookTitle);
+        dest.writeString(this.bookSubtitle);
         dest.writeString(this.bookAuthor);
+        dest.writeString(this.bookVol);
         dest.writeInt(this.bookCategory);
         dest.writeString(this.bookISBN);
         dest.writeInt(this.bookPublisher);
@@ -543,6 +553,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeString(this.bookDownload);
         dest.writeString(this.bookDownloadSize);
         dest.writeByte(this.bookInCart ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.bookInShelf ? (byte) 1 : (byte) 0);
         dest.writeByte(this.bookInFavor ? (byte) 1 : (byte) 0);
         dest.writeInt(this.bookFitGradeId);
         dest.writeString(this.bookFitGradeName);
@@ -551,15 +562,25 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeInt(this.bookFitNoteId);
         dest.writeString(this.bookFitNoteTitle);
         dest.writeInt(this.bookFitNoteStyle);
+        dest.writeString(this.bookCategoryName);
+        dest.writeString(this.bookPublisherName);
+        dest.writeInt(this.bookVersion);
+        dest.writeString(this.bookVersionName);
+        dest.writeString(this.bookStatus);
+        dest.writeString(this.bookStatusCode);
+        dest.writeInt(this.courseId);
+        dest.writeString(this.downloadkey);
         dest.writeByte(this.isCheck ? (byte) 1 : (byte) 0);
         dest.writeInt(this.bookFitHomeworkId);
-        dest.writeString(this.bookPublisherName);
+        dest.writeString(this.bookFitHomeworkTitle);
     }
 
     protected BookInfo(Parcel in) {
         this.bookId = in.readInt();
         this.bookTitle = in.readString();
+        this.bookSubtitle = in.readString();
         this.bookAuthor = in.readString();
+        this.bookVol = in.readString();
         this.bookCategory = in.readInt();
         this.bookISBN = in.readString();
         this.bookPublisher = in.readInt();
@@ -573,6 +594,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookDownload = in.readString();
         this.bookDownloadSize = in.readString();
         this.bookInCart = in.readByte() != 0;
+        this.bookInShelf = in.readByte() != 0;
         this.bookInFavor = in.readByte() != 0;
         this.bookFitGradeId = in.readInt();
         this.bookFitGradeName = in.readString();
@@ -581,9 +603,17 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookFitNoteId = in.readInt();
         this.bookFitNoteTitle = in.readString();
         this.bookFitNoteStyle = in.readInt();
+        this.bookCategoryName = in.readString();
+        this.bookPublisherName = in.readString();
+        this.bookVersion = in.readInt();
+        this.bookVersionName = in.readString();
+        this.bookStatus = in.readString();
+        this.bookStatusCode = in.readString();
+        this.courseId = in.readInt();
+        this.downloadkey = in.readString();
         this.isCheck = in.readByte() != 0;
         this.bookFitHomeworkId = in.readInt();
-        this.bookPublisherName = in.readString();
+        this.bookFitHomeworkTitle = in.readString();
     }
 
     public static final Parcelable.Creator<BookInfo> CREATOR = new Parcelable.Creator<BookInfo>() {
@@ -597,5 +627,7 @@ public class BookInfo extends DataSupport implements Parcelable {
             return new BookInfo[size];
         }
     };
-    /////////////////////////////////序列化 end ////////////////////////////
 }
+
+
+/////////////////////////////////序列化 end ////////////////////////////

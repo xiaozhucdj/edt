@@ -194,7 +194,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         //设置显示PDF 大小
         mOnyxImgView.setLayoutParams(new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
         mControlView.addView(mOnyxImgView, 0);
-        getReaderPresenter().openDocument(mPdfFile);
+        getReaderPresenter().openDocument(mPdfFile , mControlActivity.mBookId+"");
     }
 
     /////////////////////////////////////////pdf sdk start////////////////////////////////////////////

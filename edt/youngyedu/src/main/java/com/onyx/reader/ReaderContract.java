@@ -23,7 +23,7 @@ public interface ReaderContract {
     }
 
     interface ReaderPresenter extends BasePresenter {
-        void openDocument(final String documentPath);
+        void openDocument(final String documentPath ,final String booId);
         void setDocumentViewRect(final int width, final int height);
         void gotoPage(final int page);
         void nextScreen();

@@ -95,4 +95,6 @@ public class FileContonst {
     public final  static  int  PAGE_COUNTS = 9 ;
 
     public final  static  int  PAGE_LINES= 3 ;
+
+    public static final String  DOWN_LOAD_BOOKS_KEY =  "down_load_books_key" ;
 }

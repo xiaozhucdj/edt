@@ -2,6 +2,7 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
@@ -10,7 +11,11 @@ import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.init.bean.BookInfo;
+
+import org.json.JSONObject;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -37,11 +42,34 @@ public class NewTextBookCallBack extends CacheInfoBack<NewBookShelfRep> {
            //文件方式 缓存 JSON
 
            if (protocol.getData()!=null && protocol.getData().size()>0){
+               // 缓存cache
                DataCacheUtils.putString(UIUtils.getContext(), id+"", GsonUtil.toJson(protocol.getData()));
+               // 缓存key
+               String keys=  DataCacheUtils.getString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY) ;
+               try {
+                   JSONObject object  ;
+                   if (!StringUtils.isEmpty(keys)){
+                       object = new JSONObject(keys) ;
+                   }else{
+                       object = new JSONObject() ;
+                   }
+                   for (BookInfo info:protocol.getData()){
+                       String value = info.getDownloadkey() ;
+                       LogUtils.i("pare ,value"+value);
+                       object.put(info.getBookId()+"" ,value) ;
+                   }
+                   DataCacheUtils.putString(UIUtils.getContext(),FileContonst.DOWN_LOAD_BOOKS_KEY,object.toString());
+               }catch (Exception e){
+
+               }
            }else{
                DataCacheUtils.putString(UIUtils.getContext(), id+"", "");
            }
+
+
+
        }
+
         return protocol ;
     }
 

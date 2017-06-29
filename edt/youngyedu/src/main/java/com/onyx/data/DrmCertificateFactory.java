@@ -22,7 +22,6 @@ public class DrmCertificateFactory implements ReaderDrmCertificateFactory {
     private  Context context;
     private String mKeyStart = "-----BEGIN PUBLIC KEY-----\n";
     private String mKeyEnd = "\n-----END PUBLIC KEY-----";
-//    private String mPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIqw5+2CBxEXgFwqqcq8CG8jEyUKMdL1bJl8XgUb30OH15EolX22b4GkIwe7tamoY1lrzzUfcYSnt2t/glBDMQtTSF6NE2cjcNxq3CKRSEDhpy6DN9a8niOnOThMeb8cyPylF7IN+SKFshF8D+0OIToGQ4IRMlcdAMSRqfcUp7aQIDAQAB";
     private String mPublicKey ;
 
     public DrmCertificateFactory(Context context) {
@@ -42,11 +41,6 @@ public class DrmCertificateFactory implements ReaderDrmCertificateFactory {
     }
 
     public String getDrmCertificate() {
-//        File drmFile = new File("/sdcard/public_key");
-//        if (!drmFile.exists() || !drmFile.isFile()) {
-//            return null;
-//        }
-//        return readContentOfFile(drmFile);
         if (!StringUtils.isEmpty(getPublicKey())){
            return mKeyStart+getPublicKey()+mKeyEnd;
         }

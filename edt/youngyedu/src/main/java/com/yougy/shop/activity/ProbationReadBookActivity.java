@@ -128,7 +128,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         mOnyxImgView = new ImageView(this);
         mOnyxImgView.setLayoutParams(new LinearLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
         mLlPdfFather.addView(mOnyxImgView, 0);
-        getReaderPresenter().openDocument(mProbationUrl);
+        getReaderPresenter().openDocument(mProbationUrl,"");
     }
 
     //////////////////////////////////////////解析PDF////////////////////////////////////////////////////
