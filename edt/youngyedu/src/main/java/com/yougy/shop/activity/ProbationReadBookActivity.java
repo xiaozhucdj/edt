@@ -39,7 +39,6 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.globle.ShopGloble;
@@ -93,6 +92,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     private View mRootView;
     private int mCurrentMarksPage = 0;
     private int mTagForNoNet = 1;
+    private int mTagForRequestDetailsFail =2;
+    private int mTagForQueryNoNet =3;
 
     /////////////////////////////////Files///////////////////////////
 
@@ -175,7 +176,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
     protected void refreshData() {
         if (!NetUtils.isNetConnected()) {
-            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForQueryNoNet);
             return;
         }
 
@@ -262,33 +263,39 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 if (o instanceof AppendBookCartRep) {
                     AppendBookCartRep rep = (AppendBookCartRep) o;
                     if (rep.getCode() == 200) {
-                        ToastUtil.showToast(getApplicationContext(), "添加到购物车成功");
+//                        ToastUtil.showToast(getApplicationContext(), "添加到购物车成功");
+                        showCenterDetermineDialog(R.string.books_add_car_success);
+
                         mBookInfo.setBookInCart(true);
                         cartCountTV.setText((Integer.parseInt(cartCountTV.getText().toString()) + 1) + "");
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "添加到购物车失败");
+//                        ToastUtil.showToast(getApplicationContext(), "添加到购物车失败");
+                        showCenterDetermineDialog(R.string.books_add_car_fail);
                     }
                 } else if (o instanceof AppendBookFavorRep) {
                     AppendBookFavorRep rep = (AppendBookFavorRep) o;
                     if (rep.getCode() == 200) {
-                        ToastUtil.showToast(getApplicationContext(), "添加到收藏成功");
+//                        ToastUtil.showToast(getApplicationContext(), "添加到收藏成功");
+                        showCenterDetermineDialog(R.string.books_add_collection_success);
                         mBookInfo.setBookInFavor(true);
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "添加到收藏失败");
+//                        ToastUtil.showToast(getApplicationContext(), "添加到收藏失败");
+                        showCenterDetermineDialog(R.string.books_add_collection_fail);
                     }
                 } else if (o instanceof QueryShopBookDetailRep) {
                     QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
-                    if (rep.getData() != null) {
+                    if (rep.getData() != null && rep.getData() .size()>0) {
                         mBookInfo = rep.getData().get(0);
                         mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "获取图书详情失败");
+//                        ToastUtil.showToast(getApplicationContext(), "获取图书详情失败");
+                        showTagCancelAndDetermineDialog(R.string.books_request_details_fail, R.string.cancel, R.string.retry, mTagForRequestDetailsFail);
                         Log.v("FH", "获取图书详情失败");
                     }
                 } else if (o instanceof QueryBookCartRep) {
                     QueryBookCartRep rep = (QueryBookCartRep) o;
                     if (rep.getCode() != 200) {
-                        ToastUtil.showToast(getApplicationContext(), "获取购物车个数失败");
+//                        ToastUtil.showToast(getApplicationContext(), "获取购物车个数失败");
                     } else if (rep.getData() != null && rep.getData().size() != 0) {
                         cartCountTV.setText("" + rep.getData().size());
                     } else {
@@ -308,7 +315,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         startActivity(intent);
                         finish();
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "下单失败");
+                        showCenterDetermineDialog(R.string.get_order_fail);
                     }
                 }
             }
@@ -449,6 +456,16 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         super.onUiDetermineListener();
         if (mUiPromptDialog.getTag() == mTagForNoNet) {
             jumpTonet();
+        } else if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail) {
+            refreshData();
+        }
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail ||  getUiPromptDialog().getTag() == mTagForQueryNoNet) {
+            this.finish();
         }
     }
 }
