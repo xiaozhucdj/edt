@@ -21,7 +21,6 @@ import com.yougy.common.protocol.response.RemoveBookCartProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
@@ -161,6 +160,8 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                     RemoveBookCartProtocol protocal = (RemoveBookCartProtocol) o;
                     if (protocal.getCode() == 200) {
                         loadData();
+                    }else{
+                        showCenterDetermineDialog(R.string.remove_car_fail);
                     }
                 } else if (o instanceof RequirePayOrderRep) {
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
@@ -183,7 +184,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                         startActivity(intent);
                         finish();
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "下单失败");
+                        showCenterDetermineDialog(R.string.get_order_fail);
                     }
                 }
             }
