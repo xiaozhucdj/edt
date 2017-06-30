@@ -257,7 +257,7 @@ public class ImageLoaderManager {
                 .error(errorID)
 //                .thumbnail(0.1f)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .override(w, h)
+//                .override(w, h)
                 .into(view);
     }
 
