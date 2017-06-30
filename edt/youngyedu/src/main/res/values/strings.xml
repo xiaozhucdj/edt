@@ -114,7 +114,7 @@
     <string name="input_seartch_context">请输入搜索内容</string>
     <string name="unbind_success">解绑成功</string>
     <string name="unbind_fail">解绑失败</string>
-
+    <string name="get_zxing_fail">获取支付二维码失败,请稍后重试</string>
     <string-array name="titles">
         <item>课本</item>
         <item>辅导书</item>

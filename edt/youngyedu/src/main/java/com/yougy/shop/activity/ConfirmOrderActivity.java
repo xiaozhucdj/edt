@@ -82,6 +82,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
     QRCodeDialog qrCodeDialog;
     private int mTagForNoNet = 1;
     private int mTagForCancelOrder = 2;
+    private int mTagForZxingfail =3;
 
     @Override
     protected void setContentView() {
@@ -150,7 +151,7 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
                                 });
                                 qrCodeDialog.show();
                             } else {
-                                showToastSafe("请求支付二维码失败,请稍后重试...", Toast.LENGTH_SHORT);
+                                showTagCancelAndDetermineDialog(R.string.get_zxing_fail, mTagForZxingfail);
                             }
                         } else if (o instanceof IsOrderPaySuccessRep) {
                             IsOrderPaySuccessRep rep = (IsOrderPaySuccessRep) o;
@@ -453,6 +454,8 @@ public class ConfirmOrderActivity extends ShopAutoLayoutBaseActivity implements 
             jumpTonet();
         } else if (mUiPromptDialog.getTag() == mTagForCancelOrder) {
             cancelOrder();
+        }else if(mUiPromptDialog.getTag() == mTagForZxingfail){
+            queryQRStr(PAY_ALIPAY);
         }
     }
 }
