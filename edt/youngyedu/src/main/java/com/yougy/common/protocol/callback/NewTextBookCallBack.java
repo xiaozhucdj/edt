@@ -60,7 +60,8 @@ public class NewTextBookCallBack extends CacheInfoBack<NewBookShelfRep> {
                    }
                    DataCacheUtils.putString(UIUtils.getContext(),FileContonst.DOWN_LOAD_BOOKS_KEY,object.toString());
                }catch (Exception e){
-
+                    e.printStackTrace();
+                   LogUtils.i("缓存密码出差");
                }
            }else{
                DataCacheUtils.putString(UIUtils.getContext(), id+"", "");
