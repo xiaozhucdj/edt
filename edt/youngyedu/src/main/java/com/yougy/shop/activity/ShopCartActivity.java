@@ -19,6 +19,7 @@ import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.protocol.response.RemoveBookCartProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.bean.BookInfo;
@@ -511,7 +512,8 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
     public void onBtnClick(final int position) {
         mRemovePosition = position;
 
-        if (checkedCartItemList.size() > 0) {
+        LogUtils.i("onBtnClick ...."+position);
+        if (cartItemList.size() > 0) {
             if (!NetUtils.isNetConnected()) {
                 showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
                 return;

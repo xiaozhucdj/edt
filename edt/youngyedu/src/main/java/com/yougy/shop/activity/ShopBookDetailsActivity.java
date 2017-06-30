@@ -365,7 +365,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         }
                     } else if (o instanceof QueryShopBookDetailRep) {
                         QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
-                        if (rep.getData() != null) {
+                        if (rep.getData() != null&&rep.getData().size()>0) {
                             mBookInfo = rep.getData().get(0);
                             if (mBooks == null || mBooks.size() == 0) {
                                 requestPromoteBook();
