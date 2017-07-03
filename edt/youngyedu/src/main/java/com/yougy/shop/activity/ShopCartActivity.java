@@ -1,6 +1,7 @@
 package com.yougy.shop.activity;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -9,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
@@ -23,6 +26,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
@@ -33,6 +37,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -165,24 +170,35 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                         showCenterDetermineDialog(R.string.remove_car_fail);
                     }
                 } else if (o instanceof RequirePayOrderRep) {
+                    //生成订单的回调
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
                     if (rep.getCode() == 200) {
-                        RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
-
-                        orderObj.setBookList(new ArrayList<BookInfo>() {
-                            {
-                                for (CartItem cartItem : checkedCartItemList) {
-                                    BookInfo bookInfo = new BookInfo();
-                                    bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
-                                    bookInfo.setBookCover(cartItem.getBookCover());
-                                    bookInfo.setBookTitle(cartItem.getBookTitle());
-                                    add(bookInfo);
+                        BriefOrder orderObj = rep.getData().get(0);
+                        Log.v("FH" , "orderPrice : " + orderObj.getOrderPrice());
+                        if(orderObj.getOrderPrice() == 0d){
+                            Intent intent = new Intent(ShopCartActivity.this, PaySuccessActivity.class);
+                            intent.putExtra(ShopGloble.ORDER, orderObj);
+                            startActivity(intent);
+                            //通知主界面刷新
+                            BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                            EventBus.getDefault().post(baseEvent);
+                        }
+                        else {
+                            orderObj.setBookList(new ArrayList<BookInfo>() {
+                                {
+                                    for (CartItem cartItem : checkedCartItemList) {
+                                        BookInfo bookInfo = new BookInfo();
+                                        bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
+                                        bookInfo.setBookCover(cartItem.getBookCover());
+                                        bookInfo.setBookTitle(cartItem.getBookTitle());
+                                        add(bookInfo);
+                                    }
                                 }
-                            }
-                        });
-                        Intent intent = new Intent(ShopCartActivity.this, ConfirmOrderActivity.class);
-                        intent.putExtra(ShopGloble.ORDER, orderObj);
-                        startActivity(intent);
+                            });
+                            Intent intent = new Intent(ShopCartActivity.this, ConfirmOrderActivity.class);
+                            intent.putExtra(ShopGloble.ORDER, orderObj);
+                            startActivity(intent);
+                        }
                         finish();
                     } else {
                         showCenterDetermineDialog(R.string.get_order_fail);

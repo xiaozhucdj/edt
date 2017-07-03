@@ -41,6 +41,7 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.showView.TextThumbSeekBar;
@@ -304,7 +305,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 } else if (o instanceof RequirePayOrderRep) {
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
                     if (rep.getCode() == 200) {
-                        RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
+                        BriefOrder orderObj = rep.getData().get(0);
                         orderObj.setBookList(new ArrayList<BookInfo>() {
                             {
                                 add(mBookInfo);

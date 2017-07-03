@@ -113,7 +113,7 @@
                     android:background="@null"
                     android:gravity="center"
                     android:text="本学期用书"
-                    android:textColor="@drawable/btn_text_color_select"
+                    android:textColor="@drawable/btn_text_color_selector"
                     android:textSize="24dp" />
 
                 <View
@@ -129,7 +129,7 @@
                     android:background="@null"
                     android:gravity="center"
                     android:text="全部用书"
-                    android:textColor="@drawable/btn_text_color_select"
+                    android:textColor="@drawable/btn_text_color_selector"
                     android:textSize="24dp" />
 
                 <Button
@@ -140,7 +140,7 @@
                     android:background="@null"
                     android:gravity="center"
                     android:text="搜索本地课外书"
-                    android:textColor="@drawable/btn_text_color_select"
+                    android:textColor="@drawable/btn_text_color_selector"
                     android:textSize="24dp" />
 
                 <View
@@ -156,7 +156,7 @@
                     android:background="@null"
                     android:gravity="center"
                     android:text="书城"
-                    android:textColor="@drawable/btn_text_color_select"
+                    android:textColor="@drawable/btn_text_color_selector"
                     android:textSize="24dp" />
 
                 <View
@@ -172,7 +172,7 @@
                     android:background="@null"
                     android:gravity="center"
                     android:text="我的消息"
-                    android:textColor="@drawable/btn_text_color_select"
+                    android:textColor="@drawable/btn_text_color_selector"
                     android:textSize="24dp" />
 
                 <View
@@ -188,7 +188,7 @@
                     android:background="@null"
                     android:gravity="center"
                     android:text="账号设置"
-                    android:textColor="@drawable/btn_text_color_select"
+                    android:textColor="@drawable/btn_text_color_selector"
                     android:textSize="24dp" />
 
 
@@ -205,7 +205,7 @@
                     android:background="@null"
                     android:gravity="center"
                     android:text="刷新"
-                    android:textColor="@drawable/btn_text_color_select"
+                    android:textColor="@drawable/btn_text_color_selector"
                     android:textSize="24dp" />
                 <View
                     android:layout_width="match_parent"

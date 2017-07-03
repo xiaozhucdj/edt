@@ -551,8 +551,16 @@ public class ProtocolManager {
     /**
      * 24. 书城订单查询
      */
-    public static void queryBookOrderProtocol(int userId, int protocol_id, Callback callbac) {
+    public static void queryBookOrderProtocol(String orderOwner, int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............  24. 书城订单查询");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m" , "queryOrder");
+            obj.put("orderOwner", orderOwner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
 

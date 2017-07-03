@@ -159,7 +159,9 @@
         <activity
             android:name="com.yougy.shop.activity.PaySuccessActivity"
             android:screenOrientation="portrait" />
-
+        <!--我的订单列表-->
+        <activity android:name="com.yougy.shop.activity.OrderListActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name="com.yougy.shop.activity.ShopBookDetailsActivity"

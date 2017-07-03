@@ -43,6 +43,10 @@ public class ConfirmDialog extends BaseDialog {
         this(context , titleText , contentText , null , null , confirmBtnListener);
     }
 
+    public ConfirmDialog(Context context, String contentText , Dialog.OnClickListener confirmBtnListener , String confirmBtnText) {
+        this(context , null , contentText , confirmBtnText , null , confirmBtnListener);
+    }
+
     @Override
     protected void init() {
 

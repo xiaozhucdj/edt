@@ -40,6 +40,7 @@ import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
+import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.R;
 
 import de.greenrobot.event.EventBus;
@@ -249,6 +250,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnAccout = (Button) this.findViewById(R.id.btn_account);
         mBtnAccout.setOnClickListener(this);
 
+        //订单
+        findViewById(R.id.btn_order).setOnClickListener(this);
+
         mImgWSysWifi = (ImageView) this.findViewById(R.id.img_wifi);
         mImgWSysWifi.setOnClickListener(this);
         mImgWSysPower = (ImageView) this.findViewById(R.id.img_electricity);
@@ -394,6 +398,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 mFlRight.setVisibility(View.GONE);
 
+                break;
+            case R.id.btn_order:
+                LogUtils.i("订单");
+                if (NetUtils.isNetConnected()) {
+                    loadIntent(OrderListActivity.class);
+                } else {
+                    showCancelAndDetermineDialog(R.string.jump_to_net);
+                }
+                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");

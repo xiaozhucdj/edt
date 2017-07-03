@@ -66,8 +66,8 @@
             android:textColorHint="@color/black"
             android:layout_marginTop="125px"
             android:background="@drawable/shape_rounded_rectangle_black_border_login"
-            android:maxLines="1"
             android:padding="18px"
+            android:singleLine="true"
             />
         <TextView
             android:id="@+id/forget_pwd_btn"

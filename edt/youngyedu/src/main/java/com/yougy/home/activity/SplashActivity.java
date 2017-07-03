@@ -178,7 +178,8 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                 else {
                     Log.v("FH", "自动登录失败,有之前的登录信息");
                     checkLocalLockAndJump();
-                }            }
+                }
+            }
         });
     }
 
@@ -230,8 +231,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         startActivity(intent);
     }
 
-
-
     @Override
     protected void refreshView() {
     }
@@ -247,13 +246,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         });
     }
 
-
     /**
      * 开始执行下载动作
      */
     private void doDownLoad(final Context mContext, final String downloadUrl) {
-
-
         final DownProgressDialog downProgressDialog = new DownProgressDialog(mContext);
 
 //        downProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
@@ -296,7 +292,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             }
         }));
     }
-
 
     /**
      * 删除下载的apk文件

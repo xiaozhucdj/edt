@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.ImageLoaderManager;
@@ -46,6 +48,7 @@ import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.adapter.PromoteBookAdapter;
+import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -59,6 +62,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -406,15 +410,25 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     } else if (o instanceof RequirePayOrderRep) {
                         RequirePayOrderRep rep = (RequirePayOrderRep) o;
                         if (rep.getCode() == 200) {
-                            RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
-                            orderObj.setBookList(new ArrayList<BookInfo>() {
-                                {
-                                    add(mBookInfo);
-                                }
-                            });
-                            Intent intent = new Intent(ShopBookDetailsActivity.this, ConfirmOrderActivity.class);
-                            intent.putExtra(ShopGloble.ORDER, orderObj);
-                            startActivity(intent);
+                            BriefOrder orderObj = rep.getData().get(0);
+                            if (orderObj.getOrderPrice() == 0d){
+                                Intent intent = new Intent(ShopBookDetailsActivity.this, PaySuccessActivity.class);
+                                intent.putExtra(ShopGloble.ORDER, orderObj);
+                                startActivity(intent);
+                                //通知主界面刷新
+                                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                                EventBus.getDefault().post(baseEvent);
+                            }
+                            else {
+                                orderObj.setBookList(new ArrayList<BookInfo>() {
+                                    {
+                                        add(mBookInfo);
+                                    }
+                                });
+                                Intent intent = new Intent(ShopBookDetailsActivity.this, ConfirmOrderActivity.class);
+                                intent.putExtra(ShopGloble.ORDER, orderObj);
+                                startActivity(intent);
+                            }
                             finish();
                         } else {
                             showCenterDetermineDialog(R.string.books_request_order_fail);

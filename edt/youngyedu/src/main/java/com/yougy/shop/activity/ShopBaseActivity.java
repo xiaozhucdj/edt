@@ -16,6 +16,8 @@ public abstract class ShopBaseActivity extends BaseActivity {
     protected CompositeSubscription subscription;
     protected ConnectableObservable<Object> tapEventEmitter;
     protected String tag;
+    //设置是否需要在Activity onStop之后仍然接收RxBus的事件.默认为不接收,
+    private boolean needRecieveEventAfterOnStop = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,4 +47,27 @@ public abstract class ShopBaseActivity extends BaseActivity {
         }
         tapEventEmitter = null;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (needRecieveEventAfterOnStop){
+            if (subscription != null) {
+                subscription.clear();
+                subscription = null;
+            }
+            tapEventEmitter = null;
+        }
+    }
+
+    public boolean isNeedRecieveEventAfterOnStop() {
+        return needRecieveEventAfterOnStop;
+    }
+
+    public ShopBaseActivity setNeedRecieveEventAfterOnStop(boolean needRecieveEventAfterOnStop) {
+        this.needRecieveEventAfterOnStop = needRecieveEventAfterOnStop;
+        return this;
+    }
+
+
 }
