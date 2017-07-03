@@ -182,6 +182,7 @@ public class ConfirmOrderActivity extends ShopBaseActivity {
                         } else if (o instanceof IsOrderPaySuccessRep) {
                             IsOrderPaySuccessRep rep = (IsOrderPaySuccessRep) o;
                             if (rep.getCode() == 200) {
+                                YougyApplicationManager.getRxBus(ConfirmOrderActivity.this).send("refreshOrderList");
                                 Intent intent = new Intent(ConfirmOrderActivity.this, PaySuccessActivity.class);
                                 intent.putExtra(ShopGloble.ORDER, briefOrder);
                                 startActivity(intent);

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
 import com.yougy.common.protocol.callback.RemoveBookCartCallBack;
@@ -176,6 +177,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                         BriefOrder orderObj = rep.getData().get(0);
                         Log.v("FH" , "orderPrice : " + orderObj.getOrderPrice());
                         if(orderObj.getOrderPrice() == 0d){
+                            YougyApplicationManager.getRxBus(ShopCartActivity.this).send("refreshOrderList");
                             Intent intent = new Intent(ShopCartActivity.this, PaySuccessActivity.class);
                             intent.putExtra(ShopGloble.ORDER, orderObj);
                             startActivity(intent);

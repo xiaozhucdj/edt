@@ -21,6 +21,7 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
@@ -412,6 +413,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         if (rep.getCode() == 200) {
                             BriefOrder orderObj = rep.getData().get(0);
                             if (orderObj.getOrderPrice() == 0d){
+                                YougyApplicationManager.getRxBus(ShopBookDetailsActivity.this).send("refreshOrderList");
                                 Intent intent = new Intent(ShopBookDetailsActivity.this, PaySuccessActivity.class);
                                 intent.putExtra(ShopGloble.ORDER, orderObj);
                                 startActivity(intent);
