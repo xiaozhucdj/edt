@@ -64,7 +64,7 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
                 loadIntentWithSpecificFlag(MainActivity.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 break;
             case R.id.pay_succcess_actvt_to_shop_frontpage_btn:
-                loadIntentWithSpecificFlag(MainActivity.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                loadIntentWithSpecificFlag(BookShopActivityDB.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 break;
         }

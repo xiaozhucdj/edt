@@ -135,6 +135,7 @@ public class SettingMainActivity extends BaseActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 unBindRequest();
+                dialog.dismiss();
             }
         }).show();
     }
