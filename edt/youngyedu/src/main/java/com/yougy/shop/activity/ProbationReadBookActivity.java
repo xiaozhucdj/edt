@@ -264,23 +264,19 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 if (o instanceof AppendBookCartRep) {
                     AppendBookCartRep rep = (AppendBookCartRep) o;
                     if (rep.getCode() == 200) {
-//                        ToastUtil.showToast(getApplicationContext(), "添加到购物车成功");
                         showCenterDetermineDialog(R.string.books_add_car_success);
 
                         mBookInfo.setBookInCart(true);
                         cartCountTV.setText((Integer.parseInt(cartCountTV.getText().toString()) + 1) + "");
                     } else {
-//                        ToastUtil.showToast(getApplicationContext(), "添加到购物车失败");
                         showCenterDetermineDialog(R.string.books_add_car_fail);
                     }
                 } else if (o instanceof AppendBookFavorRep) {
                     AppendBookFavorRep rep = (AppendBookFavorRep) o;
                     if (rep.getCode() == 200) {
-//                        ToastUtil.showToast(getApplicationContext(), "添加到收藏成功");
                         showCenterDetermineDialog(R.string.books_add_collection_success);
                         mBookInfo.setBookInFavor(true);
                     } else {
-//                        ToastUtil.showToast(getApplicationContext(), "添加到收藏失败");
                         showCenterDetermineDialog(R.string.books_add_collection_fail);
                     }
                 } else if (o instanceof QueryShopBookDetailRep) {
@@ -289,14 +285,12 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         mBookInfo = rep.getData().get(0);
                         mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                     } else {
-//                        ToastUtil.showToast(getApplicationContext(), "获取图书详情失败");
                         showTagCancelAndDetermineDialog(R.string.books_request_details_fail, R.string.cancel, R.string.retry, mTagForRequestDetailsFail);
                         Log.v("FH", "获取图书详情失败");
                     }
                 } else if (o instanceof QueryBookCartRep) {
                     QueryBookCartRep rep = (QueryBookCartRep) o;
                     if (rep.getCode() != 200) {
-//                        ToastUtil.showToast(getApplicationContext(), "获取购物车个数失败");
                     } else if (rep.getData() != null && rep.getData().size() != 0) {
                         cartCountTV.setText("" + rep.getData().size());
                     } else {

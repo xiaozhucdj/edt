@@ -15,7 +15,6 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewLoginRep;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.dialog.ConfirmUserInfoDialog;
 import com.yougy.ui.activity.R;
@@ -93,7 +92,7 @@ public class LoginActivity extends BaseActivity {
                         confirmUserInfoDialog.show();
                     }
                     else if (response.getCode() == 401){
-                        ToastUtil.showToast(getApplicationContext() , "登录失败:用户名密码错误");
+                        new HintDialog(getThisActivity() , "登录失败:用户名密码错误").show();
                     }
                 }
             }
@@ -103,11 +102,11 @@ public class LoginActivity extends BaseActivity {
 
     public void login(View view){
         if (TextUtils.isEmpty(binding.accountEdittext.getText())){
-            ToastUtil.showToast(getApplicationContext() , "乐课账号不能为空");
+            new HintDialog(getThisActivity() , "乐课账号不能为空").show();
             return;
         }
         if (TextUtils.isEmpty(binding.pwdEdittext.getText())){
-            ToastUtil.showToast(getApplicationContext() , "乐课密码不能为空");
+            new HintDialog(getThisActivity() , "乐课密码不能为空").show();
             return;
         }
         NewLoginReq loginReq = new NewLoginReq();

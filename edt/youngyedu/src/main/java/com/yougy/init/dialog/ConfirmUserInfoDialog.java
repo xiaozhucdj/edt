@@ -20,12 +20,12 @@ import com.yougy.common.protocol.callback.BindCallBack;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.init.bean.Student;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ConfirmUserinfoDialogLayoutBinding;
+import com.yougy.view.dialog.HintDialog;
 
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
@@ -103,7 +103,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                     }
                     else {
                         Log.v("FH" , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg());
-                        ToastUtil.showToast(mActivity , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg());
+                        new HintDialog(mActivity , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg()).show();
                     }
                 }
             }

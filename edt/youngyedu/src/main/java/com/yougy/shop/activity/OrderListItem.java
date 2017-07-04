@@ -47,21 +47,12 @@ public class OrderListItem extends RelativeLayout {
             binding.orderTimeTv.setText("下单时间 : " + briefOrder.getOrderTime());
             if (briefOrder.getOrderStatus().equals("待支付")){
                 binding.orderStatusTv.setVisibility(GONE);
-                binding.finishBtn.setVisibility(GONE);
                 binding.cancleBtn.setVisibility(VISIBLE);
                 binding.payBtn.setVisibility(VISIBLE);
-            }
-            else if (briefOrder.getOrderStatus().equals("已支付")){
-                binding.orderStatusTv.setText(briefOrder.getOrderStatus());
-                binding.orderStatusTv.setVisibility(VISIBLE);
-                binding.finishBtn.setVisibility(VISIBLE);
-                binding.cancleBtn.setVisibility(GONE);
-                binding.payBtn.setVisibility(GONE);
             }
             else {
                 binding.orderStatusTv.setText(briefOrder.getOrderStatus());
                 binding.orderStatusTv.setVisibility(VISIBLE);
-                binding.finishBtn.setVisibility(GONE);
                 binding.cancleBtn.setVisibility(GONE);
                 binding.payBtn.setVisibility(GONE);
             }

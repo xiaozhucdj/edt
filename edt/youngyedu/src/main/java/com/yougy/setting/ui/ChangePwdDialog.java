@@ -8,10 +8,10 @@ import android.view.View;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.DialogChangePwdBinding;
+import com.yougy.view.dialog.HintDialog;
 
 /**
  * Created by FH on 2017/6/27.
@@ -52,29 +52,29 @@ public class ChangePwdDialog extends BaseDialog {
 
     private void changePwd(){
         if (TextUtils.isEmpty(binding.oldPwdEdtv.getText().toString())){
-            ToastUtil.showToast(mContext , "旧密码不能为空");
+            new HintDialog(mContext , "旧密码不能为空").show();
         }
         else if(!isLengthLegal(binding.oldPwdEdtv.getText().toString().length())){
-            ToastUtil.showToast(mContext , "旧密码长度不正确");
+            new HintDialog(mContext , "旧密码长度不正确").show();
         }
         else if (TextUtils.isEmpty(binding.newPwdEdtv.getText().toString())){
-            ToastUtil.showToast(mContext , "新密码不能为空");
+            new HintDialog(mContext , "新密码不能为空").show();
         }
         else if(!isLengthLegal(binding.newPwdEdtv.getText().toString().length())){
-            ToastUtil.showToast(mContext , "新密码长度不正确");
+            new HintDialog(mContext , "新密码长度不正确").show();
         }
         else if (TextUtils.isEmpty(binding.againNewPwdEdtv.getText().toString())){
-            ToastUtil.showToast(mContext , "确认新密码不能为空");
+            new HintDialog(mContext , "确认新密码不能为空").show();
         }
         else if (!binding.newPwdEdtv.getText().toString().equals(binding.againNewPwdEdtv.getText().toString())){
-            ToastUtil.showToast(mContext , "您两次输入的新密码不一致,请输入一致的新密码");
+            new HintDialog(mContext , "您两次输入的新密码不一致,请输入一致的新密码").show();
         }
         else if (!SpUtil.getLocalLockPwd().equals(binding.oldPwdEdtv.getText().toString())){
-            ToastUtil.showToast(mContext , "您输入的旧密码不正确");
+            new HintDialog(mContext , "您输入的旧密码不正确").show();
         }
         else {
             SpUtil.setLocalLockPwd(binding.newPwdEdtv.getText().toString());
-            ToastUtil.showToast(mContext , "修改成功!");
+            new HintDialog(mContext , "修改成功!").show();
             dismiss();
         }
     }

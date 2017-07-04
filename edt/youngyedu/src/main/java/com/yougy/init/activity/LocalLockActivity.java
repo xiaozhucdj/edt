@@ -10,7 +10,6 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.init.bean.Student;
@@ -18,6 +17,7 @@ import com.yougy.message.GlideCircleTransform;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLocalLockBinding;
 import com.yougy.view.dialog.ConfirmDialog;
+import com.yougy.view.dialog.HintDialog;
 
 /**
  * Created by FH on 2017/6/22.
@@ -64,7 +64,7 @@ public class LocalLockActivity extends BaseActivity {
 
     public void enter(View view){
         if (TextUtils.isEmpty(binding.localLockEdittext.getText())){
-            ToastUtil.showToast(getApplicationContext() , "密码不能为空");
+            new HintDialog(getThisActivity() , "密码不能为空").show();
             return;
         }
         Log.v("FH" , "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtil.getLocalLockPwd());
@@ -73,7 +73,7 @@ public class LocalLockActivity extends BaseActivity {
             finish();
         }
         else {
-            ToastUtil.showToast(getApplicationContext(), "密码不正确");
+            new HintDialog(getThisActivity() , "密码不正确").show();
         }
     }
 

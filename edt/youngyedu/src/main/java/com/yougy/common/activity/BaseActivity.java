@@ -819,6 +819,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         mUiPromptDialog.setDialogStyle(true);
     }
 
+    protected BaseActivity getThisActivity(){
+        return this;
+    }
+
 
     //---------------------------------dissmiss--------------------------------------------
 

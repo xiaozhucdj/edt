@@ -64,19 +64,7 @@
             android:background="@drawable/shop_btn_bg_selector"
             />
         <TextView
-            android:id="@+id/finish_btn"
-            android:layout_width="110px"
-            android:layout_height="48px"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="40px"
-            android:layout_toLeftOf="@+id/order_status_tv"
-            android:background="@drawable/shop_btn_bg_selector"
-            android:gravity="center"
-            android:text="完成"
-            android:textColor="@drawable/btn_text_color_selector"
-            android:textSize="24px" />
-        <TextView
-            android:id="@id/order_status_tv"
+            android:id="@+id/order_status_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="XXX"

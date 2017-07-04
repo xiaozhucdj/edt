@@ -1,5 +1,6 @@
 package com.yougy.shop.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,7 +29,6 @@ import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
 import com.yougy.common.protocol.response.QueryQRStrRep;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
@@ -36,35 +36,14 @@ import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityConfirmOrderBinding;
 import com.yougy.ui.activity.databinding.OrderBookInfoItemBinding;
+import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.QRCodeDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-
-import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.zhy.autolayout.utils.AutoUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -197,14 +176,18 @@ public class ConfirmOrderActivity extends ShopBaseActivity {
                         }
                         else if (o instanceof CancelBookOrderRep){
                             if (((CancelBookOrderRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                                ToastUtil.showToast(getApplicationContext(), "订单已取消");
+                                new HintDialog(getThisActivity(), "订单已取消", "确定", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        finish();
+                                        YougyApplicationManager.getRxBus(ConfirmOrderActivity.this).send("refreshOrderList");
+                                    }
+                                }).show();
                                 Log.v("FH", "订单" + briefOrder.getOrderId() + "取消成功");
-                                finish();
                                 //发送消息通知OrderList界面刷新
-                                YougyApplicationManager.getRxBus(ConfirmOrderActivity.this).send("refreshOrderList");
                             }
                             else {
-                                ToastUtil.showToast(getApplicationContext(), "订单取消失败" + ((CancelBookOrderRep) o).getMsg());
+                                new HintDialog(getThisActivity() , "订单取消失败" + ((CancelBookOrderRep) o).getMsg()).show();
                                 Log.v("FH", "订单" + briefOrder.getOrderId() + "取消失败" + ((CancelBookOrderRep) o).getMsg());
                             }
                         }

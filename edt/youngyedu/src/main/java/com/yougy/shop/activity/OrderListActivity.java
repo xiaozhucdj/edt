@@ -14,13 +14,11 @@ import android.widget.TextView;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.CancelBookOrderCallBack;
-import com.yougy.common.protocol.callback.IsOrderPaySuccessCallBack;
 import com.yougy.common.protocol.callback.QueryOrderListCallBack;
 import com.yougy.common.protocol.response.CancelBookOrderRep;
 import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
@@ -30,6 +28,7 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityShopOrderListBinding;
 import com.yougy.ui.activity.databinding.ItemOrderListBinding;
 import com.yougy.view.dialog.ConfirmDialog;
+import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -131,7 +130,6 @@ public class OrderListActivity extends ShopBaseActivity {
                     }
                     else {
                         Log.v("FH" , "获取我的订单列表失败 : " + ((QueryBookOrderListRep) o).getMsg());
-                        ToastUtil.showToast(getApplicationContext() , "获取我的订单列表失败 : " + ((QueryBookOrderListRep) o).getMsg());
                         new ConfirmDialog(OrderListActivity.this, "获取订单列表失败,是否重试?", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -143,23 +141,23 @@ public class OrderListActivity extends ShopBaseActivity {
                  }
                  else if (o instanceof CancelBookOrderRep){
                      if (((CancelBookOrderRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                         ToastUtil.showToast(getApplicationContext() , "取消订单成功");
                          Log.v("FH" , "取消订单成功");
+                         new HintDialog(getThisActivity() , "取消订单成功").show();
                          loadOrder();
                      }
                      else {
-                         ToastUtil.showToast(getApplicationContext() , "取消失败" + ((CancelBookOrderRep) o).getMsg());
+                         new HintDialog(getThisActivity() , "取消失败" + ((CancelBookOrderRep) o).getMsg()).show();
                          Log.v("FH" , "取消失败 " + ((CancelBookOrderRep) o).getMsg());
                      }
                  }
                  else if (o instanceof IsOrderPaySuccessRep){
                     if (((IsOrderPaySuccessRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                        ToastUtil.showToast(getApplicationContext() , "已支付订单已完成");
+                        new HintDialog(getThisActivity() , "已支付订单已完成").show();
                         Log.v("FH" , "已支付订单已完成");
                         loadOrder();
                     }
                     else {
-                        ToastUtil.showToast(getApplicationContext() , "完成已支付订单失败" + ((IsOrderPaySuccessRep) o).getMsg());
+                        new HintDialog(getThisActivity() , "完成已支付订单失败" + ((IsOrderPaySuccessRep) o).getMsg()).show();
                         Log.v("FH" , "完成已支付订单失败" + ((IsOrderPaySuccessRep) o).getMsg());
                     }
                  }
@@ -216,14 +214,6 @@ public class OrderListActivity extends ShopBaseActivity {
                 Intent intent = new Intent(getApplicationContext(), ConfirmOrderActivity.class);
                 intent.putExtra(ShopGloble.ORDER, item.getBriefOrder());
                 startActivity(intent);
-            }
-        });
-        item.getBinding().finishBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ProtocolManager.isOrderPaySuccessProtocol(item.getBriefOrder().getOrderId()
-                        , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_IS_ORDER_PAY_SUCCESS
-                        , new IsOrderPaySuccessCallBack(OrderListActivity.this , item.getBriefOrder().getOrderId() , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_IS_ORDER_PAY_SUCCESS));
             }
         });
     }
