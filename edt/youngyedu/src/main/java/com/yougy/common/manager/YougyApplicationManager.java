@@ -1,6 +1,9 @@
 package com.yougy.common.manager;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,12 +13,14 @@ import com.inkscreen.LeController;
 import com.inkscreen.utils.NetworkManager;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.init.activity.LocalLockActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -126,6 +131,22 @@ public class YougyApplicationManager extends LitePalApplication {
         //AutoLayout初始化
         AutoLayoutConifg.getInstance().init(this);
 
+        //注册屏幕开锁广播接收器,每次开锁的时候回跳到本地锁.
+        //本广播只会在应用程序启动后注册,未启动应用时,不能检测到开屏广播
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.intent.action.SCREEN_ON");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (BaseActivity.getForegroundActivity() != null
+                        && !(BaseActivity.getForegroundActivity() instanceof LocalLockActivity)
+                        && !TextUtils.isEmpty(SpUtil.getLocalLockPwd())){
+                    Intent newIntent = new Intent(context , LocalLockActivity.class);
+                    newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(newIntent);
+                }
+            }
+        } , filter);
     }
 
     public static void closeDb(){

@@ -23,19 +23,24 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.CancelBookOrderCallBack;
 import com.yougy.common.protocol.callback.IsOrderPaySuccessCallBack;
 import com.yougy.common.protocol.callback.QueryQRStrCallBack;
+import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.QueryQRStrRequest;
+import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.CancelBookOrderRep;
 import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
+import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.QueryQRStrRep;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
+import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityConfirmOrderBinding;
 import com.yougy.ui.activity.databinding.OrderBookInfoItemBinding;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.QRCodeDialog;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -273,8 +278,14 @@ public class ConfirmOrderActivity extends ShopBaseActivity {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
-        ProtocolManager.cancelPayOrderProtocol(briefOrder.getOrderId() , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
-                , new CancelBookOrderCallBack(getApplicationContext() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , briefOrder.getOrderId() , SpUtil.getAccountId()));
+        new ConfirmDialog(getThisActivity(), "确定要取消此订单吗?", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ProtocolManager.cancelPayOrderProtocol(briefOrder.getOrderId() , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
+                        , new CancelBookOrderCallBack(getApplicationContext() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , briefOrder.getOrderId() , SpUtil.getAccountId()));
+                dialog.dismiss();
+            }
+        }).show();
     }
 
     private void toPage(int pageIndex) {

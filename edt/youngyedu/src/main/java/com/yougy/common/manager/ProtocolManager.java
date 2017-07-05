@@ -551,12 +551,15 @@ public class ProtocolManager {
     /**
      * 24. 书城订单查询
      */
-    public static void queryBookOrderProtocol(String orderOwner, int protocol_id, Callback callbac) {
+    public static void queryBookOrderProtocol(String orderOwner, String orderStatus , int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............  24. 书城订单查询");
         JSONObject obj = new JSONObject();
         try {
             obj.put("m" , "queryOrder");
             obj.put("orderOwner", orderOwner);
+            if (orderStatus != null){
+                obj.put("orderStatus" , orderStatus);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

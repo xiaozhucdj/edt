@@ -182,6 +182,7 @@ public class OrderListActivity extends ShopBaseActivity {
 
     private void loadOrder(){
         ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+                , null
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
                 , new QueryOrderListCallBack(this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
     }
@@ -202,10 +203,16 @@ public class OrderListActivity extends ShopBaseActivity {
         item.getBinding().cancleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProtocolManager.cancelPayOrderProtocol(item.getBriefOrder().getOrderId()
-                        , SpUtil.getAccountId()
-                        , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
-                        , new CancelBookOrderCallBack(OrderListActivity.this, ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , item.getBriefOrder().getOrderId() , SpUtil.getAccountId()));
+                new ConfirmDialog(getThisActivity(), "确定要取消订单" + item.getBriefOrder().getOrderId() + "吗?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ProtocolManager.cancelPayOrderProtocol(item.getBriefOrder().getOrderId()
+                                , SpUtil.getAccountId()
+                                , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
+                                , new CancelBookOrderCallBack(OrderListActivity.this, ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , item.getBriefOrder().getOrderId() , SpUtil.getAccountId()));
+                        dialog.dismiss();
+                    }
+                }).show();
             }
         });
         item.getBinding().payBtn.setOnClickListener(new View.OnClickListener() {

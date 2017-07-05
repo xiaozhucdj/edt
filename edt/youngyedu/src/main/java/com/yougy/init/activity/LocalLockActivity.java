@@ -88,4 +88,8 @@ public class LocalLockActivity extends BaseActivity {
             }
         }).show();
     }
+
+    @Override
+    public void onBackPressed() {
+    }
 }
