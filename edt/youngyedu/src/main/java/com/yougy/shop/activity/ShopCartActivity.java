@@ -417,6 +417,12 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
+        for (CartItem cartItem : checkedCartItemList) {
+            if (cartItem.getBookStatus().contains("下架")){
+                new HintDialog(ShopCartActivity.this , "您勾选的商品中包含已下架商品,无法为您下单,请删除已下架商品后再试").show();
+                return;
+            }
+        }
         ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
                 , "[\"已支付\",\"待支付\"]"
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
