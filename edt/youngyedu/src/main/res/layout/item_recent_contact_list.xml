@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <import type="com.yougy.common.utils.DateUtils"/>
+        <variable
+            name="contact"
+            type="com.netease.nimlib.sdk.msg.model.RecentContact"/>
+    </data>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15px"
+        >
+        <ImageView
+            android:id="@+id/avatar_imv"
+            android:layout_width="76px"
+            android:layout_height="76px"
+            android:layout_marginTop="15px"
+            />
+        <TextView
+            android:id="@+id/date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text='@{DateUtils.convertTimeMillis2StrRelativeNow(contact.time , true)}'
+            android:textSize="18px"
+            android:textColor="@color/gray_999999"
+            android:layout_marginTop="28px"
+            />
+        <TextView
+            android:id="@+id/contact_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/avatar_imv"
+            android:layout_toLeftOf="@id/date_tv"
+            android:layout_marginTop="15px"
+            android:layout_marginLeft="15px"
+            android:textSize="24px"
+            android:textColor="@color/black_333333"
+            />
+        <TextView
+            android:id="@+id/message_info_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/avatar_imv"
+            android:layout_toLeftOf="@id/date_tv"
+            android:layout_below="@id/contact_name_tv"
+            android:layout_marginTop="10px"
+            android:layout_marginLeft="15px"
+            android:textSize="18px"
+            android:textColor="@color/gray_666666"
+            android:maxLines="1"
+            />
+    </RelativeLayout>
+</layout>

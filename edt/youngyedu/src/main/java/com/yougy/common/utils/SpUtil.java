@@ -319,4 +319,13 @@ public class SpUtil {
         }
         return stringBuffer.toString();
     }
+
+    /**
+     * 返回当前用户的account
+     * TODO 本方法仅用于调试,正式版需要换成返回当前用户名的正式方法
+     * @return
+     */
+    public static String justForTest(){
+        return "test10";
+    }
 }

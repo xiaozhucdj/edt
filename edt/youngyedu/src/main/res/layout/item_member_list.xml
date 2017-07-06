@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="teamMember"
+            type="com.netease.nimlib.sdk.team.model.TeamMember"/>
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal" android:layout_width="200px"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+        <ImageView
+            android:id="@+id/avatar_imv"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginTop="10px"
+            android:layout_marginBottom="10px"
+            />
+        <ImageButton
+            android:id="@+id/checkbox"
+            android:layout_width="12px"
+            android:layout_height="12px"
+            android:background="@drawable/btn_check_select"
+            android:layout_marginLeft="20px"
+            android:layout_marginTop="2px"
+            />
+        <TextView
+            android:id="@+id/member_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="xxxx"
+            android:textSize="20px"
+            android:textColor="@color/black_333333"
+            android:layout_marginLeft="10px"
+            />
+    </LinearLayout>
+</layout>

@@ -471,4 +471,63 @@ public class DateUtils {
 	}
 
 
+	/**
+	 * 根据现在的时间,把给定的时间戳转换成相对于现在时间的描述字符串
+	 * 规则:
+	 * 1.如果给定时间不是今年的一律显示完整的"年-月-日".
+	 * 2.如果给定时间是今年的,而且是今天或者昨天,则显示为"今天"或者"昨天"
+	 * 3.如果不是今年而且不是今天或昨天,则显示为"月-日".
+	 * @param timeMillis 要转换的时间戳
+	 * @param simplified 是否简化显示,如果为true,则只显示日期,如果为false,则显示为"日期[3个空格]时:分"
+	 * @return 转换好的字符串
+	 */
+	public static String convertTimeMillis2StrRelativeNow(long timeMillis , boolean simplified){
+		Calendar now = Calendar.getInstance();
+		Date date = new Date(timeMillis);
+		Calendar target = Calendar.getInstance();
+		target.setTime(date);
+		if (target.after(now)){
+			return "未来";
+		}
+		else if (now.get(Calendar.YEAR) != target.get(Calendar.YEAR)){
+			if (simplified){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				return format.format(date);
+			}
+			else {
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd   HH:mm");
+				return format.format(date);
+			}
+		}
+		else if (now.get(Calendar.DAY_OF_YEAR) == target.get(Calendar.DAY_OF_YEAR)){
+			if (simplified){
+				return "今天";
+			}
+			else {
+				SimpleDateFormat format = new SimpleDateFormat("今天   HH:mm");
+				return format.format(date);
+			}
+		}
+		else if ((now.get(Calendar.DAY_OF_YEAR)) == (target.get(Calendar.DAY_OF_YEAR) + 1)){
+			if (simplified){
+				return "昨天";
+			}
+			else {
+				SimpleDateFormat format = new SimpleDateFormat("昨天   HH:mm");
+				return format.format(date);
+			}
+		}
+		else {
+			if (simplified){
+				SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+				return format.format(date);
+			}
+			else {
+				SimpleDateFormat format = new SimpleDateFormat("MM-dd   HH:mm");
+				return format.format(date);
+			}
+		}
+	}
+
+
 }

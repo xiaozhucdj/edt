@@ -1,0 +1,207 @@
+package com.yougy.message.ui;
+
+import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.netease.nimlib.sdk.RequestCallbackWrapper;
+import com.netease.nimlib.sdk.ResponseCode;
+import com.netease.nimlib.sdk.StatusCode;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.UIUtils;
+import com.yougy.message.BookRecommandAttachment;
+import com.yougy.message.GlideCircleTransform;
+import com.yougy.message.YXClient;
+import com.yougy.ui.activity.R;
+import com.yougy.ui.activity.databinding.ActivityRecentContactBinding;
+import com.yougy.ui.activity.databinding.ItemRecentContactListBinding;
+import com.yougy.view.dialog.LoadingProgressDialog;
+import com.zhy.autolayout.utils.AutoUtils;
+
+import java.util.List;
+
+
+/**
+ * Created by FH on 2017/3/21.
+ */
+
+public class RecentContactListActivity extends MessageBaseActivity {
+
+    ActivityRecentContactBinding binding;
+    ContactAdapter adapter = new ContactAdapter();
+    YXClient.OnThingsChangedListener<Bundle> onTeamInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
+        @Override
+        public void onThingChanged(Bundle thing) {
+            adapter.notifyDataSetChanged();
+        }
+    };
+    YXClient.OnThingsChangedListener<Bundle> onUserInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
+        @Override
+        public void onThingChanged(Bundle thing) {
+            adapter.notifyDataSetChanged();
+        }
+    };
+    YXClient.OnThingsChangedListener<List<RecentContact>> onRecentContactListChangeListener = new YXClient.OnThingsChangedListener<List<RecentContact>>() {
+        @Override
+        public void onThingChanged(List<RecentContact> thing) {
+            adapter.notifyDataSetChanged();
+        }
+    };
+
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_recent_contact));
+        if (YXClient.getInstance().getCurrentOnlineStatus() == null || YXClient.getInstance().getCurrentOnlineStatus() == StatusCode.UNLOGIN){
+            final LoadingProgressDialog dialog = new LoadingProgressDialog(this);
+            dialog.setTitle("消息sdk登录中...");
+            dialog.show();
+            YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+                @Override
+                public void onResult(int code, Object result, Throwable exception) {
+                    dialog.dismiss();
+                    if (code != ResponseCode.RES_SUCCESS){
+                        UIUtils.showToastSafe("消息sdk登录失败,可能是网络原因,请检查网络是否打开...");
+                        finish();
+                    }
+                    else {
+                        initListView();
+                    }
+                }
+            });
+        }
+        else {
+            initListView();
+        }
+    }
+
+    public void initListView(){
+        binding.currentContactList.setAdapter(adapter);
+        binding.currentContactList.setDividerHeight(1);
+        binding.currentContactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RecentContact contact = YXClient.getInstance().getRecentContactList().get(position);
+                switch (contact.getSessionType()){
+                    case P2P:
+                        String userName = YXClient.getInstance().getUserNameByID(contact.getContactId());
+                        if (userName == null){
+                            userName = contact.getContactId();
+                        }
+                        openActivity(ChattingActivity.class ,
+                                "id" , contact.getContactId() ,
+                                "type" , contact.getSessionType().toString() ,
+                                "name" , userName);
+                        break;
+                    case Team:
+                        String teamName = YXClient.getInstance().getTeamNameByID(contact.getContactId());
+                        if (teamName == null){
+                            teamName = contact.getContactId();
+                        }
+                        openActivity(ChattingActivity.class ,
+                                "id" , contact.getContactId() ,
+                                "type" , contact.getSessionType().toString() ,
+                                "name" , teamName);
+                        break;
+
+                }
+
+            }
+        });
+        YXClient.getInstance().with(this).addOnRecentContactListChangeListener(onRecentContactListChangeListener);
+        YXClient.getInstance().with(this).addOnUserInfoChangeListener(onUserInfoChangeListener);
+        YXClient.getInstance().with(this).addOnTeamInfoChangeListener(onTeamInfoChangeListener);
+    }
+    @Override
+    public void init() {}
+    @Override
+    public void loadData() {}
+
+    @Override
+    protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
+        titleTv.setText("我的消息" + SpUtil.getStudent().getUserName());
+        rightBtn.setBackgroundResource(R.drawable.img_contact_list_icon);
+        rightBtn.setText("");
+        rightBtn.getLayoutParams().width = 28;
+        rightBtn.getLayoutParams().height = 28;
+    }
+
+    @Override
+    public void onTitleBarRightBtnClick(View view) {
+        openActivity(ContactListActivity.class);
+    }
+
+    private class ContactAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return YXClient.getInstance().getRecentContactList().size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(RecentContactListActivity.this).inflate(R.layout.item_recent_contact_list, parent , false);
+                AutoUtils.auto(convertView);
+                convertView.setTag(DataBindingUtil.bind(convertView));
+            }
+            RecentContact contact = YXClient.getInstance().getRecentContactList().get(position);
+            ItemRecentContactListBinding binding = (ItemRecentContactListBinding) convertView.getTag();
+            binding.setContact(contact);
+            if (contact.getMsgType() == MsgTypeEnum.custom && contact.getAttachment() != null && contact.getAttachment() instanceof BookRecommandAttachment){
+                binding.messageInfoTv.setText("[推荐图书]");
+            }
+            else {
+                binding.messageInfoTv.setText(contact.getContent());
+            }
+            switch (contact.getSessionType()){
+                case P2P:
+                    Glide.with(RecentContactListActivity.this)
+                            .load(YXClient.getInstance().getUserAvatarByID(contact.getContactId()))
+                            .placeholder(R.drawable.icon_wenda)
+                            .transform(new GlideCircleTransform(RecentContactListActivity.this))
+                            .into(binding.avatarImv);
+                    String userName = YXClient.getInstance().getUserNameByID(contact.getContactId());
+                    binding.contactNameTv.setText(TextUtils.isEmpty(userName) ? contact.getContactId() : userName);
+                    break;
+                case Team:
+                    Glide.with(RecentContactListActivity.this)
+                            .load("")
+                            .placeholder(R.drawable.icon_wenda)
+                            .transform(new GlideCircleTransform(RecentContactListActivity.this))
+                            .into(binding.avatarImv);
+                    String teamName = YXClient.getInstance().getTeamNameByID(contact.getContactId());
+                    binding.contactNameTv.setText(TextUtils.isEmpty(teamName) ? contact.getContactId() : teamName);
+                    break;
+            }
+            return convertView;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+}

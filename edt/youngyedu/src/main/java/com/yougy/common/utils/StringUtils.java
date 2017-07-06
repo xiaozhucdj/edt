@@ -1,5 +1,7 @@
 package com.yougy.common.utils;
 
+import android.text.TextUtils;
+
 /**
  * Created by Administrator on 2016/7/19.
  */
@@ -27,5 +29,23 @@ public class StringUtils {
             last = str;
         }
         return true;
+    }
+
+    /**
+     * 按照给出的最大字符串长度裁剪字符串,如果超出最大长度,则裁剪后添加省略号,否则原样返回
+     * @param str 要裁剪的字符串
+     * @param maxWords 最大长度
+     * @return 裁剪后的字符串
+     */
+    public static String cutString(String str , int maxWords){
+        if (TextUtils.isEmpty(str)){
+            return str;
+        }
+        if (str.length() > maxWords){
+            return str.substring(0 , maxWords) + "...";
+        }
+        else {
+            return str;
+        }
     }
 }

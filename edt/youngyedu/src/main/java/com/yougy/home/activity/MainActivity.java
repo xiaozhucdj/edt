@@ -38,6 +38,8 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
+import com.yougy.message.YXClient;
+import com.yougy.message.ui.RecentContactListActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
@@ -134,6 +136,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void init() {
         setPressTwiceToExit(true);
+        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), null);
     }
 
     private void removeFragments() {
@@ -384,10 +387,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 mFlRight.setVisibility(View.GONE);
                 break;
-
             case R.id.btn_msg:
+                loadIntent(RecentContactListActivity.class);
                 break;
-
             case R.id.btn_account:
                 LogUtils.i("账号设置");
 

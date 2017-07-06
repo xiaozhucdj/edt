@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <ImageView
+        android:id="@+id/arrow_imv"
+        android:layout_width="20px"
+        android:layout_height="20px"
+        android:src="@drawable/img_arrow_right"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="24px"
+        />
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="xxxxx"
+        android:layout_toRightOf="@id/arrow_imv"
+        android:textSize="24px"
+        android:textColor="@color/black"
+        android:paddingLeft="25px"
+        android:paddingBottom="18px"
+        android:paddingTop="18px"
+        />
+    <com.yougy.message.MyRecyclerView
+        android:id="@+id/sub_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_tv"
+        android:visibility="gone"
+        android:paddingLeft="30px"
+        android:paddingRight="30px"
+        />
+    <View android:id="@+id/separator_line" android:layout_width="match_parent" android:layout_height="1px" android:background="@android:color/black" android:layout_below="@id/sub_recyclerview"/>
+</RelativeLayout>
+</layout>
