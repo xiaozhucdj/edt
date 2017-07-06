@@ -1,19 +1,27 @@
 package com.yougy.message.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.netease.nimlib.sdk.RequestCallbackWrapper;
+import com.netease.nimlib.sdk.ResponseCode;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtil;
+import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMessageBaseBinding;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 /**
@@ -92,5 +100,50 @@ public abstract class MessageBaseActivity extends BaseActivity {
         }
         startActivity(intent);
     }
+
+    /**
+     * 检查网络,如果wifi没有打开,则提示.
+     * @return
+     */
+    protected boolean isWifiOn(){
+        if (!NetUtils.isNetConnected()) {
+            new ConfirmDialog(getThisActivity(), "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
+            } , "打开").show();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 刷新式登录,为了在有wifi但是wifi不能联网的时候及时测试出网络中断的状态,需要刷新式登录,如果登录成功,则什么也不做,登录失败,则提示检查网络
+     */
+    protected void refreshLogin(){
+        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+            @Override
+            public void onResult(int code, Object result, Throwable exception) {
+                if (code == ResponseCode.RES_SUCCESS){
+                    Log.v("FH" , "刷新式登录成功");
+                }
+                else {
+                    new ConfirmDialog(getThisActivity(), "已经与消息服务器断开连接(" + code + "),设备无法访问网络,请确保您的网络通畅", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                            startActivity(intent);
+                            dialog.dismiss();
+                        }
+                    } , "设置网络").show();
+                    Log.v("FH" , "刷新式登录失败 code :　" + code);
+                }
+            }
+        });
+    }
+
 
 }

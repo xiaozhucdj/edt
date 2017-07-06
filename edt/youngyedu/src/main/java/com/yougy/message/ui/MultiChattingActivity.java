@@ -138,34 +138,8 @@ public class MultiChattingActivity extends MessageBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!NetUtils.isNetConnected()) {
-            new ConfirmDialog(getThisActivity(), "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-                    startActivity(intent);
-                }
-            }, "打开").show();
-        }
-        else {
-            YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
-                @Override
-                public void onResult(int code, Object result, Throwable exception) {
-                    if (code == ResponseCode.RES_SUCCESS){
-                        Log.v("FH" , "刷新式登录成功");
-                    }
-                    else {
-                        new ConfirmDialog(getThisActivity(), "已经与消息服务器断开连接(" + code + "),设备无法访问网络,请确保您的网络通畅", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-                                startActivity(intent);
-                            }
-                        } , "设置网络").show();
-                        Log.v("FH" , "刷新式登录失败 code :　" + code);
-                    }
-                }
-            });
+        if (isWifiOn()) {
+            refreshLogin();
         }
     }
 
@@ -228,28 +202,32 @@ public class MultiChattingActivity extends MessageBaseActivity {
     }
 
     private void send(){
-        String msg = binding.messageEdittext.getText().toString().trim();
-        final IMMessage fakeMessage = MessageBuilder.createTextMessage("" , SessionTypeEnum.None , msg);
-        ArrayList<IMMessage> tempMessageList = YXClient.getInstance().sendTextMessage(idList , msg);
-        for (IMMessage message: tempMessageList) {
-            message.setLocalExtension(new HashMap<String, Object>(){
-                {
-                    put("fake_message_id" , fakeMessage.getUuid());
+        if(isWifiOn()){
+            String msg = binding.messageEdittext.getText().toString().trim();
+            final IMMessage fakeMessage = MessageBuilder.createTextMessage("" , SessionTypeEnum.None , msg);
+            ArrayList<IMMessage> tempMessageList = YXClient.getInstance().sendTextMessage(idList , msg);
+            if (tempMessageList != null){
+                for (IMMessage message: tempMessageList) {
+                    message.setLocalExtension(new HashMap<String, Object>(){
+                        {
+                            put("fake_message_id" , fakeMessage.getUuid());
+                        }
+                    });
                 }
-            });
+                fakeMessage.setLocalExtension(
+                        new HashMap<String, Object>(){
+                            {
+                                put("total" , idList.size());
+                                put("success" , 0);
+                                put("fail" , 0);
+                            }
+                        });
+                showMessageList.add(fakeMessage);
+                adapter.notifyDataSetChanged();
+                binding.messageEdittext.setText("");
+                scrollToBottom(200);
+            }
         }
-        fakeMessage.setLocalExtension(
-                new HashMap<String, Object>(){
-                    {
-                        put("total" , idList.size());
-                        put("success" , 0);
-                        put("fail" , 0);
-                    }
-                });
-        showMessageList.add(fakeMessage);
-        adapter.notifyDataSetChanged();
-        binding.messageEdittext.setText("");
-        scrollToBottom(100);
     }
 
     public void scrollToBottom(long delay){
