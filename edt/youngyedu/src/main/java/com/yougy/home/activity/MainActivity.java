@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.netease.nimlib.sdk.RequestCallbackWrapper;
+import com.netease.nimlib.sdk.ResponseCode;
+import com.netease.nimlib.sdk.StatusCode;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.activity.BaseActivity;
@@ -44,6 +48,7 @@ import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.R;
+import com.yougy.view.dialog.HintDialog;
 
 import de.greenrobot.event.EventBus;
 
@@ -136,7 +141,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void init() {
         setPressTwiceToExit(true);
-        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), null);
     }
 
     private void removeFragments() {
@@ -368,16 +372,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     bringFragmentToFrontInner(FragmentDisplayOption.ALL_HOMEWORK_FRAGMENT);
                 }
                 break;
-
             case R.id.btn_serchBook:
                 LogUtils.i("搜索课外书");
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.serch_reference, "");
                 EventBus.getDefault().post(baseEvent);
                 mFlRight.setVisibility(View.GONE);
-
-
                 break;
-
             case R.id.btn_bookStore:
                 LogUtils.e(getClass().getName(), "书城");
                 if (NetUtils.isNetConnected()) {
@@ -388,7 +388,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_msg:
-                loadIntent(RecentContactListActivity.class);
+                LogUtils.e(getClass().getName() , "我的消息");
+                gotoMyMessage();
+                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_account:
                 LogUtils.i("账号设置");
@@ -433,6 +435,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mFlRight.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    private void gotoMyMessage(){
+        if (!NetUtils.isNetConnected()) {
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+            return;
+        }
+        loadIntent(RecentContactListActivity.class);
     }
 
     private void postEvent() {

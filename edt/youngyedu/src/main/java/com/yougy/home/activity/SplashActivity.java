@@ -30,6 +30,7 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
+import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -81,22 +82,6 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     }
 
     protected void handleEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewLoginRep){
-                    if (((NewLoginRep) o).getCode()== ProtocolId.RET_SUCCESS && ((NewLoginRep) o).getCount()>0) {
-                        Log.v("FH", "自动登录成功");
-                        SpUtil.saveStudent(((NewLoginRep) o).getData().get(0));
-                        checkLocalLockAndJump();
-                    }
-                    else {
-                        Log.v("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
-                        jumpActivity(LoginActivity.class);
-                    }
-                }
-            }
-        }));
         subscription.add(tapEventEmitter.connect());
     }
 
@@ -168,6 +153,19 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             public void onBefore(Request request, int id) {}
             @Override
             public void onAfter(int id) {}
+            @Override
+            public void onResponse(NewLoginRep response, int id) {
+                if (response.getCode()== ProtocolId.RET_SUCCESS && response.getCount()>0) {
+                    Log.v("FH", "自动登录成功");
+                    SpUtil.saveStudent(response.getData().get(0));
+                    YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest() , null);
+                    checkLocalLockAndJump();
+                }
+                else {
+                    Log.v("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
+                    jumpActivity(LoginActivity.class);
+                }
+            }
             @Override
             public void onError(Call call, Exception e, int id) {
                 Log.v("FH" , "自动登录失败原因:其他错误:" + e.getMessage());

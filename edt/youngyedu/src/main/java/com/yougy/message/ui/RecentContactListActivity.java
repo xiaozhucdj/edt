@@ -1,9 +1,12 @@
 package com.yougy.message.ui;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,7 @@ import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.BookRecommandAttachment;
@@ -27,7 +31,8 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityRecentContactBinding;
 import com.yougy.ui.activity.databinding.ItemRecentContactListBinding;
-import com.yougy.view.dialog.LoadingProgressDialog;
+import com.yougy.view.dialog.ConfirmDialog;
+import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
@@ -65,26 +70,60 @@ public class RecentContactListActivity extends MessageBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_recent_contact));
-        if (YXClient.getInstance().getCurrentOnlineStatus() == null || YXClient.getInstance().getCurrentOnlineStatus() == StatusCode.UNLOGIN){
-            final LoadingProgressDialog dialog = new LoadingProgressDialog(this);
-            dialog.setTitle("消息sdk登录中...");
-            dialog.show();
+//        if (YXClient.getInstance().getCurrentOnlineStatus() == null || YXClient.getInstance().getCurrentOnlineStatus() == StatusCode.UNLOGIN){
+//            final LoadingProgressDialog dialog = new LoadingProgressDialog(this);
+//            dialog.setTitle("消息sdk登录中...");
+//            dialog.show();
+//            YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+//                @Override
+//                public void onResult(int code, Object result, Throwable exception) {
+//                    dialog.dismiss();
+//                    if (code != ResponseCode.RES_SUCCESS){
+//                        UIUtils.showToastSafe("消息sdk登录失败,可能是网络原因,请检查网络是否打开...");
+//                        finish();
+//                    }
+//                    else {
+//                        initListView();
+//                    }
+//                }
+//            });
+//        }
+//        else {
+            initListView();
+//        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!NetUtils.isNetConnected()) {
+            new ConfirmDialog(getThisActivity(), "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", "打开", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                    startActivity(intent);
+                }
+            }).show();
+        }
+        else {
             YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
                 @Override
                 public void onResult(int code, Object result, Throwable exception) {
-                    dialog.dismiss();
-                    if (code != ResponseCode.RES_SUCCESS){
-                        UIUtils.showToastSafe("消息sdk登录失败,可能是网络原因,请检查网络是否打开...");
-                        finish();
+                    if (code == ResponseCode.RES_SUCCESS){
+                        Log.v("FH" , "刷新式登录成功");
                     }
                     else {
-                        initListView();
+                        new ConfirmDialog(getThisActivity(), "已经与消息服务器断开连接(" + code + "),设备无法访问网络,请确保您的网络通畅", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                                startActivity(intent);
+                            }
+                        } , "设置网络").show();
+                        Log.v("FH" , "刷新式登录失败 code :　" + code);
                     }
                 }
             });
-        }
-        else {
-            initListView();
         }
     }
 

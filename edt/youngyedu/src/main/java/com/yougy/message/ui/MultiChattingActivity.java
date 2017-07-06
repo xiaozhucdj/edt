@@ -1,5 +1,6 @@
 package com.yougy.message.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallbackWrapper;
+import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
@@ -32,6 +35,8 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.ListUtil;
@@ -39,6 +44,7 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -127,6 +133,40 @@ public class MultiChattingActivity extends MessageBaseActivity {
         binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_chatting));
         initChattingListview();
         initInputEdittext();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!NetUtils.isNetConnected()) {
+            new ConfirmDialog(getThisActivity(), "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", "打开", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                    startActivity(intent);
+                }
+            }).show();
+        }
+        else {
+            YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+                @Override
+                public void onResult(int code, Object result, Throwable exception) {
+                    if (code == ResponseCode.RES_SUCCESS){
+                        Log.v("FH" , "刷新式登录成功");
+                    }
+                    else {
+                        new ConfirmDialog(getThisActivity(), "已经与消息服务器断开连接(" + code + "),设备无法访问网络,请确保您的网络通畅", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                                startActivity(intent);
+                            }
+                        } , "设置网络").show();
+                        Log.v("FH" , "刷新式登录失败 code :　" + code);
+                    }
+                }
+            });
+        }
     }
 
     @Override

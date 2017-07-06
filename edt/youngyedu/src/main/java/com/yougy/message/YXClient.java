@@ -580,6 +580,7 @@ public class YXClient {
         return returnList;
     }
 
+
     /**
      * 发送图书推荐消息
      * @param id 发送的对象id

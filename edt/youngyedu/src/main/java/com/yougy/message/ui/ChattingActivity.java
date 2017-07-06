@@ -1,5 +1,6 @@
 package com.yougy.message.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -39,6 +40,8 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.BookRecommandAttachment;
@@ -48,6 +51,8 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
+import com.yougy.view.dialog.ConfirmDialog;
+import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.math.BigDecimal;
@@ -122,6 +127,40 @@ public class ChattingActivity extends MessageBaseActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (!NetUtils.isNetConnected()) {
+            new ConfirmDialog(getThisActivity(), "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", "打开", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                    startActivity(intent);
+                }
+            }).show();
+        }
+        else {
+            YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+                @Override
+                public void onResult(int code, Object result, Throwable exception) {
+                    if (code == ResponseCode.RES_SUCCESS){
+                        Log.v("FH" , "刷新式登录成功");
+                    }
+                    else {
+                        new ConfirmDialog(getThisActivity(), "已经与消息服务器断开连接(" + code + "),设备无法访问网络,请确保您的网络通畅", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                                startActivity(intent);
+                            }
+                        } , "设置网络").show();
+                        Log.v("FH" , "刷新式登录失败 code :　" + code);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
     public void init() {
         type = getIntent().getStringExtra("type");
         id = getIntent().getStringExtra("id");
@@ -136,10 +175,10 @@ public class ChattingActivity extends MessageBaseActivity {
     public void loadData() {
         IMMessage anchor = null;
         if (type.equals(SessionTypeEnum.Team.toString())){
-            anchor = MessageBuilder.createEmptyMessage(id , SessionTypeEnum.Team , System.currentTimeMillis() + 5000);
+            anchor = MessageBuilder.createEmptyMessage(id , SessionTypeEnum.Team , System.currentTimeMillis() + 3600000);
         }
         else if (type.equals(SessionTypeEnum.P2P.toString())){
-            anchor = MessageBuilder.createEmptyMessage(id , SessionTypeEnum.P2P , System.currentTimeMillis() + 5000);
+            anchor = MessageBuilder.createEmptyMessage(id , SessionTypeEnum.P2P , System.currentTimeMillis() + 3600000);
         }
         Log.v("FH", "开始查询历史消息,锚点 :" + (anchor == null ? anchor : anchor.getTime()));
         //查询历史消息
