@@ -1,6 +1,5 @@
 package com.yougy.message.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -40,8 +39,6 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DateUtils;
-import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.BookRecommandAttachment;
@@ -51,8 +48,6 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
-import com.yougy.view.dialog.ConfirmDialog;
-import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.math.BigDecimal;
@@ -75,26 +70,7 @@ public class ChattingActivity extends MessageBaseActivity {
     //用户资料变更监听器
     YXClient.OnThingsChangedListener<Bundle> onUserInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
         @Override
-        public void onThingChanged(Bundle thing) {
-            adapter.notifyDataSetChanged();
-        }
-    };
-    //新到消息监听器
-    Observer<List<IMMessage>> incommingMessageObserver = new Observer<List<IMMessage>>() {
-        @Override
-        public void onEvent(List<IMMessage> imMessages) {
-            for (IMMessage newMessage : imMessages) {
-                Log.v("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType());
-                if (isMyMessage(newMessage)
-                        && (newMessage.getMsgType() == MsgTypeEnum.text || newMessage.getMsgType() == MsgTypeEnum.file
-                            || newMessage.getMsgType() == MsgTypeEnum.custom)) {
-                    messageList.add(newMessage);
-                    if (newMessage.getAttachment() != null && newMessage.getAttachment() instanceof FileAttachment) {
-                        NIMClient.getService(MsgService.class).downloadAttachment(newMessage, false);
-                    }
-                }
-            }
-            scrollToBottom(100);
+        public void onThingChanged(Bundle thing , int type) {
             adapter.notifyDataSetChanged();
         }
     };
@@ -176,7 +152,22 @@ public class ChattingActivity extends MessageBaseActivity {
                         }
                     }
                 });
-        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver, true);
+        YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnNewMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage newMessage) {
+                Log.v("FH", "ChattingActivity接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType());
+                if (isMyMessage(newMessage)
+                        && (newMessage.getMsgType() == MsgTypeEnum.text || newMessage.getMsgType() == MsgTypeEnum.file
+                        || newMessage.getMsgType() == MsgTypeEnum.custom)) {
+                    messageList.add(newMessage);
+                    if (newMessage.getAttachment() != null && newMessage.getAttachment() instanceof FileAttachment) {
+                        NIMClient.getService(MsgService.class).downloadAttachment(newMessage, false);
+                    }
+                }
+                scrollToBottom(100);
+                adapter.notifyDataSetChanged();
+            }
+        });
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, true);
     }
 
@@ -499,7 +490,6 @@ public class ChattingActivity extends MessageBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , false);
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver , false);
     }
 

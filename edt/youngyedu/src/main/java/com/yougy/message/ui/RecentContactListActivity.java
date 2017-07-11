@@ -1,12 +1,9 @@
 package com.yougy.message.ui;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,22 +14,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.netease.nimlib.sdk.RequestCallbackWrapper;
-import com.netease.nimlib.sdk.ResponseCode;
-import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.message.BookRecommandAttachment;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityRecentContactBinding;
 import com.yougy.ui.activity.databinding.ItemRecentContactListBinding;
-import com.yougy.view.dialog.ConfirmDialog;
-import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
@@ -48,19 +38,19 @@ public class RecentContactListActivity extends MessageBaseActivity {
     ContactAdapter adapter = new ContactAdapter();
     YXClient.OnThingsChangedListener<Bundle> onTeamInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
         @Override
-        public void onThingChanged(Bundle thing) {
+        public void onThingChanged(Bundle thing , int type) {
             adapter.notifyDataSetChanged();
         }
     };
     YXClient.OnThingsChangedListener<Bundle> onUserInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
         @Override
-        public void onThingChanged(Bundle thing) {
+        public void onThingChanged(Bundle thing , int type) {
             adapter.notifyDataSetChanged();
         }
     };
     YXClient.OnThingsChangedListener<List<RecentContact>> onRecentContactListChangeListener = new YXClient.OnThingsChangedListener<List<RecentContact>>() {
         @Override
-        public void onThingChanged(List<RecentContact> thing) {
+        public void onThingChanged(List<RecentContact> thing , int type) {
             adapter.notifyDataSetChanged();
         }
     };

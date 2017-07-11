@@ -22,6 +22,9 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
+import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomMessageConfig;
@@ -34,6 +37,7 @@ import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.shop.bean.BookInfo;
 
 import java.util.ArrayList;
@@ -61,6 +65,7 @@ public class YXClient {
     static public final String USER_AVATAR = "user_avatar";
     static public final String LAST_UPDATE = "last_update";
     static public final String TEAM_NAME = "team_name";
+    static public final String TEAM = "team";
     static public final String IS_FETCHING = "is_fetching";
 
     private final long UPDATE_THRESHOLD = 1000*60*60;
@@ -78,21 +83,84 @@ public class YXClient {
     private boolean teamDataInitFinish = false;
 
 
-    //用户信息更新监听器列表
+    //全局所有的用户信息更新监听器列表
     private ArrayList<OnThingsChangedListener<Bundle>> onUserInfoChangeListeners
             = new ArrayList<OnThingsChangedListener<Bundle>>();
-    //群信息更新监听器列表
+    //全局所有的群信息更新监听器列表
     private ArrayList<OnThingsChangedListener<Bundle>> onTeamInfoChangeListeners
             = new ArrayList<OnThingsChangedListener<Bundle>>();
-    //最近联系人更新监听器列表
+    //全局所有的最近联系人更新监听器列表
     private ArrayList<OnThingsChangedListener<List<RecentContact>>> onRecentContactChangeListeners
             = new ArrayList<OnThingsChangedListener<List<RecentContact>>>();
-    //我加入的群更新监听器列表
+    //全局所有的我加入的群更新监听器列表
     private ArrayList<OnThingsChangedListener<List<Team>>> onMyTeamListChangeListeners
             = new ArrayList<OnThingsChangedListener<List<Team>>>();
-    //群成员变更监听器列表
+    //全局所有的群成员变更监听器列表
     private ArrayList<OnThingsChangedListener<Pair<String , List<TeamMember>>>> onTeamMemberChangedListeners
             = new ArrayList<OnThingsChangedListener<Pair<String,List<TeamMember>>>>();
+    //全局所有的自定义新到消息监听器列表
+    private ArrayList<OnNewMessageListener> onNewMessageListenerList = new ArrayList<OnNewMessageListener>();
+
+    //新到消息监听器
+    Observer<List<IMMessage>> incommingMessageObserver = new Observer<List<IMMessage>>() {
+        @Override
+        public void onEvent(List<IMMessage> imMessages) {
+            for (IMMessage newMessage : imMessages) {
+                Log.v("FH!!!", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType());
+                if (newMessage.getSessionType() == SessionTypeEnum.Team) {
+                    Log.v("FH!!!" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
+                    IMMessage localMessage = null;
+                    switch (newMessage.getMsgType()){
+                        case file:
+                            localMessage = MessageBuilder.createFileMessage(newMessage.getFromAccount() , SessionTypeEnum.P2P , null , null);
+                            localMessage.setAttachment(newMessage.getAttachment());
+                            localMessage.setAttachStatus(newMessage.getAttachStatus());
+                            break;
+                        case custom:
+                            localMessage = MessageBuilder.createCustomMessage(newMessage.getFromAccount() , SessionTypeEnum.P2P, "[图书推荐]" , newMessage.getAttachment());
+                            localMessage.setAttachStatus(newMessage.getAttachStatus());
+                            break;
+                        case text:
+                            localMessage = MessageBuilder.createTextMessage(newMessage.getFromAccount(), SessionTypeEnum.P2P , newMessage.getContent());
+                            break;
+                        default:
+                            Log.v("FH" , "未知类型 " + newMessage.getMsgType() + "新建消息失败");
+                    }
+                    if (localMessage != null){
+                        Log.v("FH" , "开始插入数据库");
+                        localMessage.setFromAccount(newMessage.getFromAccount());
+                        localMessage.setDirect(MsgDirectionEnum.In);
+                        localMessage.setStatus(MsgStatusEnum.success);
+
+                        NIMClient.getService(MsgService.class).saveMessageToLocalEx(localMessage , false , newMessage.getTime())
+                        .setCallback(new RequestCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void param) {
+                                Log.v("FH" , "插入数据库成功");
+                            }
+                            @Override
+                            public void onFailed(int code) {
+                                Log.v("FH" , "插入数据库失败 : " + code);
+                            }
+                            @Override
+                            public void onException(Throwable exception) {
+                                Log.v("FH" , "插入数据库失败 : " + exception.getMessage());
+                                exception.printStackTrace();
+                            }
+                        });
+                        for (OnNewMessageListener listener : onNewMessageListenerList) {
+                            listener.onNewMessage(localMessage);
+                        }
+                    }
+                }
+                else {
+                    for (OnNewMessageListener listener : onNewMessageListenerList) {
+                        listener.onNewMessage(newMessage);
+                    }
+                }
+            }
+        }
+    };
 
     //在线状态变更观察者
     private Observer<StatusCode> onlineStatusObserver = new Observer<StatusCode>() {
@@ -114,30 +182,32 @@ public class YXClient {
     private Observer<List<RecentContact>> recentContactObserver = new Observer<List<RecentContact>>() {
         @Override
         public void onEvent(List<RecentContact> newRecentContactList) {
-            lv("收到最近联系人变更 " + newRecentContactList.size());
-            for (RecentContact newRecentContact : newRecentContactList) {
-                for (int i = 0 ; i < recentContactList.size() ;) {
-                    RecentContact oldContact = recentContactList.get(i);
+            lv("收到最近联系人变更(包含群) " + newRecentContactList.size() + "个");
+            for (int i = newRecentContactList.size() - 1 ; i >= 0 ; i--) {
+                RecentContact newRecentContact = newRecentContactList.get(i);
+                if (newRecentContact.getSessionType() == SessionTypeEnum.Team){
+                    newRecentContactList.remove(newRecentContact);
+                    continue;
+                }
+                for (int j = 0 ; j < recentContactList.size() ;) {
+                    RecentContact oldContact = recentContactList.get(j);
                     if (oldContact.getContactId().equals(newRecentContact.getContactId())) {
                         recentContactList.remove(oldContact);
                         break;
                     }
                     else {
-                        i++;
+                        j++;
                     }
                 }
                 switch (newRecentContact.getSessionType()){
                     case P2P:
                         updateUserInfo(newRecentContact.getContactId() , false);
                         break;
-                    case Team:
-                        updateTeamInfo(newRecentContact.getContactId() , false);
-                        break;
                 }
             }
             recentContactList.addAll(0 , newRecentContactList);
             for (OnThingsChangedListener<List<RecentContact>> listener : onRecentContactChangeListeners) {
-                listener.onThingChanged(newRecentContactList);
+                listener.onThingChanged(newRecentContactList , ALL);
             }
         }
     };
@@ -145,24 +215,22 @@ public class YXClient {
     private Observer<List<Team>> teamUpdateObserver = new Observer<List<Team>>() {
         @Override
         public void onEvent(List<Team> newTeams) {
-            lv("收到群组资料变更 " + newTeams.size());
-            for (Team newTeam: newTeams) {
-                for (int i = 0 ; i < myTeamList.size() ;) {
-                    Team oldTeam = myTeamList.get(i);
-                    if (oldTeam.getId().equals(newTeam.getId())) {
-                        myTeamList.remove(oldTeam);
-                        break;
+            //收到群组资料变更,参数为变更的群组
+            lv("收到群组资料变更 变更的群个数 " + newTeams.size());
+            for (final Team newTeam: newTeams) {
+                ListUtil.conditionalRemove(myTeamList, new ListUtil.ConditionJudger<Team>() {
+                    @Override
+                    public boolean isMatchCondition(Team nodeInList) {
+                        return nodeInList.getId().equals(newTeam.getId());
                     }
-                    else {
-                        i++;
-                    }
+                });
+                Bundle bundle = makeTeamInfoBundle(newTeam);
+                teamInfoMap.put(newTeam.getId() , bundle);
+                for (OnThingsChangedListener<Bundle> listener: onTeamInfoChangeListeners) {
+                    listener.onThingChanged(bundle , ALL);
                 }
-                teamInfoMap.put(newTeam.getId() , makeTeamInfoBundle(newTeam.getId() , newTeam.getName()));
             }
             myTeamList.addAll(0, newTeams);
-            for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
-                listener.onThingChanged(newTeams);
-            }
         }
     };
     //自己退群,被移除出群观察者
@@ -176,18 +244,44 @@ public class YXClient {
                     myTeamList.remove(oldTeam);
                 }
             }
-            ArrayList<Team> list = new ArrayList<Team>(){{add(quitedTeam);}};
+            List<Team> list = new ArrayList<Team>(){{
+                add(quitedTeam);
+            }};
             for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
-                listener.onThingChanged(list);
+                listener.onThingChanged(list , DELETE);
             }
+        }
+    };
+    // 群成员资料变化观察者通知。群组添加新成员，成员资料变化会收到该通知。
+    // 返回的参数为有更新的群成员资料列表。
+    private Observer<List<TeamMember>> teamMemberUpdateObserver = new Observer<List<TeamMember>>() {
+        @Override
+        public void onEvent(List<TeamMember> members) {
+            lv("收到群成员资料变化观察者通知 数量 " + members.size());
+            //TODO fh 这里的逻辑还没有写
         }
     };
     //群成员被移除观察者
     private Observer<TeamMember> teamMemberRemoveObserver = new Observer<TeamMember>(){
         @Override
-        public void onEvent(TeamMember teamMember) {
+        public void onEvent(final TeamMember teamMember) {
             lv("收到群成员被移除通知" + teamMember);
-            getTeamMemberByID(teamMember.getTid());
+            if (getTeamMemberByID(teamMember.getAccount()) != null){
+                Pair<Long , List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
+                pair.first = System.currentTimeMillis();
+                ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
+                    @Override
+                    public boolean isMatchCondition(TeamMember nodeInList) {
+                        return nodeInList.getAccount().equals(teamMember.getAccount());
+                    }
+                });
+                List<TeamMember> list = new ArrayList<TeamMember>(){{
+                    add(teamMember);
+                }};
+                for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
+                    listener.onThingChanged(new Pair<String, List<TeamMember>>(teamMember.getTid() , list) , DELETE);
+                }
+            }
         }
     };
      //消息过滤器
@@ -249,6 +343,9 @@ public class YXClient {
                 while(getManager().myOnUserInfoChangeListeners.size() > 0){
                     getManager().removeOnUserInfoChangeListener(getManager().myOnUserInfoChangeListeners.get(0));
                 }
+                while(getManager().myOnNewMessageListenerList.size() > 0){
+                    getManager().removeOnNewMessageListener(getManager().myOnNewMessageListenerList.get(0));
+                }
                 emptyFragmentMap.remove(activity.toString());
             }
         }.setManager(manager);
@@ -300,6 +397,8 @@ public class YXClient {
         NIMClient.getService(MsgService.class).registerIMMessageFilter(getInstance().messageFilter);
         //注册自定义消息解析器
         NIMClient.getService(MsgService.class).registerCustomAttachmentParser(customAttachParser);
+        //
+        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , true);
     }
 
     /**
@@ -390,11 +489,11 @@ public class YXClient {
         onUserInfoChangeListeners.clear();
         onMyTeamListChangeListeners.clear();
         onTeamMemberChangedListeners.clear();
-
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactObserver, false);
         NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver , false);
         NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, false);
         NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , false);
+        NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , false);
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , false);
 
         recentContactList.clear();
@@ -420,7 +519,7 @@ public class YXClient {
     /**
      * 通过群id获取群资料bundle
      * @param id 群id
-     * @return 获取的bundle内容可以见 {@link YXClient#makeTeamInfoBundle(String, String)},
+     * @return 获取的bundle内容可以见 {@link YXClient#makeTeamInfoBundle(Team)},
      * 如果之前没有获取过该群的info,会立刻返回null,并且向sdk查询最新的群info,异步查询的结果通过onTeamInfoChangedListener通知.
      * 可以通过{@link ListenerManager#addOnTeamInfoChangeListener(OnThingsChangedListener)}绑定监听器
      */
@@ -655,8 +754,13 @@ public class YXClient {
 
     private void initTeamData(){
         lv("正在初始化我加入的群列表");
+        // 注册群资料变动观察者
         NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver , true);
+        // 注册群组被移除的观察者。在退群，被踢，群被解散时会收到该通知。
         NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, true);
+        // 群成员资料变化观察者通知。群组添加新成员，成员资料变化会收到该通知。
+        NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , true);
+        // 注册移除群成员的观察者通知。
         NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , true);
 
         NIMClient.getService(TeamService.class).queryTeamList()
@@ -666,18 +770,20 @@ public class YXClient {
                         if (code == ResponseCode.RES_SUCCESS) {
                             lv("获取我加入的群列表成功,获取到" + (result == null ? result : result.size()) + "个加入的群");
                             for (Team team : result) {
-                                teamInfoMap.put(team.getId() , makeTeamInfoBundle(team.getId() , team.getName()));
+                                teamInfoMap.put(team.getId() , makeTeamInfoBundle(team));
                                 getTeamMemberByID(team.getId());
                             }
                             myTeamList.addAll(result);
                             for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
-                                listener.onThingChanged(result);
+                                listener.onThingChanged(result , ALL);
                             }
                             teamDataInitFinish = true;
                         } else {
                             lv("获取我加入的群列表失败, code : " + code + "  exception : " + exception);
+                            //注销群相关的监听器
                             NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver , false);
                             NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, false);
+                            NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , false);
                             NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , false);
                         }
                     }
@@ -691,15 +797,15 @@ public class YXClient {
             @Override
             public void onResult(int code, List<RecentContact> result, Throwable exception) {
                 if (code == ResponseCode.RES_SUCCESS) {
-                    lv("获取最近联系人列表成功,获取到" + (result == null ? result : result.size()) + "个最近联系人");
+                    lv("获取最近联系人列表成功,获取到" + (result == null ? result : result.size()) + "个最近联系人(包含群)");
                     for (RecentContact newContact : result) {
+                        if (newContact.getSessionType() == SessionTypeEnum.Team){
+                            continue;
+                        }
                         String id = newContact.getContactId();
                         switch (newContact.getSessionType()) {
                             case P2P:
                                 updateUserInfo(id , true);
-                                break;
-                            case Team:
-                                updateTeamInfo(id , true);
                                 break;
                         }
                         recentContactList.add(newContact);
@@ -720,7 +826,7 @@ public class YXClient {
                 groupMemberMap.put(id , new Pair<Long, List<TeamMember>>(System.currentTimeMillis() , param));
                 Pair pair = new Pair<String, List<TeamMember>>(id , param);
                 for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                    listener.onThingChanged(pair);
+                    listener.onThingChanged(pair , ALL);
                 }
             }
             @Override
@@ -747,7 +853,7 @@ public class YXClient {
                 userInfoMap.put(id , bundle);
                 lv("从sdk载入用户资料成功,id=" + id + " userName=" + nimUserInfo.getName() + " userAvatarPath=" + nimUserInfo.getAvatar());
                 for (OnThingsChangedListener<Bundle> listener : onUserInfoChangeListeners) {
-                    listener.onThingChanged(bundle);
+                    listener.onThingChanged(bundle , ALL);
                 }
             }
             else {
@@ -765,7 +871,7 @@ public class YXClient {
                 Bundle tempBundle = makeUserInfoBundle(id, userName, userAvatarPath);
                 userInfoMap.put(id, tempBundle);
                 for (OnThingsChangedListener<Bundle> listener : onUserInfoChangeListeners) {
-                    listener.onThingChanged(tempBundle);
+                    listener.onThingChanged(tempBundle , ALL);
                 }
                 changeUserInfoFetchingStatus(id, false);
             }
@@ -872,10 +978,10 @@ public class YXClient {
             public void onSuccess(Team param) {
                 String teamName = param.getName();
                 lv("后台网络更新群资料成功,id=" + id + " teamName=" + teamName);
-                Bundle tempBundle = makeTeamInfoBundle(id, teamName);
+                Bundle tempBundle = makeTeamInfoBundle(param);
                 teamInfoMap.put(id, tempBundle);
                 for (OnThingsChangedListener<Bundle> listener : onTeamInfoChangeListeners) {
-                    listener.onThingChanged(tempBundle);
+                    listener.onThingChanged(tempBundle , ALL);
                 }
                 changeTeamInfoFetchingStatus(id, false);
             }
@@ -933,7 +1039,7 @@ public class YXClient {
         Bundle bundle = teamInfoMap.get(id);
         if (isFetching){
             if (bundle == null){
-                bundle = makeTeamInfoBundle(null, null);
+                bundle = makeTeamInfoBundle(null);
                 teamInfoMap.put(id , bundle);
             }
             bundle.putBoolean(IS_FETCHING , isFetching);
@@ -951,18 +1057,16 @@ public class YXClient {
     /**
      * 生成一个群资料bundle
      *
-     * @param id 群id
-     * @param teamName 群名称
+     * @param team 群资料
      *
      * @return 群资料bundle,其中包含
      * <p>群id,使用bundle.getString({@link YXClient#ID})
-     * <p>群名称 使用bundle.getString({@link YXClient#TEAM_NAME})
+     * <p>群信息 使用bundle.getSerializable({@link YXClient#TEAM})
      * <p>该条群资料最后更新时间戳 使用bundle.getLong({@link YXClient#LAST_UPDATE})获取
      */
-    private Bundle makeTeamInfoBundle(String id , String teamName){
+    private Bundle makeTeamInfoBundle(Team team){
         Bundle bundle = new Bundle();
-        bundle.putString(ID , id);
-        bundle.putString(TEAM_NAME , teamName);
+        bundle.putSerializable(TEAM , team);
         bundle.putLong(LAST_UPDATE , System.currentTimeMillis());
         return bundle;
     }
@@ -975,21 +1079,23 @@ public class YXClient {
      * YxClient中的监听器管理器,会自动释放
      */
     public class ListenerManager {
-        //用户信息更新监听器列表
+        //本Manage管理的用户信息更新监听器列表
         public ArrayList<OnThingsChangedListener<Bundle>> myOnUserInfoChangeListeners
                 = new ArrayList<OnThingsChangedListener<Bundle>>();
-        //群信息更新监听器列表
+        //本Manage管理的群信息更新监听器列表
         public ArrayList<OnThingsChangedListener<Bundle>> myOnTeamInfoChangeListeners
                 = new ArrayList<OnThingsChangedListener<Bundle>>();
-        //最近联系人更新监听器列表
+        //本Manage管理的最近联系人更新监听器列表
         public ArrayList<OnThingsChangedListener<List<RecentContact>>> myOnRecentContactChangeListeners
                 = new ArrayList<OnThingsChangedListener<List<RecentContact>>>();
-        //我加入的群更新监听器列表
+        //本Manage管理的我加入的群更新监听器列表
         public ArrayList<OnThingsChangedListener<List<Team>>> myOnMyTeamListChangeListeners
                 = new ArrayList<OnThingsChangedListener<List<Team>>>();
-        //群成员变更监听器列表
+        //本Manage管理的群成员变更监听器列表
         public ArrayList<OnThingsChangedListener<Pair<String , List<TeamMember>>>> myOnTeamMemberChangedListeners
                 = new ArrayList<OnThingsChangedListener<Pair<String,List<TeamMember>>>>();
+        //本Manage管理的自定义的新到消息监听器列表
+        public ArrayList<OnNewMessageListener> myOnNewMessageListenerList = new ArrayList<OnNewMessageListener>();
 
         /**
          * 添加最近联系人列表变化监听器
@@ -1031,7 +1137,7 @@ public class YXClient {
         /**
          * 添加群资料变化监听器
          * @param listener 监听器的onEvent的参数为发生变化的群的新的info,
-         *                 具体内容可以见{@link YXClient#makeTeamInfoBundle(String, String)}
+         *                 具体内容可以见{@link YXClient#makeTeamInfoBundle(Team)}
          */
         public void addOnTeamInfoChangeListener(OnThingsChangedListener<Bundle> listener){
             onTeamInfoChangeListeners.add(listener);
@@ -1074,6 +1180,8 @@ public class YXClient {
             myOnTeamMemberChangedListeners.add(listener);
         }
 
+
+
         /**
          * 移除群成员变化监听器
          * @param listener
@@ -1081,6 +1189,15 @@ public class YXClient {
         public void removeOnTeamMemberChangeListener(OnThingsChangedListener<Pair<String, List<TeamMember>>> listener){
             onTeamMemberChangedListeners.remove(listener);
             myOnTeamMemberChangedListeners.remove(listener);
+        }
+
+        public void addOnNewMessageListener(OnNewMessageListener listener){
+            onNewMessageListenerList.add(listener);
+            myOnNewMessageListenerList.add(listener);
+        }
+        public void removeOnNewMessageListener(OnNewMessageListener listener){
+            onNewMessageListenerList.remove(listener);
+            myOnNewMessageListenerList.remove(listener);
         }
     }
 
@@ -1147,12 +1264,21 @@ public class YXClient {
         abstract void onDestroy();
     }
 
+    //OnThingsChangedListener用常量
+    public static final int NEW = 1;//代表变化为新增元素,传递的thing是新增的那部分元素
+    public static final int DELETE = 2;//代表变化为删除元素,传递的thing是删除的那部分元素
+    public static final int ALL = 3;//代表变化为数据整体改变,传递的thing是变化后的数据整体
+
     /**
      * 对象改变监听器
      * @param <T>
      */
     public interface OnThingsChangedListener<T> {
-        void onThingChanged(T thing);
+        void onThingChanged(T thing , int type);
+    }
+
+    public interface OnNewMessageListener{
+        void onNewMessage(IMMessage newMessage);
     }
 
 }
