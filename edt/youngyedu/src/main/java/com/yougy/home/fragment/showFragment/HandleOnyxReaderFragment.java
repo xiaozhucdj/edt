@@ -74,9 +74,8 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private ImageButton mBackPageBtn;
     private Button mBookMarkBtn;
     private Button mItemDirectory;
-    private ImageView mBookMarkImg;
-    private ImageView mDirectoryImg;
     private int mPageSliderRes;
+    private ImageView mDirectoryImg;
     private BookMarkAdapter mBookMarkAdapter;
     private String mPdfFile;
     private TextThumbSeekBar mSeekbarPage;
@@ -168,7 +167,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         mRl_page = (RelativeLayout) mRoot.findViewById(R.id.rl_page);
         mSeekbarPage = (TextThumbSeekBar) mRoot.findViewById(R.id.seekbar_page);
         mRoot.findViewById(R.id.tv_page_number).setVisibility(View.GONE);
-        mBookMarkImg = (ImageView) mRoot.findViewById(R.id.bookmark);
         mDirectoryImg = (ImageView) mRoot.findViewById(R.id.directory);
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
         mBackPageBtn = (ImageButton) mRoot.findViewById(R.id.btn_back_page);
@@ -299,7 +297,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         mItemDirectory.setOnClickListener(this);
         mBackPageBtn.setOnClickListener(this);
         mRlDirectory.setOnClickListener(this);
-        mBookMarkImg.setOnClickListener(this);
         mDirectoryImg.setOnClickListener(this);
         mLvBookDirectory.setOnItemClickListener(this);
     }
@@ -388,7 +385,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
         Map<Integer, BookMarkInfo> bookMarks = new LinkedHashMap<>();
         for (BookMarkInfo info : bookMarkInfos) {
-            bookMarks.put(info.getNumber(), info);
+            bookMarks.put(info.getNumber()-1, info);
         }
         return bookMarks;
     }
