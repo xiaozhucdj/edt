@@ -18,11 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
-import com.netease.nimlib.sdk.msg.MsgService;
-import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
@@ -59,52 +55,6 @@ public class MultiChattingActivity extends MessageBaseActivity {
     ActivityChattingBinding binding;
     ArrayList<IMMessage> messageListSuccessed = new ArrayList<IMMessage>();
     ArrayList<IMMessage> messageListFailed = new ArrayList<IMMessage>();
-    //用户资料变更监听器
-    YXClient.OnThingsChangedListener<Bundle> onUserInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
-        @Override
-        public void onThingChanged(Bundle thing , int type) {
-            adapter.notifyDataSetChanged();
-        }
-    };
-    //消息发送状态监听器
-    Observer<IMMessage> msgSendStatusObserver = new Observer<IMMessage>() {
-        @Override
-        public void onEvent(final IMMessage statusUpdatedMessage) {
-            Log.v("FH" , "message 状态更新  sid : " + statusUpdatedMessage.getSessionId() + " sstype: " + statusUpdatedMessage.getSessionType() + " content : " + statusUpdatedMessage.getContent() + "  status : " + statusUpdatedMessage.getStatus() + " attstatus : " + statusUpdatedMessage.getAttachStatus());
-            IMMessage fakeMessage = findFakeMessageBaseRealMessage(statusUpdatedMessage);
-            if (fakeMessage == null){
-                return;
-            }
-            HashMap<String , Object> fakeExt = (HashMap<String, Object>) fakeMessage.getLocalExtension();
-            if (statusUpdatedMessage.getStatus() == MsgStatusEnum.success) {
-                if (!ListUtil.conditionalContains(messageListSuccessed
-                        , new ListUtil.ConditionJudger<IMMessage>() {
-                            @Override
-                            public boolean isMatchCondition(IMMessage nodeInList) {
-                                return nodeInList.isTheSame(statusUpdatedMessage);
-                            }
-                        })){
-                    messageListSuccessed.add(statusUpdatedMessage);
-                    fakeExt.put("success" , (Integer)fakeExt.get("success") + 1);
-                    fakeMessage.setLocalExtension(fakeExt);
-                }
-            }
-            else if (statusUpdatedMessage.getStatus() == MsgStatusEnum.fail) {
-                if (!ListUtil.conditionalContains(messageListFailed
-                        , new ListUtil.ConditionJudger<IMMessage>() {
-                            @Override
-                            public boolean isMatchCondition(IMMessage nodeInList) {
-                                return nodeInList.isTheSame(statusUpdatedMessage);
-                            }
-                        })){
-                    messageListFailed.add(statusUpdatedMessage);
-                    fakeExt.put("fail" , (Integer)fakeExt.get("fail") + 1);
-                    fakeMessage.setLocalExtension(fakeExt);
-                }
-            }
-            adapter.notifyDataSetChanged();
-        }
-    };
 
     private IMMessage findFakeMessageBaseRealMessage(IMMessage realMessage){
         HashMap<String , Object> ext = (HashMap<String, Object>) realMessage.getLocalExtension();
@@ -145,7 +95,52 @@ public class MultiChattingActivity extends MessageBaseActivity {
             UIUtils.showToastSafe("获取消息发送对象失败");
             finish();
         }
-        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver , true);
+        //用户资料变更监听器
+        YXClient.getInstance().with(this).addOnUserInfoChangeListener(new YXClient.OnThingsChangedListener<Bundle>() {
+            @Override
+            public void onThingChanged(Bundle thing, int type) {
+                adapter.notifyDataSetChanged();
+            }
+        });
+        //消息发送状态监听器
+        YXClient.getInstance().with(this).addOnMsgStatusChangedListener(new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(final IMMessage message) {
+                Log.v("FH" , "MultiChattingActivity 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
+                IMMessage fakeMessage = findFakeMessageBaseRealMessage(message);
+                if (fakeMessage == null){
+                    return;
+                }
+                HashMap<String , Object> fakeExt = (HashMap<String, Object>) fakeMessage.getLocalExtension();
+                if (message.getStatus() == MsgStatusEnum.success) {
+                    if (!ListUtil.conditionalContains(messageListSuccessed
+                            , new ListUtil.ConditionJudger<IMMessage>() {
+                                @Override
+                                public boolean isMatchCondition(IMMessage nodeInList) {
+                                    return nodeInList.isTheSame(message);
+                                }
+                            })){
+                        messageListSuccessed.add(message);
+                        fakeExt.put("success" , (Integer)fakeExt.get("success") + 1);
+                        fakeMessage.setLocalExtension(fakeExt);
+                    }
+                }
+                else if (message.getStatus() == MsgStatusEnum.fail) {
+                    if (!ListUtil.conditionalContains(messageListFailed
+                            , new ListUtil.ConditionJudger<IMMessage>() {
+                                @Override
+                                public boolean isMatchCondition(IMMessage nodeInList) {
+                                    return nodeInList.isTheSame(message);
+                                }
+                            })){
+                        messageListFailed.add(message);
+                        fakeExt.put("fail" , (Integer)fakeExt.get("fail") + 1);
+                        fakeMessage.setLocalExtension(fakeExt);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
 
@@ -153,7 +148,6 @@ public class MultiChattingActivity extends MessageBaseActivity {
     public void loadData() {}
 
     public void initChattingListview(){
-        YXClient.getInstance().with(this).addOnUserInfoChangeListener(onUserInfoChangeListener);
         binding.chattingListview.setAdapter(adapter);
         binding.chattingListview.setDividerHeight(0);
         scrollToBottom(100);
@@ -163,7 +157,7 @@ public class MultiChattingActivity extends MessageBaseActivity {
                 IMMessage message = showMessageList.get(position);
                 if (message.getAttachment() != null){
                     if (message.getDirect() == MsgDirectionEnum.In && message.getAttachStatus() != AttachStatusEnum.transferred ){
-                        NIMClient.getService(MsgService.class).downloadAttachment(message , false);
+                        YXClient.getInstance().downloadAttachment(message , false);
                     }
                     else {
                         FileAttachment fileAttachment = (FileAttachment) message.getAttachment();
@@ -291,7 +285,6 @@ public class MultiChattingActivity extends MessageBaseActivity {
             int total = (int) ext.get("total");
             int success = (int) ext.get("success");
             int fail = (int) ext.get("fail");
-            Log.v("FH" , "total " + total + " success " + success + " fail " + fail);
             if (total == success){
                 chattingItembinding.rightMessageStatusTv.setText("全部发送成功");
             }
@@ -327,12 +320,6 @@ public class MultiChattingActivity extends MessageBaseActivity {
             return false;
         }
         return true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver , false);
     }
 
     private void openFile(String path){

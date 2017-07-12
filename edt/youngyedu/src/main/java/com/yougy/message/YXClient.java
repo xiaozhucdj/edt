@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.netease.nimlib.sdk.AbortableFuture;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -22,13 +23,13 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
-import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomMessageConfig;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.TeamServiceObserver;
@@ -37,7 +38,6 @@ import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
-import com.yougy.common.utils.SpUtil;
 import com.yougy.shop.bean.BookInfo;
 
 import java.util.ArrayList;
@@ -98,16 +98,22 @@ public class YXClient {
     private ArrayList<OnThingsChangedListener<Pair<String , List<TeamMember>>>> onTeamMemberChangedListeners
             = new ArrayList<OnThingsChangedListener<Pair<String,List<TeamMember>>>>();
     //全局所有的自定义新到消息监听器列表
-    private ArrayList<OnNewMessageListener> onNewMessageListenerList = new ArrayList<OnNewMessageListener>();
-
+    private ArrayList<OnMessageListener> onNewMessageListenerList = new ArrayList<OnMessageListener>();
+    //全局所有的自定义消息发送状态监听器列表
+    private ArrayList<OnMessageListener> onMsgStatusChangedListenerList = new ArrayList<OnMessageListener>();
     //新到消息监听器
     Observer<List<IMMessage>> incommingMessageObserver = new Observer<List<IMMessage>>() {
         @Override
         public void onEvent(List<IMMessage> imMessages) {
+            //学生端处理逻辑:老师可以给多个学生使用群发送群消息,但是对学生屏蔽群的存在,群消息过来以后会被转换成p2p消息,
+            //并且显示在与那个老师的p2p对话的时间线上
+            //所以此处的处理逻辑是收到群消息后不调用UI注册的新到消息监听器,而是先手动建立一条p2p消息,内容与群消息一致,然后把新建的p2p消息通知到UI注册的消息监听器中.
+            //并且把新建的p2p消息插入云信SDK的本地数据库,这样就方便以后查询p2p历史记录时,可以直接一次性的把群消息和p2p消息都查出来.
+            //插入数据库后SDK的最近联系人列表也会自动更新,不需要手动通知.
             for (IMMessage newMessage : imMessages) {
-                Log.v("FH!!!", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType());
+                Log.v("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType());
                 if (newMessage.getSessionType() == SessionTypeEnum.Team) {
-                    Log.v("FH!!!" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
+                    Log.v("FH" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
                     IMMessage localMessage = null;
                     switch (newMessage.getMsgType()){
                         case file:
@@ -147,16 +153,27 @@ public class YXClient {
                                 exception.printStackTrace();
                             }
                         });
-                        for (OnNewMessageListener listener : onNewMessageListenerList) {
+                        for (OnMessageListener listener : onNewMessageListenerList) {
                             listener.onNewMessage(localMessage);
                         }
                     }
                 }
                 else {
-                    for (OnNewMessageListener listener : onNewMessageListenerList) {
+                    for (OnMessageListener listener : onNewMessageListenerList) {
                         listener.onNewMessage(newMessage);
                     }
                 }
+            }
+        }
+    };
+
+    //消息状态改变监听器
+    Observer<IMMessage> msgSendStatusObserver = new Observer<IMMessage>() {
+        @Override
+        public void onEvent(IMMessage newMessage) {
+            lv("message 状态更新  sid : " + newMessage.getSessionId() + " sstype: " + newMessage.getSessionType() + " content : " + newMessage.getContent() + "  status : " + newMessage.getStatus() + " attstatus : " + newMessage.getAttachStatus());
+            for (OnMessageListener listener : onMsgStatusChangedListenerList) {
+                listener.onNewMessage(newMessage);
             }
         }
     };
@@ -181,6 +198,9 @@ public class YXClient {
     private Observer<List<RecentContact>> recentContactObserver = new Observer<List<RecentContact>>() {
         @Override
         public void onEvent(List<RecentContact> newRecentContactList) {
+            //学生端处理逻辑,由于学生端需要屏蔽群的概念,而此处收到的联系人变更通知是包含群消息引起的变动通知,
+            //就是说收到群消息导致最近联系人变动,此处也会收到通知.
+            //因此需要手动过滤群消息导致的联系人变动,并且把变动后的最近联系人列表中的群消息项删除,再通知到UI注册的监听器.
             lv("收到最近联系人变更(包含群) " + newRecentContactList.size() + "个");
             for (int i = newRecentContactList.size() - 1 ; i >= 0 ; i--) {
                 RecentContact newRecentContact = newRecentContactList.get(i);
@@ -396,8 +416,10 @@ public class YXClient {
         NIMClient.getService(MsgService.class).registerIMMessageFilter(getInstance().messageFilter);
         //注册自定义消息解析器
         NIMClient.getService(MsgService.class).registerCustomAttachmentParser(customAttachParser);
-        //
+        //注册新到消息观察者
         NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , true);
+        //注册消息发送状态改变观察者
+        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, true);
     }
 
     /**
@@ -494,6 +516,8 @@ public class YXClient {
         NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , false);
         NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , false);
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , false);
+        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , false);
+        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, false);
 
         recentContactList.clear();
         userInfoMap.clear();
@@ -505,6 +529,35 @@ public class YXClient {
         recentContactInitFinish = false;
         currentAccount = null;
         currentOnlineStatus = null;
+    }
+
+
+    /**
+     * 查询历史消息,只能查询给定锚点时间点之前的消息
+     * @param sessionType 会话类型,可以为Team或者P2P
+     * @param sessionId 会话ID(群ID或者其他用户ID)
+     * @param limit 查询条数最大值
+     * @param anchorTime 查询锚点时间,本方法只会查询给定锚点时间点之前的消息
+     * @param callback 回调,查询结果会在callback中异步返回
+     */
+    public void queryHistoryMsgList (SessionTypeEnum sessionType , String sessionId, int  limit , long anchorTime
+            , RequestCallback<List<IMMessage>> callback){
+        IMMessage anchor = MessageBuilder.createEmptyMessage(sessionId , sessionType, anchorTime);
+        lv("开始查询历史消息 sstype : " + sessionType + " ssid : " + sessionId + " limit : " + limit + " anchorTime : " + anchorTime);
+        NIMClient.getService(MsgService.class).queryMessageListEx(anchor, QueryDirectionEnum.QUERY_OLD, limit , true)
+                .setCallback(callback);
+    }
+
+    /**
+     * 正常情况收到消息后附件会自动下载。如果下载失败，可调用该接口重新下载
+     *
+     * @param msg   附件所在的消息体
+     * @param thumb 下载缩略图还是原文件。为true时，仅下载缩略图。<br>
+     *              该参数仅对图片和视频类消息有效
+     * @return AbortableFuture 调用跟踪。可设置回调函数，可中止下载操作
+     */
+    public AbortableFuture<Void> downloadAttachment(IMMessage msg, boolean thumb){
+        return NIMClient.getService(MsgService.class).downloadAttachment(msg, thumb);
     }
 
     /**
@@ -751,6 +804,9 @@ public class YXClient {
         return currentOnlineStatus;
     }
 
+    /**
+     * 注册各种关于群成员结构信息变动的全局监听器,并且获取我的群列表
+     */
     private void initTeamData(){
         lv("正在初始化我加入的群列表");
         // 注册群资料变动观察者
@@ -789,6 +845,9 @@ public class YXClient {
                 });
     }
 
+    /**
+     * 注册最近联系人列表变动监听器,获取最近联系人列表
+     */
     private void initRecentContact() {
         lv("正在初始化最近联系人列表...");
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactObserver, true);
@@ -818,6 +877,10 @@ public class YXClient {
         });
     }
 
+    /**
+     * 从云端获取群成员列表,并且通知UI注册的监听器,通知的是全体成员的列表(ALL),列表以Pair<群id , List<{@link TeamMember}>>的格式通知
+     * @param id 群id
+     */
     private void updateTeamMember(final String id){
         NIMClient.getService(TeamService.class).queryMemberList(id).setCallback(new RequestCallback<List<TeamMember>>() {
             @Override
@@ -1059,7 +1122,6 @@ public class YXClient {
      * @param team 群资料
      *
      * @return 群资料bundle,其中包含
-     * <p>群id,使用bundle.getString({@link YXClient#ID})
      * <p>群信息 使用bundle.getSerializable({@link YXClient#TEAM})
      * <p>该条群资料最后更新时间戳 使用bundle.getLong({@link YXClient#LAST_UPDATE})获取
      */
@@ -1094,11 +1156,12 @@ public class YXClient {
         public ArrayList<OnThingsChangedListener<Pair<String , List<TeamMember>>>> myOnTeamMemberChangedListeners
                 = new ArrayList<OnThingsChangedListener<Pair<String,List<TeamMember>>>>();
         //本Manage管理的自定义的新到消息监听器列表
-        public ArrayList<OnNewMessageListener> myOnNewMessageListenerList = new ArrayList<OnNewMessageListener>();
-
+        public ArrayList<OnMessageListener> myOnNewMessageListenerList = new ArrayList<OnMessageListener>();
+        //本Manage管理的自定义的消息发送状态监听器列表
+        public ArrayList<OnMessageListener> myOnMsgStatusChangedListenerList = new ArrayList<OnMessageListener>();
         /**
          * 添加最近联系人列表变化监听器
-         * @param listener 监听器的onEvent的参数为发生变化的最近联系人的列表
+         * @param listener 监听器通知UI的内容类型为ALL,即为变动后的整个最近联系人列表
          */
         public void addOnRecentContactListChangeListener(OnThingsChangedListener<List<RecentContact>> listener){
             onRecentContactChangeListeners.add(listener);
@@ -1115,8 +1178,8 @@ public class YXClient {
         }
 
         /**
-         * 添加用户资料变化监听器
-         * @param listener 监听器的onEvent的参数为发生变化的用户的新的info,
+         * 添加用户资料变化监听器,
+         * @param listener 目前监听器通知的内容类型为ALL.通知列表中只有一个变动后的用户资料Bundle
          *                 具体内容可以见{@link YXClient#makeUserInfoBundle(String, String, String)}
          */
         public void addOnUserInfoChangeListener(OnThingsChangedListener<Bundle> listener){
@@ -1133,9 +1196,9 @@ public class YXClient {
             myOnUserInfoChangeListeners.remove(listener);
         }
 
-        /**
-         * 添加群资料变化监听器
-         * @param listener 监听器的onEvent的参数为发生变化的群的新的info,
+         /**
+         * 添加群资料变化监听器,
+         * @param listener 目前监听器通知的内容类型为ALL.通知列表中只有一个变动后的群资料Bundle
          *                 具体内容可以见{@link YXClient#makeTeamInfoBundle(Team)}
          */
         public void addOnTeamInfoChangeListener(OnThingsChangedListener<Bundle> listener){
@@ -1153,8 +1216,9 @@ public class YXClient {
         }
 
         /**
-         * 添加我加入的群列表变化监听器
-         * @param listener 监听器的onEvent的参数为变化的群的list
+         * 添加我加入的群列表变化监听器,
+         * @param listener 监听器通知的内容类型有整个群列表(ALL),群列表增加(NEW),群列表减少(DELETE)
+         * 内容分别为整个群列表,增加的群的list,减少的群的list
          */
         public void addOnMyTeamListChangeListener(OnThingsChangedListener<List<Team>> listener){
             onMyTeamListChangeListeners.add(listener);
@@ -1172,7 +1236,8 @@ public class YXClient {
 
         /**
          * 添加群成员变化监听器,
-         * @param listener 监听器中的onEvent会返回{@link Pair}类型的的数据,pair.first为成员变化的群的id号,pair.second为新的成员列表
+         * @param listener 监听器通知的内容类型有整个群的成员列表全部(ALL),新增成员的list(NEW),减少成员的list(DELETE)
+         * 返回的数据格式为{@link Pair}类型的的数据,pair.first为成员变化的群的id号,pair.second为上述对应的列表
          */
         public void addOnTeamMemberChangeListener(OnThingsChangedListener<Pair<String, List<TeamMember>>> listener){
             onTeamMemberChangedListeners.add(listener);
@@ -1190,17 +1255,47 @@ public class YXClient {
             myOnTeamMemberChangedListeners.remove(listener);
         }
 
-        public void addOnNewMessageListener(OnNewMessageListener listener){
+        /**
+         * 添加新到消息监听器
+         * @param listener 通知内容为新到的{@link IMMessage},不会通知群消息(已屏蔽)
+         */
+        public void addOnNewMessageListener(OnMessageListener listener){
             onNewMessageListenerList.add(listener);
             myOnNewMessageListenerList.add(listener);
         }
-        public void removeOnNewMessageListener(OnNewMessageListener listener){
+        /**
+         * 移除新到消息监听器
+         * @param listener
+         */
+        public void removeOnNewMessageListener(OnMessageListener listener){
             onNewMessageListenerList.remove(listener);
             myOnNewMessageListenerList.remove(listener);
         }
+
+        /**
+         * 添加消息发送状态变化监听器
+         * @param listener 通知内容为新到的{@link IMMessage},包含所有类型
+         */
+        public void addOnMsgStatusChangedListener(OnMessageListener listener){
+            onMsgStatusChangedListenerList.add(listener);
+            myOnMsgStatusChangedListenerList.add(listener);
+        }
+
+        /**
+         * 移除消息发送状态变化监听器
+         * @param listener
+         */
+        public void removeOnMsgStatusChangedListener(OnMessageListener listener){
+            onMsgStatusChangedListenerList.remove(listener);
+            myOnMsgStatusChangedListenerList.remove(listener);
+        }
     }
 
-
+    /**
+     * 为了实现使用{@link YXClient#with(Activity)}函数来达到UI注册各种监听器时,监听器的生命周期会根据activity的生命周期同步
+     * ,会在activity Destory的时候自动注销的功能.
+     * 需要使用一个空的fragment添加到activity中以获取activity的回调节点.
+     */
     public static class EmptyFragment extends Fragment {
         public LifeCycle lifeCycle;
 
@@ -1276,8 +1371,8 @@ public class YXClient {
         void onThingChanged(T thing , int type);
     }
 
-    public interface OnNewMessageListener{
-        void onNewMessage(IMMessage newMessage);
+    public interface OnMessageListener {
+        void onNewMessage(IMMessage message);
     }
 
 }

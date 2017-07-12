@@ -60,27 +60,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_recent_contact));
-//        if (YXClient.getInstance().getCurrentOnlineStatus() == null || YXClient.getInstance().getCurrentOnlineStatus() == StatusCode.UNLOGIN){
-//            final LoadingProgressDialog dialog = new LoadingProgressDialog(this);
-//            dialog.setTitle("消息sdk登录中...");
-//            dialog.show();
-//            YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
-//                @Override
-//                public void onResult(int code, Object result, Throwable exception) {
-//                    dialog.dismiss();
-//                    if (code != ResponseCode.RES_SUCCESS){
-//                        UIUtils.showToastSafe("消息sdk登录失败,可能是网络原因,请检查网络是否打开...");
-//                        finish();
-//                    }
-//                    else {
-//                        initListView();
-//                    }
-//                }
-//            });
-//        }
-//        else {
-            initListView();
-//        }
+        initListView();
     }
 
     @Override
@@ -203,8 +183,4 @@ public class RecentContactListActivity extends MessageBaseActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

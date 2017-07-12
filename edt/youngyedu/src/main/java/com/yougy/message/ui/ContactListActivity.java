@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,7 +197,6 @@ public class ContactListActivity extends MessageBaseActivity{
         binding.mainListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                Log.v("FH!!!" , "click");
                 ImageButton checkbox = ((ItemContactListBinding)view.getTag()).checkbox;
                 if (checkbox.isSelected()){
                     ListUtil.conditionalRemove(hasChoosedIdList, new ListUtil.ConditionJudger<String>() {

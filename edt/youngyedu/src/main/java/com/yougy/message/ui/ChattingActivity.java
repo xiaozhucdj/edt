@@ -23,20 +23,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
-import com.netease.nimlib.sdk.msg.MessageBuilder;
-import com.netease.nimlib.sdk.msg.MsgService;
-import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.StringUtils;
@@ -67,23 +61,6 @@ public class ChattingActivity extends MessageBaseActivity {
     ArrayList<String> nameList;
     ChattingAdapter adapter = new ChattingAdapter();
     ActivityChattingBinding binding;
-    //用户资料变更监听器
-    YXClient.OnThingsChangedListener<Bundle> onUserInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
-        @Override
-        public void onThingChanged(Bundle thing , int type) {
-            adapter.notifyDataSetChanged();
-        }
-    };
-    //消息发送状态监听器
-    Observer<IMMessage> msgSendStatusObserver = new Observer<IMMessage>() {
-        @Override
-        public void onEvent(IMMessage newMessage) {
-            Log.v("FH" , "message 状态更新  sid : " + newMessage.getSessionId() + " sstype: " + newMessage.getSessionType() + " content : " + newMessage.getContent() + "  status : " + newMessage.getStatus() + " attstatus : " + newMessage.getAttachStatus());
-            if (isMyMessage(newMessage)){
-                adapter.notifyDataSetChanged();
-            }
-        }
-    };
 
     private boolean isMyMessage(IMMessage message){
         if (message.getSessionType().toString().equals(type) && message.getSessionId().equals(id)) {
@@ -123,36 +100,35 @@ public class ChattingActivity extends MessageBaseActivity {
 
     @Override
     public void loadData() {
-        IMMessage anchor = null;
+        //查询历史消息
+        SessionTypeEnum sstype = null;
         if (type.equals(SessionTypeEnum.Team.toString())){
-            anchor = MessageBuilder.createEmptyMessage(id , SessionTypeEnum.Team , System.currentTimeMillis() + 3600000);
+            sstype = SessionTypeEnum.Team;
         }
         else if (type.equals(SessionTypeEnum.P2P.toString())){
-            anchor = MessageBuilder.createEmptyMessage(id , SessionTypeEnum.P2P , System.currentTimeMillis() + 3600000);
+            sstype = SessionTypeEnum.P2P;
         }
-        Log.v("FH", "开始查询历史消息,锚点 :" + (anchor == null ? anchor : anchor.getTime()));
-        //查询历史消息
-        NIMClient.getService(MsgService.class).queryMessageListEx(anchor, QueryDirectionEnum.QUERY_OLD, 9999, true)
-                .setCallback(new RequestCallbackWrapper<List<IMMessage>>() {
-                    @Override
-                    public void onResult(int code, List<IMMessage> result, Throwable exception) {
-                        if (code == ResponseCode.RES_SUCCESS) {
-                            Log.v("FH", "获取历史消息成功" + result.size() + "条");
-                            UIUtils.showToastSafe("获取历史消息成功 " + result.size());
-                            for (IMMessage message : result) {
-                                if (message.getMsgType() == MsgTypeEnum.text || message.getMsgType() == MsgTypeEnum.file
-                                        || message.getMsgType() == MsgTypeEnum.custom) {
-                                    messageList.add(message);
-                                }
-                            }
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Log.v("FH", "获取历史消息失败 : " + code + "  " + exception);
-                            UIUtils.showToastSafe("获取历史消息失败 : " + code + "  " + exception);
+        YXClient.getInstance().queryHistoryMsgList(sstype , id , 9999 , System.currentTimeMillis() + 3600000
+                , new RequestCallbackWrapper<List<IMMessage>>() {
+            @Override
+            public void onResult(int code, List<IMMessage> result, Throwable exception) {
+                if (code == ResponseCode.RES_SUCCESS) {
+                    Log.v("FH", "获取历史消息成功" + result.size() + "条");
+                    UIUtils.showToastSafe("获取历史消息成功 " + result.size());
+                    for (IMMessage message : result) {
+                        if (message.getMsgType() == MsgTypeEnum.text || message.getMsgType() == MsgTypeEnum.file
+                                || message.getMsgType() == MsgTypeEnum.custom) {
+                            messageList.add(message);
                         }
                     }
-                });
-        YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnNewMessageListener() {
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.v("FH", "获取历史消息失败 : " + code + "  " + exception);
+                    UIUtils.showToastSafe("获取历史消息失败 : " + code + "  " + exception);
+                }
+            }
+        });
+        YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage newMessage) {
                 Log.v("FH", "ChattingActivity接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType());
@@ -161,20 +137,35 @@ public class ChattingActivity extends MessageBaseActivity {
                         || newMessage.getMsgType() == MsgTypeEnum.custom)) {
                     messageList.add(newMessage);
                     if (newMessage.getAttachment() != null && newMessage.getAttachment() instanceof FileAttachment) {
-                        NIMClient.getService(MsgService.class).downloadAttachment(newMessage, false);
+                        YXClient.getInstance().downloadAttachment(newMessage, false);
                     }
                 }
                 scrollToBottom(100);
                 adapter.notifyDataSetChanged();
             }
         });
-        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, true);
+        //用户资料变更监听器
+        YXClient.getInstance().with(this).addOnUserInfoChangeListener(new YXClient.OnThingsChangedListener<Bundle>() {
+            @Override
+            public void onThingChanged(Bundle thing, int type) {
+                adapter.notifyDataSetChanged();
+            }
+        });
+        //消息发送状态监听器
+        YXClient.getInstance().with(this).addOnMsgStatusChangedListener(new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                Log.v("FH" , "ChattingActivity message 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
+                if (isMyMessage(message)){
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
 
 
     public void initChattingListview(){
-        YXClient.getInstance().with(this).addOnUserInfoChangeListener(onUserInfoChangeListener);
         binding.chattingListview.setAdapter(adapter);
         binding.chattingListview.setDividerHeight(0);
         scrollToBottom(100);
@@ -184,7 +175,7 @@ public class ChattingActivity extends MessageBaseActivity {
                 IMMessage message = messageList.get(position);
                 if (message.getAttachment() != null && message.getMsgType() != MsgTypeEnum.custom){
                     if (message.getAttachStatus() != AttachStatusEnum.transferred){
-                        NIMClient.getService(MsgService.class).downloadAttachment(message , false);
+                        YXClient.getInstance().downloadAttachment(message , false);
                     }
                     else {
                         FileAttachment fileAttachment = (FileAttachment) message.getAttachment();
@@ -485,12 +476,6 @@ public class ChattingActivity extends MessageBaseActivity {
             return false;
         }
         return true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver , false);
     }
 
     private void openFile(String path , String displayName){
