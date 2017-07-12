@@ -64,7 +64,6 @@ public class YXClient {
     static public final String USER_NAME = "user_name";
     static public final String USER_AVATAR = "user_avatar";
     static public final String LAST_UPDATE = "last_update";
-    static public final String TEAM_NAME = "team_name";
     static public final String TEAM = "team";
     static public final String IS_FETCHING = "is_fetching";
 
@@ -540,7 +539,7 @@ public class YXClient {
     public String getTeamNameByID(String id){
         Bundle bundle = getTeamInfo(id);
         if (bundle != null){
-            return bundle.getString(TEAM_NAME);
+            return bundle.getSerializable(TEAM) == null ? null : ((Team)bundle.getSerializable(TEAM)).getName();
         }
         return null;
     }
