@@ -4,15 +4,14 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,7 +20,6 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.ListUtil;
 import com.yougy.message.Pair;
@@ -29,12 +27,10 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityContactListBinding;
 import com.yougy.ui.activity.databinding.ItemContactListBinding;
-import com.yougy.ui.activity.databinding.ItemGroupListBinding;
-import com.yougy.ui.activity.databinding.ItemMemberListBinding;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,49 +39,11 @@ import java.util.List;
 
 public class ContactListActivity extends MessageBaseActivity{
     ActivityContactListBinding binding;
-    ArrayList<Pair<Boolean , Team>> teamList = new ArrayList<>();
-    MainListViewAdapter mainAdapter;
-    GroupListAdapter groupListAdapter;
-    boolean headViewExpanded = false;
-    HashMap<String , List<TeamMember>> groupMemberMap = new HashMap<String, List<TeamMember>>();
-    ArrayList<TeamMember> hasChoosedMemberList = new ArrayList<TeamMember>();
-    YXClient.OnThingsChangedListener<List<Team>> onMyTeamListChangedListener = new YXClient.OnThingsChangedListener<List<Team>>() {
-        @Override
-        public void onThingChanged(List<Team> thing) {
-            ArrayList<Team> newTeamList = YXClient.getInstance().getMyTeamList();
-            ArrayList<Pair<Boolean , Team>> tempPairList = new ArrayList<>();
-            for (Team newTeam : newTeamList) {
-                for (int i = 0 ; i < teamList.size() ; i++) {
-                    Pair<Boolean, Team> oldPair = teamList.get(i);
-                    if (oldPair.sencond.getId().equals(newTeam.getId())){
-                        tempPairList.add(new Pair<Boolean, Team>(oldPair.first.booleanValue() , newTeam));
-                        break;
-                    }
-                    if (i == tempPairList.size() - 1){
-                        tempPairList.add(new Pair<Boolean, Team>(false , newTeam));
-                    }
-                }
-            }
-            teamList.clear();
-            teamList.addAll(tempPairList);
-        }
-    };
-    YXClient.OnThingsChangedListener<Bundle> onUserInfoChangedListener = new YXClient.OnThingsChangedListener<Bundle>() {
-        @Override
-        public void onThingChanged(Bundle thing) {
-            if (mainAdapter != null){
-                mainAdapter.notifyDataSetChanged();
-            }
-        }
-    };
-    YXClient.OnThingsChangedListener<Pair<String, List<TeamMember>>> onTeamMemberChangeListener = new YXClient.OnThingsChangedListener<Pair<String, List<TeamMember>>>() {
-        @Override
-        public void onThingChanged(Pair<String, List<TeamMember>> thing) {
-            if (mainAdapter != null){
-                mainAdapter.notifyDataSetChanged();
-            }
-        }
-    };
+    MainListViewAdapter mainAdapter = new MainListViewAdapter();
+
+    HashMap<String , List<TeamMember>> allTeamMemberMap = new HashMap<String, List<TeamMember>>();
+
+    ArrayList<String> hasChoosedIdList = new ArrayList<String>();
 
     @Override
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
@@ -95,8 +53,8 @@ public class ContactListActivity extends MessageBaseActivity{
 
     @Override
     public void onTitleBarRightBtnClick(View view) {
-        if (hasChoosedMemberList.size() == 1){
-            String account = hasChoosedMemberList.get(0).getAccount();
+        if (hasChoosedIdList.size() == 1){
+            String account = hasChoosedIdList.get(0);
             String name = YXClient.getInstance().getUserNameByID(account);
             name = TextUtils.isEmpty(name) ? account : name;
             openActivity(ChattingActivity.class ,
@@ -105,20 +63,16 @@ public class ContactListActivity extends MessageBaseActivity{
                     "name" , name
             );
         }
-        else if (hasChoosedMemberList.size() > 1){
+        else if (hasChoosedIdList.size() > 1){
             Intent intent = new Intent(this , MultiChattingActivity.class);
-            ArrayList<String> idList = new ArrayList<String>(){
-                {
-                    for (TeamMember member: hasChoosedMemberList) {
-                        add(member.getAccount());
-                    }
-                }
-            };
+            ArrayList<String> idList = new ArrayList<String>(){{
+                addAll(hasChoosedIdList);
+            }};
             ArrayList<String> nameList = new ArrayList<String>(){
                 {
-                    for (TeamMember member: hasChoosedMemberList) {
-                        String name = YXClient.getInstance().getUserNameByID(member.getAccount());
-                        name = TextUtils.isEmpty(name) ? member.getAccount() : name;
+                    for (String id : hasChoosedIdList) {
+                        String name = YXClient.getInstance().getUserNameByID(id);
+                        name = TextUtils.isEmpty(name) ? id : name;
                         add(name);
                     }
                 }
@@ -140,64 +94,131 @@ public class ContactListActivity extends MessageBaseActivity{
     public void init() {}
 
     @Override
-    public void loadData() {}
-
-    private void initMainListview(){
-        mainAdapter = new MainListViewAdapter();
-        groupListAdapter = new GroupListAdapter();
-        binding.mainListview.setDividerHeight(0);
-        initHeadView();
-        binding.mainListview.setAdapter(mainAdapter);
-        YXClient.getInstance().with(this).addOnMyTeamListChangeListener(onMyTeamListChangedListener);
-        YXClient.getInstance().with(this).addOnUserInfoChangeListener(onUserInfoChangedListener);
-        YXClient.getInstance().with(this).addOnTeamMemberChangeListener(onTeamMemberChangeListener);
-        ArrayList<Team> originTeamList = YXClient.getInstance().getMyTeamList();
-        for (Team team : originTeamList) {
-            teamList.add(new Pair(false , team));
-        }
-        mainAdapter.notifyDataSetChanged();
-        groupListAdapter.notifyDataSetChanged();
-    }
-
-    private void initHeadView(){
-        final ItemContactListBinding tempBinding = DataBindingUtil.inflate(LayoutInflater.from(ContactListActivity.this)
-                , R.layout.item_contact_list , binding.mainListview , false);
-        binding.mainListview.addHeaderView(tempBinding.getRoot());
-        tempBinding.separatorLine.getLayoutParams().height = 10;
-        tempBinding.separatorLine.setBackgroundColor(0xffdbdbdb);
-        tempBinding.titleTv.setText("群组");
-        tempBinding.titleTv.setOnClickListener(new View.OnClickListener() {
+    public void loadData() {
+        YXClient.getInstance().with(this).addOnMyTeamListChangeListener(new YXClient.OnThingsChangedListener<List<Team>>() {
             @Override
-            public void onClick(View v) {
-                if (headViewExpanded) {
-                    tempBinding.subRecyclerview.setVisibility(View.GONE);
-                    headViewExpanded = false;
-                    tempBinding.arrowImv.setImageResource(R.drawable.img_arrow_right);
-                } else {
-                    tempBinding.subRecyclerview.setVisibility(View.VISIBLE);
-                    headViewExpanded = true;
-                    tempBinding.arrowImv.setImageResource(R.drawable.img_arrow_down);
+            public void onThingChanged(List<Team> thing, int type) {
+                switch (type){
+                    case YXClient.ALL:
+                        allTeamMemberMap.clear();
+                        for (Team team : thing) {
+                            allTeamMemberMap.put(team.getId() , YXClient.getInstance().getTeamMemberByID(team.getId()));
+                        }
+                        processData();
+                        break;
+                    case YXClient.DELETE:
+                        for (Team team : thing) {
+                            allTeamMemberMap.remove(team.getId());
+                        }
+                        processData();
+                        break;
+                    case YXClient.NEW:
+                        for (Team team : thing) {
+                            allTeamMemberMap.put(team.getId() , YXClient.getInstance().getTeamMemberByID(team.getId()));
+                        }
+                        processData();
+                        break;
                 }
             }
         });
-        tempBinding.subRecyclerview.setLayoutManager(new LinearLayoutManager(ContactListActivity.this, LinearLayoutManager.VERTICAL, false));
-        tempBinding.subRecyclerview.setAdapter(groupListAdapter);
-        tempBinding.subRecyclerview.setOnItemTouchListener(new OnRecyclerItemClickListener(tempBinding.subRecyclerview) {
+        YXClient.getInstance().with(this).addOnUserInfoChangeListener(new YXClient.OnThingsChangedListener<Bundle>() {
             @Override
-            public void onItemClick(RecyclerView.ViewHolder vh) {
-                GroupListAdapter.GroupListAdapterHolder holder = (GroupListAdapter.GroupListAdapterHolder) vh;
-                openActivity(ChattingActivity.class ,
-                        "id" , holder.binding.getTeam().getId() ,
-                        "type" , SessionTypeEnum.Team.toString() ,
-                        "name" , holder.binding.getTeam().getName());
+            public void onThingChanged(Bundle thing , int type) {
+                mainAdapter.notifyDataSetChanged();
+            }
+        });
+        YXClient.getInstance().with(this).addOnTeamMemberChangeListener(new YXClient.OnThingsChangedListener<Pair<String, List<TeamMember>>>() {
+            @Override
+            public void onThingChanged(Pair<String, List<TeamMember>> thing , int type) {
+                switch (type){
+                    case YXClient.ALL:
+                        allTeamMemberMap.put(thing.first , thing.sencond);
+                        processData();
+                        break;
+                    case YXClient.DELETE:
+                        List<TeamMember> tempList1 = allTeamMemberMap.get(thing.first);
+                        if (tempList1 != null){
+                            for (final TeamMember deletedMember : thing.sencond) {
+                                ListUtil.conditionalRemove(tempList1, new ListUtil.ConditionJudger<TeamMember>() {
+                                    @Override
+                                    public boolean isMatchCondition(TeamMember nodeInList) {
+                                        return nodeInList.getAccount().equals(deletedMember.getAccount());
+                                    }
+                                });
+                            }
+                            processData();
+                        }
+                        break;
+                    case YXClient.NEW:
+                        List<TeamMember> tempList2 = allTeamMemberMap.get(thing.first);
+                        if (tempList2 != null){
+                            tempList2.addAll(thing.sencond);
+                        }
+                        processData();
+                        break;
+                }
+            }
+        });
+        ArrayList<Team> teamList = YXClient.getInstance().getMyTeamList();
+        for (Team team : teamList) {
+            allTeamMemberMap.put(team.getId() , YXClient.getInstance().getTeamMemberByID(team.getId()));
+        }
+        processData();
+    }
+
+    public void processData(){
+        mainAdapter.idList.clear();
+        Iterator<String> iterator = allTeamMemberMap.keySet().iterator();
+        while (iterator.hasNext()){
+            List<TeamMember> teamMemberList = allTeamMemberMap.get(iterator.next());
+            for (final TeamMember teamMember : teamMemberList) {
+                if (isTeacher(teamMember) && !teamMember.getAccount().equals(SpUtil.justForTest())){
+                    if (!ListUtil.conditionalContains(mainAdapter.idList, new ListUtil.ConditionJudger<String>() {
+                        @Override
+                        public boolean isMatchCondition(String nodeInList) {
+                            return nodeInList.equals(teamMember.getAccount());
+                        }
+                    })){
+                        mainAdapter.idList.add(teamMember.getAccount());
+                    }
+                }
+            }
+        }
+        mainAdapter.notifyDataSetChanged();
+    }
+
+    private boolean isTeacher(TeamMember member){
+        //TODO fh 需要判断是否是老师,根据id号,具体规则还未定
+        return true;
+    }
+
+    private void initMainListview(){
+        binding.mainListview.setAdapter(mainAdapter);
+        binding.mainListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                ImageButton checkbox = ((ItemContactListBinding)view.getTag()).checkbox;
+                if (checkbox.isSelected()){
+                    ListUtil.conditionalRemove(hasChoosedIdList, new ListUtil.ConditionJudger<String>() {
+                        @Override
+                        public boolean isMatchCondition(String nodeInList) {
+                            return nodeInList.equals(mainAdapter.idList.get(position));
+                        }
+                    });
+                }
+                else {
+                    hasChoosedIdList.add(mainAdapter.idList.get(position));
+                }
+                checkbox.setSelected(!checkbox.isSelected());
             }
         });
     }
 
     private class MainListViewAdapter extends BaseAdapter {
+        ArrayList<String> idList = new ArrayList<String>();
         @Override
         public int getCount() {
-            return teamList.size();
+            return idList.size();
         }
 
         @Override
@@ -212,166 +233,26 @@ public class ContactListActivity extends MessageBaseActivity{
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            final Team team = teamList.get(position).sencond;
             if (convertView == null){
-                convertView = LayoutInflater.from(ContactListActivity.this).inflate(R.layout.item_contact_list , parent , false);
-                ItemContactListBinding tempBinding = DataBindingUtil.bind(convertView);
-                convertView.setTag(tempBinding);
-                tempBinding.separatorLine.getLayoutParams().height = 1;
-                tempBinding.separatorLine.setBackgroundColor(0xff000000);
-                tempBinding.subRecyclerview.setAdapter(new MemberAdapter(YXClient.getInstance().getTeamMemberByID(team.getId())));
-                tempBinding.subRecyclerview.setLayoutManager(new GridLayoutManager(ContactListActivity.this , 4));
-                tempBinding.subRecyclerview.setOnItemTouchListener(new OnRecyclerItemClickListener(tempBinding.subRecyclerview) {
-                    @Override
-                    public void onItemClick(RecyclerView.ViewHolder vh) {
-                        MemberAdapter.MemberAdapterHolder holder = (MemberAdapter.MemberAdapterHolder) vh;
-                        boolean hasFound = false;
-                        for (int i = 0 ; i < hasChoosedMemberList.size() ; i++){
-                            TeamMember member = hasChoosedMemberList.get(i);
-                            if (holder.binding.getTeamMember() != null
-                                    && member.getAccount().equals(holder.binding.getTeamMember().getAccount())){
-                                hasChoosedMemberList.remove(member);
-                                hasFound = true;
-                                break;
-                            }
-                        }
-                        if (!hasFound){
-                            hasChoosedMemberList.add(holder.binding.getTeamMember());
-                        }
-                        mainAdapter.notifyDataSetChanged();
-                    }
-                });
-                AutoUtils.auto(convertView);
+                convertView = LayoutInflater.from(ContactListActivity.this).inflate(R.layout.item_contact_list, parent , false);
+                convertView.setTag(DataBindingUtil.bind(convertView));
             }
-
-            final ItemContactListBinding tempBinding = (ItemContactListBinding) convertView.getTag();
-            tempBinding.titleTv.setText(team.getName());
-            if (teamList.get(position).first){
-                ((MemberAdapter)tempBinding.subRecyclerview.getAdapter()).members.clear();
-                List<TeamMember> teamMemberList = YXClient.getInstance().getTeamMemberByID(team.getId());
-                if (teamMemberList != null){
-                    teamMemberList = ListUtil.conditionalSubList(teamMemberList,
-                            new ListUtil.ConditionJudger<TeamMember>() {
-                                @Override
-                                public boolean isMatchCondition(TeamMember nodeInList) {
-                                    return !nodeInList.getAccount().equals(SpUtil.justForTest());
-                                }
-                            }
-                    );
-                    ((MemberAdapter)tempBinding.subRecyclerview.getAdapter()).members.addAll(teamMemberList);
-                }
-                tempBinding.subRecyclerview.getAdapter().notifyDataSetChanged();
-                tempBinding.subRecyclerview.setVisibility(View.VISIBLE);
-                tempBinding.arrowImv.setImageResource(R.drawable.img_arrow_down);
-            }
-            else {
-                tempBinding.subRecyclerview.setVisibility(View.GONE);
-                tempBinding.arrowImv.setImageResource(R.drawable.img_arrow_right);
-            }
-
-            tempBinding.titleTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    teamList.get(position).first = !teamList.get(position).first;
-                    notifyDataSetChanged();
-                }
-            });
-            return convertView;
-        }
-    }
-
-    private class GroupListAdapter extends RecyclerView.Adapter{
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(ContactListActivity.this).inflate(R.layout.item_group_list , parent , false);
-            AutoUtils.auto(view);
-            return new GroupListAdapterHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            ItemGroupListBinding binding = ((GroupListAdapterHolder) holder).binding;
-            Team team = teamList.get(position).sencond;
-            binding.setTeam(team);
-        }
-
-        @Override
-        public int getItemCount() {
-            return teamList.size();
-        }
-
-        public class GroupListAdapterHolder extends RecyclerView.ViewHolder{
-            ItemGroupListBinding binding;
-            public GroupListAdapterHolder(View itemView) {
-                super(itemView);
-                binding = DataBindingUtil.bind(itemView);
-            }
-        }
-    }
-
-
-    private class MemberAdapter extends RecyclerView.Adapter{
-        List<TeamMember> members = new ArrayList<TeamMember>();
-
-        public MemberAdapter(List<TeamMember> members) {
-            if (members != null){
-                this.members.addAll(members);
-            }
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(ContactListActivity.this).inflate(R.layout.item_member_list , parent , false);
-            AutoUtils.auto(view);
-            return new MemberAdapterHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            final ItemMemberListBinding binding = ((MemberAdapterHolder)holder).binding;
-            final TeamMember member = members.get(position);
-            binding.setTeamMember(member);
-            binding.memberNameTv.setText(YXClient.getInstance().getUserNameByID(member.getAccount()));
-            String myavatarPath = YXClient.getInstance().getUserAvatarByID(member.getAccount());
+            ItemContactListBinding binding = (ItemContactListBinding) convertView.getTag();
+            binding.memberNameTv.setText(YXClient.getInstance().getUserNameByID(idList.get(position)));
+            String myavatarPath = YXClient.getInstance().getUserAvatarByID(idList.get(position));
             Glide.with(ContactListActivity.this)
                     .load(myavatarPath)
                     .placeholder(R.drawable.icon_wenda)
                     .transform(new GlideCircleTransform(ContactListActivity.this))
                     .into(binding.avatarImv);
-
-            boolean hasFound = false;
-            for (int i = 0 ; i < hasChoosedMemberList.size() ; i++){
-                TeamMember tempMember = hasChoosedMemberList.get(i);
-                if (tempMember.getAccount().equals(member.getAccount())){
-                    hasFound = true;
-                    break;
+            boolean hasChoosed = ListUtil.conditionalContains(hasChoosedIdList, new ListUtil.ConditionJudger<String>() {
+                @Override
+                public boolean isMatchCondition(String nodeInList) {
+                    return nodeInList.equals(idList.get(position));
                 }
-            }
-            binding.checkbox.setSelected(hasFound);
+            });
+            binding.checkbox.setSelected(hasChoosed);
+            return convertView;
         }
-
-        @Override
-        public int getItemCount() {
-            if (members == null){
-                return 0;
-            }
-            else {
-                return members.size();
-            }
-        }
-
-        public class MemberAdapterHolder extends RecyclerView.ViewHolder{
-            ItemMemberListBinding binding;
-            public MemberAdapterHolder(View itemView) {
-                super(itemView);
-                binding = DataBindingUtil.bind(itemView);
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

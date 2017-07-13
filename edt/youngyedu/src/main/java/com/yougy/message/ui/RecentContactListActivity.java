@@ -1,12 +1,9 @@
 package com.yougy.message.ui;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,22 +14,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.netease.nimlib.sdk.RequestCallbackWrapper;
-import com.netease.nimlib.sdk.ResponseCode;
-import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.message.BookRecommandAttachment;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityRecentContactBinding;
 import com.yougy.ui.activity.databinding.ItemRecentContactListBinding;
-import com.yougy.view.dialog.ConfirmDialog;
-import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
@@ -48,19 +38,19 @@ public class RecentContactListActivity extends MessageBaseActivity {
     ContactAdapter adapter = new ContactAdapter();
     YXClient.OnThingsChangedListener<Bundle> onTeamInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
         @Override
-        public void onThingChanged(Bundle thing) {
+        public void onThingChanged(Bundle thing , int type) {
             adapter.notifyDataSetChanged();
         }
     };
     YXClient.OnThingsChangedListener<Bundle> onUserInfoChangeListener = new YXClient.OnThingsChangedListener<Bundle>() {
         @Override
-        public void onThingChanged(Bundle thing) {
+        public void onThingChanged(Bundle thing , int type) {
             adapter.notifyDataSetChanged();
         }
     };
     YXClient.OnThingsChangedListener<List<RecentContact>> onRecentContactListChangeListener = new YXClient.OnThingsChangedListener<List<RecentContact>>() {
         @Override
-        public void onThingChanged(List<RecentContact> thing) {
+        public void onThingChanged(List<RecentContact> thing , int type) {
             adapter.notifyDataSetChanged();
         }
     };
@@ -70,27 +60,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_recent_contact));
-//        if (YXClient.getInstance().getCurrentOnlineStatus() == null || YXClient.getInstance().getCurrentOnlineStatus() == StatusCode.UNLOGIN){
-//            final LoadingProgressDialog dialog = new LoadingProgressDialog(this);
-//            dialog.setTitle("消息sdk登录中...");
-//            dialog.show();
-//            YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
-//                @Override
-//                public void onResult(int code, Object result, Throwable exception) {
-//                    dialog.dismiss();
-//                    if (code != ResponseCode.RES_SUCCESS){
-//                        UIUtils.showToastSafe("消息sdk登录失败,可能是网络原因,请检查网络是否打开...");
-//                        finish();
-//                    }
-//                    else {
-//                        initListView();
-//                    }
-//                }
-//            });
-//        }
-//        else {
-            initListView();
-//        }
+        initListView();
     }
 
     @Override
@@ -213,8 +183,4 @@ public class RecentContactListActivity extends MessageBaseActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }
