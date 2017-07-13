@@ -136,10 +136,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         mForegroundActivity = this;
         weakReference = new WeakReference<>(mForegroundActivity);
         //onResume  中启用
-        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
-                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-                        | PowerManager.ON_AFTER_RELEASE, BaseActivity.this.getClass().getName());
-        mWakeLock.acquire();
+//        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
+//                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+//                        | PowerManager.ON_AFTER_RELEASE, BaseActivity.this.getClass().getName());
+//        mWakeLock.acquire();
 
         super.onResume();
     }
@@ -147,9 +147,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     @Override
     protected void onPause() {
         mForegroundActivity = null;
-        if (mWakeLock != null) {
-            mWakeLock.release();
-        }
+//        if (mWakeLock != null) {
+//            mWakeLock.release();
+//        }
         super.onPause();
     }
 

@@ -19,7 +19,7 @@
             android:id="@+id/img_book_icon"
             android:layout_width="200dp"
             android:layout_height="268dp"
-            android:src="@drawable/aa" />
+          />
     </LinearLayout>
 
 
