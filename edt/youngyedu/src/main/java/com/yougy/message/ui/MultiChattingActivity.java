@@ -82,9 +82,7 @@ public class MultiChattingActivity extends MessageBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (isWifiOn()) {
-            refreshLogin();
-        }
+        YXClient.checkNetAndRefreshLogin(this , null , null);
     }
 
     @Override
@@ -190,32 +188,35 @@ public class MultiChattingActivity extends MessageBaseActivity {
     }
 
     private void send(){
-        if(isWifiOn()){
-            String msg = binding.messageEdittext.getText().toString().trim();
-            final IMMessage fakeMessage = MessageBuilder.createTextMessage("" , SessionTypeEnum.None , msg);
-            ArrayList<IMMessage> tempMessageList = YXClient.getInstance().sendTextMessage(idList , msg);
-            if (tempMessageList != null){
-                for (IMMessage message: tempMessageList) {
-                    message.setLocalExtension(new HashMap<String, Object>(){
-                        {
-                            put("fake_message_id" , fakeMessage.getUuid());
-                        }
-                    });
-                }
-                fakeMessage.setLocalExtension(
-                        new HashMap<String, Object>(){
+        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
+            @Override
+            public void run() {
+                String msg = binding.messageEdittext.getText().toString().trim();
+                final IMMessage fakeMessage = MessageBuilder.createTextMessage("" , SessionTypeEnum.None , msg);
+                ArrayList<IMMessage> tempMessageList = YXClient.getInstance().sendTextMessage(idList , msg);
+                if (tempMessageList != null){
+                    for (IMMessage message: tempMessageList) {
+                        message.setLocalExtension(new HashMap<String, Object>(){
                             {
-                                put("total" , idList.size());
-                                put("success" , 0);
-                                put("fail" , 0);
+                                put("fake_message_id" , fakeMessage.getUuid());
                             }
                         });
-                showMessageList.add(fakeMessage);
-                adapter.notifyDataSetChanged();
-                binding.messageEdittext.setText("");
-                scrollToBottom(200);
+                    }
+                    fakeMessage.setLocalExtension(
+                            new HashMap<String, Object>(){
+                                {
+                                    put("total" , idList.size());
+                                    put("success" , 0);
+                                    put("fail" , 0);
+                                }
+                            });
+                    showMessageList.add(fakeMessage);
+                    adapter.notifyDataSetChanged();
+                    binding.messageEdittext.setText("");
+                    scrollToBottom(200);
+                }
             }
-        }
+        } , null);
     }
 
     public void scrollToBottom(long delay){

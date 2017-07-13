@@ -39,6 +39,8 @@ import com.yougy.message.BookRecommandAttachment;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.SizeUtil;
 import com.yougy.message.YXClient;
+import com.yougy.shop.activity.ShopBookDetailsActivity;
+import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
@@ -55,7 +57,7 @@ import java.util.List;
 public class ChattingActivity extends MessageBaseActivity {
     ArrayList<IMMessage> messageList = new ArrayList<IMMessage>();
     String id;
-    String type;
+    SessionTypeEnum type;
     String name;
     ArrayList<String> idList;
     ArrayList<String> nameList;
@@ -63,7 +65,7 @@ public class ChattingActivity extends MessageBaseActivity {
     ActivityChattingBinding binding;
 
     private boolean isMyMessage(IMMessage message){
-        if (message.getSessionType().toString().equals(type) && message.getSessionId().equals(id)) {
+        if ((message.getSessionType() == type) && message.getSessionId().equals(id)) {
             Log.v("FH", message.toString() + "是我的消息");
             return true;
         }
@@ -82,17 +84,15 @@ public class ChattingActivity extends MessageBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (isWifiOn()) {
-            refreshLogin();
-        }
+        YXClient.checkNetAndRefreshLogin(this , null , null);
     }
 
     @Override
     public void init() {
-        type = getIntent().getStringExtra("type");
+        type = getIntent().getStringExtra("type") == null ? null : SessionTypeEnum.valueOf(getIntent().getStringExtra("type"));
         id = getIntent().getStringExtra("id");
         name = getIntent().getStringExtra("name");
-        if (TextUtils.isEmpty(id) || TextUtils.isEmpty(type) || TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(id) || type == null || TextUtils.isEmpty(name)){
             UIUtils.showToastSafe("获取消息发送对象失败");
             finish();
         }
@@ -101,14 +101,7 @@ public class ChattingActivity extends MessageBaseActivity {
     @Override
     public void loadData() {
         //查询历史消息
-        SessionTypeEnum sstype = null;
-        if (type.equals(SessionTypeEnum.Team.toString())){
-            sstype = SessionTypeEnum.Team;
-        }
-        else if (type.equals(SessionTypeEnum.P2P.toString())){
-            sstype = SessionTypeEnum.P2P;
-        }
-        YXClient.getInstance().queryHistoryMsgList(sstype , id , 9999 , System.currentTimeMillis() + 3600000
+        YXClient.getInstance().queryHistoryMsgList(type , id , 9999 , System.currentTimeMillis() + 3600000
                 , new RequestCallbackWrapper<List<IMMessage>>() {
             @Override
             public void onResult(int code, List<IMMessage> result, Throwable exception) {
@@ -121,6 +114,7 @@ public class ChattingActivity extends MessageBaseActivity {
                             messageList.add(message);
                         }
                     }
+                    scrollToBottom(300);
                     adapter.notifyDataSetChanged();
                 } else {
                     Log.v("FH", "获取历史消息失败 : " + code + "  " + exception);
@@ -168,7 +162,6 @@ public class ChattingActivity extends MessageBaseActivity {
     public void initChattingListview(){
         binding.chattingListview.setAdapter(adapter);
         binding.chattingListview.setDividerHeight(0);
-        scrollToBottom(100);
         binding.chattingListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -209,15 +202,18 @@ public class ChattingActivity extends MessageBaseActivity {
 
 
     private void send(){
-        if (isWifiOn()){
-            IMMessage message = YXClient.getInstance().sendTextMessage(id , SessionTypeEnum.valueOf(type) , binding.messageEdittext.getText().toString());
-            if (message != null){
-                messageList.add(message);
-                binding.messageEdittext.setText("");
-                adapter.notifyDataSetChanged();
-                scrollToBottom(200);
+        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
+            @Override
+            public void run() {
+                IMMessage message = YXClient.getInstance().sendTextMessage(id , type , binding.messageEdittext.getText().toString());
+                if (message != null) {
+                    messageList.add(message);
+                    binding.messageEdittext.setText("");
+                    adapter.notifyDataSetChanged();
+                    scrollToBottom(200);
+                }
             }
-        }
+        }, null);
     }
 
 
@@ -233,12 +229,7 @@ public class ChattingActivity extends MessageBaseActivity {
     @Override
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
         rightBtn.setVisibility(View.GONE);
-        if (type.equals("multip2p")){
-            titleTv.setText("发送给" + nameList.get(0) + "等" + idList.size() + "人");
-        }
-        else {
-            titleTv.setText(id + "  " + name);
-        }
+        titleTv.setText(id + "  " + name);
     }
 
     private class ChattingAdapter extends BaseAdapter {
@@ -347,7 +338,9 @@ public class ChattingActivity extends MessageBaseActivity {
                             spannableString.setSpan(new ClickableSpan() {
                                 @Override
                                 public void onClick(View widget) {
-                                    UIUtils.showToastSafe("bookinfo : " + attachment.bookInfo.getBookTitle());
+                                    Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
+                                    intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookInfo.getBookId()));
+                                    startActivity(intent);
                                 }
                             } , 0 , spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                             spannableStringBuilder.append(spannableString);
@@ -436,7 +429,9 @@ public class ChattingActivity extends MessageBaseActivity {
                             spannableString.setSpan(new ClickableSpan() {
                                 @Override
                                 public void onClick(View widget) {
-                                    UIUtils.showToastSafe("bookinfo : " + attachment.bookInfo.getBookTitle());
+                                    Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
+                                    intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookInfo.getBookId()));
+                                    startActivity(intent);
                                 }
                             } , 0 , spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                             spannableStringBuilder.append(spannableString);

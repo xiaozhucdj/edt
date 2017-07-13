@@ -66,9 +66,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (isWifiOn()) {
-            refreshLogin();
-        }
+        YXClient.checkNetAndRefreshLogin(this , null , null);
     }
 
     public void initListView(){

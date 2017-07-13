@@ -6,6 +6,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,7 +40,11 @@ import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.shop.bean.BookInfo;
+import com.yougy.view.dialog.ConfirmDialog;
+import com.yougy.view.dialog.HintDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -794,6 +800,42 @@ public class YXClient {
         return returnList;
     }
 
+    /**
+     * 检查WiFi是否打开,并且尝试刷新式登录
+     * @param activity 上下文环境,必须是activity,用于获取window在出现错误的时候弹出dialog提示.
+     * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
+     * @param keyPointController 关键节点控制器,可以自己定义在检查前,成功时,失败时的动作.
+     *                           如果为null,则会按默认逻辑,使用{@link CheckNetDefaultKPController}
+     *                           检查成功时调用顺序:keyPointController.before-->keyPointController.onSuccess-->onRefreshSuccessRunnable.run
+     */
+    public static void checkNetAndRefreshLogin(Activity activity , final Runnable onRefreshSuccessRunnable , KeyPointController<Object , Object , Integer> keyPointController) {
+        final KeyPointController mKeyPointController;
+        if (keyPointController == null) {
+            mKeyPointController = new CheckNetDefaultKPController(activity , false);
+        } else {
+            mKeyPointController = keyPointController;
+        }
+        mKeyPointController.before(null);
+        if (!NetUtils.isNetConnected()) {
+            mKeyPointController.onFail(-999);
+            return;
+        }
+        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+            @Override
+            public void onResult(int code, Object result, Throwable exception) {
+                if (code == ResponseCode.RES_SUCCESS) {
+                    Log.v("FH", "刷新式登录成功");
+                    mKeyPointController.onSuccess(null);
+                    if (onRefreshSuccessRunnable != null){
+                        onRefreshSuccessRunnable.run();
+                    }
+                } else {
+                    Log.v("FH", "刷新式登录失败 code :　" + code);
+                    mKeyPointController.onFail(code);
+                }
+            }
+        });
+    }
 
     /**
      * 获取当前在线状态
@@ -1374,5 +1416,67 @@ public class YXClient {
     public interface OnMessageListener {
         void onNewMessage(IMMessage message);
     }
+
+    public interface KeyPointController<A , B , C>{
+        void before(A data);
+        void onSuccess(B data);
+        void onFail(C data);
+    }
+
+    /**
+     * 检查网络时默认的处理逻辑
+     * 检查前使用HintDialog提示(showLoadingDialog为true的情况下),成功后无动作,失败后用ConfirmDialog提示用户
+     *
+     */
+    public static class CheckNetDefaultKPController implements KeyPointController<Object, Object, Integer>  {
+        Activity activity;
+        boolean showLoadingDialog;
+        public CheckNetDefaultKPController(Activity activity , boolean showLoadingDialog) {
+            this.activity = activity;
+            this.showLoadingDialog = showLoadingDialog;
+            hintDialog = new HintDialog(activity, "请稍候,检测网络状态中...");
+        }
+
+        HintDialog hintDialog ;
+        @Override
+        public void before(Object data) {
+            if (showLoadingDialog){
+                hintDialog.show();
+            }
+        }
+
+        @Override
+        public void onSuccess(Object data) {
+            if (hintDialog.isShowing()){
+                hintDialog.dismiss();
+            }
+        }
+
+        @Override
+        public void onFail(Integer data) {
+            if (hintDialog.isShowing()){
+                hintDialog.dismiss();
+            }
+            if (data == -999) {
+                hintDialog.dismiss();
+                new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                        activity.startActivity(intent);
+                        dialog.dismiss();
+                    }
+                }, "打开").show();
+            } else {
+                new ConfirmDialog(activity, "已经与消息服务器断开连接(" + data + "),设备无法访问网络,请确保您的网络通畅", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkNetAndRefreshLogin(activity , null , CheckNetDefaultKPController.this);
+                        dialog.dismiss();
+                    }
+                }, "重新连接").show();
+            }
+        }
+    };
 
 }
