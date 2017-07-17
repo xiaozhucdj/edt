@@ -31,6 +31,7 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
+import com.yougy.init.bean.Student;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
@@ -166,10 +167,21 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             @Override
             public void onResponse(NewLoginRep response, int id) {
                 if (response.getCode() == ProtocolId.RET_SUCCESS && response.getCount() > 0) {
-                    Log.v("FH", "自动登录成功");
-                    SpUtil.saveStudent(response.getData().get(0));
-                    YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), null);
-                    checkLocalLockAndJump();
+                    Student student = response.getData().get(0);
+                    if (!student.getUserRole().equals("学生")){
+                        new HintDialog(getThisActivity(), "权限错误:本设备已被其他账号绑定过,请先解绑后重新登录", "退出程序", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finishAll();
+                            }
+                        }).show();
+                    }
+                    else {
+                        Log.v("FH", "自动登录成功");
+                        SpUtil.saveStudent(response.getData().get(0));
+                        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), null);
+                        checkLocalLockAndJump();
+                    }
                 } else {
                     Log.v("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
                     jumpActivity(LoginActivity.class);
