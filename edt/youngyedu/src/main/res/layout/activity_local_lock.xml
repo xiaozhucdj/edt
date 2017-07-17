@@ -69,6 +69,7 @@
             android:padding="18px"
             android:singleLine="true"
             android:text="123456"
+            android:inputType="textPassword"
             />
         <TextView
             android:id="@+id/forget_pwd_btn"

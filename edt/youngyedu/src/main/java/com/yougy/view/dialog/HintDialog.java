@@ -57,6 +57,15 @@ public class HintDialog extends BaseDialog {
         }
     }
 
+    public void changeMsg(String msg){
+        this.msg = msg;
+        titleTv.setText(msg);
+    }
+
+    public String getMsg(){
+        return msg;
+    }
+
     public HintDialog setMsg(String msg) {
         this.msg = msg;
         titleTv.setText(msg);

@@ -44,6 +44,7 @@ import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
+import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.math.BigDecimal;
@@ -54,7 +55,7 @@ import java.util.List;
  * Created by FH on 2017/3/22.
  */
 
-public class ChattingActivity extends MessageBaseActivity {
+public class ChattingActivity extends MessageBaseActivity implements YXClient.OnErrorListener<IMMessage>{
     ArrayList<IMMessage> messageList = new ArrayList<IMMessage>();
     String id;
     SessionTypeEnum type;
@@ -109,6 +110,7 @@ public class ChattingActivity extends MessageBaseActivity {
                     Log.v("FH", "获取历史消息成功" + result.size() + "条");
                     UIUtils.showToastSafe("获取历史消息成功 " + result.size());
                     for (IMMessage message : result) {
+                        Log.v("FH" , "查询到消息为 " +  message.getMsgType() + " " + message.getContent());
                         if (message.getMsgType() == MsgTypeEnum.text || message.getMsgType() == MsgTypeEnum.file
                                 || message.getMsgType() == MsgTypeEnum.custom) {
                             messageList.add(message);
@@ -205,7 +207,8 @@ public class ChattingActivity extends MessageBaseActivity {
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
-                IMMessage message = YXClient.getInstance().sendTextMessage(id , type , binding.messageEdittext.getText().toString());
+                IMMessage message = YXClient.getInstance().sendTextMessage(id ,
+                        type , binding.messageEdittext.getText().toString() , ChattingActivity.this);
                 if (message != null) {
                     messageList.add(message);
                     binding.messageEdittext.setText("");
@@ -230,6 +233,18 @@ public class ChattingActivity extends MessageBaseActivity {
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
         rightBtn.setVisibility(View.GONE);
         titleTv.setText(id + "  " + name);
+    }
+
+    /**
+     * 发送消息失败会回调到这里
+     * @param code
+     * @param data
+     */
+    @Override
+    public void onError(int code, IMMessage data) {
+        if (code == 802){
+            new HintDialog(this , "发送失败:可能您已经不在这个群中").show();
+        }
     }
 
     private class ChattingAdapter extends BaseAdapter {

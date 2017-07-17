@@ -25,17 +25,22 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.SystemMessageObserver;
+import com.netease.nimlib.sdk.msg.attachment.NotificationAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.constant.NotificationType;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomMessageConfig;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.netease.nimlib.sdk.msg.model.SystemMessage;
 import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.TeamServiceObserver;
 import com.netease.nimlib.sdk.team.model.IMMessageFilter;
+import com.netease.nimlib.sdk.team.model.MemberChangeAttachment;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
@@ -173,6 +178,14 @@ public class YXClient {
         }
     };
 
+    //系统通知监听器
+    Observer<SystemMessage> systemMessageObserver = new Observer<SystemMessage>() {
+        @Override
+        public void onEvent(SystemMessage systemMessage) {
+            lv("收到系统通知 : " + systemMessage);
+        }
+    };
+
     //消息状态改变监听器
     Observer<IMMessage> msgSendStatusObserver = new Observer<IMMessage>() {
         @Override
@@ -243,12 +256,14 @@ public class YXClient {
             //收到群组资料变更,参数为变更的群组
             lv("收到群组资料变更 变更的群个数 " + newTeams.size());
             for (final Team newTeam: newTeams) {
-                ListUtil.conditionalRemove(myTeamList, new ListUtil.ConditionJudger<Team>() {
+                if (ListUtil.conditionalRemove(myTeamList, new ListUtil.ConditionJudger<Team>() {
                     @Override
                     public boolean isMatchCondition(Team nodeInList) {
                         return nodeInList.getId().equals(newTeam.getId());
                     }
-                });
+                }) != 0){
+                    myTeamList.addAll(0, newTeams);
+                }
                 Bundle bundle = makeTeamInfoBundle(newTeam);
                 teamInfoMap.put(newTeam.getId() , bundle);
                 for (OnThingsChangedListener<Bundle> listener: onTeamInfoChangeListeners) {
@@ -263,12 +278,15 @@ public class YXClient {
         @Override
         public void onEvent(final Team quitedTeam) {
             lv("收到退群通知");
-            for (int i = 0 ; i < myTeamList.size() ;) {
-                Team oldTeam = myTeamList.get(i);
-                if (oldTeam.getId().equals(quitedTeam.getId())){
-                    myTeamList.remove(oldTeam);
+            lv("收到退群通知 id " + quitedTeam.getId());
+            ListUtil.conditionalRemove(myTeamList, new ListUtil.ConditionJudger<Team>() {
+                @Override
+                public boolean isMatchCondition(Team nodeInList) {
+                    return nodeInList.getId().equals(quitedTeam.getId());
                 }
-            }
+            });
+            groupMemberMap.remove(quitedTeam.getId());
+            teamInfoMap.remove(quitedTeam.getId());
             List<Team> list = new ArrayList<Team>(){{
                 add(quitedTeam);
             }};
@@ -283,7 +301,36 @@ public class YXClient {
         @Override
         public void onEvent(List<TeamMember> members) {
             lv("收到群成员资料变化观察者通知 数量 " + members.size());
-            //TODO fh 这里的逻辑还没有写
+            for (final TeamMember newMember : members) {
+                if (getTeamMemberByID(newMember.getTid()) != null){
+                    Pair<Long , List<TeamMember>> pair = groupMemberMap.get(newMember.getTid());
+                    pair.first = System.currentTimeMillis();
+                    if (ListUtil.conditionalContains(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
+                        @Override
+                        public boolean isMatchCondition(TeamMember nodeInList) {
+                            return nodeInList.getAccount().equals(newMember.getAccount());
+                        }
+                    })){
+                        ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
+                            @Override
+                            public boolean isMatchCondition(TeamMember nodeInList) {
+                                return nodeInList.getAccount().equals(newMember.getAccount());
+                            }
+                        });
+                        pair.sencond.add(newMember);
+                        for (OnThingsChangedListener<Pair<String , List<TeamMember>>> listener : onTeamMemberChangedListeners) {
+                            listener.onThingChanged(new Pair<>(newMember.getTid() , pair.sencond) , ALL);
+                        }
+                    }
+                    else {
+                        pair.sencond.add(newMember);
+                        for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
+                            listener.onThingChanged(new Pair<>(newMember.getTid(), (List<TeamMember>)new ArrayList<TeamMember>() {{add(newMember);}})
+                                    , NEW);
+                        }
+                    }
+                }
+            }
         }
     };
     //群成员被移除观察者
@@ -291,7 +338,7 @@ public class YXClient {
         @Override
         public void onEvent(final TeamMember teamMember) {
             lv("收到群成员被移除通知" + teamMember);
-            if (getTeamMemberByID(teamMember.getAccount()) != null){
+            if (getTeamMemberByID(teamMember.getTid()) != null){
                 Pair<Long , List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
                 pair.first = System.currentTimeMillis();
                 ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
@@ -309,12 +356,38 @@ public class YXClient {
             }
         }
     };
-     //消息过滤器
+    //消息过滤器
     private IMMessageFilter messageFilter = new IMMessageFilter() {
         @Override
         public boolean shouldIgnore(IMMessage message) {
+            lv("过滤器收到信息!message type :　" + message.getMsgType() +
+                    " content : " + message.getContent() +
+                    " attach : " + message.getAttachment() +
+                    ((message.getAttachment() != null && message.getAttachment() instanceof NotificationAttachment) ? "attType : " + ((NotificationAttachment)message.getAttachment()).getType() : ""));
             //过滤通知类消息
             if (message.getMsgType() == MsgTypeEnum.notification){
+                if (message.getAttachment() != null && message.getAttachment() instanceof MemberChangeAttachment){
+                    MemberChangeAttachment memberChangeAttachment = (MemberChangeAttachment) message.getAttachment();
+                    if (memberChangeAttachment.getType() == NotificationType.InviteMember){
+                        ArrayList<String> target = memberChangeAttachment.getTargets();
+                        for (String id : target) {
+                            if (id.equals(SpUtil.justForTest())){
+                                NIMClient.getService(TeamService.class).queryTeam(message.getSessionId()).setCallback(new RequestCallbackWrapper<Team>() {
+                                    @Override
+                                    public void onResult(int code, final Team result, Throwable exception) {
+                                        if (code == ResponseCode.RES_SUCCESS){
+                                            myTeamList.add(result);
+                                            for (OnThingsChangedListener<List<Team>> listener: onMyTeamListChangeListeners){
+                                                listener.onThingChanged(new ArrayList<Team>(){{add(result);}}, NEW);
+                                            }
+                                        }
+                                    }
+                                });
+                                break;
+                            }
+                        }
+                    }
+                }
                 return true;
             }
             return false;
@@ -419,13 +492,15 @@ public class YXClient {
     public void initOption(Context context){
         mContext = context;
         //注册消息过滤器
-        NIMClient.getService(MsgService.class).registerIMMessageFilter(getInstance().messageFilter);
+        NIMClient.getService(MsgService.class).registerIMMessageFilter(messageFilter);
         //注册自定义消息解析器
         NIMClient.getService(MsgService.class).registerCustomAttachmentParser(customAttachParser);
         //注册新到消息观察者
         NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , true);
         //注册消息发送状态改变观察者
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, true);
+        //注册系统通知观察者
+        NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver , true);
     }
 
     /**
@@ -524,6 +599,7 @@ public class YXClient {
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , false);
         NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , false);
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, false);
+        NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver , false);
 
         recentContactList.clear();
         userInfoMap.clear();
@@ -650,6 +726,20 @@ public class YXClient {
      * @return
      */
     public ArrayList<Team> getMyTeamList(){
+        NIMClient.getService(TeamService.class).queryTeamList()
+                .setCallback(new RequestCallbackWrapper<List<Team>>() {
+                    @Override
+                    public void onResult(int code, List<Team> result, Throwable exception) {
+                        if (code == ResponseCode.RES_SUCCESS) {
+                            lv("获取我加入的群列表成功,获取到" + (result == null ? result : result.size()) + "个加入的群");
+                            myTeamList.clear();
+                            myTeamList.addAll(result);
+                            for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
+                                listener.onThingChanged(myTeamList , ALL);
+                            }
+                        }
+                    }
+                });
         return myTeamList;
     }
 
@@ -676,6 +766,7 @@ public class YXClient {
                 return null;
             }
             else {
+                lv("查到本机存有群id=" + id + "的群成员列表 size :" + returnList.size());
                 return returnList;
             }
         }
@@ -688,7 +779,7 @@ public class YXClient {
      * @param msg 发送的消息文字
      * @return 实际发送的消息体
      */
-    public IMMessage sendTextMessage(String id , SessionTypeEnum typeEnum , String msg){
+    public IMMessage sendTextMessage(String id , SessionTypeEnum typeEnum , String msg , final OnErrorListener<IMMessage> onErrorListener){
         lv("发送文字消息,对方id=" + id + " type=" + typeEnum + " msg=" + msg);
         if (TextUtils.isEmpty(msg)){
             lv("要发送的文字消息内容为空,取消发送");
@@ -709,7 +800,17 @@ public class YXClient {
         CustomMessageConfig config = new CustomMessageConfig();
         config.enableRoaming = true;
         message.setConfig(config);
-        NIMClient.getService(MsgService.class).sendMessage(message , true);
+        NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
+            @Override
+            public void onResult(int code, Void result, Throwable exception) {
+                lv("发送消息的回调 : code " + code);
+                if (code == 802){
+                    if (onErrorListener != null){
+                        onErrorListener.onError(code , message);
+                    }
+                }
+            }
+        });
         return message;
     }
 
@@ -719,7 +820,8 @@ public class YXClient {
      * @param msg 文字消息
      * @return 实际发送的消息体
      */
-    public ArrayList<IMMessage> sendTextMessage(ArrayList<String> idList , String msg){
+    public ArrayList<IMMessage> sendTextMessage(ArrayList<String> idList, String msg
+            , final OnErrorListener<IMMessage> onErrorListener){
         lv("发送文字消息,对方id=" + idList + " msg=" + msg);
         if (TextUtils.isEmpty(msg)){
             lv("要发送的文字消息内容为空,取消发送");
@@ -727,11 +829,18 @@ public class YXClient {
         }
         ArrayList<IMMessage> returnList = new ArrayList<IMMessage>();
         for (String id : idList) {
-            IMMessage message = MessageBuilder.createTextMessage(id , SessionTypeEnum.P2P, msg.trim());
+            final IMMessage message = MessageBuilder.createTextMessage(id , SessionTypeEnum.P2P, msg.trim());
             CustomMessageConfig config = new CustomMessageConfig();
             config.enableRoaming = true;
             message.setConfig(config);
-            NIMClient.getService(MsgService.class).sendMessage(message , true);
+            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
+                @Override
+                public void onResult(int code, Void result, Throwable exception) {
+                    if (code == 802){
+                        onErrorListener.onError(code , message);
+                    }
+                }
+            });
             returnList.add(message);
         }
         return returnList;
@@ -746,7 +855,8 @@ public class YXClient {
      * @param msg 推荐信息
      * @return 实际发送的消息体
      */
-    public IMMessage sendBookRecommandMessage(String id , SessionTypeEnum typeEnum , BookInfo bookInfo , String msg){
+    public IMMessage sendBookRecommandMessage(String id , SessionTypeEnum typeEnum
+            , BookInfo bookInfo , String msg , final OnErrorListener<IMMessage> onErrorListener){
         lv("发送图书推荐消息,对方id=" + id + " type=" + typeEnum + " bookInfo=" + bookInfo + "  msg= " + msg);
         final IMMessage message;
         switch (typeEnum){
@@ -763,7 +873,14 @@ public class YXClient {
         CustomMessageConfig config = new CustomMessageConfig();
         config.enableRoaming = true;
         message.setConfig(config);
-        NIMClient.getService(MsgService.class).sendMessage(message , true);
+        NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
+            @Override
+            public void onResult(int code, Void result, Throwable exception) {
+                if (code == 802){
+                    onErrorListener.onError(code , message);
+                }
+            }
+        });
         return message;
     }
 
@@ -775,7 +892,8 @@ public class YXClient {
      * @param msg 推荐信息
      * @return 实际发送的消息体列表
      */
-    public ArrayList<IMMessage> sendBookRecommandMessage(ArrayList<String> idList , SessionTypeEnum typeEnum , BookInfo bookInfo , String msg){
+    public ArrayList<IMMessage> sendBookRecommandMessage(ArrayList<String> idList
+            , SessionTypeEnum typeEnum , BookInfo bookInfo , String msg , final OnErrorListener<IMMessage> onErrorListener){
         ArrayList<IMMessage> returnList = new ArrayList<IMMessage>();
         lv("发送图书推荐消息,对方id=" + idList + " type=" + typeEnum + " bookInfo=" + bookInfo + "  msg= " + msg);
         for (String id : idList) {
@@ -794,7 +912,14 @@ public class YXClient {
             CustomMessageConfig config = new CustomMessageConfig();
             config.enableRoaming = true;
             message.setConfig(config);
-            NIMClient.getService(MsgService.class).sendMessage(message , true);
+            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
+                @Override
+                public void onResult(int code, Void result, Throwable exception) {
+                    if (code == 802){
+                        onErrorListener.onError(code , message);
+                    }
+                }
+            });
             returnList.add(message);
         }
         return returnList;
@@ -927,6 +1052,7 @@ public class YXClient {
         NIMClient.getService(TeamService.class).queryMemberList(id).setCallback(new RequestCallback<List<TeamMember>>() {
             @Override
             public void onSuccess(List<TeamMember> param) {
+                lv("从服务器查询群成员列表成功 : size : " + param.size() + "  群id : " + (param.size() == 0 ? null : param.get(0).getTid()));
                 groupMemberMap.put(id , new Pair<Long, List<TeamMember>>(System.currentTimeMillis() , param));
                 Pair pair = new Pair<String, List<TeamMember>>(id , param);
                 for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
@@ -1133,7 +1259,17 @@ public class YXClient {
         }
     }
 
-    private synchronized void pullTeamInfo(final String id, RequestCallback<Team> callback) {
+    /**
+     * 提供直接查询群信息功能.
+     * 注意
+     * 注意
+     * 注意
+     * 直接调用本方法将不会触发各种监听器,也不会缓存到本地的缓存中,如果需要触发各种业务相关的监听器,可以使用
+     * {@link YXClient#getTeamInfo(String)}
+     * @param id
+     * @param callback
+     */
+    public synchronized void pullTeamInfo(final String id, RequestCallback<Team> callback) {
         NIMClient.getService(TeamService.class).searchTeam(id)
                 .setCallback(callback);
     }
@@ -1421,6 +1557,14 @@ public class YXClient {
         void before(A data);
         void onSuccess(B data);
         void onFail(C data);
+    }
+
+    /**
+     * 错误监听器
+     * @param <D>
+     */
+    public interface OnErrorListener<D>{
+        void onError(int code , D data);
     }
 
     /**

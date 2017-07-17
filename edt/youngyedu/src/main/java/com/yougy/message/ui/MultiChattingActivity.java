@@ -35,6 +35,7 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
+import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ import java.util.HashMap;
 /**
  * 选择多个发送对象消息群发activity
  */
-public class MultiChattingActivity extends MessageBaseActivity {
+public class MultiChattingActivity extends MessageBaseActivity implements YXClient.OnErrorListener<IMMessage>{
     ArrayList<IMMessage> showMessageList = new ArrayList<IMMessage>();
     ArrayList<String> idList;
     ArrayList<String> nameList;
@@ -55,6 +56,8 @@ public class MultiChattingActivity extends MessageBaseActivity {
     ActivityChattingBinding binding;
     ArrayList<IMMessage> messageListSuccessed = new ArrayList<IMMessage>();
     ArrayList<IMMessage> messageListFailed = new ArrayList<IMMessage>();
+    HintDialog errorHintDialog;
+
 
     private IMMessage findFakeMessageBaseRealMessage(IMMessage realMessage){
         HashMap<String , Object> ext = (HashMap<String, Object>) realMessage.getLocalExtension();
@@ -193,7 +196,7 @@ public class MultiChattingActivity extends MessageBaseActivity {
             public void run() {
                 String msg = binding.messageEdittext.getText().toString().trim();
                 final IMMessage fakeMessage = MessageBuilder.createTextMessage("" , SessionTypeEnum.None , msg);
-                ArrayList<IMMessage> tempMessageList = YXClient.getInstance().sendTextMessage(idList , msg);
+                ArrayList<IMMessage> tempMessageList = YXClient.getInstance().sendTextMessage(idList , msg , MultiChattingActivity.this);
                 if (tempMessageList != null){
                     for (IMMessage message: tempMessageList) {
                         message.setLocalExtension(new HashMap<String, Object>(){
@@ -308,6 +311,24 @@ public class MultiChattingActivity extends MessageBaseActivity {
 
             }
             return convertView;
+        }
+    }
+
+    /**
+     * 发送消息错误处理器
+     * @param code
+     * @param data
+     */
+    @Override
+    public void onError(int code, IMMessage data) {
+        if (code == 802){
+            if (errorHintDialog == null || !errorHintDialog.isShowing()){
+                errorHintDialog = new HintDialog(this , "发送失败,没有权限,可能是您已经不在下列群中 : " + data.getSessionId());
+                errorHintDialog.show();
+            }
+            else {
+                errorHintDialog.changeMsg(errorHintDialog.getMsg() + " , " + data.getSessionId());
+            }
         }
     }
 
