@@ -223,6 +223,14 @@ public class OrderListActivity extends ShopBaseActivity {
                 startActivity(intent);
             }
         });
+        item.getBinding().getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ConfirmOrderActivity.class);
+                intent.putExtra(ShopGloble.ORDER, item.getBriefOrder());
+                startActivity(intent);
+            }
+        });
     }
     public void refreshUI(){
         binding.pageBtnContainer.removeAllViews();

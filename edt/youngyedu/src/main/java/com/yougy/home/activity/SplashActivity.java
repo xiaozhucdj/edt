@@ -245,7 +245,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     }
 
     private void jumpWifiActivity() {
-        Toaster.showDefaultToast(getApplication(), "当前没有网络请，请设置网络", Toast.LENGTH_LONG);
+        Toaster.showDefaultToast(getApplication(), "当前没有网络，请设置网络", Toast.LENGTH_LONG);
         Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
         startActivity(intent);
     }

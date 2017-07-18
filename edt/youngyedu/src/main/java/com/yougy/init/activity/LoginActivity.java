@@ -16,6 +16,7 @@ import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.init.bean.Student;
 import com.yougy.init.dialog.ConfirmUserInfoDialog;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLoginBinding;
@@ -87,9 +88,15 @@ public class LoginActivity extends BaseActivity {
                 if (o instanceof NewLoginRep){
                     NewLoginRep response = (NewLoginRep) o;
                     if (response.getCode() == ProtocolId.RET_SUCCESS && response.getCount()>0) {
-                        Log.v("FH", "登录成功,弹出信息确认dialog");
-                        confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this , response.getData().get(0));
-                        confirmUserInfoDialog.show();
+                        Student student = response.getData().get(0);
+                        if (!student.getUserRole().equals("学生")){
+                            new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用学生账号登录").show();
+                        }
+                        else {
+                            Log.v("FH", "登录成功,弹出信息确认dialog");
+                            confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this , response.getData().get(0));
+                            confirmUserInfoDialog.show();
+                        }
                     }
                     else if (response.getCode() == 401){
                         new HintDialog(getThisActivity() , "登录失败:用户名密码错误").show();

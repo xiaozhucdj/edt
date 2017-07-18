@@ -238,6 +238,12 @@ public class ConfirmOrderActivity extends ShopBaseActivity {
         binding.orderNumTv.setText("订单编号 : " + briefOrder.getOrderId());
         binding.orderPriceTv.setText("订单金额 :　￥" + briefOrder.getOrderPrice());
         binding.orderTimeTv.setText("下单时间 : " + briefOrder.getOrderTime());
+        if (!briefOrder.getOrderStatus().equals("待支付")){
+            binding.payBtn.setVisibility(View.GONE);
+            binding.cancleBtn.setVisibility(View.GONE);
+            binding.orderStatusTv.setVisibility(View.VISIBLE);
+            binding.orderStatusTv.setText(briefOrder.getOrderStatus());
+        }
     }
 
 
