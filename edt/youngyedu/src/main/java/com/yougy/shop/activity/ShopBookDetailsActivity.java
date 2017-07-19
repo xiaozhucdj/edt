@@ -44,6 +44,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -257,13 +258,11 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     return;
                 }
                 //跳转在线试读
-                String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
-                if (FileUtils.exists(probationUrl)) {
-                    LogUtils.i("cccccccccc");
+//                String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+
+                if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId() ,FileUtils.bookProbation))) {
                     jumpProbationActivity();
                 } else {
-                    LogUtils.i("试读文件不存在");
-                    LogUtils.i("dddddddddd");
                     downBookDialog();
                 }
                 break;
@@ -271,8 +270,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private void showReaderForPackage() {
-        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
-        if (FileUtils.exists(filePath)) {
+//        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
+        if (!StringUtils.isEmpty( FileUtils.getBookFileName( mBookInfo.getBookId() , FileUtils.bookDir))) {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.books_reader, mTagBookReader);
         } else {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.play_package, mTagBookReader);
@@ -553,7 +552,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         if (mBookInfo.isBookInShelf()) {
             //下载文件
             List<DownInfo> mFiles = new ArrayList<>();
-            DownInfo info = new DownInfo(mBookInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
+            DownInfo info = new DownInfo(mBookInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mBookInfo.getBookId() + "", true, false, mBookInfo.getBookId());
             info.setBookName(mBookInfo.getBookTitle());
             mFiles.add(info);
             downBook(mFiles);
@@ -570,7 +569,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }
                 //下载文件
                 List<DownInfo> mFiles = new ArrayList<>();
-                DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
+                DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(),+ mBookInfo.getBookId() + "", true, false, mBookInfo.getBookId());
                 info.setBookName(mBookInfo.getBookTitle());
                 mFiles.add(info);
                 downBook(mFiles);
@@ -649,8 +648,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
 
     private void jumpToControlFragmentActivity() {
-        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
-        if (FileUtils.exists(filePath)) {
+//        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
+         if (!StringUtils.isEmpty( FileUtils.getBookFileName( mBookInfo.getBookId() , FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);

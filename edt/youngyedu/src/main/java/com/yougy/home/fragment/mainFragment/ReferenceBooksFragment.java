@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
@@ -168,8 +167,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         BookInfo info = mBooks.get(position);
         mDownInfo = info;
         LogUtils.i("book id ....." + info.toString());
-        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (FileUtils.exists(filePath)) {
+//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
+        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
@@ -319,7 +318,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     public void onConfirmListener() {
         mDialog.getBtnConfirm().setVisibility(View.GONE);
         List<DownInfo> mFiles = new ArrayList<>();
-        DownInfo info = new DownInfo(mDownInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mDownInfo.getBookId() + ".pdf", true, false, mDownInfo.getBookId());
+        DownInfo info = new DownInfo(mDownInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mDownInfo.getBookId() + "", true, false, mDownInfo.getBookId());
         info.setBookName(mDownInfo.getBookTitle());
         mFiles.add(info);
         downBook(mFiles);

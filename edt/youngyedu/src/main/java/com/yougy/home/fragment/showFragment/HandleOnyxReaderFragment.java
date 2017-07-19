@@ -127,7 +127,8 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     @Override
     protected void initDatas() {
         super.initDatas();
-        mPdfFile = FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf";
+//        mPdfFile = FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf";
+        mPdfFile =  FileUtils.getBookFileName(mControlActivity.mBookId ,FileUtils.bookDir) ;
         fileName = mControlActivity.mBookId + "";
     }
 

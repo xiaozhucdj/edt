@@ -11,10 +11,6 @@ public class ShopGloble {
      */
     public static final String JUMP_BOOK_KEY = "JUMP_BOOK_KEY";
     /**
-     * 试读PDF 别名前缀 格式_token_bookId.pdf
-     */
-    public static final String probationToken = "PROBATION_TOKEN";
-    /**
      * 试读文件目录大小
      */
     public static final float PROBATION_FILES_DIR_MAX_SIZE = 200;
