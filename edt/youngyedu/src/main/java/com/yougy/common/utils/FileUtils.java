@@ -12,7 +12,7 @@ import java.util.Properties;
  * 文件操作
  */
 public class FileUtils {
-    public static final String APP_CACHE_DIR_NAME = "RONG_JIE_BOOK";
+    public static final String APP_CACHE_DIR_NAME = "student";
     public static final String TEXT_BOOK = "text_book";
     public static final String TEXT_BOOK_ICON = "text_book_icon";
     public static final String TEXT_BOOK_PROBATION = "text_book_probation";
