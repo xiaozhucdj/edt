@@ -157,6 +157,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         if (nextScription != null) {
             nextScription.unsubscribe();
         }
+        getReaderPresenter().close();
     }
 
     private Action1<? super Void> getBackSubscriber() {

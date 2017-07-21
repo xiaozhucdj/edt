@@ -258,8 +258,8 @@ public class FileUtils {
         return size;
     }
 
-    private static final String pdf = ".pdf";
-    private static final String epub = ".epub";
+    public static final String pdf = ".pdf";
+    public static final String epub = ".epub";
     public static final int bookDir = 1;
     public static final int bookProbation = 2;
 
