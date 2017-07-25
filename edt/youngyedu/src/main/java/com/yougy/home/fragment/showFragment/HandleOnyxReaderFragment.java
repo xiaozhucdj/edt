@@ -127,7 +127,8 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     @Override
     protected void initDatas() {
         super.initDatas();
-        mPdfFile = FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf";
+//        mPdfFile = FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf";
+        mPdfFile =  FileUtils.getBookFileName(mControlActivity.mBookId ,FileUtils.bookDir) ;
         fileName = mControlActivity.mBookId + "";
     }
 
@@ -255,9 +256,12 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     }
     private void setDirectoryList2(ReaderDocumentTableOfContentEntry entry, List<DirectoryModel> modelList, int level) {
         DirectoryModel model = new DirectoryModel();
-        if (entry.getTitle() != null && entry.getPosition() != null) {
+        LogUtils.i("pageName =="+entry.getPageName());
+        LogUtils.i("getPosition =="+entry.getPosition());
+        LogUtils.i("/////////////////////////////////////////////");
+        if (entry.getTitle() != null && entry.getPageName() != null) {
             model.setTitle(entry.getTitle());
-            model.setPosition(entry.getPosition());
+            model.setPosition(entry.getPageName());
             model.setHead(level == 1);
             modelList.add(model);
         }

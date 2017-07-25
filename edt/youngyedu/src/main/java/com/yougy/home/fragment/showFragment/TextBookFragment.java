@@ -140,7 +140,8 @@ public class TextBookFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     protected void initDatas() {
         super.initDatas();
-        mPdfFile = FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf";
+//      mPdfFile = FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf";
+        mPdfFile = FileUtils.getBookFileName( mControlActivity.mBookId , FileUtils.bookDir) ;
         fileName = mControlActivity.mBookId + "";
     }
 

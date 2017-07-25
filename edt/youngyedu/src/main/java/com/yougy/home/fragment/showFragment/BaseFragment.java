@@ -54,6 +54,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.ImageLoader;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -369,11 +370,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //修改笔记
         mImgupdataNote = (ImageView) mRoot.findViewById(R.id.img_updataNote);
 
-        if (mControlActivity.mBookId > 0
-                /*&& mControlActivity.mCategoryId > 0
-                && mControlActivity.mNoteCreator != Integer.parseInt(SpUtil.getAccountId())*/
-                && FileUtils.exists(FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf")) {
-
+        if (mControlActivity.mBookId > 0   && !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
             mTextbookIv.setEnabled(true);
         } else {
             mTextbookIv.setEnabled(false);

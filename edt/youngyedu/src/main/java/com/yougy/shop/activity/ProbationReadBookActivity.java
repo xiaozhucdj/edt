@@ -128,7 +128,9 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     }
 
     private void initPDF() {
-        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+//     mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+
+        mProbationUrl =   FileUtils.getBookFileName(mBookInfo.getBookId() ,FileUtils.bookProbation) ;
         LogUtils.i("mProbationUrl ......" + mProbationUrl);
         mOnyxImgView = new ImageView(this);
         mOnyxImgView.setLayoutParams(new LinearLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
@@ -155,6 +157,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         if (nextScription != null) {
             nextScription.unsubscribe();
         }
+        getReaderPresenter().close();
     }
 
     private Action1<? super Void> getBackSubscriber() {
@@ -402,7 +405,9 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
     @Override
     public void openDocumentFinsh() {
+
         mPageCounts = mReaderPresenter.getPages();
+        LogUtils.i("mPageCounts ..."+mPageCounts);
         initSeekBar();
         requestPageTask(mCurrentMarksPage);
     }
@@ -462,6 +467,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             return;
         }
         mCurrentMarksPage = position;
+        LogUtils.i("position ..."+position);
         getReaderPresenter().gotoPage(position);
     }
 
