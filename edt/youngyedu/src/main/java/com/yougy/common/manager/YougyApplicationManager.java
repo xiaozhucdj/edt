@@ -36,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
+import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
+
 //import com.tencent.bugly.crashreport.CrashReport;
 
 /**
@@ -153,6 +155,7 @@ public class YougyApplicationManager extends LitePalApplication {
                             && !TextUtils.isEmpty(SpUtil.getLocalLockPwd())){
                         Intent newIntent = new Intent(context , LocalLockActivity.class);
                         newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        newIntent.putExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, true);
                         context.startActivity(newIntent);
                     }
                 }
