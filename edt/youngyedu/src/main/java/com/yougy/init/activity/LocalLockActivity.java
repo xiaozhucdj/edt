@@ -24,6 +24,7 @@ import com.yougy.view.dialog.HintDialog;
  */
 
 public class LocalLockActivity extends BaseActivity {
+    static public final String NOT_GOTO_HOMEPAGE_ON_ENTER = "not_goto_homepage";
     ActivityLocalLockBinding binding;
 
     @Override
@@ -69,8 +70,10 @@ public class LocalLockActivity extends BaseActivity {
         }
         Log.v("FH" , "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtil.getLocalLockPwd());
         if (binding.localLockEdittext.getText().toString().equals(SpUtil.getLocalLockPwd())){
-            loadIntent(MainActivity.class);
             finish();
+            if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)){
+                loadIntent(MainActivity.class);
+            }
         }
         else {
             new HintDialog(getThisActivity() , "密码不正确").show();

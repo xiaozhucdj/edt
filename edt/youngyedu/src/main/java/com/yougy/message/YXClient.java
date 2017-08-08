@@ -33,6 +33,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.NotificationType;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomMessageConfig;
+import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
@@ -50,6 +51,9 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,6 +187,18 @@ public class YXClient {
         @Override
         public void onEvent(SystemMessage systemMessage) {
             lv("收到系统通知 : " + systemMessage);
+        }
+    };
+
+    //自定义通知接收器
+    Observer<CustomNotification> customNotificationObserver = new Observer<CustomNotification>() {
+        @Override
+        public void onEvent(CustomNotification customNotification) {
+            lv("收到自定义通知" + " content : " + customNotification.getContent()
+            + " from : " + customNotification.getFromAccount()
+                    + " sstype : " + customNotification.getSessionType()
+                    + " ssid : " + customNotification.getSessionId()
+                    + " time : " + customNotification.getTime());
         }
     };
 
@@ -475,6 +491,7 @@ public class YXClient {
         return instance;
     }
 
+
     /**
      * 初始化NimClient,必须在application的onCreate中调用(所有进程的onCreate中都要调用,否则会报错),必须放在所有的云信操作前调用.
      *
@@ -501,6 +518,8 @@ public class YXClient {
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, true);
         //注册系统通知观察者
         NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver , true);
+        //注册自定义通知观察者
+        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver , true);
     }
 
     /**
@@ -600,6 +619,7 @@ public class YXClient {
         NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , false);
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, false);
         NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver , false);
+        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver , false);
 
         recentContactList.clear();
         userInfoMap.clear();
@@ -678,6 +698,7 @@ public class YXClient {
         }
         return null;
     }
+
     /**
      * 通过用户id获取用户资料bundle
      * @param id 用户id
@@ -771,6 +792,32 @@ public class YXClient {
             }
         }
     }
+
+
+
+
+
+
+    public void sendQuestion(String id , SessionTypeEnum typeEnum , String msg){
+        CustomNotification notification = new CustomNotification();
+        notification.setSessionId(id);
+        notification.setSessionType(typeEnum);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id" , "1");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        notification.setContent(msg);
+        NIMClient.getService(MsgService.class).sendCustomNotification(notification);
+    }
+
+
+
+
+
+
+
 
     /**
      * 发送文字消息

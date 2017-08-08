@@ -207,6 +207,13 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
+                if (binding.messageEdittext.getText() != null && binding.messageEdittext.getText().toString().equals("q")){
+                    YXClient.getInstance().sendQuestion(id , type , "fuck");
+                    return;
+                }
+
+
+
                 IMMessage message = YXClient.getInstance().sendTextMessage(id ,
                         type , binding.messageEdittext.getText().toString() , ChattingActivity.this);
                 if (message != null) {
