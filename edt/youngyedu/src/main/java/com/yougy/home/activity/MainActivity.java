@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,9 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.netease.nimlib.sdk.RequestCallbackWrapper;
-import com.netease.nimlib.sdk.ResponseCode;
-import com.netease.nimlib.sdk.StatusCode;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.activity.BaseActivity;
@@ -42,17 +38,14 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
-import com.yougy.message.YXClient;
 import com.yougy.message.ui.RecentContactListActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.R;
-import com.yougy.view.dialog.HintDialog;
 
 import de.greenrobot.event.EventBus;
 
-import static com.onyx.android.sdk.utils.DeviceUtils.getBatteryPecentLevel;
 
 
 /**
@@ -191,7 +184,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetManager.getInstance().registerReceiver(this);
         PowerManager.getInstance().registerReceiver(this);
 
-        getBatteryPecentLevel(this);
         mRlFolder = (ViewGroup) findViewById(R.id.rl_folder);
         mRlFolder.setOnClickListener(this);
         //TODO:文件夹还为实现 ，暂时关闭点击切换Fragment 功能

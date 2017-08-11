@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 
-import com.onyx.android.sdk.utils.DeviceUtils;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 
@@ -38,7 +38,15 @@ public class NetManager {
      * @return
      */
    public  boolean  isWifiConnected(Context context){
-      return DeviceUtils.isWifiConnected(context) ;
+       if(context != null) {
+           ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+           NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+           if(networkInfo != null && networkInfo.getType() == 1) {
+               return networkInfo.isAvailable();
+           }
+       }
+
+       return false;
    }
 
     /***
@@ -47,7 +55,8 @@ public class NetManager {
      * @param enabled
      */
    public  void changeWiFi(Context context, boolean enabled){
-       DeviceUtils.changeWiFi(context ,enabled);
+       WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+       wifiManager.setWifiEnabled(enabled);
    }
 
     /**
