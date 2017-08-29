@@ -96,7 +96,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                 if (o instanceof NewBindDeviceRep) {
                     if (((NewBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS){
                         Log.v("FH" , "绑定成功,开始登录云信SDK");
-                        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), new RequestCallbackWrapper() {
                             @Override
                             public void onResult(int code, Object result, Throwable exception) {
                                 if (code != ResponseCode.RES_SUCCESS){

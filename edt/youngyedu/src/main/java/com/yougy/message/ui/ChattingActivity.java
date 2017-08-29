@@ -355,20 +355,18 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     if(attachment != null){
                         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                         spannableStringBuilder.append("向您推荐图书 : 《");
-                        if (attachment.bookInfo != null){
-                            SpannableString spannableString = new SpannableString(attachment.bookInfo.getBookTitle());
-                            spannableString.setSpan(new ClickableSpan() {
-                                @Override
-                                public void onClick(View widget) {
-                                    Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
-                                    intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookInfo.getBookId()));
-                                    startActivity(intent);
-                                }
-                            } , 0 , spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                            spannableStringBuilder.append(spannableString);
-                        }
+                        SpannableString spannableString = new SpannableString(attachment.bookName);
+                        spannableString.setSpan(new ClickableSpan() {
+                            @Override
+                            public void onClick(View widget) {
+                                Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
+                                intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookId));
+                                startActivity(intent);
+                            }
+                        }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        spannableStringBuilder.append(spannableString);
                         spannableStringBuilder.append("》，请点击书名查看图书详情。");
-                        if (!TextUtils.isEmpty(attachment.recommand_msg)){
+                        if (!TextUtils.isEmpty(attachment.recommand_msg)) {
                             spannableStringBuilder.append("\r\n推荐信息 :　" + attachment.recommand_msg);
                         }
                         chattingItembinding.rightTextTv.setText(spannableStringBuilder);
@@ -443,28 +441,24 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     chattingItembinding.leftTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.leftFileDialogLayout.setVisibility(View.GONE);
                     final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();
-                    if(attachment != null){
-                        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-                        spannableStringBuilder.append("向您推荐图书 : 《");
-                        if (attachment.bookInfo != null){
-                            SpannableString spannableString = new SpannableString(attachment.bookInfo.getBookTitle());
-                            spannableString.setSpan(new ClickableSpan() {
-                                @Override
-                                public void onClick(View widget) {
-                                    Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
-                                    intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookInfo.getBookId()));
-                                    startActivity(intent);
-                                }
-                            } , 0 , spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                            spannableStringBuilder.append(spannableString);
+                    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                    spannableStringBuilder.append("向您推荐图书 : 《");
+                    SpannableString spannableString = new SpannableString(attachment.bookName);
+                    spannableString.setSpan(new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
+                            intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookId));
+                            startActivity(intent);
                         }
-                        spannableStringBuilder.append("》，请点击书名查看图书详情。");
-                        if (!TextUtils.isEmpty(attachment.recommand_msg)){
-                            spannableStringBuilder.append("\r\n推荐信息 :　" + attachment.recommand_msg);
-                        }
-                        chattingItembinding.leftTextTv.setText(spannableStringBuilder);
-                        chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+                    }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                    spannableStringBuilder.append(spannableString);
+                    spannableStringBuilder.append("》，请点击书名查看图书详情。");
+                    if (!TextUtils.isEmpty(attachment.recommand_msg)) {
+                        spannableStringBuilder.append("\r\n推荐信息 :　" + attachment.recommand_msg);
                     }
+                    chattingItembinding.leftTextTv.setText(spannableStringBuilder);
+                    chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
                 }
                 else {
 

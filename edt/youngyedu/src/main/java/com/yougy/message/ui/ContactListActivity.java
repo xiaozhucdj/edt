@@ -179,7 +179,7 @@ public class ContactListActivity extends MessageBaseActivity{
         while (iterator.hasNext()){
             List<TeamMember> teamMemberList = allTeamMemberMap.get(iterator.next());
             for (final TeamMember teamMember : teamMemberList) {
-                if (isTeacher(teamMember) && !teamMember.getAccount().equals(SpUtil.justForTest())){
+                if (isTeacher(teamMember) && !teamMember.getAccount().equals(String.valueOf(SpUtil.getUserId()))){
                     if (!ListUtil.conditionalContains(mainAdapter.idList, new ListUtil.ConditionJudger<String>() {
                         @Override
                         public boolean isMatchCondition(String nodeInList) {

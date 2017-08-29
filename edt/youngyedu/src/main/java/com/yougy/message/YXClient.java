@@ -127,6 +127,10 @@ public class YXClient {
             //插入数据库后SDK的最近联系人列表也会自动更新,不需要手动通知.
             for (IMMessage newMessage : imMessages) {
                 Log.v("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType());
+                if ((newMessage.getMsgType()) == MsgTypeEnum.custom && newMessage.getAttachment() == null){
+                    // 解析有问题的自定义消息attachment为空,滤掉这类消息
+                    continue;
+                }
                 if (newMessage.getSessionType() == SessionTypeEnum.Team) {
                     Log.v("FH" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
                     IMMessage localMessage = null;
@@ -236,10 +240,17 @@ public class YXClient {
             //学生端处理逻辑,由于学生端需要屏蔽群的概念,而此处收到的联系人变更通知是包含群消息引起的变动通知,
             //就是说收到群消息导致最近联系人变动,此处也会收到通知.
             //因此需要手动过滤群消息导致的联系人变动,并且把变动后的最近联系人列表中的群消息项删除,再通知到UI注册的监听器.
+            //另外,学生端10位id的其他学生和6位id的管理员都不需要显示在最近通话中,此处滤掉
             lv("收到最近联系人变更(包含群) " + newRecentContactList.size() + "个");
             for (int i = newRecentContactList.size() - 1 ; i >= 0 ; i--) {
                 RecentContact newRecentContact = newRecentContactList.get(i);
                 if (newRecentContact.getSessionType() == SessionTypeEnum.Team){
+                    newRecentContactList.remove(newRecentContact);
+                    continue;
+                }
+                if (newRecentContact.getContactId().length() == 6
+                        || (newRecentContact.getContactId().length() == 10 && !newRecentContact.getContactId().equals(SpUtil.getUserId()))){
+                    //另外,学生端10位id的其他学生和6位id的管理员都不需要显示在最近通话中,此处滤掉
                     newRecentContactList.remove(newRecentContact);
                     continue;
                 }
@@ -261,7 +272,7 @@ public class YXClient {
             }
             recentContactList.addAll(0 , newRecentContactList);
             for (OnThingsChangedListener<List<RecentContact>> listener : onRecentContactChangeListeners) {
-                listener.onThingChanged(newRecentContactList , ALL);
+                listener.onThingChanged(recentContactList , ALL);
             }
         }
     };
@@ -318,6 +329,10 @@ public class YXClient {
         public void onEvent(List<TeamMember> members) {
             lv("收到群成员资料变化观察者通知 数量 " + members.size());
             for (final TeamMember newMember : members) {
+                if (newMember.getAccount().length() == 6 || (newMember.getAccount().length() == 10 && !newMember.getAccount().equals(SpUtil.getUserId() + ""))){
+                    //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
+                    continue;
+                }
                 if (getTeamMemberByID(newMember.getTid()) != null){
                     Pair<Long , List<TeamMember>> pair = groupMemberMap.get(newMember.getTid());
                     pair.first = System.currentTimeMillis();
@@ -354,6 +369,10 @@ public class YXClient {
         @Override
         public void onEvent(final TeamMember teamMember) {
             lv("收到群成员被移除通知" + teamMember);
+            if (teamMember.getAccount().length() == 6 || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtil.getUserId()+""))){
+                //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
+                return;
+            }
             if (getTeamMemberByID(teamMember.getTid()) != null){
                 Pair<Long , List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
                 pair.first = System.currentTimeMillis();
@@ -577,7 +596,7 @@ public class YXClient {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {
                         //TODO 从我方服务器上拉取最新的account对应的token,接口暂时未实现,使用假数据
-                        subscriber.onNext("123456");
+                        subscriber.onNext(String.valueOf(SpUtil.getUserId()));
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -643,11 +662,34 @@ public class YXClient {
      * @param callback 回调,查询结果会在callback中异步返回
      */
     public void queryHistoryMsgList (SessionTypeEnum sessionType , String sessionId, int  limit , long anchorTime
-            , RequestCallback<List<IMMessage>> callback){
+            , final RequestCallback<List<IMMessage>> callback){
         IMMessage anchor = MessageBuilder.createEmptyMessage(sessionId , sessionType, anchorTime);
         lv("开始查询历史消息 sstype : " + sessionType + " ssid : " + sessionId + " limit : " + limit + " anchorTime : " + anchorTime);
         NIMClient.getService(MsgService.class).queryMessageListEx(anchor, QueryDirectionEnum.QUERY_OLD, limit , true)
-                .setCallback(callback);
+                .setCallback(new RequestCallback<List<IMMessage>>() {
+                    @Override
+                    public void onSuccess(List<IMMessage> param) {
+                        // 解析有问题的自定义消息attachment为空,滤掉这类消息
+                        // FIXME 在此处过滤消息会导致查询到的消息数目与给定的limit消息数目不符,暂时找不到更好的解决办法,期待以后修复
+                        ListUtil.conditionalRemove(param, new ListUtil.ConditionJudger<IMMessage>() {
+                            @Override
+                            public boolean isMatchCondition(IMMessage nodeInList) {
+                                return nodeInList.getMsgType() == MsgTypeEnum.custom
+                                        && nodeInList.getAttachment() == null;
+                            }
+                        });
+                        callback.onSuccess(param);
+                    }
+                    @Override
+                    public void onFailed(int code) {
+                        callback.onFailed(code);
+
+                    }
+                    @Override
+                    public void onException(Throwable exception) {
+                        callback.onException(exception);
+                    }
+                });
     }
 
     /**
@@ -894,83 +936,6 @@ public class YXClient {
     }
 
 
-    /**
-     * 发送图书推荐消息
-     * @param id 发送的对象id
-     * @param typeEnum  发送的对象类型,可以是群或个人
-     * @param bookInfo 推荐的图书信息
-     * @param msg 推荐信息
-     * @return 实际发送的消息体
-     */
-    public IMMessage sendBookRecommandMessage(String id , SessionTypeEnum typeEnum
-            , BookInfo bookInfo , String msg , final OnErrorListener<IMMessage> onErrorListener){
-        lv("发送图书推荐消息,对方id=" + id + " type=" + typeEnum + " bookInfo=" + bookInfo + "  msg= " + msg);
-        final IMMessage message;
-        switch (typeEnum){
-            case P2P:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[图书推荐]" , new BookRecommandAttachment(msg , bookInfo));
-                break;
-            case Team:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[图书推荐]" , new BookRecommandAttachment(msg , bookInfo));
-                break;
-            default:
-                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
-                return null;
-        }
-        CustomMessageConfig config = new CustomMessageConfig();
-        config.enableRoaming = true;
-        message.setConfig(config);
-        NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
-            @Override
-            public void onResult(int code, Void result, Throwable exception) {
-                if (code == 802){
-                    onErrorListener.onError(code , message);
-                }
-            }
-        });
-        return message;
-    }
-
-    /**
-     * 发送图书推荐消息给多个ID(群发)
-     * @param idList 发送的对象id列表
-     * @param typeEnum  发送的对象类型,可以是群或个人
-     * @param bookInfo 推荐的图书信息
-     * @param msg 推荐信息
-     * @return 实际发送的消息体列表
-     */
-    public ArrayList<IMMessage> sendBookRecommandMessage(ArrayList<String> idList
-            , SessionTypeEnum typeEnum , BookInfo bookInfo , String msg , final OnErrorListener<IMMessage> onErrorListener){
-        ArrayList<IMMessage> returnList = new ArrayList<IMMessage>();
-        lv("发送图书推荐消息,对方id=" + idList + " type=" + typeEnum + " bookInfo=" + bookInfo + "  msg= " + msg);
-        for (String id : idList) {
-            final IMMessage message;
-            switch (typeEnum){
-                case P2P:
-                    message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[图书推荐]" , new BookRecommandAttachment(msg , bookInfo));
-                    break;
-                case Team:
-                    message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[图书推荐]" , new BookRecommandAttachment(msg , bookInfo));
-                    break;
-                default:
-                    lv("发送对象的type不支持,取消发送,type=" + typeEnum);
-                    return null;
-            }
-            CustomMessageConfig config = new CustomMessageConfig();
-            config.enableRoaming = true;
-            message.setConfig(config);
-            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
-                @Override
-                public void onResult(int code, Void result, Throwable exception) {
-                    if (code == 802){
-                        onErrorListener.onError(code , message);
-                    }
-                }
-            });
-            returnList.add(message);
-        }
-        return returnList;
-    }
 
     /**
      * 检查WiFi是否打开,并且尝试刷新式登录
@@ -992,7 +957,7 @@ public class YXClient {
             mKeyPointController.onFail(-999);
             return;
         }
-        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), new RequestCallbackWrapper() {
+        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), new RequestCallbackWrapper() {
             @Override
             public void onResult(int code, Object result, Throwable exception) {
                 if (code == ResponseCode.RES_SUCCESS) {
@@ -1072,14 +1037,15 @@ public class YXClient {
                     lv("获取最近联系人列表成功,获取到" + (result == null ? result : result.size()) + "个最近联系人(包含群)");
                     for (RecentContact newContact : result) {
                         if (newContact.getSessionType() == SessionTypeEnum.Team){
+                            //滤掉群消息的最近联系人
                             continue;
                         }
                         String id = newContact.getContactId();
-                        switch (newContact.getSessionType()) {
-                            case P2P:
-                                updateUserInfo(id , true);
-                                break;
+                        if (id.length() == 10 || id.length() == 6){
+                            //学生端10位id的其他学生和6位id的管理员都不需要显示在最近通话中,此处滤掉
+                            continue;
                         }
+                        updateUserInfo(id , true);
                         recentContactList.add(newContact);
                     }
                     recentContactInitFinish = true;
@@ -1100,6 +1066,16 @@ public class YXClient {
             @Override
             public void onSuccess(List<TeamMember> param) {
                 lv("从服务器查询群成员列表成功 : size : " + param.size() + "  群id : " + (param.size() == 0 ? null : param.get(0).getTid()));
+                //群成员列表需要滤除10位的其他学生的号还有6位的管理员号
+                ListUtil.conditionalRemove(param,
+                        new ListUtil.ConditionJudger<TeamMember>() {
+                            @Override
+                            public boolean isMatchCondition(TeamMember nodeInList) {
+                                return nodeInList.getAccount().length() == 6
+                                        || (nodeInList.getAccount().length() == 10 && !nodeInList.getAccount().equals(SpUtil.getUserId()+""));
+                            }
+                        }
+                );
                 groupMemberMap.put(id , new Pair<Long, List<TeamMember>>(System.currentTimeMillis() , param));
                 Pair pair = new Pair<String, List<TeamMember>>(id , param);
                 for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {

@@ -179,7 +179,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                     else {
                         Log.v("FH", "自动登录成功");
                         SpUtil.saveStudent(response.getData().get(0));
-                        YXClient.getInstance().getTokenAndLogin(SpUtil.justForTest(), null);
+                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), null);
                         checkLocalLockAndJump();
                     }
                 } else {

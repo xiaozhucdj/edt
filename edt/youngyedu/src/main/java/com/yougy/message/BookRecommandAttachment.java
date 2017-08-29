@@ -11,19 +11,16 @@ import org.json.JSONObject;
  */
 
 public class BookRecommandAttachment extends CustomAttachment{
-    final String KEY_RECOMMAND_MSG = "recommand_msg";
-    final String KEY_BOOK_INFO = "bookinfo";
+    final String KEY_COMMENT = "comment";
+    final String KEY_TITLE = "title";
+    final String KEY_ID = "id";
 
+    public String bookId;
+    public String bookName;
     public String recommand_msg;
-    public BookInfo bookInfo;
-    public BookRecommandAttachment() {
-        super(CustomAttachParser.CustomAttachmentType.RECOMMAND_BOOK.ordinal());
-    }
 
-    public BookRecommandAttachment(String recommand_msg, BookInfo bookInfo) {
-        this();
-        this.recommand_msg = recommand_msg;
-        this.bookInfo = bookInfo;
+    public BookRecommandAttachment(String clue , double version) {
+        super(clue , version);
     }
 
     /**
@@ -31,13 +28,10 @@ public class BookRecommandAttachment extends CustomAttachment{
      * @param data
      */
     @Override
-    protected void parseData(JSONObject data) {
-        try {
-            recommand_msg = data.getString(KEY_RECOMMAND_MSG);
-            bookInfo = new Gson().fromJson(data.getJSONObject(KEY_BOOK_INFO).toString() , BookInfo.class);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    protected void parseData(JSONObject data) throws JSONException{
+        recommand_msg = data.getString(KEY_COMMENT);
+        bookId = data.getString(KEY_ID);
+        bookName = data.getString(KEY_TITLE);
     }
 
     /**
@@ -48,9 +42,11 @@ public class BookRecommandAttachment extends CustomAttachment{
     protected JSONObject packData() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(KEY_RECOMMAND_MSG , recommand_msg);
-            jsonObject.put(KEY_BOOK_INFO , new JSONObject(new Gson().toJson(bookInfo)));
-        } catch (JSONException e) {
+            jsonObject.put(KEY_ID , bookId);
+            jsonObject.put(KEY_TITLE , bookName);
+            jsonObject.put(KEY_COMMENT, recommand_msg);
+        }
+        catch (JSONException e) {
             e.printStackTrace();
         }
         return jsonObject;
