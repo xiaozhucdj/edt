@@ -1,8 +1,5 @@
 package com.yougy.message;
 
-import com.google.gson.Gson;
-import com.yougy.shop.bean.BookInfo;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 

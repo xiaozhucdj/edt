@@ -12,8 +12,10 @@ import android.text.TextUtils;
 
 import com.inkscreen.LeController;
 import com.inkscreen.utils.NetworkManager;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
+import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.rx.RxBus;
@@ -22,6 +24,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.activity.LocalLockActivity;
+import com.yougy.message.AskQuestionAttachment;
 import com.yougy.message.YXClient;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -163,6 +166,19 @@ public class YougyApplicationManager extends LitePalApplication {
 
             //初始化云信配置,注册全局性的处理器和解析器等
             YXClient.getInstance().initOption(this);
+            //初始化命令消息监听器,在此处处理
+            YXClient.getInstance().setOnCommandCustomMsgListener(new YXClient.OnMessageListener() {
+                @Override
+                public void onNewMessage(IMMessage message) {
+                    if (message.getAttachment() instanceof AskQuestionAttachment){
+                        Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                        newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
+                        startActivity(newIntent);
+                    }
+                }
+            });
         }
     }
 

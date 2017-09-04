@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class CustomAttachParser implements MsgAttachmentParser {
     static String KEY_METHOD = "method";
     static String KEY_PARAM = "param";
-    static String KEY_DISPLAY = "display";
+    static String KEY_ABSTRACT = "abstract";
     static String KEY_VERSION = "version";
     static String KEY_CLUE = "clue";
 
@@ -32,14 +32,19 @@ public class CustomAttachParser implements MsgAttachmentParser {
             JSONObject object = new JSONObject(json);
             String clue = object.getString(KEY_CLUE);
             double version = object.getDouble(KEY_VERSION);
+            JSONObject data = null;
             switch (clue){
                 case "promoteBook" :
                     attachment = new BookRecommandAttachment(clue , version);
-                    JSONObject data =  object.getJSONObject(KEY_DISPLAY);
-                    if (attachment != null) {
-                        attachment.fromJson(data);
-                    }
+                    data =  object.getJSONObject(KEY_ABSTRACT);
                     break;
+                case "askQuestion" :
+                    attachment = new AskQuestionAttachment(clue , version);
+                    data = object;
+                    break;
+            }
+            if (attachment != null) {
+                attachment.fromJson(data);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -54,7 +59,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
             object.put(KEY_CLUE, clue);
             object.put(KEY_VERSION , version);
             if (data != null) {
-                object.put(KEY_DISPLAY , data);
+                object.put(KEY_ABSTRACT, data);
             }
         } catch (JSONException e) {
             e.printStackTrace();

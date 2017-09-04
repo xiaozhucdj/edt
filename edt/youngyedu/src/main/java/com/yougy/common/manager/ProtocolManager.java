@@ -661,6 +661,8 @@ public class ProtocolManager {
         setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
 
+
+
     /**
      * 1获取作业总数
      * @param :userId
@@ -676,27 +678,6 @@ public class ProtocolManager {
         setCommon(Commons.HOMEWORK_TODO_COUNT, obj.toString(), protocol_id, callbac);
     }
 
-
-
-
-    //模拟数据,后期接口通了可删除
-    static ArrayList<BookInfo> simulateData = new ArrayList<BookInfo>();
-
-    /**
-     * 初始化模拟数据
-     */
-    public static void initSimulateData(){
-        simulateData.clear();
-        for (int i = 0; i < 64; i++) {
-            BookInfo bookInfo = new BookInfo();
-            bookInfo.setBookId(i);
-            bookInfo.setBookTitle(i + "轻巧夺冠-优化训练:三年级数学(上)(人教版)(北师大版)");
-            bookInfo.setBookAuthor(i + "作者:洛夫斯基");
-            bookInfo.setBookSalePrice(8888.88f);
-            bookInfo.setBookCover("http://img3.imgtn.bdimg.com/it/u=4204844413,210602442&fm=11&gp=0.jpg");
-            simulateData.add(bookInfo);
-        }
-    }
 
     public static void isOrderPaySuccessProtocol(String orderId, int orderOwner , int protocol_id, Callback callback) {
         LogUtils.i("Protocol............. 32 查询订单支付是否成功");

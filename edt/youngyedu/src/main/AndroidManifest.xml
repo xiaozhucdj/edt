@@ -200,6 +200,9 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             >
         </activity>
+        <activity android:name="com.yougy.anwser.AnsweringActivity">
+
+        </activity>
 
         <!--===================云信相关start===================-->
         <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。

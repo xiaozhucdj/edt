@@ -48,7 +48,6 @@ import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.shop.bean.BookInfo;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 
@@ -116,6 +115,10 @@ public class YXClient {
     private ArrayList<OnMessageListener> onNewMessageListenerList = new ArrayList<OnMessageListener>();
     //全局所有的自定义消息发送状态监听器列表
     private ArrayList<OnMessageListener> onMsgStatusChangedListenerList = new ArrayList<OnMessageListener>();
+
+    //命令型消息监听器,用来通知命令型(不需要在消息列表中显示)的消息,例如开始问答,结束问答等
+    private OnMessageListener onCommandCustomMsgListener;
+
     //新到消息监听器
     Observer<List<IMMessage>> incommingMessageObserver = new Observer<List<IMMessage>>() {
         @Override
@@ -127,9 +130,17 @@ public class YXClient {
             //插入数据库后SDK的最近联系人列表也会自动更新,不需要手动通知.
             for (IMMessage newMessage : imMessages) {
                 Log.v("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType());
-                if ((newMessage.getMsgType()) == MsgTypeEnum.custom && newMessage.getAttachment() == null){
-                    // 解析有问题的自定义消息attachment为空,滤掉这类消息
-                    continue;
+                if ((newMessage.getMsgType()) == MsgTypeEnum.custom){
+                    if (newMessage.getAttachment() == null){
+                        // 解析有问题的自定义消息attachment为空,滤掉这类消息
+                        continue;
+                    }
+                    else if (newMessage.getAttachment() instanceof AskQuestionAttachment){
+                        //
+                        if (onCommandCustomMsgListener != null){
+                            onCommandCustomMsgListener.onNewMessage(newMessage);
+                        }
+                    }
                 }
                 if (newMessage.getSessionType() == SessionTypeEnum.Team) {
                     Log.v("FH" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
@@ -510,6 +521,15 @@ public class YXClient {
         return instance;
     }
 
+    /**
+     * 设置命令型消息监听器,用于接收命令型(不需要在消息列表中显示)消息的消息,例如开始问答,结束问答等
+     * @param onCommandCustomMsgListener
+     * @return
+     */
+    public YXClient setOnCommandCustomMsgListener(OnMessageListener onCommandCustomMsgListener) {
+        this.onCommandCustomMsgListener = onCommandCustomMsgListener;
+        return this;
+    }
 
     /**
      * 初始化NimClient,必须在application的onCreate中调用(所有进程的onCreate中都要调用,否则会报错),必须放在所有的云信操作前调用.
