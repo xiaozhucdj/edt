@@ -38,6 +38,7 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
+import com.yougy.message.YXClient;
 import com.yougy.message.ui.RecentContactListActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
@@ -887,6 +888,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         initSysIcon();
+        YXClient.checkNetAndRefreshLogin(this , null , null);
     }
 
     private void setSysWifi() {

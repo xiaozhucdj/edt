@@ -235,9 +235,9 @@ public class YXClient {
             currentOnlineStatus = statusCode;
             Log.v("FH" , "onlineStatus 变更: " + statusCode);
             if (statusCode == StatusCode.PWD_ERROR){
-                if (!TextUtils.isEmpty(currentAccount)){
-                    getTokenAndLogin(currentAccount , null);
-                }
+//                if (!TextUtils.isEmpty(currentAccount)){
+//                    getTokenAndLogin(currentAccount , null);
+//                }
             }
             else if (statusCode == StatusCode.KICKOUT){
 
@@ -1655,7 +1655,7 @@ public class YXClient {
                     }
                 }, "打开").show();
             } else {
-                new ConfirmDialog(activity, "已经与消息服务器断开连接(" + data + "),设备无法访问网络,请确保您的网络通畅", new DialogInterface.OnClickListener() {
+                new ConfirmDialog(activity, "已经与消息服务器断开连接(" + data + "),是否重连?", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         checkNetAndRefreshLogin(activity , null , CheckNetDefaultKPController.this);
