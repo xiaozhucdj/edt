@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -187,8 +188,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         mRlFolder = (ViewGroup) findViewById(R.id.rl_folder);
         mRlFolder.setOnClickListener(this);
-        //TODO:文件夹还为实现 ，暂时关闭点击切换Fragment 功能
-        mRlFolder.setEnabled(false);
+        //TODO:文件夹还未实现 ，暂时关闭点击切换Fragment 功能
+        mRlFolder.setEnabled(true);
         mTvFolder = (TextView) findViewById(R.id.tv_folder);
         mViewFolder = findViewById(R.id.view_folder);
 
@@ -283,9 +284,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setSysTime();
         switch (clickedViewId) {
             case R.id.rl_folder:
-                refreshTabBtnState(clickedViewId);
-                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
+//                refreshTabBtnState(clickedViewId);
+//                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
+                startActivity(new Intent(this , AnsweringActivity.class));
                 break;
 
             case R.id.rl_homework:

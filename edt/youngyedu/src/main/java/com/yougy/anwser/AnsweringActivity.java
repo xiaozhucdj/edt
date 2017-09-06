@@ -1,5 +1,6 @@
 package com.yougy.anwser;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,12 +38,14 @@ public class AnsweringActivity extends BaseActivity {
     public void init() {
         Log.v("FH" , "AnsweringActivity init " + this.toString());
         String itemId = getIntent().getStringExtra("itemId");
+        itemId = "73";
         if (TextUtils.isEmpty(itemId)){
             ToastUtil.showToast(this , "item 为空,开始问答失败");
             Log.v("FH" , "item 为空,开始问答失败");
             finish();
         }
         String from = getIntent().getStringExtra("from");
+        from = "10000200";
         if (TextUtils.isEmpty(from)){
             ToastUtil.showToast(this , "from userId 为空,开始问答失败");
             Log.v("FH" , "from userId 为空,开始问答失败");
@@ -82,6 +85,28 @@ public class AnsweringActivity extends BaseActivity {
 
     }
 
+    public void commitAnswer(View view){
+        Intent intent = new Intent(this , AnswerResultActivity.class);
+        intent.putExtra("question" , parsedQuestionItem);
+        startActivity(intent);
+        finish();
+    }
+    public void startAnswer(View view){
+        binding.startAnswerBtn.setVisibility(View.GONE);
+        binding.pageBtnLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void addPage(View view){
+    }
+    public void deletePage(View view){
+    }
+    public void cancel(View view){
+        finish();
+    }
+    public void lastPage(View view){
+    }
+    public void nextPage(View view){
+    }
     @Override
     protected void refreshView() {
         ParsedQuestionItem.Question question = parsedQuestionItem.questionList.get(0);

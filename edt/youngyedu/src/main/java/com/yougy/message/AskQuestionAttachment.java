@@ -25,8 +25,8 @@ public class AskQuestionAttachment extends CustomAttachment{
      */
     @Override
     protected void parseData(JSONObject data) throws JSONException{
-        JSONObject abstractJsonObj = data.getJSONObject("abstract");
-        JSONObject paramJsonObj = data.getJSONObject("param");
+        JSONObject abstractJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
+        JSONObject paramJsonObj = data.getJSONObject(CustomAttachParser.KEY_PARAM);
         examID = abstractJsonObj.getInt(KEY_EXAM_ID);
         itemId = abstractJsonObj.getInt(KEY_ITEM_ID);
         from = paramJsonObj.getString(KEY_FROM);

@@ -136,10 +136,13 @@ public class YXClient {
                         continue;
                     }
                     else if (newMessage.getAttachment() instanceof AskQuestionAttachment){
-                        //
                         if (onCommandCustomMsgListener != null){
                             onCommandCustomMsgListener.onNewMessage(newMessage);
                         }
+                        continue;
+                    }
+                    else {
+
                     }
                 }
                 if (newMessage.getSessionType() == SessionTypeEnum.Team) {
@@ -570,6 +573,7 @@ public class YXClient {
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
     public void login(String account , String token , final RequestCallbackWrapper callback){
+        Log.v("FH" , "yx login " + account + "  " + token);
         currentAccount = account;
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , true);
         LoginInfo loginInfo = new LoginInfo(account , token);
