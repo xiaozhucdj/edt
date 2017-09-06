@@ -25,6 +25,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
 import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
+import com.yougy.common.protocol.callback.QueryOrderListCallBack;
 import com.yougy.common.protocol.callback.QueryShopBookDetailCallBack;
 import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
@@ -33,6 +34,7 @@ import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.AppendBookCartRep;
 import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.protocol.response.QueryBookCartRep;
+import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.FileUtils;
@@ -44,6 +46,7 @@ import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
+import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.showView.TextThumbSeekBar;
 
 import java.util.ArrayList;
@@ -125,7 +128,9 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     }
 
     private void initPDF() {
-        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+//     mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+
+        mProbationUrl =   FileUtils.getBookFileName(mBookInfo.getBookId() ,FileUtils.bookProbation) ;
         LogUtils.i("mProbationUrl ......" + mProbationUrl);
         mOnyxImgView = new ImageView(this);
         mOnyxImgView.setLayoutParams(new LinearLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
@@ -152,6 +157,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         if (nextScription != null) {
             nextScription.unsubscribe();
         }
+        getReaderPresenter().close();
     }
 
     private Action1<? super Void> getBackSubscriber() {
@@ -243,11 +249,10 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
-        RequirePayOrderRequest request = new RequirePayOrderRequest();
-        request.setOrderOwner(SpUtil.getAccountId());
-        request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
-        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-                , new RequireOrderCallBack(this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+                , "[\"已支付\",\"待支付\"]"
+                , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
+                , new QueryOrderListCallBack(ProbationReadBookActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
     }
 
     /***
@@ -311,6 +316,24 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         finish();
                     } else {
                         showCenterDetermineDialog(R.string.get_order_fail);
+                    }
+                }
+                else if (o instanceof QueryBookOrderListRep){
+                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                        if (((QueryBookOrderListRep) o).getData().size() > 0) {
+                            new HintDialog(ProbationReadBookActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
+                            return;
+                        }
+                        RequirePayOrderRequest request = new RequirePayOrderRequest();
+                        request.setOrderOwner(SpUtil.getAccountId());
+                        request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
+                        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                                , new RequireOrderCallBack(ProbationReadBookActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+                    }
+                    else {
+                        new HintDialog(ProbationReadBookActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
+                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
                     }
                 }
             }
@@ -382,7 +405,9 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
     @Override
     public void openDocumentFinsh() {
+
         mPageCounts = mReaderPresenter.getPages();
+        LogUtils.i("mPageCounts ..."+mPageCounts);
         initSeekBar();
         requestPageTask(mCurrentMarksPage);
     }
@@ -442,6 +467,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             return;
         }
         mCurrentMarksPage = position;
+        LogUtils.i("position ..."+position);
         getReaderPresenter().gotoPage(position);
     }
 

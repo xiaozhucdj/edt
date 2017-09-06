@@ -112,6 +112,9 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
             if (data instanceof Favor){
                 Favor favor = (Favor) data;
                 bookNameTv.setText(favor.getBookTitle());
+                if (favor.getBookStatus().contains("下架")){
+                    bookNameTv.setText(bookNameTv.getText() + "(下架)");
+                }
                 bookAuthorTv.setText("作者:" + favor.getBookAuthor());
                 bookPriceTv.setText("价格:￥" +  favor.getBookSalePrice());
                 refreshImg(bookImgview , favor.getBookCover());
@@ -119,6 +122,9 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
             else if (data instanceof CartItem){
                 CartItem cartItem = (CartItem) data;
                 bookNameTv.setText(cartItem.getBookTitle());
+                if (cartItem.getBookStatus().contains("下架")){
+                    bookNameTv.setText(bookNameTv.getText() + "(下架)");
+                }
                 bookAuthorTv.setText("作者:" + cartItem.getBookAuthor());
                 bookPriceTv.setText("价格:￥" + cartItem.getBookSalePrice());
                 refreshImg(bookImgview , cartItem.getBookCover());

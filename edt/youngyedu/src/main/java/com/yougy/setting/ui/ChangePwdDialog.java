@@ -74,8 +74,8 @@ public class ChangePwdDialog extends BaseDialog {
         }
         else {
             SpUtil.setLocalLockPwd(binding.newPwdEdtv.getText().toString());
-            new HintDialog(mContext , "修改成功!").show();
             dismiss();
+            new HintDialog(mContext , "修改成功!").show();
         }
     }
 

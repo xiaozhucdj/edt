@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.netease.nimlib.sdk.RequestCallbackWrapper;
+import com.netease.nimlib.sdk.ResponseCode;
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
@@ -23,6 +25,7 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.init.bean.Student;
+import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ConfirmUserinfoDialogLayoutBinding;
 import com.yougy.view.dialog.HintDialog;
@@ -92,14 +95,26 @@ public class ConfirmUserInfoDialog extends BaseDialog {
             public void call(Object o) {
                 if (o instanceof NewBindDeviceRep) {
                     if (((NewBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                        Log.v("FH" , "绑定成功,重置本机锁密码并提示");
-                        binding.confirmBtn.setVisibility(View.GONE);
-                        binding.cancleBtn.setVisibility(View.GONE);
-                        binding.localPwdHintTv.setVisibility(View.VISIBLE);
-                        binding.startUseBtn.setVisibility(View.VISIBLE);
-                        binding.titleTv.setText("恭喜,用户与设备绑定成功");
-                        SpUtil.setLocalLockPwd("123456");
-                        SpUtil.saveStudent(student);
+                        Log.v("FH" , "绑定成功,开始登录云信SDK");
+                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), new RequestCallbackWrapper() {
+                            @Override
+                            public void onResult(int code, Object result, Throwable exception) {
+                                if (code != ResponseCode.RES_SUCCESS){
+                                    Log.v("FH" , "云信SDK登录失败 : code : " + code);
+                                    new HintDialog(mActivity , "云信SDK登录失败 : code : " + code).show();
+                                }
+                                else {
+                                    Log.v("FH" , "云信SDK登录成功 , 重置本机锁密码并提示");
+                                    binding.confirmBtn.setVisibility(View.GONE);
+                                    binding.cancleBtn.setVisibility(View.GONE);
+                                    binding.localPwdHintTv.setVisibility(View.VISIBLE);
+                                    binding.startUseBtn.setVisibility(View.VISIBLE);
+                                    binding.titleTv.setText("恭喜,用户与设备绑定成功");
+                                    SpUtil.setLocalLockPwd("123456");
+                                    SpUtil.saveStudent(student);
+                                }
+                            }
+                        });
                     }
                     else {
                         Log.v("FH" , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg());

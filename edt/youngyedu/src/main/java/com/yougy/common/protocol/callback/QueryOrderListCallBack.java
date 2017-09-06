@@ -47,7 +47,7 @@ public class QueryOrderListCallBack extends BaseCallBack<QueryBookOrderListRep> 
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId()),  mProtocol, this);
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId()), null , mProtocol, this);
     }
 
     @Override

@@ -16,11 +16,13 @@ import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
+import com.yougy.common.protocol.callback.QueryOrderListCallBack;
 import com.yougy.common.protocol.callback.RemoveBookCartCallBack;
 import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.RemoveBookCartRequest;
 import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.QueryBookCartRep;
+import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.RemoveBookCartProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.LogUtils;
@@ -32,6 +34,7 @@ import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NewShopBookItem;
+import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -204,6 +207,26 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                         finish();
                     } else {
                         showCenterDetermineDialog(R.string.get_order_fail);
+                    }
+                }
+                else if (o instanceof QueryBookOrderListRep){
+                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                        if (((QueryBookOrderListRep) o).getData().size() > 0) {
+                            new HintDialog(ShopCartActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
+                            return;
+                        }
+                        RequirePayOrderRequest request = new RequirePayOrderRequest();
+                        request.setOrderOwner(SpUtil.getAccountId());
+                        for (CartItem cartItem : checkedCartItemList) {
+                            request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
+                        }
+                        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                                , new RequireOrderCallBack(ShopCartActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+                    }
+                    else {
+                        new HintDialog(ShopCartActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
+                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
                     }
                 }
             }
@@ -394,13 +417,16 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
-        RequirePayOrderRequest request = new RequirePayOrderRequest();
-        request.setOrderOwner(SpUtil.getAccountId());
         for (CartItem cartItem : checkedCartItemList) {
-            request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
+            if (cartItem.getBookStatus().contains("下架")){
+                new HintDialog(ShopCartActivity.this , "您勾选的商品中包含已下架商品,无法为您下单,请删除已下架商品后再试").show();
+                return;
+            }
         }
-        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-                , new RequireOrderCallBack(this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+                , "[\"已支付\",\"待支付\"]"
+                , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
+                , new QueryOrderListCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
     }
 
     /**

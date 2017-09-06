@@ -27,6 +27,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
 import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
 import com.yougy.common.protocol.callback.PromoteBookCallBack;
+import com.yougy.common.protocol.callback.QueryOrderListCallBack;
 import com.yougy.common.protocol.callback.QueryShopBookDetailCallBack;
 import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
@@ -36,12 +37,14 @@ import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.AppendBookCartRep;
 import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.protocol.response.PromoteBookRep;
+import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -55,6 +58,7 @@ import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.DownBookDialog;
+import com.yougy.view.dialog.HintDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -254,13 +258,11 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     return;
                 }
                 //跳转在线试读
-                String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
-                if (FileUtils.exists(probationUrl)) {
-                    LogUtils.i("cccccccccc");
+//                String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+
+                if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId() ,FileUtils.bookProbation))) {
                     jumpProbationActivity();
                 } else {
-                    LogUtils.i("试读文件不存在");
-                    LogUtils.i("dddddddddd");
                     downBookDialog();
                 }
                 break;
@@ -268,8 +270,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private void showReaderForPackage() {
-        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
-        if (FileUtils.exists(filePath)) {
+//        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
+        if (!StringUtils.isEmpty( FileUtils.getBookFileName( mBookInfo.getBookId() , FileUtils.bookDir))) {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.books_reader, mTagBookReader);
         } else {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.play_package, mTagBookReader);
@@ -446,6 +448,24 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             showCenterDetermineDialog(R.string.books_request_recommended_fail);
                         }
                     }
+                    else if (o instanceof QueryBookOrderListRep){
+                        if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                            Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                            if (((QueryBookOrderListRep) o).getData().size() > 0) {
+                                new HintDialog(ShopBookDetailsActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
+                                return;
+                            }
+                            RequirePayOrderRequest request = new RequirePayOrderRequest();
+                            request.setOrderOwner(SpUtil.getAccountId());
+                            request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
+                            ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                                    , new RequireOrderCallBack(ShopBookDetailsActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+                        }
+                        else {
+                            new HintDialog(ShopBookDetailsActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
+                            Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
+                        }
+                    }
                 }
             }
         }));
@@ -475,15 +495,14 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private void requestOrder() {
-        if (NetUtils.isNetConnected()) {
-            RequirePayOrderRequest request = new RequirePayOrderRequest();
-            request.setOrderOwner(SpUtil.getAccountId());
-            request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
-            ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-                    , new RequireOrderCallBack(this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
-        } else {
+        if (!NetUtils.isNetConnected()) {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+            return;
         }
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+                , "[\"已支付\",\"待支付\"]"
+                , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
+                , new QueryOrderListCallBack(ShopBookDetailsActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
     }
 
     /***
@@ -533,7 +552,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         if (mBookInfo.isBookInShelf()) {
             //下载文件
             List<DownInfo> mFiles = new ArrayList<>();
-            DownInfo info = new DownInfo(mBookInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
+            DownInfo info = new DownInfo(mBookInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mBookInfo.getBookId() + "", true, false, mBookInfo.getBookId());
             info.setBookName(mBookInfo.getBookTitle());
             mFiles.add(info);
             downBook(mFiles);
@@ -550,7 +569,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }
                 //下载文件
                 List<DownInfo> mFiles = new ArrayList<>();
-                DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(), ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf", true, false, mBookInfo.getBookId());
+                DownInfo info = new DownInfo(mBookInfo.getBookPreview(), FileUtils.getProbationBookFilesDir(),+ mBookInfo.getBookId() + "", true, false, mBookInfo.getBookId());
                 info.setBookName(mBookInfo.getBookTitle());
                 mFiles.add(info);
                 downBook(mFiles);
@@ -629,8 +648,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
 
     private void jumpToControlFragmentActivity() {
-        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
-        if (FileUtils.exists(filePath)) {
+//        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
+         if (!StringUtils.isEmpty( FileUtils.getBookFileName( mBookInfo.getBookId() , FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);

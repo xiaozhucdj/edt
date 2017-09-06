@@ -23,6 +23,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.ui.activity.R;
 
@@ -141,7 +142,7 @@ public class MainActivityScreen extends AppCompatActivity {
         leSubTitleLayout.setOncBook("", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBookId>0 && FileUtils.exists(FileUtils.getTextBookFilesDir() + mBookId + ".pdf")){
+                if (mBookId>0 && !StringUtils.isEmpty(FileUtils.getBookFileName(mBookId ,FileUtils.bookDir))){
                     jumpActivityControl(FileContonst.JUMP_TEXT_BOOK);
                 }else{
                     Toast.makeText(MainActivityScreen.this, "当前书还未下载", Toast.LENGTH_LONG).show();

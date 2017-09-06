@@ -3,7 +3,9 @@
     <data></data>
     <com.yougy.shop.activity.OrderListItem xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:tag="layout/item_order_list_0">
+        android:tag="layout/item_order_list_0"
+        android:clickable="true"
+        >
         <TextView
             android:id="@+id/order_num_tv"
             android:layout_width="wrap_content"
