@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.inkscreen.LeController;
 import com.inkscreen.utils.NetworkManager;
@@ -27,6 +28,8 @@ import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.AskQuestionAttachment;
 import com.yougy.message.YXClient;
 import com.zhy.autolayout.config.AutoLayoutConifg;
+import com.zhy.autolayout.utils.L;
+import com.zhy.autolayout.utils.ScreenUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePal;
@@ -145,6 +148,10 @@ public class YougyApplicationManager extends LitePalApplication {
 
             //AutoLayout初始化
             AutoLayoutConifg.getInstance().init(this);
+            int[] screenSize = ScreenUtils.getScreenSize(context, false);
+            int mScreenWidth = screenSize[0];
+            int mScreenHeight = screenSize[1];
+            Log.v("FH" , " screenWidth =" + mScreenWidth + " ,screenHeight = " + mScreenHeight);
 
             //注册屏幕开锁广播接收器,每次开锁的时候回跳到本地锁.
             //本广播只会在应用程序启动后注册,未启动应用时,不能检测到开屏广播

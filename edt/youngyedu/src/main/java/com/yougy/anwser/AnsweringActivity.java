@@ -10,6 +10,7 @@ import android.view.View;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
 
@@ -31,6 +32,7 @@ public class AnsweringActivity extends BaseActivity {
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_answering, null , false);
+        UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
 

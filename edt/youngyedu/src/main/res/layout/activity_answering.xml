@@ -41,48 +41,46 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="30px"
-            android:gravity="left|bottom"
             >
             <!--装饰色块-->
             <View
                 android:layout_width="4px"
-                android:layout_height="30px"
+                android:layout_height="26px"
                 android:background="@drawable/bmp_bg_yellow"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="14px"
                 />
             <!--题目类型-->
             <TextView
                 android:id="@+id/question_type_textview"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="15px"
                 android:text="题目类型xxx"
                 android:textColor="@color/black"
                 android:textSize="24px"
-                android:gravity="bottom"
+                android:layout_marginTop="0px"
                 />
             <!--开始时间-->
             <TextView
                 android:id="@+id/start_time_tv"
                 android:layout_width="0px"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="问答开始时间："
                 android:textColor="@color/black"
                 android:textSize="22px"
                 android:layout_marginLeft="30px"
-                android:gravity="bottom"
                 />
             <!--已用时间-->
             <TextView
                 android:id="@+id/pxend_time_tv"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="30px"
                 android:text="已用时："
                 android:textColor="@color/black"
                 android:textSize="22px"
-                android:gravity="bottom"
                 />
             <!--问答中指示块-->
             <TextView
