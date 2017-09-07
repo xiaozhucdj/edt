@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <data>
-    </data>
+
+    <data></data>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,6 +13,7 @@
             android:layout_height="56px"
             android:layout_marginLeft="32px"
             android:layout_marginRight="32px">
+
             <ImageButton
                 android:id="@+id/btn_left"
                 android:layout_width="wrap_content"
@@ -19,19 +21,19 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:background="@null"
-                android:src="@drawable/img_normal_fanhui"
                 android:onClick="back"
-                android:visibility="gone"
-                />
+                android:src="@drawable/img_normal_fanhui"
+                android:visibility="gone" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="问答题目"
                 android:textColor="#000000"
-                android:textSize="28px"
-                />
+                android:textSize="28px" />
         </RelativeLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
@@ -40,185 +42,184 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="30px"
-            android:gravity="left|bottom"
             android:layout_marginTop="1px"
-            >
+            android:gravity="left|bottom"
+            android:orientation="horizontal"
+            android:paddingLeft="30px">
             <!--装饰色块-->
             <View
                 android:layout_width="4px"
                 android:layout_height="24px"
-                android:background="#000000"
-                />
+                android:background="#000000" />
             <!--题目类型-->
             <TextView
                 android:id="@+id/question_type_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="15px"
+                android:gravity="bottom"
                 android:text="题目类型xxx"
                 android:textColor="@color/black"
-                android:textSize="24px"
-                android:gravity="bottom"
-                />
+                android:textSize="24px" />
             <!--开始时间-->
             <TextView
                 android:id="@+id/start_time_tv"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="30px"
                 android:layout_weight="1"
+                android:gravity="bottom"
                 android:text="问答开始时间："
                 android:textColor="@color/black"
-                android:textSize="22px"
-                android:layout_marginLeft="30px"
-                android:gravity="bottom"
-                />
+                android:textSize="22px" />
             <!--已用时间-->
             <TextView
                 android:id="@+id/pxend_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="30px"
+                android:gravity="bottom"
                 android:text="已用时："
                 android:textColor="@color/black"
-                android:textSize="22px"
-                android:gravity="bottom"
-                />
+                android:textSize="22px" />
             <!--问答中指示块-->
             <TextView
                 android:id="@+id/answering_hint_tv"
                 android:layout_width="120px"
                 android:layout_height="56px"
                 android:layout_marginLeft="30px"
+                android:layout_marginRight="0px"
+                android:background="@drawable/img_wenda"
                 android:gravity="right|center_vertical"
                 android:paddingRight="10px"
                 android:text="问答中"
                 android:textColor="@color/white"
-                android:textSize="24px"
-                android:background="@drawable/img_wenda"
-                android:layout_marginRight="0px"
-                />
+                android:textSize="24px" />
         </LinearLayout>
 
-        <com.yougy.anwser.QuestionAnswerContainer
-            android:id="@+id/question_container"
+        <RelativeLayout
+            android:id="@+id/rl_answer"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1"
-            android:layout_marginTop="15px"
-            android:layout_marginBottom="15px"
-            android:paddingLeft="30px"
-            android:paddingRight="30px"
-            />
+            android:layout_weight="1">
+
+            <com.yougy.anwser.QuestionAnswerContainer
+                android:id="@+id/question_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="15px"
+                android:layout_marginTop="15px"
+                android:paddingLeft="30px"
+                android:paddingRight="30px" />
+        </RelativeLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="10px"
-            android:background="@color/gray_999999"
-            />
+            android:background="@color/gray_999999" />
 
         <TextView
             android:id="@+id/start_answer_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="20px"
+            android:layout_marginRight="30px"
+            android:layout_marginTop="20px"
+            android:background="@drawable/shop_btn_bg_selector"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="onClick"
             android:text="    作答    "
             android:textColor="@drawable/button_text_selector"
-            android:background="@drawable/shop_btn_bg_selector"
-            android:textSize="24px"
-            android:gravity="center"
-            android:layout_marginRight="30px"
-            android:layout_gravity="right"
-            android:layout_marginTop="20px"
-            android:layout_marginBottom="20px"
-            android:clickable="true"
-            android:onClick="startAnswer"
-            />
+            android:textSize="24px" />
+
         <LinearLayout
             android:id="@+id/page_btn_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:paddingTop="20px"
             android:paddingBottom="20px"
+            android:paddingTop="20px"
             android:visibility="gone">
+
             <TextView
                 android:id="@+id/last_page_btn"
                 android:layout_width="14px"
                 android:layout_height="26px"
-                android:background="@drawable/blue_left_arrow"
                 android:layout_marginRight="30px"
+                android:background="@drawable/blue_left_arrow"
                 android:clickable="true"
-                android:onClick="lastPage"
-                />
+                android:onClick="onClick" />
+
             <TextView
                 android:id="@+id/page_num_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="XX/XX"
-                android:textSize="24px"
-                android:textColor="@color/black"
                 android:layout_marginRight="30px"
-                />
+                android:text="XX/XX"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
             <TextView
                 android:id="@+id/next_page_btn"
                 android:layout_width="14px"
                 android:layout_height="26px"
-                android:background="@drawable/blue_right_arrow"
                 android:layout_marginRight="30px"
+                android:background="@drawable/blue_right_arrow"
                 android:clickable="true"
-                android:onClick="nextPage"
-                />
+                android:onClick="onClick" />
+
             <TextView
                 android:id="@+id/add_page_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="30px"
+                android:background="@drawable/shop_btn_bg_selector"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onClick"
                 android:text="  加一页  "
                 android:textColor="@drawable/button_text_selector"
-                android:background="@drawable/shop_btn_bg_selector"
-                android:textSize="24px"
-                android:gravity="center"
-                android:layout_marginRight="30px"
-                android:clickable="true"
-                android:onClick="addPage"
-                />
+                android:textSize="24px" />
+
             <TextView
                 android:id="@+id/delete_current_page_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="30px"
+                android:background="@drawable/shop_btn_bg_selector"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onClick"
                 android:text="  删本页  "
                 android:textColor="@drawable/button_text_selector"
-                android:background="@drawable/shop_btn_bg_selector"
-                android:textSize="24px"
-                android:gravity="center"
-                android:layout_marginRight="30px"
-                android:clickable="true"
-                android:onClick="deletePage"
-                />
+                android:textSize="24px" />
+
             <TextView
                 android:id="@+id/cancle_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="30px"
+                android:background="@drawable/shop_btn_bg_selector"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onClick"
                 android:text="    取消    "
                 android:textColor="@drawable/button_text_selector"
-                android:background="@drawable/shop_btn_bg_selector"
-                android:textSize="24px"
-                android:gravity="center"
-                android:layout_marginRight="30px"
-                android:clickable="true"
-                android:onClick="cancel"
-                />
+                android:textSize="24px" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/commit_answer_btn"
             android:layout_width="match_parent"
             android:layout_height="70px"
             android:background="@drawable/bmp_bg_blue"
-            android:gravity="center"
-            android:text="提交答案"
-            android:textSize="24px"
-            android:textColor="@color/white"
-            android:onClick="commitAnswer"
             android:clickable="true"
-            />
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="提交答案"
+            android:textColor="@color/white"
+            android:textSize="24px" />
     </LinearLayout>
 </layout>
