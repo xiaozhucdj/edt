@@ -3,6 +3,7 @@ package com.yougy.anwser;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,11 +16,12 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
-import com.yougy.view.NoteBookView;
+import com.yougy.view.NoteBookView2;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.functions.Action1;
@@ -33,7 +35,14 @@ import rx.functions.Action1;
 public class AnsweringActivity extends BaseActivity {
     ActivityAnsweringBinding binding;
     ParsedQuestionItem parsedQuestionItem;
-    private NoteBookView mNbvAnswerBoard;
+    private NoteBookView2 mNbvAnswerBoard;
+
+    //图片地址的集合（用来保存截图生长的图片路径）
+    private ArrayList<String> picPathList = new ArrayList<>();
+    //byte数组集合，（用来保存每一页书写的笔记数据）
+    private ArrayList<byte[]> bytesList = new ArrayList<>();
+    //当前页，默认从1开始
+    private int position = 1;
 
 
     @Override
@@ -87,13 +96,14 @@ public class AnsweringActivity extends BaseActivity {
 
 
         //新建写字板，并添加到界面上
-        mNbvAnswerBoard = new NoteBookView(this);
+        mNbvAnswerBoard = new NoteBookView2(this);
 
 
     }
 
     @Override
     public void loadData() {
+
 
     }
 
@@ -107,23 +117,85 @@ public class AnsweringActivity extends BaseActivity {
                 binding.pageBtnLayout.setVisibility(View.VISIBLE);
                 binding.rlAnswer.addView(mNbvAnswerBoard);
 
-                ToastUtil.showToast(this,"请开始作答");
+                bytesList.add(mNbvAnswerBoard.bitmap2Bytes());
+                ToastUtil.showToast(this, "请开始作答");
 
                 break;
             case R.id.last_page_btn:
+                /*
+                上一页 ，下一页逻辑
+                1.保存当期页面数据到集合中
+                2.清理当前页面数据
+                3.将上一页，下一页数据从集合中取出，并回复到页面
+                */
+
+
+                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
+
+                if (position == 1) {
+                    binding.questionContainer.setVisibility(View.VISIBLE);
+                    ToastUtil.showToast(this, "已经是第一页了");
+                    return;
+                }
+                mNbvAnswerBoard.clearAll();
+
+                position--;
+                binding.pageNumTv.setText(position + "/" + bytesList.size());
+
+
+                byte[] tmpBytes = bytesList.get(position - 1);
+                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+
                 break;
             case R.id.next_page_btn:
+
+                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
+                if (position == bytesList.size()) {
+                    ToastUtil.showToast(this, "已经是最后一页了");
+                    return;
+                }
+                mNbvAnswerBoard.clearAll();
+                position++;
+                binding.pageNumTv.setText(position + "/" + bytesList.size());
+
+
+                tmpBytes = bytesList.get(position - 1);
+                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+
                 break;
             case R.id.add_page_btn:
-                saveResultBitmap();
+                binding.questionContainer.setVisibility(View.GONE);
 
+                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
+                mNbvAnswerBoard.clearAll();
+                position++;
+                bytesList.add(mNbvAnswerBoard.bitmap2Bytes());
 
+                binding.pageNumTv.setText(position + "/" + bytesList.size());
 
 
                 break;
             case R.id.delete_current_page_btn:
+                if (position == 1) {
+                    ToastUtil.showToast(this, "第一页不能删除");
+                    return;
+                }
+                mNbvAnswerBoard.clearAll();
+                bytesList.remove(position-1);
+                position--;
+
+                binding.pageNumTv.setText(position + "/" + bytesList.size());
+
+
+                tmpBytes = bytesList.get(position - 1);
+                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+
+
+
                 break;
             case R.id.cancle_btn:
+                mNbvAnswerBoard.clearAll();
+                ToastUtil.showToast(this, "清理成功");
                 break;
             case R.id.commit_answer_btn:
                 Intent intent = new Intent(this, AnswerResultActivity.class);
@@ -155,7 +227,7 @@ public class AnsweringActivity extends BaseActivity {
         finish();
     }
 
-    private void saveResultBitmap() {
+    private void saveResultBitmap(String fileName) {
         binding.rlAnswer.setDrawingCacheEnabled(true);
         Bitmap tBitmap = binding.rlAnswer.getDrawingCache();
         // 拷贝图片，否则在setDrawingCacheEnabled(false)以后该图片会被释放掉
@@ -163,7 +235,7 @@ public class AnsweringActivity extends BaseActivity {
         binding.rlAnswer.setDrawingCacheEnabled(false);
         if (tBitmap != null) {
 //            ivResult.setImageBitmap(tBitmap);
-            saveBitmapToFile(tBitmap, "adsf");
+            saveBitmapToFile(tBitmap, fileName);
             Toast.makeText(this, "获取成功", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "获取失败", Toast.LENGTH_SHORT).show();
