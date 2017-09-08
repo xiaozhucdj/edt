@@ -108,7 +108,6 @@ public class AnsweringActivity extends BaseActivity {
     }
 
 
-
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         switch (view.getId()) {
@@ -133,7 +132,6 @@ public class AnsweringActivity extends BaseActivity {
                 bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
 
                 if (position == 1) {
-                    binding.questionContainer.setVisibility(View.VISIBLE);
                     ToastUtil.showToast(this, "已经是第一页了");
                     return;
                 }
@@ -145,10 +143,14 @@ public class AnsweringActivity extends BaseActivity {
 
                 byte[] tmpBytes = bytesList.get(position - 1);
                 mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                if (position == 1) {
+                    binding.questionContainer.setVisibility(View.VISIBLE);
+                }
 
                 break;
             case R.id.next_page_btn:
 
+                binding.questionContainer.setVisibility(View.GONE);
                 bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
                 if (position == bytesList.size()) {
                     ToastUtil.showToast(this, "已经是最后一页了");
@@ -181,7 +183,7 @@ public class AnsweringActivity extends BaseActivity {
                     return;
                 }
                 mNbvAnswerBoard.clearAll();
-                bytesList.remove(position-1);
+                bytesList.remove(position - 1);
                 position--;
 
                 binding.pageNumTv.setText(position + "/" + bytesList.size());
@@ -189,7 +191,6 @@ public class AnsweringActivity extends BaseActivity {
 
                 tmpBytes = bytesList.get(position - 1);
                 mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-
 
 
                 break;
