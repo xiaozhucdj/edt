@@ -206,6 +206,8 @@
         <activity android:name="com.yougy.anwser.AnswerResultActivity">
 
         </activity>
+        <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity">
+        </activity>
 
         <!--===================云信相关start===================-->
         <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。

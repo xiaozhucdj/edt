@@ -17,6 +17,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.anwser.AnsweringActivity;
+import com.yougy.anwser.ObjectiveAnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.rx.RxBus;
@@ -26,6 +27,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.AskQuestionAttachment;
+import com.yougy.message.EndQuestionAttachment;
 import com.yougy.message.YXClient;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.L;
@@ -178,11 +180,25 @@ public class YougyApplicationManager extends LitePalApplication {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment){
-                        Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
-                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
-                        newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
-                        startActivity(newIntent);
+                        if (((AskQuestionAttachment) message.getAttachment()).questionType.equals("选择")){
+                            Intent newIntent = new Intent(getApplicationContext() , ObjectiveAnsweringActivity.class);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                            newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
+                            newIntent.putExtra("examId" , ((AskQuestionAttachment) message.getAttachment()).examID);
+                            startActivity(newIntent);
+                        }
+                        else {
+                            Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                            newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
+                            newIntent.putExtra("examId" , ((AskQuestionAttachment) message.getAttachment()).examID);
+                            startActivity(newIntent);
+                        }
+                    }
+                    else if (message.getAttachment() instanceof EndQuestionAttachment){
+                        rxBus.send(message);
                     }
                 }
             });

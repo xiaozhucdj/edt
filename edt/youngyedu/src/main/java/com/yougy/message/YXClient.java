@@ -129,13 +129,14 @@ public class YXClient {
             //并且把新建的p2p消息插入云信SDK的本地数据库,这样就方便以后查询p2p历史记录时,可以直接一次性的把群消息和p2p消息都查出来.
             //插入数据库后SDK的最近联系人列表也会自动更新,不需要手动通知.
             for (IMMessage newMessage : imMessages) {
-                Log.v("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType());
+                Log.v("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType() + " attach : " + newMessage.getAttachment());
                 if ((newMessage.getMsgType()) == MsgTypeEnum.custom){
                     if (newMessage.getAttachment() == null){
                         // 解析有问题的自定义消息attachment为空,滤掉这类消息
                         continue;
                     }
-                    else if (newMessage.getAttachment() instanceof AskQuestionAttachment){
+                    else if (newMessage.getAttachment() instanceof AskQuestionAttachment
+                            || newMessage.getAttachment() instanceof EndQuestionAttachment){
                         if (onCommandCustomMsgListener != null){
                             onCommandCustomMsgListener.onNewMessage(newMessage);
                         }

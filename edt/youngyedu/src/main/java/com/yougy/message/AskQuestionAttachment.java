@@ -1,5 +1,6 @@
 package com.yougy.message;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,9 +12,13 @@ public class AskQuestionAttachment extends CustomAttachment{
     final String KEY_EXAM_ID = "examId";
     final String KEY_ITEM_ID = "itemId";
     final String KEY_FROM = "userId";
+    final String KEY_QUESTION = "question";
+    final String KEY_QUESTION_TYPE = "questionType";
+
     public int examID;
     public int itemId;
     public String from;
+    public String questionType;
 
     public AskQuestionAttachment(String clue , double version) {
         super(clue , version);
@@ -25,11 +30,12 @@ public class AskQuestionAttachment extends CustomAttachment{
      */
     @Override
     protected void parseData(JSONObject data) throws JSONException{
-        JSONObject abstractJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
+        JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
         JSONObject paramJsonObj = data.getJSONObject(CustomAttachParser.KEY_PARAM);
-        examID = abstractJsonObj.getInt(KEY_EXAM_ID);
-        itemId = abstractJsonObj.getInt(KEY_ITEM_ID);
+        examID = introJsonObj.getInt(KEY_EXAM_ID);
+        itemId = introJsonObj.getInt(KEY_ITEM_ID);
         from = paramJsonObj.getString(KEY_FROM);
+        questionType = introJsonObj.getJSONArray(KEY_QUESTION).getJSONObject(0).getString(KEY_QUESTION_TYPE);
     }
 
     /**
@@ -38,14 +44,26 @@ public class AskQuestionAttachment extends CustomAttachment{
      */
     @Override
     protected JSONObject packData() {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject returnJsonObj = new JSONObject();
+        JSONObject paramJsonObj = new JSONObject();
+        JSONObject introJsonObj = new JSONObject();
         try {
-            jsonObject.put(KEY_EXAM_ID , examID);
-            jsonObject.put(KEY_ITEM_ID , itemId);
+            introJsonObj.put(KEY_EXAM_ID , examID);
+            introJsonObj.put(KEY_ITEM_ID , itemId);
+            paramJsonObj.put(KEY_FROM , from);
+
+            JSONObject tempObj = new JSONObject();
+            tempObj.put(KEY_QUESTION_TYPE , questionType);
+            JSONArray tempArray = new JSONArray();
+            tempArray.put(tempObj);
+            introJsonObj.put(KEY_QUESTION , tempArray);
+
+            returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
+            returnJsonObj.put(CustomAttachParser.KEY_PARAM , paramJsonObj);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-        return jsonObject;
+        return returnJsonObj;
     }
 }
