@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.anwser.AnsweringActivity;
+import com.yougy.anwser.ObjectiveAnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -287,7 +288,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                refreshTabBtnState(clickedViewId);
 //                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
-                startActivity(new Intent(this , AnsweringActivity.class));
+                startActivity(new Intent(this , ObjectiveAnsweringActivity.class));
                 break;
 
             case R.id.rl_homework:

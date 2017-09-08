@@ -206,6 +206,8 @@
         <activity android:name="com.yougy.anwser.AnswerResultActivity">
 
         </activity>
+        <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity">
+        </activity>
 
         <!--===================云信相关start===================-->
         <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。
@@ -267,12 +269,9 @@
         <!--AutoLayout中需要使用到的设计图大小-->
         <meta-data
             android:name="design_width"
-            android:value="825" />
+            android:value="960" />
         <meta-data
             android:name="design_height"
-            android:value="1152" />
-        <!--<meta-data android:name="design_width" android:value="1650"/>-->
-        <!--<meta-data android:name="design_height" android:value="2208"/>-->
-
+            android:value="1232" />
     </application>
 </manifest>

@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.inkscreen.LeController;
 import com.inkscreen.utils.NetworkManager;
@@ -16,6 +17,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.anwser.AnsweringActivity;
+import com.yougy.anwser.ObjectiveAnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.rx.RxBus;
@@ -25,8 +27,11 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.AskQuestionAttachment;
+import com.yougy.message.EndQuestionAttachment;
 import com.yougy.message.YXClient;
 import com.zhy.autolayout.config.AutoLayoutConifg;
+import com.zhy.autolayout.utils.L;
+import com.zhy.autolayout.utils.ScreenUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePal;
@@ -145,6 +150,10 @@ public class YougyApplicationManager extends LitePalApplication {
 
             //AutoLayout初始化
             AutoLayoutConifg.getInstance().init(this);
+            int[] screenSize = ScreenUtils.getScreenSize(context, false);
+            int mScreenWidth = screenSize[0];
+            int mScreenHeight = screenSize[1];
+            Log.v("FH" , " screenWidth =" + mScreenWidth + " ,screenHeight = " + mScreenHeight);
 
             //注册屏幕开锁广播接收器,每次开锁的时候回跳到本地锁.
             //本广播只会在应用程序启动后注册,未启动应用时,不能检测到开屏广播
@@ -171,11 +180,25 @@ public class YougyApplicationManager extends LitePalApplication {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment){
-                        Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
-                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
-                        newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
-                        startActivity(newIntent);
+                        if (((AskQuestionAttachment) message.getAttachment()).questionType.equals("选择")){
+                            Intent newIntent = new Intent(getApplicationContext() , ObjectiveAnsweringActivity.class);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                            newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
+                            newIntent.putExtra("examId" , ((AskQuestionAttachment) message.getAttachment()).examID);
+                            startActivity(newIntent);
+                        }
+                        else {
+                            Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                            newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
+                            newIntent.putExtra("examId" , ((AskQuestionAttachment) message.getAttachment()).examID);
+                            startActivity(newIntent);
+                        }
+                    }
+                    else if (message.getAttachment() instanceof EndQuestionAttachment){
+                        rxBus.send(message);
                     }
                 }
             });

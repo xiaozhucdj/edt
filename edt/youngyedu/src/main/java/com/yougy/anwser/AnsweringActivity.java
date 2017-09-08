@@ -10,12 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
+import com.yougy.common.utils.UIUtils;
+import com.yougy.message.EndQuestionAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
+import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.NoteBookView2;
 
 import java.io.File;
@@ -24,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 /**
@@ -32,7 +37,7 @@ import rx.functions.Action1;
  * 问答中界面
  */
 
-public class AnsweringActivity extends BaseActivity {
+public class AnsweringActivity extends AnswerBaseActivity {
     ActivityAnsweringBinding binding;
     ParsedQuestionItem parsedQuestionItem;
     private NoteBookView2 mNbvAnswerBoard;
@@ -44,41 +49,86 @@ public class AnsweringActivity extends BaseActivity {
     //当前页，默认从1开始
     private int position = 1;
 
+    String itemId;
+    String fromUserId;
+    int examId;
 
     @Override
     protected void setContentView() {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answering, null, false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_answering, null , false);
+        UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
 
     @Override
     public void init() {
-        Log.v("FH", "AnsweringActivity init " + this.toString());
-        String itemId = getIntent().getStringExtra("itemId");
-        itemId = "73";
-        if (TextUtils.isEmpty(itemId)) {
-            ToastUtil.showToast(this, "item 为空,开始问答失败");
-            Log.v("FH", "item 为空,开始问答失败");
+        Log.v("FH" , "AnsweringActivity init " + this.toString());
+        itemId = getIntent().getStringExtra("itemId");
+//        itemId = "73";
+        if (TextUtils.isEmpty(itemId)){
+            ToastUtil.showToast(this , "item 为空,开始问答失败");
+            Log.v("FH" , "item 为空,开始问答失败");
             finish();
         }
-        String from = getIntent().getStringExtra("from");
-        from = "10000200";
-        if (TextUtils.isEmpty(from)) {
-            ToastUtil.showToast(this, "from userId 为空,开始问答失败");
-            Log.v("FH", "from userId 为空,开始问答失败");
+        fromUserId = getIntent().getStringExtra("from");
+//        from = "10000200";
+        if (TextUtils.isEmpty(fromUserId)){
+            ToastUtil.showToast(this , "from userId 为空,开始问答失败");
+            Log.v("FH" , "from userId 为空,开始问答失败");
             finish();
         }
-        NetWorkManager.queryQuestionItemList(from, null, itemId, null)
+        examId = getIntent().getIntExtra("examId" , -1);
+//        examId = 148;
+        if (examId == -1){
+            ToastUtil.showToast(this , "examId 为空,开始问答失败");
+            Log.v("FH" , "examId 为空,开始问答失败");
+            finish();
+        }
+    }
+
+    @Override
+    protected void initLayout() {
+
+    }
+
+    @Override
+    protected void handleEvent() {
+        super.handleEvent();
+        tapEventEmitter.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        if (o instanceof IMMessage){
+                            if (((IMMessage) o).getAttachment() instanceof EndQuestionAttachment){
+                                if (((EndQuestionAttachment) ((IMMessage) o).getAttachment()).examID == examId){
+                                    new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss(DialogInterface dialog) {
+                                            dialog.dismiss();
+                                            finish();
+                                        }
+                                    }).show();
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void loadData() {
+        NetWorkManager.queryQuestionItemList(fromUserId, null , itemId , null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
-                        Log.v("FH", "call ");
-                        if (parsedQuestionItems != null && parsedQuestionItems.size() > 0) {
+                        Log.v("FH" , "call ");
+                        if (parsedQuestionItems != null && parsedQuestionItems.size() > 0){
                             parsedQuestionItem = parsedQuestionItems.get(0);
                             refreshView();
-                        } else {
-                            ToastUtil.showToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
-                            Log.v("FH", "获取到的题目为空,开始问答失败");
+                        }
+                        else {
+                            ToastUtil.showToast(getApplicationContext() , "获取到的题目为空,开始问答失败");
+                            Log.v("FH" , "获取到的题目为空,开始问答失败");
                             finish();
                         }
                     }
