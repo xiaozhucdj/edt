@@ -33,4 +33,14 @@ public interface ServerApi {
     @DefaultField(keys = {"m"} , values = {"postReplyRequest"})
     Observable<BaseResult<STSbean>> queryReplyRequest(@Field("userId") String userId);
 
+
+    /**
+     *  问答解答(学生图片)
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"} , values = {"postReply"})
+    Observable<BaseResult<Object>> askResultForPic(@Field("userId") String userId, @Field("itemId") String itemId, @Field("examId") String examId, @Field("content") String content);
+
+
 }

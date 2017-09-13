@@ -22,6 +22,7 @@ import com.alibaba.sdk.android.oss.common.auth.OSSFederationCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
+import com.google.gson.Gson;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -66,6 +67,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
     private ArrayList<byte[]> bytesList = new ArrayList<>();
     //当前页，默认从1开始
     private int position = 1;
+    //图片上传成功后，统计上传数据到集合中，方便将该信息提交到服务器
+    private ArrayList<STSResultbean> stsResultbeanArrayList = new ArrayList<>();
 
     String itemId;
     String fromUserId;
@@ -376,8 +379,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     public void back(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
-        ToastUtil.showToast(this,"请完成作答");
-        // TODO: 2017/9/13 这里先保留关闭页面，做测试使用 
+        ToastUtil.showToast(this, "请完成作答");
+        // TODO: 2017/9/13 这里先保留关闭页面，做测试使用
         finish();
     }
 
@@ -500,6 +503,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     String picPath = picPathList.get(i);
                     String picName = picPath.substring(picPath.lastIndexOf("/"));
 
+
                     // 构造上传请求
                     PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
                     try {
@@ -517,6 +521,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         Log.e("HostId", e.getHostId());
                         Log.e("RawMessage", e.getRawMessage());
                     }
+
+                    STSResultbean stsResultbean = new STSResultbean();
+                    stsResultbean.setBucket(stSbean.getBucketName());
+                    stsResultbean.setRemote(stSbean.getPath() + picName);
+                    stsResultbean.setSize(new File(picPath).length());
+                    stsResultbeanArrayList.add(stsResultbean);
 
                 }
 
@@ -548,10 +558,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             loadingProgressDialog = null;
                         }
 
-                        Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
-                        intent.putExtra("question", parsedQuestionItem);
-                        startActivity(intent);
-                        finish();
+
+                        writeInfoToS();
 
                     }
 
@@ -565,6 +573,32 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                     @Override
                     public void onNext(Object o) {
+                    }
+                });
+
+    }
+
+
+    /**
+     * 将上传信息提交给服务器
+     */
+    private void writeInfoToS() {
+
+        String content = new Gson().toJson(stsResultbeanArrayList);
+
+        NetWorkManager.askResultForPic(SpUtil.getUserId() + "", itemId, examId + "", content)
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
+                        intent.putExtra("question", parsedQuestionItem);
+                        startActivity(intent);
+                        finish();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
                     }
                 });
 

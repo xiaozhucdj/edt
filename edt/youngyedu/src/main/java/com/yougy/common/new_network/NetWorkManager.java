@@ -102,7 +102,7 @@ public final class NetWorkManager {
             }
         }
 
-        if (BaseActivity.getForegroundActivity() != null){
+        if (BaseActivity.getForegroundActivity() != null) {
             loadingProgressDialog = new LoadingProgressDialog(BaseActivity.getForegroundActivity());
 //            loadingProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             loadingProgressDialog.show();
@@ -111,20 +111,27 @@ public final class NetWorkManager {
     }
 
 
-    public static Observable<List<ParsedQuestionItem>> queryQuestionItemList(String userId , String bookId
-            , String itemId, Integer cursor){
-        Log.v("FH","!!!!!调用ServerApi查询问答题目列表:queryQuestionItemList");
-        return getInstance().getServerApi().queryTotalQuestionList(userId , bookId , itemId, cursor)
+    public static Observable<List<ParsedQuestionItem>> queryQuestionItemList(String userId, String bookId
+            , String itemId, Integer cursor) {
+        Log.v("FH", "!!!!!调用ServerApi查询问答题目列表:queryQuestionItemList");
+        return getInstance().getServerApi().queryTotalQuestionList(userId, bookId, itemId, cursor)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseQuestion());
     }
 
 
-    public static Observable<STSbean> queryReplyRequest(String userId ){
+    public static Observable<STSbean> queryReplyRequest(String userId) {
         return getInstance().getServerApi().queryReplyRequest(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<Object> askResultForPic(String userId, String itemId, String examId, String content) {
+        return getInstance().getServerApi().askResultForPic(userId, itemId, examId, content)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
 }
