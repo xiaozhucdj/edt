@@ -52,21 +52,21 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
     protected void init() {
         Log.v("FH" , "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
-//        itemId = "115";
+        itemId = "115";
         if (TextUtils.isEmpty(itemId)){
             ToastUtil.showToast(this , "item 为空,开始问答失败");
             Log.v("FH" , "item 为空,开始问答失败");
             finish();
         }
         fromUserId = getIntent().getStringExtra("from");
-//        fromUserId = "10000207";
+        fromUserId = "10000207";
         if (TextUtils.isEmpty(fromUserId)){
             ToastUtil.showToast(this , "from userId 为空,开始问答失败");
             Log.v("FH" , "from userId 为空,开始问答失败");
             finish();
         }
         examId = getIntent().getIntExtra("examId" , -1);
-//        examId = 148;
+        examId = 148;
         if (examId == -1){
             ToastUtil.showToast(this , "examId 为空,开始问答失败");
             Log.v("FH" , "examId 为空,开始问答失败");

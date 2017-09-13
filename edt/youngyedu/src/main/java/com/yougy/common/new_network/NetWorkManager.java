@@ -2,10 +2,9 @@ package com.yougy.common.new_network;
 
 import android.util.Log;
 
-
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
-import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -14,10 +13,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -121,6 +118,13 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseQuestion());
+    }
+
+
+    public static Observable<STSbean> queryReplyRequest(String userId ){
+        return getInstance().getServerApi().queryReplyRequest(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
 }

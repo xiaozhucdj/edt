@@ -137,4 +137,7 @@ dependencies {
 
     compile 'com.badoo.mobile:android-weak-handler:1.1'
 
+
+    compile 'com.aliyun.dpa:oss-android-sdk:2.4.3'
+
 }

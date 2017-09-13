@@ -1,5 +1,6 @@
 package com.yougy.anwser;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -10,17 +11,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientConfiguration;
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSS;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.common.OSSLog;
+import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSFederationCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.api.device.epd.EpdController;
-import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.EndQuestionAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
-import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.NoteBookView2;
+import com.yougy.view.dialog.HintDialog;
+import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,8 +43,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by FH on 2017/3/22.
@@ -53,42 +71,40 @@ public class AnsweringActivity extends AnswerBaseActivity {
     String fromUserId;
     int examId;
 
+    private Bitmap firstResultBitmap;
+
+
     @Override
     protected void setContentView() {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_answering, null , false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answering, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
 
     @Override
     public void init() {
-        Log.v("FH" , "AnsweringActivity init " + this.toString());
+        Log.v("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
-//        itemId = "73";
-        if (TextUtils.isEmpty(itemId)){
-            ToastUtil.showToast(this , "item 为空,开始问答失败");
-            Log.v("FH" , "item 为空,开始问答失败");
+        itemId = "73";
+        if (TextUtils.isEmpty(itemId)) {
+            ToastUtil.showToast(this, "item 为空,开始问答失败");
+            Log.v("FH", "item 为空,开始问答失败");
             finish();
         }
         fromUserId = getIntent().getStringExtra("from");
-//        from = "10000200";
-        if (TextUtils.isEmpty(fromUserId)){
-            ToastUtil.showToast(this , "from userId 为空,开始问答失败");
-            Log.v("FH" , "from userId 为空,开始问答失败");
+        fromUserId = "10000200";
+        if (TextUtils.isEmpty(fromUserId)) {
+            ToastUtil.showToast(this, "from userId 为空,开始问答失败");
+            Log.v("FH", "from userId 为空,开始问答失败");
             finish();
         }
-        examId = getIntent().getIntExtra("examId" , -1);
-//        examId = 148;
-        if (examId == -1){
-            ToastUtil.showToast(this , "examId 为空,开始问答失败");
-            Log.v("FH" , "examId 为空,开始问答失败");
+        examId = getIntent().getIntExtra("examId", -1);
+        examId = 148;
+        if (examId == -1) {
+            ToastUtil.showToast(this, "examId 为空,开始问答失败");
+            Log.v("FH", "examId 为空,开始问答失败");
             finish();
         }
-    }
-
-    @Override
-    protected void initLayout() {
-
     }
 
     @Override
@@ -98,9 +114,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        if (o instanceof IMMessage){
-                            if (((IMMessage) o).getAttachment() instanceof EndQuestionAttachment){
-                                if (((EndQuestionAttachment) ((IMMessage) o).getAttachment()).examID == examId){
+                        if (o instanceof IMMessage) {
+                            if (((IMMessage) o).getAttachment() instanceof EndQuestionAttachment) {
+                                if (((EndQuestionAttachment) ((IMMessage) o).getAttachment()).examID == examId) {
                                     new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
@@ -117,18 +133,17 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     public void loadData() {
-        NetWorkManager.queryQuestionItemList(fromUserId, null , itemId , null)
+        NetWorkManager.queryQuestionItemList(fromUserId, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
-                        Log.v("FH" , "call ");
-                        if (parsedQuestionItems != null && parsedQuestionItems.size() > 0){
+                        Log.v("FH", "call ");
+                        if (parsedQuestionItems != null && parsedQuestionItems.size() > 0) {
                             parsedQuestionItem = parsedQuestionItems.get(0);
                             refreshView();
-                        }
-                        else {
-                            ToastUtil.showToast(getApplicationContext() , "获取到的题目为空,开始问答失败");
-                            Log.v("FH" , "获取到的题目为空,开始问答失败");
+                        } else {
+                            ToastUtil.showToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
+                            Log.v("FH", "获取到的题目为空,开始问答失败");
                             finish();
                         }
                     }
@@ -147,12 +162,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
-
-
-    }
-
-    @Override
-    public void loadData() {
 
 
     }
@@ -178,6 +187,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 3.将上一页，下一页数据从集合中取出，并回复到页面
                 */
 
+                if (position == 1) {
+                    firstResultBitmap = saveScreenBitmap();
+                }
 
                 bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
 
@@ -200,6 +212,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.next_page_btn:
 
+                if (position == 1) {
+                    firstResultBitmap = saveScreenBitmap();
+                    binding.questionContainer.setVisibility(View.VISIBLE);
+                }
                 binding.questionContainer.setVisibility(View.GONE);
                 bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
                 if (position == bytesList.size()) {
@@ -216,6 +232,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                 break;
             case R.id.add_page_btn:
+                if (position == 1) {
+                    firstResultBitmap = saveScreenBitmap();
+                }
                 binding.questionContainer.setVisibility(View.GONE);
 
                 bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
@@ -241,23 +260,104 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                 tmpBytes = bytesList.get(position - 1);
                 mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-
+                if (position == 1) {
+                    binding.questionContainer.setVisibility(View.VISIBLE);
+                }
 
                 break;
             case R.id.cancle_btn:
-                mNbvAnswerBoard.clearAll();
-                ToastUtil.showToast(this, "清理成功");
+//                mNbvAnswerBoard.clearAll();
+//                ToastUtil.showToast(this, "清理成功");
+
                 break;
             case R.id.commit_answer_btn:
-                Intent intent = new Intent(this, AnswerResultActivity.class);
-                intent.putExtra("question", parsedQuestionItem);
-                startActivity(intent);
-                finish();
+                if (position == 1) {
+                    firstResultBitmap = saveScreenBitmap();
+                } else {
+                    bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
+                }
+
+                makePicbyList();
+
+
                 break;
 
 
         }
 
+    }
+
+
+    /**
+     * 保存所有学生答案的图片地址到集合中去
+     */
+    private void makePicbyList() {
+
+
+        Observable.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+
+                String firstFileName = saveBitmapToFile(firstResultBitmap);
+                picPathList.add(firstFileName);
+
+                for (int i = 1; i < bytesList.size(); i++) {
+
+                    byte[] mbyte = bytesList.get(i);
+
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(mbyte, 0, mbyte.length);
+
+                    String filePath = saveBitmapToFile(bitmap);
+                    picPathList.add(filePath);
+
+                }
+
+
+                subscriber.onNext(new Object());//将执行结果返回
+                subscriber.onCompleted();//结束异步任务
+            }
+        })
+                .subscribeOn(Schedulers.io())//异步任务在IO线程执行
+                .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
+                .subscribe(new Subscriber<Object>() {
+                    LoadingProgressDialog loadingProgressDialog;
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        if (loadingProgressDialog == null) {
+                            loadingProgressDialog = new LoadingProgressDialog(AnsweringActivity.this);
+                            loadingProgressDialog.show();
+                            loadingProgressDialog.setTitle("答案生成中...");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                        ToastUtil.showToast(AnsweringActivity.this, "答案生成完毕");
+                        getUpLoadInfo();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                    }
+                });
+
+
+        ToastUtil.showToast(this, "保存完毕");
     }
 
 
@@ -275,6 +375,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     public void back(View view) {
+        EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        ToastUtil.showToast(this,"请完成作答");
+        // TODO: 2017/9/13 这里先保留关闭页面，做测试使用 
         finish();
     }
 
@@ -286,16 +389,31 @@ public class AnsweringActivity extends AnswerBaseActivity {
         binding.rlAnswer.setDrawingCacheEnabled(false);
         if (tBitmap != null) {
 //            ivResult.setImageBitmap(tBitmap);
-            saveBitmapToFile(tBitmap, fileName);
+            saveBitmapToFile(tBitmap);
             Toast.makeText(this, "获取成功", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "获取失败", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private Bitmap saveScreenBitmap() {
+        binding.rlAnswer.setDrawingCacheEnabled(true);
+        Bitmap tBitmap = binding.rlAnswer.getDrawingCache();
+        // 拷贝图片，否则在setDrawingCacheEnabled(false)以后该图片会被释放掉
+        tBitmap = tBitmap.createBitmap(tBitmap);
+        binding.rlAnswer.setDrawingCacheEnabled(false);
+        return tBitmap;
+    }
 
-    public void saveBitmapToFile(Bitmap bitmap, String bitName) {
-        File f = new File("/sdcard/" + bitName + ".png");
+
+    public String saveBitmapToFile(Bitmap bitmap) {
+
+        String fileDir = FileUtils.getAppFilesDir() + "/answer_result";
+        FileUtils.createDirs(fileDir);
+
+
+        String bitName = System.currentTimeMillis() + "";
+        File f = new File(fileDir, bitName + ".png");
         FileOutputStream fOut = null;
         try {
             f.createNewFile();
@@ -315,6 +433,141 @@ public class AnsweringActivity extends AnswerBaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return f.getAbsolutePath();
+    }
+
+
+    /**
+     * 获取oss上传所需信息
+     */
+    private void getUpLoadInfo() {
+        NetWorkManager.queryReplyRequest(SpUtil.getUserId() + "")
+                .subscribe(new Action1<STSbean>() {
+                    @Override
+                    public void call(STSbean stSbean) {
+                        Log.v("FH", "call ");
+                        if (stSbean != null) {
+                            upLoadPic(stSbean);
+                        } else {
+                            ToastUtil.showToast(getApplicationContext(), "获取上传信息失败");
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
+
+    }
+
+
+    /**
+     * 上传图片，使用同步方法上传
+     *
+     * @param stSbean
+     */
+    public void upLoadPic(STSbean stSbean) {
+
+
+        String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
+
+
+        OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {
+            @Override
+            public OSSFederationToken getFederationToken() {
+                return new OSSFederationToken(stSbean.getAccessKeyId(), stSbean.getAccessKeySecret(), stSbean.getSecurityToken(), stSbean.getExpiration());
+            }
+        };
+
+
+        //该配置类如果不设置，会有默认配置，具体可看该类
+        ClientConfiguration conf = new ClientConfiguration();
+        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
+        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
+        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
+        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+        OSSLog.enableLog();
+        OSS oss = new OSSClient(YougyApplicationManager.getContext(), endpoint, credentialProvider, conf);
+
+
+        Observable.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+
+                for (int i = 0; i < picPathList.size(); i++) {
+
+                    String picPath = picPathList.get(i);
+                    String picName = picPath.substring(picPath.lastIndexOf("/"));
+
+                    // 构造上传请求
+                    PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                    try {
+                        PutObjectResult putResult = oss.putObject(put);
+                        Log.d("PutObject", "UploadSuccess");
+                        Log.d("ETag", putResult.getETag());
+                        Log.d("RequestId", putResult.getRequestId());
+                    } catch (ClientException e) {
+                        // 本地异常如网络异常等
+                        e.printStackTrace();
+                    } catch (ServiceException e) {
+                        // 服务异常
+                        Log.e("RequestId", e.getRequestId());
+                        Log.e("ErrorCode", e.getErrorCode());
+                        Log.e("HostId", e.getHostId());
+                        Log.e("RawMessage", e.getRawMessage());
+                    }
+
+                }
+
+
+                subscriber.onNext(new Object());//将执行结果返回
+                subscriber.onCompleted();//结束异步任务
+            }
+        })
+                .subscribeOn(Schedulers.io())//异步任务在IO线程执行
+                .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
+                .subscribe(new Subscriber<Object>() {
+                    LoadingProgressDialog loadingProgressDialog;
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        if (loadingProgressDialog == null) {
+                            loadingProgressDialog = new LoadingProgressDialog(AnsweringActivity.this);
+                            loadingProgressDialog.show();
+                            loadingProgressDialog.setTitle("答案上传中...");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+
+                        Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
+                        intent.putExtra("question", parsedQuestionItem);
+                        startActivity(intent);
+                        finish();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                    }
+                });
+
     }
 
 }

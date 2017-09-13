@@ -2,6 +2,7 @@ package com.yougy.common.new_network;
 
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
+import com.yougy.anwser.STSbean;
 
 import java.util.List;
 
@@ -24,5 +25,12 @@ public interface ServerApi {
     @DefaultField(keys = {"m"} , values = {"queryItem"})
     Observable<BaseResult<List<OriginQuestionItem>>> queryTotalQuestionList(@Field("userId") String userId
             , @Field("bookId") String bookId , @Field("itemId") String itemId, @Field("cursor") Integer cursor);
+/**
+     *  问题解答上传oss
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"} , values = {"postReplyRequest"})
+    Observable<BaseResult<STSbean>> queryReplyRequest(@Field("userId") String userId);
 
 }
