@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -41,6 +43,8 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
     String itemId;
     String fromUserId;
     int examId;
+    long startTimeMill;
+    private TimedTask timedTask;
     ArrayList<String> checkedAnswerList = new ArrayList<String>();
 
     @Override
@@ -53,26 +57,27 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
     protected void init() {
         Log.v("FH" , "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
-        itemId = "115";
+//        itemId = "115";
         if (TextUtils.isEmpty(itemId)){
             ToastUtil.showToast(this , "item 为空,开始问答失败");
             Log.v("FH" , "item 为空,开始问答失败");
             finish();
         }
         fromUserId = getIntent().getStringExtra("from");
-        fromUserId = "10000207";
+//        fromUserId = "10000207";
         if (TextUtils.isEmpty(fromUserId)){
             ToastUtil.showToast(this , "from userId 为空,开始问答失败");
             Log.v("FH" , "from userId 为空,开始问答失败");
             finish();
         }
         examId = getIntent().getIntExtra("examId" , -1);
-        examId = 148;
+//        examId = 148;
         if (examId == -1){
             ToastUtil.showToast(this , "examId 为空,开始问答失败");
             Log.v("FH" , "examId 为空,开始问答失败");
             finish();
         }
+        startTimeMill = System.currentTimeMillis();
     }
 
     @Override
@@ -85,6 +90,7 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
                         if (o instanceof IMMessage){
                             if (((IMMessage) o).getAttachment() instanceof EndQuestionAttachment){
                                 if (((EndQuestionAttachment) ((IMMessage) o).getAttachment()).examID == examId){
+                                    timedTask.stop();
                                     new HintDialog(ObjectiveAnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
@@ -132,6 +138,7 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
                 ((AnswerItemHolder) vh).reverseCheckbox();
             }
         });
+        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(System.currentTimeMillis(), "yyyy-MM-dd HH:mm"));
     }
 
     @Override
@@ -165,6 +172,7 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
                         throwable.printStackTrace();
                     }
                 });
+        startClock();
     }
 
     @Override
@@ -188,11 +196,62 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
         binding.answerContainer.getAdapter().notifyDataSetChanged();
     }
 
+    private void startClock() {
+        timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+                .start(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer times) {
+                        refreshTime();
+                    }
+                });
+    }
+
+    private void refreshTime() {
+        long spentTimeMill = System.currentTimeMillis() - startTimeMill;
+        binding.spendTimeTv.setText("已用时间 : " + DateUtils.converLongTimeToString(spentTimeMill));
+    }
+
+
     public void commitAnswer(View view){
-        Intent intent = new Intent(this , AnswerResultActivity.class);
-        intent.putExtra("question" , parsedQuestionItem);
-        startActivity(intent);
-        finish();
+        String content;
+        if (checkedAnswerList.size() == 0){
+            ToastUtil.showToast(getApplicationContext() , "您还没有选择答案");
+            return;
+        }
+        else if (checkedAnswerList.size() == 1){
+            content = checkedAnswerList.get(0);
+        }
+        else {
+            content = "[";
+            for (int i = 0 ; i < checkedAnswerList.size() ; i++){
+                content = content + "\"" + checkedAnswerList.get(i) + "\"";
+                if ((i+1) != checkedAnswerList.size()){
+                    content = content + ",";
+                }
+                else {
+                    content = content + "]";
+                }
+            }
+        }
+        NetWorkManager.postReply(SpUtil.getUserId()+"" , itemId , examId+"" , content , DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        timedTask.stop();
+                        ToastUtil.showToast(getApplicationContext() , "提交成功");
+                        Intent intent = new Intent(ObjectiveAnsweringActivity.this , AnswerResultActivity.class);
+                        intent.putExtra("question" , parsedQuestionItem);
+                        startActivity(intent);
+                        finish();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        Log.v("FH" , "提交失败 " + throwable.getMessage());
+                        ToastUtil.showToast(getApplicationContext() , "提交失败 " + throwable.getMessage());
+                    }
+                });
     }
     public void startAnswer(View view){
         binding.startAnswerBtn.setVisibility(View.GONE);

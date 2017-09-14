@@ -6,7 +6,7 @@ package com.yougy.anwser;
 
 public class STSResultbean {
 
-    private String version = "0.1";
+    private double version = 0.1;
     private long size;
     private String bucket;
     private String format = "ATCH/PNG";

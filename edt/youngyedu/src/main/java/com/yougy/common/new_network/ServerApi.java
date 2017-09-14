@@ -41,7 +41,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"} , values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
-            , @Field("examId") String examId, @Field("content") String content);
+            , @Field("examId") String examId, @Field("content") String content , @Field("replyUseTime") String replyUseTime);
 
     /**
      *  按userId查询云信token

@@ -27,6 +27,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
@@ -61,6 +62,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
     ParsedQuestionItem parsedQuestionItem;
     private NoteBookView2 mNbvAnswerBoard;
 
+    long startTimeMill;
+    private TimedTask timedTask;
+
     //图片地址的集合（用来保存截图生长的图片路径）
     private ArrayList<String> picPathList = new ArrayList<>();
     //byte数组集合，（用来保存每一页书写的笔记数据）
@@ -88,26 +92,27 @@ public class AnsweringActivity extends AnswerBaseActivity {
     public void init() {
         Log.v("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
-        itemId = "73";
+//        itemId = "73";
         if (TextUtils.isEmpty(itemId)) {
             ToastUtil.showToast(this, "item 为空,开始问答失败");
             Log.v("FH", "item 为空,开始问答失败");
             finish();
         }
         fromUserId = getIntent().getStringExtra("from");
-        fromUserId = "10000200";
+//        fromUserId = "10000200";
         if (TextUtils.isEmpty(fromUserId)) {
             ToastUtil.showToast(this, "from userId 为空,开始问答失败");
             Log.v("FH", "from userId 为空,开始问答失败");
             finish();
         }
         examId = getIntent().getIntExtra("examId", -1);
-        examId = 148;
+//        examId = 148;
         if (examId == -1) {
             ToastUtil.showToast(this, "examId 为空,开始问答失败");
             Log.v("FH", "examId 为空,开始问答失败");
             finish();
         }
+        startTimeMill = System.currentTimeMillis();
     }
 
     @Override
@@ -123,6 +128,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
+                                            timedTask.stop();
                                             dialog.dismiss();
                                             finish();
                                         }
@@ -156,12 +162,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         throwable.printStackTrace();
                     }
                 });
-
+        startClock();
     }
 
     @Override
     protected void initLayout() {
-
+        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(System.currentTimeMillis(), "yyyy-MM-dd HH:mm"));
 
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
@@ -377,6 +383,22 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
     }
 
+
+    private void startClock() {
+        timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+                .start(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer times) {
+                        refreshTime();
+                    }
+                });
+    }
+
+    private void refreshTime() {
+        long spentTimeMill = System.currentTimeMillis() - startTimeMill;
+        binding.spendTimeTv.setText("已用时间 : " + DateUtils.converLongTimeToString(spentTimeMill));
+    }
+
     public void back(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         ToastUtil.showToast(this, "请完成作答");
@@ -586,10 +608,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
         String content = new Gson().toJson(stsResultbeanArrayList);
 
-        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", content)
+        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", content , DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
+                        timedTask.stop();
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", parsedQuestionItem);
                         startActivity(intent);

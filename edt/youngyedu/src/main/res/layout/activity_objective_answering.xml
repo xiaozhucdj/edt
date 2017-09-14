@@ -74,7 +74,7 @@
                 />
             <!--已用时间-->
             <TextView
-                android:id="@+id/pxend_time_tv"
+                android:id="@+id/spend_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30px"

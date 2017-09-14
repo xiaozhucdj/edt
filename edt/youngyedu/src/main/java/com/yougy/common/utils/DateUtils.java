@@ -529,5 +529,15 @@ public class DateUtils {
 		}
 	}
 
+	/**
+	 * 转换时间戳至指定格式的时间字符串
+	 * @param timeMillis 毫秒为单位的时间戳
+	 * @param pattern 输出的时间字符串的格式,如果为null,则按照yyyy-MM-dd HH:mm:ss的格式输出.
+	 * @return 输出的时间字符串
+	 */
+	public static String convertTimeMillisToStr(long timeMillis , String pattern){
+		SimpleDateFormat format = new SimpleDateFormat(pattern == null ? "yyyy-MM-dd HH:mm:ss" : pattern);
+		return format.format(new Date(timeMillis));
+	}
 
 }
