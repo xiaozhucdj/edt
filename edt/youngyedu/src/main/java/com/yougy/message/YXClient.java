@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.netease.nimlib.sdk.AbortableFuture;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
@@ -46,6 +47,7 @@ import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -616,24 +618,53 @@ public class YXClient {
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
     public void getTokenAndLogin(final String account , final RequestCallbackWrapper callback){
-        Observable
-                .create(new Observable.OnSubscribe<String>() {
-                    @Override
-                    public void call(Subscriber<? super String> subscriber) {
-                        //TODO 从我方服务器上拉取最新的account对应的token,接口暂时未实现,使用假数据
-                        subscriber.onNext(String.valueOf(SpUtil.getUserId()));
+        if (account.equals("10000200") || account.equals("10000201") || account.equals("1000001714")){
+            NetWorkManager.queryToken(account).subscribe(new Action1<Object>() {
+                @Override
+                public void call(Object o) {
+                    try {
+                        List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
+                        String token = (String) result.get(0).get("token");
+                        login(account , token , callback);
                     }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String token) {
-                        if (!TextUtils.isEmpty(token)){
-                            login(account , token , callback);
+                    catch (Exception e){
+                        e.printStackTrace();
+                        if (callback != null){
+                            callback.onException(e);
                         }
                     }
-                });
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    throwable.printStackTrace();
+                    Log.v("FH" , "获取token失败 : " + throwable.getMessage());
+                    if (callback != null){
+                        callback.onException(throwable);
+                    }
+                }
+            });
+        }
+        else {
+            Observable
+                    .create(new Observable.OnSubscribe<String>() {
+                        @Override
+                        public void call(Subscriber<? super String> subscriber) {
+                            //TODO 从我方服务器上拉取最新的account对应的token,接口暂时未实现,使用假数据
+                            subscriber.onNext(SpUtil.getUserId() + "");
+                        }
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<String>() {
+                        @Override
+                        public void call(String token) {
+                            if (!TextUtils.isEmpty(token)){
+                                login(account , token , callback);
+                            }
+                        }
+                    });
+        }
     }
 
     /**

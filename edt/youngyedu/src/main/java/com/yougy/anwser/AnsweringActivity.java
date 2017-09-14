@@ -586,7 +586,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
         String content = new Gson().toJson(stsResultbeanArrayList);
 
-        NetWorkManager.askResultForPic(SpUtil.getUserId() + "", itemId, examId + "", content)
+        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", content)
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {

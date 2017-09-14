@@ -32,6 +32,7 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/9/7.
+ * 选择题答题界面
  */
 
 public class ObjectiveAnsweringActivity extends AnswerBaseActivity{

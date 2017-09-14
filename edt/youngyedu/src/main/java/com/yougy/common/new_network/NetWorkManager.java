@@ -127,11 +127,17 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> askResultForPic(String userId, String itemId, String examId, String content) {
-        return getInstance().getServerApi().askResultForPic(userId, itemId, examId, content)
+    public static Observable<Object> postReply(String userId, String itemId, String examId, String content) {
+        return getInstance().getServerApi().postReply(userId, itemId, examId, content)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<Object> queryToken(String userId){
+        Log.v("FH","!!!!!调用ServerApi查询云信对应token:queryToken");
+        return getInstance().getServerApi().queryToken(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
 }

@@ -35,12 +35,20 @@ public interface ServerApi {
 
 
     /**
-     *  问答解答(学生图片)
+     *  问答解答
      */
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"} , values = {"postReply"})
-    Observable<BaseResult<Object>> askResultForPic(@Field("userId") String userId, @Field("itemId") String itemId, @Field("examId") String examId, @Field("content") String content);
+    Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
+            , @Field("examId") String examId, @Field("content") String content);
 
+    /**
+     *  按userId查询云信token
+     */
+    @FormUrlEncoded
+    @POST("netease")
+    @DefaultField(keys = {"m"} , values = {"queryToken"})
+    Observable<BaseResult<Object>> queryToken(@Field("userId") String userId);
 
 }
