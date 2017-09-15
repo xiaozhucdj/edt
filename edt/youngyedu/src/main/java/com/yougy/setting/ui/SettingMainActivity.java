@@ -24,6 +24,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
 import com.yougy.message.GlideCircleTransform;
+import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivitySettingBinding;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -82,6 +83,7 @@ public class SettingMainActivity extends BaseActivity {
                         startService(intent);
                         SpUtil.clearSP();
                         showCenterDetermineDialog(R.string.unbind_success);
+                        YXClient.getInstance().logout();
                     } else {
                         LogUtils.i("unbind fail ..." + getString(R.string.unbind_success) + ((NewUnBindDeviceRep) o).getMsg());
                         showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
