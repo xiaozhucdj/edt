@@ -618,7 +618,6 @@ public class YXClient {
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
     public void getTokenAndLogin(final String account , final RequestCallbackWrapper callback){
-        if (account.equals("10000200") || account.equals("10000201") || account.equals("1000001714")){
             NetWorkManager.queryToken(account).subscribe(new Action1<Object>() {
                 @Override
                 public void call(Object o) {
@@ -644,27 +643,26 @@ public class YXClient {
                     }
                 }
             });
-        }
-        else {
-            Observable
-                    .create(new Observable.OnSubscribe<String>() {
-                        @Override
-                        public void call(Subscriber<? super String> subscriber) {
-                            //TODO 从我方服务器上拉取最新的account对应的token,接口暂时未实现,使用假数据
-                            subscriber.onNext(SpUtil.getUserId() + "");
-                        }
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<String>() {
-                        @Override
-                        public void call(String token) {
-                            if (!TextUtils.isEmpty(token)){
-                                login(account , token , callback);
-                            }
-                        }
-                    });
-        }
+//        else {
+//            Observable
+//                    .create(new Observable.OnSubscribe<String>() {
+//                        @Override
+//                        public void call(Subscriber<? super String> subscriber) {
+//                            //TODO 从我方服务器上拉取最新的account对应的token,接口暂时未实现,使用假数据
+//                            subscriber.onNext(SpUtil.getUserId() + "");
+//                        }
+//                    })
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Action1<String>() {
+//                        @Override
+//                        public void call(String token) {
+//                            if (!TextUtils.isEmpty(token)){
+//                                login(account , token , callback);
+//                            }
+//                        }
+//                    });
+//        }
     }
 
     /**
