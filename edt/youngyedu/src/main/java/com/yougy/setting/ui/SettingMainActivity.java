@@ -72,7 +72,6 @@ public class SettingMainActivity extends BaseActivity {
         tapEventEmitter = null;
     }
 
-
     protected void handleEvent() {
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
@@ -85,7 +84,7 @@ public class SettingMainActivity extends BaseActivity {
                         showCenterDetermineDialog(R.string.unbind_success);
                         YXClient.getInstance().logout();
                     } else {
-                        LogUtils.i("unbind fail ..." + getString(R.string.unbind_success) + ((NewUnBindDeviceRep) o).getMsg());
+                        LogUtils.i("unbind fail ..." + getString(R.string.unbind_fail) + ((NewUnBindDeviceRep) o).getMsg());
                         showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
                     }
                 }

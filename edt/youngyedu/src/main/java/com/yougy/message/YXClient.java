@@ -689,10 +689,6 @@ public class YXClient {
         NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , false);
         NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , false);
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , false);
-        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , false);
-        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, false);
-        NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver , false);
-        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver , false);
 
         recentContactList.clear();
         userInfoMap.clear();
