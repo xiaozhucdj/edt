@@ -67,7 +67,7 @@ public class OriginQuestionItem {
             ParsedQuestionItem.Question question = null;
             for (LinkedTreeMap questionContentTreeMap : questionContentTreeMapList) {
                 String format = (String) questionContentTreeMap.get("format");
-                if (format.equals("ATCH/???") || format.equals("ATCH/HTM")){
+                if (format.startsWith("ATCH/")){
                     if (questionContentTreeMap.get("remote") != null
                             && !TextUtils.isEmpty((String)questionContentTreeMap.get("remote"))){
                         String questionUrl = "http://question.learningpad.cn/" + questionContentTreeMap.get("remote");
@@ -110,7 +110,7 @@ public class OriginQuestionItem {
             List<LinkedTreeMap> answerContentTreeMapList = (List<LinkedTreeMap>) answerLinkedTreeMap.get("answerContent");
             for (LinkedTreeMap answerContentTreeMap : answerContentTreeMapList) {
                 String format = (String) answerContentTreeMap.get("format");
-                if (format.equals("ATCH/???") || format.equals("ATCH/HTM")) {
+                if (format.startsWith("ATCH/")) {
                     if (answerContentTreeMap.get("remote") != null
                             && !TextUtils.isEmpty((String)answerContentTreeMap.get("remote"))){
                         String answerUrl = "http://question.learningpad.cn/" + answerContentTreeMap.get("remote");
@@ -168,7 +168,7 @@ public class OriginQuestionItem {
                 List<LinkedTreeMap> notationContentTreeMapList = (List<LinkedTreeMap>) notationLinkedTreeMap.get("notationContent");
                 for (LinkedTreeMap notationContentTreeMap : notationContentTreeMapList) {
                     String notationFormat = (String) notationContentTreeMap.get("format");
-                    if (notationFormat.equals("ATCH/???") || notationFormat.equals("ATCH/HTM")) {
+                    if (notationFormat.startsWith("ATCH/")) {
                         if (notationContentTreeMap.get("remote") != null
                                 && !TextUtils.isEmpty((String)notationContentTreeMap.get("remote"))){
                             String analysisUrl = "http://question.learningpad.cn/" + notationContentTreeMap.get("remote");
