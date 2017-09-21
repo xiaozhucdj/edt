@@ -207,13 +207,6 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
-                if (binding.messageEdittext.getText() != null && binding.messageEdittext.getText().toString().equals("q")){
-                    YXClient.getInstance().sendQuestion(id , type , "fuck");
-                    return;
-                }
-
-
-
                 IMMessage message = YXClient.getInstance().sendTextMessage(id ,
                         type , binding.messageEdittext.getText().toString() , ChattingActivity.this);
                 if (message != null) {
@@ -297,13 +290,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 chattingItembinding.rightMessageBodyLayout.setVisibility(View.VISIBLE);
                 chattingItembinding.rightMessageStatusTv.setVisibility(View.VISIBLE);
                 //显示头像
-                String myavatarPath = YXClient.getInstance().getUserAvatarByID(imMessage.getFromAccount());
-                Glide.with(ChattingActivity.this)
-                        .load(myavatarPath)
-                        .placeholder(R.drawable.icon_wenda)
-                        .transform(new GlideCircleTransform(ChattingActivity.this))
-                        .into(chattingItembinding.rightAvatarImv);
-
+                chattingItembinding.rightAvatarImv.setImageResource(R.drawable.icon_student_medium);
                 switch (imMessage.getStatus()){
                     case sending:
                         chattingItembinding.rightMessageStatusTv.setText("正在发送...");
@@ -318,7 +305,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                                     chattingItembinding.rightMessageStatusTv.setText("正在传送附件...");
                                     break;
                                 case transferred:
-                                    chattingItembinding.rightMessageStatusTv.setText("发送成功");
+//                                    chattingItembinding.rightMessageStatusTv.setText("发送成功");
+                                    chattingItembinding.rightMessageStatusTv.setText("");
                                     break;
                                 case fail:
                                     chattingItembinding.rightMessageStatusTv.setText("附件传送失败");
@@ -326,7 +314,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                             }
                         }
                         else {
-                            chattingItembinding.rightMessageStatusTv.setText("发送成功");
+//                                    chattingItembinding.rightMessageStatusTv.setText("发送成功");
+                            chattingItembinding.rightMessageStatusTv.setText("");
                         }
                         break;
                     case fail:
@@ -385,12 +374,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 chattingItembinding.rightMessageBodyLayout.setVisibility(View.GONE);
                 chattingItembinding.rightMessageStatusTv.setVisibility(View.GONE);
                 //显示头像
-                String myavatarPath = YXClient.getInstance().getUserAvatarByID(imMessage.getFromAccount());
-                Glide.with(ChattingActivity.this)
-                        .load(myavatarPath)
-                        .placeholder(R.drawable.icon_wenda)
-                        .transform(new GlideCircleTransform(ChattingActivity.this))
-                        .into(chattingItembinding.leftAvatarImv);
+                chattingItembinding.leftAvatarImv.setImageResource(R.drawable.icon_teacher_medium);
                 switch (imMessage.getStatus()){
                     case sending:
                         chattingItembinding.leftMessageStatusTv.setText("正在接收...");
@@ -405,7 +389,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                                     chattingItembinding.leftMessageStatusTv.setText("正在接收附件...");
                                     break;
                                 case transferred:
-                                    chattingItembinding.leftMessageStatusTv.setText("接收成功");
+//                                    chattingItembinding.leftMessageStatusTv.setText("接收成功");
+                                    chattingItembinding.leftMessageStatusTv.setText("");
                                     break;
                                 case fail:
                                     chattingItembinding.leftMessageStatusTv.setText("附件接收失败");
@@ -413,7 +398,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                             }
                         }
                         else {
-                            chattingItembinding.leftMessageStatusTv.setText("接收成功");
+//                                    chattingItembinding.leftMessageStatusTv.setText("接收成功");
+                            chattingItembinding.leftMessageStatusTv.setText("");
                         }
                         break;
                     case fail:
@@ -482,7 +468,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
      * @return
      */
     private boolean shouldShowTime(IMMessage thisMessage , IMMessage lastMessage){
-        final long TIME_INTERVAL = 1000*60*5;//5min
+        final long TIME_INTERVAL = 1000*60*2;//2min
         if (lastMessage != null && thisMessage.getTime() - lastMessage.getTime() < TIME_INTERVAL){
             return false;
         }

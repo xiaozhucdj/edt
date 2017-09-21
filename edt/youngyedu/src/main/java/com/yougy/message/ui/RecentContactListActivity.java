@@ -159,22 +159,14 @@ public class RecentContactListActivity extends MessageBaseActivity {
             }
             switch (contact.getSessionType()){
                 case P2P:
-                    Glide.with(RecentContactListActivity.this)
-                            .load(YXClient.getInstance().getUserAvatarByID(contact.getContactId()))
-                            .placeholder(R.drawable.icon_wenda)
-                            .transform(new GlideCircleTransform(RecentContactListActivity.this))
-                            .into(binding.avatarImv);
                     String userName = YXClient.getInstance().getUserNameByID(contact.getContactId());
                     binding.contactNameTv.setText(TextUtils.isEmpty(userName) ? contact.getContactId() : userName);
+                    binding.avatarImv.setImageResource(R.drawable.icon_teacher_medium);
                     break;
                 case Team:
-                    Glide.with(RecentContactListActivity.this)
-                            .load("")
-                            .placeholder(R.drawable.icon_wenda)
-                            .transform(new GlideCircleTransform(RecentContactListActivity.this))
-                            .into(binding.avatarImv);
                     String teamName = YXClient.getInstance().getTeamNameByID(contact.getContactId());
                     binding.contactNameTv.setText(TextUtils.isEmpty(teamName) ? contact.getContactId() : teamName);
+                    binding.avatarImv.setImageResource(R.drawable.icon_group_medium);
                     break;
             }
             return convertView;

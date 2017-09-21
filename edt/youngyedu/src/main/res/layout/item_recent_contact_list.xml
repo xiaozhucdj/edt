@@ -16,6 +16,7 @@
             android:layout_width="76px"
             android:layout_height="76px"
             android:layout_marginTop="15px"
+
             />
         <TextView
             android:id="@+id/date_tv"

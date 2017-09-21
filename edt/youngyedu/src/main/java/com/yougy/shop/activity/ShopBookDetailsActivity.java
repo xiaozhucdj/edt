@@ -3,6 +3,7 @@ package com.yougy.shop.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -396,7 +397,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             //购买按钮价格
                             mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                             //图书详情
-                            mTvBookDetails.setText(mBookInfo.getBookSummary());
+                            if (TextUtils.isEmpty(mBookInfo.getBookSummary())){
+                                mTvBookDetails.setText("");
+                            }
+                            else {
+                                mTvBookDetails.setText(Html.fromHtml(mBookInfo.getBookSummary()));
+                            }
                             //在线试读是否可点
                             if (TextUtils.isEmpty(mBookInfo.getBookPreview())) {
                                 mBtnRead.setEnabled(false);

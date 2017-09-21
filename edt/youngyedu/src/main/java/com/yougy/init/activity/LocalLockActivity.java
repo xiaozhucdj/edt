@@ -51,11 +51,6 @@ public class LocalLockActivity extends BaseActivity {
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
         binding.numTv.setText("班级 : " + student.getUserNum());
-        Glide.with(this)
-                .load("")
-                .placeholder(R.drawable.camera)
-                .transform(new GlideCircleTransform(this))
-                .into(binding.avatarImv);
     }
 
     @Override

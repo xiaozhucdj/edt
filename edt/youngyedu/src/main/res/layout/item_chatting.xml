@@ -18,8 +18,8 @@
         <!--左头像-->
         <ImageView
             android:id="@+id/left_avatar_imv"
-            android:layout_width="78px"
-            android:layout_height="78px"
+            android:layout_width="76px"
+            android:layout_height="76px"
             android:layout_below="@id/time_tv"
             android:layout_marginTop="30px"
             />
@@ -106,8 +106,8 @@
         <!--右头像-->
         <ImageView
             android:id="@+id/right_avatar_imv"
-            android:layout_width="78px"
-            android:layout_height="78px"
+            android:layout_width="76px"
+            android:layout_height="76px"
             android:layout_alignParentRight="true"
             android:layout_below="@id/time_tv"
             android:layout_marginTop="30px"

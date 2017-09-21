@@ -2,6 +2,8 @@ package com.yougy.shop.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +64,12 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             ImageLoaderManager.getInstance().loadImageActivity((Activity) mBookImg.getContext(),info.getBookCover(),R.drawable.img_book_cover,mBookImg);
             mBookName.setText(info.getBookTitle());
             mBookAuthor.setText(info.getBookAuthor());
-            mBookIntro.setText(info.getBookSummary());
+            if (TextUtils.isEmpty(info.getBookSummary())){
+                mBookIntro.setText("");
+            }
+            else {
+                mBookIntro.setText(Html.fromHtml(info.getBookSummary()));
+            }
         }
 
         public static SearchResultHolder create(ViewGroup parent) {

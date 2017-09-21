@@ -246,12 +246,7 @@ public class ContactListActivity extends MessageBaseActivity{
             }
             ItemContactListBinding binding = (ItemContactListBinding) convertView.getTag();
             binding.memberNameTv.setText(YXClient.getInstance().getUserNameByID(idList.get(position)));
-            String myavatarPath = YXClient.getInstance().getUserAvatarByID(idList.get(position));
-            Glide.with(ContactListActivity.this)
-                    .load(myavatarPath)
-                    .placeholder(R.drawable.icon_wenda)
-                    .transform(new GlideCircleTransform(ContactListActivity.this))
-                    .into(binding.avatarImv);
+            binding.avatarImv.setImageResource(R.drawable.icon_teacher_medium);
             boolean hasChoosed = ListUtil.conditionalContains(hasChoosedIdList, new ListUtil.ConditionJudger<String>() {
                 @Override
                 public boolean isMatchCondition(String nodeInList) {
