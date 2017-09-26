@@ -299,10 +299,10 @@
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="47dp"
+                    android:layout_marginTop="48dp"
                     android:background="@null"
                     android:scaleType="fitXY"
-                    android:src="@drawable/img_user_default_icon" />
+                    android:src="@drawable/icon_student_120px" />
 
                 <TextView
                     android:id="@+id/tv_className"
