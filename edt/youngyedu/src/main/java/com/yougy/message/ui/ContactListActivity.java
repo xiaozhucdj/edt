@@ -201,6 +201,7 @@ public class ContactListActivity extends MessageBaseActivity{
 
     private void initMainListview(){
         binding.mainListview.setAdapter(mainAdapter);
+        binding.mainListview.setDividerHeight(2);
         binding.mainListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -244,13 +245,14 @@ public class ContactListActivity extends MessageBaseActivity{
                 convertView = LayoutInflater.from(ContactListActivity.this).inflate(R.layout.item_contact_list, parent , false);
                 convertView.setTag(DataBindingUtil.bind(convertView));
             }
+            String id = idList.get(position);
             ItemContactListBinding binding = (ItemContactListBinding) convertView.getTag();
-            binding.memberNameTv.setText(YXClient.getInstance().getUserNameByID(idList.get(position)));
+            binding.memberNameTv.setText(YXClient.getInstance().getUserNameByID(id));
             binding.avatarImv.setImageResource(R.drawable.icon_teacher_medium);
             boolean hasChoosed = ListUtil.conditionalContains(hasChoosedIdList, new ListUtil.ConditionJudger<String>() {
                 @Override
                 public boolean isMatchCondition(String nodeInList) {
-                    return nodeInList.equals(idList.get(position));
+                    return nodeInList.equals(id);
                 }
             });
             binding.checkbox.setSelected(hasChoosed);

@@ -18,8 +18,8 @@
             android:id="@+id/avatar_imv"
             android:layout_width="76px"
             android:layout_height="76px"
-            android:layout_marginTop="15px"
-            android:layout_marginBottom="15px"
+            android:layout_marginTop="16px"
+            android:layout_marginBottom="16px"
             android:layout_marginLeft="15px"
             />
         <TextView
