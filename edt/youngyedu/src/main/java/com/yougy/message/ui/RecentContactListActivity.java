@@ -71,7 +71,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
 
     public void initListView(){
         binding.currentContactList.setAdapter(adapter);
-        binding.currentContactList.setDividerHeight(1);
+        binding.currentContactList.setDividerHeight(2);
         binding.currentContactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -113,7 +113,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
 
     @Override
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
-        titleTv.setText("我的消息" + SpUtil.getStudent().getUserName());
+        titleTv.setText("我的消息");
         rightBtn.setBackgroundResource(R.drawable.img_contact_list_icon);
         rightBtn.setText("");
         rightBtn.getLayoutParams().width = 28;

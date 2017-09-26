@@ -50,7 +50,7 @@ public class LocalLockActivity extends BaseActivity {
         binding.nameTv.setText("姓名 : " + student.getUserRealName());
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
-        binding.numTv.setText("班级 : " + student.getUserNum());
+        binding.numTv.setText("编号 : " + student.getUserNum());
     }
 
     @Override
