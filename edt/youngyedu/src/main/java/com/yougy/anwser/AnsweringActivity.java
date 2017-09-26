@@ -292,11 +292,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }
 
                 makePicbyList();
-
-
                 break;
-
-
         }
 
     }
@@ -344,7 +340,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             loadingProgressDialog.show();
                             loadingProgressDialog.setTitle("答案生成中...");
                         }
-
                     }
 
                     @Override
@@ -552,8 +547,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     STSResultbean stsResultbean = new STSResultbean();
                     stsResultbean.setBucket(stSbean.getBucketName());
                     stsResultbean.setRemote(stSbean.getPath() + picName);
-                    stsResultbean.setSize(new File(picPath).length());
+                    File picFile = new File(picPath);
+                    stsResultbean.setSize(picFile.length());
                     stsResultbeanArrayList.add(stsResultbean);
+                    //上传后清理掉本地图片文件
+                    picFile.delete();
 
                 }
 
