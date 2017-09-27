@@ -225,12 +225,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     firstResultBitmap = saveScreenBitmap();
                     binding.questionContainer.setVisibility(View.VISIBLE);
                 }
-                binding.questionContainer.setVisibility(View.GONE);
-                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
                 if (position == bytesList.size()) {
                     ToastUtil.showToast(this, "已经是最后一页了");
                     return;
                 }
+                binding.questionContainer.setVisibility(View.GONE);
+                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
+
                 mNbvAnswerBoard.clearAll();
                 position++;
                 binding.pageNumTv.setText(position + "/" + bytesList.size());
@@ -280,6 +281,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                 break;
             case R.id.commit_answer_btn:
+                if (bytesList.size() == 0) {
+                    ToastUtil.showToast(this, "请作答后再提交");
+                    return;
+                }
                 if (position == 1) {
                     firstResultBitmap = saveScreenBitmap();
                 } else {
@@ -287,11 +292,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }
 
                 makePicbyList();
-
-
                 break;
-
-
         }
 
     }
@@ -339,7 +340,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             loadingProgressDialog.show();
                             loadingProgressDialog.setTitle("答案生成中...");
                         }
-
                     }
 
                     @Override
@@ -547,8 +547,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     STSResultbean stsResultbean = new STSResultbean();
                     stsResultbean.setBucket(stSbean.getBucketName());
                     stsResultbean.setRemote(stSbean.getPath() + picName);
-                    stsResultbean.setSize(new File(picPath).length());
+                    File picFile = new File(picPath);
+                    stsResultbean.setSize(picFile.length());
                     stsResultbeanArrayList.add(stsResultbean);
+                    //上传后清理掉本地图片文件
+                    picFile.delete();
 
                 }
 
@@ -608,7 +611,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
         String content = new Gson().toJson(stsResultbeanArrayList);
 
-        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", content , DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
+        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", content, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
