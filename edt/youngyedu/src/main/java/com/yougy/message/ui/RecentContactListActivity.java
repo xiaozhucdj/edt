@@ -169,6 +169,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
                     binding.avatarImv.setImageResource(R.drawable.icon_group_medium);
                     break;
             }
+            binding.contactNameTv.setText(binding.contactNameTv.getText() + "    未读" + YXClient.getInstance().getUnreadMsgCount(contact.getContactId() , contact.getSessionType()));
             return convertView;
         }
     }

@@ -189,12 +189,14 @@ public class YXClient {
                                 exception.printStackTrace();
                             }
                         });
+                        SpUtil.addUnreadMsgCount(localMessage.getSessionId());
                         for (OnMessageListener listener : onNewMessageListenerList) {
                             listener.onNewMessage(localMessage);
                         }
                     }
                 }
                 else {
+                    SpUtil.addUnreadMsgCount(newMessage.getSessionId());
                     for (OnMessageListener listener : onNewMessageListenerList) {
                         listener.onNewMessage(newMessage);
                     }
@@ -289,7 +291,7 @@ public class YXClient {
             }
             recentContactList.addAll(0 , newRecentContactList);
             for (OnThingsChangedListener<List<RecentContact>> listener : onRecentContactChangeListeners) {
-                listener.onThingChanged(recentContactList , ALL);
+                listener.onThingChanged(recentContactList , UNKNOWN);
             }
         }
     };
@@ -1383,8 +1385,56 @@ public class YXClient {
         return bundle;
     }
 
-    private void lv(String msg) {
+    private static void lv(String msg) {
         Log.v("FHH", msg);
+    }
+
+
+    /**
+     * 获取未读消息条数
+     * @param ssid p2p消息传用户id,群消息传群id
+     * @param sessionType p2p消息传{@link SessionTypeEnum#P2P}, 群消息传{@link SessionTypeEnum#Team}
+     * @return 未读消息数
+     */
+    public static int getUnreadMsgCount (String ssid , SessionTypeEnum sessionType){
+        int unreadMsgCount = 0;
+        if (sessionType == SessionTypeEnum.P2P){
+            unreadMsgCount = SpUtil.getUnreadMsgCount(ssid);
+        }
+        else if (sessionType == SessionTypeEnum.Team){
+            unreadMsgCount = SpUtil.getUnreadMsgCount("g" + ssid);
+        }
+        lv("获取未读消息数 ssid=" + ssid + "  setSessionType=" + sessionType + "  获取结果为 : " + unreadMsgCount);
+        return unreadMsgCount;
+    }
+
+    /**
+     * 清除未读消息计数
+     * @param ssid p2p消息传用户id,群消息传群id
+     * @param sessionType p2p消息传{@link SessionTypeEnum#P2P}, 群消息传{@link SessionTypeEnum#Team}
+     */
+    public static void clearUnreadMsgCount(String ssid , SessionTypeEnum sessionType){
+        lv("清除未读消息计数 ssid=" + ssid + "  setSessionType=" + sessionType);
+        if (sessionType == SessionTypeEnum.P2P){
+            SpUtil.clearUnreadMsgCount(ssid);
+        }
+        else if (sessionType == SessionTypeEnum.Team){
+            SpUtil.clearUnreadMsgCount("g" + ssid);
+        }
+    }
+
+    /**
+     * 清除所有未读计数
+     */
+    public static void clearAllUnreadMsgCount(){
+        lv("清除所有未读计数");
+        SpUtil.clearAllUnreadMsgCount();
+    }
+
+    public void callOnRecentContactChangeLiseners(){
+        for (OnThingsChangedListener<List<RecentContact>> listener : onRecentContactChangeListeners) {
+            listener.onThingChanged(null , UNKNOWN);
+        }
     }
 
     /**
@@ -1412,7 +1462,8 @@ public class YXClient {
         public ArrayList<OnMessageListener> myOnMsgStatusChangedListenerList = new ArrayList<OnMessageListener>();
         /**
          * 添加最近联系人列表变化监听器
-         * @param listener 监听器通知UI的内容类型为ALL,即为变动后的整个最近联系人列表
+         * @param listener 监听器通知UI的内容类型为UNKNOWN,即为发生变动的最近联系人的集合,
+         *                 此处的集合不是所有最近联系人的集合,只是发生变化了的联系人的集合.
          */
         public void addOnRecentContactListChangeListener(OnThingsChangedListener<List<RecentContact>> listener){
             onRecentContactChangeListeners.add(listener);
@@ -1613,6 +1664,7 @@ public class YXClient {
     public static final int NEW = 1;//代表变化为新增元素,传递的thing是新增的那部分元素
     public static final int DELETE = 2;//代表变化为删除元素,传递的thing是删除的那部分元素
     public static final int ALL = 3;//代表变化为数据整体改变,传递的thing是变化后的数据整体
+    public static final int UNKNOWN = 4;//发生变化的类型不明,传递的thing是发生变化的对象的集合,集合中有可能包含之前存在的但是发生变化的对象,也可能包含之前不存在的新的对象,也可能两种都包括.
 
     /**
      * 对象改变监听器

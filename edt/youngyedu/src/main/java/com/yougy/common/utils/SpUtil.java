@@ -3,6 +3,7 @@ package com.yougy.common.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.yougy.home.bean.PaintDrawStateInfo;
 import com.yougy.init.bean.Student;
@@ -29,6 +30,11 @@ public class SpUtil {
     private static final String STUDENT_SCHOOL = "student_school";
     private static final String STUDENT_SUBJECT = "student_subject";
     private static final String STUDENT_CODE = "student_code";
+
+    private static final String SP_MSG_UNREAD_COUNT_FILE_NAME = "message_unread_count";
+
+    private static final SharedPreferences unReadMsgSp = UIUtils.getContext()
+            .getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE);
 
     /**
      * 年级
@@ -231,6 +237,7 @@ public class SpUtil {
         UIUtils.getContext().getSharedPreferences(INIT_DOWN , Context.MODE_PRIVATE).edit().clear().apply();
         UIUtils.getContext().getSharedPreferences(HISTORY_RECORD , Context.MODE_PRIVATE).edit().clear().apply();
         UIUtils.getContext().getSharedPreferences(UUID , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE).edit().clear().apply();
     }
 
     /**
@@ -300,6 +307,30 @@ public class SpUtil {
     public static void setLocalLockPwd(String pwd){
         pwd = rot13(pwd);
         sp.edit().putString(LOCAL_LOCK_PWD , pwd).apply();
+    }
+
+    public static int getUnreadMsgCount (String ssid){
+        Log.v("FH" , "getUnreadMsgCount ssid=" + ssid);
+        if (!TextUtils.isEmpty(ssid)){
+            return unReadMsgSp.getInt(ssid , 0);
+        }
+        return 0;
+    }
+
+    public static void clearUnreadMsgCount (String ssid){
+        Log.v("FH" , "clearUnreadMsgCount ssid=" + ssid);
+        unReadMsgSp.edit().remove(ssid).apply();
+    }
+
+    public static void addUnreadMsgCount (String ssid){
+        Log.v("FH" , "addUnreadMsgCount ssid=" + ssid);
+        int current = getUnreadMsgCount(ssid);
+        unReadMsgSp.edit().putInt(ssid , ++current).apply();
+    }
+
+    public static void clearAllUnreadMsgCount (){
+        Log.v("FH" , "clearAllUnreadMsgCount");
+        unReadMsgSp.edit().clear().apply();
     }
 
     public static String rot13 (String str){

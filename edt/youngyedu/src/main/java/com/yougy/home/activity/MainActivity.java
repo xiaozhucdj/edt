@@ -3,6 +3,8 @@ package com.yougy.home.activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.BatteryManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.anwser.AnsweringActivity;
@@ -45,6 +48,9 @@ import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -131,11 +137,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 //    private ImageButton mImgBtnRefresh;
 
+
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            int totalUnreadMsgCount = msg.what;
+            if (totalUnreadMsgCount != 0){
+                mBtnMsg.setText("我的消息    未读" + totalUnreadMsgCount);
+            }
+            else {
+                mBtnMsg.setText("我的消息");
+            }
+        }
+    };
+
     /***************************************************************************/
 
     @Override
     protected void init() {
         setPressTwiceToExit(true);
+        YXClient.getInstance().with(this).addOnRecentContactListChangeListener(new YXClient.OnThingsChangedListener<List<RecentContact>>() {
+            @Override
+            public void onThingChanged(List<RecentContact> thing, int type) {
+                ArrayList<RecentContact> recentContactList = new ArrayList<RecentContact>();
+                recentContactList.addAll(YXClient.getInstance().getRecentContactList());
+                int totalUnreadCount = 0;
+                for (RecentContact recentContact : recentContactList) {
+                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                }
+                mHandler.sendEmptyMessage(totalUnreadCount);
+            }
+        });
     }
 
     private void removeFragments() {
@@ -325,7 +357,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.imgBtn_showRight:
                 mFlRight.setVisibility(View.VISIBLE);
                 EpdController.invalidate(mRootView, UpdateMode.GC);
-
+                ArrayList<RecentContact> recentContactList = new ArrayList<RecentContact>();
+                recentContactList.addAll(YXClient.getInstance().getRecentContactList());
+                int totalUnreadCount = 0;
+                for (RecentContact recentContact : recentContactList) {
+                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                }
+                if (totalUnreadCount != 0){
+                    mBtnMsg.setText("我的消息    未读" + totalUnreadCount);
+                }
+                else {
+                    mBtnMsg.setText("我的消息");
+                }
                 break;
 
             case R.id.fl_right:

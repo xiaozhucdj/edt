@@ -97,6 +97,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
             UIUtils.showToastSafe("获取消息发送对象失败");
             finish();
         }
+        YXClient.getInstance().clearUnreadMsgCount(id , type);
+        YXClient.getInstance().callOnRecentContactChangeLiseners();
     }
 
     @Override
