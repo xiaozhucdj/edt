@@ -65,6 +65,18 @@
             android:paddingRight="30dp"
             android:src="@drawable/img_user_btn_icon" />
 
+        <TextView
+            android:id="@+id/unread_msg_count_textview1"
+            android:layout_width="15px"
+            android:layout_height="15px"
+            android:text="xxx"
+            android:textSize="13px"
+            android:textColor="@color/white"
+            android:background="@color/black"
+            android:layout_alignRight="@id/imgBtn_showRight"
+            android:layout_alignTop="@id/imgBtn_showRight"
+            android:layout_marginRight="15dp"
+            />
 
         <ImageButton
             android:id="@+id/imgBtn_refresh"

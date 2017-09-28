@@ -5,6 +5,7 @@ import android.util.Log;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -139,5 +140,14 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<List<DownloadInfo>> downloadBook (String userId , String bookId){
+        Log.v("FH", "!!!!!调用ServerApi下载图书:downloadBook");
+        return getInstance().getServerApi().downloadBook(userId , bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+
 
 }

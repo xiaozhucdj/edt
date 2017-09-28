@@ -3,6 +3,7 @@ package com.yougy.common.new_network;
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
+import com.yougy.shop.bean.DownloadInfo;
 
 import java.util.List;
 
@@ -50,5 +51,13 @@ public interface ServerApi {
     @POST("netease")
     @DefaultField(keys = {"m"} , values = {"queryToken"})
     Observable<BaseResult<Object>> queryToken(@Field("userId") String userId);
+
+    /**
+     * 图书下载
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"downloadBook"})
+    Observable<BaseResult<List<DownloadInfo>>> downloadBook(@Field("userId") String userId , @Field("bookId") String bookId);
 
 }

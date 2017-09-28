@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.onyx.android.sdk.api.device.epd.EpdController;
@@ -111,6 +112,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Button mBtnAllBook;
     private Button mBtnMsg;
 
+    TextView unreadMsgCountTextview1;
     //    private WifiStatusChangedReceiver receiver = new WifiStatusChangedReceiver();
 //    private IntentFilter filter;
 
@@ -144,9 +146,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             int totalUnreadMsgCount = msg.what;
             if (totalUnreadMsgCount != 0){
                 mBtnMsg.setText("我的消息    未读" + totalUnreadMsgCount);
+                unreadMsgCountTextview1.setVisibility(View.VISIBLE);
+                unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
             }
             else {
                 mBtnMsg.setText("我的消息");
+                unreadMsgCountTextview1.setVisibility(View.GONE);
             }
         }
     };
@@ -282,6 +287,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //账号设置
         mBtnAccout = (Button) this.findViewById(R.id.btn_account);
         mBtnAccout.setOnClickListener(this);
+
+        unreadMsgCountTextview1 = (TextView) findViewById(R.id.unread_msg_count_textview1);
 
         //订单
         findViewById(R.id.btn_order).setOnClickListener(this);
@@ -933,7 +940,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         initSysIcon();
-        YXClient.checkNetAndRefreshLogin(this , null , null);
+        YXClient.checkNetAndRefreshLogin(this , new Runnable() {
+            @Override
+            public void run() {
+                new AsyncTask(){
+                    @Override
+                    protected Object doInBackground(Object[] params) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Object o) {
+                        int totalUnreadMsgCount = 0;
+                        for (RecentContact recentContact : YXClient.getInstance().getRecentContactList()) {
+                            totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                        }
+                        if (totalUnreadMsgCount != 0){
+                            unreadMsgCountTextview1.setVisibility(View.VISIBLE);
+                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
+                        }
+                        else {
+                            unreadMsgCountTextview1.setVisibility(View.GONE);
+                        }
+                    }
+                }.execute((Object[]) null);
+            }
+        } , null);
     }
 
     private void setSysWifi() {
