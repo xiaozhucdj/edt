@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="456dp"
+    android:layout_height="300dp"
+    android:layout_gravity="center"
+    android:background="@drawable/mark_context_shap">
+    >
+
+    <TextView
+        android:id="@+id/tv_loadingMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:text="文件损坏,请点击确定 重新进入"
+        android:textColor="@color/directory_text"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#000000"
+        android:padding="20dp"
+        android:text="确定"
+        android:textColor="#ffffff"
+        android:textSize="30dp" />
+</RelativeLayout>
