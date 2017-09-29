@@ -474,9 +474,10 @@ public class DateUtils {
 	/**
 	 * 根据现在的时间,把给定的时间戳转换成相对于现在时间的描述字符串
 	 * 规则:
-	 * 1.如果给定时间不是今年的一律显示完整的"年-月-日".
+	 * 1.不是今年的时间一律显示成年-月-日[3个空格]时:分.
 	 * 2.如果给定时间是今年的,而且是今天或者昨天,则显示为"今天"或者"昨天"
-	 * 3.如果不是今年而且不是今天或昨天,则显示为"月-日".
+	 * 3.如果给定的时间是本周的,但是不是今天或昨天,则一律显示为周X[3个空格]时:分
+	 * 4.如果是今年的且不是本周的时间,显示为月-日[3个空格]时:分
 	 * @param timeMillis 要转换的时间戳
 	 * @param simplified 是否简化显示,如果为true,则只显示日期,如果为false,则显示为"日期[3个空格]时:分"
 	 * @return 转换好的字符串
@@ -486,46 +487,73 @@ public class DateUtils {
 		Date date = new Date(timeMillis);
 		Calendar target = Calendar.getInstance();
 		target.setTime(date);
-		if (target.after(now)){
-			return "未来";
-		}
-		else if (now.get(Calendar.YEAR) != target.get(Calendar.YEAR)){
-			if (simplified){
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR)){
+			int nowDayOfYear = now.get(Calendar.YEAR);
+			int targetDayOfYear = target.get(Calendar.YEAR);
+			if (nowDayOfYear == targetDayOfYear){
+				if (simplified){
+					return "今天";
+				}
+				else {
+					SimpleDateFormat format = new SimpleDateFormat("今天   HH:mm");
+					return format.format(date);
+				}
+			}
+			if (nowDayOfYear == targetDayOfYear + 1){
+				if (simplified){
+					return "昨天";
+				}
+				else {
+					SimpleDateFormat format = new SimpleDateFormat("昨天   HH:mm");
+					return format.format(date);
+				}
+			}
+			if (now.get(Calendar.WEEK_OF_YEAR) == target.get(Calendar.WEEK_OF_YEAR)){
+				String tempStr = "未知周几";
+				switch (target.get(Calendar.DAY_OF_WEEK)){
+					case Calendar.MONDAY:
+						tempStr = "周一";
+						break;
+					case Calendar.TUESDAY:
+						tempStr = "周二";
+						break;
+					case Calendar.WEDNESDAY:
+						tempStr = "周三";
+						break;
+					case Calendar.THURSDAY:
+						tempStr = "周四";
+						break;
+					case Calendar.FRIDAY:
+						tempStr = "周五";
+						break;
+					case Calendar.SATURDAY:
+						tempStr = "周六";
+						break;
+					case Calendar.SUNDAY:
+						tempStr = "周日";
+						break;
+				}
+				if (simplified) {
+					return tempStr;
+				} else {
+					SimpleDateFormat format = new SimpleDateFormat(tempStr + "   HH:mm");
+					return format.format(date);
+				}
+			}
+			if (simplified) {
+				SimpleDateFormat format = new SimpleDateFormat("MM-dd");
 				return format.format(date);
-			}
-			else {
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd   HH:mm");
-				return format.format(date);
-			}
-		}
-		else if (now.get(Calendar.DAY_OF_YEAR) == target.get(Calendar.DAY_OF_YEAR)){
-			if (simplified){
-				return "今天";
-			}
-			else {
-				SimpleDateFormat format = new SimpleDateFormat("今天   HH:mm");
-				return format.format(date);
-			}
-		}
-		else if ((now.get(Calendar.DAY_OF_YEAR)) == (target.get(Calendar.DAY_OF_YEAR) + 1)){
-			if (simplified){
-				return "昨天";
-			}
-			else {
-				SimpleDateFormat format = new SimpleDateFormat("昨天   HH:mm");
-				return format.format(date);
-			}
-		}
-		else {
-			if (simplified){
-				SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-				return format.format(date);
-			}
-			else {
+			} else {
 				SimpleDateFormat format = new SimpleDateFormat("MM-dd   HH:mm");
 				return format.format(date);
 			}
+		}
+		if (simplified) {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			return format.format(date);
+		} else {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd   HH:mm");
+			return format.format(date);
 		}
 	}
 
