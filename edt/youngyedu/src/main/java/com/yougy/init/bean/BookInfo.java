@@ -73,10 +73,6 @@ public class BookInfo extends DataSupport implements Parcelable {
      */
     private String bookSummary;
     /**
-     * 图书封面
-     */
-    private String bookCover;
-    /**
      * 图书封面文件大小
      */
     private String bookCoverSize;
@@ -128,7 +124,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 笔记ID
      */
-    private int bookFitNoteId =-1;
+    private int bookFitNoteId = -1;
     /**
      * 笔记标题
      */
@@ -168,17 +164,19 @@ public class BookInfo extends DataSupport implements Parcelable {
     /**
      * 图书状态码
      */
-    private String bookStatusCode ;
+    private String bookStatusCode;
 
 
     /**
      * 对应课程编码
      */
-    private int  courseId ;
+    private int courseId;
 
 
-    /**图书密码*/
-    private  String bookDownloadKey  = "";
+    /**
+     * 图书密码
+     */
+    private String bookDownloadKey = "";
 
     public String getDownloadkey() {
         return bookDownloadKey;
@@ -273,8 +271,30 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookPublisherName = bookPublisherName;
         return this;
     }
+    /**小图*/
+    private String bookCoverS ;
+    /**大图*/
+    private String bookCoverL;
 
     ///////////////////////////////////////////////////////////
+
+
+    public String getBookCoverS() {
+        return bookCoverS;
+    }
+
+    public void setBookCoverS(String bookCoverS) {
+        this.bookCoverS = bookCoverS;
+    }
+
+    public String getBookCoverL() {
+        return bookCoverL;
+    }
+
+    public void setBookCoverL(String bookCoverL) {
+        this.bookCoverL = bookCoverL;
+    }
+
     /**
      * 判断是否是选中的
      */
@@ -352,13 +372,6 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookSummary = bookSummary;
     }
 
-    public String getBookCover() {
-        return bookCover;
-    }
-
-    public void setBookCover(String bookCover) {
-        this.bookCover = bookCover;
-    }
 
     public String getBookPreview() {
         return bookPreview;
@@ -441,8 +454,6 @@ public class BookInfo extends DataSupport implements Parcelable {
             return false;
         if (bookSummary != null ? !bookSummary.equals(info.bookSummary) : info.bookSummary != null)
             return false;
-        if (bookCover != null ? !bookCover.equals(info.bookCover) : info.bookCover != null)
-            return false;
         if (bookCoverSize != null ? !bookCoverSize.equals(info.bookCoverSize) : info.bookCoverSize != null)
             return false;
         if (bookPreview != null ? !bookPreview.equals(info.bookPreview) : info.bookPreview != null)
@@ -472,7 +483,6 @@ public class BookInfo extends DataSupport implements Parcelable {
         result = 31 * result + (bookPublishTime != null ? bookPublishTime.hashCode() : 0);
         result = (int) (31 * result + (bookSalePrice != +0.0f ? Double.doubleToLongBits(bookSalePrice) : 0));
         result = 31 * result + (bookSummary != null ? bookSummary.hashCode() : 0);
-        result = 31 * result + (bookCover != null ? bookCover.hashCode() : 0);
         result = 31 * result + (bookCoverSize != null ? bookCoverSize.hashCode() : 0);
         result = 31 * result + (bookPreview != null ? bookPreview.hashCode() : 0);
         result = 31 * result + (bookPreviewSize != null ? bookPreviewSize.hashCode() : 0);
@@ -523,11 +533,7 @@ public class BookInfo extends DataSupport implements Parcelable {
     public void setBookFitHomeworkTitle(String bookFitHomeworkTitle) {
         this.bookFitHomeworkTitle = bookFitHomeworkTitle;
     }
-
-
-    /////////////////////////////////序列化 start ////////////////////////////
-
-
+    /////////////////////////////////序列化 start ///////////////////////////
     @Override
     public int describeContents() {
         return 0;
@@ -546,7 +552,6 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeString(this.bookPublishTime);
         dest.writeDouble(this.bookSalePrice);
         dest.writeString(this.bookSummary);
-        dest.writeString(this.bookCover);
         dest.writeString(this.bookCoverSize);
         dest.writeString(this.bookPreview);
         dest.writeString(this.bookPreviewSize);
@@ -570,6 +575,8 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeString(this.bookStatusCode);
         dest.writeInt(this.courseId);
         dest.writeString(this.bookDownloadKey);
+        dest.writeString(this.bookCoverS);
+        dest.writeString(this.bookCoverL);
         dest.writeByte(this.isCheck ? (byte) 1 : (byte) 0);
         dest.writeInt(this.bookFitHomeworkId);
         dest.writeString(this.bookFitHomeworkTitle);
@@ -587,7 +594,6 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookPublishTime = in.readString();
         this.bookSalePrice = in.readDouble();
         this.bookSummary = in.readString();
-        this.bookCover = in.readString();
         this.bookCoverSize = in.readString();
         this.bookPreview = in.readString();
         this.bookPreviewSize = in.readString();
@@ -611,6 +617,8 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookStatusCode = in.readString();
         this.courseId = in.readInt();
         this.bookDownloadKey = in.readString();
+        this.bookCoverS = in.readString();
+        this.bookCoverL = in.readString();
         this.isCheck = in.readByte() != 0;
         this.bookFitHomeworkId = in.readInt();
         this.bookFitHomeworkTitle = in.readString();
@@ -627,7 +635,9 @@ public class BookInfo extends DataSupport implements Parcelable {
             return new BookInfo[size];
         }
     };
+    /////////////////////////////////序列化 end ////////////////////////////
 }
 
 
-/////////////////////////////////序列化 end ////////////////////////////
+
+

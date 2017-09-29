@@ -379,7 +379,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                                 requestPromoteBook();
                             }
                             //图片
-                            refreshImg(mImgBookIcon, mBookInfo.getBookCover());
+                            refreshImg(mImgBookIcon, mBookInfo.getBookCoverL());
                             //标题
                             mTvTitle.setText("图书详情");
                             //图书名称

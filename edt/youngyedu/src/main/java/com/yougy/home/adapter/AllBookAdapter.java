@@ -75,7 +75,7 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
-               refreshImg(mImgBookIcon, mInfos.get(position).getBookCover());
+               refreshImg(mImgBookIcon, mInfos.get(position).getBookCoverL());
             }
         }
     }
