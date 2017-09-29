@@ -25,6 +25,7 @@ import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.RemoveBookCartProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
@@ -178,6 +179,8 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
                     if (rep.getCode() == 200) {
                         BriefOrder orderObj = rep.getData().get(0);
+                        orderObj.setOrderStatus("待支付");
+                        orderObj.setOrderTime(DateUtils.getCalendarAndTimeString());
                         Log.v("FH" , "orderPrice : " + orderObj.getOrderPrice());
                         if(orderObj.getOrderPrice() == 0d){
                             YougyApplicationManager.getRxBus(ShopCartActivity.this).send("refreshOrderList");

@@ -288,7 +288,7 @@ public class ConfirmOrderActivity extends ShopBaseActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ProtocolManager.cancelPayOrderProtocol(briefOrder.getOrderId() , SpUtil.getAccountId() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER
-                        , new CancelBookOrderCallBack(getApplicationContext() , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , briefOrder.getOrderId() , SpUtil.getAccountId()));
+                        , new CancelBookOrderCallBack(ConfirmOrderActivity.this , ProtocolId.PROTOCOL_ID_CANCEL_PAY_ORDER , briefOrder.getOrderId() , SpUtil.getAccountId()));
                 dialog.dismiss();
             }
         }).show();
