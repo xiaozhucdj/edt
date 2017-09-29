@@ -74,7 +74,7 @@ public class PromoteBookAdapter extends RecyclerView.Adapter<PromoteBookAdapter.
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
-                refreshImg(imgBookIcon, mInfos.get(position).getBookCover());
+                refreshImg(imgBookIcon, mInfos.get(position).getBookCoverL());
                 tvBookTitle.setText(mInfos.get(position).getBookTitle());
                 tvBookPirce.setText("￥"+mInfos.get(position).getBookSalePrice());
             }

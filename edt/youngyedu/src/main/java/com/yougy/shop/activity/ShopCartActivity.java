@@ -197,7 +197,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                                     for (CartItem cartItem : checkedCartItemList) {
                                         BookInfo bookInfo = new BookInfo();
                                         bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
-                                        bookInfo.setBookCover(cartItem.getBookCover());
+                                        bookInfo.setBookCoverL(cartItem.getBookCover());
                                         bookInfo.setBookTitle(cartItem.getBookTitle());
                                         add(bookInfo);
                                     }

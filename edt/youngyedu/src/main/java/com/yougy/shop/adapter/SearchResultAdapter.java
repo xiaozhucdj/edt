@@ -61,7 +61,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         }
 
         public void bindView(BookInfo info) {
-            ImageLoaderManager.getInstance().loadImageActivity((Activity) mBookImg.getContext(),info.getBookCover(),R.drawable.img_book_cover,mBookImg);
+            ImageLoaderManager.getInstance().loadImageActivity((Activity) mBookImg.getContext(),info.getBookCoverL(),R.drawable.img_book_cover,mBookImg);
             mBookName.setText(info.getBookTitle());
             mBookAuthor.setText(info.getBookAuthor());
             if (TextUtils.isEmpty(info.getBookSummary())){

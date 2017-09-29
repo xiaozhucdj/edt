@@ -42,6 +42,8 @@ import com.yougy.rx_subscriber.BaseSubscriber;
 import com.yougy.ui.activity.R;
 import com.yougy.view.controlView.ControlView;
 import com.yougy.view.dialog.BookMarksDialog;
+import com.yougy.view.dialog.LoadingProgressDialog;
+import com.yougy.view.dialog.OpenBookErrorDialog;
 import com.yougy.view.showView.MyFrameLayout;
 import com.yougy.view.showView.TextThumbSeekBar;
 
@@ -107,6 +109,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private ImageView mOnyxImgView;
     private ReaderPresenter mReaderPresenter;
     private HandlerDirAdapter mHandlerDirAdapter;
+    private LoadingProgressDialog mloadingDialog;
 
 
     private void printTakeTimes(String job) {
@@ -128,7 +131,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     protected void initDatas() {
         super.initDatas();
 //        mPdfFile = FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf";
-        mPdfFile =  FileUtils.getBookFileName(mControlActivity.mBookId ,FileUtils.bookDir) ;
+        mPdfFile = FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir);
         fileName = mControlActivity.mBookId + "";
     }
 
@@ -147,6 +150,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      **/
     private void initView() {
         //替换布局
+
+        mloadingDialog = new LoadingProgressDialog(getActivity());
+        mloadingDialog.show();
+        mloadingDialog.setTitle("请稍后...");
         mStub.setLayoutResource(R.layout.pdf_layout2);
         mStub.inflate();
         mTextbookIv.setEnabled(false);
@@ -193,7 +200,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         //设置显示PDF 大小
         mOnyxImgView.setLayoutParams(new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
         mControlView.addView(mOnyxImgView, 0);
-        getReaderPresenter().openDocument(mPdfFile , mControlActivity.mBookId+"");
+        getReaderPresenter().openDocument(mPdfFile, mControlActivity.mBookId + "");
     }
 
     /////////////////////////////////////////pdf sdk start////////////////////////////////////////////
@@ -213,6 +220,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     @Override
     public void updatePage(int page, Bitmap bitmap) {
+        if (mloadingDialog!=null && mloadingDialog.isShowing()){
+            mloadingDialog.dismiss();
+        }
+
         LogUtils.i("updatePage");
         position = page;
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
@@ -229,6 +240,16 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     @Override
     public void showThrowable(Throwable throwable) {
         throwable.printStackTrace();
+        mloadingDialog.dismiss();
+        OpenBookErrorDialog mErrorDialog = new OpenBookErrorDialog(getActivity()) {
+            @Override
+            public void deltedeBook() {
+                FileUtils.deleteFile((FileUtils.getTextBookFilesDir() + mControlActivity.mBookId + ".pdf"));
+                this.dismiss();
+                getActivity().finish();
+            }
+        };
+        mErrorDialog.show();
     }
 
     @Override
@@ -242,6 +263,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      * 设置 图书章节
      */
     private List<DirectoryModel> mDirectoryList = new ArrayList<>();
+
     @Override
     public void updateDirectory(ReaderDocumentTableOfContent content) {
         if (content != null && !content.isEmpty() && content.getRootEntry() != null) {
@@ -250,14 +272,15 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 setDirectoryList2(entry, mDirectoryList, 0);
             }
             setShowDirectory();
-        }else{
+        } else {
             setMarkAndDirectoryClickTextChange(true);
         }
     }
+
     private void setDirectoryList2(ReaderDocumentTableOfContentEntry entry, List<DirectoryModel> modelList, int level) {
         DirectoryModel model = new DirectoryModel();
-        LogUtils.i("pageName =="+entry.getPageName());
-        LogUtils.i("getPosition =="+entry.getPosition());
+        LogUtils.i("pageName ==" + entry.getPageName());
+        LogUtils.i("getPosition ==" + entry.getPosition());
         LogUtils.i("/////////////////////////////////////////////");
         if (entry.getTitle() != null && entry.getPageName() != null) {
             model.setTitle(entry.getTitle());
@@ -306,7 +329,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     }
 
     private void initSeekBar() {
-        LogUtils.i("mPageCounts =="+mPageCounts);
+        LogUtils.i("mPageCounts ==" + mPageCounts);
         mSeekbarPage.setPdfCounts(mPageCounts);
         mSeekbarPage.setVisibility(View.VISIBLE);
         int smax = Math.max(mPageCounts - 1, 1);
@@ -389,7 +412,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
         Map<Integer, BookMarkInfo> bookMarks = new LinkedHashMap<>();
         for (BookMarkInfo info : bookMarkInfos) {
-            bookMarks.put(info.getNumber()-1, info);
+            bookMarks.put(info.getNumber() - 1, info);
         }
         return bookMarks;
     }
@@ -519,7 +542,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         if (parent.getAdapter() instanceof HandlerDirAdapter) {
             // 保持用户可以看见的 位置 ，因为一个目录会有可能出现很长
             if (position >= 0) {
-                LogUtils.i("yuanye pos ="+(mDirectoryList.get(position).getPosition()));
+                LogUtils.i("yuanye pos =" + (mDirectoryList.get(position).getPosition()));
                 requestPageTask(Integer.parseInt(mDirectoryList.get(position).getPosition()));
             }
 
@@ -618,16 +641,15 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      */
     public void showDirectory() {
         mRlDirectory.setVisibility(View.VISIBLE);
-        if (mBookMarkBtn.isSelected() && mBookMarkAdapter!=null){
+        if (mBookMarkBtn.isSelected() && mBookMarkAdapter != null) {
             mInfos.clear();
             if (mBookMarks.size() > 0) {
                 mInfos.addAll(new ArrayList<>(mBookMarks.values()));
             }
             mBookMarkAdapter.notifyDataSetChanged();
-        }
-       else if (mDirectoryList.size()>0){
+        } else if (mDirectoryList.size() > 0) {
             setShowDirectory();
-        }else{
+        } else {
             getReaderPresenter().getDirectory();
         }
     }
@@ -654,7 +676,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     public void onDestroyView() {
         super.onDestroyView();
-        if (mSubDb!=null&&!mSubDb.isUnsubscribed()) {
+        if (mSubDb != null && !mSubDb.isUnsubscribed()) {
             mSubDb.unsubscribe();
         }
         mSubDb = null;

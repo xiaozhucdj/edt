@@ -23,19 +23,15 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.CancelBookOrderCallBack;
 import com.yougy.common.protocol.callback.IsOrderPaySuccessCallBack;
 import com.yougy.common.protocol.callback.QueryQRStrCallBack;
-import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.QueryQRStrRequest;
-import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.CancelBookOrderRep;
 import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
-import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.QueryQRStrRep;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
-import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityConfirmOrderBinding;
@@ -455,7 +451,7 @@ public class ConfirmOrderActivity extends ShopBaseActivity {
         public void onBindViewHolder(BookInfoViewHolder holder, int position) {
             holder.binding.bookNameTv.setText(mdata.get(position).getBookTitle());
             holder.binding.bookPriceTv.setText("￥" + mdata.get(position).getBookSalePrice());
-            refreshImg(holder.binding.bookItemImg, mdata.get(position).getBookCover());
+            refreshImg(holder.binding.bookItemImg, mdata.get(position).getBookCoverL());
         }
 
         @Override
