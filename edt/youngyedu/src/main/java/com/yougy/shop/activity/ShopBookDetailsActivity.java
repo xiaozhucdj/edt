@@ -41,6 +41,7 @@ import com.yougy.common.protocol.response.PromoteBookRep;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -420,6 +421,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         RequirePayOrderRep rep = (RequirePayOrderRep) o;
                         if (rep.getCode() == 200) {
                             BriefOrder orderObj = rep.getData().get(0);
+                            orderObj.setOrderStatus("待支付");
+                            orderObj.setOrderTime(DateUtils.getCalendarAndTimeString());
                             if (orderObj.getOrderPrice() == 0d){
                                 YougyApplicationManager.getRxBus(ShopBookDetailsActivity.this).send("refreshOrderList");
                                 Intent intent = new Intent(ShopBookDetailsActivity.this, PaySuccessActivity.class);
