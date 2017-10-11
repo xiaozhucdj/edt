@@ -445,6 +445,16 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     }
 
     private void setLlTermSize() {
+
+        // 延迟2S 解决 硬件残影问题
+        llTerm.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                llTerm.setVisibility(View.GONE);
+                llTerm.setVisibility(View.VISIBLE);
+            }
+        }, 200) ;
+
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);

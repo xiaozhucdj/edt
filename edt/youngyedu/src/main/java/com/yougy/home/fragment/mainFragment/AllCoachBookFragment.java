@@ -428,6 +428,14 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }
 
     private void setLlTermSize() {
+        llTerm.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                llTerm.setVisibility(View.GONE);
+                llTerm.setVisibility(View.VISIBLE);
+            }
+        }, 200) ;
+
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
