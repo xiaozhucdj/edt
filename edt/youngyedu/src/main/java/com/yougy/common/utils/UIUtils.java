@@ -13,10 +13,13 @@ import android.os.Process;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.view.Toaster;
+import com.zhy.autolayout.utils.AutoUtils;
 
 
 /**
@@ -281,6 +284,7 @@ public class UIUtils {
         }
     }
 
+
     /**
      * 对toast的简易封装。线程安全，可以在非UI线程调用。
      *
@@ -304,6 +308,14 @@ public class UIUtils {
                 }
             });
         }
+    }
+    /**
+     * 对toast的简易封装。线程安全，可以在非UI线程调用。
+     *
+     * @param text     Toast内容
+     */
+    public static void showToastSafe(final CharSequence text) {
+        showToastSafe(text , Toast.LENGTH_SHORT);
     }
 
     public static int getScreenWidth() {
@@ -395,5 +407,22 @@ public class UIUtils {
         result[0] = w;
         result[1] = h;
         return  result ;
+    }
+
+    /**
+     * 递归的使用AutoUtils递归根View下所有的view
+     * @param rootView
+     */
+    public static void recursiveAuto(View rootView){
+        if (rootView instanceof ViewGroup){
+            for (int i = 0 ; i < ((ViewGroup) rootView).getChildCount() ; i++){
+                View childView = ((ViewGroup) rootView).getChildAt(i);
+                recursiveAuto(childView);
+            }
+            AutoUtils.auto(rootView);
+        }
+        else {
+            AutoUtils.auto(rootView);
+        }
     }
 }

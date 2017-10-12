@@ -5,10 +5,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.alibaba.sdk.android.common.utils.DateUtil;
-import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.home.activity.MainActivity;
+import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 
@@ -30,7 +29,7 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
     @BindView(R.id.pay_succcess_actvt_to_shop_frontpage_btn)
     Button toShopFrontpageBtn;
 
-    RequirePayOrderRep.OrderObj order;
+    BriefOrder order;
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_pay_success);
@@ -65,7 +64,8 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
                 loadIntentWithSpecificFlag(MainActivity.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 break;
             case R.id.pay_succcess_actvt_to_shop_frontpage_btn:
-                loadIntentWithSpecificFlag(BookShopActivityDB.class , Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                loadIntentWithSpecificFlag(BookShopActivityDB.class , Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                finish();
                 break;
         }
     }

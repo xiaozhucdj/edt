@@ -12,7 +12,7 @@ import java.util.Properties;
  * 文件操作
  */
 public class FileUtils {
-    public static final String APP_CACHE_DIR_NAME = "RONG_JIE_BOOK";
+    public static final String APP_CACHE_DIR_NAME = "student";
     public static final String TEXT_BOOK = "text_book";
     public static final String TEXT_BOOK_ICON = "text_book_icon";
     public static final String TEXT_BOOK_PROBATION = "text_book_probation";
@@ -61,7 +61,7 @@ public class FileUtils {
      * @return 是否创建成功
      */
     public static boolean createDirs(String dirPath) {
-        LogUtils.i("yuanye path == "+dirPath);
+        LogUtils.i("yuanye path == " + dirPath);
         File file = new File(dirPath);
         if (!file.exists() || !file.isDirectory()) {
             return file.mkdirs();
@@ -81,6 +81,7 @@ public class FileUtils {
     public static boolean deleteFolder(File file) {
         return delFileOrFolder(file);
     }
+
     /**
      * Delete file or folder.
      *
@@ -125,7 +126,7 @@ public class FileUtils {
     /**
      * 获取应用的路径，如果没有SD卡，则返回data/data目录下的应用目录，如果有，则返回SD卡上的应用目录
      */
-    public static String  getAppFilesDir() {
+    public static String getAppFilesDir() {
         if (isSDcardExist()) {
             return getSDCardPath() + APP_CACHE_DIR_NAME + "/";
         } else {
@@ -149,7 +150,7 @@ public class FileUtils {
         return getAppFilesDir() + TEXT_BOOK_ICON + "/";
     }
 
-    public static  String getProbationBookFilesDir(){
+    public static String getProbationBookFilesDir() {
         return getAppFilesDir() + TEXT_BOOK_PROBATION + "/";
     }
 
@@ -188,16 +189,17 @@ public class FileUtils {
     }
 
 
-
-    public static String getLogFilesDir(){
+    public static String getLogFilesDir() {
         if (isSDcardExist()) {
             return getSDCardPath() + "rongjie" + "/" + "edt" + "/" + "log" + "/";
         } else {
-            return getAppFilesDirByData()+"rongjie" + "/" + "edt" + "/" + "log" + "/";
+            return getAppFilesDirByData() + "rongjie" + "/" + "edt" + "/" + "log" + "/";
         }
     }
 
-    /** 根据值读取 */
+    /**
+     * 根据值读取
+     */
     public static String readProperties(String filePath, String key, String defaultValue) {
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(filePath)) {
             return null;
@@ -232,7 +234,9 @@ public class FileUtils {
     }
 
 
-    /** 获取到目录下面文件的大小。包含了子目录。 */
+    /**
+     * 获取到目录下面文件的大小。包含了子目录。
+     */
     public static long getDirLength(File f) throws IOException {
         if (null == f) {
             return -1;
@@ -252,5 +256,53 @@ public class FileUtils {
             }
         }
         return size;
+    }
+
+    public static final String pdf = ".pdf";
+    public static final String epub = ".epub";
+    public static final int bookDir = 1;
+    public static final int bookProbation = 2;
+
+
+    /**
+     * 获取图书全路径 包含后缀
+     *
+     * @param booId
+     * @param bookType bookDir
+     *                 bookProbation
+     * @return
+     */
+    public static String getBookFileName(int booId, int bookType) {
+        String bookName = "";
+        switch (bookType) {
+            case bookDir:
+                if (FileUtils.exists(FileUtils.getTextBookFilesDir() + booId + pdf)) {
+                    bookName = FileUtils.getTextBookFilesDir() + booId + pdf;
+                } else if (FileUtils.exists(FileUtils.getTextBookFilesDir() + booId + epub)) {
+                    bookName = FileUtils.getTextBookFilesDir() + booId + epub;
+                }
+                break;
+            case bookProbation:
+                if (FileUtils.exists(FileUtils.getProbationBookFilesDir() + booId + pdf)) {
+                    bookName = FileUtils.getProbationBookFilesDir() + booId + pdf;
+                } else if (FileUtils.exists(FileUtils.getProbationBookFilesDir() + booId + epub)) {
+                    bookName = FileUtils.getProbationBookFilesDir() + booId + epub;
+                }
+                break;
+        }
+        return bookName;
+    }
+
+    /**
+     * 获取下载文件后缀
+     *
+     * @param filePath
+     * @return .pdf
+     */
+    public static String getDownBookSuffix(String filePath) {
+        if (StringUtils.isEmpty(filePath)) {
+            return "";
+        }
+        return filePath.substring(filePath.lastIndexOf("."));
     }
 }

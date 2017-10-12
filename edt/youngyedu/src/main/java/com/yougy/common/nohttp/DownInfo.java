@@ -1,5 +1,7 @@
 package com.yougy.common.nohttp;
 
+import com.yougy.common.utils.FileUtils;
+
 import java.io.File;
 
 /**
@@ -46,7 +48,7 @@ public class DownInfo {
     public DownInfo(String url, String fileFolder, String filename, boolean isRange, boolean isDeleteOld, int what) {
         this.url = url;
         this.fileFolder = fileFolder;
-        this.filename = filename;
+        this.filename = filename+FileUtils.getDownBookSuffix(url);
         this.isRange = isRange;
         this.isDeleteOld = isDeleteOld;
         this.what = what;

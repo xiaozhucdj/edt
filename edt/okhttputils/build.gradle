@@ -40,10 +40,14 @@ task makeJar(type: Copy) {
 makeJar.dependsOn(clearJar, build)
 
 
+ext {
+    okhttp_need_version = '3.4.1'
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile "com.squareup.okhttp3:okhttp:${okhttp_need_version}"
+    compile "com.squareup.okhttp3:logging-interceptor:${okhttp_need_version}"
 }
 
 //添加

@@ -732,14 +732,28 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     }
 
     private void setLlTermSize() {
+        // 延迟2S 解决 硬件残影问题
+        llTerm.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                llTerm.setVisibility(View.GONE);
+                llTerm.setVisibility(View.VISIBLE);
+            }
+        }, 200) ;
+
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+//            mFitGradeView.setVisibility(View.GONE);
+//            mSubjectView.setVisibility(View.GONE);
         } else {
+//            mFitGradeView.setVisibility(View.VISIBLE);
+//            mSubjectView.setVisibility(View.VISIBLE);
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
         llTerm.setLayoutParams(params);
         mGradeMore.setSelected(mIsPackUp);
+
     }
 
 

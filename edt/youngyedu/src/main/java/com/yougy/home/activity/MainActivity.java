@@ -3,6 +3,8 @@ package com.yougy.home.activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.BatteryManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -13,10 +15,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
-import com.onyx.android.sdk.utils.DeviceUtils;
+import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -39,12 +43,18 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
+import com.yougy.message.YXClient;
+import com.yougy.message.ui.RecentContactListActivity;
+import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
+import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-import static com.onyx.android.sdk.utils.DeviceUtils.getBatteryPecentLevel;
 
 
 /**
@@ -102,6 +112,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Button mBtnAllBook;
     private Button mBtnMsg;
 
+    TextView unreadMsgCountTextview1;
     //    private WifiStatusChangedReceiver receiver = new WifiStatusChangedReceiver();
 //    private IntentFilter filter;
 
@@ -128,15 +139,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 //    private ImageButton mImgBtnRefresh;
 
+
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            int totalUnreadMsgCount = msg.what;
+            if (totalUnreadMsgCount != 0){
+                mBtnMsg.setText("我的消息    未读" + totalUnreadMsgCount);
+                unreadMsgCountTextview1.setVisibility(View.VISIBLE);
+                unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
+            }
+            else {
+                mBtnMsg.setText("我的消息");
+                unreadMsgCountTextview1.setVisibility(View.GONE);
+            }
+        }
+    };
+
     /***************************************************************************/
 
     @Override
     protected void init() {
         setPressTwiceToExit(true);
+        YXClient.getInstance().with(this).addOnRecentContactListChangeListener(new YXClient.OnThingsChangedListener<List<RecentContact>>() {
+            @Override
+            public void onThingChanged(List<RecentContact> thing, int type) {
+                ArrayList<RecentContact> recentContactList = new ArrayList<RecentContact>();
+                recentContactList.addAll(YXClient.getInstance().getRecentContactList());
+                int totalUnreadCount = 0;
+                for (RecentContact recentContact : recentContactList) {
+                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                }
+                mHandler.sendEmptyMessage(totalUnreadCount);
+            }
+        });
     }
 
     private void removeFragments() {
-        DeviceUtils.setFullScreenOnResume();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.remove(mCoachBookFragment);
         fragmentTransaction.remove(mHomeworkFragment);
@@ -184,11 +223,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetManager.getInstance().registerReceiver(this);
         PowerManager.getInstance().registerReceiver(this);
 
-        getBatteryPecentLevel(this);
         mRlFolder = (ViewGroup) findViewById(R.id.rl_folder);
         mRlFolder.setOnClickListener(this);
-        //TODO:文件夹还为实现 ，暂时关闭点击切换Fragment 功能
-        mRlFolder.setEnabled(false);
+        //TODO:文件夹还未实现 ，暂时关闭点击切换Fragment 功能
+        mRlFolder.setEnabled(true);
         mTvFolder = (TextView) findViewById(R.id.tv_folder);
         mViewFolder = findViewById(R.id.view_folder);
 
@@ -250,6 +288,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnAccout = (Button) this.findViewById(R.id.btn_account);
         mBtnAccout.setOnClickListener(this);
 
+        unreadMsgCountTextview1 = (TextView) findViewById(R.id.unread_msg_count_textview1);
+
+        //订单
+        findViewById(R.id.btn_order).setOnClickListener(this);
+
         mImgWSysWifi = (ImageView) this.findViewById(R.id.img_wifi);
         mImgWSysWifi.setOnClickListener(this);
         mImgWSysPower = (ImageView) this.findViewById(R.id.img_electricity);
@@ -280,9 +323,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setSysTime();
         switch (clickedViewId) {
             case R.id.rl_folder:
-                refreshTabBtnState(clickedViewId);
-                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
+//                refreshTabBtnState(clickedViewId);
+//                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
+                startActivity(new Intent(this , AnsweringActivity.class));
                 break;
 
             case R.id.rl_homework:
@@ -320,7 +364,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.imgBtn_showRight:
                 mFlRight.setVisibility(View.VISIBLE);
                 EpdController.invalidate(mRootView, UpdateMode.GC);
-
+                ArrayList<RecentContact> recentContactList = new ArrayList<RecentContact>();
+                recentContactList.addAll(YXClient.getInstance().getRecentContactList());
+                int totalUnreadCount = 0;
+                for (RecentContact recentContact : recentContactList) {
+                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                }
+                if (totalUnreadCount != 0){
+                    mBtnMsg.setText("我的消息    未读" + totalUnreadCount);
+                }
+                else {
+                    mBtnMsg.setText("我的消息");
+                }
                 break;
 
             case R.id.fl_right:
@@ -362,16 +417,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     bringFragmentToFrontInner(FragmentDisplayOption.ALL_HOMEWORK_FRAGMENT);
                 }
                 break;
-
             case R.id.btn_serchBook:
                 LogUtils.i("搜索课外书");
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.serch_reference, "");
                 EventBus.getDefault().post(baseEvent);
                 mFlRight.setVisibility(View.GONE);
-
-
                 break;
-
             case R.id.btn_bookStore:
                 LogUtils.e(getClass().getName(), "书城");
                 if (NetUtils.isNetConnected()) {
@@ -381,21 +432,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 mFlRight.setVisibility(View.GONE);
                 break;
-
             case R.id.btn_msg:
-                LogUtils.i("消息中心");
+                LogUtils.e(getClass().getName() , "我的消息");
+                gotoMyMessage();
+                mFlRight.setVisibility(View.GONE);
                 break;
-
             case R.id.btn_account:
                 LogUtils.i("账号设置");
 
                 if (NetUtils.isNetConnected()) {
-                    loadIntent(AccountSetActivity.class);
+                    loadIntent(SettingMainActivity.class);
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
                 mFlRight.setVisibility(View.GONE);
 
+                break;
+            case R.id.btn_order:
+                LogUtils.i("订单");
+                if (NetUtils.isNetConnected()) {
+                    loadIntent(OrderListActivity.class);
+                } else {
+                    showCancelAndDetermineDialog(R.string.jump_to_net);
+                }
+                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");
@@ -420,6 +480,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mFlRight.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    private void gotoMyMessage(){
+        if (!NetUtils.isNetConnected()) {
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+            return;
+        }
+        loadIntent(RecentContactListActivity.class);
     }
 
     private void postEvent() {
@@ -872,6 +940,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         initSysIcon();
+        YXClient.checkNetAndRefreshLogin(this , new Runnable() {
+            @Override
+            public void run() {
+                new AsyncTask(){
+                    @Override
+                    protected Object doInBackground(Object[] params) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Object o) {
+                        int totalUnreadMsgCount = 0;
+                        for (RecentContact recentContact : YXClient.getInstance().getRecentContactList()) {
+                            totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                        }
+                        if (totalUnreadMsgCount != 0){
+                            unreadMsgCountTextview1.setVisibility(View.VISIBLE);
+                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
+                        }
+                        else {
+                            unreadMsgCountTextview1.setVisibility(View.GONE);
+                        }
+                    }
+                }.execute((Object[]) null);
+            }
+        } , null);
     }
 
     private void setSysWifi() {
@@ -963,7 +1062,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
             LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
             setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
-        }else if(EventBusConstant.need_refresh.equalsIgnoreCase(event.getType())){
+        } else if (EventBusConstant.need_refresh.equalsIgnoreCase(event.getType())) {
             postEvent();
         }
     }

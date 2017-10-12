@@ -14,16 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.yolanda.nohttp.Headers;
-import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
@@ -44,7 +40,6 @@ import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
-import com.yougy.view.dialog.DownBookDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,9 +49,7 @@ import java.util.TreeSet;
 import rx.functions.Action1;
 
 import static android.content.ContentValues.TAG;
-import static android.view.View.GONE;
 import static android.view.View.OnClickListener;
-import static android.view.View.VISIBLE;
 import static android.view.View.inflate;
 
 /**
@@ -64,7 +57,7 @@ import static android.view.View.inflate;
  * 全部课本本
  * 注意 adapter 对应的 list  ，并且集合赋值 “= ”切记不要使用
  */
-public class AllTextBookFragment extends BFragment implements OnClickListener, DownBookDialog.DownBookListener {
+public class AllTextBookFragment extends BFragment implements OnClickListener {
     //////////////////////////////////////集合数据/////////////////////////////////////////////////////
     /**
      * 适配器 数据
@@ -131,8 +124,6 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     private SubjectAdapter mSubjectAdapter;
     private FitGradeAdapter mFitGradeAdapter;
     private LinearLayout mLlPager;
-    private DownBookDialog mDialog;
-    private BookInfo mDownInfo;
     private TextView mSubMore;
     private TextView mGradeMore;
 
@@ -312,10 +303,9 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     private void itemClick(int position) {
         mDownPosition = position ;
         BookInfo info = mBooks.get(position);
-        mDownInfo = info;
         LogUtils.i("book id ....." + info.toString());
-        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (FileUtils.exists(filePath)) {
+//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
+        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
@@ -335,13 +325,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         } else {
 
             if (NetUtils.isNetConnected()) {
-                if (mDialog == null) {
-                    mDialog = new DownBookDialog(getActivity());
-                    mDialog.setListener(this);
-                }
-                mDialog.show();
-                mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                downBookTask(info.getBookId());
             } else {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
@@ -461,6 +445,16 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     }
 
     private void setLlTermSize() {
+
+        // 延迟2S 解决 硬件残影问题
+        llTerm.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                llTerm.setVisibility(View.GONE);
+                llTerm.setVisibility(View.VISIBLE);
+            }
+        }, 200) ;
+
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
@@ -471,60 +465,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
         mGradeMore.setSelected(mIsPackUp);
     }
 
-    @Override
-    public void onCancelListener() {
-        //判断是否下载
-        DownloadManager.cancel();
-        mDialog.dismiss();
-    }
 
-    @Override
-    public void onConfirmListener() {
-        mDialog.getBtnConfirm().setVisibility(GONE);
-        List<DownInfo> mFiles = new ArrayList<>();
-        DownInfo info = new DownInfo(mDownInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mDownInfo.getBookId() + ".pdf", true, false, mDownInfo.getBookId());
-        info.setBookName(mDownInfo.getBookTitle());
-        mFiles.add(info);
-        downBook(mFiles);
-    }
-
-    /***
-     * 文件下载，下载位置 ，FileUtils.getTextBookFilesDir()
-     */
-    private void downBook(List<DownInfo> mFiles) {
-        DownloadManager.downloadFile(mFiles, new DownloadListener() {
-            @Override
-            public void onDownloadError(int what, Exception exception) {
-                LogUtils.i("  onDownloadError     what ........" + what);
-                DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
-                mDialog.getBtnConfirm().setVisibility(VISIBLE);
-            }
-
-            @Override
-            public void onStart(int what, boolean isResume, long rangeSize, Headers responseHeaders, long allCount) {
-                LogUtils.i("  onStart     what ........" + what);
-            }
-
-            @Override
-            public void onProgress(int what, int progress, long fileCount) {
-                mDialog.setTitle(String.format(getString(R.string.down_book_loading), progress + "%"));
-            }
-
-            @Override
-            public void onFinish(int what, String filePath) {
-                if (DownloadManager.isFinish()) {
-                    mDialog.dismiss();
-                    itemClick(mDownPosition);
-                }
-            }
-
-            @Override
-            public void onCancel(int what) {
-
-            }
-        });
-    }
 
     /***
      * 刷新适配器数据
@@ -745,5 +686,11 @@ public class AllTextBookFragment extends BFragment implements OnClickListener, D
     public void onUiCancelListener() {
         super.onUiCancelListener();
         dissMissUiPromptDialog();
+    }
+
+    @Override
+    protected void onDownBookFinish() {
+        super.onDownBookFinish();
+        itemClick(mDownPosition);
     }
 }

@@ -1,6 +1,7 @@
 package com.yougy.shop.activity;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -9,30 +10,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
+import com.yougy.common.protocol.callback.QueryOrderListCallBack;
 import com.yougy.common.protocol.callback.RemoveBookCartCallBack;
 import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.RemoveBookCartRequest;
 import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.QueryBookCartRep;
+import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.RemoveBookCartProtocol;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NewShopBookItem;
+import com.yougy.view.dialog.HintDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -161,29 +171,65 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
                     RemoveBookCartProtocol protocal = (RemoveBookCartProtocol) o;
                     if (protocal.getCode() == 200) {
                         loadData();
+                    }else{
+                        showCenterDetermineDialog(R.string.remove_car_fail);
                     }
                 } else if (o instanceof RequirePayOrderRep) {
+                    //生成订单的回调
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
                     if (rep.getCode() == 200) {
-                        RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
-
-                        orderObj.setBookList(new ArrayList<BookInfo>() {
-                            {
-                                for (CartItem cartItem : checkedCartItemList) {
-                                    BookInfo bookInfo = new BookInfo();
-                                    bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
-                                    bookInfo.setBookCover(cartItem.getBookCover());
-                                    bookInfo.setBookTitle(cartItem.getBookTitle());
-                                    add(bookInfo);
+                        BriefOrder orderObj = rep.getData().get(0);
+                        orderObj.setOrderStatus("待支付");
+                        orderObj.setOrderTime(DateUtils.getCalendarAndTimeString());
+                        Log.v("FH" , "orderPrice : " + orderObj.getOrderPrice());
+                        if(orderObj.getOrderPrice() == 0d){
+                            YougyApplicationManager.getRxBus(ShopCartActivity.this).send("refreshOrderList");
+                            Intent intent = new Intent(ShopCartActivity.this, PaySuccessActivity.class);
+                            intent.putExtra(ShopGloble.ORDER, orderObj);
+                            startActivity(intent);
+                            //通知主界面刷新
+                            BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                            EventBus.getDefault().post(baseEvent);
+                        }
+                        else {
+                            orderObj.setBookList(new ArrayList<BookInfo>() {
+                                {
+                                    for (CartItem cartItem : checkedCartItemList) {
+                                        BookInfo bookInfo = new BookInfo();
+                                        bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
+                                        bookInfo.setBookCoverL(cartItem.getBookCover());
+                                        bookInfo.setBookTitle(cartItem.getBookTitle());
+                                        add(bookInfo);
+                                    }
                                 }
-                            }
-                        });
-                        Intent intent = new Intent(ShopCartActivity.this, ConfirmOrderActivity.class);
-                        intent.putExtra(ShopGloble.ORDER, orderObj);
-                        startActivity(intent);
+                            });
+                            Intent intent = new Intent(ShopCartActivity.this, ConfirmOrderActivity.class);
+                            intent.putExtra(ShopGloble.ORDER, orderObj);
+                            startActivity(intent);
+                        }
                         finish();
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "下单失败");
+                        showCenterDetermineDialog(R.string.get_order_fail);
+                    }
+                }
+                else if (o instanceof QueryBookOrderListRep){
+                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                        if (((QueryBookOrderListRep) o).getData().size() > 0) {
+                            new HintDialog(ShopCartActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
+                            return;
+                        }
+                        RequirePayOrderRequest request = new RequirePayOrderRequest();
+                        request.setOrderOwner(SpUtil.getAccountId());
+                        for (CartItem cartItem : checkedCartItemList) {
+                            request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
+                        }
+                        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                                , new RequireOrderCallBack(ShopCartActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+                    }
+                    else {
+                        new HintDialog(ShopCartActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
+                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
                     }
                 }
             }
@@ -374,13 +420,16 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
-        RequirePayOrderRequest request = new RequirePayOrderRequest();
-        request.setOrderOwner(SpUtil.getAccountId());
         for (CartItem cartItem : checkedCartItemList) {
-            request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
+            if (cartItem.getBookStatus().contains("下架")){
+                new HintDialog(ShopCartActivity.this , "您勾选的商品中包含已下架商品,无法为您下单,请删除已下架商品后再试").show();
+                return;
+            }
         }
-        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-                , new RequireOrderCallBack(this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+                , "[\"已支付\",\"待支付\"]"
+                , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
+                , new QueryOrderListCallBack(ShopCartActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
     }
 
     /**
@@ -510,7 +559,8 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
     public void onBtnClick(final int position) {
         mRemovePosition = position;
 
-        if (checkedCartItemList.size() > 0) {
+        LogUtils.i("onBtnClick ...."+position);
+        if (cartItemList.size() > 0) {
             if (!NetUtils.isNetConnected()) {
                 showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
                 return;

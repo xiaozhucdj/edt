@@ -224,42 +224,6 @@ public class ProtocolManager {
 
 
     /**
-     * 5.设备绑定
-     *
-     * @param userId:用户编码
-     * @param deviceId:设备编码
-     * @param protocol_id:  协议ID
-     * @param callbac:      协议回调函数
-     */
-    public static void deviceBindProtocol(String userId, String deviceId, int protocol_id, Callback callbac) {
-        LogUtils.i("Protocol............. 5.设备绑定");
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("userId", userId);
-            obj.put("deviceId", deviceId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        setCommon(Commons.URL_DEVICE_BIND, obj.toString(), protocol_id, callbac);
-    }
-
-
-    /**
-     * 6.设备解绑
-     */
-    public static void deviceUnBindProtocol(String deviceId, int protocol_id, Callback callback) {
-        LogUtils.i("Protocol............. 6.设备解绑");
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("deviceId", deviceId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        setCommon(Commons.URL_UNBIND_DEVICE, obj.toString(), protocol_id, callback);
-    }
-
-
-    /**
      * 7. 用户登录
      *
      * @param deviceId:设备编码
@@ -587,8 +551,19 @@ public class ProtocolManager {
     /**
      * 24. 书城订单查询
      */
-    public static void queryBookOrderProtocol(int userId, int protocol_id, Callback callbac) {
+    public static void queryBookOrderProtocol(String orderOwner, String orderStatus , int protocol_id, Callback callbac) {
         LogUtils.i("Protocol.............  24. 书城订单查询");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("m" , "queryOrder");
+            obj.put("orderOwner", orderOwner);
+            if (orderStatus != null){
+                obj.put("orderStatus" , orderStatus);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        setCommon(Commons.SHOP_URL, obj.toString(), protocol_id, callbac);
     }
 
 
@@ -686,6 +661,8 @@ public class ProtocolManager {
         setCommon(Commons.SHOP_URL, GsonUtil.toJson(request), protocol_id, callbac);
     }
 
+
+
     /**
      * 1获取作业总数
      * @param :userId
@@ -701,27 +678,6 @@ public class ProtocolManager {
         setCommon(Commons.HOMEWORK_TODO_COUNT, obj.toString(), protocol_id, callbac);
     }
 
-
-
-
-    //模拟数据,后期接口通了可删除
-    static ArrayList<BookInfo> simulateData = new ArrayList<BookInfo>();
-
-    /**
-     * 初始化模拟数据
-     */
-    public static void initSimulateData(){
-        simulateData.clear();
-        for (int i = 0; i < 64; i++) {
-            BookInfo bookInfo = new BookInfo();
-            bookInfo.setBookId(i);
-            bookInfo.setBookTitle(i + "轻巧夺冠-优化训练:三年级数学(上)(人教版)(北师大版)");
-            bookInfo.setBookAuthor(i + "作者:洛夫斯基");
-            bookInfo.setBookSalePrice(8888.88f);
-            bookInfo.setBookCover("http://img3.imgtn.bdimg.com/it/u=4204844413,210602442&fm=11&gp=0.jpg");
-            simulateData.add(bookInfo);
-        }
-    }
 
     public static void isOrderPaySuccessProtocol(String orderId, int orderOwner , int protocol_id, Callback callback) {
         LogUtils.i("Protocol............. 32 查询订单支付是否成功");

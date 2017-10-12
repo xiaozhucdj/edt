@@ -3,10 +3,10 @@ package com.yougy.common.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.yougy.home.bean.PaintDrawStateInfo;
-import com.yougy.init.bean.AccountInfo;
-import com.yougy.init.bean.UserInfo;
+import com.yougy.init.bean.Student;
 import com.yougy.ui.activity.R;
 
 import java.util.ArrayList;
@@ -24,24 +24,29 @@ public class SpUtil {
     private static final String LOCATION_Y = "locationY";
     private static final String LABEL_CONTENT = "label_content";
     private static final String USER_FILE = "user";
-    public static final String USER_ID = "user_id";
-    private static final String USER_NAME = "user_name";
-    private static final String USER_NUMBER = "user_number";
-    private static final String USER_INFO = "user_info";
 
-    private static final String INIT_FILE = "info_init";
-    private static final String INIT_SCHOOL = "province";
+    private static final String STUDENT_ID = "student_id";
+    private static final String STUDENT_NAME = "student_name";
+    private static final String STUDENT_SCHOOL = "student_school";
+    private static final String STUDENT_SUBJECT = "student_subject";
+    private static final String STUDENT_CODE = "student_code";
 
-    private static final String ACCOUNT_FILE = "acount";
-    private static final String ACCOUNT_SCHOOL = "school";
-    private static final String ACCOUNT_CLASS = "class";
-    private static final String ACCOUNT_NAME = "name";
-    private static final String ACCOUNT_NUMBER = "number";
-    private static final String ACCOUNT_ID = "id";
+    private static final String SP_MSG_UNREAD_COUNT_FILE_NAME = "message_unread_count";
+
+    private static final SharedPreferences unReadMsgSp = UIUtils.getContext()
+            .getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE);
+
     /**
      * 年级
      */
     private static final String GRADE_NAME = "gradeName";
+
+    private static final String CLASS_NAME = "class_name";
+    private static final String REAL_NAME = "real_name";
+    private static String GRADE_DISPLAY = "gradeDisplay" ;
+
+    private static final String LOCAL_LOCK_PWD = "LOCAL_LOCK_PWD";
+
     /**
      * 当前学期学科
      */
@@ -49,6 +54,8 @@ public class SpUtil {
     private static final String HISTORY_RECORD = "history_record";
 
     private static final String UUID = "UUID";
+
+    private static final SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE,Context.MODE_PRIVATE);
 
     public static void saveLableLocation(int x, int y) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
@@ -85,6 +92,36 @@ public class SpUtil {
     public static String getLabelContent() {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
         return sp.getString(LABEL_CONTENT, "");
+    }
+
+    public static void saveStudent(Student student){
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(STUDENT_ID,student.getUserId());
+        editor.putString(STUDENT_NAME,student.getUserName());
+        editor.putString(STUDENT_CODE,student.getUserNum());
+        editor.putString(STUDENT_SCHOOL,student.getSchoolName());
+        editor.putString(STUDENT_SUBJECT,student.getSubjectNames());
+        editor.putString(GRADE_NAME , student.getGradeName());
+        editor.putString(CLASS_NAME , student.getClassName());
+        editor.putString(REAL_NAME , student.getUserRealName());
+        editor.putString(GRADE_DISPLAY , student.getGradeDisplay());
+        editor.putString(SUBJECT_NAMES , student.getSubjectNames());
+        editor.apply();
+    }
+
+    public static Student getStudent(){
+        Student student = new Student();
+        student.setUserId(sp.getInt(STUDENT_ID,-1));
+        student.setUserName(sp.getString(STUDENT_NAME,""));
+        student.setUserNum(sp.getString(STUDENT_CODE,"-1"));
+        student.setSchoolName(sp.getString(STUDENT_SCHOOL,""));
+        student.setSubjectNames(sp.getString(STUDENT_SUBJECT,""));
+        student.setGradeDisplay(sp.getString(GRADE_DISPLAY ,""));
+        student.setClassName(sp.getString(CLASS_NAME,""));
+        student.setUserRealName(sp.getString(REAL_NAME , ""));
+        student.setGradeName(sp.getString(GRADE_NAME,""));
+        student.setSubjectNames(sp.getString(SUBJECT_NAMES , ""));
+        return student;
     }
 
     /**
@@ -172,138 +209,35 @@ public class SpUtil {
     }
 
     public static int getUserId() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE, Context.MODE_PRIVATE);
-        return sp.getInt(USER_ID, 0);
-    }
-
-    public static void saveUserId(int userId) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(USER_ID, userId);
-        editor.apply();
-    }
-
-    public static void saveUser(UserInfo.User user) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(USER_ID, user.getUserId());
-        editor.putString(USER_NAME, user.getUserName());
-        editor.putString(USER_NUMBER, user.getUserNumber());
-        editor.apply();
-    }
-
-    public static UserInfo.User getUser() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE, Context.MODE_PRIVATE);
-        String userId = sp.getString(USER_ID, "");
-        String userName = sp.getString(USER_NAME, "");
-        String userNumber = sp.getString(USER_NUMBER, "");
-        if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userNumber)) {
-            UserInfo.User user = new UserInfo.User();
-            user.setUserId(userId);
-            user.setUserName(userName);
-            user.setUserNumber(userNumber);
-            return user;
-        }
-        return null;
-    }
-
-    public static void saveAccountSchool(String school) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(ACCOUNT_SCHOOL, school);
-        editor.apply();
-    }
-
-    public static String getAccountSchool() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(ACCOUNT_SCHOOL, "");
-    }
-
-    public static void saveAccountClass(String classStr) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(ACCOUNT_CLASS, classStr);
-        editor.apply();
+        return getStudent().getUserId();
     }
 
     public static String getAccountClass() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(ACCOUNT_CLASS, "");
-    }
-
-    public static void saveAccountName(String name) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(ACCOUNT_NAME, name);
-        editor.apply();
+        return getStudent().getClassName();
     }
 
     public static String getAccountName() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(ACCOUNT_NAME, "");
-    }
-
-    public static void saveAccountNumber(String number) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(ACCOUNT_NUMBER, number);
-        editor.apply();
+        return getStudent().getUserRealName();
     }
 
     public static String getAccountNumber() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(ACCOUNT_NUMBER, "");
-    }
-
-    public static void saveAccountId(int id) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(ACCOUNT_ID, id);
-        editor.apply();
+        return getStudent().getUserNum();
     }
 
     public static int getAccountId() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getInt(ACCOUNT_ID, -1);
+        return getStudent().getUserId();
     }
 
-    public static AccountInfo getAccountInfo() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        String schoolName = sp.getString(ACCOUNT_SCHOOL, "");
-        String className = sp.getString(ACCOUNT_CLASS, "");
-        String studentName = sp.getString(ACCOUNT_NAME, "");
-        String studentNumber = sp.getString(ACCOUNT_NUMBER, "");
-        int accountId = sp.getInt(ACCOUNT_ID, -1);
-        String id = accountId == -1 ? "" : Integer.toString(accountId);
-        AccountInfo info = null;
-        if (!TextUtils.isEmpty(schoolName) && !TextUtils.isEmpty(className) && !TextUtils.isEmpty(studentName) && !TextUtils.isEmpty(studentNumber) && !TextUtils.isEmpty(id)) {
-            info = new AccountInfo();
-            info.setSchoolName(schoolName);
-            info.setClassName(className);
-            info.setStudentName(studentName);
-            info.setStudentNumber(studentNumber);
-            info.setId(id);
-        }
-        return info;
-    }
 
-    public static void clearAccount() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.clear();
-        editor.apply();
-    }
-
-    /**
-     * 设置年级
-     *
-     * @param gradeName
-     */
-    public static void saveGradeName(String gradeName) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(GRADE_NAME, gradeName);
-        editor.apply();
+    public static void clearSP() {
+        sp.edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(LABEL_LOCATION , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(HISTORY_RECORD , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(CONTENT_CHANGED , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(INIT_DOWN , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(HISTORY_RECORD , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(UUID , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE).edit().clear().apply();
     }
 
     /**
@@ -312,20 +246,7 @@ public class SpUtil {
      * @return
      */
     public static String getGradeName() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(GRADE_NAME, "");
-    }
-
-    /**
-     * 设置当前学期学科
-     *
-     * @param gradeName
-     */
-    public static void saveSubjectNames(String gradeName) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(SUBJECT_NAMES, gradeName);
-        editor.apply();
+        return getStudent().getGradeName();
     }
 
     /**
@@ -334,23 +255,7 @@ public class SpUtil {
      * @return
      */
     public static String getSubjectNames() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(SUBJECT_NAMES, "");
-    }
-
-    private static final String AREA = "area";
-    private static final String AREA_ID = "area_id";
-
-    public static void saveSelectAreaID(String areaId) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(AREA, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(AREA_ID, areaId);
-        editor.apply();
-    }
-
-    public static String getSelectAreaId() {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(ACCOUNT_FILE, Context.MODE_PRIVATE);
-        return sp.getString(SUBJECT_NAMES, "");
+        return getStudent().getSubjectNames();
     }
 
     private static final String CONTENT_CHANGED = "content_changed";
@@ -393,6 +298,65 @@ public class SpUtil {
 
     public static String getUUID() {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(UUID, Context.MODE_PRIVATE);
-        return sp.getString(UUID, "-1");
+        return sp.getString(UUID, null);
+    }
+
+    public static String getLocalLockPwd(){
+        return rot13(sp.getString(LOCAL_LOCK_PWD , ""));
+    }
+    public static void setLocalLockPwd(String pwd){
+        pwd = rot13(pwd);
+        sp.edit().putString(LOCAL_LOCK_PWD , pwd).apply();
+    }
+
+    public static int getUnreadMsgCount (String ssid){
+        Log.v("FH" , "getUnreadMsgCount ssid=" + ssid);
+        if (!TextUtils.isEmpty(ssid)){
+            return unReadMsgSp.getInt(ssid , 0);
+        }
+        return 0;
+    }
+
+    public static void clearUnreadMsgCount (String ssid){
+        Log.v("FH" , "clearUnreadMsgCount ssid=" + ssid);
+        unReadMsgSp.edit().remove(ssid).apply();
+    }
+
+    public static void addUnreadMsgCount (String ssid){
+        Log.v("FH" , "addUnreadMsgCount ssid=" + ssid);
+        int current = getUnreadMsgCount(ssid);
+        unReadMsgSp.edit().putInt(ssid , ++current).apply();
+    }
+
+    public static void clearAllUnreadMsgCount (){
+        Log.v("FH" , "clearAllUnreadMsgCount");
+        unReadMsgSp.edit().clear().apply();
+    }
+
+    public static String rot13 (String str){
+        if (TextUtils.isEmpty(str)){
+            return null;
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0 ; i < str.length() ; i++){
+            char c = str.charAt(i);
+            if(c >= 'a' && c <= 'z'){
+                c = (char) ('a' + (c - 'a' + 13) % 26);
+            }
+            else if(c >= 'A' && c <= 'Z'){
+                c = (char) ('A' + (c - 'A' + 13) % 26);
+            }
+            stringBuffer.append(c);
+        }
+        return stringBuffer.toString();
+    }
+
+    /**
+     * 返回当前用户的account
+     * TODO 本方法仅用于调试,正式版需要换成返回当前用户名的正式方法
+     * @return
+     */
+    public static String justForTest(){
+        return "test10";
     }
 }

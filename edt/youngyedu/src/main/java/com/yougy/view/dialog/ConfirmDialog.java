@@ -2,74 +2,100 @@ package com.yougy.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import com.yougy.ui.activity.databinding.ConfirmDialogLayoutBinding;
 
 /**
  * Created by FH on 2017/02/17.
  */
 public class ConfirmDialog extends BaseDialog {
-    String msg;
-    @BindView(R.id.confirm_dialog_tv)
-    TextView titleTv;
-    @BindView(R.id.confirm_dialog_confirm_btn)
-    Button confirmBtn;
-    @BindView(R.id.confirm_dialog_cancle_btn)
-    Button cancleBtn;
+    ConfirmDialogLayoutBinding binding;
+    String titleText;
+    String contentText;
     String cancleBtnText;
     String confirmBtnText;
-
+    Context mContext;
     Dialog.OnClickListener confirmBtnListener;
 
-    public ConfirmDialog(Context context, String msg , Dialog.OnClickListener confirmBtnListener) {
+
+    public ConfirmDialog(Context context, String titleText , String contentText , String confirmBtnText
+            , String cancleBtnText , Dialog.OnClickListener confirmBtnListener) {
         super(context);
-        this.msg = msg;
+        mContext = context;
+        this.titleText = titleText;
+        this.contentText = contentText;
+        this.confirmBtnText = confirmBtnText;
+        this.cancleBtnText = cancleBtnText;
         this.confirmBtnListener = confirmBtnListener;
+    }
+    public ConfirmDialog(Context context, String contentText , Dialog.OnClickListener confirmBtnListener) {
+        this(context , null , contentText , null , null , confirmBtnListener);
+    }
+
+    public ConfirmDialog(Context context, String titleText , String contentText , Dialog.OnClickListener confirmBtnListener) {
+        this(context , titleText , contentText , null , null , confirmBtnListener);
+    }
+
+    public ConfirmDialog(Context context, String contentText , Dialog.OnClickListener confirmBtnListener , String confirmBtnText) {
+        this(context , null , contentText , confirmBtnText , null , confirmBtnListener);
     }
 
     @Override
     protected void init() {
-    }
 
-    public ConfirmDialog setCancleBtnText(String cancleBtnText) {
-        this.cancleBtnText = cancleBtnText;
-        return this;
-    }
-
-    public ConfirmDialog setConfirmBtnText(String confirmBtnText) {
-        this.confirmBtnText = confirmBtnText;
-        return this;
     }
 
     @Override
     protected void initLayout() {
-        setContentView(R.layout.confirm_dialog_layout);
-        ButterKnife.bind(this);
-        if (!TextUtils.isEmpty(msg))titleTv.setText(msg);
-        if (!TextUtils.isEmpty(cancleBtnText))cancleBtn.setText(cancleBtnText);
-        if (!TextUtils.isEmpty(confirmBtnText))confirmBtn.setText(confirmBtnText);
-    }
-
-    @OnClick({R.id.confirm_dialog_confirm_btn, R.id.confirm_dialog_cancle_btn})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.confirm_dialog_confirm_btn:
-                if (confirmBtnListener != null){
-                    confirmBtnListener.onClick(this , 0);
-                }
-                break;
-            case R.id.confirm_dialog_cancle_btn:
-                dismiss();
-                break;
+        binding = DataBindingUtil.inflate(LayoutInflater.from(mContext) , R.layout.confirm_dialog_layout , null , false);
+        UIUtils.recursiveAuto(binding.getRoot());
+        setContentView(binding.getRoot());
+        if (TextUtils.isEmpty(titleText)){
+            binding.titleTv.setVisibility(View.GONE);
         }
+        else {
+            binding.titleTv.setText(titleText);
+        }
+        if (TextUtils.isEmpty(contentText)){
+            binding.contentTv.setText("提示");
+        }
+        else {
+            binding.contentTv.setText(contentText);
+        }
+        if (TextUtils.isEmpty(confirmBtnText)){
+            binding.confirmBtn.setText("确定");
+        }
+        else {
+            binding.confirmBtn.setText(confirmBtnText);
+        }
+        if (TextUtils.isEmpty(cancleBtnText)){
+            binding.cancleBtn.setText("取消");
+        }
+        else {
+            binding.cancleBtn.setText(cancleBtnText);
+        }
+        binding.cancleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        binding.confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (confirmBtnListener != null) {
+                    confirmBtnListener.onClick(ConfirmDialog.this, 0);
+                } else {
+                    dismiss();
+                }
+            }
+        });
     }
 }

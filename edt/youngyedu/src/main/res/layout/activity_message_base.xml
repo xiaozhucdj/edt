@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root_layout"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <RelativeLayout
+            android:id="@+id/title_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="62px"
+            >
+            <Button
+                android:id="@+id/back_btn"
+                android:layout_width="30px"
+                android:layout_height="30px"
+                android:onClick="onTitleBarLeftBtnClick"
+                android:background="@drawable/edu_img_back_select"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="16px"
+                android:paddingBottom="16px"/>
+            <TextView
+                android:id="@+id/title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="title"
+                android:textSize="27px"
+                android:layout_centerInParent="true"
+                />
+            <Button
+                android:id="@+id/right_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="right"
+                android:textSize="24px"
+                android:textColor="@color/black_333333"
+                android:onClick="onTitleBarRightBtnClick"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30px"
+                android:minWidth="0px"
+                android:minHeight="0px"
+                android:background="@color/transparent"
+                android:layout_centerVertical="true"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="@android:color/black"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

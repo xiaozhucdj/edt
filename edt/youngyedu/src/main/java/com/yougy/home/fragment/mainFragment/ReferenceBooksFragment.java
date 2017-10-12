@@ -12,20 +12,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
-import com.yolanda.nohttp.Headers;
-import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
@@ -44,7 +39,6 @@ import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
-import com.yougy.view.dialog.DownBookDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.SearchBookDialog;
 
@@ -63,7 +57,7 @@ import static android.content.ContentValues.TAG;
  * Created by Administrator on 2016/7/12.
  * 课外书
  */
-public class ReferenceBooksFragment extends BFragment implements View.OnClickListener, DownBookDialog.DownBookListener {
+public class ReferenceBooksFragment extends BFragment implements View.OnClickListener {
     /**
      * 适配器 数据
      */
@@ -125,8 +119,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      */
     private TextView mTvSerachErrorTitle;
     private SearchBookDialog mSearchDialog;
-    private DownBookDialog mDialog;
-    private BookInfo mDownInfo;
     //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
@@ -166,10 +158,9 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private void itemClick(int position) {
         mDownPosition = position ;
         BookInfo info = mBooks.get(position);
-        mDownInfo = info;
         LogUtils.i("book id ....." + info.toString());
-        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (FileUtils.exists(filePath)) {
+//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
+        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
@@ -185,13 +176,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (NetUtils.isNetConnected()) {
-                if (mDialog == null) {
-                    mDialog = new DownBookDialog(getActivity());
-                    mDialog.setListener(this);
-                }
-                mDialog.show();
-                mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+                downBookTask(info.getBookId());
             } else {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
@@ -243,46 +228,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 //        }
     }
 
-    /***
-     * 文件下载，下载位置 ，FileUtils.getTextBookFilesDir()
-     */
-    private void downBook(List<DownInfo> mFiles) {
-        DownloadManager.downloadFile(mFiles, new DownloadListener() {
-            @Override
-            public void onDownloadError(int what, Exception exception) {
-                LogUtils.i("  onDownloadError     what ........" + what);
-                DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
-                mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onStart(int what, boolean isResume, long rangeSize, Headers responseHeaders, long allCount) {
-                LogUtils.i("  onStart     what ........" + what);
-
-            }
-
-            @Override
-            public void onProgress(int what, int progress, long fileCount) {
-                mDialog.setTitle(String.format(getString(R.string.down_book_loading), progress + "%"));
-            }
-
-            @Override
-            public void onFinish(int what, String filePath) {
-                if (DownloadManager.isFinish()) {
-                    mDialog.dismiss();
-                    //直接进入下载的图书
-                    itemClick(mDownPosition);
-                }
-            }
-
-            @Override
-            public void onCancel(int what) {
-
-            }
-        });
-    }
-
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
@@ -306,26 +251,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     }
 
-    //取消下载
-    @Override
-    public void onCancelListener() {
-        //判断是否下载
-        DownloadManager.cancel();
-        mDialog.dismiss();
-    }
-
-    //确定下载
-    @Override
-    public void onConfirmListener() {
-        mDialog.getBtnConfirm().setVisibility(View.GONE);
-        List<DownInfo> mFiles = new ArrayList<>();
-        DownInfo info = new DownInfo(mDownInfo.getBookDownload(), FileUtils.getTextBookFilesDir(), mDownInfo.getBookId() + ".pdf", true, false, mDownInfo.getBookId());
-        info.setBookName(mDownInfo.getBookTitle());
-        mFiles.add(info);
-        downBook(mFiles);
-    }
-
-
     private void freshUI(List<BookInfo> bookInfos) {
         mNewTextBookCallBack = null;
         mIsRefresh = false;
@@ -338,7 +263,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
-
 
     /***
      * 刷新适配器数据
@@ -606,6 +530,12 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     public void onUiCancelListener() {
         super.onUiCancelListener();
         dissMissUiPromptDialog();
+    }
+
+    @Override
+    protected void onDownBookFinish() {
+        super.onDownBookFinish();
+        itemClick(mDownPosition);
     }
 }
 

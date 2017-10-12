@@ -38,14 +38,6 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     }
 
     @Override
-    public void onError(Call call, Exception e, int id) {
-        super.onError(call, e, id);
-        SpUtil.saveAccountId(-1);
-        SpUtil.saveAccountName("");
-        SpUtil.saveAccountNumber("");
-    }
-
-    @Override
     public NewBindDeviceRep parseNetworkResponse(Response response, int id) throws Exception {
         String result = response.body().string();
         LogUtils.e(getClass().getName(),"bind device json is :" + result);
@@ -92,7 +84,6 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
         String uuid = Commons.UUID;
-//        ProtocolManager.deviceBindProtocol(InitManager.getInstance().getStudentId(), uuid, ProtocolId.PROTOCOL_ID_DEVICEBIND, this);
         NewBindDeviceReq deviceReq = new NewBindDeviceReq();
         deviceReq.setDeviceId(uuid);
         NewProtocolManager.bindDevice(deviceReq,this);

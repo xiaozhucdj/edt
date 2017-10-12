@@ -25,6 +25,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.AppendBookCartCallBack;
 import com.yougy.common.protocol.callback.AppendBookFavorCallBack;
 import com.yougy.common.protocol.callback.QueryBookCartCallBack;
+import com.yougy.common.protocol.callback.QueryOrderListCallBack;
 import com.yougy.common.protocol.callback.QueryShopBookDetailCallBack;
 import com.yougy.common.protocol.callback.RequireOrderCallBack;
 import com.yougy.common.protocol.request.AppendBookCartRequest;
@@ -33,17 +34,19 @@ import com.yougy.common.protocol.request.RequirePayOrderRequest;
 import com.yougy.common.protocol.response.AppendBookCartRep;
 import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.protocol.response.QueryBookCartRep;
+import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
+import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.showView.TextThumbSeekBar;
 
 import java.util.ArrayList;
@@ -93,6 +96,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     private View mRootView;
     private int mCurrentMarksPage = 0;
     private int mTagForNoNet = 1;
+    private int mTagForRequestDetailsFail =2;
+    private int mTagForQueryNoNet =3;
 
     /////////////////////////////////Files///////////////////////////
 
@@ -123,12 +128,14 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     }
 
     private void initPDF() {
-        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+//     mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+
+        mProbationUrl =   FileUtils.getBookFileName(mBookInfo.getBookId() ,FileUtils.bookProbation) ;
         LogUtils.i("mProbationUrl ......" + mProbationUrl);
         mOnyxImgView = new ImageView(this);
         mOnyxImgView.setLayoutParams(new LinearLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
         mLlPdfFather.addView(mOnyxImgView, 0);
-        getReaderPresenter().openDocument(mProbationUrl);
+        getReaderPresenter().openDocument(mProbationUrl,"");
     }
 
     //////////////////////////////////////////解析PDF////////////////////////////////////////////////////
@@ -150,6 +157,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         if (nextScription != null) {
             nextScription.unsubscribe();
         }
+        getReaderPresenter().close();
     }
 
     private Action1<? super Void> getBackSubscriber() {
@@ -175,7 +183,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
     protected void refreshData() {
         if (!NetUtils.isNetConnected()) {
-            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForQueryNoNet);
             return;
         }
 
@@ -241,11 +249,10 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
-        RequirePayOrderRequest request = new RequirePayOrderRequest();
-        request.setOrderOwner(SpUtil.getAccountId());
-        request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
-        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-                , new RequireOrderCallBack(this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+                , "[\"已支付\",\"待支付\"]"
+                , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
+                , new QueryOrderListCallBack(ProbationReadBookActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
     }
 
     /***
@@ -262,33 +269,33 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 if (o instanceof AppendBookCartRep) {
                     AppendBookCartRep rep = (AppendBookCartRep) o;
                     if (rep.getCode() == 200) {
-                        ToastUtil.showToast(getApplicationContext(), "添加到购物车成功");
+                        showCenterDetermineDialog(R.string.books_add_car_success);
+
                         mBookInfo.setBookInCart(true);
                         cartCountTV.setText((Integer.parseInt(cartCountTV.getText().toString()) + 1) + "");
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "添加到购物车失败");
+                        showCenterDetermineDialog(R.string.books_add_car_fail);
                     }
                 } else if (o instanceof AppendBookFavorRep) {
                     AppendBookFavorRep rep = (AppendBookFavorRep) o;
                     if (rep.getCode() == 200) {
-                        ToastUtil.showToast(getApplicationContext(), "添加到收藏成功");
+                        showCenterDetermineDialog(R.string.books_add_collection_success);
                         mBookInfo.setBookInFavor(true);
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "添加到收藏失败");
+                        showCenterDetermineDialog(R.string.books_add_collection_fail);
                     }
                 } else if (o instanceof QueryShopBookDetailRep) {
                     QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
-                    if (rep.getData() != null) {
+                    if (rep.getData() != null && rep.getData() .size()>0) {
                         mBookInfo = rep.getData().get(0);
                         mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "获取图书详情失败");
+                        showTagCancelAndDetermineDialog(R.string.books_request_details_fail, R.string.cancel, R.string.retry, mTagForRequestDetailsFail);
                         Log.v("FH", "获取图书详情失败");
                     }
                 } else if (o instanceof QueryBookCartRep) {
                     QueryBookCartRep rep = (QueryBookCartRep) o;
                     if (rep.getCode() != 200) {
-                        ToastUtil.showToast(getApplicationContext(), "获取购物车个数失败");
                     } else if (rep.getData() != null && rep.getData().size() != 0) {
                         cartCountTV.setText("" + rep.getData().size());
                     } else {
@@ -297,7 +304,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 } else if (o instanceof RequirePayOrderRep) {
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
                     if (rep.getCode() == 200) {
-                        RequirePayOrderRep.OrderObj orderObj = rep.getData().get(0);
+                        BriefOrder orderObj = rep.getData().get(0);
                         orderObj.setBookList(new ArrayList<BookInfo>() {
                             {
                                 add(mBookInfo);
@@ -308,7 +315,25 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         startActivity(intent);
                         finish();
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "下单失败");
+                        showCenterDetermineDialog(R.string.get_order_fail);
+                    }
+                }
+                else if (o instanceof QueryBookOrderListRep){
+                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                        if (((QueryBookOrderListRep) o).getData().size() > 0) {
+                            new HintDialog(ProbationReadBookActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
+                            return;
+                        }
+                        RequirePayOrderRequest request = new RequirePayOrderRequest();
+                        request.setOrderOwner(SpUtil.getAccountId());
+                        request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
+                        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                                , new RequireOrderCallBack(ProbationReadBookActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+                    }
+                    else {
+                        new HintDialog(ProbationReadBookActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
+                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
                     }
                 }
             }
@@ -380,7 +405,9 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
     @Override
     public void openDocumentFinsh() {
+
         mPageCounts = mReaderPresenter.getPages();
+        LogUtils.i("mPageCounts ..."+mPageCounts);
         initSeekBar();
         requestPageTask(mCurrentMarksPage);
     }
@@ -440,6 +467,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             return;
         }
         mCurrentMarksPage = position;
+        LogUtils.i("position ..."+position);
         getReaderPresenter().gotoPage(position);
     }
 
@@ -449,6 +477,16 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         super.onUiDetermineListener();
         if (mUiPromptDialog.getTag() == mTagForNoNet) {
             jumpTonet();
+        } else if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail) {
+            refreshData();
+        }
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail ||  getUiPromptDialog().getTag() == mTagForQueryNoNet) {
+            this.finish();
         }
     }
 }

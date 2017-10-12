@@ -683,7 +683,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         }
         int end = infos.size() > COUNT_PER_PAGE ? COUNT_PER_PAGE : infos.size();
         mPageInfos.addAll(infos.subList(0, end));
-        mBookAdapter = new BookAdapter(mPageInfos);
+        mBookAdapter = new BookAdapter(mPageInfos,this);
         binding.singleClassifyRecycler.setAdapter(mBookAdapter);
         binding.singleClassifyRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.singleClassifyRecycler) {
             @Override

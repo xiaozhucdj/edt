@@ -37,11 +37,35 @@ public class NewTextBookCallBack extends CacheInfoBack<NewBookShelfRep> {
            //文件方式 缓存 JSON
 
            if (protocol.getData()!=null && protocol.getData().size()>0){
+               // 缓存cache
                DataCacheUtils.putString(UIUtils.getContext(), id+"", GsonUtil.toJson(protocol.getData()));
+               // 缓存key
+//               String keys=  DataCacheUtils.getString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY) ;
+//               try {
+//                   JSONObject object  ;
+//                   if (!StringUtils.isEmpty(keys)){
+//                       object = new JSONObject(keys) ;
+//                   }else{
+//                       object = new JSONObject() ;
+//                   }
+//                   for (BookInfo info:protocol.getData()){
+//                       String value = info.getDownloadkey() ;
+//                       LogUtils.i("pare ,value"+value);
+//                       object.put(info.getBookId()+"" ,value) ;
+//                   }
+//                   DataCacheUtils.putString(UIUtils.getContext(),FileContonst.DOWN_LOAD_BOOKS_KEY,object.toString());
+//               }catch (Exception e){
+//                    e.printStackTrace();
+//                   LogUtils.i("缓存密码出差");
+//               }
            }else{
                DataCacheUtils.putString(UIUtils.getContext(), id+"", "");
            }
+
+
+
        }
+
         return protocol ;
     }
 

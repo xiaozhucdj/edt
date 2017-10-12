@@ -19,7 +19,7 @@ import okhttp3.Request;
 
 public abstract class BaseCallBack<T> extends Callback<T> implements UiPromptDialog.Listener {
     private static final String TAG = "BaseCallback";
-    private LoadingProgressDialog loadingDialog;
+    protected LoadingProgressDialog loadingDialog;
     protected WeakReference<Context> mWeakReference;
     protected UiPromptDialog mUiPromptDialog;
     protected Context mContext ;

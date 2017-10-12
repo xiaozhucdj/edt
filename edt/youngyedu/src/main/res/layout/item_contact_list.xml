@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:descendantFocusability="blocksDescendants"
+        >
+        <ImageButton
+            android:id="@+id/checkbox"
+            android:layout_width="25px"
+            android:layout_height="25px"
+            android:background="@drawable/btn_check_select"
+            android:layout_marginLeft="20px"
+            android:layout_marginTop="2px"
+            />
+        <ImageView
+            android:id="@+id/avatar_imv"
+            android:layout_width="76px"
+            android:layout_height="76px"
+            android:layout_marginTop="16px"
+            android:layout_marginBottom="16px"
+            android:layout_marginLeft="15px"
+            />
+        <TextView
+            android:id="@+id/member_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="xxxx"
+            android:textSize="24px"
+            android:textColor="@color/black_333333"
+            android:layout_marginLeft="15px"
+            />
+    </LinearLayout>
+</layout>

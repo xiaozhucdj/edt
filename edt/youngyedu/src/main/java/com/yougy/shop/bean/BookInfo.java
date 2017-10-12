@@ -37,6 +37,8 @@ public class BookInfo implements Parcelable{
     private String bookPublisherName;
     private  int bookCategoryFamily;
     private String bookVersionName;
+    private String bookCoverS ;
+    private String bookCoverL;
 
     public BookInfo(){
 
@@ -70,6 +72,8 @@ public class BookInfo implements Parcelable{
         bookPublisherName = in.readString();
         bookCategoryFamily = in.readInt();
         bookVersionName = in.readString();
+        bookCoverS = in.readString();
+        bookCoverL = in.readString();
     }
 
     public static final Creator<BookInfo> CREATOR = new Creator<BookInfo>() {
@@ -308,12 +312,30 @@ public class BookInfo implements Parcelable{
         this.bookVersionName = bookVersionName;
     }
 
+    public String getBookCoverS() {
+        return bookCoverS;
+    }
+
+    public void setBookCoverS(String bookCoverS) {
+        this.bookCoverS = bookCoverS;
+    }
+
+    public String getBookCoverL() {
+        return bookCoverL;
+    }
+
+    public void setBookCoverL(String bookCoverL) {
+        this.bookCoverL = bookCoverL;
+    }
+
     @Override
     public String toString() {
         return "BookInfo{" +
                 "bookTitle='" + bookTitle + '\'' +
                 ", bookAuthor='" + bookAuthor + '\'' +
                 ", bookCategoryFamilyName='" + bookCategoryFamilyName + '\'' +
+                ", bookCoverS='" + bookCoverS + '\'' +
+                ", bookCoverL='" + bookCoverL + '\'' +
                 '}';
     }
 
@@ -351,5 +373,7 @@ public class BookInfo implements Parcelable{
         dest.writeString(this.bookPublisherName);
         dest.writeInt(this.bookCategoryFamily);
         dest.writeString(this.bookVersionName);
+        dest.writeString(this.bookCoverS);
+        dest.writeString(this.bookCoverL);
     }
 }

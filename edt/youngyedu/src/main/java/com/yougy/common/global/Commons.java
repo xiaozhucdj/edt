@@ -17,11 +17,13 @@ public class Commons {
      * 外网接口
      */
 //    private static final String URL = "http://api.learningpad.cn:8080/leke_api/android";
-    public static final String URL = "http://106.15.45.14:8080/leke_api/android";
-    public static final String VERSION_URL = "http://106.15.45.14:10002/version";
+    public static final String URL = "http://api.learningpad.cn:8080/leke_api/android";
+    public static final String VERSION_URL = "http://api.learningpad.cn:10002/version";
 
-    public static final String SHOP_URL = "http://106.15.45.14:10002/bookStore";
-    public static final String NEW_URL = "http://106.15.45.14:10002/";
+    public static final String SHOP_URL = "http://api.learningpad.cn:10002/bookStore";
+    public static final String NEW_URL = "http://api.learningpad.cn:10002/";
+
+    public static final String CLASSROOM_URL = "http://api.learningpad.cn:10002/classRoom";
 
     /**
      * 花生壳 映射外网 -->每个月限制流量1G

@@ -4,8 +4,10 @@ import android.content.Context;
 
 import com.onyx.android.sdk.common.request.BaseCallback;
 import com.onyx.android.sdk.common.request.BaseRequest;
+import com.onyx.android.sdk.data.ReaderTextStyle;
 import com.onyx.android.sdk.reader.common.BaseReaderRequest;
 import com.onyx.android.sdk.reader.host.options.BaseOptions;
+import com.onyx.android.sdk.reader.host.request.ChangeStyleRequest;
 import com.onyx.android.sdk.reader.host.request.CloseRequest;
 import com.onyx.android.sdk.reader.host.request.CreateViewRequest;
 import com.onyx.android.sdk.reader.host.request.GammaCorrectionRequest;
@@ -17,7 +19,15 @@ import com.onyx.android.sdk.reader.host.request.PreviousScreenRequest;
 import com.onyx.android.sdk.reader.host.wrapper.Reader;
 import com.onyx.android.sdk.reader.utils.PagePositionUtils;
 import com.onyx.data.DrmCertificateFactory;
+import com.yougy.common.global.FileContonst;
+import com.yougy.common.utils.DataCacheUtils;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.UIUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by ming on 2017/4/1.
@@ -28,16 +38,30 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     private ReaderContract.ReaderView readerView;
     private Reader reader;
     private int mPags;
+    private String path;
 
     public ReaderPresenter(ReaderContract.ReaderView readerView) {
         this.readerView = readerView;
     }
 
     @Override
-    public void openDocument(String documentPath) {
-        DrmCertificateFactory factory  = new DrmCertificateFactory(readerView.getViewContext()) ;
+    public void openDocument(final String documentPath, String bookId) {
+        path = documentPath;
+        DrmCertificateFactory factory = new DrmCertificateFactory(readerView.getViewContext());
+        if (!StringUtils.isEmpty(bookId)) {
+            String keys = DataCacheUtils.getString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
+            if (!StringUtils.isEmpty(keys) && keys.contains(bookId)) {
+                try {
+                    JSONObject object = new JSONObject(keys);
+                    factory.setKey(object.getString(bookId));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         OpenRequest openRequest = new OpenRequest(documentPath, new BaseOptions(),
-                factory  , false);
+                factory, false);
         getReader().submitRequest(getContext(), openRequest, new BaseCallback() {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
@@ -57,12 +81,45 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-//                    gotoPage(0);
-                    mPags = getReader().getNavigator().getTotalPage();
-                    readerView.openDocumentFinsh();
+                    if (FileUtils.getDownBookSuffix(path).equalsIgnoreCase(FileUtils.epub)) {
+                        setChangeStyleReqest();
+                    } else {
+                        mPags = getReader().getNavigator().getTotalPage();
+                        readerView.openDocumentFinsh();
+                    }
                 } else {
                     readerView.showThrowable(throwable);
                 }
+            }
+        });
+    }
+
+
+    /**
+     * 设置epub格式
+     */
+    private void setChangeStyleReqest() {
+
+        ReaderTextStyle style = ReaderTextStyle.defaultStyle();
+        //设置字体大小
+        style.setFontSize(ReaderTextStyle.SPUnit.create(23.0F));
+        //设置边距
+        ReaderTextStyle.Percentage left = new ReaderTextStyle.Percentage(130);
+        ReaderTextStyle.Percentage bottom = new ReaderTextStyle.Percentage(160);
+        ReaderTextStyle.Percentage right = new ReaderTextStyle.Percentage(130);
+        ReaderTextStyle.Percentage top = new ReaderTextStyle.Percentage(160);
+        style.setPageMargin(new ReaderTextStyle.PageMargin(left, bottom, right, top));
+//        //对齐方式 ,两边对齐
+//        style.setAlignment(ReaderTextStyle.Alignment.ALIGNMENT_NONE);
+//        //设置行间距
+//        style.setLineSpacing(new ReaderTextStyle.Percentage(120));
+
+        ChangeStyleRequest request = new ChangeStyleRequest(style);
+        getReader().submitRequest(getContext(), request, new BaseCallback() {
+            @Override
+            public void done(BaseRequest baseRequest, Throwable throwable) {
+                mPags = getReader().getNavigator().getTotalPage();
+                readerView.openDocumentFinsh();
             }
         });
     }
