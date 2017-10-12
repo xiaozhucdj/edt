@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.onyx.android.sdk.utils.DeviceUtils;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -135,6 +136,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void removeFragments() {
+        DeviceUtils.setFullScreenOnResume();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.remove(mCoachBookFragment);
         fragmentTransaction.remove(mHomeworkFragment);
