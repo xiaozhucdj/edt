@@ -39,13 +39,14 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     private Reader reader;
     private int mPags;
     private String path;
-
+    private boolean mIsInit ;
     public ReaderPresenter(ReaderContract.ReaderView readerView) {
         this.readerView = readerView;
     }
 
     @Override
     public void openDocument(final String documentPath, String bookId) {
+        mIsInit  =false ;
         path = documentPath;
         DrmCertificateFactory factory = new DrmCertificateFactory(readerView.getViewContext());
         if (!StringUtils.isEmpty(bookId)) {
@@ -132,8 +133,11 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-//                    readerView.updatePage(page, getReader().getViewportBitmap().getBitmap());
-                    gamma(page);
+                    if (mIsInit){
+                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap()) ;
+                    }else{
+                        gamma(page);
+                    }
                 } else {
                     readerView.showThrowable(throwable);
                 }
@@ -152,6 +156,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
+                    mIsInit = true ;
                     readerView.updatePage(page, getReader().getViewportBitmap().getBitmap());
                 } else {
                     readerView.showThrowable(throwable);
