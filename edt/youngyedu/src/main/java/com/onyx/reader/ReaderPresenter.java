@@ -39,13 +39,14 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     private Reader reader;
     private int mPags;
     private String path;
-
+    private boolean mIsInit ;
     public ReaderPresenter(ReaderContract.ReaderView readerView) {
         this.readerView = readerView;
     }
 
     @Override
     public void openDocument(final String documentPath, String bookId) {
+        mIsInit  =false ;
         path = documentPath;
         DrmCertificateFactory factory = new DrmCertificateFactory(readerView.getViewContext());
         if (!StringUtils.isEmpty(bookId)) {
@@ -132,8 +133,11 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-//                    readerView.updatePage(page, getReader().getViewportBitmap().getBitmap());
-                    gamma(page);
+                    if (mIsInit){
+                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap()) ;
+                    }else{
+                        gamma(page);
+                    }
                 } else {
                     readerView.showThrowable(throwable);
                 }
@@ -147,11 +151,12 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
         int imageGamma = 200; // imageGamma works only when textGamma is not set
         int textGamma = 200; // text gamma works for PDF texts
         int glyphEmbolden = 0; // ranges from [0, 5], 0 means no embolden, 5 is max embolden
-        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(globalGamma, imageGamma, textGamma, glyphEmbolden);
+        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(150, 100, 190, 0);
         getReader().submitRequest(getContext(), gammaRequest, new BaseCallback() {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
+                    mIsInit = true ;
                     readerView.updatePage(page, getReader().getViewportBitmap().getBitmap());
                 } else {
                     readerView.showThrowable(throwable);
