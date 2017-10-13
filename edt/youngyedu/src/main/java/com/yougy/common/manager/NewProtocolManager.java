@@ -4,6 +4,7 @@ import android.widget.Toast;
 
 import com.yougy.common.global.Commons;
 import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.protocol.request.AliyunDataReq;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewBookStoreBookReq;
@@ -389,6 +390,13 @@ public class NewProtocolManager {
     }
 
     /**
+     * 19 查询阿里云数据
+     */
+    public static Response queryAliyunData(AliyunDataReq req){
+        return setCommon(GsonUtil.toJson(req), NewProtocolId.ID_ALIYUN_DATA);
+    }
+
+    /**
      * 图书查询
      */
     public static Response queryBook(NewBookStoreBookReq req){
@@ -429,7 +437,6 @@ public class NewProtocolManager {
     public static Response updateNote(NewUpdateNoteReq req) {
         return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE);
     }
-
 
 
     /***协议请求 id*/
@@ -479,7 +486,7 @@ public class NewProtocolManager {
         public static final int ID_BOOKSHOP_HOME = 40;
         public static final int ID_BOOKSHOP_CATEGORY_ALL = 41;
         public static final int ID_BOOKSHOP_BOOK = 42;
-
+        public static final int ID_ALIYUN_DATA = 50;
         public static final int ID_UPDATE_NOTE= 20;
 
     }

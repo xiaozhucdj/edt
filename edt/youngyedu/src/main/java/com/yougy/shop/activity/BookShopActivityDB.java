@@ -123,6 +123,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 LogUtils.e(tag, "call.........................");
                 handleCategoryInfo(categoryInfos);
                 LogUtils.e(tag, "categoryInfos' size is : " + categoryInfos.size() + ",bookinfos' size is : " + bookInfos.size());
+                LogUtils.e(tag,"bookinfos : " + bookInfos);
                 return bookInfos;
             }
         }).subscribeOn(Schedulers.io())
@@ -211,6 +212,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 textbooks = infos;
             } else if ("教辅".equals(category)) {
                 guidbooks = infos;
+                LogUtils.e(tag,"教辅："+infos);
             } else {
                 extrabooks = infos;
             }

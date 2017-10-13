@@ -53,7 +53,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
         mBookIv.setImageResource(R.drawable.cart_book);
         mBookNameTv.setText(info.getBookTitle());
         mBookPriceTv.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price),info.getBookSalePrice()));
-        refreshImg(mBookIv ,info.getBookCover());
+        refreshImg(mBookIv ,info.getBookCoverS());
     }
 
 

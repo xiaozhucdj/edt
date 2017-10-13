@@ -10,7 +10,7 @@ import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
 import com.alibaba.sdk.android.oss.common.OSSLog;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
-import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSStsTokenCredentialProvider;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
@@ -34,8 +34,8 @@ public class AliyunUtil {
     private OSS oss;
     // 运行sample前需要配置以下字段为有效的值
     private static final String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
-    private static final String accessKeyId = "LTAI9VRGbs9MnZZi";
-    private static final String accessKeySecret = "TGrEQznAlSWTMIDfS3JffCDgjd85ml";
+//    private static final String accessKeyId = "LTAI9VRGbs9MnZZi";
+//    private static final String accessKeySecret = "TGrEQznAlSWTMIDfS3JffCDgjd85ml";
     public static final String DATABASE_NAME = "leke.db";
     public static final String JOURNAL_NAME = "leke.db-journal";
     private static String filePath;
@@ -43,8 +43,8 @@ public class AliyunUtil {
     private static final String bucketName = "espo";
     private static String objectKey;
 
-    private AliyunUtil() {
-        OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(accessKeyId, accessKeySecret);
+    public AliyunUtil(String accessKeyId,String accessKeySecret,String securityToken) {
+        OSSCredentialProvider credentialProvider = new OSSStsTokenCredentialProvider(accessKeyId, accessKeySecret,securityToken);
         filePath = YougyApplicationManager.getContext().getDatabasePath(DATABASE_NAME).getAbsolutePath();
         objectKey = "leke" + File.separator + SpUtil.getUserId() + File.separator + DATABASE_NAME;
         ClientConfiguration conf = new ClientConfiguration();
@@ -56,18 +56,18 @@ public class AliyunUtil {
         oss = new OSSClient(YougyApplicationManager.getContext(), endpoint, credentialProvider, conf);
     }
 
-    private static volatile AliyunUtil instance;
-
-    public static AliyunUtil getInstance() {
-        if (instance == null) {
-            synchronized (AliyunUtil.class) {
-                if (instance == null) {
-                    instance = new AliyunUtil();
-                }
-            }
-        }
-        return instance;
-    }
+//    private static volatile AliyunUtil instance;
+//
+//    public static AliyunUtil getInstance() {
+//        if (instance == null) {
+//            synchronized (AliyunUtil.class) {
+//                if (instance == null) {
+//                    instance = new AliyunUtil();
+//                }
+//            }
+//        }
+//        return instance;
+//    }
 
 
     public void upload() {
