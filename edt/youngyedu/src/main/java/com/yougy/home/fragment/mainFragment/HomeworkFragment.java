@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.inkscreen.MainActivityScreen;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ProtocolManager;
@@ -25,6 +24,7 @@ import com.yougy.common.protocol.response.QueryHomewrokProtocol;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.HomeWorkBean;
@@ -110,8 +110,10 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
             //笔记样式
             extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
-
-            loadIntentWithExtras(MainActivityScreen.class,extras);
+//            loadIntentWithExtras(MainActivityScreen.class,extras);
+            //课本进入
+            extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
+            loadIntentWithExtras(ControlFragmentActivity.class, extras);
         }else{
             UIUtils.showToastSafe("尚未开通", Toast.LENGTH_LONG);
         }
