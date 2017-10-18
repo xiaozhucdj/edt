@@ -178,6 +178,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        mNbvAnswerBoard.invalidate();
         switch (view.getId()) {
             case R.id.start_answer_btn:
                 binding.startAnswerBtn.setVisibility(View.GONE);
