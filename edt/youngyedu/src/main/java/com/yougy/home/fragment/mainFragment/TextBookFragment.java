@@ -99,19 +99,15 @@ public class TextBookFragment extends BFragment implements View.OnClickListener 
     }
 
     private void itemClick(int position) {
-        mDownPosition = position ;
+        mDownPosition = position;
         BookInfo info = mBooks.get(position);
 //        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
             //笔记创建者
             extras.putInt(FileContonst.NOTE_CREATOR, -1);
-            //笔记id
-            extras.putInt(FileContonst.NOTE_ID, info.getBookFitNoteId());
-            //图书id
-            extras.putInt(FileContonst.BOOK_ID, info.getBookId());
             //分类码
             extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
             //笔记类型
@@ -120,6 +116,10 @@ public class TextBookFragment extends BFragment implements View.OnClickListener 
             extras.putString(FileContonst.NOTE_SUBJECT_NAME, info.getBookFitSubjectName());
             //作业ID
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
+            //笔记id
+            extras.putInt(FileContonst.NOTE_ID, info.getBookFitNoteId());
+            //图书id
+            extras.putInt(FileContonst.BOOK_ID, info.getBookId());
             extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {

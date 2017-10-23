@@ -7,8 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 
-import com.inkscreen.MainActivityScreen;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
@@ -151,7 +151,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     /**
      * 跳转至课本界面
      */
-    private BaseFragment mFragment;
+    private BFragment mFragment;
     private TextBookFragment mTextBookFragment;
     private HandleOnyxReaderFragment mHandleOnyxReader;
 
@@ -240,9 +240,9 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
                 ft.hide(mFragment);
             }
 
-         /*   if (mExerciseBookFragment != null) {
+          if (mExerciseBookFragment != null) {
                 ft.hide(mExerciseBookFragment);
-            }*/
+            }
             mFragment = mNoteBookFragment;
             ft.commit();
         }
@@ -258,8 +258,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         FragmentTransaction ft = fm.beginTransaction();
         if (null == mExerciseBookFragment) {
             mExerciseBookFragment = new ExerciseBookFragment();
- /*           mExerciseBookFragment.setOnSwitcherListener(this);
-            mExerciseBookFragment.setActivity(this);*/
+            mExerciseBookFragment.setActivity(this);
             ft.add(R.id.container, mExerciseBookFragment);
         } else {
             ft.show(mExerciseBookFragment);
@@ -297,6 +296,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         if (mNoteBookFragment != null) {
             mNoteBookFragment.leaveScribbleMode(false);
         }
+
         super.onBackPressed();
     }
 
@@ -339,7 +339,6 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     @Override
     protected void onStart() {
         super.onStart();
-        LogUtils.i("yuanye ..onStart");
         LogUtils.i("yuanye ..mJump==" + mJump);
         switch (mJump) {
             case FileContonst.JUMP_TEXT_BOOK:
@@ -349,23 +348,24 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
                 toNoteBookFragment();
                 break;
             case FileContonst.JUMP_HOMEWROK:
-//                toExerciseBookFragment();
-                Bundle extras = new Bundle();
-                //图书ID
-                extras.putInt(FileContonst.BOOK_ID, this.mBookId);
-                //笔记ID
-                extras.putInt(FileContonst.NOTE_ID, this.mNoteId);
-                //作业ID
-                extras.putInt(FileContonst.HOME_WROK_ID, this.mHomewrokId);
-                //笔记名字
-                extras.putString(FileContonst.NOTE_TITLE, this.mNotetitle);
-                //笔记样式
-                extras.putInt(FileContonst.NOTE_Style, this.mNoteStyle);
-
-                Intent intent = new Intent(this, MainActivityScreen.class);
-                intent.putExtras(extras);
-                startActivity(intent);
+//               toExerciseBookFragment();
+//                Bundle extras = new Bundle();
+//                //图书ID
+//                extras.putInt(FileContonst.BOOK_ID, this.mBookId);
+//                //笔记ID
+//                extras.putInt(FileContonst.NOTE_ID, this.mNoteId);
+//                //作业ID
+//                extras.putInt(FileContonst.HOME_WROK_ID, this.mHomewrokId);
+//                //笔记名字
+//                extras.putString(FileContonst.NOTE_TITLE, this.mNotetitle);
+//                //笔记样式
+//                extras.putInt(FileContonst.NOTE_Style, this.mNoteStyle);
+//
+//                Intent intent = new Intent(this, MainActivityScreen.class);
+//                intent.putExtras(extras);
+//                startActivity(intent);
 //                finish();
+                toExerciseBookFragment();
                 break;
         }
     }
@@ -381,11 +381,10 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-
         mNoteBookFragment = null;
         mTextBookFragment = null;
         mHandleOnyxReader = null;
+        mExerciseBookFragment = null ;
     }
 
     @Override

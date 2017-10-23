@@ -45,11 +45,9 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
-import com.inkscreen.MainActivityScreen;
 import com.jakewharton.rxbinding.view.RxView;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.fragment.BFragment;
-import com.yougy.common.global.FileContonst;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.ImageLoader;
 import com.yougy.common.utils.LogUtils;
@@ -731,22 +729,22 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 toNoteBookFragment();
                 break;
             case R.id.exercise_book:
-                Bundle extras = new Bundle();
-                //图书ID
-                extras.putInt(FileContonst.BOOK_ID, mControlActivity.mBookId);
-                //笔记ID
-                extras.putInt(FileContonst.NOTE_ID, mControlActivity.mNoteId);
-                //作业ID
-                extras.putInt(FileContonst.HOME_WROK_ID, mControlActivity.mHomewrokId);
-                //笔记名字
-                extras.putString(FileContonst.NOTE_TITLE, mControlActivity.mNotetitle);
-                //笔记样式
-                extras.putInt(FileContonst.NOTE_Style, mControlActivity.mNoteStyle);
-
-                Intent intent = new Intent(getActivity(), MainActivityScreen.class);
-                intent.putExtras(extras);
-                startActivity(intent);
-
+//                Bundle extras = new Bundle();
+//                //图书ID
+//                extras.putInt(FileContonst.BOOK_ID, mControlActivity.mBookId);
+//                //笔记ID
+//                extras.putInt(FileContonst.NOTE_ID, mControlActivity.mNoteId);
+//                //作业ID
+//                extras.putInt(FileContonst.HOME_WROK_ID, mControlActivity.mHomewrokId);
+//                //笔记名字
+//                extras.putString(FileContonst.NOTE_TITLE, mControlActivity.mNotetitle);
+//                //笔记样式
+//                extras.putInt(FileContonst.NOTE_Style, mControlActivity.mNoteStyle);
+//
+//                Intent intent = new Intent(getActivity(), MainActivityScreen.class);
+//                intent.putExtras(extras);
+//                startActivity(intent);
+                toExerciseBookFragment();
                 break;
             case R.id.cancel_cut:
                 isNeedCutScreen = true;
@@ -1911,15 +1909,5 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     public void setActivity(ControlFragmentActivity activity) {
         mControlActivity = activity;
-    }
-
-    //按键上一页
-    public void prevPageForKey() {
-
-    }
-
-    //按键下一页
-    public void nextPageForKey() {
-
     }
 }

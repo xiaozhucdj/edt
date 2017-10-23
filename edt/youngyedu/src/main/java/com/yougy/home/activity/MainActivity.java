@@ -233,7 +233,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         mRHomework = (ViewGroup) findViewById(R.id.rl_homework);
         mRHomework.setOnClickListener(this);
-        mRHomework.setEnabled(false);
+        mRHomework.setEnabled(true);
 
         mTvHomework = (TextView) findViewById(R.id.tv_homework);
         mViewHomework = findViewById(R.id.view_homework);

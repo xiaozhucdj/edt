@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.inkscreen.MainActivityScreen;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.HomewrokCallBack;
 import com.yougy.common.protocol.response.QueryHomewrokProtocol;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.HomeWorkBean;
@@ -110,8 +105,10 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
             //笔记样式
             extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
-
-            loadIntentWithExtras(MainActivityScreen.class,extras);
+//            loadIntentWithExtras(MainActivityScreen.class,extras);
+            //课本进入
+            extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
+            loadIntentWithExtras(ControlFragmentActivity.class, extras);
         }else{
             UIUtils.showToastSafe("尚未开通", Toast.LENGTH_LONG);
         }
@@ -167,14 +164,15 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
 
 
     private void loadData() {
-        if (YougyApplicationManager.isWifiAvailable()) {
-            mHomeworkCallBack = new HomewrokCallBack(getActivity(),ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK);
-            Log.e(TAG, "query homeWrok from server...");
-            ProtocolManager.queryHomeWrokProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK, mHomeworkCallBack);
-        }else{
-            tvErrMsg.setText(UIUtils.getString(R.string.net_not_connection));
-            mLoadingNull.setVisibility(View.VISIBLE);
-        }
+//        if (YougyApplicationManager.isWifiAvailable()) {
+//            mHomeworkCallBack = new HomewrokCallBack(getActivity(),ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK);
+//            Log.e(TAG, "query homeWrok from server...");
+//            ProtocolManager.queryHomeWrokProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK, mHomeworkCallBack);
+//        }else{
+//            tvErrMsg.setText(UIUtils.getString(R.string.net_not_connection));
+//            mLoadingNull.setVisibility(View.VISIBLE);
+//        }
+        testData();
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -293,5 +291,19 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         if (mHomeworkAdapter != null) {
             mHomeworkAdapter = null;
         }
+    }
+
+
+    private  void  testData(){
+        List<HomeWorkBean> beans = new ArrayList<>() ;
+        for (int i = 0 ; i<10 ;i++){
+            HomeWorkBean bean = new HomeWorkBean() ;
+            bean.setHomeworkId(10);
+            bean.setHomeworkFitBookId(7146307);
+            bean.setHomeworkFitNoteId(33163);
+            bean.setHomeworkStatus(1);
+            beans.add(bean) ;
+        }
+        freshUI(beans);
     }
 }
