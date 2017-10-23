@@ -27,12 +27,13 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.service.DownloadService;
+import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.UploadService;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
 import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
 import com.yougy.home.fragment.mainFragment.AllNotesFragment;
@@ -305,6 +306,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnRefresh = (Button) this.findViewById(R.id.btn_refresh);
         mBtnRefresh.setOnClickListener(this);
 
+        findViewById(R.id.btn_upload).setOnClickListener(this);
+        findViewById(R.id.btn_download).setOnClickListener(this);
     }
 
 
@@ -322,6 +325,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         int clickedViewId = v.getId();
         setSysTime();
         switch (clickedViewId) {
+            case R.id.btn_upload:
+                startService(new Intent(this, UploadService.class));
+                break;
+            case R.id.btn_download:
+                startService(new Intent(this, DownloadService.class));
+                break;
             case R.id.rl_folder:
 //                refreshTabBtnState(clickedViewId);
 //                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
@@ -1072,5 +1081,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onUiDetermineListener();
         jumpTonet();
     }
+
 }
 
