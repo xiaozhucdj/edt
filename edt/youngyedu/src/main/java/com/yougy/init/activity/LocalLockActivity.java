@@ -1,19 +1,19 @@
 package com.yougy.init.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.init.bean.Student;
-import com.yougy.message.GlideCircleTransform;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLocalLockBinding;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -67,6 +67,7 @@ public class LocalLockActivity extends BaseActivity {
         if (binding.localLockEdittext.getText().toString().equals(SpUtil.getLocalLockPwd())){
             finish();
             if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)){
+                startService(new Intent(this, DownloadService.class));
                 loadIntent(MainActivity.class);
             }
         }

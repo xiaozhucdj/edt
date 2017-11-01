@@ -24,6 +24,7 @@ public class Commons {
     public static final String NEW_URL = "http://api.learningpad.cn:10002/";
 
     public static final String CLASSROOM_URL = "http://api.learningpad.cn:10002/classRoom";
+    public static final String ALIYUNDATE_URL = "http://api.learningpad.cn:10002/device";
 
     /**
      * 花生壳 映射外网 -->每个月限制流量1G

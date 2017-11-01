@@ -40,6 +40,8 @@ import com.yougy.view.Toaster;
 import com.yougy.view.dialog.DownProgressDialog;
 import com.yougy.view.dialog.HintDialog;
 
+import org.litepal.LitePal;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -69,6 +71,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LitePal.getDatabase();
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
