@@ -10,7 +10,7 @@ import com.yougy.ui.activity.R;
 public class HomeworkActivity extends BaseActivity {
     @Override
     protected void setContentView() {
-        setContentView(R.layout.activity_homewrok);
+        setContentView(R.layout.fragment_exercise_book);
     }
 
     @Override

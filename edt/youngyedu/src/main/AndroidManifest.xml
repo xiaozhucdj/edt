@@ -200,6 +200,12 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             >
         </activity>
+        <activity android:name="com.yougy.homework.mistake_note.BookStructureActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
+
+        </activity>
+
         <activity android:name="com.yougy.anwser.AnsweringActivity">
 
         </activity>
