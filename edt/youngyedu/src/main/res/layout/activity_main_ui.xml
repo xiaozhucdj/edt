@@ -482,6 +482,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/directory_text" />
+
+                <Button
+                    android:id="@+id/btn_upload"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="上传"
+                    android:textColor="@drawable/btn_text_color_selector"
+                    android:textSize="24dp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/directory_text" />
+
+                <Button
+                    android:id="@+id/btn_download"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="下载"
+                    android:textColor="@drawable/btn_text_color_selector"
+                    android:textSize="24dp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/directory_text" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

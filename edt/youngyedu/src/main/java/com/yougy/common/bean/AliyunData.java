@@ -11,7 +11,6 @@ public class AliyunData {
 
     private String securityToken;
 
-
     public String getAccessKeyId() {
         return accessKeyId;
     }

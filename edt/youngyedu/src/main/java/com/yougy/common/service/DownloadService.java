@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.protocol.request.AliyunDataReq;
+import com.yougy.common.protocol.request.AliyunDataDownloadReq;
 import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.ResultUtils;
 
@@ -33,13 +33,13 @@ public class DownloadService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Response response = NewProtocolManager.queryAliyunData(new AliyunDataReq());
+        Response response = NewProtocolManager.queryAliyunData(new AliyunDataDownloadReq());
         try {
             if (response.isSuccessful()) {
                 String resultJson = response.body().string();
                 Result<AliyunData> result = ResultUtils.fromJsonObject(resultJson, AliyunData.class);
                 AliyunData data = result.getData();
-                AliyunUtil aliyunUtil = new AliyunUtil(data.getAccessKeyId(), data.getAccessKeySecret(), data.getSecurityToken());
+                AliyunUtil aliyunUtil = new AliyunUtil(data);
                 aliyunUtil.download();
             }
         }catch (Exception e){

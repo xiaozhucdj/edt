@@ -4,7 +4,8 @@ import android.widget.Toast;
 
 import com.yougy.common.global.Commons;
 import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.request.AliyunDataReq;
+import com.yougy.common.protocol.request.AliyunDataDownloadReq;
+import com.yougy.common.protocol.request.AliyunDataUploadReq;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewBookStoreBookReq;
@@ -110,6 +111,7 @@ public class NewProtocolManager {
 
 
     private static Response setCommon(String json, int id){
+        LogUtils.e("NewProtocolManager","requst json : " + json);
         String url = Commons.SHOP_URL;
         //防止用户的多次请求
 //        OkHttpUtils.getInstance().cancelTag(url);
@@ -392,10 +394,13 @@ public class NewProtocolManager {
     /**
      * 19 查询阿里云数据
      */
-    public static Response queryAliyunData(AliyunDataReq req){
-        return setCommon(GsonUtil.toJson(req), NewProtocolId.ID_ALIYUN_DATA);
+    public static Response queryAliyunData(AliyunDataUploadReq req){
+        return setCommon(Commons.ALIYUNDATE_URL,GsonUtil.toJson(req),NewProtocolId.ID_ALIYUN_DATA);
     }
 
+    public static Response queryAliyunData(AliyunDataDownloadReq req){
+        return setCommon(Commons.ALIYUNDATE_URL,GsonUtil.toJson(req),NewProtocolId.ID_ALIYUN_DATA);
+    }
     /**
      * 图书查询
      */
@@ -486,8 +491,8 @@ public class NewProtocolManager {
         public static final int ID_BOOKSHOP_HOME = 40;
         public static final int ID_BOOKSHOP_CATEGORY_ALL = 41;
         public static final int ID_BOOKSHOP_BOOK = 42;
-        public static final int ID_ALIYUN_DATA = 50;
         public static final int ID_UPDATE_NOTE= 20;
+        public static final int ID_ALIYUN_DATA = 50;
 
     }
 

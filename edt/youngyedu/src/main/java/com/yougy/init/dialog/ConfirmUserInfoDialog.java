@@ -21,6 +21,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.BindCallBack;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.response.NewBindDeviceRep;
+import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
@@ -29,6 +30,8 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ConfirmUserinfoDialogLayoutBinding;
 import com.yougy.view.dialog.HintDialog;
+
+import java.io.File;
 
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
@@ -112,6 +115,10 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                                     binding.titleTv.setText("恭喜,用户与设备绑定成功");
                                     SpUtil.setLocalLockPwd("123456");
                                     SpUtil.saveStudent(student);
+                                    File file = new File(getContext().getDatabasePath(student.getUserId()+".db").getAbsolutePath());
+                                    if (!file.exists()){
+                                        getContext().startService(new Intent(getContext(), DownloadService.class));
+                                    }
                                 }
                             }
                         });
