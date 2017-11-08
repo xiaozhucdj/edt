@@ -3,6 +3,7 @@ package com.yougy.home.fragment.showFragment;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.homework.CheckedHomeworkDetailActivity;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.mistake_note.BookStructureActivity;
 import com.yougy.ui.activity.R;
@@ -108,7 +110,20 @@ public class ExerciseBookFragment extends BFragment {
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-                //TODO 列表点击
+                switch (currentStatus){
+                    case CHECKED:
+                        Intent intent = new Intent(getActivity() , CheckedHomeworkDetailActivity.class);
+                        startActivity(intent);
+                        break;
+                    case WAIT_FOR_CHECK:
+                        Intent intent111 = new Intent(Settings.ACTION_SETTINGS);
+                        startActivity(intent111);
+                        //TODO 待批改项点击
+                        break;
+                    case DOING:
+                        //TODO 作业中项点击
+                        break;
+                }
             }
         });
         binding.doingHomeworkBtn.setOnClickListener(new View.OnClickListener() {
