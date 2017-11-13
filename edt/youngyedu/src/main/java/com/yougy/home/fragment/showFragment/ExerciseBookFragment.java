@@ -201,4 +201,10 @@ public class ExerciseBookFragment extends BFragment {
     public void setActivity(ControlFragmentActivity activity) {
         mControlActivity = activity;
     }
+
+    public void aaaa() {
+        int id1 = mControlActivity.mHomewrokId;
+        int id2 = mControlActivity.mNoteId;
+        int id3 = mControlActivity.mBookId;
+    }
 }
