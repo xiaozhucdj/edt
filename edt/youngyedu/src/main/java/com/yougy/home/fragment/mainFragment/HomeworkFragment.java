@@ -11,18 +11,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.callback.HomewrokCallBack;
-import com.yougy.common.protocol.response.QueryHomewrokProtocol;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.home.bean.HomeWorkBean;
+import com.yougy.home.bean.NoteInfo;
+import com.yougy.homework.bean.HomeworkBookInfo;
+import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -42,8 +46,8 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     /**
      * 适配器 数据
      */
-    private List<HomeWorkBean> mHomewroks = new ArrayList<>();
-    private List<HomeWorkBean> mCountBooks = new ArrayList<>();
+    private List<HomeworkBookInfo> mHomewroks = new ArrayList<>();
+    private List<HomeworkBookInfo> mCountBooks = new ArrayList<>();
     /***
      * 一页数据个数
      */
@@ -92,11 +96,10 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
 
     /**点击事件*/
     private void itemClick(int position) {
-        HomeWorkBean info = mHomewroks.get(position);
-        if (info.getHomeworkStatus()>0){
+        HomeworkBookInfo info = mHomewroks.get(position);
             Bundle extras = new Bundle();
             //图书ID
-            extras.putInt(FileContonst.BOOK_ID, info.getHomeworkFitBookId());
+            extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
             //笔记ID
             extras.putInt(FileContonst.NOTE_ID, info.getHomeworkFitNoteId());
             //作业ID
@@ -104,35 +107,16 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             //笔记名字
             extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
             //笔记样式
-            extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
+//            extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
 //            loadIntentWithExtras(MainActivityScreen.class,extras);
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
-        }else{
-            UIUtils.showToastSafe("尚未开通", Toast.LENGTH_LONG);
-        }
-
     }
 
     @Override
     protected void handleEvent() {
-        handleTextBookEvent();
         super.handleEvent();
-    }
-
-
-    private void handleTextBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof QueryHomewrokProtocol && !mHide && mHomeworkCallBack != null) { //网数据库存储 协议返回的JSON
-                    QueryHomewrokProtocol shelfProtocol = (QueryHomewrokProtocol) o;
-                    List<HomeWorkBean> beans = shelfProtocol.getData().get(0).getHomeworkList();
-                    freshUI(beans);
-                }
-            }
-        }));
     }
 
     @Override
@@ -141,7 +125,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mIsFist = true;
     }
 
-    private void freshUI(List<HomeWorkBean> beans) {
+    private void freshUI(List<HomeworkBookInfo> beans) {
         if (beans!=null && beans.size()>0){
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
@@ -153,7 +137,6 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         }
     }
 
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -162,17 +145,19 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         }
     }
 
-
     private void loadData() {
-//        if (YougyApplicationManager.isWifiAvailable()) {
-//            mHomeworkCallBack = new HomewrokCallBack(getActivity(),ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK);
-//            Log.e(TAG, "query homeWrok from server...");
-//            ProtocolManager.queryHomeWrokProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK, mHomeworkCallBack);
-//        }else{
-//            tvErrMsg.setText(UIUtils.getString(R.string.net_not_connection));
-//            mLoadingNull.setVisibility(View.VISIBLE);
-//        }
-        testData();
+        NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
+                .subscribe(new Action1<List<HomeworkBookInfo>>() {
+                    @Override
+                    public void call(List<HomeworkBookInfo> homeworkBookInfos) {
+                        freshUI(homeworkBookInfos);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -293,17 +278,12 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         }
     }
 
-
-    private  void  testData(){
-        List<HomeWorkBean> beans = new ArrayList<>() ;
-        for (int i = 0 ; i<10 ;i++){
-            HomeWorkBean bean = new HomeWorkBean() ;
-            bean.setHomeworkId(10);
-            bean.setHomeworkFitBookId(7146307);
-            bean.setHomeworkFitNoteId(33163);
-            bean.setHomeworkStatus(1);
-            beans.add(bean) ;
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.current_home_work)) {
+            LogUtils.i("type .." + EventBusConstant.current_home_work);
+            loadData();
         }
-        freshUI(beans);
     }
 }

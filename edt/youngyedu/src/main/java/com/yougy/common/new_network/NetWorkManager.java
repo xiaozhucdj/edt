@@ -5,6 +5,7 @@ import android.util.Log;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.homework.bean.HomeworkBookInfo;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -148,6 +149,11 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-
+    public static Observable<List<HomeworkBookInfo>> queryHomeworkBookList(String userId , String homeworkFitGradeName){
+        Log.v("FH", "!!!!!调用ServerApi获取作业本列表:queryHomeworkBookList");
+        return getInstance().getServerApi().queryHomeworkBookList(userId , homeworkFitGradeName)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
 }

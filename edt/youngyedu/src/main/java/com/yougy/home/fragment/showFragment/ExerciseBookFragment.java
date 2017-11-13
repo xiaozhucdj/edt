@@ -186,6 +186,10 @@ public class ExerciseBookFragment extends BFragment {
         super.onStart();
     }
 
+    public void back(View view){
+        getActivity().finish();
+    }
+
 
 
 

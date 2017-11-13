@@ -3,6 +3,7 @@ package com.yougy.common.new_network;
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
+import com.yougy.homework.bean.HomeworkBookInfo;
 import com.yougy.shop.bean.DownloadInfo;
 
 import java.util.List;
@@ -60,4 +61,12 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"downloadBook"})
     Observable<BaseResult<List<DownloadInfo>>> downloadBook(@Field("userId") String userId , @Field("bookId") String bookId);
 
+    /**
+     * 作业本列表接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryHomework"})
+    Observable<BaseResult<List<HomeworkBookInfo>>> queryHomeworkBookList(@Field("userId") String userId
+            , @Field("homeworkFitGradeName") String homeworkFitGradeName);
 }
