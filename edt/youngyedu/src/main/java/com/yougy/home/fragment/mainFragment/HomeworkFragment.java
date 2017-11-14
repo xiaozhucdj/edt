@@ -17,16 +17,13 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.callback.HomewrokCallBack;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookInfo;
-import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -62,7 +59,6 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     private boolean mIsFist;
     private LinearLayout mLlPager;
     private ViewGroup mLoadingNull;
-    private HomewrokCallBack mHomeworkCallBack;
     private TextView tvErrMsg;
 
     @Override
@@ -107,7 +103,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             //笔记名字
             extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
             //笔记样式
-//            extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
+            extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
 //            loadIntentWithExtras(MainActivityScreen.class,extras);
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
