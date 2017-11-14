@@ -41,6 +41,7 @@ public class HomeworkBookInfo {
     private String courseBookTitle;
     private String homeworkFitGradeName;
     private String homeworkFitNoteTitle;
+    private String homeworkFitNoteStyle;
     private int homeworkFitSubjectId;
     private int homeworkFitNoteId;
     private int courseBookId;
@@ -78,6 +79,15 @@ public class HomeworkBookInfo {
 
     public void setHomeworkCreateTime(String homeworkCreateTime) {
         this.homeworkCreateTime = homeworkCreateTime;
+    }
+
+    public String getHomeworkFitNoteStyle() {
+        return homeworkFitNoteStyle;
+    }
+
+    public HomeworkBookInfo setHomeworkFitNoteStyle(String homeworkFitNoteStyle) {
+        this.homeworkFitNoteStyle = homeworkFitNoteStyle;
+        return this;
     }
 
     public int getHomeworkCreator() {
