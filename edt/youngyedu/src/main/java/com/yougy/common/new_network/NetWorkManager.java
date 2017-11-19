@@ -5,7 +5,10 @@ import android.util.Log;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
-import com.yougy.homework.bean.HomeworkBookInfo;
+import com.yougy.homework.bean.HomeworkBookDetail;
+import com.yougy.homework.bean.HomeworkBookSummary;
+import com.yougy.homework.bean.HomeworkSummary;
+import com.yougy.homework.bean.QuestionReply;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -149,11 +152,40 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<HomeworkBookInfo>> queryHomeworkBookList(String userId , String homeworkFitGradeName){
+    public static Observable<List<HomeworkBookSummary>> queryHomeworkBookList(String userId , String homeworkFitGradeName){
         Log.v("FH", "!!!!!调用ServerApi获取作业本列表:queryHomeworkBookList");
         return getInstance().getServerApi().queryHomeworkBookList(userId , homeworkFitGradeName)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId){
+        Log.v("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<Object>> queryBook(Integer bookId){
+        Log.v("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
+        return getInstance().getServerApi().queryBook(bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> refreshHomeworkBook(Integer homeworkId){
+        Log.v("FH", "!!!!!调用ServerApi刷新作业本:refreshHomeworkBook");
+        return getInstance().getServerApi().refreshHomeworkBook(homeworkId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<QuestionReply>> queryReply(Integer examId){
+        Log.v("FH", "!!!!!调用ServerApi刷新作业本:refreshHomeworkBook");
+        return getInstance().getServerApi().queryReply(examId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
 }

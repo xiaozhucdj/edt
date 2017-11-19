@@ -23,7 +23,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.homework.bean.HomeworkBookInfo;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -43,8 +43,8 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     /**
      * 适配器 数据
      */
-    private List<HomeworkBookInfo> mHomewroks = new ArrayList<>();
-    private List<HomeworkBookInfo> mCountBooks = new ArrayList<>();
+    private List<HomeworkBookSummary> mHomewroks = new ArrayList<>();
+    private List<HomeworkBookSummary> mCountBooks = new ArrayList<>();
     /***
      * 一页数据个数
      */
@@ -92,7 +92,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
 
     /**点击事件*/
     private void itemClick(int position) {
-        HomeworkBookInfo info = mHomewroks.get(position);
+        HomeworkBookSummary info = mHomewroks.get(position);
             Bundle extras = new Bundle();
             //图书ID
             extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
@@ -121,7 +121,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mIsFist = true;
     }
 
-    private void freshUI(List<HomeworkBookInfo> beans) {
+    private void freshUI(List<HomeworkBookSummary> beans) {
         if (beans!=null && beans.size()>0){
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
@@ -143,10 +143,10 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
 
     private void loadData() {
         NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
-                .subscribe(new Action1<List<HomeworkBookInfo>>() {
+                .subscribe(new Action1<List<HomeworkBookSummary>>() {
                     @Override
-                    public void call(List<HomeworkBookInfo> homeworkBookInfos) {
-                        freshUI(homeworkBookInfos);
+                    public void call(List<HomeworkBookSummary> homeworkBookSummaries) {
+                        freshUI(homeworkBookSummaries);
                     }
                 }, new Action1<Throwable>() {
                     @Override

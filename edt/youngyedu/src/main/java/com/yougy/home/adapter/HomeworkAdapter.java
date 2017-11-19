@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yougy.common.utils.UIUtils;
-import com.yougy.homework.bean.HomeworkBookInfo;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 
 import java.util.List;
@@ -17,12 +17,12 @@ import java.util.List;
  */
 
 public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.HomeworkHolder> {
-    private List<HomeworkBookInfo> mInfos;
+    private List<HomeworkBookSummary> mInfos;
 
     /**
      * 构造函数 初始化数据
      */
-    public HomeworkAdapter(List<HomeworkBookInfo> mInfos) {
+    public HomeworkAdapter(List<HomeworkBookSummary> mInfos) {
         this.mInfos = mInfos;
     }
 
@@ -74,7 +74,7 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
                 mImgIcon.setBackgroundDrawable(UIUtils.getDrawable(R.drawable.img_book_backgroud));
-                mTvName.setText( mInfos.get(position).getCourseBookTitle());
+                mTvName.setText(mInfos.get(position).getHomeworkId() + mInfos.get(position).getHomeworkTitle());
             }
         }
     }
