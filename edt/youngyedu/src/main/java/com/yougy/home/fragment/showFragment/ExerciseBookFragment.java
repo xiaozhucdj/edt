@@ -15,6 +15,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.PageableRecyclerView;
+import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.mistake_note.BookStructureActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FragmentExerciseBookBinding;
@@ -145,6 +146,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到课本逻辑
+                startActivity(new Intent(getActivity(),WriteHomeWorkActivity.class));
             }
         });
         binding.switch2noteBtn.setOnClickListener(new View.OnClickListener() {
