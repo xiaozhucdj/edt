@@ -18,12 +18,13 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.homework.bean.HomeworkBookSummary;
+import com.yougy.homework.bean.HomeworkBookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -43,8 +44,8 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     /**
      * 适配器 数据
      */
-    private List<HomeworkBookSummary> mHomewroks = new ArrayList<>();
-    private List<HomeworkBookSummary> mCountBooks = new ArrayList<>();
+    private List<HomeworkBookInfo> mHomewroks = new ArrayList<>();
+    private List<HomeworkBookInfo> mCountBooks = new ArrayList<>();
     /***
      * 一页数据个数
      */
@@ -92,7 +93,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
 
     /**点击事件*/
     private void itemClick(int position) {
-        HomeworkBookSummary info = mHomewroks.get(position);
+        HomeworkBookInfo info = mHomewroks.get(position);
             Bundle extras = new Bundle();
             //图书ID
             extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
@@ -121,7 +122,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mIsFist = true;
     }
 
-    private void freshUI(List<HomeworkBookSummary> beans) {
+    private void freshUI(List<HomeworkBookInfo> beans) {
         if (beans!=null && beans.size()>0){
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
@@ -142,18 +143,22 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     }
 
     private void loadData() {
-        NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
-                .subscribe(new Action1<List<HomeworkBookSummary>>() {
-                    @Override
-                    public void call(List<HomeworkBookSummary> homeworkBookSummaries) {
-                        freshUI(homeworkBookSummaries);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+        if (NetUtils.isNetConnected()) {
+            NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
+                    .subscribe(new Action1<List<HomeworkBookInfo>>() {
+                        @Override
+                        public void call(List<HomeworkBookInfo> homeworkBookInfos) {
+                            freshUI(homeworkBookInfos);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+        } else {
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+        }
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -281,5 +286,19 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             LogUtils.i("type .." + EventBusConstant.current_home_work);
             loadData();
         }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
     }
 }
