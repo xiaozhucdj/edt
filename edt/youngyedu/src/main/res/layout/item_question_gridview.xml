@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="164px"
+        android:layout_height="124px"
+        >
+        <TextView
+            android:id="@+id/textview"
+            android:layout_width="82px"
+            android:layout_height="82px"
+            android:background="@drawable/shape_circle_white_black"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="1"
+            android:textSize="24px"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:id="@+id/icon"
+            android:layout_width="38px"
+            android:layout_height="38px"
+            android:background="@drawable/icon_correct"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="26px"
+            android:layout_marginBottom="20px"
+            />
+    </RelativeLayout>
+</layout>

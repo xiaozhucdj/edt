@@ -21,7 +21,6 @@
                 android:layout_width="30px"
                 android:layout_height="30px"
                 android:src="@drawable/le_btn_back_new_selector"
-                android:onClick="back"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -33,28 +32,45 @@
                 />
         </RelativeLayout>
 
-        <View
+        <View android:layout_width="match_parent" android:layout_height="2px" android:background="@color/black" />
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:background="@color/black" />
-
-        <Spinner
-            android:id="@+id/book_spinner"
-            android:layout_width="202px"
-            android:layout_height="38px"
-            android:background="@drawable/img_bg_xuankuang"
-            android:spinnerMode="dropdown"
-            android:layout_gravity="right"
-            android:layout_marginRight="30px"
-            android:layout_marginTop="11px"
-            android:layout_marginBottom="10px"
-            />
+            android:layout_height="60px"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="30px"
+            >
+            <TextView
+                android:id="@+id/current_position_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前位置 : xxxxxxxxx    >>    xxxxxxxx"
+                android:textSize="22px"
+                android:textColor="@color/black"
+                />
+        </LinearLayout>
         <View android:layout_width="match_parent" android:layout_height="2px" android:background="@color/black"/>
         <com.yougy.homework.PageableRecyclerView
             android:id="@+id/main_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="30px"
+            android:layout_marginTop="3px"
+            />
+        <TextView
+            android:id="@+id/no_result_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="该章节还没有错题哦!继续努力!"
+            android:textSize="28px"
+            android:textColor="@color/black"
+            android:paddingTop="85px"
+            android:paddingBottom="85px"
+            android:paddingLeft="100px"
+            android:paddingRight="100px"
+            android:layout_marginTop="290px"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shape_rectangle_black_border"
             />
     </LinearLayout>
 </layout>

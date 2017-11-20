@@ -68,12 +68,6 @@
         <activity android:name="com.yougy.shop.activity.BookShopActivityDB" />
 
 
-        <activity
-            android:name="com.yougy.home.activity.HomeworkActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-
-
         <!--确认订单页-->
         <activity
             android:name="com.yougy.shop.activity.ConfirmOrderActivity"
@@ -205,6 +199,25 @@
 
 
         <activity android:name="com.yougy.anwser.AnsweringActivity" />
+        <activity android:name="com.yougy.message.ui.ContactListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
+        </activity>
+        <!--错题本图书章节选择界面-->
+        <activity android:name="com.yougy.homework.mistake_note.BookStructureActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
+        </activity>
+        <!--错题本错题列表界面-->
+        <activity android:name="com.yougy.homework.mistake_note.MistakeListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
+        </activity>
+        <activity android:name="com.yougy.homework.CheckedHomeworkDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
+        </activity>
+        <activity android:name="com.yougy.anwser.AnsweringActivity">
 
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
