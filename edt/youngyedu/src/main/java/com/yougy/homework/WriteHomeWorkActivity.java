@@ -10,16 +10,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
+import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/10/19.
@@ -65,7 +70,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-
+        NetWorkManager.queryHomeworkDetail(524).subscribe(new Action1<List<HomeworkDetail>>() {
+            @Override
+            public void call(List<HomeworkDetail> homeworkDetails) {
+                homeworkDetails.size();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
         //作业题目切换
 
         homeWorkPageNumAdapter = new HomeWorkPageNumAdapter();

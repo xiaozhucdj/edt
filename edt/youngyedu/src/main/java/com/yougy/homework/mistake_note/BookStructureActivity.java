@@ -94,24 +94,17 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                         else {
                             node = ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).nodeList.get(position - 1);
                         }
-                        ArrayList<Integer> mistakeItemIdList = new ArrayList<Integer>();
-                        for (MistakeSummary mistakeSummary : mistakeList) {
-                            if (node.getId() == mistakeSummary.getExtra().getCursor()){
-                                if (!ListUtil.conditionalContains(mistakeItemIdList, new ListUtil.ConditionJudger<Integer>() {
-                                    @Override
-                                    public boolean isMatchCondition(Integer nodeInList) {
-                                        return nodeInList.intValue() == mistakeSummary.getItem();
-                                    }
-                                })){
-                                    mistakeItemIdList.add(mistakeSummary.getItem());
-                                }
+                        ArrayList<MistakeSummary> subMistakeList = ListUtil.conditionalSubList(mistakeList, new ListUtil.ConditionJudger<MistakeSummary>() {
+                            @Override
+                            public boolean isMatchCondition(MistakeSummary nodeInList) {
+                                return nodeInList.getExtra().getCursor() == node.getId();
                             }
-                        }
+                        });
                         Intent intent = new Intent(getApplicationContext() , MistakeListActivity.class);
                         intent.putExtra("topNode" , ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).fatherNode);
                         intent.putExtra("currentNode" , node);
-                        if (mistakeItemIdList.size() > 0){
-                            intent.putIntegerArrayListExtra("itemIdList" , mistakeItemIdList);
+                        if (subMistakeList.size() > 0){
+                            intent.putParcelableArrayListExtra("mistakeList" , subMistakeList);
                         }
                         startActivity(intent);
                     }
