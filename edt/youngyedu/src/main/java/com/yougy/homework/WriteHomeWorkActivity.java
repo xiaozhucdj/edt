@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.anwser.QuestionAnswerContainer;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
@@ -38,11 +40,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RecyclerView allHomeWorkPage;
     @BindView(R.id.rcv_all_question_page)
     RecyclerView allQuestionPage;
+    @BindView(R.id.question_container)
+    QuestionAnswerContainer questionContainer;
 
     private static final int PAGE_SHOW_SIZE = 5;
 
-    int homeWorkPageSize = 17;
-    int questionPageSize = 3;
+    private int homeWorkPageSize = 17;
+    private int questionPageSize = 3;
 
     //底部页码数偏移量
     private int pageDeviationNum = 0;
@@ -51,6 +55,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
     //当前顶部展示的页数（展示的第几题）从0开始。
     private int showHomeWorkPosition = 0;
     private HomeWorkPageNumAdapter homeWorkPageNumAdapter;
+
+    //顶部作业题目展示数据
+    List<com.yougy.homework.bean.HomeworkDetail.ExamPaper.ExamPaperContent> examPaperContentList;
+    //底部某一题多页数据
+    private List<ParsedQuestionItem.Question> questionList;
 
     @Override
     protected void setContentView() {
@@ -73,7 +82,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         NetWorkManager.queryHomeworkDetail(524).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
-                homeworkDetails.size();
+                com.yougy.homework.bean.HomeworkDetail.ExamPaper examPaper = homeworkDetails.get(0).getExamPaper();
+
+                examPaperContentList = examPaper.getPaperContent();
+
+                homeWorkPageSize = examPaperContentList.size();
+
+                fillData();
             }
         }, new Action1<Throwable>() {
             @Override
@@ -81,8 +96,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 throwable.printStackTrace();
             }
         });
-        //作业题目切换
 
+
+    }
+
+    //填充数据
+    private void fillData() {
+        //作业题目切换
         homeWorkPageNumAdapter = new HomeWorkPageNumAdapter();
         CustomGridLayoutManager gridLayoutManager = new CustomGridLayoutManager(this, 8);
         gridLayoutManager.setScrollEnabled(false);
@@ -97,10 +117,28 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 showHomeWorkPosition = position;
 
-                HomeWorkPageNumViewHolder holder =(HomeWorkPageNumViewHolder) allHomeWorkPage.findViewHolderForAdapterPosition(position);
-                homeWorkPageNumAdapter.notifyDataSetChanged();
-                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_zhengqu);
-                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+                com.yougy.homework.bean.HomeworkDetail.ExamPaper.ExamPaperContent examPaperContent = examPaperContentList.get(position);
+                ParsedQuestionItem parsedQuestionItem = examPaperContent.getParsedQuestionItemList().get(0);
+                questionList = parsedQuestionItem.questionList;
+
+                questionPageSize = questionList.size();
+
+                //取题目的第一页纸展示
+                ParsedQuestionItem.Question question = questionList.get(0);
+                if (question instanceof ParsedQuestionItem.HtmlQuestion) {
+                    questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) question).htmlUrl);
+                } else if (question instanceof ParsedQuestionItem.TextQuestion) {
+                    questionContainer.setText(((ParsedQuestionItem.TextQuestion) question).text);
+                } else if (question instanceof ParsedQuestionItem.ImgQuestion) {
+                    questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) question).imgUrl);
+                }
+                questionContainer.setVisibility(View.VISIBLE);
+                questionPageNumAdapter.notifyDataSetChanged();
+
+//                HomeWorkPageNumViewHolder holder = (HomeWorkPageNumViewHolder) allHomeWorkPage.findViewHolderForAdapterPosition(position);
+//                homeWorkPageNumAdapter.notifyDataSetChanged();
+//                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_zhengqu);
+//                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
 
             }
         });
@@ -118,6 +156,23 @@ public class WriteHomeWorkActivity extends BaseActivity {
             public void onItemClick1(int position) {
                 ToastUtil.showToast(WriteHomeWorkActivity.this, position + 1 + "");
 
+                if (position < questionList.size()) {
+                    //切换当前题目的分页
+                    ParsedQuestionItem.Question question = questionList.get(position);
+                    if (question instanceof ParsedQuestionItem.HtmlQuestion) {
+                        questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) question).htmlUrl);
+                    } else if (question instanceof ParsedQuestionItem.TextQuestion) {
+                        questionContainer.setText(((ParsedQuestionItem.TextQuestion) question).text);
+                    } else if (question instanceof ParsedQuestionItem.ImgQuestion) {
+                        questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) question).imgUrl);
+                    }
+                    questionContainer.setVisibility(View.VISIBLE);
+                } else {
+                    //加白纸
+                    questionContainer.setVisibility(View.GONE);
+
+                }
+
 
                 //以下逻辑为调整列表中角标位置。
                 if (questionPageSize <= PAGE_SHOW_SIZE) {
@@ -131,10 +186,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
                 moveToPosition(linearLayoutManager, pageDeviationNum);
 
+
             }
         });
 
+        if (examPaperContentList != null && examPaperContentList.size() > 0) {
+
+            homeWorkPageNumAdapter.onItemClickListener.onItemClick1(0);
+            if (questionList != null && questionList.size() > 0) {
+                questionPageNumAdapter.onItemClickListener.onItemClick1(0);
+            }
+        }
     }
+
 
     /**
      * RecyclerView 移动到当前位置，
@@ -161,16 +225,16 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (showHomeWorkPosition > 0) {
                     showHomeWorkPosition--;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
-                }else{
-                    ToastUtil.showToast(this,"已经是第一题了");
+                } else {
+                    ToastUtil.showToast(this, "已经是第一题了");
                 }
                 break;
             case R.id.tv_next_homework:
                 if (showHomeWorkPosition < homeWorkPageSize - 1) {
                     showHomeWorkPosition++;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
-                }else{
-                    ToastUtil.showToast(this,"已经是最后一题了");
+                } else {
+                    ToastUtil.showToast(this, "已经是最后一题了");
                 }
                 break;
             case R.id.tv_save_homework:
@@ -182,7 +246,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_add_page:
                 questionPageSize++;
                 questionPageNumAdapter.notifyDataSetChanged();
-                questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize-1);
+                questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize - 1);
 
                 break;
             case R.id.ll_chooese_homework:
