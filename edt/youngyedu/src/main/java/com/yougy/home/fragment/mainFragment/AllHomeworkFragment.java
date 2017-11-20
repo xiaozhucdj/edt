@@ -29,7 +29,7 @@ import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
-import com.yougy.homework.bean.HomeworkBookInfo;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -54,16 +54,16 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     /**
      * 适配器 数据
      */
-    private List<HomeworkBookInfo> mBooks = new ArrayList<>();
+    private List<HomeworkBookSummary> mBooks = new ArrayList<>();
     /**
      * 当前按照（年级，和课本类别分类后的数据总集合）
      */
-    private List<HomeworkBookInfo> mCountBooks = new ArrayList<>();
+    private List<HomeworkBookSummary> mCountBooks = new ArrayList<>();
 
     /**
      * 服务器返回数据
      */
-    private List<HomeworkBookInfo> mServerBooks = new ArrayList<>();
+    private List<HomeworkBookSummary> mServerBooks = new ArrayList<>();
 
 //
     /**
@@ -288,7 +288,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     }
 
     private void itemClick(int position) {
-        HomeworkBookInfo info = mBooks.get(position);
+        HomeworkBookSummary info = mBooks.get(position);
         Bundle extras = new Bundle();
         //图书ID
         extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
@@ -328,9 +328,9 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     private void loadData() {
         if (NetUtils.isNetConnected()) {
             NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"",null)
-                    .subscribe(new Action1<List<HomeworkBookInfo>>() {
+                    .subscribe(new Action1<List<HomeworkBookSummary>>() {
                         @Override
-                        public void call(List<HomeworkBookInfo> homeworkBookInfos) {
+                        public void call(List<HomeworkBookSummary> homeworkBookInfos) {
                             freshUI(homeworkBookInfos);
                         }
                     }, new Action1<Throwable>() {
@@ -358,7 +358,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
         mBooks.clear();
         // 根据 是否是学科筛选数据
         if (isGrade) {
-            for (HomeworkBookInfo book : mServerBooks) {
+            for (HomeworkBookSummary book : mServerBooks) {
 
                 //设置当前年级锁需要的书 ，并且做分页显示
                 if (StringUtils.isEquals(key, book.getHomeworkFitGradeName())) {
@@ -366,7 +366,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
                 }
             }
         } else {
-            for (HomeworkBookInfo book : mServerBooks) {
+            for (HomeworkBookSummary book : mServerBooks) {
                 //设置当前年级锁需要的书 ，并且做分页显示
                 if (StringUtils.isEquals(key, book.getHomeworkFitSubjectName())) {
                     mCountBooks.add(book);
@@ -451,7 +451,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
         mCountBooks.clear();
 
         if (mServerBooks.size() > 0) {
-            for (HomeworkBookInfo book : mServerBooks) {
+            for (HomeworkBookSummary book : mServerBooks) {
                 //设置当前年级锁需要的书 ，并且做分页显示
                 if (StringUtils.isEquals(SpUtil.getGradeName(), book.getHomeworkFitGradeName())) {
                     mCountBooks.add(book);
@@ -568,7 +568,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
         }
     }
 
-    private void freshUI(List<HomeworkBookInfo> homeworkBookInfos) {
+    private void freshUI(List<HomeworkBookSummary> homeworkBookInfos) {
         if (homeworkBookInfos != null && homeworkBookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
