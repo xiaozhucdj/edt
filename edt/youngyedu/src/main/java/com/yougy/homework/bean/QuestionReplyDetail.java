@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.yougy.anwser.Content;
+import com.yougy.anwser.OriginQuestionItem;
+import com.yougy.anwser.ParsedQuestionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +47,13 @@ public class QuestionReplyDetail {
     private String replyCreateTime;
     private List<LinkedTreeMap> replyContent;
     private List<LinkedTreeMap> replyComment;
-    private LinkedTreeMap replyItemContent;
+    private OriginQuestionItem replyItemContent;
+
 
     private String textContent;
     private List<Content> parsedReplyContentList = new ArrayList<Content>();
     private List<String> parsedReplyCommentList = new ArrayList<String>();
-
+    private ParsedQuestionItem parsedQuestionItem;
 
     public String getReplyStatus() {
         return replyStatus;
@@ -215,7 +218,11 @@ public class QuestionReplyDetail {
         }
 
         for (LinkedTreeMap linkedTreeMap : replyComment) {
-            replyComment.add((LinkedTreeMap) linkedTreeMap.get("value"));
+            parsedReplyCommentList.add((String) linkedTreeMap.get("value"));
         }
+
+        parsedQuestionItem = replyItemContent.parseQuestion();
     }
+
+
 }

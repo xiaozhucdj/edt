@@ -7,6 +7,7 @@ import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.shop.bean.DownloadInfo;
 
 import java.util.List;
@@ -98,12 +99,12 @@ public interface ServerApi {
     Observable<BaseResult<Object>> refreshHomeworkBook(@Field("homeworkId") Integer homeworkId);
 
     /**
-     * 查询解答
+     * 查询解答详情
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"}, values = {"queryReply"})
-    Observable<BaseResult<List<QuestionReplyDetail>>> queryReply(@Field("examId") Integer examId);
+    @DefaultField(keys = {"m"}, values = {"reviewComment"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId , @Field("itemId") Integer itemId);
 
     /**
      * 查询作业详情
@@ -112,4 +113,12 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryExam"})
     Observable<BaseResult<List<HomeworkDetail>>> queryHomeworkDetail(@Field("examId") Integer examId);
+
+    /**
+     * 查询解答摘要
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryReply"})
+    Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId);
 }

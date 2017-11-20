@@ -9,6 +9,7 @@ import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -180,13 +181,12 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<QuestionReplyDetail>> queryReply(Integer examId){
-        Log.v("FH", "!!!!!调用ServerApi查询学生解答:queryReply");
-        return getInstance().getServerApi().queryReply(examId)
+    public static Observable<List<QuestionReplyDetail>> queryReplyDetail(Integer examId , Integer itemId){
+        Log.v("FH", "!!!!!调用ServerApi查询学生解答详情:queryReplyDetail");
+        return getInstance().getServerApi().reviewComment(examId , itemId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
-//                .compose(RxResultHelper.)
-                ;
+                .compose(RxResultHelper.parseReplyDetail());
     }
 
     public static Observable<List<HomeworkDetail>> queryHomeworkDetail(Integer examId){
@@ -195,5 +195,12 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());
+    }
+
+    public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId){
+        Log.v("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
+        return getInstance().getServerApi().queryReply(examId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 }
