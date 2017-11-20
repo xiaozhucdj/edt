@@ -16,7 +16,7 @@
             android:id="@+id/from_textview"
             android:layout_width="wrap_content"
             android:layout_height="40px"
-            android:text="来自于 : 9月15日作业"
+            android:text="来自于 : xxxxxxxxxxxx"
             android:textSize="20px"
             android:textColor="@color/black"
             android:gravity="center_vertical"

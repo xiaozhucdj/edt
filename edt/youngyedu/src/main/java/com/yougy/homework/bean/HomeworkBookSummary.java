@@ -6,7 +6,7 @@ import java.util.List;
  * Created by FH on 2017/11/13.
  */
 
-public class HomeworkBookInfo {
+public class HomeworkBookSummary {
 
     /**
      * homeworkStatus : 已开通
@@ -85,7 +85,7 @@ public class HomeworkBookInfo {
         return homeworkFitNoteStyle;
     }
 
-    public HomeworkBookInfo setHomeworkFitNoteStyle(int homeworkFitNoteStyle) {
+    public HomeworkBookSummary setHomeworkFitNoteStyle(int homeworkFitNoteStyle) {
         this.homeworkFitNoteStyle = homeworkFitNoteStyle;
         return this;
     }

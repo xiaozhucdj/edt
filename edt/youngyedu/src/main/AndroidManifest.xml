@@ -154,8 +154,9 @@
             android:name="com.yougy.shop.activity.PaySuccessActivity"
             android:screenOrientation="portrait" />
         <!--我的订单列表-->
-        <activity android:name="com.yougy.shop.activity.OrderListActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.yougy.shop.activity.OrderListActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.yougy.shop.activity.ShopBookDetailsActivity"
@@ -163,13 +164,14 @@
         <activity
             android:name="com.yougy.shop.activity.ProbationReadBookActivity"
             android:screenOrientation="portrait" />
-        <service android:name="com.yougy.common.service.DownloadService"/>
-        <service android:name="com.yougy.common.service.UploadService"/>
+
+        <service android:name="com.yougy.common.service.DownloadService" />
+        <service android:name="com.yougy.common.service.UploadService" />
 
         <!-- 最近联系人-->
-        <activity android:name="com.yougy.message.ui.RecentContactListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            >
+        <activity
+            android:name="com.yougy.message.ui.RecentContactListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->
 
@@ -178,47 +180,49 @@
         </activity>
 
         <!--聊天界面-->
-        <activity android:name="com.yougy.message.ui.ChattingActivity"
+        <activity
+            android:name="com.yougy.message.ui.ChattingActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="adjustResize"
-            >
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <!--群发聊天界面-->
-        <activity android:name="com.yougy.message.ui.MultiChattingActivity"
+        <activity
+            android:name="com.yougy.message.ui.MultiChattingActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="adjustResize"
-            >
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <!--选择联系人界面-->
-        <activity android:name="com.yougy.message.ui.ContactListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            >
-        </activity>
+        <activity
+            android:name="com.yougy.message.ui.ContactListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name="com.yougy.homework.mistake_note.BookStructureActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+
+        <activity android:name="com.yougy.anwser.AnsweringActivity" />
+        <activity
+            android:name="com.yougy.message.ui.ContactListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <!--错题本图书章节选择界面-->
-        <activity android:name="com.yougy.homework.mistake_note.BookStructureActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            >
-        </activity>
+        <activity
+            android:name="com.yougy.homework.mistake_note.BookStructureActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <!--错题本错题列表界面-->
-        <activity android:name="com.yougy.homework.mistake_note.MistakeListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            >
-        </activity>
-        <activity android:name="com.yougy.homework.CheckedHomeworkDetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            >
-        </activity>
-        <activity android:name="com.yougy.anwser.AnsweringActivity">
+        <activity
+            android:name="com.yougy.homework.mistake_note.MistakeListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <activity
+            android:name="com.yougy.homework.CheckedHomeworkDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <activity android:name="com.yougy.anwser.AnsweringActivity" />
 
-        </activity>
-        <activity android:name="com.yougy.anwser.AnswerResultActivity">
+        <activity android:name="com.yougy.anwser.AnswerResultActivity" />
+        <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
+        <activity android:name="com.yougy.homework.HomeWorkResultActivity" />
+        <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity" />
 
-        </activity>
-        <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity">
-        </activity>
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
             <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
 
@@ -264,12 +268,13 @@
         <!-- 安卓保活配置 -->
         <service
             android:name="com.netease.cosine.core.CosineService"
-            android:process=":cosine"/>
+            android:process=":cosine" />
 
         <receiver
             android:name="com.netease.cosine.target.CosineReceiver"
             android:exported="true"
-            android:process=":cosine"/>
+            android:process=":cosine" />
+
         <meta-data
             android:name="com.netease.cosine.target"
             android:value="" />

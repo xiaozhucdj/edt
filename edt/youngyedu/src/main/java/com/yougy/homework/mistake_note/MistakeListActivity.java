@@ -1,20 +1,29 @@
 package com.yougy.homework.mistake_note;
 
 import android.databinding.DataBindingUtil;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.PageableRecyclerView;
+import com.yougy.homework.bean.BookStructureNode;
+import com.yougy.homework.bean.MistakeSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeListBinding;
 import com.yougy.ui.activity.databinding.ItemMistakeListBinding;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/11/3.
@@ -22,6 +31,10 @@ import com.yougy.ui.activity.databinding.ItemMistakeListBinding;
 
 public class MistakeListActivity extends HomeworkBaseActivity{
     ActivityMistakeListBinding binding;
+    ArrayList<MistakeSummary> mistakeSummaryList;
+    ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
+    BookStructureNode topNode , currentNode;
+    ArrayList<BookStructureNode> nodeTree = new ArrayList<BookStructureNode>();
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.activity_mistake_list , null , false);
@@ -31,33 +44,73 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     @Override
     protected void init() {
+        mistakeSummaryList = getIntent().getParcelableArrayListExtra("mistakeList");
+        topNode = getIntent().getParcelableExtra("topNode");
+        currentNode = getIntent().getParcelableExtra("currentNode");
+        if (findCurrentNode(topNode , currentNode)){
+            String currentPostionText = "";
+            for (int i = nodeTree.size() - 1 ; i >=0 ; i--){
+                currentPostionText = currentPostionText + nodeTree.get(i).getName();
+                if (i != 0){
+                    currentPostionText = currentPostionText + "  >>  ";
+                }
+            }
+            binding.currentPositionTextview.setText(currentPostionText);
+        }
+    }
 
+    private boolean findCurrentNode(BookStructureNode from , BookStructureNode tofind){
+        if (from.getId() == tofind.getId()){
+            nodeTree.add(from);
+            return true;
+        }
+        else {
+            if (from.getNodes() == null || from.getNodes().size() == 0){
+                return false;
+            }
+            else {
+                for (BookStructureNode child : from.getNodes()){
+                    if (findCurrentNode(child , tofind)){
+                        nodeTree.add(from);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
     }
 
     @Override
     protected void initLayout() {
+        binding.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         binding.mainRecyclerview.setMaxItemNumInOnePage(4);
         binding.mainRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext() , LinearLayoutManager.VERTICAL , false));
-        binding.mainRecyclerview.setAdapter(new PageableRecyclerView.Adapter() {
+        binding.mainRecyclerview.setAdapter(new PageableRecyclerView.Adapter<MyHolder>() {
             @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 return new MyHolder(DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()) , R.layout.item_mistake_list , parent , false));
             }
 
             @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+            public void onBindViewHolder(MyHolder holder, int position) {
+                ParsedQuestionItem parsedQuestionItem = questionList.get(position);
+                holder.setQuestionItem(parsedQuestionItem);
             }
 
             @Override
             public int getItemCount() {
-                return 10;
+                return questionList.size();
             }
         });
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-                //TODO 列表点击事件
+                ToastUtil.showToast(getApplicationContext() , ((MyHolder) vh).questionItem.itemId);
             }
         });
         binding.mainRecyclerview.notifyDataSetChanged();
@@ -65,7 +118,38 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     @Override
     protected void loadData() {
-
+        if (mistakeSummaryList == null || mistakeSummaryList.size() == 0){
+            binding.noResultTextview.setVisibility(View.VISIBLE);
+            binding.mainRecyclerview.setVisibility(View.GONE);
+            return;
+        }
+        binding.noResultTextview.setVisibility(View.GONE);
+        binding.mainRecyclerview.setVisibility(View.VISIBLE);
+        String itemIdStr = "";
+        for (int i = 0; i < mistakeSummaryList.size() ; i++) {
+            if (i == 0){
+                itemIdStr = itemIdStr + "[";
+            }
+            itemIdStr = itemIdStr + mistakeSummaryList.get(i).getItem();
+            if(i == mistakeSummaryList.size() - 1){
+                itemIdStr = itemIdStr + "]";
+            }
+            else {
+                itemIdStr = itemIdStr + ",";
+            }
+        }
+        NetWorkManager.queryQuestionItemList(null , null , itemIdStr , null).subscribe(new Action1<List<ParsedQuestionItem>>() {
+            @Override
+            public void call(List<ParsedQuestionItem> parsedQuestionItems) {
+                questionList.addAll(parsedQuestionItems);
+                binding.mainRecyclerview.notifyDataSetChanged();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -73,14 +157,31 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     }
 
-    public void back(View view){
-        onBackPressed();
-    }
     private class MyHolder extends RecyclerView.ViewHolder{
-        ItemMistakeListBinding binding;
+        private ItemMistakeListBinding binding;
+        private ParsedQuestionItem questionItem;
         public MyHolder(ItemMistakeListBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public void setQuestionItem(ParsedQuestionItem item){
+            questionItem = item;
+            if (questionItem.questionList.get(0) instanceof ParsedQuestionItem.HtmlQuestion){
+                binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) questionItem.questionList.get(0)).htmlUrl);
+            }
+            else if (questionItem.questionList.get(0) instanceof ParsedQuestionItem.TextQuestion){
+                binding.questionContainer.setText(((ParsedQuestionItem.TextQuestion) questionItem.questionList.get(0)).text);
+            }
+            else if (questionItem.questionList.get(0) instanceof ParsedQuestionItem.ImgQuestion){
+                binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) questionItem.questionList.get(0)).imgUrl);
+            }
+            for (MistakeSummary mistakeSummary : mistakeSummaryList) {
+                if (questionItem.itemId.equals("" + mistakeSummary.getItem())){
+                    binding.fromTextview.setText("来自于 : " + mistakeSummary.getExtra().getName());
+                    break;
+                }
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ import android.util.Log;
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
-import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.util.ArrayList;
@@ -23,39 +22,38 @@ import rx.functions.Func1;
  * FIXME
  * Rx处理服务器返回
  */
-public class RxResultHelper {
-    public static <T> Observable.Transformer<BaseResult<T>, T> handleResult(final LoadingProgressDialog loadingProgressDialog) {
-        Log.v("FH" , "!!!!! handleResult " + loadingProgressDialog);
-        return new Observable.Transformer<BaseResult<T>, T>() {
+public class RxResultHelper2 {
+    public static <T> Observable.Transformer<BaseResult<T>, BaseResult<T>> handleResult(final LoadingProgressDialog loadingProgressDialog) {
+        return new Observable.Transformer<BaseResult<T>, BaseResult<T>>() {
             @Override
-            public Observable<T> call(Observable<BaseResult<T>> tObservable) {
+            public Observable<BaseResult<T>> call(Observable<BaseResult<T>> tObservable) {
                 return tObservable.flatMap(
-                        new Func1<BaseResult<T>, Observable<? extends T>>() {
+                        new Func1<BaseResult<T>, Observable<BaseResult<T>>>() {
                             @Override
-                            public Observable<? extends T> call(BaseResult<T> entity) {
-                                Log.v("FH", "!!!!! success call  " + loadingProgressDialog);
-                                if (loadingProgressDialog != null){
+                            public Observable<BaseResult<T>> call(BaseResult<T> entity) {
+                                if (loadingProgressDialog != null && loadingProgressDialog.isShowing()) {
+                                    Log.v("FH", "!!!!! success call  " + loadingProgressDialog.toString());
                                     loadingProgressDialog.dismiss();
                                 }
                                 if (entity.getCode() == 200) {
-                                    return createData(entity.getData());
+                                    return createData(entity);
                                 } else {
                                     return Observable.error(new ApiException(entity.getCode() + "", entity.getMsg()));
                                 }
                             }
                         },
-                        new Func1<Throwable, Observable<? extends T>>() {
+                        new Func1<Throwable, Observable<BaseResult<T>>>() {
                             @Override
-                            public Observable<? extends T> call(Throwable throwable) {
-                                Log.v("FH", "!!!!! error call  " + loadingProgressDialog);
-                                if (loadingProgressDialog != null){
+                            public Observable<BaseResult<T>> call(Throwable throwable) {
+                                if (loadingProgressDialog != null && loadingProgressDialog.isShowing()) {
+                                    Log.v("FH", "!!!!! error call  " + loadingProgressDialog.toString());
                                     loadingProgressDialog.dismiss();
                                 }
                                 return Observable.error(throwable);
                             }
-                        }, new Func0<Observable<? extends T>>() {
+                        }, new Func0<Observable<BaseResult<T>>>() {
                             @Override
-                            public Observable<? extends T> call() {
+                            public Observable<BaseResult<T>> call() {
                                 return null;
                             }
                         }
@@ -64,7 +62,9 @@ public class RxResultHelper {
         };
     }
 
-    public static class ResultHandler<T> implements Func1<BaseResult<T> , Observable<T>>{
+
+
+    /*public static class ResultHandler<T> implements Func1<BaseResult<T> , Observable<T>>{
         @Override
         public Observable<T> call(BaseResult<T> tBaseResult) {
             if (tBaseResult.getCode() == 200) {
@@ -73,7 +73,8 @@ public class RxResultHelper {
                 return Observable.error(new ApiException(tBaseResult.getCode() + "", tBaseResult.getMsg()));
             }
         }
-    }
+    }*/
+
 
     private static <T> Observable<T> createData(final T t) {
         return Observable.create(new Observable.OnSubscribe<T>() {
@@ -88,6 +89,8 @@ public class RxResultHelper {
             }
         });
     }
+
+
 
     public static Observable.Transformer<List<OriginQuestionItem>, List<ParsedQuestionItem>> parseQuestion(){
         return new Observable.Transformer<List<OriginQuestionItem>, List<ParsedQuestionItem>>() {
@@ -104,29 +107,6 @@ public class RxResultHelper {
                             }
                         }
                         return paredQuestionList;
-                    }
-                });
-            }
-        };
-    }
-
-    public static Observable.Transformer<List<HomeworkDetail> , List<HomeworkDetail>> parseHomeworkQuestion(){
-        return new Observable.Transformer<List<HomeworkDetail>, List<HomeworkDetail>>() {
-            @Override
-            public Observable<List<HomeworkDetail>> call(Observable<List<HomeworkDetail>> listObservable) {
-                return listObservable.map(new Func1<List<HomeworkDetail>, List<HomeworkDetail>>() {
-                    @Override
-                    public List<HomeworkDetail> call(List<HomeworkDetail> homeworkDetails) {
-                        for (HomeworkDetail homeworkDetail : homeworkDetails) {
-                            for (HomeworkDetail.ExamPaper.ExamPaperContent paperContent: homeworkDetail.getExamPaper().getPaperContent()
-                                 ) {
-                                for (OriginQuestionItem originQuestionItem :
-                                        paperContent.getPaperItemContent()) {
-                                    paperContent.getParsedQuestionItemList().add(originQuestionItem.parseQuestion());
-                                }
-                            }
-                        }
-                        return homeworkDetails;
                     }
                 });
             }

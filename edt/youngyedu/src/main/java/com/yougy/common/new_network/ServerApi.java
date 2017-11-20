@@ -3,7 +3,10 @@ package com.yougy.common.new_network;
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
-import com.yougy.homework.bean.HomeworkBookInfo;
+import com.yougy.homework.bean.HomeworkBookDetail;
+import com.yougy.homework.bean.HomeworkBookSummary;
+import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.QuestionReply;
 import com.yougy.shop.bean.DownloadInfo;
 
 import java.util.List;
@@ -67,6 +70,46 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryHomework"})
-    Observable<BaseResult<List<HomeworkBookInfo>>> queryHomeworkBookList(@Field("userId") String userId
+    Observable<BaseResult<List<HomeworkBookSummary>>> queryHomeworkBookList(@Field("userId") String userId
             , @Field("homeworkFitGradeName") String homeworkFitGradeName);
+
+    /**
+     * 作业本内容作业(考试)列表接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryHomeworkDetail"})
+    Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(@Field("homeworkId") Integer homeworkId);
+
+    /**
+     * 获取图书信息
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryBook"})
+    Observable<BaseResult<List<Object>>> queryBook(@Field("bookId") Integer bookId);
+
+    /**
+     * 刷新作业本中所有作业的状态
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"refreshHomework"})
+    Observable<BaseResult<Object>> refreshHomeworkBook(@Field("homeworkId") Integer homeworkId);
+
+    /**
+     * 查询解答
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryReply"})
+    Observable<BaseResult<List<QuestionReply>>> queryReply(@Field("examId") Integer examId);
+
+    /**
+     * 查询作业详情
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryExam"})
+    Observable<BaseResult<List<HomeworkDetail>>> queryHomeworkDetail(@Field("examId") Integer examId);
 }
