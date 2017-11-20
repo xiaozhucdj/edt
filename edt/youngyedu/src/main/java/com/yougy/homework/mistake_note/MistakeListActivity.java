@@ -15,6 +15,7 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.bean.BookStructureNode;
+import com.yougy.homework.bean.MistakeSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeListBinding;
 import com.yougy.ui.activity.databinding.ItemMistakeListBinding;
@@ -30,7 +31,7 @@ import rx.functions.Action1;
 
 public class MistakeListActivity extends HomeworkBaseActivity{
     ActivityMistakeListBinding binding;
-    ArrayList<Integer> itemIdList;
+    ArrayList<MistakeSummary> mistakeSummaryList;
     ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
     BookStructureNode topNode , currentNode;
     ArrayList<BookStructureNode> nodeTree = new ArrayList<BookStructureNode>();
@@ -43,7 +44,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     @Override
     protected void init() {
-        itemIdList = getIntent().getIntegerArrayListExtra("itemIdList");
+        mistakeSummaryList = getIntent().getParcelableArrayListExtra("mistakeList");
         topNode = getIntent().getParcelableExtra("topNode");
         currentNode = getIntent().getParcelableExtra("currentNode");
         if (findCurrentNode(topNode , currentNode)){
@@ -117,7 +118,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     @Override
     protected void loadData() {
-        if (itemIdList == null || itemIdList.size() == 0){
+        if (mistakeSummaryList == null || mistakeSummaryList.size() == 0){
             binding.noResultTextview.setVisibility(View.VISIBLE);
             binding.mainRecyclerview.setVisibility(View.GONE);
             return;
@@ -125,12 +126,12 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         binding.noResultTextview.setVisibility(View.GONE);
         binding.mainRecyclerview.setVisibility(View.VISIBLE);
         String itemIdStr = "";
-        for (int i = 0 ; i < itemIdList.size() ; i++) {
+        for (int i = 0; i < mistakeSummaryList.size() ; i++) {
             if (i == 0){
-                itemIdStr = itemIdStr + "[" + itemIdList.get(i);
+                itemIdStr = itemIdStr + "[";
             }
-            itemIdStr = itemIdStr + itemIdList.get(i);
-            if(i == itemIdList.size() - 1){
+            itemIdStr = itemIdStr + mistakeSummaryList.get(i).getItem();
+            if(i == mistakeSummaryList.size() - 1){
                 itemIdStr = itemIdStr + "]";
             }
             else {
@@ -174,6 +175,12 @@ public class MistakeListActivity extends HomeworkBaseActivity{
             }
             else if (questionItem.questionList.get(0) instanceof ParsedQuestionItem.ImgQuestion){
                 binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) questionItem.questionList.get(0)).imgUrl);
+            }
+            for (MistakeSummary mistakeSummary : mistakeSummaryList) {
+                if (questionItem.itemId.equals("" + mistakeSummary.getItem())){
+                    binding.fromTextview.setText("来自于 : " + mistakeSummary.getExtra().getName());
+                    break;
+                }
             }
         }
     }

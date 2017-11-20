@@ -5,6 +5,7 @@ import android.util.Log;
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.util.ArrayList;
@@ -103,6 +104,29 @@ public class RxResultHelper {
                             }
                         }
                         return paredQuestionList;
+                    }
+                });
+            }
+        };
+    }
+
+    public static Observable.Transformer<List<HomeworkDetail> , List<HomeworkDetail>> parseHomeworkQuestion(){
+        return new Observable.Transformer<List<HomeworkDetail>, List<HomeworkDetail>>() {
+            @Override
+            public Observable<List<HomeworkDetail>> call(Observable<List<HomeworkDetail>> listObservable) {
+                return listObservable.map(new Func1<List<HomeworkDetail>, List<HomeworkDetail>>() {
+                    @Override
+                    public List<HomeworkDetail> call(List<HomeworkDetail> homeworkDetails) {
+                        for (HomeworkDetail homeworkDetail : homeworkDetails) {
+                            for (HomeworkDetail.ExamPaper.ExamPaperContent paperContent: homeworkDetail.getExamPaper().getPaperContent()
+                                 ) {
+                                for (OriginQuestionItem originQuestionItem :
+                                        paperContent.getPaperItemContent()) {
+                                    paperContent.getParsedQuestionItemList().add(originQuestionItem.parseQuestion());
+                                }
+                            }
+                        }
+                        return homeworkDetails;
                     }
                 });
             }
