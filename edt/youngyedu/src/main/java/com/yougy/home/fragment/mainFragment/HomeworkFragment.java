@@ -24,7 +24,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.homework.bean.HomeworkBookInfo;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -40,12 +40,12 @@ import static android.content.ContentValues.TAG;
  * Created by Administrator on 2016/7/12.
  * 课本
  */
-public class HomeworkFragment  extends BFragment implements View.OnClickListener {
+public class HomeworkFragment extends BFragment implements View.OnClickListener {
     /**
      * 适配器 数据
      */
-    private List<HomeworkBookInfo> mHomewroks = new ArrayList<>();
-    private List<HomeworkBookInfo> mCountBooks = new ArrayList<>();
+    private List<HomeworkBookSummary> mHomewroks = new ArrayList<>();
+    private List<HomeworkBookSummary> mCountBooks = new ArrayList<>();
     /***
      * 一页数据个数
      */
@@ -68,7 +68,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),FileContonst.PAGE_LINES);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
@@ -91,24 +91,26 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         return mRootView;
     }
 
-    /**点击事件*/
+    /**
+     * 点击事件
+     */
     private void itemClick(int position) {
-        HomeworkBookInfo info = mHomewroks.get(position);
-            Bundle extras = new Bundle();
-            //图书ID
-            extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
-            //笔记ID
-            extras.putInt(FileContonst.NOTE_ID, info.getHomeworkFitNoteId());
-            //作业ID
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getHomeworkId());
-            //笔记名字
-            extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
-            //笔记样式
-            extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
+        HomeworkBookSummary info = mHomewroks.get(position);
+        Bundle extras = new Bundle();
+        //图书ID
+        extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
+        //笔记ID
+        extras.putInt(FileContonst.NOTE_ID, info.getHomeworkFitNoteId());
+        //作业ID
+        extras.putInt(FileContonst.HOME_WROK_ID, info.getHomeworkId());
+        //笔记名字
+        extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
+        //笔记样式
+        extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
 //            loadIntentWithExtras(MainActivityScreen.class,extras);
-            //课本进入
-            extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
-            loadIntentWithExtras(ControlFragmentActivity.class, extras);
+        //课本进入
+        extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
+        loadIntentWithExtras(ControlFragmentActivity.class, extras);
     }
 
     @Override
@@ -122,13 +124,13 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mIsFist = true;
     }
 
-    private void freshUI(List<HomeworkBookInfo> beans) {
-        if (beans!=null && beans.size()>0){
+    private void freshUI(List<HomeworkBookSummary> beans) {
+        if (beans != null && beans.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
             mCountBooks.addAll(beans);
             initPages();
-        }else{
+        } else {
             // 数据返回为null
             mLoadingNull.setVisibility(View.VISIBLE);
         }
@@ -144,10 +146,10 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
 
     private void loadData() {
         if (NetUtils.isNetConnected()) {
-            NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
-                    .subscribe(new Action1<List<HomeworkBookInfo>>() {
+            NetWorkManager.queryHomeworkBookList(SpUtil.getUserId() + "", SpUtil.getGradeName())
+                    .subscribe(new Action1<List<HomeworkBookSummary>>() {
                         @Override
-                        public void call(List<HomeworkBookInfo> homeworkBookInfos) {
+                        public void call(List<HomeworkBookSummary> homeworkBookInfos) {
                             freshUI(homeworkBookInfos);
                         }
                     }, new Action1<Throwable>() {
