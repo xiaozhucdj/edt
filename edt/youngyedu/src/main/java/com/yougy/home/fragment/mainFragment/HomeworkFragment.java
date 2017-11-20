@@ -18,6 +18,7 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -142,18 +143,22 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     }
 
     private void loadData() {
-        NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
-                .subscribe(new Action1<List<HomeworkBookInfo>>() {
-                    @Override
-                    public void call(List<HomeworkBookInfo> homeworkBookInfos) {
-                        freshUI(homeworkBookInfos);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+        if (NetUtils.isNetConnected()) {
+            NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
+                    .subscribe(new Action1<List<HomeworkBookInfo>>() {
+                        @Override
+                        public void call(List<HomeworkBookInfo> homeworkBookInfos) {
+                            freshUI(homeworkBookInfos);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+        } else {
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+        }
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -281,5 +286,19 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             LogUtils.i("type .." + EventBusConstant.current_home_work);
             loadData();
         }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
     }
 }

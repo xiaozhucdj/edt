@@ -60,14 +60,12 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
     public class HomeworkHolder extends RecyclerView.ViewHolder {
         private final TextView mTvName;
         private final ImageView mImgIcon;
-        private final TextView mTvStatus;
 
 
         public HomeworkHolder(View itemView) {
             super(itemView);
             mTvName = (TextView) itemView.findViewById(R.id.tv_name);
             mImgIcon = (ImageView) itemView.findViewById(R.id.img_homework_icon);
-            mTvStatus = (TextView) itemView.findViewById(R.id.tv_status);
 
         }
 
