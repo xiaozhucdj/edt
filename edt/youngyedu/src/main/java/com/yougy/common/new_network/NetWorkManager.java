@@ -8,7 +8,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
-import com.yougy.homework.bean.QuestionReply;
+import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -180,11 +180,13 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<QuestionReply>> queryReply(Integer examId){
-        Log.v("FH", "!!!!!调用ServerApi刷新作业本:refreshHomeworkBook");
+    public static Observable<List<QuestionReplyDetail>> queryReply(Integer examId){
+        Log.v("FH", "!!!!!调用ServerApi查询学生解答:queryReply");
         return getInstance().getServerApi().queryReply(examId)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+//                .compose(RxResultHelper.)
+                ;
     }
 
     public static Observable<List<HomeworkDetail>> queryHomeworkDetail(Integer examId){
