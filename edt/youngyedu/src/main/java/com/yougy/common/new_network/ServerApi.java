@@ -6,7 +6,7 @@ import com.yougy.anwser.STSbean;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
-import com.yougy.homework.bean.QuestionReply;
+import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.shop.bean.DownloadInfo;
 
 import java.util.List;
@@ -103,7 +103,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryReply"})
-    Observable<BaseResult<List<QuestionReply>>> queryReply(@Field("examId") Integer examId);
+    Observable<BaseResult<List<QuestionReplyDetail>>> queryReply(@Field("examId") Integer examId);
 
     /**
      * 查询作业详情

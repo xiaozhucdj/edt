@@ -6,11 +6,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityCheckedHomeworkDetailBinding;
 import com.yougy.ui.activity.databinding.ItemQuestionGridviewBinding;
+
+import java.util.List;
+
+import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/11/6.
@@ -77,7 +83,18 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
 
     @Override
     protected void loadData() {
-
+        NetWorkManager.queryReply(1)
+                .subscribe(new Action1<List<QuestionReplyDetail>>() {
+                    @Override
+                    public void call(List<QuestionReplyDetail> questionReplies) {
+                        questionReplies.size();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
     @Override

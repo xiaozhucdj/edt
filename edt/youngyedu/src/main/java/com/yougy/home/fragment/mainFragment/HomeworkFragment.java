@@ -18,6 +18,7 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -39,7 +40,7 @@ import static android.content.ContentValues.TAG;
  * Created by Administrator on 2016/7/12.
  * 课本
  */
-public class HomeworkFragment  extends BFragment implements View.OnClickListener {
+public class HomeworkFragment extends BFragment implements View.OnClickListener {
     /**
      * 适配器 数据
      */
@@ -67,7 +68,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),FileContonst.PAGE_LINES);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
@@ -90,24 +91,26 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         return mRootView;
     }
 
-    /**点击事件*/
+    /**
+     * 点击事件
+     */
     private void itemClick(int position) {
         HomeworkBookSummary info = mHomewroks.get(position);
-            Bundle extras = new Bundle();
-            //图书ID
-            extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
-            //笔记ID
-            extras.putInt(FileContonst.NOTE_ID, info.getHomeworkFitNoteId());
-            //作业ID
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getHomeworkId());
-            //笔记名字
-            extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
-            //笔记样式
-            extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
+        Bundle extras = new Bundle();
+        //图书ID
+        extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
+        //笔记ID
+        extras.putInt(FileContonst.NOTE_ID, info.getHomeworkFitNoteId());
+        //作业ID
+        extras.putInt(FileContonst.HOME_WROK_ID, info.getHomeworkId());
+        //笔记名字
+        extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
+        //笔记样式
+        extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
 //            loadIntentWithExtras(MainActivityScreen.class,extras);
-            //课本进入
-            extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
-            loadIntentWithExtras(ControlFragmentActivity.class, extras);
+        //课本进入
+        extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
+        loadIntentWithExtras(ControlFragmentActivity.class, extras);
     }
 
     @Override
@@ -122,12 +125,12 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     }
 
     private void freshUI(List<HomeworkBookSummary> beans) {
-        if (beans!=null && beans.size()>0){
+        if (beans != null && beans.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
             mCountBooks.addAll(beans);
             initPages();
-        }else{
+        } else {
             // 数据返回为null
             mLoadingNull.setVisibility(View.VISIBLE);
         }
@@ -142,18 +145,22 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     }
 
     private void loadData() {
-        NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"" , SpUtil.getGradeName())
-                .subscribe(new Action1<List<HomeworkBookSummary>>() {
-                    @Override
-                    public void call(List<HomeworkBookSummary> homeworkBookSummaries) {
-                        freshUI(homeworkBookSummaries);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+        if (NetUtils.isNetConnected()) {
+            NetWorkManager.queryHomeworkBookList(SpUtil.getUserId() + "", SpUtil.getGradeName())
+                    .subscribe(new Action1<List<HomeworkBookSummary>>() {
+                        @Override
+                        public void call(List<HomeworkBookSummary> homeworkBookInfos) {
+                            freshUI(homeworkBookInfos);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+        } else {
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+        }
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -281,5 +288,19 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
             LogUtils.i("type .." + EventBusConstant.current_home_work);
             loadData();
         }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
     }
 }
