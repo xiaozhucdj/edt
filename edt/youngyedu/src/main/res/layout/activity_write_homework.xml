@@ -138,6 +138,15 @@
                     android:paddingLeft="5px"
                     android:paddingRight="5px" />
 
+                <android.support.v7.widget.RecyclerView
+                    android:layout_alignBottom="@+id/question_container"
+                    android:id="@+id/rcv_chooese_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:visibility="gone"
+                    android:layout_centerHorizontal="true"></android.support.v7.widget.RecyclerView>
+
+
             </RelativeLayout>
 
 
@@ -153,12 +162,7 @@
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcv_chooese_item"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:visibility="gone"
-        android:layout_centerHorizontal="true"></android.support.v7.widget.RecyclerView>
+
 
 
     <View
