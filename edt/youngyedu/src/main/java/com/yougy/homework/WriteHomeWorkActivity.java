@@ -1,5 +1,6 @@
 package com.yougy.homework;
 
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.QuestionAnswerContainer;
 import com.yougy.common.activity.BaseActivity;
@@ -16,11 +19,17 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
+import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
+import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
+import com.yougy.view.NoteBookView2;
+import com.zhy.autolayout.utils.AutoUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,8 +49,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RecyclerView allHomeWorkPage;
     @BindView(R.id.rcv_all_question_page)
     RecyclerView allQuestionPage;
+    @BindView(R.id.rcv_chooese_item)
+    RecyclerView rcvChooese;
     @BindView(R.id.question_container)
     QuestionAnswerContainer questionContainer;
+    @BindView(R.id.rl_answer)
+    RelativeLayout rlAnswer;
+
+
+    private NoteBookView2 mNbvAnswerBoard;
 
     private static final int PAGE_SHOW_SIZE = 5;
 
@@ -60,6 +76,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
     List<com.yougy.homework.bean.HomeworkDetail.ExamPaper.ExamPaperContent> examPaperContentList;
     //底部某一题多页数据
     private List<ParsedQuestionItem.Question> questionList;
+    //如果是选择题，这里存储选择题的结果
+    private List<ParsedQuestionItem.Answer> chooeseAnswerList;
+    //选择题选择的结果
+    private ArrayList<String> checkedAnswerList = new ArrayList<String>();
 
     @Override
     protected void setContentView() {
@@ -74,6 +94,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void initLayout() {
+        //新建写字板，并添加到界面上
+        mNbvAnswerBoard = new NoteBookView2(this);
 
     }
 
@@ -113,13 +135,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
         homeWorkPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick1(int position) {
-                ToastUtil.showToast(WriteHomeWorkActivity.this, position + 1 + "");
+                ToastUtil.showToast(WriteHomeWorkActivity.this, position + 1 + "题");
+
+                EpdController.leaveScribbleMode(mNbvAnswerBoard);
+                mNbvAnswerBoard.invalidate();
 
                 showHomeWorkPosition = position;
 
                 com.yougy.homework.bean.HomeworkDetail.ExamPaper.ExamPaperContent examPaperContent = examPaperContentList.get(position);
                 ParsedQuestionItem parsedQuestionItem = examPaperContent.getParsedQuestionItemList().get(0);
                 questionList = parsedQuestionItem.questionList;
+
 
                 questionPageSize = questionList.size();
 
@@ -134,6 +160,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
                 questionContainer.setVisibility(View.VISIBLE);
                 questionPageNumAdapter.notifyDataSetChanged();
+
+                if ("选择".equals(question.questionType)) {
+                    rlAnswer.removeView(mNbvAnswerBoard);
+                    rcvChooese.setVisibility(View.VISIBLE);
+                    chooeseAnswerList = parsedQuestionItem.answerList;
+
+                    setChooeseResult();
+
+                } else {
+                    rlAnswer.addView(mNbvAnswerBoard);
+                    rcvChooese.setVisibility(View.GONE);
+                }
+
 
 //                HomeWorkPageNumViewHolder holder = (HomeWorkPageNumViewHolder) allHomeWorkPage.findViewHolderForAdapterPosition(position);
 //                homeWorkPageNumAdapter.notifyDataSetChanged();
@@ -154,7 +193,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
         questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick1(int position) {
-                ToastUtil.showToast(WriteHomeWorkActivity.this, position + 1 + "");
+                ToastUtil.showToast(WriteHomeWorkActivity.this, position + 1 + "页");
+
+                EpdController.leaveScribbleMode(mNbvAnswerBoard);
+                mNbvAnswerBoard.invalidate();
 
                 if (position < questionList.size()) {
                     //切换当前题目的分页
@@ -197,6 +239,52 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 questionPageNumAdapter.onItemClickListener.onItemClick1(0);
             }
         }
+        //触发一下点击事件。默认隐藏所有题目
+        onClick(findViewById(R.id.ll_chooese_homework));
+    }
+
+
+    /**
+     * 设置选择题的结果界面
+     */
+    private void setChooeseResult() {
+
+        //清理掉其他题中的作业结果。
+        checkedAnswerList.clear();
+
+        rcvChooese.setAdapter(new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(WriteHomeWorkActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
+                AutoUtils.auto(view);
+                return new AnswerItemHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ParsedQuestionItem.Answer answer = chooeseAnswerList.get(position);
+                ((AnswerItemHolder) holder).setAnswer(answer);
+            }
+
+            @Override
+            public int getItemCount() {
+                if (chooeseAnswerList != null) {
+                    return chooeseAnswerList.size();
+                } else {
+                    return 0;
+                }
+            }
+        });
+        CustomGridLayoutManager gridLayoutManager = new CustomGridLayoutManager(this, chooeseAnswerList.size());
+        gridLayoutManager.setScrollEnabled(false);
+        rcvChooese.setLayoutManager(gridLayoutManager);
+        rcvChooese.addOnItemTouchListener(new OnRecyclerItemClickListener(rcvChooese) {
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder vh) {
+                ((AnswerItemHolder) vh).reverseCheckbox();
+            }
+        });
+
     }
 
 
@@ -219,6 +307,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @OnClick({R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework, R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework})
     public void onClick(View view) {
+        EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        mNbvAnswerBoard.invalidate();
+
         switch (view.getId()) {
 
             case R.id.tv_last_homework:
@@ -242,6 +333,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_submit_homework:
                 break;
             case R.id.tv_clear_write:
+                mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
                 questionPageSize++;
@@ -422,5 +514,47 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
     }
 
+
+    public class AnswerItemHolder extends RecyclerView.ViewHolder {
+        ItemAnswerChooseGridviewBinding itemBinding;
+        ParsedQuestionItem.Answer answer;
+
+        public AnswerItemHolder(View itemView) {
+            super(itemView);
+            itemBinding = DataBindingUtil.bind(itemView);
+        }
+
+        public AnswerItemHolder setAnswer(ParsedQuestionItem.Answer answer) {
+            this.answer = answer;
+            if (answer instanceof ParsedQuestionItem.TextAnswer) {
+                itemBinding.textview.setText(((ParsedQuestionItem.TextAnswer) answer).text);
+                if (ListUtil.conditionalContains(checkedAnswerList, new ListUtil.ConditionJudger<String>() {
+                    @Override
+                    public boolean isMatchCondition(String nodeInList) {
+                        return nodeInList.equals(((ParsedQuestionItem.TextAnswer) answer).text);
+                    }
+                })) {
+                    itemBinding.checkbox.setSelected(true);
+                } else {
+                    itemBinding.checkbox.setSelected(false);
+                }
+            } else {
+                itemBinding.textview.setText("格式错误");
+                itemBinding.checkbox.setSelected(false);
+            }
+            return this;
+        }
+
+        public void reverseCheckbox() {
+            if (answer instanceof ParsedQuestionItem.TextAnswer) {
+                if (itemBinding.checkbox.isSelected()) {
+                    checkedAnswerList.remove(((ParsedQuestionItem.TextAnswer) answer).text);
+                } else {
+                    checkedAnswerList.add(((ParsedQuestionItem.TextAnswer) answer).text);
+                }
+                rcvChooese.getAdapter().notifyDataSetChanged();
+            }
+        }
+    }
 
 }
