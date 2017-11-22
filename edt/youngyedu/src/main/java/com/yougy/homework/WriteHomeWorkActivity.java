@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +14,29 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.oss.ClientConfiguration;
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSS;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.common.OSSLog;
+import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSFederationCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.QuestionAnswerContainer;
+import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
+import com.yougy.anwser.TimedTask;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -32,6 +49,7 @@ import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
+import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.io.File;
@@ -43,7 +61,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+import static com.yougy.common.utils.SharedPreferencesUtil.getSpUtil;
 
 /**
  * Created by FH on 2017/10/19.
@@ -63,6 +87,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     QuestionAnswerContainer questionContainer;
     @BindView(R.id.rl_answer)
     RelativeLayout rlAnswer;
+    @BindView(R.id.tv_submit_homework)
+    TextView tvSubmitHomeWork;
 
 
     private NoteBookView2 mNbvAnswerBoard;
@@ -70,7 +96,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private static final int PAGE_SHOW_SIZE = 5;
 
     private int homeWorkPageSize = 17;
-    private int questionPageSize = 3;
+    private int questionPageSize = 1;
 
     //底部页码数偏移量
     private int pageDeviationNum = 0;
@@ -92,7 +118,16 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private ParsedQuestionItem parsedQuestionItem;
 
     private static int COMEIN_HOMEWORK_PAGE_MODE = 0;//0：点击角标进入，1：上一页进入，2：下一页进入
+    //单题用时时间记录的定时器
+    private TimedTask timedTask;
+    //单题用时开始时间
+    private long startTimeMill;
 
+    //保存当前题目结果的页面从0开始
+    private int savePage;
+
+
+    private int examId = 547;
 
     @Override
     protected void setContentView() {
@@ -114,7 +149,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryHomeworkDetail(524).subscribe(new Action1<List<HomeworkDetail>>() {
+        NetWorkManager.queryHomeworkDetail(examId).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
                 com.yougy.homework.bean.HomeworkDetail.ExamPaper examPaper = homeworkDetails.get(0).getExamPaper();
@@ -158,7 +193,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 //两种情况（一种直接点击，此时showHomeWorkPosition为之前页码位。另一种上一页或下一页点击，此时showHomeWorkPosition为当前展示页码位，获取之前页面位需+1或-1）
 
                 if (position != 0) {
-                    int savePage;
                     if (COMEIN_HOMEWORK_PAGE_MODE == 0) {
 
                         //点击的是同一页。不处理
@@ -178,8 +212,26 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     COMEIN_HOMEWORK_PAGE_MODE = 0;
 
 
-                    String saveFilePath = saveBitmapToFile(saveScreenBitmap(), savePage);
+                    String saveFilePath = saveBitmapToFile(saveScreenBitmap());
                     System.out.println(saveFilePath);
+
+
+                    if (questionList != null && "选择".equals(questionList.get(0).questionType)) {
+
+                        String chooeseResult = "";
+                        for (int i = 0; i < checkedAnswerList.size(); i++) {
+                            chooeseResult = chooeseResult + "," + checkedAnswerList.get(i);
+                        }
+
+                        if (!TextUtils.isEmpty(chooeseResult)) {
+                            chooeseResult = chooeseResult.substring(1);
+                        }
+
+                        //选择题需要存储选择结果
+                        getSpUtil().putString(examId + "_" + savePage + "_chooese_result", chooeseResult);
+                    }
+                    //存储第一页
+                    getSpUtil().putString(examId + "_" + savePage + "_pic_result_first", saveFilePath);
                 }
 
 
@@ -189,6 +241,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 parsedQuestionItem = examPaperContent.getParsedQuestionItemList().get(0);
                 questionList = parsedQuestionItem.questionList;
 
+
                 questionPageSize = questionList.size();
 
 
@@ -197,6 +250,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     questionPageNumAdapter.onItemClickListener.onItemClick1(0);
                 }
 
+                startTimeMill = System.currentTimeMillis();
+                startClock();
 
 //                HomeWorkPageNumViewHolder holder = (HomeWorkPageNumViewHolder) allHomeWorkPage.findViewHolderForAdapterPosition(position);
 //                homeWorkPageNumAdapter.notifyDataSetChanged();
@@ -278,6 +333,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         //触发一下点击事件。默认隐藏所有题目
         onClick(findViewById(R.id.ll_chooese_homework));
+    }
+
+
+    private void startClock() {
+        timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+                .start(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer times) {
+                        refreshTime();
+                    }
+                });
+    }
+
+    private void refreshTime() {
+        long spentTimeMill = System.currentTimeMillis() - startTimeMill;
+        tvSubmitHomeWork.setText("提交（时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
 
@@ -404,7 +475,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void call(STSbean stSbean) {
                         Log.v("FH", "call ");
                         if (stSbean != null) {
-//                            upLoadPic(stSbean);
+                            upLoadPic(stSbean);
                         } else {
                             ToastUtil.showToast(getApplicationContext(), "获取上传信息失败");
                         }
@@ -417,6 +488,130 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 });
 
     }
+    /**
+     * 上传图片，使用同步方法上传
+     *
+     * @param stSbean
+     */
+    public void upLoadPic(STSbean stSbean) {
+
+
+        String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
+
+
+        OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {
+            @Override
+            public OSSFederationToken getFederationToken() {
+                return new OSSFederationToken(stSbean.getAccessKeyId(), stSbean.getAccessKeySecret(), stSbean.getSecurityToken(), stSbean.getExpiration());
+            }
+        };
+
+
+        //该配置类如果不设置，会有默认配置，具体可看该类
+        ClientConfiguration conf = new ClientConfiguration();
+        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
+        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
+        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
+        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+        OSSLog.enableLog();
+        OSS oss = new OSSClient(YougyApplicationManager.getContext(), endpoint, credentialProvider, conf);
+
+
+        Observable.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+
+
+
+
+                for (int i = 0; i < examPaperContentList.size(); i++) {
+
+                    String picPath = SharedPreferencesUtil.getSpUtil().getString(examId + "_" + i + "_pic_result_first","");
+                    if (TextUtils.isEmpty(picPath)) {
+                        continue;
+                    }
+
+
+                    String picName = picPath.substring(picPath.lastIndexOf("/"));
+
+
+                    // 构造上传请求
+                    PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                    try {
+                        PutObjectResult putResult = oss.putObject(put);
+                        Log.d("PutObject", "UploadSuccess");
+                        Log.d("ETag", putResult.getETag());
+                        Log.d("RequestId", putResult.getRequestId());
+                    } catch (ClientException e) {
+                        // 本地异常如网络异常等
+                        e.printStackTrace();
+                    } catch (ServiceException e) {
+                        // 服务异常
+                        Log.e("RequestId", e.getRequestId());
+                        Log.e("ErrorCode", e.getErrorCode());
+                        Log.e("HostId", e.getHostId());
+                        Log.e("RawMessage", e.getRawMessage());
+                    }
+
+                    STSResultbean stsResultbean = new STSResultbean();
+                    stsResultbean.setBucket(stSbean.getBucketName());
+                    stsResultbean.setRemote(stSbean.getPath() + picName);
+                    File picFile = new File(picPath);
+                    stsResultbean.setSize(picFile.length());
+//                    stsResultbeanArrayList.add(stsResultbean);
+                    //上传后清理掉本地图片文件
+                    picFile.delete();
+
+                }
+
+
+                subscriber.onNext(new Object());//将执行结果返回
+                subscriber.onCompleted();//结束异步任务
+            }
+        })
+                .subscribeOn(Schedulers.io())//异步任务在IO线程执行
+                .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
+                .subscribe(new Subscriber<Object>() {
+                    LoadingProgressDialog loadingProgressDialog;
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        if (loadingProgressDialog == null) {
+                            loadingProgressDialog = new LoadingProgressDialog(WriteHomeWorkActivity.this);
+                            loadingProgressDialog.show();
+                            loadingProgressDialog.setTitle("答案上传中...");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+
+
+//                        writeInfoToS();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                    }
+                });
+
+    }
+
 
 
     /**
@@ -433,9 +628,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         return tBitmap;
     }
 
-    public String saveBitmapToFile(Bitmap bitmap, int savePage) {
+    public String saveBitmapToFile(Bitmap bitmap) {
 
-        String fileDir = FileUtils.getAppFilesDir() + "/homework_result/" + savePage;
+        String fileDir = FileUtils.getAppFilesDir() + "/homework_result";
         FileUtils.createDirs(fileDir);
 
 
