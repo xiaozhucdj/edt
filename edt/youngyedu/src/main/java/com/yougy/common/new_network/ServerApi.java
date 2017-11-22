@@ -104,7 +104,8 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"reviewComment"})
-    Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId , @Field("itemId") Integer itemId);
+    Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
+            , @Field("itemId") Integer itemId , @Field("userId") String userId);
 
     /**
      * 查询作业详情

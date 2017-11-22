@@ -181,9 +181,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<QuestionReplyDetail>> queryReplyDetail(Integer examId , Integer itemId){
+    public static Observable<List<QuestionReplyDetail>> queryReplyDetail(Integer examId , Integer itemId , String userId){
         Log.v("FH", "!!!!!调用ServerApi查询学生解答详情:queryReplyDetail");
-        return getInstance().getServerApi().reviewComment(examId , itemId)
+        return getInstance().getServerApi().reviewComment(examId , itemId , userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReplyDetail());

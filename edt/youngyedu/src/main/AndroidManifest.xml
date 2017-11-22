@@ -193,15 +193,8 @@
         <activity
             android:name="com.yougy.message.ui.ContactListActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name="com.yougy.homework.mistake_note.BookStructureActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-
+        <!--问答中界面-->
         <activity android:name="com.yougy.anwser.AnsweringActivity" />
-        <activity
-            android:name="com.yougy.message.ui.ContactListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <!--错题本图书章节选择界面-->
         <activity
             android:name="com.yougy.homework.mistake_note.BookStructureActivity"
@@ -210,14 +203,16 @@
         <activity
             android:name="com.yougy.homework.mistake_note.MistakeListActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <!--已批改作业详情界面-->
         <activity
             android:name="com.yougy.homework.CheckedHomeworkDetailActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-        <activity android:name="com.yougy.anwser.AnsweringActivity" />
+        <!--已批改作业题目详情界面-->
+        <activity android:name="com.yougy.homework.HomeWorkResultActivity" />
+
 
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
-        <activity android:name="com.yougy.homework.HomeWorkResultActivity" />
         <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity" />
 
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">

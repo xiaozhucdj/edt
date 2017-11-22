@@ -1,9 +1,11 @@
 package com.yougy.homework;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.yougy.common.new_network.NetWorkManager;
@@ -26,8 +28,9 @@ import rx.functions.Action1;
 
 public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
     ActivityCheckedHomeworkDetailBinding binding;
-    List<QuestionReplySummary> replyList = new ArrayList<QuestionReplySummary>();
+    ArrayList<QuestionReplySummary> replyList = new ArrayList<QuestionReplySummary>();
     int examId;
+    String examName;
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_checked_homework_detail , null , false);
@@ -42,7 +45,8 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
             ToastUtil.showToast(getApplicationContext() , "examId 为空");
             finish();
         }
-        binding.titleTv.setText(getIntent().getStringExtra("examName"));
+        examName = getIntent().getStringExtra("examName");
+        binding.titleTv.setText(examName);
     }
 
     @Override
@@ -75,7 +79,11 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 MyHolder holder = (MyHolder) vh;
-                ToastUtil.showToast(getApplicationContext() , "itemId : " + holder.getData().getReplyItem());
+                Intent intent = new Intent(CheckedHomeworkDetailActivity.this , HomeWorkResultActivity.class);
+                intent.putExtra("examName" , examName);
+                intent.putExtra("toShow" , holder.getData());
+                intent.putParcelableArrayListExtra("all" , replyList);
+                startActivity(intent);
             }
         });
     }
@@ -115,6 +123,9 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
     @Override
     protected void refreshView() {}
 
+    public void back(View view){
+
+    }
     private class MyHolder extends RecyclerView.ViewHolder{
         private ItemQuestionGridviewBinding itemBinding;
         private QuestionReplySummary data;

@@ -1,10 +1,13 @@
 package com.yougy.homework.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Administrator on 2017/11/17.
  */
 
-public class QuestionReplySummary {
+public class QuestionReplySummary implements Parcelable {
 
     /**
      * replyStatus : 已评完
@@ -132,4 +135,54 @@ public class QuestionReplySummary {
         this.replyCreateTime = replyCreateTime;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.replyStatus);
+        dest.writeInt(this.replyItem);
+        dest.writeString(this.replyStatusCode);
+        dest.writeInt(this.replyCreator);
+        dest.writeInt(this.replyExam);
+        dest.writeString(this.replyUseTime);
+        dest.writeInt(this.replyId);
+        dest.writeInt(this.replyCommentator);
+        dest.writeInt(this.replyScore);
+        dest.writeString(this.replyCreatorName);
+        dest.writeString(this.replyCommentTime);
+        dest.writeString(this.replyCreateTime);
+    }
+
+    public QuestionReplySummary() {
+    }
+
+    protected QuestionReplySummary(Parcel in) {
+        this.replyStatus = in.readString();
+        this.replyItem = in.readInt();
+        this.replyStatusCode = in.readString();
+        this.replyCreator = in.readInt();
+        this.replyExam = in.readInt();
+        this.replyUseTime = in.readString();
+        this.replyId = in.readInt();
+        this.replyCommentator = in.readInt();
+        this.replyScore = in.readInt();
+        this.replyCreatorName = in.readString();
+        this.replyCommentTime = in.readString();
+        this.replyCreateTime = in.readString();
+    }
+
+    public static final Parcelable.Creator<QuestionReplySummary> CREATOR = new Parcelable.Creator<QuestionReplySummary>() {
+        @Override
+        public QuestionReplySummary createFromParcel(Parcel source) {
+            return new QuestionReplySummary(source);
+        }
+
+        @Override
+        public QuestionReplySummary[] newArray(int size) {
+            return new QuestionReplySummary[size];
+        }
+    };
 }
