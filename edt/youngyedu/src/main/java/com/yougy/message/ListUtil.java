@@ -102,6 +102,36 @@ public class ListUtil {
         return false;
     }
 
+    /**
+     * List 中indexOf的条件扩展,可以自定义规则判断List中符合条件的节点所在的index,以int的形式返回.
+     * <p>
+     * 给定一个列表和一套比对规则,根据规则,返回第一个符合条件的节点在列表中的index.
+     * 如果没有符合条件的节点,则返回-1.
+     *
+     * 例如找出mList中和accordingNode的id一样节点所在的index值,则可以如此调用:
+     *
+     * <p>  Node accordingNode = ....;
+     * <p>  int index = conditionalIndexOf(mList , new ConditionJudger<Node>() {
+     * <p>      @Override
+     * <p>      public boolean isMatchCondition(Node nodeInList) {
+     * <p>          return nodeInList.id.equals(accordingObj.id);
+     * <p>      }
+     * <p>  });
+     *
+     * @param targetList 给定的列表
+     * @param judger 给定的规则判断器
+     * @return 如果存在符合条件的节点,则返回该节点在列表中的index,如果有多个节点都符合条件,只返回第一个节点的index,如果没有节点符合条件,则返回-1.
+     */
+    public static <T> int conditionalIndexOf(List<T> targetList , ConditionJudger<T> judger){
+        for (int i = 0; i < targetList.size(); i++) {
+            T nodeInList = targetList.get(i);
+            if (judger.isMatchCondition(nodeInList)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     public interface ConditionJudger<T>{
         public boolean isMatchCondition(T nodeInList);

@@ -1,19 +1,23 @@
 package com.yougy.homework;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityCheckedHomeworkDetailBinding;
 import com.yougy.ui.activity.databinding.ItemQuestionGridviewBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.functions.Action1;
@@ -24,6 +28,9 @@ import rx.functions.Action1;
 
 public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
     ActivityCheckedHomeworkDetailBinding binding;
+    ArrayList<QuestionReplySummary> replyList = new ArrayList<QuestionReplySummary>();
+    int examId;
+    String examName;
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_checked_homework_detail , null , false);
@@ -33,12 +40,17 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
 
     @Override
     protected void init() {
-
+        examId = getIntent().getIntExtra("examId" , -1);
+        if (examId == -1){
+            ToastUtil.showToast(getApplicationContext() , "examId 为空");
+            finish();
+        }
+        examName = getIntent().getStringExtra("examName");
+        binding.titleTv.setText(examName);
     }
 
     @Override
     protected void initLayout() {
-        binding.circleProgressBar.setText("01234567890123");
         binding.mainRecyclerview.setMaxItemNumInOnePage(36);
         binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext() , 6){
             @Override
@@ -55,39 +67,38 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
                 holder.itemBinding.textview.setText("" + (position + 1));
-                int i = position % 3;
-                if (i == 0){
-                    holder.itemBinding.icon.setBackgroundResource(R.drawable.icon_correct);
-                }
-                else if (i == 1){
-                    holder.itemBinding.icon.setBackgroundResource(R.drawable.icon_half_correct);
-                }
-                else if (i == 2){
-                    holder.itemBinding.icon.setBackgroundResource(R.drawable.icon_wrong);
-                }
+                holder.setData(replyList.get(position));
             }
 
             @Override
             public int getItemCount() {
-                return 100;
+                return replyList.size();
             }
         });
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-
+                MyHolder holder = (MyHolder) vh;
+                Intent intent = new Intent(CheckedHomeworkDetailActivity.this , HomeWorkResultActivity.class);
+                intent.putExtra("examName" , examName);
+                intent.putExtra("toShow" , holder.getData());
+                intent.putParcelableArrayListExtra("all" , replyList);
+                startActivity(intent);
             }
         });
-        binding.mainRecyclerview.notifyDataSetChanged();
     }
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReply(1)
-                .subscribe(new Action1<List<QuestionReplyDetail>>() {
+        NetWorkManager.queryReplySummary(examId)
+                .subscribe(new Action1<List<QuestionReplySummary>>() {
                     @Override
-                    public void call(List<QuestionReplyDetail> questionReplies) {
-                        questionReplies.size();
+                    public void call(List<QuestionReplySummary> replySummaries) {
+                        replyList.clear();
+                        replyList.addAll(replySummaries);
+                        binding.mainRecyclerview.notifyDataSetChanged();
+                        binding.questionNumTv.setText("习题数量 : " + replyList.size());
+                        refreshCircleProgressBar();
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -97,16 +108,52 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
                 });
     }
 
+
+    private void refreshCircleProgressBar(){
+        float f = 0;
+        for (QuestionReplySummary reply : replyList) {
+            if (reply.getReplyScore() == 100){
+                f++;
+            }
+        }
+        f = f*100/replyList.size();
+        binding.circleProgressBar.setProgress((int) f);
+        binding.circleProgressBar.setText(f + "%");
+    }
     @Override
-    protected void refreshView() {
+    protected void refreshView() {}
+
+    public void back(View view){
 
     }
-
     private class MyHolder extends RecyclerView.ViewHolder{
-        ItemQuestionGridviewBinding itemBinding;
+        private ItemQuestionGridviewBinding itemBinding;
+        private QuestionReplySummary data;
         public MyHolder(ItemQuestionGridviewBinding binding) {
             super(binding.getRoot());
             this.itemBinding = binding;
+        }
+
+        public MyHolder setData(QuestionReplySummary data) {
+            this.data = data;
+            if (data.getReplyScore() == 0){
+                itemBinding.icon.setBackgroundResource(R.drawable.icon_wrong);
+            }
+            else if (data.getReplyScore() == 100){
+                itemBinding.icon.setBackgroundResource(R.drawable.icon_correct);
+            }
+            else {
+                itemBinding.icon.setBackgroundResource(R.drawable.icon_half_correct);
+            }
+            return this;
+        }
+
+        public ItemQuestionGridviewBinding getItemBinding() {
+            return itemBinding;
+        }
+
+        public QuestionReplySummary getData() {
+            return data;
         }
     }
 }

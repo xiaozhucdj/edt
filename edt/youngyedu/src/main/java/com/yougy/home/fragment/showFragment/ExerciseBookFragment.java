@@ -67,17 +67,17 @@ public class ExerciseBookFragment extends BFragment {
                     case DOING:
                         holder.binding.statusTv.setText("作\n业\n中");
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
-                        holder.binding.homeworkNameTv.setText(doingList.get(position).getExtra().getName());
+                        holder.setData(doingList.get(position));
                         break;
                     case WAIT_FOR_CHECK:
                         holder.binding.statusTv.setText("待\n批\n改");
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
-                        holder.binding.homeworkNameTv.setText(waitForCheckList.get(position).getExtra().getName());
+                        holder.setData(waitForCheckList.get(position));
                         break;
                     case CHECKED:
                         holder.binding.statusTv.setText("已\n批\n改");
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
-                        holder.binding.homeworkNameTv.setText(checkedList.get(position).getExtra().getName());
+                        holder.setData(checkedList.get(position));
                         break;
                 }
             }
@@ -102,11 +102,13 @@ public class ExerciseBookFragment extends BFragment {
                 switch (currentStatus){
                     case CHECKED:
                         Intent intent = new Intent(getActivity() , CheckedHomeworkDetailActivity.class);
+                        intent.putExtra("examId" , ((MyHolder) vh).getData().getExam());
+                        intent.putExtra("examName" , ((MyHolder) vh).getData().getExtra().getName());
                         startActivity(intent);
                         break;
                     case WAIT_FOR_CHECK:
-                        Intent intent111 = new Intent(Settings.ACTION_SETTINGS);
-                        startActivity(intent111);
+//                        Intent intent111 = new Intent(Settings.ACTION_SETTINGS);
+//                        startActivity(intent111);
                         //TODO 待批改项点击
                         break;
                     case DOING:
@@ -220,10 +222,23 @@ public class ExerciseBookFragment extends BFragment {
     }
 
     private class MyHolder extends RecyclerView.ViewHolder{
-        ItemHomeworkListBinding binding;
+        private ItemHomeworkListBinding binding;
+        private HomeworkSummary data;
         public MyHolder(ItemHomeworkListBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public void setData(HomeworkSummary data){
+            this.data = data;
+            binding.homeworkNameTv.setText(data.getExtra().getName());
+        }
+        public HomeworkSummary getData() {
+            return data;
+        }
+
+        public ItemHomeworkListBinding getBinding() {
+            return binding;
         }
     }
 

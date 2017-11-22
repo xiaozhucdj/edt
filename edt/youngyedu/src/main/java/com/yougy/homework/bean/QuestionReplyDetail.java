@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.yougy.anwser.Content;
+import com.yougy.anwser.OriginQuestionItem;
+import com.yougy.anwser.ParsedQuestionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +47,13 @@ public class QuestionReplyDetail {
     private String replyCreateTime;
     private List<LinkedTreeMap> replyContent;
     private List<LinkedTreeMap> replyComment;
-    private LinkedTreeMap replyItemContent;
+    private OriginQuestionItem replyItemContent;
+
 
     private String textContent;
     private List<Content> parsedReplyContentList = new ArrayList<Content>();
     private List<String> parsedReplyCommentList = new ArrayList<String>();
-
+    private ParsedQuestionItem parsedQuestionItem;
 
     public String getReplyStatus() {
         return replyStatus;
@@ -191,13 +194,31 @@ public class QuestionReplyDetail {
         return this;
     }
 
+    public OriginQuestionItem getReplyItemContent() {
+        return replyItemContent;
+    }
+
+    public QuestionReplyDetail setReplyItemContent(OriginQuestionItem replyItemContent) {
+        this.replyItemContent = replyItemContent;
+        return this;
+    }
+
+    public ParsedQuestionItem getParsedQuestionItem() {
+        return parsedQuestionItem;
+    }
+
+    public QuestionReplyDetail setParsedQuestionItem(ParsedQuestionItem parsedQuestionItem) {
+        this.parsedQuestionItem = parsedQuestionItem;
+        return this;
+    }
+
     public void parse(){
         for (LinkedTreeMap linkedTreeMap : replyContent) {
             String format = (String) linkedTreeMap.get("format");
             if (format.startsWith("ATCH/")){
                 if (linkedTreeMap.get("remote") != null
                         && !TextUtils.isEmpty((String)linkedTreeMap.get("remote"))){
-                    String url = "http://question.learningpad.cn/" + linkedTreeMap.get("remote");
+                    String url = "http://question.learningpad.cn/2017/7244559/1e046ea9-ca02-4b9d-9c23-284994fcd259/96.htm" + linkedTreeMap.get("remote");
                     if (url.endsWith(".gif")
                             || url.endsWith(".jpg")
                             || url.endsWith(".png")
@@ -215,7 +236,11 @@ public class QuestionReplyDetail {
         }
 
         for (LinkedTreeMap linkedTreeMap : replyComment) {
-            replyComment.add((LinkedTreeMap) linkedTreeMap.get("value"));
+            parsedReplyCommentList.add((String) linkedTreeMap.get("value"));
         }
+
+        parsedQuestionItem = replyItemContent.parseQuestion();
     }
+
+
 }
