@@ -28,53 +28,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="作业名"
+                android:text="错题练习"
                 android:textColor="#000000"
                 android:textSize="28px" />
-        </RelativeLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:background="@color/black" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingTop="15px"
-            android:paddingBottom="15px">
             <TextView
-                android:id="@+id/question_num_tv"
+                android:id="@+id/sub_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30px"
-                android:text="第X题"
+                android:text="-xxxxx"
                 android:textColor="@color/black"
-                android:textSize="24px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="教师批改结果 :"
-                android:textSize="24px"
-                android:textColor="@color/black"
-                android:layout_marginLeft="60px"/>
-
-            <ImageView
-                android:id="@+id/right_or_wrong_icon"
-                android:layout_width="28px"
-                android:layout_height="28px"
-                android:layout_marginLeft="20px"
-                android:src="@drawable/img_ziping_zhengque"
+                android:textSize="22px"
+                android:layout_toRightOf="@id/title_tv"
+                android:layout_alignBottom="@id/title_tv"
                 />
-        </LinearLayout>
-        <View android:layout_width="match_parent" android:layout_height="10px" android:background="@color/gray_dbdbdb"/>
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="64px"
             android:layout_marginTop="1px"
-            android:background="@color/gray_dbdbdb"
+            android:background="@color/black"
             android:paddingBottom="2px"
-            android:paddingLeft="2px">
+            android:paddingLeft="2px"
+            android:paddingTop="2px"
+            >
             <TextView
                 android:id="@+id/question_body_btn"
                 android:layout_width="0px"
@@ -82,7 +58,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg_selector_white_blue"
                 android:gravity="center"
-                android:text="题干"
+                android:text="题目"
                 android:textColor="@drawable/btn_text_color_selector_black_white"
                 android:textSize="24px"
                 />
@@ -148,36 +124,80 @@
             android:layout_width="match_parent"
             android:layout_height="70px"
             android:orientation="horizontal">
-            <TextView
-                android:id="@+id/last_question_btn"
+            <LinearLayout
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bmp_bg_blue"
                 android:gravity="center"
                 android:clickable="true"
-                android:onClick="lastQuestion"
-                android:text="上一题"
-                android:textColor="@color/white"
-                android:textSize="24px"
-                />
+                android:onClick="onRightBtnClick"
+                >
+                <TextView
+                    android:layout_width="28px"
+                    android:layout_height="28px"
+                    android:background="@drawable/icon_right_whtie"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="正确"
+                    android:textColor="@color/white"
+                    android:textSize="24px"
+                    android:layout_marginLeft="20px"
+                    />
+            </LinearLayout>
             <View
                 android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@color/white" />
-            <TextView
-                android:id="@+id/next_question_btn"
+            <LinearLayout
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bmp_bg_blue"
                 android:gravity="center"
                 android:clickable="true"
-                android:onClick="nextQuestion"
-                android:text="下一题"
-                android:textColor="@color/white"
-                android:textSize="24px"
-                />
+                android:onClick="onWrongBtnClick"
+                >
+                <TextView
+                    android:layout_width="28px"
+                    android:layout_height="28px"
+                    android:background="@drawable/icon_wrong_whtie"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="错误"
+                    android:textColor="@color/white"
+                    android:textSize="24px"
+                    android:layout_marginLeft="20px"
+                    />
+            </LinearLayout>
+            <View
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="@color/white" />
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bmp_bg_blue"
+                android:gravity="center"
+                android:clickable="true"
+                android:onClick="onHasLearnedBtnCLick"
+                >
+                <TextView
+                    android:layout_width="28px"
+                    android:layout_height="28px"
+                    android:background="@drawable/icon_flag_whtie"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="我已学会"
+                    android:textColor="@color/white"
+                    android:textSize="24px"
+                    android:layout_marginLeft="20px"
+                    />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </layout>

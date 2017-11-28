@@ -1,9 +1,9 @@
 package com.yougy.home.fragment.showFragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,15 +14,18 @@ import android.view.ViewGroup;
 
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.CheckedHomeworkDetailActivity;
+import com.yougy.homework.FullScreenHintDialog;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.mistake_note.BookStructureActivity;
+import com.yougy.homework.mistake_note.MistakePractiseActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FragmentExerciseBookBinding;
 import com.yougy.ui.activity.databinding.ItemHomeworkListBinding;
@@ -170,6 +173,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到笔记逻辑
+                startActivity(new Intent(getActivity(),MistakePractiseActivity.class));
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
