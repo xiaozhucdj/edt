@@ -213,6 +213,7 @@
 
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
+        <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
         <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity" />
 
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
