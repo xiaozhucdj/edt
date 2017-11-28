@@ -32,6 +32,7 @@ public class SpUtil {
     private static final String STUDENT_CODE = "student_code";
 
     private static final String SP_MSG_UNREAD_COUNT_FILE_NAME = "message_unread_count";
+    private static final String SP_DIALOG_NOT_SHOW_AGAIN_TAG_FILE_NAME = "dialog_not_show_again_tag";
 
     private static final SharedPreferences unReadMsgSp = UIUtils.getContext()
             .getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE);
@@ -331,6 +332,22 @@ public class SpUtil {
     public static void clearAllUnreadMsgCount (){
         Log.v("FH" , "clearAllUnreadMsgCount");
         unReadMsgSp.edit().clear().apply();
+    }
+
+    public static boolean isThisDialogNotShowAgain(String tag){
+        if (TextUtils.isEmpty(tag)){
+            return false;
+        }
+        SharedPreferences sp = UIUtils.getContext()
+                .getSharedPreferences(SP_DIALOG_NOT_SHOW_AGAIN_TAG_FILE_NAME, Context.MODE_PRIVATE);
+        return sp.getBoolean(tag , false);
+    }
+
+    public static void setNotSHowAgainDialogTag(String tag , boolean notShow){
+        if (!TextUtils.isEmpty(tag)){
+            UIUtils.getContext().getSharedPreferences(SP_DIALOG_NOT_SHOW_AGAIN_TAG_FILE_NAME, Context.MODE_PRIVATE)
+                    .edit().putBoolean(tag , notShow).apply();
+        }
     }
 
     public static String rot13 (String str){
