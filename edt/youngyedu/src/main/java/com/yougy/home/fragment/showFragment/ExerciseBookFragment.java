@@ -25,6 +25,7 @@ import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.mistake_note.BookStructureActivity;
+import com.yougy.homework.mistake_note.MistakePractiseActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FragmentExerciseBookBinding;
 import com.yougy.ui.activity.databinding.ItemHomeworkListBinding;
@@ -172,24 +173,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到笔记逻辑
-                new FullScreenHintDialog(getActivity() , "test")
-                        .setIconResId(R.drawable.icon_caution_big)
-                        .setContentText("是否提交作业?")
-                        .setBtn1("检查作业", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ToastUtil.showToast(getContext() , "检查作业");
-                                dialog.dismiss();
-                            }
-                        } , false)
-                        .setBtn2("确认提交", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ToastUtil.showToast(getContext() , "确认提交");
-                                dialog.dismiss();
-                            }
-                        } , true)
-                        .show();
+                startActivity(new Intent(getActivity(),MistakePractiseActivity.class));
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
