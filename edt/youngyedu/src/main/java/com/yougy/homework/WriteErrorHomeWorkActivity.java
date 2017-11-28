@@ -110,7 +110,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void setContentView() {
-        setContentView(R.layout.activity_write_homework);
+        setContentView(R.layout.activity_write_error_homework);
     }
 
     @Override
