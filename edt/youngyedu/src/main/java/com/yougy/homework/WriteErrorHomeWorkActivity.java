@@ -108,6 +108,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     private ArrayList<String> pathList = new ArrayList<>();
 
 
+    private String itemId;
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_error_homework);
@@ -115,7 +117,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void init() {
-
+        itemId = getIntent().getStringExtra("itemId");
+        if (TextUtils.isEmpty(itemId)){
+            ToastUtil.showToast(getApplicationContext() , "itemId 为空");
+            return;
+        }
     }
 
 
@@ -128,25 +134,21 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryHomeworkDetail(examId).subscribe(new Action1<List<HomeworkDetail>>() {
-            @Override
-            public void call(List<HomeworkDetail> homeworkDetails) {
-                HomeworkDetail.ExamPaper examPaper = homeworkDetails.get(0).getExamPaper();
-
-                examPaperContentList = examPaper.getPaperContent();
-
-                homeWorkPageSize = examPaperContentList.size();
-
-                fillData();
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                throwable.printStackTrace();
-            }
-        });
-
-
+        NetWorkManager.queryQuestionItemList(null , null , itemId , null)
+                .subscribe(new Action1<List<ParsedQuestionItem>>() {
+                    @Override
+                    public void call(List<ParsedQuestionItem> parsedQuestionItems) {
+                        if (parsedQuestionItems != null || parsedQuestionItems.size() != 0){
+                            ParsedQuestionItem parsedQuestionItem = parsedQuestionItems.get(0);
+                            //TODO 获取到题目之后的逻辑
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
     //填充数据

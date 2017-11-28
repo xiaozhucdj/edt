@@ -1,5 +1,6 @@
 package com.yougy.homework.mistake_note;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.PageableRecyclerView;
+import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.bean.BookStructureNode;
 import com.yougy.homework.bean.MistakeSummary;
 import com.yougy.ui.activity.R;
@@ -110,7 +112,9 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-                ToastUtil.showToast(getApplicationContext() , ((MyHolder) vh).questionItem.itemId);
+                Intent intent = new Intent(getApplicationContext() , WriteErrorHomeWorkActivity.class);
+                intent.putExtra("itemId" , ((MyHolder) vh).questionItem.itemId);
+                startActivity(intent);
             }
         });
         binding.mainRecyclerview.notifyDataSetChanged();
