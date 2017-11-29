@@ -78,9 +78,7 @@ public class SharedPreferencesUtil {
         Gson gson = new Gson();
         //转换成json数据，再保存
         String strJson = gson.toJson(datalist);
-        sp.edit().clear();
-        sp.edit().putString(tag, strJson);
-        sp.edit().commit();
+        sp.edit().putString(tag, strJson).commit();
 
     }
 

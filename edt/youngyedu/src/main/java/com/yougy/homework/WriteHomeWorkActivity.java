@@ -1,5 +1,6 @@
 package com.yougy.homework;
 
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,6 +36,7 @@ import com.yougy.anwser.TimedTask;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
@@ -108,7 +110,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     List<com.yougy.homework.bean.HomeworkDetail.ExamPaper.ExamPaperContent> examPaperContentList;
     //底部某一题多页数据
     private List<ParsedQuestionItem.Question> questionList;
-    //如果是选择题，这里存储选择题的结果
+    //如果是选择题，这里存储选择题的可选结果
     private List<ParsedQuestionItem.Answer> chooeseAnswerList;
     //选择题选择的结果
     private ArrayList<String> checkedAnswerList = new ArrayList<String>();
@@ -135,8 +137,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
     //存储每一页截屏图片地址
     private ArrayList<String> pathList = new ArrayList<>();
 
-    //是否第一次自动点击进入
-    private boolean isFirstComeIn;
+    //是否第一次自动点击进入某一题
+    private boolean isFirstComeInHomeWork;
+    //是否第一次自动点击进入某一题的第一页
+    private boolean isFirstComeInQuestion;
 
     @Override
     protected void setContentView() {
@@ -158,6 +162,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+
         NetWorkManager.queryHomeworkDetail(examId).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
@@ -201,8 +206,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 //存储之前一题的结果
                 //两种情况（一种直接点击，此时showHomeWorkPosition为之前页码位。另一种上一页或下一页点击，此时showHomeWorkPosition为当前展示页码位，获取之前页面位需+1或-1）
 
-                if (isFirstComeIn) {
-                    isFirstComeIn = false;
+                if (isFirstComeInHomeWork) {
+                    isFirstComeInHomeWork = false;
 
                 } else {
                     if (COMEIN_HOMEWORK_PAGE_MODE == 0) {
@@ -243,7 +248,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 questionList = parsedQuestionItem.questionList;
 
 
-                questionPageSize = questionList.size();
+                //判断是否之前有笔记
+                questionPageSize = bytesList.size()>=questionList.size()?bytesList.size():questionList.size();
 
                 //切换题目时，先丢掉之前添加的写字板
                 if (isAddAnswerBoard) {
@@ -255,10 +261,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 //取题目的第一页纸展示
                 if (questionList != null && questionList.size() > 0) {
                     //这里先添加第一题题目的分页手写笔记，方便后期修改
-                    for (int i = 0; i < questionPageSize; i++) {
-                        bytesList.add(null);
-                        pathList.add(null);
+
+                    if (bytesList.size() > 0) {
+
+                    } else {
+                        for (int i = 0; i < questionPageSize; i++) {
+                            bytesList.add(null);
+                        }
                     }
+                    if (pathList.size() > 0) {
+
+                    } else {
+                        for (int i = 0; i < questionPageSize; i++) {
+                            pathList.add(null);
+                        }
+                    }
+                    isFirstComeInQuestion = true;
                     questionPageNumAdapter.onItemClickListener.onItemClick1(0);
                 }
 
@@ -291,22 +309,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.invalidate();
 
 
-                //保存上一个题目多页数据中的某一页手写笔记。
-                bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
-                pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+                if (isFirstComeInQuestion) {
+                    isFirstComeInQuestion = false;
+                }else{
+                    //保存上一个题目多页数据中的某一页手写笔记。
+                    byte[] tmpBytes1 = mNbvAnswerBoard.bitmap2Bytes();
+                    bytesList.set(saveQuestionPage, tmpBytes1);
+                    pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+                }
 
                 mNbvAnswerBoard.clearAll();
 
                 //将本页设置为选中页
                 saveQuestionPage = position;
-
-                //从之前bytesList中回显之前保存的手写笔记，如果有的话
-                if (bytesList.size() > position) {
-                    byte[] tmpBytes = bytesList.get(position);
-                    if (tmpBytes != null) {
-                        mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-                    }
-                }
 
 
                 ParsedQuestionItem.Question question = null;
@@ -326,8 +341,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     questionContainer.setVisibility(View.GONE);
 
                 }
-                if (question != null) {
-                    if ("选择".equals(question.questionType)) {
+                if (questionList.get(0) != null) {
+                    if ("选择".equals(questionList.get(0).questionType)) {
                         if (isAddAnswerBoard) {
                             rlAnswer.removeView(mNbvAnswerBoard);
                             isAddAnswerBoard = false;
@@ -337,12 +352,25 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         setChooeseResult();
 
+                        //刷新当前选择结果的reciv
+                        if (rcvChooese.getAdapter() != null) {
+                            rcvChooese.getAdapter().notifyDataSetChanged();
+                        }
+
                     } else {
                         if (!isAddAnswerBoard) {
                             rlAnswer.addView(mNbvAnswerBoard);
                             isAddAnswerBoard = true;
                         }
                         rcvChooese.setVisibility(View.GONE);
+
+                        //从之前bytesList中回显之前保存的手写笔记，如果有的话
+                        if (bytesList.size() > position) {
+                            byte[] tmpBytes = bytesList.get(position);
+                            if (tmpBytes != null) {
+                                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                            }
+                        }
                     }
                 }
                 questionPageNumAdapter.notifyDataSetChanged();
@@ -366,7 +394,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         if (examPaperContentList != null && examPaperContentList.size() > 0) {
 
-            isFirstComeIn = true;
+            isFirstComeInHomeWork = true;
             homeWorkPageNumAdapter.onItemClickListener.onItemClick1(0);
 
         }
@@ -380,7 +408,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .start(new Action1<Integer>() {
                     @Override
                     public void call(Integer times) {
-                        refreshTime();
+//                        refreshTime();
                     }
                 });
     }
@@ -397,7 +425,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void setChooeseResult() {
 
         //清理掉其他题中的作业结果。
-        checkedAnswerList.clear();
+//        checkedAnswerList.clear();
 
         rcvChooese.setAdapter(new RecyclerView.Adapter() {
             @Override
@@ -486,10 +514,39 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     //如果已经是最后一题，那么不在跳转。直接打开暂存成功弹窗
                 }
-// TODO: 2017/11/27 这里需要跳转到弹窗界面
+                // 这里需要跳转到暂存成功的弹窗界面
+                FullScreenHintDialog fullScreenHintDialog = new FullScreenHintDialog(this, "");
+                fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("暂存成功").setBtn1("继续作答", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        fullScreenHintDialog.dismiss();
+                    }
+                }, false).setBtn2("返回作业", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        fullScreenHintDialog.dismiss();
+                    }
+                }, false).setShowNoMoreAgainHint(false).show();
+
 
                 break;
             case R.id.tv_submit_homework:
+
+//                bytesList.clear();
+//
+//                bytesList.add(mNbvAnswerBoard.bitmap2Bytes());
+//
+//
+//                DataCacheUtils.putObject(this,"adsf",bytesList);
+
+                mNbvAnswerBoard.clearAll();
+
+                List<byte[]> getBytesList = (List<byte[]>) DataCacheUtils.getObject(this, "adsf");
+                byte[] tmpBytes = getBytesList.get(0);
+
+                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+
+                mNbvAnswerBoard.invalidate();
                 break;
             case R.id.tv_clear_write:
                 mNbvAnswerBoard.clearAll();
@@ -526,7 +583,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
 
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）
-        SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + saveHomeWorkPage + "_bytes_list", bytesList);
+        DataCacheUtils.putObject(this, examId + "_" + saveHomeWorkPage + "_bytes_list", bytesList);
         //保存待上传图片，用于上传
         SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + saveHomeWorkPage + "_path_list", pathList);
         SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + saveHomeWorkPage + "_chooese_list", checkedAnswerList);
@@ -545,6 +602,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
             //选择题需要存储选择结果
             getSpUtil().putString(examId + "_" + saveHomeWorkPage + "_chooese_result", chooeseResult);
         }
+        //本题所有数据保存完毕
+        saveQuestionPage =0;
 
         //以上存储了3中数据，1：保存手写笔记集合，2：保存每页图片集合，3：如果是选择题，保存选择题结果字符串。
         //存储成功之后，将内存中的数据全部清空。
@@ -558,6 +617,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         checkedAnswerList.clear();
         chooeseResult = "";
 
+
     }
 
 
@@ -567,14 +627,20 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void getShowHomeWorkData() {
 
         //回显之前存储在sp中的手写笔记数据（如果有）
-        List<byte[]> tmpBytesList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + showHomeWorkPosition + "_bytes_list");
+
+        List<byte[]> tmpBytesList = (List<byte[]>) DataCacheUtils.getObject(this, examId + "_" + showHomeWorkPosition + "_bytes_list");
         if (tmpBytesList != null && tmpBytesList.size() > 0) {
             bytesList.addAll(tmpBytesList);
         }
+        List<String> tmpPathList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + showHomeWorkPosition + "_path_list");
+        if (pathList != null && pathList.size() > 0) {
+            pathList.addAll(tmpPathList);
+        }
         //回显之前存储在sp中的选择结果数据（如果有）
-        List<String> tmpCheckedAnswerList =SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + showHomeWorkPosition + "_chooese_list");
+        List<String> tmpCheckedAnswerList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + showHomeWorkPosition + "_chooese_list");
         if (tmpCheckedAnswerList != null && tmpCheckedAnswerList.size() > 0) {
             checkedAnswerList.addAll(tmpCheckedAnswerList);
+
         }
 
     }
