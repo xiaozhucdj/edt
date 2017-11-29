@@ -54,15 +54,6 @@ public class MistakeSummary implements Parcelable {
     }
 
     public static class ExtraBean implements Parcelable {
-        /**
-         * exam : 542
-         * book : 7244559
-         * useTime : 00:00:51
-         * score : 0
-         * cursor : 11
-         * display : true
-         */
-
         private int exam;
         private int book;
         private String useTime;
@@ -70,6 +61,8 @@ public class MistakeSummary implements Parcelable {
         private int cursor;
         private boolean display;
         private String name;
+        private boolean deleted;
+        private int lastScore;
 
         public int getExam() {
             return exam;
@@ -127,6 +120,23 @@ public class MistakeSummary implements Parcelable {
             this.name = name;
             return this;
         }
+        public boolean isDeleted() {
+            return deleted;
+        }
+
+        public ExtraBean setDeleted(boolean deleted) {
+            this.deleted = deleted;
+            return this;
+        }
+
+        public int getLastScore() {
+            return lastScore;
+        }
+
+        public ExtraBean setLastScore(int lastScore) {
+            this.lastScore = lastScore;
+            return this;
+        }
 
         @Override
         public int describeContents() {
@@ -142,6 +152,8 @@ public class MistakeSummary implements Parcelable {
             dest.writeInt(this.cursor);
             dest.writeByte(this.display ? (byte) 1 : (byte) 0);
             dest.writeString(this.name);
+            dest.writeByte(this.deleted ? (byte) 1 : (byte) 0);
+            dest.writeInt(this.lastScore);
         }
 
         public ExtraBean() {
@@ -155,9 +167,11 @@ public class MistakeSummary implements Parcelable {
             this.cursor = in.readInt();
             this.display = in.readByte() != 0;
             this.name = in.readString();
+            this.deleted = in.readByte() != 0;
+            this.lastScore = in.readInt();
         }
 
-        public static final Parcelable.Creator<ExtraBean> CREATOR = new Parcelable.Creator<ExtraBean>() {
+        public static final Creator<ExtraBean> CREATOR = new Creator<ExtraBean>() {
             @Override
             public ExtraBean createFromParcel(Parcel source) {
                 return new ExtraBean(source);

@@ -52,7 +52,7 @@
             android:paddingTop="2px"
             >
             <TextView
-                android:id="@+id/question_body_btn"
+                android:id="@+id/writed_question_btn"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

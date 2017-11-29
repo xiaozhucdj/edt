@@ -203,4 +203,29 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<Object> deleteMistake_thorough(Integer homeworkId , String itemId){
+        Log.v("FH", "!!!!!调用ServerApi移除错题(彻底删除):deleteMistake_thorough");
+        return getInstance().getServerApi().removeHomeworkExcerpt(homeworkId , "{\"item\":" + itemId + "}")
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> deleteMistake(Integer homeworkId , String itemId){
+        Log.v("FH", "!!!!!调用ServerApi移除错题(标记为删除):deleteMistake");
+        return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
+                , "{\"item\":" + itemId + ",\"extra\":{\"deleted\":true}}")
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> setMistakeLastScore(Integer homeworkId , String itemId , int score){
+        Log.v("FH", "!!!!!调用ServerApi设置错题上次自评结果:setMistakeLastScore");
+        return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
+                , "{\"item\":" + itemId + ",\"extra\":{\"lastScore\":" + score + "}}")
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+
 }

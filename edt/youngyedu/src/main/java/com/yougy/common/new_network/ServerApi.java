@@ -122,4 +122,22 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryReply"})
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId);
+
+    /**
+     * 作业本错题移除
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"removeHomeworkExcerpt"})
+    Observable<BaseResult<Object>> removeHomeworkExcerpt(@Field("homeworkId") Integer homeworkId
+            , @Field("homeworkExcerpt") String homeworkExcerpt);
+
+    /**
+     * 作业本错题修改
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"modifyHomeworkExcerpt"})
+    Observable<BaseResult<Object>> modifyHomeworkExcerpt(@Field("homeworkId") Integer homeworkId
+            , @Field("homeworkExcerpt") String homeworkExcerpt);
 }
