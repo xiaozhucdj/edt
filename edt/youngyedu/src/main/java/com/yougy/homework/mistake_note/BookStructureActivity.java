@@ -44,6 +44,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
     List<MistakeSummary> mistakeList = new ArrayList<MistakeSummary>();
     int bookId;
     int homeworkId;
+    String bookTitle;
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this)
@@ -53,10 +54,24 @@ public class BookStructureActivity extends HomeworkBaseActivity {
     }
     @Override
     protected void init() {
+        setNeedRecieveEventAfterOnStop(true);
         bookId = getIntent().getIntExtra("bookId" , -1);
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
     }
 
+    @Override
+    protected void handleEvent() {
+        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof String
+                        && (((String) o).startsWith("removeMistakeItem:") || ((String) o).startsWith("lastScoreChanged"))){
+                    getMistakes();
+                }
+            }
+        }));
+        super.handleEvent();
+    }
 
     @Override
     protected void initLayout() {
@@ -103,6 +118,8 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                         Intent intent = new Intent(getApplicationContext() , MistakeListActivity.class);
                         intent.putExtra("topNode" , ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).fatherNode);
                         intent.putExtra("currentNode" , node);
+                        intent.putExtra("homeworkId" , homeworkId);
+                        intent.putExtra("bookTitle" , bookTitle);
                         if (subMistakeList.size() > 0){
                             intent.putParcelableArrayListExtra("mistakeList" , subMistakeList);
                         }
@@ -138,7 +155,8 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                     @Override
                     public void call(List<Object> objects) {
                         if (objects.size() > 0){
-                            getWrongQuestion();
+                            getMistakes();
+                            bookTitle = (String) ((LinkedTreeMap) objects.get(0)).get("bookTitle");
                             List<LinkedTreeMap> nodeList =(List<LinkedTreeMap>)((LinkedTreeMap) ((LinkedTreeMap) objects.get(0)).get("bookContents")).get("nodes");
                             bookStructureNodeList.addAll(parseNode(nodeList));
                             binding.mainRecyclerview.notifyDataSetChanged();
@@ -152,7 +170,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                 });
     }
 
-    private void getWrongQuestion(){
+    private void getMistakes(){
         if (homeworkId == -1){
             ToastUtil.showToast(getApplicationContext() , "homeworkId 为空");
             finish();
@@ -166,7 +184,11 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                                 && homeworkBookDetails.get(0).getHomeworkExcerpt() != null
                                 && homeworkBookDetails.get(0).getHomeworkExcerpt().size() != 0){
                             mistakeList.clear();
-                            mistakeList.addAll(homeworkBookDetails.get(0).getHomeworkExcerpt());
+                            for (MistakeSummary mistakeSummary : homeworkBookDetails.get(0).getHomeworkExcerpt()) {
+                                if (!mistakeSummary.getExtra().isDeleted()){
+                                 mistakeList.add(mistakeSummary);
+                                }
+                            }
                             binding.mainRecyclerview.notifyDataSetChanged();
                         }
                     }

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.HomeworkBaseActivity;
@@ -18,6 +17,7 @@ import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.bean.BookStructureNode;
 import com.yougy.homework.bean.MistakeSummary;
+import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeListBinding;
 import com.yougy.ui.activity.databinding.ItemMistakeListBinding;
@@ -37,6 +37,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
     ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
     BookStructureNode topNode , currentNode;
     ArrayList<BookStructureNode> nodeTree = new ArrayList<BookStructureNode>();
+    int homeworkId;
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.activity_mistake_list , null , false);
@@ -45,10 +46,49 @@ public class MistakeListActivity extends HomeworkBaseActivity{
     }
 
     @Override
+    protected void handleEvent() {
+        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof String && ((String) o).startsWith("removeMistakeItem:")){
+                    String[] tempStrs = ((String) o).split(":");
+                    if (tempStrs.length == 2){
+                        int removeItemId = Integer.parseInt(tempStrs[1]);
+                        ListUtil.conditionalRemove(mistakeSummaryList, new ListUtil.ConditionJudger<MistakeSummary>() {
+                            @Override
+                            public boolean isMatchCondition(MistakeSummary nodeInList) {
+                                return nodeInList.getItem() == removeItemId;
+                            }
+                        });
+                        loadData();
+                    }
+                }
+                else if (o instanceof String && ((String) o).startsWith("lastScoreChanged:")){
+                    String[] tempStrs = ((String) o).split(":");
+                    if (tempStrs.length == 3){
+                        int itemId = Integer.parseInt(tempStrs[1]);
+                        int lastScore = Integer.parseInt(tempStrs[2]);
+                        for (MistakeSummary mistakeSummary :
+                                mistakeSummaryList) {
+                            if (mistakeSummary.getItem() == itemId){
+                                mistakeSummary.getExtra().setLastScore(lastScore);
+                            }
+                        }
+                        loadData();
+                    }
+                }
+            }
+        }));
+        super.handleEvent();
+    }
+
+    @Override
     protected void init() {
+        setNeedRecieveEventAfterOnStop(true);
         mistakeSummaryList = getIntent().getParcelableArrayListExtra("mistakeList");
         topNode = getIntent().getParcelableExtra("topNode");
         currentNode = getIntent().getParcelableExtra("currentNode");
+        homeworkId = getIntent().getIntExtra("homeworkId" , -1);
         if (findCurrentNode(topNode , currentNode)){
             String currentPostionText = "";
             for (int i = nodeTree.size() - 1 ; i >=0 ; i--){
@@ -114,6 +154,13 @@ public class MistakeListActivity extends HomeworkBaseActivity{
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 Intent intent = new Intent(getApplicationContext() , WriteErrorHomeWorkActivity.class);
                 intent.putExtra("itemId" , ((MyHolder) vh).questionItem.itemId);
+                intent.putExtra("homeworkId" , homeworkId);
+                intent.putExtra("bookTitle" , getIntent().getStringExtra("bookTitle"));
+                for (MistakeSummary mistakeSummary : mistakeSummaryList) {
+                    if (mistakeSummary.getItem() == Integer.parseInt(((MyHolder) vh).questionItem.itemId)){
+                        intent.putExtra("lastScore" , mistakeSummary.getExtra().getLastScore());
+                    }
+                }
                 startActivity(intent);
             }
         });
@@ -145,6 +192,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         NetWorkManager.queryQuestionItemList(null , null , itemIdStr , null).subscribe(new Action1<List<ParsedQuestionItem>>() {
             @Override
             public void call(List<ParsedQuestionItem> parsedQuestionItems) {
+                questionList.clear();
                 questionList.addAll(parsedQuestionItems);
                 binding.mainRecyclerview.notifyDataSetChanged();
             }

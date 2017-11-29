@@ -1,5 +1,6 @@
 package com.yougy.homework;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +27,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.mistake_note.MistakeGradeActivity;
 import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
@@ -109,6 +111,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
 
     private String itemId;
+    private int homeworkId;
+    private int lastScore;
+    private String bookTitle;
+    private ParsedQuestionItem questionItem;
+    private ArrayList<String> writeImgList = new ArrayList<String>();
 
     @Override
     protected void setContentView() {
@@ -118,10 +125,14 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     @Override
     protected void init() {
         itemId = getIntent().getStringExtra("itemId");
+        homeworkId = getIntent().getIntExtra("homeworkId" , -1);
+        lastScore = getIntent().getIntExtra("lastScore" , -1);
+        bookTitle =getIntent().getStringExtra("bookTitle");
         if (TextUtils.isEmpty(itemId)){
             ToastUtil.showToast(getApplicationContext() , "itemId 为空");
             return;
         }
+        ToastUtil.showToast(getApplicationContext() , "lastScore : " + lastScore);
     }
 
 
@@ -139,7 +150,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
                         if (parsedQuestionItems != null || parsedQuestionItems.size() != 0){
-                            ParsedQuestionItem parsedQuestionItem = parsedQuestionItems.get(0);
+                            questionItem = parsedQuestionItems.get(0);
                             //TODO 获取到题目之后的逻辑
                         }
                     }
@@ -349,7 +360,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
                 break;*/
             case R.id.tv_submit_homework:
-                saveHomeWorkData();
+//                saveHomeWorkData();
+                gotoMistakeGradeActivity();
                 break;
             case R.id.tv_clear_write:
                 mNbvAnswerBoard.clearAll();
@@ -375,6 +387,17 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         }
     }
 
+
+    private void gotoMistakeGradeActivity(){
+        //TODO 此处跳转到错题判断界面
+        Intent intent = new Intent(getApplicationContext() , MistakeGradeActivity.class);
+        intent.putStringArrayListExtra("writeImgList" , writeImgList);
+        intent.putExtra("questionItem" , questionItem);
+        intent.putExtra("homeworkId" , homeworkId);
+        intent.putExtra("bookTitle" , bookTitle);
+        startActivity(intent);
+        finish();
+    }
     /**
      * 保存之前操作题目结果数据
      */

@@ -210,7 +210,7 @@
         <!--已批改作业题目详情界面-->
         <activity android:name="com.yougy.homework.HomeWorkResultActivity" />
         <!--错题练习界面-->
-        <activity android:name="com.yougy.homework.mistake_note.MistakePractiseActivity" />
+        <activity android:name="com.yougy.homework.mistake_note.MistakeGradeActivity" />
 
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
