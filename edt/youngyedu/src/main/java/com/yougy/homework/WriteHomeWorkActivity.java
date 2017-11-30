@@ -72,8 +72,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-import static com.yougy.common.utils.SharedPreferencesUtil.getSpUtil;
-
 
 public class WriteHomeWorkActivity extends BaseActivity {
 
@@ -623,20 +621,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
         SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + saveHomeWorkPage + "_path_list", pathList);
         SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + saveHomeWorkPage + "_chooese_list", checkedAnswerList);
 
-        String chooeseResult = "";
-        if (questionList != null && "选择".equals(questionList.get(0).questionType)) {
-
-            for (int i = 0; i < checkedAnswerList.size(); i++) {
-                chooeseResult = chooeseResult + "," + checkedAnswerList.get(i);
-            }
-
-            if (!TextUtils.isEmpty(chooeseResult)) {
-                chooeseResult = chooeseResult.substring(1);
-            }
-
-            //选择题需要存储选择结果
-            getSpUtil().putString(examId + "_" + saveHomeWorkPage + "_chooese_result", chooeseResult);
-        }
         //本题所有数据保存完毕
         saveQuestionPage = 0;
 
@@ -650,8 +634,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
         bytesList.clear();
         pathList.clear();
         checkedAnswerList.clear();
-        chooeseResult = "";
-
 
     }
 
@@ -792,7 +774,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         stsResultbeanArrayList.clear();
                         //选择题需要存储选择结果
-                        String txtContent = getSpUtil().getString(examId + "_" + i + "_chooese_result", "");
+                        String txtContent = "";
+                        List<String> tmpCheckedAnswerList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + i + "_chooese_list");
+                        if (tmpCheckedAnswerList != null && tmpCheckedAnswerList.size() > 0) {
+                            txtContent = new Gson().toJson(tmpCheckedAnswerList);
+                        }
+
 
                         HomeWorkResultbean homeWorkResultbean = new HomeWorkResultbean();
                         homeWorkResultbean.setExamId(examId);
@@ -808,7 +795,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         //清理掉缓存书写笔记，图片地址存 ,选择结果
                         DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_bytes_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_path_list");
-                        SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_chooese_result");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_chooese_list");
                     }
 
