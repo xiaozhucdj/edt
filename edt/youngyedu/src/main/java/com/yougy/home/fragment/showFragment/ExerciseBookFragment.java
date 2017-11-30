@@ -18,9 +18,10 @@ import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.CheckedHomeworkDetailActivity;
 import com.yougy.homework.PageableRecyclerView;
+import com.yougy.homework.WriteErrorHomeWorkActivity;
+import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
-import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.mistake_note.BookStructureActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FragmentExerciseBookBinding;
@@ -37,11 +38,13 @@ import rx.functions.Action1;
  */
 public class ExerciseBookFragment extends BFragment {
     FragmentExerciseBookBinding binding;
+
     enum STATUS {
         DOING,
         WAIT_FOR_CHECK,
         CHECKED
     }
+
     private STATUS currentStatus = STATUS.DOING;
 
     ArrayList<HomeworkSummary> doingList = new ArrayList<HomeworkSummary>();
@@ -51,18 +54,18 @@ public class ExerciseBookFragment extends BFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(getActivity()) , R.layout.fragment_exercise_book, container , false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(getActivity()), R.layout.fragment_exercise_book, container, false);
         UIUtils.recursiveAuto(binding.getRoot());
-        binding.mainRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity() , LinearLayoutManager.VERTICAL , false));
+        binding.mainRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         binding.mainRecyclerview.setAdapter(new PageableRecyclerView.Adapter<MyHolder>() {
             @Override
             public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                    return new MyHolder(DataBindingUtil.inflate(inflater , R.layout.item_homework_list , parent , false));
+                return new MyHolder(DataBindingUtil.inflate(inflater, R.layout.item_homework_list, parent, false));
             }
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
-                switch (currentStatus){
+                switch (currentStatus) {
                     case DOING:
                         holder.binding.statusTv.setText("作\n业\n中");
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
@@ -80,9 +83,10 @@ public class ExerciseBookFragment extends BFragment {
                         break;
                 }
             }
+
             @Override
             public int getItemCount() {
-                switch (currentStatus){
+                switch (currentStatus) {
                     case DOING:
                         return doingList.size();
                     case WAIT_FOR_CHECK:
@@ -98,11 +102,11 @@ public class ExerciseBookFragment extends BFragment {
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-                switch (currentStatus){
+                switch (currentStatus) {
                     case CHECKED:
-                        Intent intent = new Intent(getActivity() , CheckedHomeworkDetailActivity.class);
-                        intent.putExtra("examId" , ((MyHolder) vh).getData().getExam());
-                        intent.putExtra("examName" , ((MyHolder) vh).getData().getExtra().getName());
+                        Intent intent = new Intent(getActivity(), CheckedHomeworkDetailActivity.class);
+                        intent.putExtra("examId", ((MyHolder) vh).getData().getExam());
+                        intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
                         startActivity(intent);
                         break;
                     case WAIT_FOR_CHECK:
@@ -152,9 +156,9 @@ public class ExerciseBookFragment extends BFragment {
         binding.mistakesBookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity() , BookStructureActivity.class);
-                intent.putExtra("homeworkId" , mControlActivity.mHomewrokId);
-                intent.putExtra("bookId" , mControlActivity.mBookId);
+                Intent intent = new Intent(getActivity(), BookStructureActivity.class);
+                intent.putExtra("homeworkId", mControlActivity.mHomewrokId);
+                intent.putExtra("bookId", mControlActivity.mBookId);
                 startActivity(intent);
             }
         });
@@ -162,13 +166,21 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到课本逻辑
-                startActivity(new Intent(getActivity(),WriteHomeWorkActivity.class));
+                startActivity(new Intent(getActivity(), WriteHomeWorkActivity.class));
             }
         });
         binding.switch2noteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO 切换到笔记逻辑
+
+                Intent intent = new Intent(getActivity(), WriteErrorHomeWorkActivity.class);
+                intent.putExtra("QUESTION_ITEMID", 183+"");
+                intent.putExtra("HOMEWORKID", 550);
+                intent.putExtra("BOOKTITLE", "测试测试");
+                intent.putExtra("LASTSCORE", 1);
+                startActivity(intent);
+
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
@@ -176,8 +188,8 @@ public class ExerciseBookFragment extends BFragment {
         return binding.getRoot();
     }
 
-    private void refreshData(){
-        Log.v("FH" , "mHomeworkid = " + mControlActivity.mHomewrokId);
+    private void refreshData() {
+        Log.v("FH", "mHomeworkid = " + mControlActivity.mHomewrokId);
         NetWorkManager.queryHomeworkBookDetail(mControlActivity.mHomewrokId)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
@@ -185,7 +197,7 @@ public class ExerciseBookFragment extends BFragment {
                         checkedList.clear();
                         waitForCheckList.clear();
                         doingList.clear();
-                        if (homeworkBookDetails.size() > 0){
+                        if (homeworkBookDetails.size() > 0) {
                             parseData(homeworkBookDetails.get(0));
                         }
                         binding.mainRecyclerview.setCurrentPage(1);
@@ -199,39 +211,38 @@ public class ExerciseBookFragment extends BFragment {
                 });
     }
 
-    private void parseData(HomeworkBookDetail homeworkBookDetail){
+    private void parseData(HomeworkBookDetail homeworkBookDetail) {
         //作业状态码:
         //未开始(IH01),作答中(IH02),未批改(IH03),批改中(IH04),已批改(IH05),未提交(IH51)
         List<HomeworkSummary> homeworkSummaryList = homeworkBookDetail.getHomeworkContent();
         for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
             String statusCode = homeworkSummary.getExtra().getStatusCode();
-            if (statusCode.equals("IH01")){
+            if (statusCode.equals("IH01")) {
 
-            }
-            else if (statusCode.equals("IH02")){//作答中
+            } else if (statusCode.equals("IH02")) {//作答中
                 doingList.add(homeworkSummary);
-            }
-            else if (statusCode.equals("IH03") || statusCode.equals("IH04")){//未批改,批改中
+            } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中
                 waitForCheckList.add(homeworkSummary);
-            }
-            else if (statusCode.equals("IH05")){//已批改
+            } else if (statusCode.equals("IH05")) {//已批改
                 checkedList.add(homeworkSummary);
             }
         }
     }
 
-    private class MyHolder extends RecyclerView.ViewHolder{
+    private class MyHolder extends RecyclerView.ViewHolder {
         private ItemHomeworkListBinding binding;
         private HomeworkSummary data;
+
         public MyHolder(ItemHomeworkListBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        public void setData(HomeworkSummary data){
+        public void setData(HomeworkSummary data) {
             this.data = data;
             binding.homeworkNameTv.setText(data.getExtra().getName());
         }
+
         public HomeworkSummary getData() {
             return data;
         }
@@ -246,18 +257,14 @@ public class ExerciseBookFragment extends BFragment {
         super.onStart();
     }
 
-    public void back(View view){
+    public void back(View view) {
         getActivity().finish();
     }
 
 
-
-
-
-
-
     //TODO:袁野
     public ControlFragmentActivity mControlActivity;
+
     public void setActivity(ControlFragmentActivity activity) {
         mControlActivity = activity;
     }

@@ -555,12 +555,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                     //打开未完成提示
                     fullScreenHintDialog = new FullScreenHintDialog(this, "");
-                    fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("该作业之后还有没有完成的作业，是否现在提交").setBtn1("继续作答", new DialogInterface.OnClickListener() {
+                    fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("是否提交作业").setBtn1("检查作业", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             fullScreenHintDialog.dismiss();
                         }
-                    }, false).setBtn2("现在提交", new DialogInterface.OnClickListener() {
+                    }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // 去提交
@@ -862,11 +862,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(Object o) {
                         timedTask.stop();
-//                        Intent intent = new Intent(WriteHomeWorkActivity.this, AnswerResultActivity.class);
-//                        intent.putExtra("question", parsedQuestionItem);
-//                        startActivity(intent);
-//                        finish();
                         ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
+                        onBackPressed();
                     }
                 }, new Action1<Throwable>() {
                     @Override
