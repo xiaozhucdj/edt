@@ -41,13 +41,20 @@ public interface ServerApi {
 
 
     /**
-     *  问答解答
+     *  解答上传（单题）
      */
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"} , values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
             , @Field("examId") String examId, @Field("content") String content , @Field("replyUseTime") String replyUseTime);
+/**
+     *  解答上传（多题，作业）
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"} , values = {"postReply"})
+    Observable<BaseResult<Object>> postReply(@Field("userId") String userId,  @Field("data") String data);
 
     /**
      *  按userId查询云信token

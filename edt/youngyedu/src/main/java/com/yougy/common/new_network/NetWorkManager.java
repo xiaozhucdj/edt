@@ -138,6 +138,11 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+    public static Observable<Object> postReply(String userId, String data) {
+        return getInstance().getServerApi().postReply(userId, data)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
     public static Observable<Object> queryToken(String userId){
         Log.v("FH","!!!!!调用ServerApi查询云信对应token:queryToken");
