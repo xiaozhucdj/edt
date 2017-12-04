@@ -199,7 +199,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
         homeWorkPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick1(int position) {
-                ToastUtil.showToast(WriteHomeWorkActivity.this, position + 1 + "题");
 
                 EpdController.leaveScribbleMode(mNbvAnswerBoard);
                 mNbvAnswerBoard.invalidate();
@@ -219,7 +218,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             return;
                         }
                         saveHomeWorkPage = showHomeWorkPosition;
-
 
                     } else if (COMEIN_HOMEWORK_PAGE_MODE == 1) {
                         saveHomeWorkPage = position + 1;
@@ -304,7 +302,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
         questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick1(int position) {
-                ToastUtil.showToast(WriteHomeWorkActivity.this, position + 1 + "页");
 
                 //离开手绘模式，并刷新界面ui
                 EpdController.leaveScribbleMode(mNbvAnswerBoard);
@@ -321,7 +318,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         bytesList.set(saveQuestionPage, tmpBytes1);
                     }
                     //是否是选择题。都需要截屏保存图片
-                    pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+                    pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + saveHomeWorkPage + "_" + saveQuestionPage));
                 }
 
                 mNbvAnswerBoard.clearAll();
@@ -611,7 +608,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
         }
         //是否是选择题。都需要截屏保存图片
-        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + saveHomeWorkPage + "_" + saveQuestionPage));
         mNbvAnswerBoard.clearAll();
 
 
@@ -855,7 +852,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void writeInfoToS() {
 
         String content = new Gson().toJson(homeWorkResultbeanList);
-        System.out.println(content);
 
         NetWorkManager.postReply(SpUtil.getUserId() + "", content)
                 .subscribe(new Action1<Object>() {
@@ -889,13 +885,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         return tBitmap;
     }
 
-    public String saveBitmapToFile(Bitmap bitmap) {
+    public String saveBitmapToFile(Bitmap bitmap, String bitName) {
 
         String fileDir = FileUtils.getAppFilesDir() + "/homework_result";
         FileUtils.createDirs(fileDir);
 
 
-        String bitName = System.currentTimeMillis() + "";
+//        String bitName = System.currentTimeMillis() + "";
         File f = new File(fileDir, bitName + ".png");
         FileOutputStream fOut = null;
         try {
