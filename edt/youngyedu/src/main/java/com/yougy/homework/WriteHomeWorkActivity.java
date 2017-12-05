@@ -797,10 +797,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
 
-                        homeWorkResultbean.setPiccontent(picContent);
+                        homeWorkResultbean.setPicContent(picContent);
                         // TODO: 2017/11/30 这里需要对每题时间的数据进行添加，可以放到sp中去
                         homeWorkResultbean.setUseTime("");
-                        homeWorkResultbean.setTxtcontent(txtContent);
+                        homeWorkResultbean.setTxtContent(txtContent);
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
                         //清理掉缓存书写笔记，图片地址存 ,选择结果
