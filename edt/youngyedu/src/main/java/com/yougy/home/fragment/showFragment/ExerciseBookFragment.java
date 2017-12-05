@@ -119,6 +119,7 @@ public class ExerciseBookFragment extends BFragment {
                     case DOING:
                         intent = new Intent(getActivity(), WriteHomeWorkActivity.class);
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
+                        intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
                         intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
                         startActivity(intent);
                         break;
@@ -180,7 +181,7 @@ public class ExerciseBookFragment extends BFragment {
                 //TODO 切换到笔记逻辑
 
                 Intent intent = new Intent(getActivity(), WriteErrorHomeWorkActivity.class);
-                intent.putExtra("QUESTION_ITEMID", 183+"");
+                intent.putExtra("QUESTION_ITEMID", 183 + "");
                 intent.putExtra("HOMEWORKID", 550);
                 intent.putExtra("BOOKTITLE", "测试测试");
                 intent.putExtra("LASTSCORE", 1);

@@ -242,7 +242,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
 
                     //切换题目是触发一下保存上一题结果数据
-                    saveLastHomeWorkData();
+                    saveLastHomeWorkData(saveHomeWorkPage);
                 }
 
                 showHomeWorkPosition = position;
@@ -330,7 +330,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         bytesList.set(saveQuestionPage, tmpBytes1);
                     }
                     //是否是选择题。都需要截屏保存图片
-                    pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + saveHomeWorkPage + "_" + saveQuestionPage));
+                    pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
                 }
 
                 mNbvAnswerBoard.clearAll();
@@ -581,6 +581,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 } else {
                     //如果已经是最后一题，直接提交
+                    //前提是先保存最后一题结果到本地存储
+                    saveLastHomeWorkData(showHomeWorkPosition);
                     getUpLoadInfo();
                 }
 
@@ -613,22 +615,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
     /**
      * 保存之前操作题目结果数据
      */
-    private void saveLastHomeWorkData() {
+    private void saveLastHomeWorkData(int position) {
         //刷新最后没有保存的数据
         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
         if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
             bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
         }
         //是否是选择题。都需要截屏保存图片
-        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + saveHomeWorkPage + "_" + saveQuestionPage));
+        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + position + "_" + saveQuestionPage));
         mNbvAnswerBoard.clearAll();
 
 
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）
-        DataCacheUtils.putObject(this, examId + "_" + saveHomeWorkPage + "_bytes_list", bytesList);
+        DataCacheUtils.putObject(this, examId + "_" + position + "_bytes_list", bytesList);
         //保存待上传图片，用于上传
-        SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + saveHomeWorkPage + "_path_list", pathList);
-        SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + saveHomeWorkPage + "_chooese_list", checkedAnswerList);
+        SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
+        SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
 
         //本题所有数据保存完毕
         saveQuestionPage = 0;
@@ -805,6 +807,16 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_bytes_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_path_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_chooese_list");
+                    } else {
+
+                        //后台定义没有做的题目 任然上传，结果数据为空
+                        HomeWorkResultbean homeWorkResultbean = new HomeWorkResultbean();
+                        homeWorkResultbean.setExamId(Integer.parseInt(examId));
+                        int itemId = examPaperContentList.get(i).getPaperItem();
+                        homeWorkResultbean.setItemId(itemId);
+
+                        homeWorkResultbeanList.add(homeWorkResultbean);
+
                     }
 
                 }
@@ -870,9 +882,24 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(Object o) {
                         timedTask.stop();
-                        ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
-                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
-                        onBackPressed();
+
+
+                        NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
+                            @Override
+                            public void call(Object o) {
+
+                                ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
+                                YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+                                onBackPressed();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+                        });
+
+
                     }
                 }, new Action1<Throwable>() {
                     @Override
