@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -192,18 +194,68 @@ public class ExerciseBookFragment extends BFragment {
         return binding.getRoot();
     }
 
+    @Override
+    protected void handleEvent() {
+        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof String || o.equals("refreshHomeworkList")){
+
+                }
+            }
+        }));
+        super.handleEvent();
+    }
+
     private void refreshData() {
-        Log.v("FH", "mHomeworkid = " + mControlActivity.mHomewrokId);
         NetWorkManager.queryHomeworkBookDetail(mControlActivity.mHomewrokId)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
                     public void call(List<HomeworkBookDetail> homeworkBookDetails) {
+                        if (homeworkBookDetails.size() > 0) {
+                            //作业状态码:
+                            //未开始(IH01),作答中(IH02),未批改(IH03),批改中(IH04),已批改(IH05),未提交(IH51)
+                            List<HomeworkSummary> homeworkSummaryList = homeworkBookDetails.get(0).getHomeworkContent();
+                            for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
+                                String statusCode = homeworkSummary.getExtra().getStatusCode();
+                                if (statusCode.equals("IH01")) {
+                                    long startTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getStartTime() , "yyyy-MM-dd HH:mm:ss");
+                                    long endTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getEndTime() , "yyyy-MM-dd HH:mm:ss");
+                                    long currentTime = System.currentTimeMillis();
+                                    if (startTime < currentTime){
+                                        Log.v("FH" , "发现有作业状态不对,刷新作业列表" +
+                                                " 作业id: " + homeworkSummary.getExam()
+                                                + " 作业状态 : " + statusCode
+                                                + " startTime : " + homeworkSummary.getExtra().getStartTime()
+                                                + " endTime : " + homeworkSummary.getExtra().getEndTime()
+                                                + "currentTime" + System.currentTimeMillis());
+                                        ToastUtil.showToast(getActivity() , "发现有考试状态不对,刷新考试列表");
+                                        NetWorkManager.refreshHomeworkBook(mControlActivity.mHomewrokId)
+                                                .subscribe(new Action1<Object>() {
+                                                    @Override
+                                                    public void call(Object o) {
+                                                        refreshData();
+                                                    }
+                                                }, new Action1<Throwable>() {
+                                                    @Override
+                                                    public void call(Throwable throwable) {
+                                                        throwable.printStackTrace();
+                                                    }
+                                                });
+                                        return;
+                                    }
+                                } else if (statusCode.equals("IH02")) {//作答中
+                                    doingList.add(homeworkSummary);
+                                } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中
+                                    waitForCheckList.add(homeworkSummary);
+                                } else if (statusCode.equals("IH05")) {//已批改
+                                    checkedList.add(homeworkSummary);
+                                }
+                            }
+                        }
                         checkedList.clear();
                         waitForCheckList.clear();
                         doingList.clear();
-                        if (homeworkBookDetails.size() > 0) {
-                            parseData(homeworkBookDetails.get(0));
-                        }
                         binding.mainRecyclerview.setCurrentPage(1);
                         binding.mainRecyclerview.notifyDataSetChanged();
                     }
@@ -215,23 +267,6 @@ public class ExerciseBookFragment extends BFragment {
                 });
     }
 
-    private void parseData(HomeworkBookDetail homeworkBookDetail) {
-        //作业状态码:
-        //未开始(IH01),作答中(IH02),未批改(IH03),批改中(IH04),已批改(IH05),未提交(IH51)
-        List<HomeworkSummary> homeworkSummaryList = homeworkBookDetail.getHomeworkContent();
-        for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
-            String statusCode = homeworkSummary.getExtra().getStatusCode();
-            if (statusCode.equals("IH01")) {
-
-            } else if (statusCode.equals("IH02")) {//作答中
-                doingList.add(homeworkSummary);
-            } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中
-                waitForCheckList.add(homeworkSummary);
-            } else if (statusCode.equals("IH05")) {//已批改
-                checkedList.add(homeworkSummary);
-            }
-        }
-    }
 
     private class MyHolder extends RecyclerView.ViewHolder {
         private ItemHomeworkListBinding binding;
