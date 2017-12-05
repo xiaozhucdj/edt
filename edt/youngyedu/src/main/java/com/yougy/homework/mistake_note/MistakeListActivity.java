@@ -153,12 +153,12 @@ public class MistakeListActivity extends HomeworkBaseActivity{
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 Intent intent = new Intent(getApplicationContext() , WriteErrorHomeWorkActivity.class);
-                intent.putExtra("itemId" , ((MyHolder) vh).questionItem.itemId);
-                intent.putExtra("homeworkId" , homeworkId);
-                intent.putExtra("bookTitle" , getIntent().getStringExtra("bookTitle"));
+                intent.putExtra("QUESTION_ITEMID" , ((MyHolder) vh).questionItem.itemId);
+                intent.putExtra("HOMEWORKID" , homeworkId);
+                intent.putExtra("BOOKTITLE" , getIntent().getStringExtra("bookTitle"));
                 for (MistakeSummary mistakeSummary : mistakeSummaryList) {
                     if (mistakeSummary.getItem() == Integer.parseInt(((MyHolder) vh).questionItem.itemId)){
-                        intent.putExtra("lastScore" , mistakeSummary.getExtra().getLastScore());
+                        intent.putExtra("LASTSCORE" , mistakeSummary.getExtra().getLastScore());
                     }
                 }
                 startActivity(intent);

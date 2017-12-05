@@ -117,7 +117,10 @@ public class ExerciseBookFragment extends BFragment {
                         //TODO 待批改项点击
                         break;
                     case DOING:
-                        //TODO 作业中项点击
+                        intent = new Intent(getActivity(), WriteHomeWorkActivity.class);
+                        intent.putExtra("examId", ((MyHolder) vh).getData().getExam());
+                        intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
+                        startActivity(intent);
                         break;
                 }
             }
@@ -168,7 +171,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到课本逻辑
-                startActivity(new Intent(getActivity(), WriteHomeWorkActivity.class));
+
             }
         });
         binding.switch2noteBtn.setOnClickListener(new View.OnClickListener() {

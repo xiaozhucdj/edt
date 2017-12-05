@@ -89,6 +89,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
     TextView tvSubmitHomeWork;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
 
 
     private NoteBookView2 mNbvAnswerBoard;
@@ -129,7 +131,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     //保存当前题目页面分页，默认从0开始
     private int saveQuestionPage = 0;
 
-    private int examId = 550;
+    private String examName;
+    private String examId = "550";
     //是否添加了手写板
     private boolean isAddAnswerBoard;
     //byte数组集合，（用来保存每一页书写的笔记数据）
@@ -152,6 +155,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void init() {
 
+        examId = getIntent().getStringExtra("examId");
+
+        if (TextUtils.isEmpty(examId)) {
+            ToastUtil.showToast(getBaseContext(), "作业id为空");
+            finish();
+        }
+
+        examName = getIntent().getStringExtra("examName");
+        tvTitle.setText(examName);
     }
 
 
@@ -165,7 +177,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void loadData() {
 
-        NetWorkManager.queryHomeworkDetail(examId).subscribe(new Action1<List<HomeworkDetail>>() {
+        NetWorkManager.queryHomeworkDetail(Integer.parseInt(examId)).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
                 com.yougy.homework.bean.HomeworkDetail.ExamPaper examPaper = homeworkDetails.get(0).getExamPaper();
@@ -779,7 +791,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
 
                         HomeWorkResultbean homeWorkResultbean = new HomeWorkResultbean();
-                        homeWorkResultbean.setExamId(examId);
+                        homeWorkResultbean.setExamId(Integer.parseInt(examId));
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
 
@@ -859,6 +871,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void call(Object o) {
                         timedTask.stop();
                         ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
+                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
                         onBackPressed();
                     }
                 }, new Action1<Throwable>() {
