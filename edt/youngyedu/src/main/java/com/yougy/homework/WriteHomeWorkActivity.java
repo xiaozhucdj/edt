@@ -871,6 +871,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void call(Object o) {
                         timedTask.stop();
                         ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
+                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
                         onBackPressed();
                     }
                 }, new Action1<Throwable>() {
