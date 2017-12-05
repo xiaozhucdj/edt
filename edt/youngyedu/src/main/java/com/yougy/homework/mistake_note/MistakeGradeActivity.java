@@ -118,19 +118,29 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 binding.questionContainer.setText("没有答案");
             }
             else {
-                String answerString = "";
-                for (ParsedQuestionItem.Answer answer: questionItem.answerList) {
-                    if (answer.answerType.equals("正式")){
-                        answerString = answerString + ((ParsedQuestionItem.TextAnswer) answer).text + "、";
-                    }
+                if (questionItem.answerList.get(0) instanceof ParsedQuestionItem.HtmlAnswer){
+                    //只显示第一个HTML
+                    binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) questionItem.answerList.get(0)).answerUrl);
                 }
-                if (answerString.endsWith("、")){
-                    answerString = answerString.substring(0 , answerString.length() - 1);
+                else if (questionItem.answerList.get(0) instanceof ParsedQuestionItem.ImgAnswer){
+                    //只显示第一个IMG
+                    binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnswer) questionItem.answerList.get(0)).imgUrl);
                 }
                 else {
-                    answerString = "没有答案";
+                    String answerString = "";
+                    for (ParsedQuestionItem.Answer answer: questionItem.answerList) {
+                        if (answer.answerType.equals("正式")){
+                            answerString = answerString + ((ParsedQuestionItem.TextAnswer) answer).text + "、";
+                        }
+                    }
+                    if (answerString.endsWith("、")){
+                        answerString = answerString.substring(0 , answerString.length() - 1);
+                    }
+                    else {
+                        answerString = "没有答案";
+                    }
+                    binding.questionContainer.setText(answerString);
                 }
-                binding.questionContainer.setText(answerString);
             }
         }
         else if (binding.analysisBtn.isSelected()){
