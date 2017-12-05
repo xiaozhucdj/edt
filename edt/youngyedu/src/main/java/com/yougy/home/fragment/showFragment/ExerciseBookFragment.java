@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.inkscreen.LekeApplication;
 import com.yougy.common.fragment.BFragment;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -186,6 +188,19 @@ public class ExerciseBookFragment extends BFragment {
         binding.doingHomeworkBtn.setSelected(true);
         refreshData();
         return binding.getRoot();
+    }
+
+    @Override
+    protected void handleEvent() {
+        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof String || o.equals("refreshHomeworkList")){
+
+                }
+            }
+        }));
+        super.handleEvent();
     }
 
     private void refreshData() {
