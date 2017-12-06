@@ -218,7 +218,7 @@ public class QuestionReplyDetail {
             if (format.startsWith("ATCH/")){
                 if (linkedTreeMap.get("remote") != null
                         && !TextUtils.isEmpty((String)linkedTreeMap.get("remote"))){
-                    String url = "http://question.learningpad.cn/2017/7244559/1e046ea9-ca02-4b9d-9c23-284994fcd259/96.htm" + linkedTreeMap.get("remote");
+                    String url = "http://" + linkedTreeMap.get("bucket") + ".oss-cn-shanghai.aliyuncs.com/" + linkedTreeMap.get("remote");
                     if (url.endsWith(".gif")
                             || url.endsWith(".jpg")
                             || url.endsWith(".png")

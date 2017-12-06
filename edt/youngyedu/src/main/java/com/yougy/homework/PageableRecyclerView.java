@@ -15,6 +15,7 @@ import com.yougy.ui.activity.R;
 
 /**
  * Created by FH on 2017/10/13.
+ * 自动分页的recyclerview
  */
 
 public class PageableRecyclerView extends LinearLayout {

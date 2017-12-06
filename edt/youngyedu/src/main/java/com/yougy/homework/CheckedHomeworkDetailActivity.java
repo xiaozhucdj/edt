@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -24,6 +25,7 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/11/6.
+ * 已批改作业详情列表
  */
 
 public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
@@ -79,9 +81,10 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 MyHolder holder = (MyHolder) vh;
-                Intent intent = new Intent(CheckedHomeworkDetailActivity.this , HomeWorkResultActivity.class);
+                Intent intent = new Intent(CheckedHomeworkDetailActivity.this , CheckedHomeworkOverviewActivity.class);
                 intent.putExtra("examName" , examName);
                 intent.putExtra("toShow" , holder.getData());
+                intent.putExtra("examId" , examId);
                 intent.putParcelableArrayListExtra("all" , replyList);
                 startActivity(intent);
             }
@@ -90,7 +93,7 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReplySummary(examId)
+        NetWorkManager.queryReplySummary(examId , SpUtil.getUserId())
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                     @Override
                     public void call(List<QuestionReplySummary> replySummaries) {

@@ -21,7 +21,8 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FullScreenHintDialogBinding;
 
 /**
- * Created by Administrator on 2017/11/27.
+ * Created by FH on 2017/11/27.
+ * 全屏的提示Dialog
  */
 
 public class FullScreenHintDialog extends Dialog {
@@ -58,6 +59,7 @@ public class FullScreenHintDialog extends Dialog {
         //去除标题栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(binding.getRoot());
+        //以下两句必须在setContentView之后调用
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 

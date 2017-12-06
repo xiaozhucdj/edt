@@ -24,9 +24,10 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/9/6.
+ * 单个已批改作业整体概览界面,统计正确率,每道题的对错,等等
  */
 
-public class HomeWorkResultActivity extends BaseActivity {
+public class CheckedHomeworkOverviewActivity extends BaseActivity {
     ActivityHomeworkResultBinding binding;
     QuestionReplySummary currentShow;
     ArrayList<QuestionReplySummary> allReplyList = new ArrayList<QuestionReplySummary>();
@@ -34,6 +35,7 @@ public class HomeWorkResultActivity extends BaseActivity {
     int currentShowQuestionPageIndex = 0;
     int currentShowAnswerPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
+    int examId;
 
     @Override
     protected void setContentView() {
@@ -45,9 +47,10 @@ public class HomeWorkResultActivity extends BaseActivity {
     @Override
     protected void init() {
         binding.titleTv.setText(getIntent().getStringExtra("examName"));
+        examId = getIntent().getIntExtra("examId" , -1);
         currentShow = getIntent().getParcelableExtra("toShow");
         allReplyList = getIntent().getParcelableArrayListExtra("all");
-        if (currentShow == null || allReplyList == null || allReplyList.size() == 0){
+        if (currentShow == null || allReplyList == null || allReplyList.size() == 0 || examId == -1){
             ToastUtil.showToast(getApplicationContext() , "必要数据为空");
             finish();
         }
@@ -88,7 +91,7 @@ public class HomeWorkResultActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReplyDetail(null , currentShow.getReplyItem() , SpUtil.getUserId() + "")
+        NetWorkManager.queryReplyDetail(examId , currentShow.getReplyItem() , SpUtil.getUserId() + "")
                 .subscribe(new Action1<List<QuestionReplyDetail>>() {
                     @Override
                     public void call(List<QuestionReplyDetail> questionReplyDetails) {
@@ -180,19 +183,44 @@ public class HomeWorkResultActivity extends BaseActivity {
                 binding.questionContainer.setText("没有答案");
             }
             else {
-                String answerString = "";
-                for (ParsedQuestionItem.Answer answer: data.getParsedQuestionItem().answerList) {
-                    if (answer.answerType.equals("正式")){
-                        answerString = answerString + ((ParsedQuestionItem.TextAnswer) answer).text + "、";
+                ParsedQuestionItem.Answer answer = data.getParsedQuestionItem().answerList.get(currentShowAnswerPageIndex);
+                if (answer instanceof ParsedQuestionItem.HtmlAnswer || answer instanceof ParsedQuestionItem.ImgAnswer){
+                    if (answer instanceof ParsedQuestionItem.HtmlAnswer){
+                        binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) answer).answerUrl);
+                    }
+                    else if (answer instanceof ParsedQuestionItem.ImgAnswer){
+                        binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnswer) answer).imgUrl);
+                    }
+                    if (currentShowAnswerPageIndex == 0){
+                        binding.lastPageBtn.setClickable(false);
+                    }
+                    else {
+                        binding.lastPageBtn.setClickable(true);
+                    }
+                    if ((currentShowAnswerPageIndex  +1) == data.getParsedQuestionItem().answerList.size()){
+                        binding.nextPageBtn.setClickable(false);
+                    }
+                    else {
+                        binding.nextPageBtn.setClickable(true);
                     }
                 }
-                if (answerString.endsWith("、")){
-                    answerString = answerString.substring(0 , answerString.length() - 1);
-                }
                 else {
-                    answerString = "没有答案";
+                    String answerString = "";
+                    for (ParsedQuestionItem.Answer tempAnswer: data.getParsedQuestionItem().answerList) {
+                        if (tempAnswer.answerType.equals("正式")){
+                            answerString = answerString + ((ParsedQuestionItem.TextAnswer) tempAnswer).text + "、";
+                        }
+                    }
+                    if (answerString.endsWith("、")){
+                        answerString = answerString.substring(0 , answerString.length() - 1);
+                    }
+                    else {
+                        answerString = "没有答案";
+                    }
+                    binding.questionContainer.setText(answerString);
+                    binding.lastPageBtn.setClickable(false);
+                    binding.nextPageBtn.setClickable(false);
                 }
-                binding.questionContainer.setText(answerString);
             }
         }
         else if (binding.analysisBtn.isSelected()){

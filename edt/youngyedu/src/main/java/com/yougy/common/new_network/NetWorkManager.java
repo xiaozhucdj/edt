@@ -202,9 +202,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId){
+    public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId , Integer userId){
         Log.v("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
-        return getInstance().getServerApi().queryReply(examId)
+        return getInstance().getServerApi().queryReply(examId , userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

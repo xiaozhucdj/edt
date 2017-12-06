@@ -29,6 +29,7 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/11/3.
+ * 错题列表界面
  */
 
 public class MistakeListActivity extends HomeworkBaseActivity{

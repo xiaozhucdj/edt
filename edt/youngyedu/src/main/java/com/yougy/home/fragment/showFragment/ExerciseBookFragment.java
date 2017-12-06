@@ -172,21 +172,18 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到课本逻辑
-
             }
         });
         binding.switch2noteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO 切换到笔记逻辑
-
-                Intent intent = new Intent(getActivity(), WriteErrorHomeWorkActivity.class);
-                intent.putExtra("QUESTION_ITEMID", 183 + "");
-                intent.putExtra("HOMEWORKID", 550);
-                intent.putExtra("BOOKTITLE", "测试测试");
-                intent.putExtra("LASTSCORE", 1);
-                startActivity(intent);
-
+//                Intent intent = new Intent(getActivity(), WriteErrorHomeWorkActivity.class);
+//                intent.putExtra("QUESTION_ITEMID", 183 + "");
+//                intent.putExtra("HOMEWORKID", 550);
+//                intent.putExtra("BOOKTITLE", "测试测试");
+//                intent.putExtra("LASTSCORE", 1);
+//                startActivity(intent);
             }
         });
         binding.doingHomeworkBtn.setSelected(true);

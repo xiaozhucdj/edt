@@ -14,6 +14,7 @@ import android.view.animation.LinearInterpolator;
 
 /**
  * Created by FH on 2017/9/3.
+ * 圆形进度条,显示正确率用
  */
 
 public class CircleProgressBar extends View{

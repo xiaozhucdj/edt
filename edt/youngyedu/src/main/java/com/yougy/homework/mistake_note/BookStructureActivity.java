@@ -36,6 +36,7 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/10/19.
+ * 错题本中的图书章节列表,并显示章节下是否有错题
  */
 
 public class BookStructureActivity extends HomeworkBaseActivity {
