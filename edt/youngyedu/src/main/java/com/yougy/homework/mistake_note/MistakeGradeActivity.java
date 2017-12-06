@@ -118,19 +118,34 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 binding.questionContainer.setText("没有答案");
             }
             else {
-                if (questionItem.answerList.get(0) instanceof ParsedQuestionItem.HtmlAnswer){
-                    //只显示第一个HTML
-                    binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) questionItem.answerList.get(0)).answerUrl);
-                }
-                else if (questionItem.answerList.get(0) instanceof ParsedQuestionItem.ImgAnswer){
-                    //只显示第一个IMG
-                    binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnswer) questionItem.answerList.get(0)).imgUrl);
+                //答案类型为HTML和IMG的时候支持翻页
+                ParsedQuestionItem.Answer answer = questionItem.answerList.get(currentShowAnswerPageIndex);
+                if (answer instanceof ParsedQuestionItem.HtmlAnswer || answer instanceof ParsedQuestionItem.ImgAnswer){
+                    if (answer instanceof ParsedQuestionItem.HtmlAnswer){
+                        binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) answer).answerUrl);
+                    }
+                    else if (answer instanceof ParsedQuestionItem.ImgAnswer){
+                        binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnswer) answer).imgUrl);
+                    }
+                    if (currentShowAnswerPageIndex == 0){
+                        binding.lastPageBtn.setClickable(false);
+                    }
+                    else {
+                        binding.lastPageBtn.setClickable(true);
+                    }
+                    if ((currentShowAnswerPageIndex +1) == questionItem.answerList.size()){
+                        binding.nextPageBtn.setClickable(false);
+                    }
+                    else {
+                        binding.nextPageBtn.setClickable(true);
+                    }
                 }
                 else {
+                    //答案类型为TEXT的时候把所有"正式"的答案拼在一起显示,不支持分页,"混淆"的答案忽略
                     String answerString = "";
-                    for (ParsedQuestionItem.Answer answer: questionItem.answerList) {
-                        if (answer.answerType.equals("正式")){
-                            answerString = answerString + ((ParsedQuestionItem.TextAnswer) answer).text + "、";
+                    for (ParsedQuestionItem.Answer tempAnswer: questionItem.answerList) {
+                        if (tempAnswer.answerType.equals("正式")){
+                            answerString = answerString + ((ParsedQuestionItem.TextAnswer) tempAnswer).text + "、";
                         }
                     }
                     if (answerString.endsWith("、")){
@@ -140,6 +155,8 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                         answerString = "没有答案";
                     }
                     binding.questionContainer.setText(answerString);
+                    binding.lastPageBtn.setClickable(false);
+                    binding.nextPageBtn.setClickable(false);
                 }
             }
         }

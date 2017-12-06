@@ -183,7 +183,9 @@ public class CheckedHomeworkOverviewActivity extends BaseActivity {
                 binding.questionContainer.setText("没有答案");
             }
             else {
+
                 ParsedQuestionItem.Answer answer = data.getParsedQuestionItem().answerList.get(currentShowAnswerPageIndex);
+                //答案类型为HTML和IMG的时候支持翻页
                 if (answer instanceof ParsedQuestionItem.HtmlAnswer || answer instanceof ParsedQuestionItem.ImgAnswer){
                     if (answer instanceof ParsedQuestionItem.HtmlAnswer){
                         binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) answer).answerUrl);
@@ -204,6 +206,7 @@ public class CheckedHomeworkOverviewActivity extends BaseActivity {
                         binding.nextPageBtn.setClickable(true);
                     }
                 }
+                //答案类型为TEXT的时候把所有"正式"的答案拼在一起显示,不支持分页,"混淆"的答案忽略
                 else {
                     String answerString = "";
                     for (ParsedQuestionItem.Answer tempAnswer: data.getParsedQuestionItem().answerList) {

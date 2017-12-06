@@ -112,6 +112,9 @@ public class CheckedHomeworkDetailActivity extends HomeworkBaseActivity{
     }
 
 
+    /**
+     * 更新圆形进度条的文字
+     */
     private void refreshCircleProgressBar(){
         float f = 0;
         for (QuestionReplySummary reply : replyList) {
