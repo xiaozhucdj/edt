@@ -781,27 +781,20 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         }
                         tmpPathList.clear();
-                        String picContent = new Gson().toJson(stsResultbeanArrayList);
-
-                        stsResultbeanArrayList.clear();
-                        //选择题需要存储选择结果
-                        String txtContent = "";
                         List<String> tmpCheckedAnswerList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + i + "_chooese_list");
-                        if (tmpCheckedAnswerList != null && tmpCheckedAnswerList.size() > 0) {
-                            txtContent = new Gson().toJson(tmpCheckedAnswerList);
-                        }
-
 
                         HomeWorkResultbean homeWorkResultbean = new HomeWorkResultbean();
                         homeWorkResultbean.setExamId(Integer.parseInt(examId));
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
 
-                        homeWorkResultbean.setPicContent(picContent);
+                        homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         // TODO: 2017/11/30 这里需要对每题时间的数据进行添加，可以放到sp中去
                         homeWorkResultbean.setUseTime("");
-                        homeWorkResultbean.setTxtContent(txtContent);
+                        homeWorkResultbean.setTxtContent(tmpCheckedAnswerList);
                         homeWorkResultbeanList.add(homeWorkResultbean);
+
+                        stsResultbeanArrayList.clear();
 
                         //清理掉缓存书写笔记，图片地址存 ,选择结果
                         DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_bytes_list");

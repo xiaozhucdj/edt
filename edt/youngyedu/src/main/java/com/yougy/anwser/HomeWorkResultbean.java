@@ -1,5 +1,8 @@
 package com.yougy.anwser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Administrator on 2017/9/12.
  */
@@ -8,9 +11,25 @@ public class HomeWorkResultbean {
 
     private int examId;
     private int itemId;
-    private String txtContent;
-    private String picContent;
+    private List<String> txtContent;
+    private ArrayList<STSResultbean> picContent;
     private String useTime;
+
+    public List<String> getTxtContent() {
+        return txtContent;
+    }
+
+    public void setTxtContent(List<String> txtContent) {
+        this.txtContent = txtContent;
+    }
+
+    public ArrayList<STSResultbean> getPicContent() {
+        return picContent;
+    }
+
+    public void setPicContent(ArrayList<STSResultbean> picContent) {
+        this.picContent = picContent;
+    }
 
     public int getExamId() {
         return examId;
@@ -28,21 +47,6 @@ public class HomeWorkResultbean {
         this.itemId = itemId;
     }
 
-    public String getTxtContent() {
-        return txtContent;
-    }
-
-    public void setTxtContent(String txtContent) {
-        this.txtContent = txtContent;
-    }
-
-    public String getPicContent() {
-        return picContent;
-    }
-
-    public void setPicContent(String picContent) {
-        this.picContent = picContent;
-    }
 
     public String getUseTime() {
         return useTime;
