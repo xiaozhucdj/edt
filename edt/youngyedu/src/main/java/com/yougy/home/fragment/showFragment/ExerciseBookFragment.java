@@ -200,7 +200,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void call(Object o) {
                 if (o instanceof String || o.equals("refreshHomeworkList")){
-
+                    refreshData();
                 }
             }
         }));
@@ -213,6 +213,9 @@ public class ExerciseBookFragment extends BFragment {
                     @Override
                     public void call(List<HomeworkBookDetail> homeworkBookDetails) {
                         if (homeworkBookDetails.size() > 0) {
+                            checkedList.clear();
+                            waitForCheckList.clear();
+                            doingList.clear();
                             //作业状态码:
                             //未开始(IH01),作答中(IH02),未批改(IH03),批改中(IH04),已批改(IH05),未提交(IH51)
                             List<HomeworkSummary> homeworkSummaryList = homeworkBookDetails.get(0).getHomeworkContent();
@@ -253,9 +256,6 @@ public class ExerciseBookFragment extends BFragment {
                                 }
                             }
                         }
-                        checkedList.clear();
-                        waitForCheckList.clear();
-                        doingList.clear();
                         binding.mainRecyclerview.setCurrentPage(1);
                         binding.mainRecyclerview.notifyDataSetChanged();
                     }
