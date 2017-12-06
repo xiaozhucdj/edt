@@ -37,7 +37,13 @@ public class FullScreenHintDialog extends Dialog {
     private boolean showNoMoreAgainHint = true;
     private String tag;
 
-
+    /**
+     * 本dialog是全屏的dialog,主要用于弹出确认提示.
+     * 支持最多两个按钮,一个icon,一行提示文字,和"下次不再弹出"的checkbox
+     * 下次不再弹出的功能已经集成,只用在构造函数中传入tag,并且在setBtn的时候设定nextStep,就可在自动完成下次不再弹出的功能.
+     * @param context
+     * @param tag 设定一个tag,tag相同的FullScreenHintDialog视为同一类Dialog,同一类的dialog再勾选下次不再显示只有则不再弹出,直接执行isNextStep被设为true的OnClickListener.
+     */
     public FullScreenHintDialog(Context context , String tag) {
         super(context);
         this.tag = tag;
@@ -125,6 +131,15 @@ public class FullScreenHintDialog extends Dialog {
         return btn1Text;
     }
 
+    /**
+     * 设定btn1(左按钮)的文字,点击逻辑,并且规定是否在勾选了不在弹出本dialog后下次自动执行btn1的onClick逻辑
+     * 如果btn1和btn2的isNextStep都被置为true,则以后置的btn的onClick为准
+     *
+     * @param btn1Text
+     * @param onClickListener
+     * @param isNextStep 如果为true,并且勾选了下次不再提示勾选框,下次就不再弹出dialog,而是直接执行btn1的onClick逻辑
+     * @return
+     */
     public FullScreenHintDialog setBtn1(String btn1Text , OnClickListener onClickListener , boolean isNextStep) {
         this.btn1Text = btn1Text;
         this.btn1OnClickListener = onClickListener;
@@ -138,6 +153,16 @@ public class FullScreenHintDialog extends Dialog {
         return btn2Text;
     }
 
+    /**
+     * 设定btn2(右按钮)的文字,点击逻辑,并且规定是否在勾选了不在弹出本dialog后下次自动执行btn2的onClick逻辑
+     * 如果btn1和btn2的isNextStep都被置为true,则以后置的btn的onClick为准
+     * 如果setBtn2没有被调用,则dialog上只会存在一个btn1按钮
+     *
+     * @param btn2Text
+     * @param onClickListener
+     * @param isNextStep 如果为true,并且勾选了下次不再提示勾选框,下次就不再弹出dialog,而是直接执行btn2的onClick逻辑
+     * @return
+     */
     public FullScreenHintDialog setBtn2(String btn2Text , OnClickListener onClickListener , boolean isNextStep) {
         this.btn2Text = btn2Text;
         this.btn2OnClickListener = onClickListener;

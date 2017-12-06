@@ -151,11 +151,13 @@ public class BookStructureActivity extends HomeworkBaseActivity {
             return;
         }
         bookStructureNodeList.clear();
+        //先获取图书章节信息
         NetWorkManager.queryBook(bookId)
                 .subscribe(new Action1<List<Object>>() {
                     @Override
                     public void call(List<Object> objects) {
                         if (objects.size() > 0){
+                            //再获取错题列表
                             getMistakes();
                             bookTitle = (String) ((LinkedTreeMap) objects.get(0)).get("bookTitle");
                             List<LinkedTreeMap> nodeList =(List<LinkedTreeMap>)((LinkedTreeMap) ((LinkedTreeMap) objects.get(0)).get("bookContents")).get("nodes");
@@ -186,6 +188,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                                 && homeworkBookDetails.get(0).getHomeworkExcerpt().size() != 0){
                             mistakeList.clear();
                             for (MistakeSummary mistakeSummary : homeworkBookDetails.get(0).getHomeworkExcerpt()) {
+                                //被标记为"我已学会"的错题不算作错题,排除
                                 if (!mistakeSummary.getExtra().isDeleted()){
                                  mistakeList.add(mistakeSummary);
                                 }
@@ -210,6 +213,11 @@ public class BookStructureActivity extends HomeworkBaseActivity {
         onBackPressed();
     }
 
+    /**
+     * 按深度遍历的顺序遍历图书章节的节点树,按照遍历顺序把节点放在一个list里
+     * @param list
+     * @return
+     */
     private List<BookStructureNode> parseNode(List<LinkedTreeMap> list){
         List<BookStructureNode> returnList = new ArrayList<BookStructureNode>();
         for (LinkedTreeMap linkedTreeMap : list) {

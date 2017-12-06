@@ -45,7 +45,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.functions.Action1;
 
-
+/**
+ * Created by cdj
+ * 写错题界面
+ */
 public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @BindView(R.id.iv_chooese_tag)
