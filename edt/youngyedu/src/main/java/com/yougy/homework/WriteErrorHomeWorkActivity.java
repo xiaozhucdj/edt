@@ -63,6 +63,9 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     @BindView(R.id.tv_submit_homework)
     TextView tvSubmitHomeWork;
 
+    @BindView(R.id.iv_last_zp_result)
+    ImageView ivZpResult;
+
 
     private NoteBookView2 mNbvAnswerBoard;
 
@@ -115,7 +118,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             ToastUtil.showToast(getApplicationContext(), "itemId 为空");
             return;
         }
-        ToastUtil.showToast(getApplicationContext(), "lastScore : " + lastScore);
+//        ToastUtil.showToast(getApplicationContext(), "lastScore : " + lastScore);
     }
 
 
@@ -123,6 +126,17 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     protected void initLayout() {
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
+        switch (lastScore) {
+            case 0:
+                ivZpResult.setImageResource(R.drawable.img_ziping_cuowu);
+                break;
+            case 50:
+                ivZpResult.setImageResource(R.drawable.img_ziping_bandui);
+                break;
+            case 100:
+                ivZpResult.setImageResource(R.drawable.img_ziping_zhengque);
+                break;
+        }
 
     }
 
