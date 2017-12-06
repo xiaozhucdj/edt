@@ -18,9 +18,8 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.homework.CheckedHomeworkDetailActivity;
+import com.yougy.homework.CheckedHomeworkOverviewActivity;
 import com.yougy.homework.PageableRecyclerView;
-import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
@@ -107,7 +106,7 @@ public class ExerciseBookFragment extends BFragment {
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 switch (currentStatus) {
                     case CHECKED:
-                        Intent intent = new Intent(getActivity(), CheckedHomeworkDetailActivity.class);
+                        Intent intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam());
                         intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
                         startActivity(intent);
