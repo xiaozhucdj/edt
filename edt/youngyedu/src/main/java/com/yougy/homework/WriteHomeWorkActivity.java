@@ -794,7 +794,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setTxtContent(tmpCheckedAnswerList);
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
-                        stsResultbeanArrayList.clear();
 
                         //清理掉缓存书写笔记，图片地址存 ,选择结果
                         DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_bytes_list");
