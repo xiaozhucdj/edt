@@ -118,7 +118,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             ToastUtil.showToast(getApplicationContext(), "itemId 为空");
             return;
         }
-//        ToastUtil.showToast(getApplicationContext(), "lastScore : " + lastScore);
     }
 
 

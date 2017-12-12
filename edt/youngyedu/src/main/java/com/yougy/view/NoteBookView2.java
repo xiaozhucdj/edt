@@ -168,8 +168,8 @@ public class NoteBookView2 extends View {
             LogUtils.e(getClass().getName(), "PL107");
             matrix.postRotate(90);
             matrix.postTranslate(UIUtils.getScreenHeight(), 0);
-        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96")) {
-            LogUtils.e(getClass().getName(), "N96");
+        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+            LogUtils.e(getClass().getName(), "N96，EDU");
             matrix.postRotate(270);
             matrix.postTranslate(0, UIUtils.getScreenWidth());
         }

@@ -118,7 +118,6 @@
             android:layout_marginLeft="10dp"
             android:gravity="center_vertical"
             android:text="上次自评结果："
-            android:textColor="@color/background_black"
             android:textColor="@color/black"
             android:textSize="22sp" />
 
