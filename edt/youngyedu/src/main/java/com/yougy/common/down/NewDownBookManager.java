@@ -108,6 +108,8 @@ public class NewDownBookManager {
                 int total = 0;
                 int len;
                 try {
+                    System.out.println("yuanye ... save path "+info.getSaveFilePath());
+
                     fos = new FileOutputStream(info.getSaveFilePath());
                     while ((len = inputStream.read(buffer)) != -1) {
                         // 处理下载的数据
@@ -155,9 +157,9 @@ public class NewDownBookManager {
         });
     }
 
-    public void cancel() {
+    public void cancel(int bookid) {
         if (mTask != null) {
-            if (mInfo!=null && !StringUtils.isEmpty(mInfo.getSaveFilePath())){
+            if (mInfo!=null && !StringUtils.isEmpty(mInfo.getSaveFilePath()) && bookid == mInfo.getBookId()){
                 FileUtils.deleteFile(mInfo.getSaveFilePath()) ;
             }
             mTask.cancel();

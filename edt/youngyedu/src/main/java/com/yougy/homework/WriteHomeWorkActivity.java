@@ -72,7 +72,10 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-
+/**
+ * Created by cdj
+ * 写作业界面
+ */
 public class WriteHomeWorkActivity extends BaseActivity {
 
     @BindView(R.id.iv_chooese_tag)

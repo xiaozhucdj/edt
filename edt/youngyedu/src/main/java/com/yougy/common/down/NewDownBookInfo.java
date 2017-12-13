@@ -5,6 +5,7 @@ package com.yougy.common.down;
  */
 
 public class NewDownBookInfo {
+    private  int bookId;
     /**ak*/
     private String accessKeyId ;
     /**sk*/
@@ -95,5 +96,13 @@ public class NewDownBookInfo {
                 ", objectKey='" + objectKey + '\'' +
                 ", saveFilePath='" + saveFilePath + '\'' +
                 '}';
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 }

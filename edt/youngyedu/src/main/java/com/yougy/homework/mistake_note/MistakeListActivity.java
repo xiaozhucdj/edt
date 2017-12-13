@@ -51,6 +51,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
+                //自评界面我已学会按钮点击后,会发消息通知本界面移除错题
                 if (o instanceof String && ((String) o).startsWith("removeMistakeItem:")){
                     String[] tempStrs = ((String) o).split(":");
                     if (tempStrs.length == 2){
@@ -64,6 +65,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                         loadData();
                     }
                 }
+                //自评界面自评按钮点击后,会通知本界面更新原来的上次自评结果字段
                 else if (o instanceof String && ((String) o).startsWith("lastScoreChanged:")){
                     String[] tempStrs = ((String) o).split(":");
                     if (tempStrs.length == 3){
@@ -85,11 +87,13 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     @Override
     protected void init() {
+        //标记本activity在onstop后仍然接收其他界面发送的RxBus消息
         setNeedRecieveEventAfterOnStop(true);
         mistakeSummaryList = getIntent().getParcelableArrayListExtra("mistakeList");
         topNode = getIntent().getParcelableExtra("topNode");
         currentNode = getIntent().getParcelableExtra("currentNode");
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
+        //找到当前章节的层级结构并显示
         if (findCurrentNode(topNode , currentNode)){
             String currentPostionText = "";
             for (int i = nodeTree.size() - 1 ; i >=0 ; i--){
@@ -177,6 +181,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         }
         binding.noResultTextview.setVisibility(View.GONE);
         binding.mainRecyclerview.setVisibility(View.VISIBLE);
+        //根据传进来的错题的id的list拼接请求查询错题详情的list
         String itemIdStr = "";
         for (int i = 0; i < mistakeSummaryList.size() ; i++) {
             if (i == 0){

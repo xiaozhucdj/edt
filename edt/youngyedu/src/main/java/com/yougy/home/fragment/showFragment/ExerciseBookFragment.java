@@ -18,9 +18,8 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.homework.CheckedHomeworkDetailActivity;
+import com.yougy.homework.CheckedHomeworkOverviewActivity;
 import com.yougy.homework.PageableRecyclerView;
-import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
@@ -37,6 +36,7 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2016/7/14.
+ * 作业本中的作业列表界面
  */
 public class ExerciseBookFragment extends BFragment {
     FragmentExerciseBookBinding binding;
@@ -106,14 +106,12 @@ public class ExerciseBookFragment extends BFragment {
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 switch (currentStatus) {
                     case CHECKED:
-                        Intent intent = new Intent(getActivity(), CheckedHomeworkDetailActivity.class);
+                        Intent intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam());
                         intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
                         startActivity(intent);
                         break;
                     case WAIT_FOR_CHECK:
-//                        Intent intent111 = new Intent(Settings.ACTION_SETTINGS);
-//                        startActivity(intent111);
                         //TODO 待批改项点击
                         break;
                     case DOING:
@@ -178,12 +176,6 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到笔记逻辑
-//                Intent intent = new Intent(getActivity(), WriteErrorHomeWorkActivity.class);
-//                intent.putExtra("QUESTION_ITEMID", 183 + "");
-//                intent.putExtra("HOMEWORKID", 550);
-//                intent.putExtra("BOOKTITLE", "测试测试");
-//                intent.putExtra("LASTSCORE", 1);
-//                startActivity(intent);
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
@@ -219,6 +211,8 @@ public class ExerciseBookFragment extends BFragment {
                             for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
                                 String statusCode = homeworkSummary.getExtra().getStatusCode();
                                 if (statusCode.equals("IH01")) {
+                                    //如果作业开始时间已经早于现在的时间,说明作业已经开始了,
+                                    //但是如果此时这个作业的状态还是IH01未开始,则调一次刷新接口刷新整个作业本,这样这个作业的状态就可以更正了.
                                     long startTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getStartTime() , "yyyy-MM-dd HH:mm:ss");
                                     long endTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getEndTime() , "yyyy-MM-dd HH:mm:ss");
                                     long currentTime = System.currentTimeMillis();
@@ -234,6 +228,7 @@ public class ExerciseBookFragment extends BFragment {
                                                 .subscribe(new Action1<Object>() {
                                                     @Override
                                                     public void call(Object o) {
+                                                        //刷新成功后再次调用查询接口查询新的作业本数据
                                                         refreshData();
                                                     }
                                                 }, new Action1<Throwable>() {
@@ -246,7 +241,7 @@ public class ExerciseBookFragment extends BFragment {
                                     }
                                 } else if (statusCode.equals("IH02")) {//作答中
                                     doingList.add(homeworkSummary);
-                                } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中
+                                } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中都算待批改
                                     waitForCheckList.add(homeworkSummary);
                                 } else if (statusCode.equals("IH05")) {//已批改
                                     checkedList.add(homeworkSummary);

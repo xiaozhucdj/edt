@@ -24,7 +24,7 @@
                 android:layout_width="32px"
                 android:layout_height="32px"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/homework_btn_selector"
+                android:background="@drawable/icon_homework_selected"
                 android:layout_marginRight="30px"
                 />
             <TextView

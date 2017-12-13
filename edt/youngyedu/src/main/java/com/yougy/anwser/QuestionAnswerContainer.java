@@ -70,6 +70,7 @@ public class QuestionAnswerContainer extends FrameLayout {
         textView = new TextView(mContext);
         addView(textView , new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.MATCH_PARENT));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP , 20);
+        textView.setTextColor(Color.BLACK);
 
         imageView = new ImageView(mContext);
         addView(imageView , new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.MATCH_PARENT));

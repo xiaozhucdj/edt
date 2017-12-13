@@ -205,10 +205,10 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <!--已批改作业详情界面-->
         <activity
-            android:name="com.yougy.homework.CheckedHomeworkDetailActivity"
+            android:name="com.yougy.homework.CheckedHomeworkOverviewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <!--已批改作业题目详情界面-->
-        <activity android:name="com.yougy.homework.CheckedHomeworkOverviewActivity" />
+        <activity android:name="com.yougy.homework.CheckedHomeworkDetailActivity" />
         <!--错题练习界面-->
         <activity android:name="com.yougy.homework.mistake_note.MistakeGradeActivity" />
 
