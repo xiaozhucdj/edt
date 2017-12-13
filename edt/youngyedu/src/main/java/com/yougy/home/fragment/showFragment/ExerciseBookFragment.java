@@ -142,6 +142,7 @@ public class ExerciseBookFragment extends BFragment {
                 binding.doingHomeworkBtn.setSelected(true);
                 binding.waitForCheckBtn.setSelected(false);
                 binding.hasCheckedBtn.setSelected(false);
+                refreshData();
             }
         });
         binding.waitForCheckBtn.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +154,7 @@ public class ExerciseBookFragment extends BFragment {
                 binding.doingHomeworkBtn.setSelected(false);
                 binding.waitForCheckBtn.setSelected(true);
                 binding.hasCheckedBtn.setSelected(false);
+                refreshData();
             }
         });
         binding.hasCheckedBtn.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +166,7 @@ public class ExerciseBookFragment extends BFragment {
                 binding.doingHomeworkBtn.setSelected(false);
                 binding.waitForCheckBtn.setSelected(false);
                 binding.hasCheckedBtn.setSelected(true);
+                refreshData();
             }
         });
         binding.mistakesBookBtn.setOnClickListener(new View.OnClickListener() {
