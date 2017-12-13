@@ -351,13 +351,16 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page})
+    @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left})
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
 
         switch (view.getId()) {
 
+            case R.id.btn_left:
+                finish();
+                break;
             case R.id.tv_submit_homework:
                 saveHomeWorkData();
                 gotoMistakeGradeActivity();

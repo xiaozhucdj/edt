@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         >
         <ImageButton
             android:id="@+id/checkbox"
-            android:layout_width="26px"
-            android:layout_height="26px"
-            android:background="@drawable/btn_check_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_check_sidaan"
             />
         <TextView
             android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:text="xxxx"
             android:textSize="24px"
-            android:textColor="@color/black_333333"
-            android:layout_marginLeft="40px"
+            android:textColor="@drawable/btn_text_color_selector_black_white"
             />
-    </LinearLayout>
+    </RelativeLayout>
 </layout>
