@@ -94,6 +94,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
     TextView tvSubmitHomeWork;
     @BindView(R.id.tv_title)
     TextView tvTitle;
+    @BindView(R.id.tv_add_page)
+    TextView tvAddPage;
+    @BindView(R.id.tv_clear_write)
+    TextView tvClearWrite;
+    @BindView(R.id.iv_caogao_icon)
+    ImageView ivCaogaoIcon;
+    @BindView(R.id.tv_caogao_text)
+    TextView tvCaogaoText;
 
 
     private NoteBookView2 mNbvAnswerBoard;
@@ -367,6 +375,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                         rcvChooese.setVisibility(View.VISIBLE);
                         chooeseAnswerList = parsedQuestionItem.answerList;
+                        //选择题不能加页
+                        tvAddPage.setVisibility(View.GONE);
+                        tvClearWrite.setVisibility(View.GONE);
 
                         setChooeseResult();
 
@@ -381,6 +392,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             isAddAnswerBoard = true;
                         }
                         rcvChooese.setVisibility(View.GONE);
+                        tvAddPage.setVisibility(View.VISIBLE);
+                        tvClearWrite.setVisibility(View.VISIBLE);
 
                         //从之前bytesList中回显之前保存的手写笔记，如果有的话
                         if (bytesList.size() > position) {
@@ -450,7 +463,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(WriteHomeWorkActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
                 AutoUtils.auto(view);
-                return new AnswerItemHolder(view);
+                AnswerItemHolder holder = new AnswerItemHolder(view);
+
+                holder.setChooeseStyle(chooeseAnswerList.size());
+
+                return holder;
             }
 
             @Override
@@ -503,7 +520,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    @OnClick({R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework, R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework})
+    @OnClick({R.id.ll_caogao_control, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework, R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework})
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
@@ -609,6 +626,18 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     allHomeWorkPage.setVisibility(View.GONE);
                     ivChooeseTag.setImageResource(R.drawable.img_timu_up);
+                }
+
+                break;
+            case R.id.ll_caogao_control:
+
+                if (tvCaogaoText.getText().toString().startsWith("扔掉")) {
+                    tvCaogaoText.setText("草稿纸");
+                    ivCaogaoIcon.setImageResource(R.drawable.icon_caogao);
+
+                } else {
+                    tvCaogaoText.setText("扔掉\n草稿纸");
+                    ivCaogaoIcon.setImageResource(R.drawable.icon_caogao_rengdiao);
                 }
 
                 break;
@@ -1133,7 +1162,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     }
                 })) {
                     itemBinding.checkbox.setSelected(true);
+                    itemBinding.textview.setSelected(true);
                 } else {
+                    itemBinding.textview.setSelected(false);
                     itemBinding.checkbox.setSelected(false);
                 }
             } else {
@@ -1156,6 +1187,30 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 rcvChooese.getAdapter().notifyDataSetChanged();
             }
         }
+
+
+        public void setChooeseStyle(int size) {
+            int rid;
+            switch (size) {
+                case 2:
+                    rid = R.drawable.btn_check_liangdaan;
+                    break;
+                case 3:
+                    rid = R.drawable.btn_check_sandaan;
+                    break;
+                case 4:
+                    rid = R.drawable.btn_check_sidaan;
+                    break;
+                case 5:
+                    rid = R.drawable.btn_check_wudaan;
+                    break;
+                default:
+                    rid = R.drawable.btn_check_liudaan;
+                    break;
+            }
+            itemBinding.checkbox.setBackgroundResource(rid);
+        }
+
     }
 
 }

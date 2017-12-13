@@ -66,6 +66,9 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     @BindView(R.id.tv_submit_homework)
     TextView tvSubmitHomeWork;
 
+    @BindView(R.id.iv_last_zp_result)
+    ImageView ivZpResult;
+
 
     private NoteBookView2 mNbvAnswerBoard;
 
@@ -118,7 +121,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             ToastUtil.showToast(getApplicationContext(), "itemId 为空");
             return;
         }
-        ToastUtil.showToast(getApplicationContext(), "lastScore : " + lastScore);
     }
 
 
@@ -126,6 +128,17 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     protected void initLayout() {
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
+        switch (lastScore) {
+            case 0:
+                ivZpResult.setImageResource(R.drawable.img_ziping_cuowu);
+                break;
+            case 50:
+                ivZpResult.setImageResource(R.drawable.img_ziping_bandui);
+                break;
+            case 100:
+                ivZpResult.setImageResource(R.drawable.img_ziping_zhengque);
+                break;
+        }
 
     }
 
@@ -341,13 +354,16 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page})
+    @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left})
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
 
         switch (view.getId()) {
 
+            case R.id.btn_left:
+                finish();
+                break;
             case R.id.tv_submit_homework:
                 saveHomeWorkData();
                 gotoMistakeGradeActivity();

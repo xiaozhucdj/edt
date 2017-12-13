@@ -504,7 +504,8 @@ public class BookInfo extends DataSupport implements Parcelable {
     @Override
     public String toString() {
         return "BookInfo{" +
-                "bookTitle='" + bookTitle + '\'' +
+                "bookId=" + bookId +
+                ", bookTitle='" + bookTitle + '\'' +
                 '}';
     }
 
