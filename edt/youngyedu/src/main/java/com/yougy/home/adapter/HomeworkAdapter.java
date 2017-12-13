@@ -71,8 +71,8 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
-                mImgIcon.setBackgroundDrawable(UIUtils.getDrawable(R.drawable.img_book_backgroud));
-                mTvName.setText(mInfos.get(position).getHomeworkId() + mInfos.get(position).getHomeworkTitle());
+//                mImgIcon.setBackgroundDrawable(UIUtils.getDrawable(R.drawable.img_book_backgroud));
+                mTvName.setText(mInfos.get(position).getHomeworkTitle());
             }
         }
     }

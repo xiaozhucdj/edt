@@ -18,6 +18,7 @@
                 android:layout_height="30px"
                 android:src="@drawable/le_btn_back_new_selector"
                 android:layout_marginLeft="30px"
+                android:onClick="back"
                 />
             <TextView
                 android:id="@+id/switch2homework_btn"

@@ -1,6 +1,5 @@
 package com.yougy.homework;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 
 /**
  * Created by FH on 2017/9/3.
@@ -70,13 +68,7 @@ public class CircleProgressBar extends View{
         return mPaint;
     }
     private void init(){
-        //测试进度条走动
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startAnimation();
-            }
-        });
+
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -158,24 +150,5 @@ public class CircleProgressBar extends View{
         float textSizeBelow = 195*scale;
         canvas.drawText("正确率" , mWidth/2 - 290*scale , mHeight/2 + 200*scale ,
                 getPaint(Color.BLACK , Paint.Style.FILL, 0 , textSizeBelow));
-    }
-
-    private ValueAnimator mAnimator;
-
-    public void startAnimation(){
-        mAnimator = ValueAnimator.ofInt(0 , 100);
-        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int value = (int) animation.getAnimatedValue();
-                Log.v("FH" , "animate : " + value);
-                setProgress(value);
-            }
-        });
-        mAnimator.setRepeatCount(-1);
-        mAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mAnimator.setInterpolator(new LinearInterpolator());
-        mAnimator.setDuration(5000);
-        mAnimator.start();
     }
 }

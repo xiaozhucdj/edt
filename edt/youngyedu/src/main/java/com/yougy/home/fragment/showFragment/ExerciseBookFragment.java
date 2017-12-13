@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -58,6 +61,12 @@ public class ExerciseBookFragment extends BFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(LayoutInflater.from(getActivity()), R.layout.fragment_exercise_book, container, false);
         UIUtils.recursiveAuto(binding.getRoot());
+        binding.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
         binding.mainRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         binding.mainRecyclerview.setAdapter(new PageableRecyclerView.Adapter<MyHolder>() {
             @Override
@@ -170,12 +179,31 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 //TODO 切换到课本逻辑
+                if (mControlActivity.mBookId <= 0){
+                    ToastUtil.showToast(getActivity() , "没有图书");
+                }
+                else if ( !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId , FileUtils.bookDir))) {
+                        mControlActivity.switch2TextBookFragment();
+                }else{
+                    if (NetUtils.isNetConnected()) {
+                        downBookTask(mControlActivity.mBookId);
+                    } else {
+                        showCancelAndDetermineDialog(R.string.jump_to_net);
+                    }
+
+                }
             }
         });
         binding.switch2noteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO 切换到笔记逻辑
+                if (mControlActivity.mNoteId>0){
+                    mControlActivity.switch2NoteBookFragment();
+                }
+                else {
+                    ToastUtil.showToast(getActivity() , "没有笔记");
+                }
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
@@ -288,11 +316,6 @@ public class ExerciseBookFragment extends BFragment {
         super.onStart();
     }
 
-    public void back(View view) {
-        getActivity().finish();
-    }
-
-
     //TODO:袁野
     public ControlFragmentActivity mControlActivity;
 
@@ -304,5 +327,27 @@ public class ExerciseBookFragment extends BFragment {
         int id1 = mControlActivity.mHomewrokId;
         int id2 = mControlActivity.mNoteId;
         int id3 = mControlActivity.mBookId;
+    }
+
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    protected void onDownBookFinish() {
+        super.onDownBookFinish();
+        mControlActivity.switch2TextBookFragment();
+
     }
 }
