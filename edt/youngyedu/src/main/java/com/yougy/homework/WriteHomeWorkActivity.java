@@ -560,7 +560,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
                 // 这里需要跳转到暂存成功的弹窗界面
                 FullScreenHintDialog fullScreenHintDialog = new FullScreenHintDialog(this, "");
-                fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("暂存成功").setBtn1("继续作答", new DialogInterface.OnClickListener() {
+                fullScreenHintDialog.setIconResId(R.drawable.icon_correct).setContentText("暂存成功").setBtn1("继续作答", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
@@ -569,6 +569,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
+
+                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+                        onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
 
