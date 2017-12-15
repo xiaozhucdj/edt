@@ -161,6 +161,13 @@
             android:background="@color/white"
             android:padding="30px"></android.support.v7.widget.RecyclerView>
 
+        <View
+
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/rcv_all_homework_page"
+            android:background="@color/black" />
+
 
         <LinearLayout
             android:id="@+id/ll_caogao_control"

@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -102,6 +104,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     ImageView ivCaogaoIcon;
     @BindView(R.id.tv_caogao_text)
     TextView tvCaogaoText;
+    @BindView(R.id.ll_caogao_control)
+    LinearLayout llCaogaoControl;
 
 
     private NoteBookView2 mNbvAnswerBoard;
@@ -178,10 +182,77 @@ public class WriteHomeWorkActivity extends BaseActivity {
     }
 
 
+    int screenWidth;
+    int screenHeight;
+    int lastX;
+    int lastY;
+
+    int left;
+    int top;
+    int right;
+    int bottom;
+
     @Override
     protected void initLayout() {
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
+        findViewById(R.id.img_btn_right).setVisibility(View.GONE);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        screenWidth = dm.widthPixels;
+        screenHeight = dm.heightPixels - 50;
+
+
+        llCaogaoControl.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastX = (int) event.getRawX();
+                        lastY = (int) event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int dx = (int) event.getRawX() - lastX;
+                        int dy = (int) event.getRawY() - lastY;
+
+                        left = v.getLeft() + dx;
+                        top = v.getTop() + dy;
+                        right = v.getRight() + dx;
+                        bottom = v.getBottom() + dy;
+                        if (left < 0) {
+                            left = 0;
+                            right = left + v.getWidth();
+                        }
+                        if (right > screenWidth) {
+                            right = screenWidth;
+                            left = right - v.getWidth();
+                        }
+                        if (top < 0) {
+                            top = 0;
+                            bottom = top + v.getHeight();
+                        }
+                        if (bottom > screenHeight) {
+                            bottom = screenHeight;
+                            top = bottom - v.getHeight();
+                        }
+                        v.layout(left, top, right, bottom);
+                        lastX = (int) event.getRawX();
+                        lastY = (int) event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                v.layout(left, top, right, bottom);
+                            }
+                        }, 100);
+
+                        break;
+                }
+                return false;
+            }
+        });
 
     }
 
@@ -225,6 +296,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 EpdController.leaveScribbleMode(mNbvAnswerBoard);
                 mNbvAnswerBoard.invalidate();
+                llCaogaoControl.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        llCaogaoControl.layout(left, top, right, bottom);
+                    }
+                }, 30);
 
 
                 //存储之前一题的结果
@@ -329,7 +406,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 //离开手绘模式，并刷新界面ui
                 EpdController.leaveScribbleMode(mNbvAnswerBoard);
                 mNbvAnswerBoard.invalidate();
-
+                llCaogaoControl.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        llCaogaoControl.layout(left, top, right, bottom);
+                    }
+                }, 30);
 
                 if (isFirstComeInQuestion) {
                     isFirstComeInQuestion = false;
@@ -423,6 +505,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         });
 
+        left = llCaogaoControl.getLeft();
+        top = llCaogaoControl.getTop();
+        right = llCaogaoControl.getRight();
+        bottom = llCaogaoControl.getBottom();
+
         if (examPaperContentList != null && examPaperContentList.size() > 0) {
 
             isFirstComeInHomeWork = true;
@@ -491,6 +578,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
         rcvChooese.addOnItemTouchListener(new OnRecyclerItemClickListener(rcvChooese) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
+                //离开手绘模式，并刷新界面ui
+                EpdController.leaveScribbleMode(mNbvAnswerBoard);
+                mNbvAnswerBoard.invalidate();
+                llCaogaoControl.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        llCaogaoControl.layout(left, top, right, bottom);
+                    }
+                }, 30);
                 ((AnswerItemHolder) vh).reverseCheckbox();
             }
         });
@@ -524,7 +620,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
-
+        llCaogaoControl.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                llCaogaoControl.layout(left, top, right, bottom);
+            }
+        }, 30);
         switch (view.getId()) {
 
             case R.id.btn_left:
