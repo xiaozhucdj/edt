@@ -74,6 +74,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+import static com.yougy.common.utils.SharedPreferencesUtil.getSpUtil;
+
 /**
  * Created by cdj
  * 写作业界面
@@ -107,8 +109,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @BindView(R.id.ll_caogao_control)
     LinearLayout llCaogaoControl;
 
-
+    //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
+    //作业草稿纸
+    private NoteBookView2 mCaogaoNoteBoard;
 
     private static final int PAGE_SHOW_SIZE = 5;
 
@@ -196,6 +200,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void initLayout() {
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
+        mCaogaoNoteBoard = new NoteBookView2(this);
         findViewById(R.id.img_btn_right).setVisibility(View.GONE);
         DisplayMetrics dm = getResources().getDisplayMetrics();
         screenWidth = dm.widthPixels;
@@ -209,6 +214,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 int action = event.getAction();
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
+                        EpdController.leaveScribbleMode(mNbvAnswerBoard);
+                        mNbvAnswerBoard.invalidate();
+
+                        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+                            mCaogaoNoteBoard.invalidate();
+                        }
+
                         lastX = (int) event.getRawX();
                         lastY = (int) event.getRawY();
                         break;
@@ -302,6 +315,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         llCaogaoControl.layout(left, top, right, bottom);
                     }
                 }, 30);
+
+                if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                    EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+                    mCaogaoNoteBoard.invalidate();
+                }
 
 
                 //存储之前一题的结果
@@ -412,6 +430,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         llCaogaoControl.layout(left, top, right, bottom);
                     }
                 }, 30);
+
+                if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                    EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+                    mCaogaoNoteBoard.invalidate();
+                }
 
                 if (isFirstComeInQuestion) {
                     isFirstComeInQuestion = false;
@@ -526,13 +549,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .start(new Action1<Integer>() {
                     @Override
                     public void call(Integer times) {
-//                        refreshTime();
+                        refreshTime();
                     }
                 });
     }
 
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
+
         tvSubmitHomeWork.setText("提交（时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
@@ -587,6 +611,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         llCaogaoControl.layout(left, top, right, bottom);
                     }
                 }, 30);
+
+                if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                    EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+                    mCaogaoNoteBoard.invalidate();
+                }
+
                 ((AnswerItemHolder) vh).reverseCheckbox();
             }
         });
@@ -613,6 +643,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+        }
         super.onBackPressed();
     }
 
@@ -626,6 +659,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 llCaogaoControl.layout(left, top, right, bottom);
             }
         }, 30);
+
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+            mCaogaoNoteBoard.invalidate();
+        }
+
         switch (view.getId()) {
 
             case R.id.btn_left:
@@ -739,9 +778,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     tvCaogaoText.setText("草稿纸");
                     ivCaogaoIcon.setImageResource(R.drawable.icon_caogao);
 
+                    mCaogaoNoteBoard.clearAll();
+                    rlAnswer.removeView(mCaogaoNoteBoard);
+
                 } else {
                     tvCaogaoText.setText("扔掉\n草稿纸");
                     ivCaogaoIcon.setImageResource(R.drawable.icon_caogao_rengdiao);
+
+                    rlAnswer.addView(mCaogaoNoteBoard);
                 }
 
                 break;
@@ -765,8 +809,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）
         DataCacheUtils.putObject(this, examId + "_" + position + "_bytes_list", bytesList);
         //保存待上传图片，用于上传
-        SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
-        SharedPreferencesUtil.getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
+        getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
+        getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
+
+        String textInfo = tvSubmitHomeWork.getText().toString();
+        if (textInfo.contains("(") && textInfo.contains(")")) {
+            getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 2, textInfo.lastIndexOf(")")));
+        }
 
         //本题所有数据保存完毕
         saveQuestionPage = 0;
@@ -796,12 +845,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (tmpBytesList != null && tmpBytesList.size() > 0) {
             bytesList.addAll(tmpBytesList);
         }
-        List<String> tmpPathList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + position + "_path_list");
+        List<String> tmpPathList = getSpUtil().getDataList(examId + "_" + position + "_path_list");
         if (tmpPathList != null && tmpPathList.size() > 0) {
             pathList.addAll(tmpPathList);
         }
         //回显之前存储在sp中的选择结果数据（如果有）
-        List<String> tmpCheckedAnswerList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + position + "_chooese_list");
+        List<String> tmpCheckedAnswerList = getSpUtil().getDataList(examId + "_" + position + "_chooese_list");
         if (tmpCheckedAnswerList != null && tmpCheckedAnswerList.size() > 0) {
             checkedAnswerList.addAll(tmpCheckedAnswerList);
 
@@ -870,7 +919,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 for (int i = 0; i < homeWorkPageSize; i++) {
 
-                    List<String> tmpPathList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + i + "_path_list");
+                    List<String> tmpPathList = getSpUtil().getDataList(examId + "_" + i + "_path_list");
                     if (tmpPathList != null && tmpPathList.size() > 0) {
 
                         //作业中某一题图片上传成功后，统计上传数据到集合中，方便将该信息提交到服务器
@@ -917,7 +966,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         }
                         tmpPathList.clear();
-                        List<String> tmpCheckedAnswerList = SharedPreferencesUtil.getSpUtil().getDataList(examId + "_" + i + "_chooese_list");
+                        List<String> tmpCheckedAnswerList = getSpUtil().getDataList(examId + "_" + i + "_chooese_list");
+                        String useTime = SharedPreferencesUtil.getSpUtil().getString(examId + "_" + i + "_use_time", "");
 
                         HomeWorkResultbean homeWorkResultbean = new HomeWorkResultbean();
                         homeWorkResultbean.setExamId(Integer.parseInt(examId));
@@ -925,8 +975,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setItemId(itemId);
 
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
-                        // TODO: 2017/11/30 这里需要对每题时间的数据进行添加，可以放到sp中去
-                        homeWorkResultbean.setUseTime("");
+                        homeWorkResultbean.setUseTime(useTime);
                         homeWorkResultbean.setTxtContent(tmpCheckedAnswerList);
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
@@ -935,6 +984,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_bytes_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_path_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_chooese_list");
+                        SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_use_time");
                     } else {
 
                         //后台定义没有做的题目 任然上传，结果数据为空
