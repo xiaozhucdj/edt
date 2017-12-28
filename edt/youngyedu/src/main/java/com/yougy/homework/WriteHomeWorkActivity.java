@@ -102,12 +102,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
     TextView tvAddPage;
     @BindView(R.id.tv_clear_write)
     TextView tvClearWrite;
-    @BindView(R.id.iv_caogao_icon)
-    ImageView ivCaogaoIcon;
     @BindView(R.id.tv_caogao_text)
     TextView tvCaogaoText;
     @BindView(R.id.ll_caogao_control)
     LinearLayout llCaogaoControl;
+    @BindView(R.id.rl_caogao_box)
+    RelativeLayout rlCaogaoBox;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -254,12 +254,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         lastY = (int) event.getRawY();
                         break;
                     case MotionEvent.ACTION_UP:
-                        v.postDelayed(new Runnable() {
+                        /*v.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 v.layout(left, top, right, bottom);
                             }
-                        }, 100);
+                        }, 100);*/
 
                         break;
                 }
@@ -309,12 +309,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 EpdController.leaveScribbleMode(mNbvAnswerBoard);
                 mNbvAnswerBoard.invalidate();
-                llCaogaoControl.postDelayed(new Runnable() {
+                /*llCaogaoControl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         llCaogaoControl.layout(left, top, right, bottom);
                     }
-                }, 30);
+                }, 30);*/
 
                 if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                     EpdController.leaveScribbleMode(mCaogaoNoteBoard);
@@ -424,13 +424,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 //离开手绘模式，并刷新界面ui
                 EpdController.leaveScribbleMode(mNbvAnswerBoard);
                 mNbvAnswerBoard.invalidate();
-                llCaogaoControl.postDelayed(new Runnable() {
+               /* llCaogaoControl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         llCaogaoControl.layout(left, top, right, bottom);
                     }
                 }, 30);
-
+*/
                 if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                     EpdController.leaveScribbleMode(mCaogaoNoteBoard);
                     mCaogaoNoteBoard.invalidate();
@@ -439,6 +439,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (isFirstComeInQuestion) {
                     isFirstComeInQuestion = false;
                 } else {
+
+                    //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
+                    if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+                        tvCaogaoText.setText("草稿纸");
+                        llCaogaoControl.setVisibility(View.GONE);
+                    }
+
                     //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                     if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
                         //保存上一个题目多页数据中的某一页手写笔记。
@@ -605,12 +612,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 //离开手绘模式，并刷新界面ui
                 EpdController.leaveScribbleMode(mNbvAnswerBoard);
                 mNbvAnswerBoard.invalidate();
-                llCaogaoControl.postDelayed(new Runnable() {
+                /*llCaogaoControl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         llCaogaoControl.layout(left, top, right, bottom);
                     }
-                }, 30);
+                }, 30);*/
 
                 if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                     EpdController.leaveScribbleMode(mCaogaoNoteBoard);
@@ -649,16 +656,16 @@ public class WriteHomeWorkActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    @OnClick({R.id.ll_caogao_control, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework, R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework})
+    @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework, R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework})
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
-        llCaogaoControl.postDelayed(new Runnable() {
+        /*llCaogaoControl.postDelayed(new Runnable() {
             @Override
             public void run() {
                 llCaogaoControl.layout(left, top, right, bottom);
             }
-        }, 30);
+        }, 30);*/
 
         if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             EpdController.leaveScribbleMode(mCaogaoNoteBoard);
@@ -772,22 +779,35 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
 
                 break;
-            case R.id.ll_caogao_control:
+            case R.id.tv_caogao_text:
 
                 if (tvCaogaoText.getText().toString().startsWith("扔掉")) {
                     tvCaogaoText.setText("草稿纸");
-                    ivCaogaoIcon.setImageResource(R.drawable.icon_caogao);
 
                     mCaogaoNoteBoard.clearAll();
-                    rlAnswer.removeView(mCaogaoNoteBoard);
+                    llCaogaoControl.setVisibility(View.GONE);
+
+                    if (rlCaogaoBox.getChildCount() > 0) {
+                        rlCaogaoBox.removeView(mCaogaoNoteBoard);
+                    }
 
                 } else {
                     tvCaogaoText.setText("扔掉\n草稿纸");
-                    ivCaogaoIcon.setImageResource(R.drawable.icon_caogao_rengdiao);
+                    llCaogaoControl.setVisibility(View.VISIBLE);
 
-                    rlAnswer.addView(mCaogaoNoteBoard);
+                    if (rlCaogaoBox.getChildCount() == 0) {
+                        rlCaogaoBox.addView(mCaogaoNoteBoard);
+                    }
+
                 }
 
+                break;
+            case R.id.tv_dismiss_caogao:
+
+                if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+                    tvCaogaoText.setText("草稿纸");
+                    llCaogaoControl.setVisibility(View.GONE);
+                }
                 break;
         }
     }
@@ -796,6 +816,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 保存之前操作题目结果数据
      */
     private void saveLastHomeWorkData(int position) {
+
+        //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
+        if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+            tvCaogaoText.setText("草稿纸");
+            llCaogaoControl.setVisibility(View.GONE);
+        }
+
+
         //刷新最后没有保存的数据
         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
         if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {

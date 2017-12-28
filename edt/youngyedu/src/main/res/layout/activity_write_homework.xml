@@ -171,30 +171,50 @@
 
         <LinearLayout
             android:id="@+id/ll_caogao_control"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="11px"
-            android:layout_marginLeft="10px"
-            android:background="@drawable/img_caogao_bg"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/iv_caogao_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/icon_caogao" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/black" />
+
 
             <TextView
-                android:id="@+id/tv_caogao_text"
+                android:id="@+id/tv_dismiss_caogao"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_height="50px"
+                android:layout_gravity="right"
+                android:layout_marginRight="30px"
+                android:background="@color/white"
                 android:gravity="center"
-                android:text="草稿纸"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:text="隐藏"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/black" />
+
+
+            <RelativeLayout
+                android:id="@+id/rl_caogao_box"
+                android:layout_width="match_parent"
+                android:layout_height="420px"
+                android:background="#f0f0f0"></RelativeLayout>
+
+            <!--<TextView
+                android:layout_width="match_parent"
+                android:layout_height="420px"
+                android:text="集合和几何"
+                android:textColor="@color/black"
+                android:textSize="16sp" />-->
 
         </LinearLayout>
 
@@ -222,6 +242,20 @@
 
 
             </LinearLayout>-->
+
+            <TextView
+                android:id="@+id/tv_caogao_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/img_caogao_text_bg"
+                android:gravity="center"
+                android:text="草稿纸"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rcv_all_question_page"
