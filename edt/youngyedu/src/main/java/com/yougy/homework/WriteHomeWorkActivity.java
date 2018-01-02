@@ -159,6 +159,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
     //存储每一页截屏图片地址
     private ArrayList<String> pathList = new ArrayList<>();
 
+    //byte数组集合，（用来保存每一页草稿的笔记数据）
+    private ArrayList<byte[]> cgBytes = new ArrayList<>();
+
     //是否第一次自动点击进入某一题
     private boolean isFirstComeInHomeWork;
     //是否第一次自动点击进入某一题的第一页
@@ -336,6 +339,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             return;
                         }
                         saveHomeWorkPage = showHomeWorkPosition;
+                        onClick(findViewById(R.id.ll_chooese_homework));
 
                     } else if (COMEIN_HOMEWORK_PAGE_MODE == 1) {
                         saveHomeWorkPage = position + 1;
@@ -385,6 +389,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     } else {
                         for (int i = 0; i < questionPageSize; i++) {
                             bytesList.add(null);
+                        }
+                    }
+                    if (cgBytes.size() > 0) {
+                    } else {
+                        for (int i = 0; i < questionPageSize; i++) {
+                            cgBytes.add(null);
                         }
                     }
                     if (pathList.size() > 0) {
@@ -442,7 +452,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                     //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
                     if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+                        cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+
                         tvCaogaoText.setText("草稿纸");
+                        mCaogaoNoteBoard.clear();
                         llCaogaoControl.setVisibility(View.GONE);
                     }
 
@@ -514,6 +527,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                 mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
                             }
                         }
+                       /* //从之前cgBytes中回显之前保存的草稿手写笔记，如果有的话
+                        if (cgBytes.size() > position) {
+                            byte[] tmpBytes = cgBytes.get(position);
+                            if (tmpBytes != null) {
+                                mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                            }
+                        }*/
                     }
                 }
                 questionPageNumAdapter.notifyDataSetChanged();
@@ -765,6 +785,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 questionPageSize++;
                 bytesList.add(null);
                 pathList.add(null);
+                cgBytes.add(null);
                 questionPageNumAdapter.notifyDataSetChanged();
                 questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize - 1);
 
@@ -784,6 +805,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (tvCaogaoText.getText().toString().startsWith("扔掉")) {
                     tvCaogaoText.setText("草稿纸");
 
+                    cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
 
@@ -799,6 +821,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
                     }
 
+                    byte[] tmpBytes = cgBytes.get(saveQuestionPage);
+                    if (tmpBytes != null) {
+                        mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    }
+
                 }
 
                 break;
@@ -806,6 +833,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 if (llCaogaoControl.getVisibility() == View.VISIBLE) {
                     tvCaogaoText.setText("草稿纸");
+                    cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
                 }
                 break;
@@ -820,6 +848,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
         //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
         if (llCaogaoControl.getVisibility() == View.VISIBLE) {
             tvCaogaoText.setText("草稿纸");
+            cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+            mCaogaoNoteBoard.clear();
             llCaogaoControl.setVisibility(View.GONE);
         }
 
@@ -836,6 +866,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）
         DataCacheUtils.putObject(this, examId + "_" + position + "_bytes_list", bytesList);
+        DataCacheUtils.putObject(this, examId + "_" + position + "_caogao_bytes_list", cgBytes);
         //保存待上传图片，用于上传
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
@@ -856,6 +887,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             tmp = null;
         }
         bytesList.clear();
+        cgBytes.clear();
         pathList.clear();
         checkedAnswerList.clear();
 
@@ -872,6 +904,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
         List<byte[]> tmpBytesList = (List<byte[]>) DataCacheUtils.getObject(this, examId + "_" + position + "_bytes_list");
         if (tmpBytesList != null && tmpBytesList.size() > 0) {
             bytesList.addAll(tmpBytesList);
+        }
+        List<byte[]> cgBytesList = (List<byte[]>) DataCacheUtils.getObject(this, examId + "_" + position + "_caogao_bytes_list");
+        if (cgBytesList != null && cgBytesList.size() > 0) {
+            cgBytes.addAll(cgBytesList);
         }
         List<String> tmpPathList = getSpUtil().getDataList(examId + "_" + position + "_path_list");
         if (tmpPathList != null && tmpPathList.size() > 0) {
@@ -1010,6 +1046,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         //清理掉缓存书写笔记，图片地址存 ,选择结果
                         DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_bytes_list");
+                        DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_caogao_bytes_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_path_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_chooese_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_use_time");
