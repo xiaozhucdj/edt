@@ -92,6 +92,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                 params.rightMargin = 25;
                 params.topMargin = 30;
                 listView.setLayoutParams(params);
+                listView.setDividerHeight(2);
                 listView.setBackgroundResource(R.drawable.shape_rounded_rectangle_black_border);
                 TextView headView = new TextView(getApplicationContext());
                 ListView.LayoutParams headviewParam = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.WRAP_CONTENT);
