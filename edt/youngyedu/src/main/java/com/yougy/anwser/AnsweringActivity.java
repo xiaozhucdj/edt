@@ -149,6 +149,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         Log.v("FH", "call ");
                         if (parsedQuestionItems != null && parsedQuestionItems.size() > 0) {
                             parsedQuestionItem = parsedQuestionItems.get(0);
+                            binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);
                             refreshView();
                         } else {
                             ToastUtil.showToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
@@ -172,7 +173,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
 
-
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper());
     }
 
 
@@ -216,7 +217,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 byte[] tmpBytes = bytesList.get(position - 1);
                 mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
                 if (position == 1) {
-                    binding.questionContainer.setVisibility(View.VISIBLE);
+                    binding.contentDisplayer.setVisibility(View.VISIBLE);
                 }
 
                 break;
@@ -224,13 +225,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                 if (position == 1) {
                     firstResultBitmap = saveScreenBitmap();
-                    binding.questionContainer.setVisibility(View.VISIBLE);
+                    binding.contentDisplayer.setVisibility(View.VISIBLE);
                 }
                 if (position == bytesList.size()) {
                     ToastUtil.showToast(this, "已经是最后一页了");
                     return;
                 }
-                binding.questionContainer.setVisibility(View.GONE);
+                binding.contentDisplayer.setVisibility(View.GONE);
                 bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
 
                 mNbvAnswerBoard.clearAll();
@@ -246,7 +247,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 if (position == 1) {
                     firstResultBitmap = saveScreenBitmap();
                 }
-                binding.questionContainer.setVisibility(View.GONE);
+                binding.contentDisplayer.setVisibility(View.GONE);
 
                 bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
                 mNbvAnswerBoard.clearAll();
@@ -272,7 +273,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 tmpBytes = bytesList.get(position - 1);
                 mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
                 if (position == 1) {
-                    binding.questionContainer.setVisibility(View.VISIBLE);
+                    binding.contentDisplayer.setVisibility(View.VISIBLE);
                 }
 
                 break;
@@ -375,13 +376,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     protected void refreshView() {
         ParsedQuestionItem.Question question = parsedQuestionItem.questionList.get(0);
         binding.questionTypeTextview.setText("题目类型 : " + question.questionType);
-        if (question instanceof ParsedQuestionItem.HtmlQuestion) {
-            binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) question).htmlUrl);
-        } else if (question instanceof ParsedQuestionItem.TextQuestion) {
-            binding.questionContainer.setText(((ParsedQuestionItem.TextQuestion) question).text);
-        } else if (question instanceof ParsedQuestionItem.ImgQuestion) {
-            binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) question).imgUrl);
-        }
+        binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , false);
     }
 
 

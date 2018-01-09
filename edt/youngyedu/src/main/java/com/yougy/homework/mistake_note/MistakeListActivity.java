@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.UIUtils;
@@ -225,15 +226,10 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
         public void setQuestionItem(ParsedQuestionItem item){
             questionItem = item;
-            if (questionItem.questionList.get(0) instanceof ParsedQuestionItem.HtmlQuestion){
-                binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) questionItem.questionList.get(0)).htmlUrl);
-            }
-            else if (questionItem.questionList.get(0) instanceof ParsedQuestionItem.TextQuestion){
-                binding.questionContainer.setText(((ParsedQuestionItem.TextQuestion) questionItem.questionList.get(0)).text);
-            }
-            else if (questionItem.questionList.get(0) instanceof ParsedQuestionItem.ImgQuestion){
-                binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) questionItem.questionList.get(0)).imgUrl);
-            }
+            ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper();
+            contentAdaper.addData("question" , questionItem.questionContentList.get(0));
+            binding.contentDisplayer.setmContentAdaper(contentAdaper);
+            contentAdaper.toPage("question" , 0 , false);
             for (MistakeSummary mistakeSummary : mistakeSummaryList) {
                 if (questionItem.itemId.equals("" + mistakeSummary.getItem())){
                     binding.fromTextview.setText("来自于 : " + mistakeSummary.getExtra().getName());

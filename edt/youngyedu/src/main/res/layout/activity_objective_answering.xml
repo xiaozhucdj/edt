@@ -97,8 +97,8 @@
                 />
         </LinearLayout>
 
-        <com.yougy.anwser.QuestionAnswerContainer
-            android:id="@+id/question_container"
+        <com.yougy.anwser.ContentDisplayer
+            android:id="@+id/content_displayer"
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"

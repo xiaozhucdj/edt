@@ -63,25 +63,13 @@
                 android:textSize="24px"
                 />
             <TextView
-                android:id="@+id/answer_btn"
-                android:layout_width="0px"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="2px"
-                android:layout_marginRight="2px"
-                android:layout_weight="1"
-                android:background="@drawable/btn_bg_selector_white_blue"
-                android:gravity="center"
-                android:text="答案"
-                android:textColor="@drawable/btn_text_color_selector_black_white"
-                android:textSize="24px" />
-            <TextView
-                android:id="@+id/analysis_btn"
+                android:id="@+id/answer_analysis_btn"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg_selector_white_blue"
                 android:gravity="center"
-                android:text="解析"
+                android:text="解析与解析"
                 android:textColor="@drawable/btn_text_color_selector_black_white"
                 android:textSize="24px" />
         </LinearLayout>
@@ -90,13 +78,14 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1">
-            <com.yougy.anwser.QuestionAnswerContainer
-                android:id="@+id/question_container"
+            <com.yougy.anwser.ContentDisplayer
+                android:id="@+id/content_displayer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="15px"
                 android:paddingLeft="30px"
-                android:paddingRight="30px" />
+                android:paddingRight="30px"
+                />
             <TextView
                 android:id="@+id/last_page_btn"
                 android:layout_width="39px"

@@ -3,7 +3,7 @@ package com.yougy.homework.bean;
 import android.text.TextUtils;
 
 import com.google.gson.internal.LinkedTreeMap;
-import com.yougy.anwser.Content;
+import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
 
@@ -50,8 +50,7 @@ public class QuestionReplyDetail {
     private OriginQuestionItem replyItemContent;
 
 
-    private String textContent;
-    private List<Content> parsedReplyContentList = new ArrayList<Content>();
+    private List<Content_new> parsedReplyContentList = new ArrayList<Content_new>();
     private List<String> parsedReplyCommentList = new ArrayList<String>();
     private ParsedQuestionItem parsedQuestionItem;
 
@@ -167,20 +166,11 @@ public class QuestionReplyDetail {
         this.replyComment = replyComment;
     }
 
-    public String getTextContent() {
-        return textContent;
-    }
-
-    public QuestionReplyDetail setTextContent(String textContent) {
-        this.textContent = textContent;
-        return this;
-    }
-
-    public List<Content> getParsedReplyContentList() {
+    public List<Content_new> getParsedReplyContentList() {
         return parsedReplyContentList;
     }
 
-    public QuestionReplyDetail setParsedReplyContentList(List<Content> parsedReplyContentList) {
+    public QuestionReplyDetail setParsedReplyContentList(List<Content_new> parsedReplyContentList) {
         this.parsedReplyContentList = parsedReplyContentList;
         return this;
     }
@@ -223,15 +213,29 @@ public class QuestionReplyDetail {
                             || url.endsWith(".jpg")
                             || url.endsWith(".png")
                             ){
-                        parsedReplyContentList.add(Content.newImgContent((Double) linkedTreeMap.get("version"), url));
+                        parsedReplyContentList.add(
+                                new Content_new(Content_new.Type.IMG_URL
+                                        , ((Double) linkedTreeMap.get("version"))
+                                        , url
+                                        , null)
+                        );
                     }
                     else if (url.endsWith(".htm")){
-                        parsedReplyContentList.add(Content.newHtmlContent((Double) linkedTreeMap.get("version"), url));
+                        parsedReplyContentList.add(
+                                new Content_new(Content_new.Type.HTML_URL
+                                        , ((Double) linkedTreeMap.get("version"))
+                                        , url
+                                        , null)
+                        );
                     }
                 }
             }
             else if (format.equals("TEXT")){
-                textContent = (String) linkedTreeMap.get("value");
+                parsedReplyContentList.add(
+                        new Content_new(Content_new.Type.TEXT
+                                , ((Double) linkedTreeMap.get("version"))
+                                , ((String) linkedTreeMap.get("value"))
+                                , null));
             }
         }
 
