@@ -4,10 +4,11 @@ import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.yougy.anwser.Content;
-import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.anwser.ContentDisplayer;
+import com.yougy.anwser.Content_new;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -33,7 +34,6 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
     ArrayList<QuestionReplySummary> allReplyList = new ArrayList<QuestionReplySummary>();
     QuestionReplyDetail data;
     int currentShowQuestionPageIndex = 0;
-    int currentShowAnswerPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
     int examId;
 
@@ -54,7 +54,6 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             ToastUtil.showToast(getApplicationContext() , "必要数据为空");
             finish();
         }
-        refreshViewSafe();
     }
 
     @Override
@@ -63,30 +62,21 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 binding.questionBodyBtn.setSelected(true);
-                binding.answerBtn.setSelected(false);
-                binding.analysisBtn.setSelected(false);
+                binding.answerAnalysisBtn.setSelected(false);
                 refreshViewSafe();
             }
         });
-        binding.answerBtn.setOnClickListener(new View.OnClickListener() {
+        binding.answerAnalysisBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 binding.questionBodyBtn.setSelected(false);
-                binding.answerBtn.setSelected(true);
-                binding.analysisBtn.setSelected(false);
-                refreshViewSafe();
-            }
-        });
-        binding.analysisBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.questionBodyBtn.setSelected(false);
-                binding.answerBtn.setSelected(false);
-                binding.analysisBtn.setSelected(true);
+                binding.answerAnalysisBtn.setSelected(true);
                 refreshViewSafe();
             }
         });
         binding.questionBodyBtn.setSelected(true);
+        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper();
+        binding.questionDisplayer.setmContentAdaper(contentAdaper);
     }
 
     @Override
@@ -100,6 +90,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                             return;
                         }
                         data = questionReplyDetails.get(0);
+
                         refreshViewSafe();
                     }
                 }, new Action1<Throwable>() {
@@ -112,6 +103,20 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
 
     @Override
     protected void refreshView() {
+        String questionType = (String) data.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+        binding.questionDisplayer.getmContentAdaper()
+                .updateDataList("reply" , ListUtil.conditionalSubList(data.getParsedReplyContentList(), new ListUtil.ConditionJudger<Content_new>() {
+            @Override
+            public boolean isMatchCondition(Content_new nodeInList) {
+                return nodeInList.getType() != Content_new.Type.TEXT;
+            }
+        }));
+        binding.questionDisplayer.getmContentAdaper().updateDataList("analysis"
+                , data.getParsedQuestionItem().analysisContentList);
+        if (questionType.equals("选择")){
+            binding.questionDisplayer.getmContentAdaper()
+                    .setSubText("答案 : " + RxResultHelper.parseAnswerList(data.getParsedQuestionItem().answerContentList));
+        }
         int questionIndex = ListUtil.conditionalIndexOf(allReplyList, new ListUtil.ConditionJudger<QuestionReplySummary>() {
             @Override
             public boolean isMatchCondition(QuestionReplySummary nodeInList) {
@@ -143,119 +148,38 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                 break;
         }
         if (binding.questionBodyBtn.isSelected()){
-            if (data.getParsedReplyContentList() == null || data.getParsedReplyContentList().size() == 0){
-                binding.questionContainer.setText("没有题目内容");
+            binding.questionDisplayer.getmContentAdaper().toPage("reply" , currentShowQuestionPageIndex , false);
+            if (currentShowQuestionPageIndex == 0){
                 binding.lastPageBtn.setClickable(false);
+            }
+            else {
+                binding.lastPageBtn.setClickable(true);
+            }
+            if ((currentShowQuestionPageIndex +1) == binding.questionDisplayer.getmContentAdaper().getDataList("reply").size()){
                 binding.nextPageBtn.setClickable(false);
             }
             else {
-                Content content = data.getParsedReplyContentList().get(currentShowQuestionPageIndex);
-                switch (content.getType()){
-                    case HTML_URL:
-                        binding.questionContainer.setHtmlUrl(content.getValue());
-                        break;
-                    case IMG_URL:
-                        binding.questionContainer.setImgUrl(content.getValue());
-                        break;
-                    case TEXT:
-                        binding.questionContainer.setText(content.getValue());
-                        break;
-                }
-                if (currentShowQuestionPageIndex == 0){
-                    binding.lastPageBtn.setClickable(false);
-                }
-                else {
-                    binding.lastPageBtn.setClickable(true);
-                }
-                if ((currentShowQuestionPageIndex +1) == data.getParsedReplyContentList().size()){
-                    binding.nextPageBtn.setClickable(false);
-                }
-                else {
-                    binding.nextPageBtn.setClickable(true);
-                }
+                binding.nextPageBtn.setClickable(true);
             }
         }
-        else if (binding.answerBtn.isSelected()){
-            binding.lastPageBtn.setClickable(false);
-            binding.nextPageBtn.setClickable(false);
-            if (data.getParsedQuestionItem() == null || data.getParsedQuestionItem().answerList == null
-                    || data.getParsedQuestionItem().answerList.size() == 0){
-                binding.questionContainer.setText("没有答案");
+        else if (binding.answerAnalysisBtn.isSelected()){
+            if (questionType.equals("选择")){
+                binding.questionDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
             }
             else {
-
-                ParsedQuestionItem.Answer answer = data.getParsedQuestionItem().answerList.get(currentShowAnswerPageIndex);
-                //答案类型为HTML和IMG的时候支持翻页
-                if (answer instanceof ParsedQuestionItem.HtmlAnswer || answer instanceof ParsedQuestionItem.ImgAnswer){
-                    if (answer instanceof ParsedQuestionItem.HtmlAnswer){
-                        binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) answer).answerUrl);
-                    }
-                    else if (answer instanceof ParsedQuestionItem.ImgAnswer){
-                        binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnswer) answer).imgUrl);
-                    }
-                    if (currentShowAnswerPageIndex == 0){
-                        binding.lastPageBtn.setClickable(false);
-                    }
-                    else {
-                        binding.lastPageBtn.setClickable(true);
-                    }
-                    if ((currentShowAnswerPageIndex  +1) == data.getParsedQuestionItem().answerList.size()){
-                        binding.nextPageBtn.setClickable(false);
-                    }
-                    else {
-                        binding.nextPageBtn.setClickable(true);
-                    }
-                }
-                //答案类型为TEXT的时候把所有"正式"的答案拼在一起显示,不支持分页,"混淆"的答案忽略
-                else {
-                    String answerString = "";
-                    for (ParsedQuestionItem.Answer tempAnswer: data.getParsedQuestionItem().answerList) {
-                        if (tempAnswer.answerType.equals("正式")){
-                            answerString = answerString + ((ParsedQuestionItem.TextAnswer) tempAnswer).text + "、";
-                        }
-                    }
-                    if (answerString.endsWith("、")){
-                        answerString = answerString.substring(0 , answerString.length() - 1);
-                    }
-                    else {
-                        answerString = "没有答案";
-                    }
-                    binding.questionContainer.setText(answerString);
-                    binding.lastPageBtn.setClickable(false);
-                    binding.nextPageBtn.setClickable(false);
-                }
+                binding.questionDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , false);
             }
-        }
-        else if (binding.analysisBtn.isSelected()){
-            if (data.getParsedQuestionItem() == null || data.getParsedQuestionItem().analysisList == null
-                    || data.getParsedQuestionItem().analysisList.size() == 0){
-                binding.questionContainer.setText("没有解析");
+            if (currentShowAnalysisPageIndex == 0){
                 binding.lastPageBtn.setClickable(false);
+            }
+            else {
+                binding.lastPageBtn.setClickable(true);
+            }
+            if ((currentShowAnalysisPageIndex +1) == binding.questionDisplayer.getmContentAdaper().getDataList("analysis").size()){
                 binding.nextPageBtn.setClickable(false);
             }
             else {
-                ParsedQuestionItem.Analysis analysis = data.getParsedQuestionItem().analysisList.get(currentShowAnalysisPageIndex);
-                if (analysis instanceof ParsedQuestionItem.HtmlAnalysis){
-                    binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnalysis) analysis).analysisUrl);
-                }
-                else if (analysis instanceof ParsedQuestionItem.ImgAnalysis){
-                    binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnalysis) analysis).imgUrl);
-                }
-                else if (analysis instanceof ParsedQuestionItem.TextAnalysis){
-                    binding.questionContainer.setText(((ParsedQuestionItem.TextAnalysis) analysis).text);
-                }
-                if (currentShowAnalysisPageIndex == 0){
-                    binding.lastPageBtn.setClickable(false);
-                }
-                else {
-                    binding.lastPageBtn.setClickable(true);
-                }
-                if ((currentShowAnalysisPageIndex +1) == data.getParsedQuestionItem().analysisList.size()){
-                    binding.nextPageBtn.setClickable(false);
-                }
-                else {
-                    binding.nextPageBtn.setClickable(true);
-                }
+                binding.nextPageBtn.setClickable(true);
             }
         }
     }
@@ -268,10 +192,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         if (binding.questionBodyBtn.isSelected()) {
             currentShowQuestionPageIndex--;
         }
-        else if (binding.answerBtn.isSelected()) {
-            currentShowAnswerPageIndex--;
-        }
-        else if (binding.analysisBtn.isSelected()) {
+        else if (binding.answerAnalysisBtn.isSelected()) {
             currentShowAnalysisPageIndex--;
         }
         refreshViewSafe();
@@ -280,10 +201,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         if (binding.questionBodyBtn.isSelected()) {
             currentShowQuestionPageIndex++;
         }
-        else if (binding.answerBtn.isSelected()) {
-            currentShowAnswerPageIndex++;
-        }
-        else if (binding.analysisBtn.isSelected()) {
+        else if (binding.answerAnalysisBtn.isSelected()) {
             currentShowAnalysisPageIndex++;
         }
         refreshViewSafe();
@@ -297,11 +215,9 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         });
         currentShow = allReplyList.get(questionIndex - 1);
         currentShowQuestionPageIndex = 0;
-        currentShowAnswerPageIndex = 0;
         currentShowAnalysisPageIndex = 0;
         binding.questionBodyBtn.setSelected(true);
-        binding.answerBtn.setSelected(false);
-        binding.analysisBtn.setSelected(false);
+        binding.answerAnalysisBtn.setSelected(false);
         loadData();
     }
     public void nextQuestion(View view){
@@ -313,11 +229,9 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         });
         currentShow = allReplyList.get(questionIndex + 1);
         currentShowQuestionPageIndex = 0;
-        currentShowAnswerPageIndex = 0;
         currentShowAnalysisPageIndex = 0;
         binding.questionBodyBtn.setSelected(true);
-        binding.answerBtn.setSelected(false);
-        binding.analysisBtn.setSelected(false);
+        binding.answerAnalysisBtn.setSelected(false);
         loadData();
     }
 

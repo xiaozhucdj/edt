@@ -2,6 +2,7 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
@@ -54,6 +55,7 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     }
 
     private void downloadDb(){
+        Log.v("FH" , "注意这儿:DATABASE_NAME=" + DATABASE_NAME);
         final File dbfile = mWeakReference.get().getDatabasePath(DATABASE_NAME);
         final File journalFile = mWeakReference.get().getDatabasePath(JOURNAL_NAME);
         if (YougyApplicationManager.isWifiAvailable() && !SpUtil.isInit()) {

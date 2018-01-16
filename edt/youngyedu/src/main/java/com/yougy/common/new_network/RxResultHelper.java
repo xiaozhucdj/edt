@@ -3,6 +3,7 @@ package com.yougy.common.new_network;
 import android.util.Log;
 
 import com.yougy.anwser.BaseResult;
+import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.homework.bean.HomeworkDetail;
@@ -149,6 +150,27 @@ public class RxResultHelper {
                 });
             }
         };
+    }
+
+    /**
+     * 把题目Answer中的正式类型的答案拼接成一个字符串
+     * @param answerContentList
+     * @return
+     */
+    public static String parseAnswerList(ArrayList<Content_new> answerContentList){
+        if (!answerContentList.isEmpty()){
+            String answerText = "";
+            for (int i = 0 ; i < answerContentList.size() ; i++){
+                Content_new answerContent = answerContentList.get(i);
+                if (answerContent.getExtraData().equals("正式")){
+                    answerText = answerText + answerContent.getValue() + "、";
+                }
+            }
+            if (answerText.endsWith("、")){
+                return answerText.substring(0 , answerText.length() - 1);
+            }
+        }
+        return "";
     }
 
 }

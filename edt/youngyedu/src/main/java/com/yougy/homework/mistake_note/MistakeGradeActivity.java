@@ -6,9 +6,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.yougy.anwser.ContentDisplayer;
+import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.homework.FullScreenHintDialog;
 import com.yougy.homework.HomeworkBaseActivity;
@@ -27,10 +30,10 @@ import rx.functions.Action1;
 public class MistakeGradeActivity extends HomeworkBaseActivity{
     ActivityMistakeGradeBinding binding;
     int currentShowWriteImgPageIndex = 0;
-    int currentShowAnswerPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
     private ParsedQuestionItem questionItem;
-    private ArrayList<String> writeImgList;
+    private String questionType;
+    private ArrayList<Content_new> writeContentList = new ArrayList<Content_new>();
     private int homeworkId;
     private String bookTitle;
     @Override
@@ -41,37 +44,34 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
             @Override
             public void onClick(View v) {
                 binding.writedQuestionBtn.setSelected(true);
-                binding.analysisBtn.setSelected(false);
-                binding.answerBtn.setSelected(false);
+                binding.answerAnalysisBtn.setSelected(false);
                 refreshViewSafe();
             }
         });
-        binding.analysisBtn.setOnClickListener(new View.OnClickListener() {
+        binding.answerAnalysisBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 binding.writedQuestionBtn.setSelected(false);
-                binding.analysisBtn.setSelected(true);
-                binding.answerBtn.setSelected(false);
+                binding.answerAnalysisBtn.setSelected(true);
                 refreshViewSafe();
             }
         });
-        binding.answerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.writedQuestionBtn.setSelected(false);
-                binding.analysisBtn.setSelected(false);
-                binding.answerBtn.setSelected(true);
-                refreshViewSafe();
-            }
-        });
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper());
     }
 
     @Override
     protected void init() {
-        questionItem = (ParsedQuestionItem) getIntent().getSerializableExtra("questionItem");
-        writeImgList = getIntent().getStringArrayListExtra("writeImgList");
+        questionItem = (ParsedQuestionItem) getIntent().getParcelableExtra("questionItem");
+        ArrayList<String> contentList = getIntent().getStringArrayListExtra("writeImgList");
+        for (String url : contentList) {
+            if (!TextUtils.isEmpty(url)){
+                writeContentList.add(new Content_new(Content_new.Type.IMG_URL , 0 , url , null));
+            }
+        }
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
         bookTitle = getIntent().getStringExtra("bookTitle");
+        questionType = (String) questionItem.questionContentList.get(0).getExtraData();
+
     }
 
     @Override
@@ -82,6 +82,11 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
     @Override
     protected void loadData() {
         binding.writedQuestionBtn.setSelected(true);
+        binding.contentDisplayer.getmContentAdaper().updateDataList("question" , writeContentList);
+        binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , questionItem.analysisContentList);
+        if (questionType.equals("选择")){
+            binding.contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(questionItem.answerContentList));
+        }
         refreshViewSafe();
     }
 
@@ -97,99 +102,30 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
             else {
                 binding.lastPageBtn.setClickable(true);
             }
-            if (currentShowWriteImgPageIndex + 1 >= writeImgList.size()){
+            if (currentShowWriteImgPageIndex + 1 >= writeContentList.size()){
                 binding.nextPageBtn.setClickable(false);
             }
             else {
                 binding.nextPageBtn.setClickable(true);
             }
-            if (writeImgList == null || writeImgList.size() == 0){
-                binding.questionContainer.setText("没有题目数据");
+            binding.contentDisplayer.getmContentAdaper().toPage("question" , currentShowWriteImgPageIndex , false);
+        }
+        else if (binding.answerAnalysisBtn.isSelected()){
+            if (questionType.equals("选择")){
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
             }
             else {
-                binding.questionContainer.setImgUrl(writeImgList.get(currentShowWriteImgPageIndex));
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , false);
             }
-        }
-        else if (binding.answerBtn.isSelected()){
-            binding.lastPageBtn.setClickable(false);
-            binding.nextPageBtn.setClickable(false);
-            if (questionItem == null || questionItem.answerList == null
-                    || questionItem.answerList.size() == 0){
-                binding.questionContainer.setText("没有答案");
-            }
-            else {
-                //答案类型为HTML和IMG的时候支持翻页
-                ParsedQuestionItem.Answer answer = questionItem.answerList.get(currentShowAnswerPageIndex);
-                if (answer instanceof ParsedQuestionItem.HtmlAnswer || answer instanceof ParsedQuestionItem.ImgAnswer){
-                    if (answer instanceof ParsedQuestionItem.HtmlAnswer){
-                        binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) answer).answerUrl);
-                    }
-                    else if (answer instanceof ParsedQuestionItem.ImgAnswer){
-                        binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnswer) answer).imgUrl);
-                    }
-                    if (currentShowAnswerPageIndex == 0){
-                        binding.lastPageBtn.setClickable(false);
-                    }
-                    else {
-                        binding.lastPageBtn.setClickable(true);
-                    }
-                    if ((currentShowAnswerPageIndex +1) == questionItem.answerList.size()){
-                        binding.nextPageBtn.setClickable(false);
-                    }
-                    else {
-                        binding.nextPageBtn.setClickable(true);
-                    }
-                }
-                else {
-                    //答案类型为TEXT的时候把所有"正式"的答案拼在一起显示,不支持分页,"混淆"的答案忽略
-                    String answerString = "";
-                    for (ParsedQuestionItem.Answer tempAnswer: questionItem.answerList) {
-                        if (tempAnswer.answerType.equals("正式")){
-                            answerString = answerString + ((ParsedQuestionItem.TextAnswer) tempAnswer).text + "、";
-                        }
-                    }
-                    if (answerString.endsWith("、")){
-                        answerString = answerString.substring(0 , answerString.length() - 1);
-                    }
-                    else {
-                        answerString = "没有答案";
-                    }
-                    binding.questionContainer.setText(answerString);
-                    binding.lastPageBtn.setClickable(false);
-                    binding.nextPageBtn.setClickable(false);
-                }
-            }
-        }
-        else if (binding.analysisBtn.isSelected()){
-            if (questionItem== null || questionItem.analysisList == null
-                    || questionItem.analysisList.size() == 0){
-                binding.questionContainer.setText("没有解析");
+            if (currentShowAnalysisPageIndex == 0) {
                 binding.lastPageBtn.setClickable(false);
-                binding.nextPageBtn.setClickable(false);
+            } else {
+                binding.lastPageBtn.setClickable(true);
             }
-            else {
-                ParsedQuestionItem.Analysis analysis = questionItem.analysisList.get(currentShowAnalysisPageIndex);
-                if (analysis instanceof ParsedQuestionItem.HtmlAnalysis){
-                    binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnalysis) analysis).analysisUrl);
-                }
-                else if (analysis instanceof ParsedQuestionItem.ImgAnalysis){
-                    binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnalysis) analysis).imgUrl);
-                }
-                else if (analysis instanceof ParsedQuestionItem.TextAnalysis){
-                    binding.questionContainer.setText(((ParsedQuestionItem.TextAnalysis) analysis).text);
-                }
-                if (currentShowAnalysisPageIndex == 0){
-                    binding.lastPageBtn.setClickable(false);
-                }
-                else {
-                    binding.lastPageBtn.setClickable(true);
-                }
-                if ((currentShowAnalysisPageIndex +1) == questionItem.analysisList.size()){
-                    binding.nextPageBtn.setClickable(false);
-                }
-                else {
-                    binding.nextPageBtn.setClickable(true);
-                }
+            if ((currentShowAnalysisPageIndex + 1) == questionItem.analysisList.size()) {
+                binding.nextPageBtn.setClickable(false);
+            } else {
+                binding.nextPageBtn.setClickable(true);
             }
         }
     }
@@ -204,10 +140,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
         if (binding.writedQuestionBtn.isSelected()) {
             currentShowWriteImgPageIndex--;
         }
-        else if (binding.answerBtn.isSelected()) {
-            currentShowAnswerPageIndex--;
-        }
-        else if (binding.analysisBtn.isSelected()) {
+        else if (binding.answerAnalysisBtn.isSelected()) {
             currentShowAnalysisPageIndex--;
         }
         refreshViewSafe();
@@ -217,10 +150,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
         if (binding.writedQuestionBtn.isSelected()) {
             currentShowWriteImgPageIndex++;
         }
-        else if (binding.answerBtn.isSelected()) {
-            currentShowAnswerPageIndex++;
-        }
-        else if (binding.analysisBtn.isSelected()) {
+        else if (binding.answerAnalysisBtn.isSelected()) {
             currentShowAnalysisPageIndex++;
         }
         refreshViewSafe();

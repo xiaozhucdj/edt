@@ -16,8 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.yougy.anwser.ContentDisplayer;
+import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
-import com.yougy.anwser.QuestionAnswerContainer;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
@@ -59,8 +60,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     RecyclerView allQuestionPage;
     @BindView(R.id.rcv_chooese_item)
     RecyclerView rcvChooese;
-    @BindView(R.id.question_container)
-    QuestionAnswerContainer questionContainer;
+    @BindView(R.id.content_displayer)
+    ContentDisplayer contentDisplayer;
     @BindView(R.id.rl_answer)
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
@@ -81,7 +82,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     private QuestionPageNumAdapter questionPageNumAdapter;
 
     //底部某一题多页数据
-    private List<ParsedQuestionItem.Question> questionList;
+    private List<Content_new> questionList;
     //如果是选择题，这里存储选择题的结果
     private List<ParsedQuestionItem.Answer> chooeseAnswerList;
     //选择题选择的结果
@@ -139,7 +140,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 ivZpResult.setImageResource(R.drawable.img_ziping_zhengque);
                 break;
         }
-
+        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper();
+        contentDisplayer.setmContentAdaper(contentAdaper);
     }
 
     @Override
@@ -168,8 +170,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             ToastUtil.showToast(getBaseContext(), "该题可能已经被删除");
             return;
         }
-        questionList = questionItem.questionList;
-
+        questionList = questionItem.questionContentList;
+        contentDisplayer.getmContentAdaper().updateDataList("question" , (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
             questionPageSize = questionList.size();
@@ -213,22 +215,15 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     ParsedQuestionItem.Question question = null;
                     if (position < questionList.size()) {
                         //切换当前题目的分页
-                        question = questionList.get(position);
-                        if (question instanceof ParsedQuestionItem.HtmlQuestion) {
-                            questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) question).htmlUrl);
-                        } else if (question instanceof ParsedQuestionItem.TextQuestion) {
-                            questionContainer.setText(((ParsedQuestionItem.TextQuestion) question).text);
-                        } else if (question instanceof ParsedQuestionItem.ImgQuestion) {
-                            questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) question).imgUrl);
-                        }
-                        questionContainer.setVisibility(View.VISIBLE);
+                        contentDisplayer.getmContentAdaper().toPage("question" , position , false);
+                        contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
-                        questionContainer.setVisibility(View.GONE);
+                        contentDisplayer.setVisibility(View.GONE);
 
                     }
                     if (questionList.get(0) != null) {
-                        if ("选择".equals(questionList.get(0).questionType)) {
+                        if ("选择".equals(questionList.get(0).getExtraData())) {
                             if (isAddAnswerBoard) {
                                 rlAnswer.removeView(mNbvAnswerBoard);
                                 isAddAnswerBoard = false;

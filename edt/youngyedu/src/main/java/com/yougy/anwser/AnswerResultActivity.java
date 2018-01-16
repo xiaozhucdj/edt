@@ -1,17 +1,16 @@
 package com.yougy.anwser;
 
 import android.databinding.DataBindingUtil;
-import android.text.TextUtils;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerResultBinding;
-
-import java.io.Serializable;
 
 /**
  * Created by FH on 2017/9/6.
@@ -20,6 +19,7 @@ import java.io.Serializable;
 public class AnswerResultActivity extends BaseActivity{
     ActivityAnswerResultBinding binding;
     ParsedQuestionItem parsedQuestionItem;
+    String questionType;
 
     @Override
     protected void setContentView() {
@@ -29,13 +29,15 @@ public class AnswerResultActivity extends BaseActivity{
     }
     @Override
     protected void init() {
-        Serializable question = getIntent().getSerializableExtra("question");
+        Parcelable question = getIntent().getParcelableExtra("question");
         if (question == null){
             ToastUtil.showToast(this , "题目内容获取失败");
             finish();
         }
         else {
             parsedQuestionItem = (ParsedQuestionItem) question;
+            questionType = (String) parsedQuestionItem.questionContentList.get(0).getExtraData();
+
         }
     }
     @Override
@@ -44,93 +46,42 @@ public class AnswerResultActivity extends BaseActivity{
             @Override
             public void onClick(View v) {
                 binding.questionBodyBtn.setSelected(true);
-                binding.answerBtn.setSelected(false);
-                binding.analysisBtn.setSelected(false);
+                binding.answerAnalysisBtn.setSelected(false);
                 setQuestionBodyToContent();
             }
         });
-        binding.answerBtn.setOnClickListener(new View.OnClickListener() {
+        binding.answerAnalysisBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 binding.questionBodyBtn.setSelected(false);
-                binding.answerBtn.setSelected(true);
-                binding.analysisBtn.setSelected(false);
-                setAnswerToContent();
-            }
-        });
-        binding.analysisBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.questionBodyBtn.setSelected(false);
-                binding.answerBtn.setSelected(false);
-                binding.analysisBtn.setSelected(true);
+                binding.answerAnalysisBtn.setSelected(true);
                 setAnalysisToContent();
             }
         });
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper());
     }
 
     public void setQuestionBodyToContent(){
-        ParsedQuestionItem.Question question = parsedQuestionItem.questionList.get(0);
-        binding.questionTypeTextview.setText("题目类型 : " + question.questionType);
-        if (question instanceof ParsedQuestionItem.HtmlQuestion){
-            binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) question).htmlUrl);
-        }
-        else if (question instanceof ParsedQuestionItem.TextQuestion){
-            binding.questionContainer.setText(((ParsedQuestionItem.TextQuestion) question).text);
-        }
-        else if (question instanceof ParsedQuestionItem.ImgQuestion){
-            binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) question).imgUrl);
-        }
-    }
-    public void setAnswerToContent(){
-        binding.questionTypeTextview.setText("答案");
-        if (parsedQuestionItem.answerList.size() == 0){
-            binding.questionContainer.setText("没有答案");
-            return;
-        }
-        ParsedQuestionItem.Answer answer = parsedQuestionItem.answerList.get(0);
-        if (answer instanceof ParsedQuestionItem.HtmlAnswer){
-            binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnswer) answer).answerUrl);
-        }
-        else if (answer instanceof ParsedQuestionItem.TextAnswer){
-            String answerText = "";
-            for (int i = 0 ; i < parsedQuestionItem.answerList.size() ; i++){
-                ParsedQuestionItem.Answer tempAnswer = parsedQuestionItem.answerList.get(i);
-                if (tempAnswer instanceof ParsedQuestionItem.TextAnswer && tempAnswer.answerType.equals("正式")){
-                    answerText = answerText + ((ParsedQuestionItem.TextAnswer) tempAnswer).text + "、";
-                }
-            }
-            if (TextUtils.isEmpty(answerText)){
-                binding.questionContainer.setText("没有答案");
-            }
-            else {
-                binding.questionContainer.setText(answerText.substring(0 , answerText.length() - 1));
-            }
-        }
-        else if (answer instanceof ParsedQuestionItem.ImgAnswer){
-            binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnswer) answer).imgUrl);
-        }
+        binding.questionTypeTextview.setText("题目类型 : " + questionType);
+        binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , false);
     }
     public void setAnalysisToContent(){
         binding.questionTypeTextview.setText("解析");
-        if (parsedQuestionItem.analysisList.size() == 0){
-            binding.questionContainer.setText("没有解析");
-            return;
+        if (questionType.equals("选择")){
+            binding.contentDisplayer.getmContentAdaper().toPage("analysis" , 0 , true);
         }
-        ParsedQuestionItem.Analysis analysis = parsedQuestionItem.analysisList.get(0);
-        if (analysis instanceof ParsedQuestionItem.HtmlAnalysis){
-            binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlAnalysis) analysis).analysisUrl);
-        }
-        else if (analysis instanceof ParsedQuestionItem.TextAnalysis){
-            binding.questionContainer.setText(((ParsedQuestionItem.TextAnalysis) analysis).text);
-        }
-        else if (analysis instanceof ParsedQuestionItem.ImgAnalysis){
-            binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgAnalysis) analysis).imgUrl);
+        else {
+            binding.contentDisplayer.getmContentAdaper().toPage("analysis" , 0 , false);
         }
     }
 
     @Override
     protected void loadData() {
+        binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);
+        binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
+        if (questionType.equals("选择")){
+            binding.contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(parsedQuestionItem.answerContentList));
+        }
         binding.questionBodyBtn.performClick();
     }
 

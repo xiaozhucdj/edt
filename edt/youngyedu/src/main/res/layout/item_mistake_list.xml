@@ -24,8 +24,8 @@
             android:paddingRight="30px"
             />
         <View android:layout_width="match_parent" android:layout_height="1px" android:background="@color/black"/>
-        <com.yougy.anwser.QuestionAnswerContainer
-            android:id="@+id/question_container"
+        <com.yougy.anwser.ContentDisplayer
+            android:id="@+id/content_displayer"
             android:layout_width="match_parent"
             android:layout_height="179px"
             android:padding="30px"

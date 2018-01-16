@@ -1,38 +1,29 @@
 package com.yougy.anwser;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by FH on 2017/8/30.
+ * Created by FH on 2018/1/5.
  */
 
-public class Content implements Parcelable {
+public class Content_new<E> implements Parcelable {
     public enum Type{
         HTML_URL ,
         IMG_URL ,
         TEXT
     }
     private double version;
-    private Type type;
+    private Content_new.Type type;
     private String content;
+    private E extraData;
 
-    private Content(Type type , double version , String content){
+    public Content_new(Content_new.Type type , double version , String content , E extraData){
         this.type = type;
         this.version = version;
         this.content = content;
-    }
-
-    public static Content newHtmlContent(double version , String url){
-        return new Content(Type.HTML_URL , version , url);
-    }
-
-    public static Content newImgContent(double version , String imgUrl){
-        return new Content(Type.IMG_URL , version , imgUrl);
-    }
-
-    public static Content newTextContent(double version , String text){
-        return new Content(Type.TEXT , version , text);
+        this.extraData = extraData;
     }
 
 
@@ -40,12 +31,16 @@ public class Content implements Parcelable {
         return content;
     }
 
-    public Type getType(){
+    public Content_new.Type getType(){
         return type;
     }
 
     public double getVersion(){
         return version;
+    }
+
+    public E getExtraData(){
+        return extraData;
     }
 
     @Override
@@ -58,24 +53,26 @@ public class Content implements Parcelable {
         dest.writeDouble(this.version);
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
         dest.writeString(this.content);
+        dest.writeValue(this.extraData);
     }
 
-    protected Content(Parcel in) {
+    protected Content_new(Parcel in) {
         this.version = in.readDouble();
         int tmpType = in.readInt();
         this.type = tmpType == -1 ? null : Type.values()[tmpType];
         this.content = in.readString();
+        this.extraData = (E) in.readValue(null);
     }
 
-    public static final Parcelable.Creator<Content> CREATOR = new Parcelable.Creator<Content>() {
+    public static final Parcelable.Creator<Content_new> CREATOR = new Parcelable.Creator<Content_new>() {
         @Override
-        public Content createFromParcel(Parcel source) {
-            return new Content(source);
+        public Content_new createFromParcel(Parcel source) {
+            return new Content_new(source);
         }
 
         @Override
-        public Content[] newArray(int size) {
-            return new Content[size];
+        public Content_new[] newArray(int size) {
+            return new Content_new[size];
         }
     };
 }

@@ -37,6 +37,7 @@ public class AliyunUtil {
     private OSS oss;
     // 运行sample前需要配置以下字段为有效的值
     private static final String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
+    public static final String ANSWER_PIC_HOST = ".oss-cn-shanghai.aliyuncs.com/";
     public static String DATABASE_NAME;
     public static String JOURNAL_NAME;
     private static String filePath;

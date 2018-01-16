@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -118,8 +117,8 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                ParsedQuestionItem.Answer answer = parsedQuestionItem.answerList.get(position);
-                ((AnswerItemHolder) holder).setAnswer(answer);
+                Content_new answerContent = parsedQuestionItem.answerContentList.get(position);
+                ((AnswerItemHolder) holder).setAnswerContent(answerContent);
             }
 
             @Override
@@ -140,6 +139,7 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
             }
         });
         binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(System.currentTimeMillis(), "yyyy-MM-dd HH:mm"));
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper());
     }
 
     @Override
@@ -151,6 +151,7 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
                         Log.v("FH" , "call ");
                         if (parsedQuestionItems != null && parsedQuestionItems.size() > 0){
                             parsedQuestionItem = parsedQuestionItems.get(0);
+                            binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);
                             if (parsedQuestionItem.questionList.size() <= 0){
                                 ToastUtil.showToast(getApplicationContext() , "题干内容为空");
                                 return;
@@ -178,21 +179,12 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
 
     @Override
     protected void refreshView() {
-        if (parsedQuestionItem.questionList.size() <= 0){
+        if (parsedQuestionItem.questionContentList.size() <= 0){
             ToastUtil.showToast(getApplicationContext() , "题干内容为空");
             return;
         }
-        ParsedQuestionItem.Question question = parsedQuestionItem.questionList.get(0);
-        binding.questionTypeTextview.setText("题目类型 : " + question.questionType);
-        if (question instanceof ParsedQuestionItem.HtmlQuestion){
-            binding.questionContainer.setHtmlUrl(((ParsedQuestionItem.HtmlQuestion) question).htmlUrl);
-        }
-        else if (question instanceof ParsedQuestionItem.TextQuestion){
-            binding.questionContainer.setText(((ParsedQuestionItem.TextQuestion) question).text);
-        }
-        else if (question instanceof ParsedQuestionItem.ImgQuestion){
-            binding.questionContainer.setImgUrl(((ParsedQuestionItem.ImgQuestion) question).imgUrl);
-        }
+        binding.questionTypeTextview.setText("题目类型 : " + parsedQuestionItem.questionContentList.get(0).getExtraData());
+        binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , false);
 
         binding.answerContainer.getAdapter().notifyDataSetChanged();
     }
@@ -265,20 +257,20 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
 
     public class AnswerItemHolder extends RecyclerView.ViewHolder{
         ItemAnswerChooseGridviewBinding itemBinding;
-        ParsedQuestionItem.Answer answer;
+        Content_new answerContent;
         public AnswerItemHolder(View itemView) {
             super(itemView);
             itemBinding = DataBindingUtil.bind(itemView);
         }
 
-        public AnswerItemHolder setAnswer(ParsedQuestionItem.Answer answer) {
-            this.answer = answer;
-            if (answer instanceof ParsedQuestionItem.TextAnswer){
-                itemBinding.textview.setText(((ParsedQuestionItem.TextAnswer) answer).text);
+        public AnswerItemHolder setAnswerContent(Content_new answerContent) {
+            this.answerContent = answerContent;
+            if (answerContent.getType() == Content_new.Type.TEXT){
+                itemBinding.textview.setText(answerContent.getValue());
                 if (ListUtil.conditionalContains(checkedAnswerList, new ListUtil.ConditionJudger<String>() {
                     @Override
                     public boolean isMatchCondition(String nodeInList) {
-                        return nodeInList.equals(((ParsedQuestionItem.TextAnswer) answer).text);
+                        return nodeInList.equals(answerContent.getValue());
                     }
                 })){
                     itemBinding.checkbox.setSelected(true);
@@ -295,12 +287,12 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
         }
 
         public void reverseCheckbox(){
-            if (answer instanceof ParsedQuestionItem.TextAnswer){
+            if (answerContent.getType() == Content_new.Type.TEXT){
                 if (itemBinding.checkbox.isSelected()){
-                    checkedAnswerList.remove(((ParsedQuestionItem.TextAnswer) answer).text);
+                    checkedAnswerList.remove(answerContent.getValue());
                 }
                 else {
-                    checkedAnswerList.add(((ParsedQuestionItem.TextAnswer) answer).text);
+                    checkedAnswerList.add(answerContent.getValue());
                 }
                 binding.answerContainer.getAdapter().notifyDataSetChanged();
             }
