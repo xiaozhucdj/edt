@@ -3,6 +3,7 @@ package com.yougy.anwser;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ public class PageBtnBar extends LinearLayout {
 
     public PageBtnBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setGravity(Gravity.CENTER);
     }
 
     private Button makePageBtn() {
@@ -41,11 +43,16 @@ public class PageBtnBar extends LinearLayout {
                 if (mOnPageBtnClickListener != null){
                     mOnPageBtnClickListener.onPageBtnClick(v , index , (String)((Button) v).getText());
                 }
+                currentSelectPageIndex = index;
+                refreshPageBar();
             }
         });
         return button;
     }
 
+    public void setCurrentSelectPageIndex(int index){
+        currentSelectPageIndex = index;
+    }
     public void refreshPageBar() {
         if (mPageBarAdapter == null || mPageBarAdapter.getPageBtnCount() == 0){
             removeAllViews();

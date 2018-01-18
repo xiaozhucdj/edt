@@ -1,6 +1,7 @@
 package com.yougy.common.utils;
 
 import android.os.Environment;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,6 +70,20 @@ public class FileUtils {
         return true;
     }
 
+    public static File ifNotExistCreateFile(String filePath) throws IOException {
+        if (TextUtils.isEmpty(filePath)){
+            throw new IOException("filePath is empty");
+        }
+        String saveFileDir = filePath.substring(0 , filePath.lastIndexOf("/"));
+        if (TextUtils.isEmpty(saveFileDir) || !createDirs(saveFileDir)){
+            throw new IOException("create saveFileDir fail");
+        }
+        File file = new File(filePath);
+        if (!file.exists()){
+            file.createNewFile();
+        }
+        return file;
+    }
 
     /**
      * Delete file or folder.
