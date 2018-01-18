@@ -12,7 +12,8 @@ public class Content_new<E> implements Parcelable {
     public enum Type{
         HTML_URL ,
         IMG_URL ,
-        TEXT
+        TEXT ,
+        PDF
     }
     private double version;
     private Content_new.Type type;
@@ -41,6 +42,10 @@ public class Content_new<E> implements Parcelable {
 
     public E getExtraData(){
         return extraData;
+    }
+
+    public void setValue(String value){
+        this.content = value;
     }
 
     @Override

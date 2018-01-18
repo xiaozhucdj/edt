@@ -23,6 +23,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.plide.LoadController;
+import com.yougy.plide.LoadListener;
+import com.yougy.plide.Plide;
+import com.yougy.plide.PlideException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,8 +47,9 @@ public class ContentDisplayer extends RelativeLayout {
     //展示文字用的textview
     private TextView mainTextView;
     //展示图片用的imageView
-    private ImageView imageView;
-
+    private ImageView picImageView;
+    //展示pdf用的imageView
+    private ImageView pdfImageView;
     //次显示控件
     private TextView subTextview;
 
@@ -121,10 +126,15 @@ public class ContentDisplayer extends RelativeLayout {
         params.addRule(BELOW , subTextview.getId());
         addView(mainTextView, params);
 
-        imageView = new ImageView(getContext());
+        picImageView = new ImageView(getContext());
         params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(BELOW , subTextview.getId());
-        addView(imageView, params);
+        addView(picImageView , params);
+
+        pdfImageView = new ImageView(getContext());
+        params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.MATCH_PARENT);
+        params.addRule(BELOW , subTextview.getId());
+        addView(pdfImageView , params);
 
         clickOrHintlayer = new TextView(getContext());
         clickOrHintlayer.setTextSize(TypedValue.COMPLEX_UNIT_SP , 20);
@@ -153,7 +163,7 @@ public class ContentDisplayer extends RelativeLayout {
     }
     public void setHintText(String hintText){
         if (TextUtils.isEmpty(hintText)){
-            if (scrollEnable){
+            if (true){
                 clickOrHintlayer.setText("");
                 clickOrHintlayer.setVisibility(GONE);
             }
@@ -182,15 +192,17 @@ public class ContentDisplayer extends RelativeLayout {
     private void setHtmlUrl(String url){
         webview.setVisibility(VISIBLE);
         mainTextView.setVisibility(GONE);
-        imageView.setVisibility(GONE);
+        picImageView.setVisibility(GONE);
+        pdfImageView.setVisibility(GONE);
         webview.loadUrl(url);
         needRefresh = false;
-        setHintText("正在加载....");
+        setHintText("正在加载网页....");
     }
     private void setMainText(String text){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(VISIBLE);
-        imageView.setVisibility(GONE);
+        picImageView.setVisibility(GONE);
+        pdfImageView.setVisibility(GONE);
         mainTextView.setText(text);
         needRefresh = false;
         setHintText(null);
@@ -198,7 +210,8 @@ public class ContentDisplayer extends RelativeLayout {
     private void setImgUrl(String url){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);
-        imageView.setVisibility(VISIBLE);
+        picImageView.setVisibility(VISIBLE);
+        pdfImageView.setVisibility(GONE);
         Glide.with(getContext()).load(url).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -213,9 +226,75 @@ public class ContentDisplayer extends RelativeLayout {
             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                 return false;
             }
-        }).into(imageView);
+        }).into(picImageView);
         needRefresh = false;
         setHintText(null);
+    }
+
+    private void setPdf(Content_new content , int contentIndex , int subPageIndex , String typeKey){
+        webview.setVisibility(GONE);
+        mainTextView.setVisibility(GONE);
+        picImageView.setVisibility(GONE);
+        pdfImageView.setVisibility(VISIBLE);
+        try {
+            String url = content.getValue();
+            if (url.endsWith("##")){
+                url = url.substring(0 , url.lastIndexOf("**"));
+            }
+            Plide.with(getContext()).load(url).setLoadListener(new LoadListener() {
+                @Override
+                public void onLoadStatusChanged(LoadController.PDF_STATUS newStatus, float downloadProgress , int totalPage) {
+                    Log.v("FH" , "onLoadStatusChanged newStatus = " + newStatus + " downloadProgress = " + downloadProgress
+                            + " totalPage = " + totalPage
+                            + " threadId = " + Thread.currentThread().getId());
+                    if (newStatus == LoadController.PDF_STATUS.ERROR){
+                        setHintText("题目pdf加载失败"  + ",点击重新加载...");
+                        needRefresh = true;
+                    }
+                    else if (newStatus == LoadController.PDF_STATUS.LOADED){
+                        if (!content.getValue().endsWith("##")){
+                            content.setValue(content.getValue() + "**" + totalPage + "##");
+                            if (typeKey.equals(mContentAdaper.getCurrentShowTypeKey())){
+                                mContentAdaper.onPageInfoChanged(typeKey , mContentAdaper.getPageCount(typeKey) , mContentAdaper.getCurrentSelectPageIndex());
+                            }
+                        }
+                        else {
+                            String value = content.getValue();
+                            String contentPageStr = value.substring(value.lastIndexOf("**") + 2 , value.lastIndexOf("##"));
+                            try {
+                                if (Integer.parseInt(contentPageStr) != totalPage){
+                                    content.setValue(value.substring(0 , value.lastIndexOf("**") - 1) + "**" + totalPage + "##");
+                                    if (typeKey.equals(mContentAdaper.getCurrentShowTypeKey())) {
+                                        mContentAdaper.onPageInfoChanged(typeKey, mContentAdaper.getPageCount(typeKey), mContentAdaper.getCurrentSelectPageIndex());
+                                    }
+                                }
+                            }
+                            catch (NumberFormatException e){
+                                content.setValue(value.substring(0 , value.lastIndexOf("**") - 1));
+                                if (typeKey.equals(mContentAdaper.getCurrentShowTypeKey())) {
+                                    mContentAdaper.onPageInfoChanged(typeKey, mContentAdaper.getPageCount(typeKey), mContentAdaper.getCurrentSelectPageIndex());
+                                }
+                            }
+                        }
+                        setHintText(null);
+                    }
+                    else if (newStatus == LoadController.PDF_STATUS.DOWNLOADING){
+                        setHintText("正在下载pdf....");
+                    }
+                    else if (newStatus == LoadController.PDF_STATUS.LOADING){
+                        setHintText("正在加载pdf....");
+                    }
+                    else if (newStatus == LoadController.PDF_STATUS.EMPTY){
+                        setHintText("无pdf加载请求...");
+                    }
+                }
+            }).into(pdfImageView).toPage(subPageIndex);
+        } catch (PlideException e) {
+            e.printStackTrace();
+            setHintText("题目pdf加载失败:" + e.getMessage() + ",点击重新加载...");
+            needRefresh = true;
+        }
+        needRefresh = false;
     }
 
     private void setSubText(String text){
@@ -232,17 +311,20 @@ public class ContentDisplayer extends RelativeLayout {
         getLayoutParams().height = height;
     }
 
-
     public static class ContentAdaper {
         private ContentDisplayer mContentDisplayer;
 
         private HashMap<String , ArrayList<Content_new>> dataMap = new HashMap<String, ArrayList<Content_new>>();
 
         private String subText;
-        private String currentShowTypeKey;
-        private int currentShowPosition;
+        private String currentShowTypeKey = null;
+        private int currentShowContentIndex = -1;
+        private int currentShowSubPageIndex = -1;
         private boolean isSubTextShow;
 
+        public void onPageInfoChanged(String typeKey , int newPageCount , int selectPageIndex){
+
+        }
 
         public void setmContentDisplayer(ContentDisplayer mContentDisplayer) {
             this.mContentDisplayer = mContentDisplayer;
@@ -255,18 +337,38 @@ public class ContentDisplayer extends RelativeLayout {
                 dataMap.put(typeKey , dataList);
             }
             dataList.add(data);
+            if (typeKey.equals(getCurrentShowTypeKey())){
+                onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentSelectPageIndex());
+            }
         }
         public void deleteData(String typeKey , Content_new data){
             ArrayList<Content_new> dataList = dataMap.get(typeKey);
             if (dataList != null){
-                dataList.remove(data);
+                int toRemoveIndex = dataList.indexOf(data);
+                if (toRemoveIndex != -1){
+                    dataList.remove(data);
+                    if (typeKey.equals(getCurrentShowTypeKey())){
+                        if (toRemoveIndex == getCurrentShowContentIndex()){
+                            setCurrentShowInfo(typeKey , -1 , -1);
+                            toPage(typeKey , -1 , false);
+                        }
+                        else if (toRemoveIndex < getCurrentShowContentIndex()){
+                            setCurrentShowInfo(typeKey , getCurrentShowContentIndex() - 1 , getCurrentShowSubPageIndex());
+                        }
+                        onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentSelectPageIndex());
+                    }
+                }
             }
         }
         public void updateData(String typeKey , Content_new data , Comparator<Content_new> comparator){
             ArrayList<Content_new> dataList = dataMap.get(typeKey);
             if (dataList == null){
                 dataList = new ArrayList<Content_new>();
+                dataList.add(data);
                 dataMap.put(typeKey , dataList);
+                if (typeKey.equals(getCurrentShowTypeKey())){
+                    onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentShowContentIndex());
+                }
             }
             else {
                 for (int i = 0; i < dataList.size();) {
@@ -274,6 +376,13 @@ public class ContentDisplayer extends RelativeLayout {
                     if (comparator.compare(originData , data) == 0){
                         dataList.remove(i);
                         dataList.add(i , originData);
+                        if (typeKey.equals(getCurrentShowTypeKey())){
+                            if (i == getCurrentShowContentIndex()){
+                                setCurrentShowInfo(typeKey , -1 , -1);
+                                toPage(typeKey , -1 , false);
+                            }
+                            onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentSelectPageIndex());
+                        }
                         return;
                     }
                     else {
@@ -294,9 +403,19 @@ public class ContentDisplayer extends RelativeLayout {
 
         public void deleteDataList(String typeKey){
             dataMap.remove(typeKey);
+            if (typeKey.equals(getCurrentShowTypeKey())){
+                setCurrentShowInfo(null , -1 , -1);
+                toPage(null , -1 , false);
+                onPageInfoChanged(typeKey , 0 , -1);
+            }
         }
         public void updateDataList(String typeKey , ArrayList<Content_new> dataList){
             dataMap.put(typeKey , dataList);
+            if (typeKey.equals(getCurrentShowTypeKey())){
+                setCurrentShowInfo(typeKey , -1 , -1);
+                toPage(typeKey, -1 , false);
+                onPageInfoChanged(typeKey , getPageCount(typeKey) , -1);
+            }
         }
 
         public ArrayList<Content_new> getDataList(String typeKey){
@@ -323,49 +442,117 @@ public class ContentDisplayer extends RelativeLayout {
         }
 
         public void toPage(String typeKey , int pageIndex , boolean showSubText){
+            if (typeKey == null || pageIndex == -1){
+                mContentDisplayer.setMainText("没有内容");
+                return;
+            }
             if (mContentDisplayer != null){
+                isSubTextShow = showSubText;
+                mContentDisplayer.setSubText(showSubText ? subText : null);
+
                 ArrayList<Content_new> dataList = dataMap.get(typeKey);
                 if (dataList != null){
-                    Content_new data = dataList.get(pageIndex);
-                    if (data != null){
-                        currentShowTypeKey = typeKey;
-                        currentShowPosition = pageIndex;
-                        showContent(data);
+                    for (int i = 0 ; i < dataList.size() ; i ++) {
+                        Content_new content = dataList.get(i);
+                        if (content.getValue().endsWith("##")){
+                            String contentValue = content.getValue();
+                            String contentPageStr = contentValue.substring(contentValue.lastIndexOf("**") + 2 , contentValue.lastIndexOf("##"));
+                            int subPageIndex = 0;
+                            for (int j = 0; j < Integer.parseInt(contentPageStr) ; j++){
+                                pageIndex--;
+                                if (pageIndex == -1){
+                                    setCurrentShowInfo(typeKey , i , subPageIndex);
+                                    onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentSelectPageIndex());
+                                    showContent(typeKey , i , subPageIndex);
+                                    return;
+                                }
+                                else {
+                                    subPageIndex++;
+                                }
+                            }
+                        }
+                        else {
+                            pageIndex--;
+                            if (pageIndex == -1){
+                                setCurrentShowInfo(typeKey , i , 0);
+                                onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentSelectPageIndex());
+                                showContent(typeKey , i , 0);
+                                return;
+                            }
+                        }
                     }
-                }
-                isSubTextShow = showSubText;
-                if (showSubText && !TextUtils.isEmpty(subText)){
-                    mContentDisplayer.subTextview.setVisibility(VISIBLE);
-                    mContentDisplayer.subTextview.setText(subText);
-                }
-                else {
-                    mContentDisplayer.subTextview.setVisibility(GONE);
                 }
             }
         }
 
         public int getPageCount(String typeKey){
             ArrayList<Content_new> dataList = dataMap.get(typeKey);
+            int pageCount = 0;
             if (dataList != null){
-                return dataList.size();
+                for (Content_new content : dataList) {
+                    String contentValue = content.getValue();
+                    if (contentValue.endsWith("##")){
+                        String contentPageStr = contentValue.substring(contentValue.lastIndexOf("**") + 2 , contentValue.lastIndexOf("##"));
+                        try {
+                            pageCount = pageCount + Integer.parseInt(contentPageStr);
+                        }
+                        catch (NumberFormatException e){
+                            e.printStackTrace();
+                            pageCount = pageCount + 1;
+                        }
+                    }
+                    else {
+                        pageCount = pageCount + 1;
+                    }
+                }
             }
-            return 0;
+            return pageCount;
         }
 
-        public int getCurrentShowPageIndex(){
-            return currentShowPosition;
+        public void setCurrentShowInfo(String typeKey , int contentIndex , int subPageIndex){
+            this.currentShowTypeKey = typeKey;
+            this.currentShowContentIndex = contentIndex;
+            this.currentShowSubPageIndex = subPageIndex;
+        }
+
+        public int getCurrentShowContentIndex(){
+            return currentShowContentIndex;
         }
 
         public String getCurrentShowTypeKey(){
             return currentShowTypeKey;
         }
-
-
-        public void refresh(){
-            toPage(currentShowTypeKey , currentShowPosition , isSubTextShow);
+        public int getCurrentShowSubPageIndex(){
+            return currentShowSubPageIndex;
         }
 
-        private void showContent(Content_new content){
+        public int getCurrentSelectPageIndex(){
+            ArrayList<Content_new> dataList = dataMap.get(currentShowTypeKey);
+            if (dataList != null){
+                int pageIndex = 0;
+                for (int i = 0 ; i < currentShowContentIndex ; i++) {
+                    Content_new content = dataList.get(i);
+                    if (content.getValue().endsWith("##")) {
+                        String contentValue = content.getValue();
+                        String contentPageStr = contentValue.substring(contentValue.lastIndexOf("**") + 2, contentValue.lastIndexOf("##"));
+                        pageIndex = pageIndex + Integer.parseInt(contentPageStr);
+                    }
+                    else {
+                        pageIndex++;
+                    }
+                }
+                pageIndex = pageIndex + currentShowSubPageIndex;
+                return pageIndex;
+            }
+            return -1;
+        }
+
+        public void refresh(){
+            toPage(getCurrentShowTypeKey() , getCurrentSelectPageIndex() , isSubTextShow);
+        }
+
+        private void showContent(String typeKey , int contentIndex , int subPageIndex){
+            Content_new content = dataMap.get(typeKey).get(contentIndex);
             switch (content.getType()){
                 case HTML_URL:
                     mContentDisplayer.setHtmlUrl(content.getValue());
@@ -375,6 +562,9 @@ public class ContentDisplayer extends RelativeLayout {
                     break;
                 case TEXT:
                     mContentDisplayer.setMainText(content.getValue());
+                    break;
+                case PDF:
+                    mContentDisplayer.setPdf(content , contentIndex , subPageIndex, typeKey);
                     break;
             }
         }
