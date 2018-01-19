@@ -89,6 +89,11 @@ public class OriginQuestionItem {
                             //暂时只取第一个值,其他值忽略
                             break;
                         }
+                        else if (questionUrl.endsWith(".pdf")){
+                            questionContent = new Content_new<String>(Content_new.Type.PDF , 1 , questionUrl , questionTypeString);
+                            //暂时只取第一个值,其他值忽略
+                            break;
+                        }
                     }
                 }
                 else if (format.equals("TEXT")){
@@ -105,9 +110,6 @@ public class OriginQuestionItem {
             if (questionContent != null){
                 parsedQuestionItem.questionContentList.add(questionContent);
             }
-        }
-        if (parsedQuestionItem.questionList.size() == 0){
-            return null;
         }
         if (parsedQuestionItem.questionContentList.size() == 0){
             return null;
@@ -140,6 +142,11 @@ public class OriginQuestionItem {
                         else if (answerUrl.endsWith(".htm")){
                             answerContent = new Content_new<String>(Content_new.Type.HTML_URL , 1 , answerUrl , answerType);
                             answer = new ParsedQuestionItem.HtmlAnswer(answerType , answerUrl);
+                            //暂时只取第一个值,其他值忽略
+                            break;
+                        }
+                        else if (answerUrl.endsWith(".pdf")){
+                            answerContent = new Content_new<String>(Content_new.Type.PDF , 1 , answerUrl , answerType);
                             //暂时只取第一个值,其他值忽略
                             break;
                         }
@@ -206,6 +213,11 @@ public class OriginQuestionItem {
                             else if (analysisUrl.endsWith(".htm")){
                                 analysisContent = new Content_new(Content_new.Type.HTML_URL , 1 , analysisUrl , null);
                                 analysis = new ParsedQuestionItem.HtmlAnalysis(analysisUrl);
+                                //暂时只取第一个值,其他值忽略
+                                break;
+                            }
+                            else if (analysisUrl.endsWith(".pdf")){
+                                analysisContent = new Content_new(Content_new.Type.PDF , 1 , analysisUrl , null);
                                 //暂时只取第一个值,其他值忽略
                                 break;
                             }
