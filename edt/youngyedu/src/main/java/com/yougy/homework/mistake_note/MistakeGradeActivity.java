@@ -3,6 +3,7 @@ package com.yougy.homework.mistake_note;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -56,7 +57,13 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 refreshViewSafe();
             }
         });
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper());
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
+            @Override
+            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
+                Log.v("FH" , "===================onPageInfoChanged");
+                refreshPageChangeBtns();
+            }
+        });
     }
 
     @Override
@@ -71,7 +78,6 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
         bookTitle = getIntent().getStringExtra("bookTitle");
         questionType = (String) questionItem.questionContentList.get(0).getExtraData();
-
     }
 
     @Override
@@ -87,46 +93,19 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
         if (questionType.equals("选择")){
             binding.contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(questionItem.answerContentList));
         }
+        if (!TextUtils.isEmpty(bookTitle)){
+            binding.subTitleTv.setText(" - " + bookTitle);
+        }
         refreshViewSafe();
     }
 
     @Override
     protected void refreshView() {
-        if (!TextUtils.isEmpty(bookTitle)){
-            binding.subTitleTv.setText(" - " + bookTitle);
-        }
-        if (binding.writedQuestionBtn.isSelected()){
-            if (currentShowWriteImgPageIndex == 0){
-                binding.lastPageBtn.setClickable(false);
-            }
-            else {
-                binding.lastPageBtn.setClickable(true);
-            }
-            if (currentShowWriteImgPageIndex + 1 >= writeContentList.size()){
-                binding.nextPageBtn.setClickable(false);
-            }
-            else {
-                binding.nextPageBtn.setClickable(true);
-            }
+        if (binding.writedQuestionBtn.isSelected()) {
             binding.contentDisplayer.getmContentAdaper().toPage("question" , currentShowWriteImgPageIndex , false);
         }
-        else if (binding.answerAnalysisBtn.isSelected()){
-            if (questionType.equals("选择")){
-                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
-            }
-            else {
-                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , false);
-            }
-            if (currentShowAnalysisPageIndex == 0) {
-                binding.lastPageBtn.setClickable(false);
-            } else {
-                binding.lastPageBtn.setClickable(true);
-            }
-            if ((currentShowAnalysisPageIndex + 1) == questionItem.analysisList.size()) {
-                binding.nextPageBtn.setClickable(false);
-            } else {
-                binding.nextPageBtn.setClickable(true);
-            }
+        else if (binding.answerAnalysisBtn.isSelected()) {
+            binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
         }
     }
 
@@ -137,23 +116,60 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
 
     //上一页
     public void lastPage(View view){
-        if (binding.writedQuestionBtn.isSelected()) {
-            currentShowWriteImgPageIndex--;
+        int lastPageIndex = binding.contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex() - 1;
+        if (lastPageIndex >= 0){
+            if (binding.writedQuestionBtn.isSelected()) {
+                currentShowWriteImgPageIndex= lastPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("question" , lastPageIndex , false);
+            }
+            else if (binding.answerAnalysisBtn.isSelected()) {
+                currentShowAnalysisPageIndex = lastPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , lastPageIndex, true);
+            }
         }
-        else if (binding.answerAnalysisBtn.isSelected()) {
-            currentShowAnalysisPageIndex--;
-        }
-        refreshViewSafe();
     }
     //下一页
     public void nextPage(View view){
+        int nextPageIndex = binding.contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex() + 1;
         if (binding.writedQuestionBtn.isSelected()) {
-            currentShowWriteImgPageIndex++;
+            if (nextPageIndex < binding.contentDisplayer.getmContentAdaper().getPageCount("question")){
+                currentShowWriteImgPageIndex = nextPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("question" , nextPageIndex, false);
+            }
         }
         else if (binding.answerAnalysisBtn.isSelected()) {
-            currentShowAnalysisPageIndex++;
+            if (nextPageIndex < binding.contentDisplayer.getmContentAdaper().getPageCount("analysis")){
+                currentShowAnalysisPageIndex = nextPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , nextPageIndex , true);
+            }
         }
-        refreshViewSafe();
+    }
+
+    public void refreshPageChangeBtns(){
+        int currentSelectPageIndex = binding.contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex();
+        if (currentSelectPageIndex == 0){
+            binding.lastPageBtn.setClickable(false);
+        }
+        else {
+            binding.lastPageBtn.setClickable(true);
+        }
+
+        if (binding.writedQuestionBtn.isSelected()){
+            if ((currentSelectPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("question")){
+                binding.nextPageBtn.setClickable(false);
+            }
+            else {
+                binding.nextPageBtn.setClickable(true);
+            }
+        }
+        else if (binding.answerAnalysisBtn.isSelected()){
+            if ((currentSelectPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("analysis")){
+                binding.nextPageBtn.setClickable(false);
+            }
+            else {
+                binding.nextPageBtn.setClickable(true);
+            }
+        }
     }
     //正确
     public void onRightBtnClick(View view){

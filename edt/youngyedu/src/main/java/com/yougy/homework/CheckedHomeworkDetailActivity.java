@@ -1,6 +1,7 @@
 package com.yougy.homework;
 
 import android.databinding.DataBindingUtil;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -33,9 +34,10 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
     QuestionReplySummary currentShow;
     ArrayList<QuestionReplySummary> allReplyList = new ArrayList<QuestionReplySummary>();
     QuestionReplyDetail data;
+    int examId;
+
     int currentShowQuestionPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
-    int examId;
 
     @Override
     protected void setContentView() {
@@ -75,8 +77,12 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             }
         });
         binding.questionBodyBtn.setSelected(true);
-        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper();
-        binding.questionDisplayer.setmContentAdaper(contentAdaper);
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
+            @Override
+            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
+                refreshPageChangeBtns();
+            }
+        });
     }
 
     @Override
@@ -90,7 +96,52 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                             return;
                         }
                         data = questionReplyDetails.get(0);
-
+                        String questionType = (String) data.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+                        binding.contentDisplayer.getmContentAdaper()
+                                .updateDataList("reply" , ListUtil.conditionalSubList(data.getParsedReplyContentList(), new ListUtil.ConditionJudger<Content_new>() {
+                                    @Override
+                                    public boolean isMatchCondition(Content_new nodeInList) {
+                                        return nodeInList.getType() != Content_new.Type.TEXT;
+                                    }
+                                }));
+                        binding.contentDisplayer.getmContentAdaper().updateDataList("analysis"
+                                , data.getParsedQuestionItem().analysisContentList);
+                        if (questionType.equals("选择")){
+                            binding.contentDisplayer.getmContentAdaper()
+                                    .setSubText("答案 : " + RxResultHelper.parseAnswerList(data.getParsedQuestionItem().answerContentList));
+                        }
+                        int questionIndex = ListUtil.conditionalIndexOf(allReplyList, new ListUtil.ConditionJudger<QuestionReplySummary>() {
+                            @Override
+                            public boolean isMatchCondition(QuestionReplySummary nodeInList) {
+                                return nodeInList.getReplyId() == currentShow.getReplyId();
+                            }
+                        });
+                        binding.questionNumTv.setText("第" + (questionIndex + 1) + "题");
+                        if (questionIndex == 0){
+                            binding.lastQuestionBtn.setClickable(false);
+                        }
+                        else {
+                            binding.lastQuestionBtn.setClickable(true);
+                        }
+                        if (questionIndex + 1 == allReplyList.size()){
+                            binding.nextQuestionBtn.setClickable(false);
+                        }
+                        else {
+                            binding.nextQuestionBtn.setClickable(true);
+                        }
+                        switch (currentShow.getReplyScore()){
+                            case 0:
+                                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_cuowu);
+                                break;
+                            case 100:
+                                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_zhengque);
+                                break;
+                            default:
+                                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_bandui);
+                                break;
+                        }
+                        currentShowQuestionPageIndex = 0;
+                        currentShowAnalysisPageIndex = 0;
                         refreshViewSafe();
                     }
                 }, new Action1<Throwable>() {
@@ -103,59 +154,25 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
 
     @Override
     protected void refreshView() {
-        String questionType = (String) data.getParsedQuestionItem().questionContentList.get(0).getExtraData();
-        binding.questionDisplayer.getmContentAdaper()
-                .updateDataList("reply" , ListUtil.conditionalSubList(data.getParsedReplyContentList(), new ListUtil.ConditionJudger<Content_new>() {
-            @Override
-            public boolean isMatchCondition(Content_new nodeInList) {
-                return nodeInList.getType() != Content_new.Type.TEXT;
-            }
-        }));
-        binding.questionDisplayer.getmContentAdaper().updateDataList("analysis"
-                , data.getParsedQuestionItem().analysisContentList);
-        if (questionType.equals("选择")){
-            binding.questionDisplayer.getmContentAdaper()
-                    .setSubText("答案 : " + RxResultHelper.parseAnswerList(data.getParsedQuestionItem().answerContentList));
+        if (binding.questionBodyBtn.isSelected()) {
+            binding.contentDisplayer.getmContentAdaper().toPage("reply" , currentShowQuestionPageIndex , false);
         }
-        int questionIndex = ListUtil.conditionalIndexOf(allReplyList, new ListUtil.ConditionJudger<QuestionReplySummary>() {
-            @Override
-            public boolean isMatchCondition(QuestionReplySummary nodeInList) {
-                return nodeInList.getReplyId() == currentShow.getReplyId();
-            }
-        });
-        binding.questionNumTv.setText("第" + (questionIndex + 1) + "题");
-        if (questionIndex == 0){
-            binding.lastQuestionBtn.setClickable(false);
+        else if (binding.answerAnalysisBtn.isSelected()) {
+            binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
+        }
+    }
+
+    public void refreshPageChangeBtns(){
+        int currentSelectPageIndex = binding.contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex();
+        if (currentSelectPageIndex == 0){
+            binding.lastPageBtn.setClickable(false);
         }
         else {
-            binding.lastQuestionBtn.setClickable(true);
+            binding.lastPageBtn.setClickable(true);
         }
-        if (questionIndex + 1 == allReplyList.size()){
-            binding.nextQuestionBtn.setClickable(false);
-        }
-        else {
-            binding.nextQuestionBtn.setClickable(true);
-        }
-        switch (currentShow.getReplyScore()){
-            case 0:
-                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_cuowu);
-                break;
-            case 100:
-                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_zhengque);
-                break;
-            default:
-                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_bandui);
-                break;
-        }
+
         if (binding.questionBodyBtn.isSelected()){
-            binding.questionDisplayer.getmContentAdaper().toPage("reply" , currentShowQuestionPageIndex , false);
-            if (currentShowQuestionPageIndex == 0){
-                binding.lastPageBtn.setClickable(false);
-            }
-            else {
-                binding.lastPageBtn.setClickable(true);
-            }
-            if ((currentShowQuestionPageIndex +1) == binding.questionDisplayer.getmContentAdaper().getDataList("reply").size()){
+            if ((currentSelectPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("reply")){
                 binding.nextPageBtn.setClickable(false);
             }
             else {
@@ -163,19 +180,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             }
         }
         else if (binding.answerAnalysisBtn.isSelected()){
-            if (questionType.equals("选择")){
-                binding.questionDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
-            }
-            else {
-                binding.questionDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , false);
-            }
-            if (currentShowAnalysisPageIndex == 0){
-                binding.lastPageBtn.setClickable(false);
-            }
-            else {
-                binding.lastPageBtn.setClickable(true);
-            }
-            if ((currentShowAnalysisPageIndex +1) == binding.questionDisplayer.getmContentAdaper().getDataList("analysis").size()){
+            if ((currentSelectPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("analysis")){
                 binding.nextPageBtn.setClickable(false);
             }
             else {
@@ -189,22 +194,32 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
     }
 
     public void lastPage(View view){
-        if (binding.questionBodyBtn.isSelected()) {
-            currentShowQuestionPageIndex--;
+        int lastPageIndex = binding.contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex() - 1;
+        if (lastPageIndex >= 0){
+            if (binding.questionBodyBtn.isSelected()) {
+                currentShowQuestionPageIndex = lastPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("reply" , lastPageIndex , false);
+            }
+            else if (binding.answerAnalysisBtn.isSelected()) {
+                currentShowAnalysisPageIndex = lastPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , lastPageIndex, true);
+            }
         }
-        else if (binding.answerAnalysisBtn.isSelected()) {
-            currentShowAnalysisPageIndex--;
-        }
-        refreshViewSafe();
     }
     public void nextPage(View view){
+        int nextPageIndex = binding.contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex() + 1;
         if (binding.questionBodyBtn.isSelected()) {
-            currentShowQuestionPageIndex++;
+            if (nextPageIndex < binding.contentDisplayer.getmContentAdaper().getPageCount("reply")){
+                currentShowQuestionPageIndex = nextPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("reply" , nextPageIndex, false);
+            }
         }
         else if (binding.answerAnalysisBtn.isSelected()) {
-            currentShowAnalysisPageIndex++;
+            if (nextPageIndex < binding.contentDisplayer.getmContentAdaper().getPageCount("analysis")){
+                currentShowAnalysisPageIndex = nextPageIndex;
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , nextPageIndex , true);
+            }
         }
-        refreshViewSafe();
     }
     public void lastQuestion(View view){
         int questionIndex = ListUtil.conditionalIndexOf(allReplyList, new ListUtil.ConditionJudger<QuestionReplySummary>() {
@@ -214,8 +229,6 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             }
         });
         currentShow = allReplyList.get(questionIndex - 1);
-        currentShowQuestionPageIndex = 0;
-        currentShowAnalysisPageIndex = 0;
         binding.questionBodyBtn.setSelected(true);
         binding.answerAnalysisBtn.setSelected(false);
         loadData();
@@ -228,8 +241,6 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             }
         });
         currentShow = allReplyList.get(questionIndex + 1);
-        currentShowQuestionPageIndex = 0;
-        currentShowAnalysisPageIndex = 0;
         binding.questionBodyBtn.setSelected(true);
         binding.answerAnalysisBtn.setSelected(false);
         loadData();
