@@ -228,6 +228,14 @@ public class QuestionReplyDetail {
                                         , null)
                         );
                     }
+                    else if (url.endsWith(".pdf")){
+                        parsedReplyContentList.add(
+                                new Content_new(Content_new.Type.PDF
+                                        , ((Double) linkedTreeMap.get("version"))
+                                        , url
+                                        , null)
+                        );
+                    }
                 }
             }
             else if (format.equals("TEXT")){
