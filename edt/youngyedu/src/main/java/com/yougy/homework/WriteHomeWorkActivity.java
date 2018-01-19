@@ -271,7 +271,38 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         });
 
-        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper();
+        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper() {
+            @Override
+            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
+                super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
+
+                //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
+                if (newPageCount > questionPageSize) {
+                    //需要添加的页码数目。
+                    int newAddPageNum = newPageCount - questionPageSize;
+
+                    for (int i = 0; i < newAddPageNum; i++) {
+                        bytesList.add(null);
+                    }
+                    for (int i = 0; i < newAddPageNum; i++) {
+                        cgBytes.add(null);
+                    }
+                    for (int i = 0; i < newAddPageNum; i++) {
+                        pathList.add(null);
+                    }
+
+                    //更新最新的页面数据
+                    questionPageSize = newPageCount;
+                    questionPageNumAdapter.notifyDataSetChanged();
+                    if (selectPageIndex == 0) {
+                        isFirstComeInQuestion = true;
+                    }
+                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
+
+                }
+
+            }
+        };
         contentDisplayer.setmContentAdaper(contentAdaper);
     }
 
@@ -371,7 +402,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 parsedQuestionItem = parsedQuestionItemList.get(0);
                 questionList = parsedQuestionItem.questionContentList;
-                contentDisplayer.getmContentAdaper().updateDataList("question" , (ArrayList<Content_new>) questionList);
+                contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
 
 
                 //判断是否之前有笔记
@@ -478,11 +509,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 //将本页设置为选中页
                 saveQuestionPage = position;
 
-
-                ParsedQuestionItem.Question question = null;
-                if (position < questionList.size()) {
+                if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
                     //切换当前题目的分页
-                    contentDisplayer.getmContentAdaper().toPage("question" , position , false);
+                    contentDisplayer.getmContentAdaper().toPage("question", position, false);
                     contentDisplayer.setVisibility(View.VISIBLE);
                 } else {
                     //加白纸
