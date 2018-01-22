@@ -100,13 +100,17 @@
             android:paddingLeft="30px"
             android:paddingRight="30px"
             />
-
+        <com.yougy.anwser.PageBtnBar
+            android:id="@+id/btn_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20px"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="2px"
             android:background="@color/black"/>
         <TextView
-            android:id="@+id/tv_start_answer"
+            android:id="@+id/close_btn"
             android:layout_width="match_parent"
             android:layout_height="70px"
             android:layout_gravity="center"

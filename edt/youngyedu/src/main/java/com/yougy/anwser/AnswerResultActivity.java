@@ -20,6 +20,8 @@ public class AnswerResultActivity extends BaseActivity{
     ActivityAnswerResultBinding binding;
     ParsedQuestionItem parsedQuestionItem;
     String questionType;
+    int currentShowQuestionPageIndex = 0;
+    int currentShowAnalysisPageIndex = 0;
 
     @Override
     protected void setContentView() {
@@ -47,7 +49,7 @@ public class AnswerResultActivity extends BaseActivity{
             public void onClick(View v) {
                 binding.questionBodyBtn.setSelected(true);
                 binding.answerAnalysisBtn.setSelected(false);
-                setQuestionBodyToContent();
+                refreshViewSafe();
             }
         });
         binding.answerAnalysisBtn.setOnClickListener(new View.OnClickListener() {
@@ -55,24 +57,46 @@ public class AnswerResultActivity extends BaseActivity{
             public void onClick(View v) {
                 binding.questionBodyBtn.setSelected(false);
                 binding.answerAnalysisBtn.setSelected(true);
-                setAnalysisToContent();
+                refreshViewSafe();
             }
         });
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper());
-    }
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
+            @Override
+            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
+                binding.btnBar.setCurrentSelectPageIndex(selectPageIndex);
+                binding.btnBar.refreshPageBar();
+            }
+        });
+        binding.btnBar.setPageBarAdapter(new PageBtnBar.PageBarAdapter() {
+            @Override
+            public int getPageBtnCount() {
+                if (binding.questionBodyBtn.isSelected()){
+                    return binding.contentDisplayer.getmContentAdaper().getPageCount("question");
+                }
+                else if (binding.answerAnalysisBtn.isSelected()){
+                    return binding.contentDisplayer.getmContentAdaper().getPageCount("analysis");
+                }
+                return 0;
+            }
 
-    public void setQuestionBodyToContent(){
-        binding.questionTypeTextview.setText("题目类型 : " + questionType);
-        binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , false);
-    }
-    public void setAnalysisToContent(){
-        binding.questionTypeTextview.setText("解析");
-        if (questionType.equals("选择")){
-            binding.contentDisplayer.getmContentAdaper().toPage("analysis" , 0 , true);
-        }
-        else {
-            binding.contentDisplayer.getmContentAdaper().toPage("analysis" , 0 , false);
-        }
+            @Override
+            public String getPageText(int index) {
+                return String.valueOf(index + 1);
+            }
+        });
+        binding.btnBar.setOnPageBtnClickListener(new PageBtnBar.OnPageBtnClickListener() {
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+                if (binding.questionBodyBtn.isSelected()){
+                    currentShowQuestionPageIndex = btnIndex;
+                    refreshView();
+                }
+                else if (binding.answerAnalysisBtn.isSelected()){
+                    currentShowAnalysisPageIndex = btnIndex;
+                    refreshView();
+                }
+            }
+        });
     }
 
     @Override
@@ -80,14 +104,26 @@ public class AnswerResultActivity extends BaseActivity{
         binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);
         binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
         if (questionType.equals("选择")){
-            binding.contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(parsedQuestionItem.answerContentList));
+            binding.contentDisplayer.getmContentAdaper().setSubText("答案 : " + RxResultHelper.parseAnswerList(parsedQuestionItem.answerContentList));
         }
         binding.questionBodyBtn.performClick();
     }
 
     @Override
     protected void refreshView() {
-
+        if (binding.questionBodyBtn.isSelected()){
+            binding.questionTypeTextview.setText("题目类型 : " + questionType);
+            binding.contentDisplayer.getmContentAdaper().toPage("question" , currentShowQuestionPageIndex , false);
+        }
+        else if (binding.answerAnalysisBtn.isSelected()){
+            binding.questionTypeTextview.setText("解析");
+            if (questionType.equals("选择")){
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
+            }
+            else {
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , false);
+            }
+        }
     }
     public void back(View view){
         finish();

@@ -146,7 +146,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
-                        Log.v("FH", "call ");
                         if (parsedQuestionItems != null && parsedQuestionItems.size() > 0) {
                             parsedQuestionItem = parsedQuestionItems.get(0);
                             binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);

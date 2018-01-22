@@ -74,6 +74,8 @@ public class OriginQuestionItem {
                     if (questionContentTreeMap.get("remote") != null
                             && !TextUtils.isEmpty((String)questionContentTreeMap.get("remote"))){
                         String questionUrl = "http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + questionContentTreeMap.get("remote");
+                        //TODO 测试pdf用,删掉
+//                        questionUrl = "http://lovewanwan.top/111.pdf";
                         if (questionUrl.endsWith(".gif")
                                 || questionUrl.endsWith(".jpg")
                                 || questionUrl.endsWith(".png")
@@ -130,6 +132,8 @@ public class OriginQuestionItem {
                     if (answerContentTreeMap.get("remote") != null
                             && !TextUtils.isEmpty((String)answerContentTreeMap.get("remote"))){
                         String answerUrl = "http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + answerContentTreeMap.get("remote");
+                        //TODO 测试pdf用,删掉
+//                        answerUrl= "http://lovewanwan.top/222.pdf";
                         if (answerUrl.endsWith(".gif")
                                 || answerUrl.endsWith(".jpg")
                                 || answerUrl.endsWith(".png")
@@ -201,6 +205,8 @@ public class OriginQuestionItem {
                         if (notationContentTreeMap.get("remote") != null
                                 && !TextUtils.isEmpty((String)notationContentTreeMap.get("remote"))){
                             String analysisUrl = "http://" + bucket + AliyunUtil.ANSWER_PIC_HOST  + notationContentTreeMap.get("remote");
+                            //TODO 测试pdf用,删掉
+//                            analysisUrl= "http://lovewanwan.top/222.pdf";
                             if (analysisUrl.endsWith(".gif")
                                     || analysisUrl.endsWith(".jpg")
                                     || analysisUrl.endsWith(".png")
