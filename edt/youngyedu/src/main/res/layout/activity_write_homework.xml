@@ -243,6 +243,19 @@
 
             </LinearLayout>-->
 
+
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rcv_all_question_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="330dp"
+                android:paddingRight="330dp"></android.support.v7.widget.RecyclerView>
+
+
             <TextView
                 android:id="@+id/tv_caogao_text"
                 android:layout_width="wrap_content"
@@ -257,17 +270,8 @@
                 android:textSize="20sp" />
 
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rcv_all_question_page"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:paddingLeft="330dp"
-                android:paddingRight="330dp"></android.support.v7.widget.RecyclerView>
-
-
             <TextView
+
                 android:id="@+id/tv_add_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
