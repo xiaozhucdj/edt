@@ -101,7 +101,7 @@
             android:paddingRight="30px"
             />
         <com.yougy.anwser.PageBtnBar
-            android:id="@+id/btn_bar"
+            android:id="@+id/page_btn_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20px"/>

@@ -63,11 +63,11 @@ public class AnswerResultActivity extends BaseActivity{
         binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
-                binding.btnBar.setCurrentSelectPageIndex(selectPageIndex);
-                binding.btnBar.refreshPageBar();
+                binding.pageBtnBar.setCurrentSelectPageIndex(selectPageIndex);
+                binding.pageBtnBar.refreshPageBar();
             }
         });
-        binding.btnBar.setPageBarAdapter(new PageBtnBar.PageBarAdapter() {
+        binding.pageBtnBar.setPageBarAdapter(new PageBtnBar.PageBarAdapter() {
             @Override
             public int getPageBtnCount() {
                 if (binding.questionBodyBtn.isSelected()){
@@ -84,7 +84,7 @@ public class AnswerResultActivity extends BaseActivity{
                 return String.valueOf(index + 1);
             }
         });
-        binding.btnBar.setOnPageBtnClickListener(new PageBtnBar.OnPageBtnClickListener() {
+        binding.pageBtnBar.setOnPageBtnClickListener(new PageBtnBar.OnPageBtnClickListener() {
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
                 if (binding.questionBodyBtn.isSelected()){
