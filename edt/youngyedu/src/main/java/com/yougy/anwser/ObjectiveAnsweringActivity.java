@@ -152,11 +152,11 @@ public class ObjectiveAnsweringActivity extends AnswerBaseActivity{
                         if (parsedQuestionItems != null && parsedQuestionItems.size() > 0){
                             parsedQuestionItem = parsedQuestionItems.get(0);
                             binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);
-                            if (parsedQuestionItem.questionList.size() <= 0){
+                            if (parsedQuestionItem.questionContentList.size() <= 0){
                                 ToastUtil.showToast(getApplicationContext() , "题干内容为空");
                                 return;
                             }
-                            else if (!parsedQuestionItem.questionList.get(0).questionType.equals("选择")){
+                            else if (!parsedQuestionItem.questionContentList.get(0).getExtraData().equals("选择")){
                                 ToastUtil.showToast(getApplicationContext() , "题目类型错误,题目不为选择题");
                                 return;
                             }
