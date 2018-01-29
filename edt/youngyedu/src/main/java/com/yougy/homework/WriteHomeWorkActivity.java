@@ -300,7 +300,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     if (selectPageIndex == 0) {
                         isFirstComeInQuestion = true;
                     }
-                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
 
                 }
             }
@@ -1364,10 +1363,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
             holder.mTvPageId.setText((position + 1) + "");
 
 
-            if(position == chooesePoint){
+            if (position == chooesePoint) {
                 holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
                 holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
-            }else{
+            } else {
                 holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
                 holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
             }
