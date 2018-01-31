@@ -168,7 +168,7 @@ public class NoteBookView extends View {
             LogUtils.e(getClass().getName(), "PL107");
             matrix.postRotate(90);
             matrix.postTranslate(UIUtils.getScreenHeight(), 0);
-        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96")) {
+        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")){
             LogUtils.e(getClass().getName(), "N96");
             matrix.postRotate(270);
             matrix.postTranslate(0, UIUtils.getScreenWidth());
@@ -412,13 +412,18 @@ public class NoteBookView extends View {
         if (!isEnabled() || event.getPointerCount() > 1) {
             return false;
         }
+        LogUtils.i("yuanye .......event.getToolType(0)......."+event.getToolType(0));
+        LogUtils.i("yuanye .......flagOfErase)......."+flagOfErase);
 
         if (!flagOfErase) {
-            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_UNKNOWN) {
+            LogUtils.i("yuanye ..............11111");
+            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
+                LogUtils.i("yuanye ..............2222222222");
                 setPen();
             }
         }
         if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
+            LogUtils.i("yuanye ..............33333333");
             useEraser();
         }
 

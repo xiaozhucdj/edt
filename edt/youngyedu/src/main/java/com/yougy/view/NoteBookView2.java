@@ -427,7 +427,7 @@ public class NoteBookView2 extends View {
         }
 
         if (!flagOfErase) {
-            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_UNKNOWN) {
+            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
                 setPen();
             }
         }
