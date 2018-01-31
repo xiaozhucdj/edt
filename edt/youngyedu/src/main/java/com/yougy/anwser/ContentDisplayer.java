@@ -163,7 +163,7 @@ public class ContentDisplayer extends RelativeLayout {
     }
     public void setHintText(String hintText){
         if (TextUtils.isEmpty(hintText)){
-            if (true){
+            if (scrollEnable){
                 clickOrHintlayer.setText("");
                 clickOrHintlayer.setVisibility(GONE);
             }

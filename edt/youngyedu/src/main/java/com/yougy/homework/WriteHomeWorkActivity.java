@@ -170,6 +170,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
     //作业中某一题所有结果（图片，文本），统计上传数据到集合中，方便将该信息提交到服务器
     ArrayList<HomeWorkResultbean> homeWorkResultbeanList = new ArrayList<>();
 
+    //某一题的分页中选中页码用来设置选择背景色。
+    private int chooesePoint = 0;
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_homework);
@@ -297,10 +300,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     if (selectPageIndex == 0) {
                         isFirstComeInQuestion = true;
                     }
-                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
 
                 }
-
             }
         };
         contentDisplayer.setmContentAdaper(contentAdaper);
@@ -372,6 +373,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (position == showHomeWorkPosition) {
                             return;
                         }
+                        chooesePoint = 0;
                         saveHomeWorkPage = showHomeWorkPosition;
                         onClick(findViewById(R.id.ll_chooese_homework));
 
@@ -505,6 +507,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
 
                 mNbvAnswerBoard.clearAll();
+
+
+                chooesePoint = position;
+
 
                 //将本页设置为选中页
                 saveQuestionPage = position;
@@ -728,6 +734,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (showHomeWorkPosition > 0) {
                     showHomeWorkPosition--;
                     COMEIN_HOMEWORK_PAGE_MODE = 1;
+                    chooesePoint = 0;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
                 } else {
                     ToastUtil.showToast(this, "已经是第一题了");
@@ -737,6 +744,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (showHomeWorkPosition < homeWorkPageSize - 1) {
                     showHomeWorkPosition++;
                     COMEIN_HOMEWORK_PAGE_MODE = 2;
+                    chooesePoint = 0;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
                 } else {
                     ToastUtil.showToast(this, "已经是最后一题了");
@@ -1354,8 +1362,18 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
             holder.mTvPageId.setText((position + 1) + "");
 
-            int tag = 2;
-            tag = position % 2;
+
+            if (position == chooesePoint) {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+            }
+
+
+
+            /*int tag = 0;
 
             if (holder.mTvPageId.getTag() != null) {
                 tag = (int) holder.mTvPageId.getTag();
@@ -1363,14 +1381,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
             switch (tag) {
                 default:
                 case 0://错误
-                    holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
-                    holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+
                     break;
                 case 1://选中
-                    holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
-                    holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+
                     break;
-            }
+            }*/
 
             holder.mTvPageId.setOnClickListener(new View.OnClickListener() {
                 @Override
