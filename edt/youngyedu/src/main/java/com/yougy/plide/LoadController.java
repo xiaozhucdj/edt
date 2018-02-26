@@ -2,10 +2,12 @@ package com.yougy.plide;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
@@ -14,6 +16,10 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.plide.pipe.Pipe;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 import rx.Observable;
@@ -263,6 +269,7 @@ public class LoadController implements ReaderContract.ReaderView{
     @Override
     public void updatePage(int page, Bitmap bitmap) {
         lv("updatePage page=" + page + "  bitmap=" + bitmap + " threadId : " + Thread.currentThread().getId());
+//        save(bitmap);
         mImgView.setImageBitmap(bitmap);
         toPagePipe.cancleCurrentBall();
         synchronized (currentStatusLock){
@@ -272,6 +279,29 @@ public class LoadController implements ReaderContract.ReaderView{
         callLoadListener(100);
     }
 
+//    public void save(Bitmap btImage){
+//        FileOutputStream out = null;
+//        try {
+//            String path = Environment.getExternalStorageDirectory().getPath() + "/" + System.currentTimeMillis() + ".jpg";
+//            lv("___________保存的__sd___下_______________________" + path);
+//            File file = FileUtils.ifNotExistCreateFile(path);
+//            out = new FileOutputStream(file);
+//            btImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            if (out != null){
+//                out.flush();
+//                out.close();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Toast.makeText(mContext ,"保存已经至"+Environment.getExternalStorageDirectory()+"下", Toast.LENGTH_SHORT).show();
+//    }
     @Override
     public View getContentView() {
         lv("getContentView");

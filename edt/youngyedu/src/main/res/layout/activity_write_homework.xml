@@ -165,7 +165,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/rcv_all_homework_page"
+            android:layout_below="@id/rcv_all_homework_page"
             android:background="@color/black" />
 
 
@@ -275,7 +275,7 @@
                 android:id="@+id/tv_add_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@+id/rcv_all_question_page"
+                android:layout_alignRight="@id/rcv_all_question_page"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="270dp"
                 android:background="@drawable/img_press_jiaye"
