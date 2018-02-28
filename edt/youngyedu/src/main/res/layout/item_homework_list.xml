@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+
+    </data>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_rectangle_black_border"
+        android:layout_marginTop="26px"
+        android:layout_marginLeft="20px"
+        android:layout_marginRight="20px"
+        >
+        <TextView
+            android:id="@+id/status_tv"
+            android:layout_width="36px"
+            android:layout_height="82px"
+            android:background="@drawable/img_homework_status_bg_blue"
+            android:textSize="16px"
+            android:textColor="@color/white"
+            android:text="作\n业\n中"
+            android:paddingTop="7px"
+            android:paddingLeft="8px"
+            />
+        <TextView
+            android:id="@+id/homework_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9月15号化学英语作业"
+            android:textSize="24px"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@id/status_tv"
+            android:layout_marginTop="25px"
+            android:layout_marginLeft="27px"
+            />
+        <TextView
+            android:id="@+id/clock_icon_tv"
+            android:layout_width="20px"
+            android:layout_height="20px"
+            android:background="@drawable/icon_clock"
+            android:layout_alignLeft="@id/homework_name_tv"
+            android:layout_below="@id/homework_name_tv"
+            android:layout_marginTop="27px"
+            />
+        <TextView
+            android:id="@+id/time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20px"
+            android:textColor="@color/black"
+            android:text="时间 : 10-23 18:04~10-24 18:04"
+            android:layout_alignTop="@id/clock_icon_tv"
+            android:layout_toRightOf="@id/clock_icon_tv"
+            android:layout_marginLeft="10px"
+            android:layout_marginBottom="33px"
+            android:layout_marginTop="-3px"
+            />
+    </RelativeLayout>
+</layout>

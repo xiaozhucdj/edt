@@ -102,6 +102,10 @@ public class TextBookFragment extends BFragment implements View.OnClickListener 
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
 //        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
+
+        LogUtils.i("yuanye ..."+info.getBookId());
+        LogUtils.i("yuanye ..."+FileUtils.getTextBookFilesDir());
+        LogUtils.i("yuanye ..."+StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir)));
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入

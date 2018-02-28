@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- 标题-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="55px"
+            android:layout_marginLeft="32px"
+            android:layout_marginRight="32px">
+            <ImageView
+                android:id="@+id/btn_left"
+                android:layout_width="28px"
+                android:layout_height="28px"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:clickable="true"
+                android:onClick="back"
+                android:src="@drawable/img_normal_fanhui" />
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="作业名"
+                android:textColor="#000000"
+                android:textSize="28px" />
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/black" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="15px"
+            android:paddingBottom="15px">
+            <TextView
+                android:id="@+id/question_num_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30px"
+                android:text="第X题"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="教师批改结果 :"
+                android:textSize="24px"
+                android:textColor="@color/black"
+                android:layout_marginLeft="60px"/>
+
+            <ImageView
+                android:id="@+id/right_or_wrong_icon"
+                android:layout_width="28px"
+                android:layout_height="28px"
+                android:layout_marginLeft="20px"
+                android:src="@drawable/img_ziping_zhengque"
+                />
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="10px" android:background="@color/gray_dbdbdb"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64px"
+            android:layout_marginTop="1px"
+            android:background="@color/gray_dbdbdb"
+            android:paddingBottom="2px"
+            android:paddingLeft="2px">
+            <TextView
+                android:id="@+id/question_body_btn"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/btn_bg_selector_white_blue"
+                android:gravity="center"
+                android:text="题干"
+                android:textColor="@drawable/btn_text_color_selector_black_white"
+                android:textSize="24px"
+                />
+            <TextView
+                android:id="@+id/answer_analysis_btn"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/btn_bg_selector_white_blue"
+                android:gravity="center"
+                android:text="解析"
+                android:textColor="@drawable/btn_text_color_selector_black_white"
+                android:textSize="24px" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1">
+            <com.yougy.anwser.ContentDisplayer
+                android:id="@+id/content_displayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15px"
+                android:paddingLeft="30px"
+                android:paddingRight="30px" />
+            <TextView
+                android:id="@+id/last_page_btn"
+                android:layout_width="39px"
+                android:layout_height="78px"
+                android:background="@drawable/btn_big_left_arrow_selector"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:onClick="lastPage"
+                android:layout_marginLeft="20px"
+                />
+            <TextView
+                android:id="@+id/next_page_btn"
+                android:layout_width="39px"
+                android:layout_height="78px"
+                android:background="@drawable/btn_big_right_arrow_selector"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:onClick="nextPage"
+                android:layout_marginRight="20px"
+                />
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/bottom_btn_bar"
+            android:layout_width="match_parent"
+            android:layout_height="70px"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/last_question_btn"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bmp_bg_blue"
+                android:gravity="center"
+                android:clickable="true"
+                android:onClick="lastQuestion"
+                android:text="上一题"
+                android:textColor="@color/white"
+                android:textSize="24px"
+                />
+            <View
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="@color/white" />
+            <TextView
+                android:id="@+id/next_question_btn"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bmp_bg_blue"
+                android:gravity="center"
+                android:clickable="true"
+                android:onClick="nextQuestion"
+                android:text="下一题"
+                android:textColor="@color/white"
+                android:textSize="24px"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

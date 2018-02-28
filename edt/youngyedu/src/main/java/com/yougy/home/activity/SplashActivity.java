@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
@@ -120,7 +121,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         Log.v("FH", "开始检测版本更新...");
         if (NetUtils.isNetConnected()) {
             Log.v("FH", "有网络,更新UUID");
-            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":", "");
+            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":", "") + "-" + Settings.System.getString(getContentResolver() , Settings.Secure.ANDROID_ID);
             SpUtil.saveUUID(Commons.UUID);
             getServerVersion();
         } else {

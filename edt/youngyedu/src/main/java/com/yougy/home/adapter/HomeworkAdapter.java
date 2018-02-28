@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.bean.HomeWorkBean;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 
 import java.util.List;
@@ -17,12 +17,12 @@ import java.util.List;
  */
 
 public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.HomeworkHolder> {
-    private List<HomeWorkBean> mInfos;
+    private List<HomeworkBookSummary> mInfos;
 
     /**
      * 构造函数 初始化数据
      */
-    public HomeworkAdapter(List<HomeWorkBean> mInfos) {
+    public HomeworkAdapter(List<HomeworkBookSummary> mInfos) {
         this.mInfos = mInfos;
     }
 
@@ -60,30 +60,19 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
     public class HomeworkHolder extends RecyclerView.ViewHolder {
         private final TextView mTvName;
         private final ImageView mImgIcon;
-        private final TextView mTvStatus;
 
 
         public HomeworkHolder(View itemView) {
             super(itemView);
             mTvName = (TextView) itemView.findViewById(R.id.tv_name);
             mImgIcon = (ImageView) itemView.findViewById(R.id.img_homework_icon);
-            mTvStatus = (TextView) itemView.findViewById(R.id.tv_status);
 
         }
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
-                mImgIcon.setBackgroundDrawable(UIUtils.getDrawable(R.drawable.img_book_backgroud));
-                mTvName.setText( mInfos.get(position).getHomeworkFitBookTitle());
-                if ( mInfos.get(position).getHomeworkStatus() ==1){
-                        //开通
-                    mTvStatus.setVisibility(View.GONE);
-                    mImgIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_homework_cover));
-                }else{
-                        //未开通
-                    mTvStatus.setVisibility(View.VISIBLE);
-                    mImgIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_homework_undredge));
-                }
+//                mImgIcon.setBackgroundDrawable(UIUtils.getDrawable(R.drawable.img_book_backgroud));
+                mTvName.setText(mInfos.get(position).getHomeworkTitle());
             }
         }
     }

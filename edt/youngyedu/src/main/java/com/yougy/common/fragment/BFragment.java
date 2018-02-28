@@ -365,10 +365,11 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     protected void downBookTask(int bookId) {
         if (mDownDialog == null) {
             mDownDialog = new DownBookDialog(getActivity());
+        }
             mDownDialog.setListener(new DownBookDialog.DownBookListener() {
                 @Override
                 public void onCancelListener() {
-                    cancelDownBook();
+                    cancelDownBook(bookId);
                 }
 
                 @Override
@@ -376,8 +377,6 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
                     confirmDownBook(bookId);
                 }
             });
-        }
-
         mDownDialog.show();
         mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
         mDownDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
@@ -386,9 +385,9 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     /**
      * 取消下载图书
      */
-    protected void cancelDownBook() {
+    protected void cancelDownBook(int  bookid) {
         mDownDialog.dismiss();
-        NewDownBookManager.getInstance().cancel();
+        NewDownBookManager.getInstance().cancel(bookid);
     }
 
     /**
@@ -417,6 +416,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
                     //下载图书
                     savebookDownloadKey(bookId,downloadInfos.get(0).getAtchEncryptKey());
                     NewDownBookInfo info = new NewDownBookInfo();
+                    info.setBookId(bookId);
                     info.setAccessKeyId(downloadInfos.get(0).getAccessKeyId());
                     info.setAccessKeySecret(downloadInfos.get(0).getAccessKeySecret());
                     info.setSecurityToken(downloadInfos.get(0).getSecurityToken());

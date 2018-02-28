@@ -568,4 +568,25 @@ public class DateUtils {
 		return format.format(new Date(timeMillis));
 	}
 
+	/**
+	 * 转换时间字符串为时间戳
+	 * @param timeStr 时间字符串,如2012-01-01 09:00:00
+	 * @param pattern 时间字符串的格式,需要与时间字符串的格式完全一致,如yyyy-MM-dd HH:mm:ss
+	 * @return 时间戳
+	 */
+	public static long convertTimeStrToTimeStamp(String timeStr , String pattern){
+		if (TextUtils.isEmpty(timeStr) || TextUtils.isEmpty(pattern)){
+			return -1;
+		}
+		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		try {
+			return format.parse(timeStr).getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+
+
 }

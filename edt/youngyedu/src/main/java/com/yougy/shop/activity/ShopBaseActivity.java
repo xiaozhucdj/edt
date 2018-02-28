@@ -29,9 +29,11 @@ public abstract class ShopBaseActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
-        handleEvent();
+        if (subscription == null){
+            subscription = new CompositeSubscription();
+            tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
+            handleEvent();
+        }
     }
 
     protected void handleEvent() {
@@ -41,23 +43,23 @@ public abstract class ShopBaseActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (subscription != null) {
-            subscription.clear();
-            subscription = null;
-        }
-        tapEventEmitter = null;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (needRecieveEventAfterOnStop){
+        if (!needRecieveEventAfterOnStop){
             if (subscription != null) {
                 subscription.clear();
                 subscription = null;
             }
             tapEventEmitter = null;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (subscription != null) {
+            subscription.clear();
+            subscription = null;
+        }
+        tapEventEmitter = null;
     }
 
     public boolean isNeedRecieveEventAfterOnStop() {

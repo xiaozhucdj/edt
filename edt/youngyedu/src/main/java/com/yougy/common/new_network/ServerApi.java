@@ -3,6 +3,11 @@ package com.yougy.common.new_network;
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
+import com.yougy.homework.bean.HomeworkBookDetail;
+import com.yougy.homework.bean.HomeworkBookSummary;
+import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.shop.bean.DownloadInfo;
 
 import java.util.List;
@@ -36,13 +41,20 @@ public interface ServerApi {
 
 
     /**
-     *  问答解答
+     *  解答上传（单题）
      */
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"} , values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
             , @Field("examId") String examId, @Field("content") String content , @Field("replyUseTime") String replyUseTime);
+/**
+     *  解答上传（多题，作业）
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"} , values = {"postReply"})
+    Observable<BaseResult<Object>> postReply(@Field("userId") String userId,  @Field("data") String data);
 
     /**
      *  按userId查询云信token
@@ -60,4 +72,79 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"downloadBook"})
     Observable<BaseResult<List<DownloadInfo>>> downloadBook(@Field("userId") String userId , @Field("bookId") String bookId);
 
+    /**
+     * 作业本列表接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryHomework"})
+    Observable<BaseResult<List<HomeworkBookSummary>>> queryHomeworkBookList(@Field("userId") String userId
+            , @Field("homeworkFitGradeName") String homeworkFitGradeName);
+
+    /**
+     * 作业本内容作业(考试)列表接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryHomeworkDetail"})
+    Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(@Field("homeworkId") Integer homeworkId);
+
+    /**
+     * 获取图书信息
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryBook"})
+    Observable<BaseResult<List<Object>>> queryBook(@Field("bookId") Integer bookId);
+
+    /**
+     * 刷新作业本中所有作业的状态
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"refreshHomework"})
+    Observable<BaseResult<Object>> refreshHomeworkBook(@Field("homeworkId") Integer homeworkId);
+
+    /**
+     * 查询解答详情
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"reviewComment"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
+            , @Field("itemId") Integer itemId , @Field("userId") String userId);
+
+    /**
+     * 查询作业详情
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryExam"})
+    Observable<BaseResult<List<HomeworkDetail>>> queryHomeworkDetail(@Field("examId") Integer examId);
+
+    /**
+     * 查询解答摘要
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryReply"})
+    Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId , @Field("userId") Integer userId);
+
+    /**
+     * 作业本错题移除
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"removeHomeworkExcerpt"})
+    Observable<BaseResult<Object>> removeHomeworkExcerpt(@Field("homeworkId") Integer homeworkId
+            , @Field("homeworkExcerpt") String homeworkExcerpt);
+
+    /**
+     * 作业本错题修改
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"modifyHomeworkExcerpt"})
+    Observable<BaseResult<Object>> modifyHomeworkExcerpt(@Field("homeworkId") Integer homeworkId
+            , @Field("homeworkExcerpt") String homeworkExcerpt);
 }

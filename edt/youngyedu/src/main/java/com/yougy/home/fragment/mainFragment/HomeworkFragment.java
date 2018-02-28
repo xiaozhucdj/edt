@@ -11,18 +11,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.protocol.callback.HomewrokCallBack;
-import com.yougy.common.protocol.response.QueryHomewrokProtocol;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.home.bean.HomeWorkBean;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
@@ -38,12 +40,12 @@ import static android.content.ContentValues.TAG;
  * Created by Administrator on 2016/7/12.
  * 课本
  */
-public class HomeworkFragment  extends BFragment implements View.OnClickListener {
+public class HomeworkFragment extends BFragment implements View.OnClickListener {
     /**
      * 适配器 数据
      */
-    private List<HomeWorkBean> mHomewroks = new ArrayList<>();
-    private List<HomeWorkBean> mCountBooks = new ArrayList<>();
+    private List<HomeworkBookSummary> mHomewroks = new ArrayList<>();
+    private List<HomeworkBookSummary> mCountBooks = new ArrayList<>();
     /***
      * 一页数据个数
      */
@@ -58,7 +60,6 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
     private boolean mIsFist;
     private LinearLayout mLlPager;
     private ViewGroup mLoadingNull;
-    private HomewrokCallBack mHomeworkCallBack;
     private TextView tvErrMsg;
 
     @Override
@@ -67,7 +68,7 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),FileContonst.PAGE_LINES);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
@@ -90,49 +91,31 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         return mRootView;
     }
 
-    /**点击事件*/
+    /**
+     * 点击事件
+     */
     private void itemClick(int position) {
-        HomeWorkBean info = mHomewroks.get(position);
-        if (info.getHomeworkStatus()>0){
-            Bundle extras = new Bundle();
-            //图书ID
-            extras.putInt(FileContonst.BOOK_ID, info.getHomeworkFitBookId());
-            //笔记ID
-            extras.putInt(FileContonst.NOTE_ID, info.getHomeworkFitNoteId());
-            //作业ID
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getHomeworkId());
-            //笔记名字
-            extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
-            //笔记样式
-            extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
+        HomeworkBookSummary info = mHomewroks.get(position);
+        Bundle extras = new Bundle();
+        //图书ID
+        extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
+        //笔记ID
+        extras.putInt(FileContonst.NOTE_ID, info.getHomeworkFitNoteId());
+        //作业ID
+        extras.putInt(FileContonst.HOME_WROK_ID, info.getHomeworkId());
+        //笔记名字
+        extras.putString(FileContonst.NOTE_TITLE, info.getHomeworkFitNoteTitle());
+        //笔记样式
+        extras.putInt(FileContonst.NOTE_Style, info.getHomeworkFitNoteStyle());
 //            loadIntentWithExtras(MainActivityScreen.class,extras);
-            //课本进入
-            extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
-            loadIntentWithExtras(ControlFragmentActivity.class, extras);
-        }else{
-            UIUtils.showToastSafe("尚未开通", Toast.LENGTH_LONG);
-        }
-
+        //课本进入
+        extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
+        loadIntentWithExtras(ControlFragmentActivity.class, extras);
     }
 
     @Override
     protected void handleEvent() {
-        handleTextBookEvent();
         super.handleEvent();
-    }
-
-
-    private void handleTextBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof QueryHomewrokProtocol && !mHide && mHomeworkCallBack != null) { //网数据库存储 协议返回的JSON
-                    QueryHomewrokProtocol shelfProtocol = (QueryHomewrokProtocol) o;
-                    List<HomeWorkBean> beans = shelfProtocol.getData().get(0).getHomeworkList();
-                    freshUI(beans);
-                }
-            }
-        }));
     }
 
     @Override
@@ -141,18 +124,17 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         mIsFist = true;
     }
 
-    private void freshUI(List<HomeWorkBean> beans) {
-        if (beans!=null && beans.size()>0){
+    private void freshUI(List<HomeworkBookSummary> beans) {
+        if (beans != null && beans.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
             mCountBooks.addAll(beans);
             initPages();
-        }else{
+        } else {
             // 数据返回为null
             mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
-
 
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -162,17 +144,23 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         }
     }
 
-
     private void loadData() {
-//        if (YougyApplicationManager.isWifiAvailable()) {
-//            mHomeworkCallBack = new HomewrokCallBack(getActivity(),ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK);
-//            Log.e(TAG, "query homeWrok from server...");
-//            ProtocolManager.queryHomeWrokProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_HOME_WROK, mHomeworkCallBack);
-//        }else{
-//            tvErrMsg.setText(UIUtils.getString(R.string.net_not_connection));
-//            mLoadingNull.setVisibility(View.VISIBLE);
-//        }
-        testData();
+        if (NetUtils.isNetConnected()) {
+            NetWorkManager.queryHomeworkBookList(SpUtil.getUserId() + "", SpUtil.getGradeName())
+                    .subscribe(new Action1<List<HomeworkBookSummary>>() {
+                        @Override
+                        public void call(List<HomeworkBookSummary> homeworkBookInfos) {
+                            freshUI(homeworkBookInfos);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+        } else {
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+        }
     }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -293,17 +281,26 @@ public class HomeworkFragment  extends BFragment implements View.OnClickListener
         }
     }
 
-
-    private  void  testData(){
-        List<HomeWorkBean> beans = new ArrayList<>() ;
-        for (int i = 0 ; i<10 ;i++){
-            HomeWorkBean bean = new HomeWorkBean() ;
-            bean.setHomeworkId(10);
-            bean.setHomeworkFitBookId(7146307);
-            bean.setHomeworkFitNoteId(33163);
-            bean.setHomeworkStatus(1);
-            beans.add(bean) ;
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.current_home_work)) {
+            LogUtils.i("type .." + EventBusConstant.current_home_work);
+            loadData();
         }
-        freshUI(beans);
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
     }
 }

@@ -15,7 +15,7 @@ import rx.schedulers.Schedulers;
  * 自己写的一个基于rx的定时任务执行器
  */
 public class TimedTask {
-    enum TYPE {
+    public enum TYPE {
         //循环执行
         CIRCULATION,
         //立即执行一次,然后循环执行

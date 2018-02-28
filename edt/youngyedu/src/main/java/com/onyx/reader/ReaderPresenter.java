@@ -231,14 +231,16 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     @Override
     public void close() {
         final CloseRequest closeRequest = new CloseRequest();
-        reader.submitRequest(getContext(), closeRequest, new BaseCallback() {
-            @Override
-            public void done(BaseRequest baseRequest, Throwable throwable) {
-                if (throwable == null) {
-                    //close success
+        if (reader != null){
+            reader.submitRequest(getContext(), closeRequest, new BaseCallback() {
+                @Override
+                public void done(BaseRequest baseRequest, Throwable throwable) {
+                    if (throwable == null) {
+                        //close success
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private Context getContext() {

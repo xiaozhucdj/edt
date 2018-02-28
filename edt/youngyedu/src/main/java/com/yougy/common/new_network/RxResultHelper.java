@@ -3,8 +3,11 @@ package com.yougy.common.new_network;
 import android.util.Log;
 
 import com.yougy.anwser.BaseResult;
+import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.util.ArrayList;
@@ -108,4 +111,66 @@ public class RxResultHelper {
             }
         };
     }
+
+    public static Observable.Transformer<List<HomeworkDetail> , List<HomeworkDetail>> parseHomeworkQuestion(){
+        return new Observable.Transformer<List<HomeworkDetail>, List<HomeworkDetail>>() {
+            @Override
+            public Observable<List<HomeworkDetail>> call(Observable<List<HomeworkDetail>> listObservable) {
+                return listObservable.map(new Func1<List<HomeworkDetail>, List<HomeworkDetail>>() {
+                    @Override
+                    public List<HomeworkDetail> call(List<HomeworkDetail> homeworkDetails) {
+                        for (HomeworkDetail homeworkDetail : homeworkDetails) {
+                            for (HomeworkDetail.ExamPaper.ExamPaperContent paperContent: homeworkDetail.getExamPaper().getPaperContent()
+                                 ) {
+                                for (OriginQuestionItem originQuestionItem :
+                                        paperContent.getPaperItemContent()) {
+                                    paperContent.getParsedQuestionItemList().add(originQuestionItem.parseQuestion());
+                                }
+                            }
+                        }
+                        return homeworkDetails;
+                    }
+                });
+            }
+        };
+    }
+
+    public static Observable.Transformer<List<QuestionReplyDetail> , List<QuestionReplyDetail>> parseReplyDetail(){
+        return new Observable.Transformer<List<QuestionReplyDetail>, List<QuestionReplyDetail>>() {
+            @Override
+            public Observable<List<QuestionReplyDetail>> call(Observable<List<QuestionReplyDetail>> listObservable) {
+                return listObservable.map(new Func1<List<QuestionReplyDetail>, List<QuestionReplyDetail>>() {
+                    @Override
+                    public List<QuestionReplyDetail> call(List<QuestionReplyDetail> questionReplyDetails) {
+                        for (QuestionReplyDetail questionReplyDetail : questionReplyDetails) {
+                            questionReplyDetail.parse();
+                        }
+                        return questionReplyDetails;
+                    }
+                });
+            }
+        };
+    }
+
+    /**
+     * 把题目Answer中的正式类型的答案拼接成一个字符串
+     * @param answerContentList
+     * @return
+     */
+    public static String parseAnswerList(ArrayList<Content_new> answerContentList){
+        if (!answerContentList.isEmpty()){
+            String answerText = "";
+            for (int i = 0 ; i < answerContentList.size() ; i++){
+                Content_new answerContent = answerContentList.get(i);
+                if (answerContent.getExtraData().equals("正式")){
+                    answerText = answerText + answerContent.getValue() + "、";
+                }
+            }
+            if (answerText.endsWith("、")){
+                return answerText.substring(0 , answerText.length() - 1);
+            }
+        }
+        return "";
+    }
+
 }
