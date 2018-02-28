@@ -53,6 +53,8 @@
                 android:hint="请输入乐课账号"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray_999999"
+                android:inputType="number"
+                android:digits="1234567890"
                 android:textSize="24px"
                 android:layout_marginLeft="15px"
                 android:singleLine="true"

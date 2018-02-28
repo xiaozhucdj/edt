@@ -744,7 +744,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void showSpinnerLayout() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
-            mStage = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
+//            mStage = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
+            mStage = SpUtil.getStudent().getGradeName();
             binding.stageButton.setText(mStage);
             setCompositeText();
         }

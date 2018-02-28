@@ -165,6 +165,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
      */
     @Override
     protected void setContentView() {
+        LogUtils.e(tag,"setContentView..................");
         setContentView(R.layout.activity_shop_new_book_item_details);
     }
 
@@ -217,6 +218,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_left:
+                LogUtils.e(tag,"finish ................. ");
                 this.finish();
                 break;
             case R.id.img_btn_right:
@@ -267,6 +269,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 } else {
                     downBookDialog();
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -494,6 +498,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     @Override
     protected void onResume() {
         super.onResume();
+
         mActivityHide = false;
     }
 
