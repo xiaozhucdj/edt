@@ -72,4 +72,21 @@
         <item name="android:textSize">@dimen/twenty_four_px</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="classfyTextStyle">
+        <item name="android:layout_height">@dimen/classify_text_height</item>
+        <item name="android:layout_width">@dimen/classify_text_width</item>
+        <item name="android:textSize">@dimen/classify_text_size</item>
+        <item name="android:textColor">@drawable/classify_color_selector</item>
+        <item name="android:background">@drawable/classify_bg_selector</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="shopImgStyle">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">@dimen/shop_img_padding</item>
+        <item name="android:paddingRight">@dimen/shop_img_padding</item>
+    </style>
 </resources>
