@@ -22,6 +22,7 @@ import com.yougy.common.protocol.callback.BindCallBack;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.service.DownloadService;
+import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
@@ -64,6 +65,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                 , R.layout.confirm_userinfo_dialog_layout , null , false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
+        AliyunUtil.DATABASE_NAME = student.getUserId() + ".db";
         binding.nameTv.setText("姓名 : " + student.getUserRealName());
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());

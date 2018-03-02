@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.TestImgActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
@@ -308,6 +309,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         findViewById(R.id.btn_upload).setOnClickListener(this);
         findViewById(R.id.btn_download).setOnClickListener(this);
+        findViewById(R.id.btn_test_img).setOnClickListener(this);
     }
 
 
@@ -330,6 +332,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.btn_download:
                 startService(new Intent(this, DownloadService.class));
+                break;
+            case R.id.btn_test_img:
+                startActivity(new Intent(this, TestImgActivity.class));
                 break;
             case R.id.rl_folder:
 //                refreshTabBtnState(clickedViewId);
@@ -487,6 +492,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 intent.setComponent(new ComponentName("com.onyx.android.settings", "com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
                 mFlRight.setVisibility(View.GONE);
+                break;
+            default:
                 break;
         }
     }

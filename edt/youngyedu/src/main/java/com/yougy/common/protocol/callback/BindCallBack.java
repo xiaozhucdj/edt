@@ -18,14 +18,12 @@ import com.yougy.common.utils.SpUtil;
 
 import java.io.File;
 
-import okhttp3.Call;
 import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
-import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 
 
 /**
@@ -57,7 +55,6 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     private void downloadDb(){
         Log.v("FH" , "注意这儿:DATABASE_NAME=" + DATABASE_NAME);
         final File dbfile = mWeakReference.get().getDatabasePath(DATABASE_NAME);
-        final File journalFile = mWeakReference.get().getDatabasePath(JOURNAL_NAME);
         if (YougyApplicationManager.isWifiAvailable() && !SpUtil.isInit()) {
             Observable.create(new Observable.OnSubscribe<Boolean>() {
 
@@ -69,14 +66,6 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
                     }
                     Intent intent = new Intent(mWeakReference.get(), DownloadService.class);
                     mWeakReference.get().startService(intent);
-//                    boolean downloadDb = FtpUtil.downLoadFile(dbfile.getAbsolutePath(), DATABASE_NAME);
-//                    LogUtils.e("BindCallBack","download result is : " + downloadDb);
-//                    boolean downloadJournal = FtpUtil.downLoadFile(journalFile.getAbsolutePath(), JOURNAL_NAME);
-//                    boolean downResult = downloadDb & downloadJournal;
-//                    SpUtil.changeInitFlag(downloadDb);
-//                    if (!downloadDb){
-//                        Connector.getDatabase();
-//                    }
                 }
             }).subscribeOn(Schedulers.io()).subscribe();
         }
