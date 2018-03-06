@@ -48,7 +48,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
      */
     @Override
     public void onBindViewHolder(final HolerFragmentBook holder, int position) {
-       holder.setViewData(position);
+     holder.setViewData(position);
     }
 
     /**
@@ -81,7 +81,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                         R.drawable.img_book_cover,
                         R.drawable.img_book_cover,
                         200,
-                        268,
+                        266,
                         mImgBookIcon);
             }
         }

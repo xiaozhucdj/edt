@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +42,6 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
-import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.CreatNoteDialog;
 
 import java.util.ArrayList;
@@ -122,8 +123,12 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
      * 初始化 书列表
      */
     private void initNotes() {
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
-        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_view);
+//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        mRecyclerView.addItemDecoration(divider);
+
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);

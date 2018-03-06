@@ -3,7 +3,6 @@ package com.yougy.home.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yougy.common.utils.UIUtils;
@@ -59,19 +58,15 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
      */
     public class HomeworkHolder extends RecyclerView.ViewHolder {
         private final TextView mTvName;
-        private final ImageView mImgIcon;
 
 
         public HomeworkHolder(View itemView) {
             super(itemView);
-            mTvName = (TextView) itemView.findViewById(R.id.tv_name);
-            mImgIcon = (ImageView) itemView.findViewById(R.id.img_homework_icon);
-
+            mTvName = (TextView) itemView.findViewById(R.id.tv_myTitle);
         }
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
-//                mImgIcon.setBackgroundDrawable(UIUtils.getDrawable(R.drawable.img_book_backgroud));
                 mTvName.setText(mInfos.get(position).getHomeworkTitle());
             }
         }
