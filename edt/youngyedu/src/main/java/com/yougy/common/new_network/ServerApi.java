@@ -1,6 +1,7 @@
 package com.yougy.common.new_network;
 
 import com.yougy.anwser.BaseResult;
+import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.homework.bean.HomeworkBookDetail;
@@ -147,4 +148,12 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"modifyHomeworkExcerpt"})
     Observable<BaseResult<Object>> modifyHomeworkExcerpt(@Field("homeworkId") Integer homeworkId
             , @Field("homeworkExcerpt") String homeworkExcerpt);
+
+    /**
+     * 查询学生课程
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryCourse"})
+    Observable<BaseResult<List<CourseInfo>>> queryCourse(@Field("userId") Integer userId);
 }
