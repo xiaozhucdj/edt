@@ -13,6 +13,7 @@ public class NewBookStoreBookReq extends NewBaseReq {
     private int userId = -1;
     private int bookVersion = -1;
     private String bookTitle = "";
+    private String bookTitleMatch = "";
 
     public NewBookStoreBookReq(){
         m = "queryBook";
@@ -64,5 +65,13 @@ public class NewBookStoreBookReq extends NewBaseReq {
 
     public void setBookVersion(int bookVersion) {
         this.bookVersion = bookVersion;
+    }
+
+    public String getBookTitleMatch() {
+        return bookTitleMatch;
+    }
+
+    public void setBookTitleMatch(String bookTitleMatch) {
+        this.bookTitleMatch = bookTitleMatch;
     }
 }

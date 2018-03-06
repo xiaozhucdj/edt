@@ -69,7 +69,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
         public void bindView(BookInfo info) {
             searchResultImg.setImageResource(R.drawable.cart_book);
             searchResultName.setText(info.getBookTitle());
-//            searchResultPrice.setText(Float.toString(info.getBookSalePrice()));
             searchResultPrice.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price),info.getBookSalePrice()));
             ImageLoaderManager.getInstance().loadImageContext(mContext,
                    info.getBookCoverS(),

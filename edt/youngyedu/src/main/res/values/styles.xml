@@ -89,4 +89,13 @@
         <item name="android:paddingLeft">@dimen/shop_img_padding</item>
         <item name="android:paddingRight">@dimen/shop_img_padding</item>
     </style>
+
+    <style name="bottomBtnStyle">
+        <item name="android:layout_width">350px</item>
+        <item name="android:layout_height">70px</item>
+        <item name="android:background">@drawable/search_click_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24px</item>
+        <item name="android:textColor">@drawable/classify_color_selector</item>
+    </style>
 </resources>

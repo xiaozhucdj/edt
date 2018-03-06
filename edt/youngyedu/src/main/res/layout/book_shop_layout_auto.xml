@@ -75,8 +75,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:gravity="center"
-                >
+                android:gravity="center">
 
                 <ImageView
                     android:id="@+id/schoolbag"
@@ -99,22 +98,23 @@
                     android:layout_toLeftOf="@+id/cart_go"
                     android:onClick="@{activity.clickFavorite}"
                     android:src="@drawable/icon_shoucang" />
+
                 <TextView
                     android:id="@+id/search"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/shop_img_padding"
+                    android:layout_marginRight="@dimen/shop_img_padding"
                     android:layout_toLeftOf="@+id/favorite"
                     android:layout_toRightOf="@+id/schoolbag"
                     android:background="@drawable/img_bg_sousuo"
                     android:drawableLeft="@drawable/icon_sousuo"
                     android:drawablePadding="@dimen/search_drawable_padding"
-                    android:layout_marginLeft="@dimen/shop_img_padding"
-                    android:layout_marginRight="@dimen/shop_img_padding"
-                    android:onClick="@{activity.search}"
                     android:gravity="center_vertical"
-                    android:text="@string/search"
+                    android:onClick="@{activity.search}"
                     android:paddingLeft="@dimen/search_icon_padding_left"
+                    android:text="@string/search"
                     android:textColor="@color/search_color"
                     android:textSize="@dimen/shop_search_text_size" />
             </RelativeLayout>
@@ -122,38 +122,37 @@
             <RelativeLayout
                 android:id="@+id/spinner_layout"
                 android:layout_width="match_parent"
-                android:layout_height="50px"
+                android:layout_height="@dimen/shop_spinner_layout_height"
                 android:layout_below="@+id/classify_layout"
                 android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="36px"
+                    android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingLeft="30px">
+                    android:paddingLeft="@dimen/shop_spinner_padding_left">
 
                     <Button
                         android:id="@+id/stage_button"
-                        android:layout_width="170px"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/img_xiala"
+                        android:layout_width="@dimen/stage_button_width"
+                        android:layout_height="@dimen/stage_button_height"
+                        android:background="@drawable/img_bg_xuankuang"
                         android:gravity="center_vertical"
                         android:onClick="@{activity.stageClick}"
-                        android:paddingLeft="5px"
-                        android:textSize="20px" />
+                        android:paddingLeft="10px"
+                        android:textSize="@dimen/stage_text_size" />
 
                     <Button
                         android:id="@+id/classify_button"
                         android:layout_width="170px"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="30px"
-                        android:layout_marginRight="30px"
-                        android:background="@drawable/img_xiala"
+                        android:layout_height="36px"
+                        android:layout_marginLeft="40px"
+                        android:background="@drawable/img_bg_xuankuang"
                         android:gravity="center_vertical"
                         android:onClick="@{activity.classifyClick}"
-                        android:paddingLeft="5px"
+                        android:paddingLeft="10px"
                         android:textSize="20px"
                         android:visibility="gone" />
 
@@ -161,26 +160,26 @@
                         android:id="@+id/correspond_school"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="30px"
+                        android:layout_marginLeft="40px"
                         android:checked="true"
-                        android:paddingLeft="30px"
+                        android:paddingLeft="10px"
                         android:text="@string/text_correspond"
                         android:textColor="@color/text_color_black"
-                        android:textSize="20px"
+                        android:textSize="24px"
                         android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/filtrate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="60px"
+                        android:layout_marginLeft="40px"
                         android:drawablePadding="10px"
                         android:drawableRight="@drawable/filtrate_img"
                         android:gravity="center"
                         android:onClick="@{activity.filtrate}"
                         android:text="@string/text_filtrate"
                         android:textColor="@color/text_color_black"
-                        android:textSize="20px"
+                        android:textSize="24px"
                         android:visibility="gone" />
                 </LinearLayout>
 
@@ -202,9 +201,8 @@
                 android:id="@+id/all_classify_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="15px"
-                android:paddingLeft="30px"
-                android:paddingRight="30px" />
+                android:layout_marginLeft="@dimen/shop_recycler_margin_left"
+                android:layout_marginTop="@dimen/shop_recycler_margin_top" />
 
             <RelativeLayout
                 android:id="@+id/single_classify_layout"
@@ -212,15 +210,16 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="30px"
                 android:paddingRight="30px"
-                android:paddingTop="20px"
+                android:paddingTop="15px"
                 android:visibility="gone">
 
                 <TextView
                     android:id="@+id/composite_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
                     android:textColor="@color/text_color_black"
-                    android:textSize="22px" />
+                    android:textSize="24px" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -231,7 +230,7 @@
                         android:id="@+id/single_classify_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15px" />
+                        android:layout_marginTop="20px" />
 
                     <TextView
                         android:id="@+id/empty_tv"
@@ -249,7 +248,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="24px"
+                    android:layout_marginBottom="20px"
                     android:gravity="center"
                     android:orientation="horizontal" />
             </RelativeLayout>
@@ -259,8 +258,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingLeft="30px"
-                android:paddingTop="15px"
                 android:visibility="gone">
 
                 <LinearLayout
@@ -268,12 +265,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/text_color_white"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingLeft="30px"
+                    android:paddingTop="30px">
 
                     <TextView
                         android:id="@+id/subject_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
                         android:text="@string/subject_text"
                         android:textColor="@color/text_color_black"
                         android:textSize="22px" />
@@ -282,7 +282,6 @@
                         android:id="@+id/subject_wrap"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15px"
                         android:paddingBottom="20px" />
                 </LinearLayout>
 
@@ -293,13 +292,16 @@
                     android:layout_below="@+id/subject_layout"
                     android:background="@color/text_color_white"
                     android:orientation="horizontal"
-                    android:paddingBottom="@dimen/twenty_px"
+                    android:paddingBottom="30px"
+                    android:paddingLeft="30px"
+                    android:paddingTop="30px"
                     android:visibility="gone">
 
                     <TextView
                         android:id="@+id/version_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
                         android:text="@string/version_text"
                         android:textColor="@color/text_color_black"
                         android:textSize="22px" />
@@ -312,53 +314,65 @@
                 </LinearLayout>
 
                 <View
-                    android:id="@+id/filtrate_line"
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_below="@+id/version_layout"
-                    android:background="@color/black" />
-
-                <View
                     android:id="@+id/filtrate_empty"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@+id/filtrate_line"
-                    android:background="#e0000000"
-                    android:onClick="@{activity.clickEmpty}"
-                    android:visibility="gone" />
+                    android:layout_height="20px"
+                    android:layout_below="@+id/version_layout"
+                    android:background="@drawable/img_bg_yinying"
+                    android:onClick="@{activity.clickEmpty}" />
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/stage_recycler"
-                android:layout_width="170px"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30px"
-                android:background="@drawable/identity_list_bg"
-                android:paddingBottom="5px"
-                android:paddingLeft="5px"
-                android:paddingTop="5px"
-                android:visibility="gone" />
+            <FrameLayout
+                android:id="@+id/stage_recycler_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:onClick="@{activity.hideStageRecyclerLayout}"
+                android:clickable="true">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/classify_recycler"
-                android:layout_width="170px"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="230px"
-                android:background="@drawable/identity_list_bg"
-                android:visibility="gone" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/stage_recycler"
+                    android:layout_width="170px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30px"
+                    android:background="@drawable/identity_list_bg"
+                    android:paddingBottom="5px"
+                    android:paddingLeft="5px"
+                    android:paddingTop="5px"
+                     />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/classify_recycler_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:visibility="gone"
+                android:onClick="@{activity.hideClassifyRecyclerLayout}"
+                >
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/classify_recycler"
+                    android:layout_width="170px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="240px"
+                    android:background="@drawable/identity_list_bg"
+                    />
+            </FrameLayout>
         </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/search_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/zl_white"
+            android:layout_height="match_parent"
+            android:clickable="true"
             android:visibility="gone">
 
             <RelativeLayout
                 android:id="@+id/search_et_layout"
                 android:layout_width="match_parent"
-                android:layout_height="60px"
+                android:layout_height="76px"
+                android:background="@color/zl_white"
                 android:paddingLeft="30px"
                 android:paddingRight="30px">
 
@@ -368,11 +382,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="28px"
+                    android:layout_marginLeft="30px"
                     android:onClick="@{activity.clickSearchOrCancelTv}"
                     android:text="搜索"
                     android:textColor="@color/text_color_black"
-                    android:textSize="24px" />
+                    android:textSize="28px" />
 
                 <EditText
                     android:id="@+id/search_et"
@@ -380,13 +394,13 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/search_or_cancel_tv"
-                    android:background="@drawable/img_sousuokuang"
+                    android:background="@drawable/img_bg_sousuo"
                     android:drawableLeft="@drawable/icon_sousuo"
                     android:drawablePadding="10px"
                     android:hint="@string/search"
-                    android:paddingLeft="10px"
+                    android:paddingLeft="20px"
                     android:textColor="@color/search_color"
-                    android:textSize="20px" />
+                    android:textSize="22px" />
             </RelativeLayout>
 
             <View
@@ -399,7 +413,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/search_fourth_line">
+                android:layout_below="@+id/search_fourth_line"
+                android:background="@color/zl_white">
 
                 <TextView
                     android:id="@+id/search_history_tv"
@@ -408,9 +423,10 @@
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="30px"
                     android:layout_marginTop="20px"
+                    android:includeFontPadding="false"
                     android:text="@string/record_of_search"
                     android:textColor="@color/text_color_black"
-                    android:textSize="24px"
+                    android:textSize="26px"
                     android:textStyle="bold" />
 
                 <TextView
@@ -419,7 +435,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="30px"
-                    android:layout_marginTop="23px"
+                    android:layout_marginTop="25px"
+                    android:includeFontPadding="false"
                     android:onClick="@{activity.clearHistoryRecord}"
                     android:text="@string/clear_record"
                     android:textColor="@color/text_color_black"
@@ -431,7 +448,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/search_history_tv"
                     android:layout_marginLeft="40px"
-                    android:layout_marginTop="30px"
+                    android:layout_marginTop="20px"
                     android:orientation="vertical" />
 
                 <View
