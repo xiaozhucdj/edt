@@ -98,18 +98,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/ll_referenceKey"
-        android:layout_marginLeft="54dp"
-        android:layout_marginRight="49dp"
-        android:layout_marginTop="40dp"
-        android:background="@android:color/white" />
+      />
 
     <LinearLayout
         android:id="@+id/ll_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginBottom="26px"
+        android:layout_marginTop="26px"
         android:gravity="center"
         android:orientation="horizontal" />
 

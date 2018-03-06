@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -128,7 +129,12 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
+
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        mRecyclerView.addItemDecoration(divider);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
@@ -237,18 +243,15 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_referenceBooks: //返回全部课课外书
-                mLlSearchKeyTitle.setVisibility(View.GONE);
-                mLlSearchKeyResut.setVisibility(View.GONE);
-                mRecyclerView.setVisibility(View.VISIBLE);
-                initPages(mServerBooks, COUNT_PER_PAGE);
-                break;
-            case R.id.page_btn:
-                refreshAdapterData(v);
-                break;
-        }
+        if (v.getId() == R.id.tv_referenceBooks){
+            mLlSearchKeyTitle.setVisibility(View.GONE);
+            mLlSearchKeyResut.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            initPages(mServerBooks, COUNT_PER_PAGE);
 
+        }else if(v.getId() == R.id.tv_page_item){
+            refreshAdapterData(v);
+        }
     }
 
     private void freshUI(List<BookInfo> bookInfos) {
@@ -334,10 +337,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         //删除之前的按钮
         mLlPager.removeAllViews();
         for (int index = 1; index <= counts; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = 20;
-            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
             if (index == 1) {
                 mPagerIndex = 1;
                 pageBtn.setSelected(true);
@@ -345,7 +349,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             pageBtn.setTag(index);
             pageBtn.setText(Integer.toString(index));
             pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn, params);
+            mLlPager.addView(pageBtn);
         }
     }
 

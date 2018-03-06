@@ -11,22 +11,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="修改购物车 首页请求失败后 处理">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_fanhui.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_share.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_xiangqing.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_manjian.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_button.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_tushuxiangqing.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/adaper_divider_img_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/book_adaper_item_icon_test_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/home_tabs_bg__text_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/home_tabs_bg_btn_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/home_tabs_icon_msg_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/note_add_iv_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/note_cover_iv_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/pagebtn_bg_normal_green.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/pagebtn_bg_pressed_green.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/CourseInfo.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/home_tabs_btn_bg_selector.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/home_tabs_tv_bg_selector.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/page_btn_bg_selector.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/page_btn_text_selector.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/tab_title_select.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/new_page_item.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_new_book_item_details.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_promote_book.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_promote_book.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/commcon_title_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/commcon_title_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/recommend_item.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/recommend_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/MainActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/BookAdapter.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/BookAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/HomeworkAdapter.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/HomeworkAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/NotesAdapter.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/NotesAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllCoachBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllCoachBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllHomeworkFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllHomeworkFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllNotesFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllNotesFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllTextBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllTextBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/CoachBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/CoachBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/HomeworkFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/HomeworkFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/NotesFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/NotesFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/ReferenceBooksFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/ReferenceBooksFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/TextBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/TextBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main_ui.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main_ui.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_book.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_book.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_homework.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_homework.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_notes.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_notes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_book.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_book.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_notes.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_notes.xml" />
     </list>
     <ignored path="edt.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -3694,6 +3716,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".idea" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scratches">
@@ -4049,9 +4085,6 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
-  <component name="SvnConfiguration">
-    <configuration />
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="修改购物车 首页请求失败后 处理" />
@@ -4064,7 +4097,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32756633" sideWeight="0.49511003" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2733564" sideWeight="0.6295844" order="13" side_tool="false" content_ui="tabs" />
@@ -4080,7 +4113,7 @@
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298731" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22616138" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22616138" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Freeline" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298731" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35524797" sideWeight="0.49511003" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294621" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />

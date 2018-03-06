@@ -4,12 +4,12 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:background="@color/text_color_black"
         android:id="@+id/rl_system"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:paddingLeft="36dp"
-        android:paddingRight="36dp">
+        android:layout_height="50px"
+        android:background="@color/text_color_black"
+        android:paddingLeft="36px"
+        android:paddingRight="36px">
 
         <ImageView
             android:id="@+id/img_wifi"
@@ -29,14 +29,14 @@
 
 
         <TextView
-            android:layout_marginRight="10dp"
             android:id="@+id/tv_power"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginRight="10px"
             android:layout_toLeftOf="@+id/img_electricity"
             android:textColor="@color/text_color_white"
-            android:textSize="20dp" />
+            android:textSize="30px" />
 
         <TextView
             android:id="@+id/tv_time"
@@ -44,16 +44,32 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textColor="@color/text_color_white"
-            android:textSize="24dp" />
+            android:textSize="30px" />
 
     </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_home_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/rl_system"
+        android:layout_marginRight="27px"
+        android:layout_marginTop="16px"
+        android:background="@null"
+        android:src="@drawable/home_tabs_icon_msg_normal" />
 
 
     <RelativeLayout
         android:id="@+id/rl_title"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_below="@id/rl_system">
+        android:layout_height="48px"
+        android:layout_below="@id/rl_system"
+        android:layout_marginBottom="14px"
+        android:layout_marginLeft="60px"
+        android:layout_marginRight="30px"
+        android:layout_marginTop="14px">
 
         <ImageButton
             android:id="@+id/imgBtn_showRight"
@@ -62,207 +78,87 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@null"
-            android:paddingRight="30dp"
             android:src="@drawable/img_user_btn_icon" />
-
-        <TextView
-            android:id="@+id/unread_msg_count_textview1"
-            android:layout_width="15px"
-            android:layout_height="15px"
-            android:text="xxx"
-            android:textSize="13px"
-            android:textColor="@color/white"
-            android:background="@color/black"
-            android:layout_alignRight="@id/imgBtn_showRight"
-            android:layout_alignTop="@id/imgBtn_showRight"
-            android:layout_marginRight="15dp"
-            />
-
-        <ImageButton
-            android:id="@+id/imgBtn_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@null"
-            android:paddingLeft="30dp"
-            android:src="@drawable/edu_img_refresh_select"
-            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="90dp"
-            android:layout_marginRight="90dp"
-            android:baselineAligned="false"
+            android:layout_height="48px"
+            android:layout_marginRight="15px"
+            android:layout_toLeftOf="@id/imgBtn_showRight"
             android:orientation="horizontal">
 
-            <RelativeLayout
-                android:id="@+id/rl_text_book"
-                android:layout_width="match_parent"
+
+            <TextView
+                android:id="@+id/tv_text_book"
+                android:layout_width="120px"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:background="@drawable/home_tabs_tv_bg_selector"
+                android:gravity="center"
+                android:text="课本"
+                android:textColor="@drawable/tab_title_select"
+                android:textSize="30px"
+                android:textStyle="bold" />
 
-                <View
-
-                    android:id="@+id/view_text_book"
-                    android:layout_width="100dp"
-                    android:layout_height="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@color/text_border_focused"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/tv_text_book"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:gravity="center"
-                    android:text="课本"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="28dp"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rl_coach_book"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_coach_book"
+                android:layout_width="120px"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_marginLeft="23px"
+                android:background="@drawable/home_tabs_tv_bg_selector"
+                android:gravity="center"
+                android:text="辅导书"
+                android:textColor="@drawable/tab_title_select"
+                android:textSize="30px"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_coach_book"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="辅导书"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="28dp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:id="@+id/view_coach_book"
-                    android:layout_width="100dp"
-                    android:layout_height="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@color/text_border_focused"
-                    android:visibility="invisible" />
-
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/rl_reference_books"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_reference_books"
+                android:layout_width="120px"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_marginLeft="36px"
+                android:background="@drawable/home_tabs_tv_bg_selector"
+                android:gravity="center"
+                android:text="课外书"
+                android:textColor="@drawable/tab_title_select"
+                android:textSize="30px"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_reference_books"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="课外书"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="28dp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:id="@+id/view_reference_books"
-                    android:layout_width="100dp"
-                    android:layout_height="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@color/text_border_focused"
-                    android:visibility="invisible" />
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/rl_notes"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_notes"
+                android:layout_width="120px"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_marginLeft="22px"
+                android:background="@drawable/home_tabs_tv_bg_selector"
+                android:gravity="center"
+                android:text="笔记"
+                android:textColor="@drawable/tab_title_select"
+                android:textSize="30px"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_notes"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="笔记"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="28dp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:id="@+id/view_notes"
-                    android:layout_width="100dp"
-                    android:layout_height="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@color/text_border_focused"
-                    android:visibility="invisible" />
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/rl_homework"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_homework"
+                android:layout_width="120px"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_marginLeft="8px"
+                android:background="@drawable/home_tabs_tv_bg_selector"
+                android:gravity="center"
+                android:text="作业"
+                android:textColor="@drawable/tab_title_select"
+                android:textSize="30px"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_homework"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="作业"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="28dp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:id="@+id/view_homework"
-                    android:layout_width="100dp"
-                    android:layout_height="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@color/text_border_focused"
-                    android:visibility="invisible" />
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/rl_folder"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_folder"
+                android:layout_width="120px"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textStyle="bold">
+                android:layout_marginLeft="6px"
+                android:background="@drawable/home_tabs_tv_bg_selector"
+                android:gravity="center"
+                android:text="问答"
+                android:textColor="@drawable/tab_title_select"
+                android:textSize="30px"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_folder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="文件夹"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="28dp" />
-
-                <View
-                    android:id="@+id/view_folder"
-                    android:layout_width="100dp"
-                    android:layout_height="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@color/text_border_focused"
-                    android:visibility="invisible" />
-            </RelativeLayout>
         </LinearLayout>
 
     </RelativeLayout>
@@ -270,9 +166,9 @@
     <View
         android:id="@+id/view_line"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="2px"
         android:layout_below="@id/rl_title"
-        android:background="@color/text_border_focused" />
+        android:background="@color/black" />
 
     <FrameLayout
         android:id="@+id/fl_content_layout"
@@ -285,250 +181,252 @@
         android:id="@+id/fl_right"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
+        android:layout_below="@id/view_line"
         android:clickable="true"
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="350dp"
-            android:layout_height="match_parent"
+            android:layout_width="240px"
+            android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:background="#e5e5e5"
+            android:background="@color/white"
             android:orientation="horizontal">
 
             <View
-                android:layout_width="2dp"
+                android:layout_width="2px"
                 android:layout_height="match_parent"
-                android:background="@color/text_border_focused" />
+                android:background="#666666" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="120px"
+                    android:layout_height="120px"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="48dp"
+                    android:layout_marginTop="22px"
                     android:background="@null"
                     android:scaleType="fitXY"
                     android:src="@drawable/icon_student_120px" />
-
-                <TextView
-                    android:id="@+id/tv_className"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="20dp"
-                    android:singleLine="true"
-                    android:text="小学一年级一班"
-                    android:textColor="@color/text_border_focused"
-                    android:textSize="24dp" />
 
                 <TextView
                     android:id="@+id/tv_userName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20px"
                     android:singleLine="true"
                     android:text="西门春雪"
-                    android:textColor="@color/text_border_focused"
-                    android:textSize="24dp" />
+                    android:textColor="@color/black"
+                    android:textSize="24px" />
+
+                <TextView
+                    android:id="@+id/tv_className"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10px"
+                    android:singleLine="true"
+                    android:text="小学一年级一班"
+                    android:textColor="@color/black"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:layout_marginTop="20px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_currentBook"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
                     android:gravity="center"
                     android:text="本学期用书"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_allBook"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
                     android:gravity="center"
                     android:text="全部用书"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <Button
                     android:id="@+id/btn_serchBook"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
                     android:gravity="center"
                     android:text="搜索本地课外书"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />>
 
                 <Button
                     android:id="@+id/btn_bookStore"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
                     android:gravity="center"
                     android:text="书城"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_msg"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="我的消息"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_account"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="账号设置"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
+
                 <Button
                     android:id="@+id/btn_order"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="订单"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_refresh"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="刷新"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_sysSeeting"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="系统设置"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_upload"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="上传"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_download"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="下载"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
+
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
 
                 <Button
                     android:id="@+id/btn_test_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@null"
-                    android:gravity="center"
                     android:text="测试图片"
-                    android:textColor="@drawable/btn_text_color_selector"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/directory_text" />
+                    android:layout_height="2px"
+                    android:background="@color/black" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
