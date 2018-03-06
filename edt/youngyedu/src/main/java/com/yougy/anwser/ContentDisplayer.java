@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -207,26 +208,51 @@ public class ContentDisplayer extends RelativeLayout {
         needRefresh = false;
         setHintText(null);
     }
-    private void setImgUrl(String url){
+    private void setImgUrl(String url , boolean useCache){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);
         picImageView.setVisibility(VISIBLE);
         pdfImageView.setVisibility(GONE);
-        Glide.with(getContext()).load(url).listener(new RequestListener<String, GlideDrawable>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                e.printStackTrace();
-                Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
-                setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
-                needRefresh = true;
-                return false;
-            }
+        if (useCache){
+            Glide.with(getContext())
+                    .load(url)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            e.printStackTrace();
+                            Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
+                            setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
+                            needRefresh = true;
+                            return false;
+                        }
 
-            @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                return false;
-            }
-        }).into(picImageView);
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            return false;
+                        }
+                    }).into(picImageView);
+        }
+        else {
+            Glide.with(getContext())
+                    .load(url)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            e.printStackTrace();
+                            Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
+                            setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
+                            needRefresh = true;
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            return false;
+                        }
+                    }).into(picImageView);
+        }
         needRefresh = false;
         setHintText(null);
     }
@@ -442,6 +468,10 @@ public class ContentDisplayer extends RelativeLayout {
         }
 
         public void toPage(String typeKey , int pageIndex , boolean showSubText){
+            toPage(typeKey, pageIndex, showSubText , true);
+        }
+
+        public void toPage(String typeKey , int pageIndex , boolean showSubText , boolean useCache){
             if (typeKey == null || pageIndex == -1){
                 mContentDisplayer.setMainText("没有内容");
                 return;
@@ -463,7 +493,7 @@ public class ContentDisplayer extends RelativeLayout {
                                 if (pageIndex == -1){
                                     setCurrentShowInfo(typeKey , i , subPageIndex);
                                     onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentSelectPageIndex());
-                                    showContent(typeKey , i , subPageIndex);
+                                    showContent(typeKey , i , subPageIndex , useCache);
                                     return;
                                 }
                                 else {
@@ -476,7 +506,7 @@ public class ContentDisplayer extends RelativeLayout {
                             if (pageIndex == -1){
                                 setCurrentShowInfo(typeKey , i , 0);
                                 onPageInfoChanged(typeKey , getPageCount(typeKey) , getCurrentSelectPageIndex());
-                                showContent(typeKey , i , 0);
+                                showContent(typeKey , i , 0 , useCache);
                                 return;
                             }
                         }
@@ -551,14 +581,14 @@ public class ContentDisplayer extends RelativeLayout {
             toPage(getCurrentShowTypeKey() , getCurrentSelectPageIndex() , isSubTextShow);
         }
 
-        private void showContent(String typeKey , int contentIndex , int subPageIndex){
+        private void showContent(String typeKey , int contentIndex , int subPageIndex , boolean useCache){
             Content_new content = dataMap.get(typeKey).get(contentIndex);
             switch (content.getType()){
                 case HTML_URL:
                     mContentDisplayer.setHtmlUrl(content.getValue());
                     break;
                 case IMG_URL:
-                    mContentDisplayer.setImgUrl(content.getValue());
+                    mContentDisplayer.setImgUrl(content.getValue() , useCache);
                     break;
                 case TEXT:
                     mContentDisplayer.setMainText(content.getValue());
