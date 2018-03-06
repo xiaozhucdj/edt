@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
@@ -475,12 +475,9 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.page_btn:
-                mDelteIndex = (int) v.getTag();
-                page((int) v.getTag());
-                break;
-        }
+        mDelteIndex = (int) v.getTag();
+        page((int) v.getTag());
+
     }
 
     private void page(int index) {
@@ -566,11 +563,12 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
         //删除之前的按钮
         mLlPager.removeAllViews();
         for (int index = 1; index <= counts; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = 20;
-            LogUtils.e(TAG, "getActivity is null ? " + (getActivity() == null));
-            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            LogUtils.e(TAG, "getActivity is null ? " + (getActivity() == null));
+//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
             if (index == 1) {
                 mPagerIndex = 1;
                 pageBtn.setSelected(true);
@@ -578,7 +576,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
             pageBtn.setTag(index);
             pageBtn.setText(Integer.toString(index));
             pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn, params);
+            mLlPager.addView(pageBtn);
         }
     }
 
