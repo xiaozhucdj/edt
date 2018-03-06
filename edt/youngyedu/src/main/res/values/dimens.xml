@@ -101,8 +101,8 @@
     <dimen name="shop_book_img_padding">11px</dimen>
     <dimen name="shop_book_price_text_size">24px</dimen>
     <dimen name="shop_book_name_text_size">20px</dimen>
-    <dimen name="shop_book_price_margin_top">5px</dimen>
-    <dimen name="shop_book_name_margin_top">15px</dimen>
+    <dimen name="shop_book_price_margin_top">2px</dimen>
+    <dimen name="shop_book_name_margin_top">12px</dimen>
     <dimen name="shop_book_name_margin_bottom">20px</dimen>
     <dimen name="shop_spinner_layout_height">50px</dimen>
     <dimen name="shop_spinner_padding_left">30px</dimen>

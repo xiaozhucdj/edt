@@ -57,20 +57,44 @@
 
     </style>
     <style name="bookDetailStyle">
-        <item name="android:layout_marginTop">@dimen/three_px</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/twenty_px</item>
+        <item name="android:textSize">20px</item>
+        <item name="android:layout_marginTop">10px</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
-    <style name="bookOperateStyle">
+
+    <style name="bookPromotionStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@null</item>
+        <item name="android:textSize">20px</item>
+        <item name="android:textColor">@color/text_color_black</item>
+    </style>
+
+    <style name="bookOperateStyle">
+        <item name="android:layout_width">200px</item>
+        <item name="android:layout_height">48px</item>
+        <item name="android:background">@drawable/img_normal_button</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@drawable/shop_color_btn_selector</item>
-        <item name="android:textSize">@dimen/twenty_four_px</item>
+        <item name="android:textSize">24px</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginRight">33px</item>
+    </style>
+
+    <style name="detailTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">30px</item>
+        <item name="android:layout_marginRight">30px</item>
+        <item name="android:layout_marginTop">20px</item>
+        <item name="android:drawableLeft">@drawable/img_tushuxiangqing</item>
+        <item name="android:drawablePadding">20px</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/text_color_black</item>
+        <item name="android:textSize">26px</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="classfyTextStyle">
