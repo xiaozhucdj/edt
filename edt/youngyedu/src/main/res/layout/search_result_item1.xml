@@ -13,23 +13,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="20px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
+        android:paddingTop="25px"
         >
 
         <ImageView
             android:id="@+id/book_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="132px"
+            android:layout_height="172px"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/shu_bg"
             android:src="@drawable/cart_book"
-            android:paddingLeft="2px"
-            android:paddingTop="2px"
-            android:paddingRight="6px"
-            android:paddingBottom="6px"
+            android:paddingRight="11px"
+            android:paddingBottom="11px"
             />
 
         <ImageView
@@ -43,14 +39,15 @@
             android:id="@+id/book_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16px"
+            android:layout_marginLeft="10px"
             android:layout_toRightOf="@+id/book_img"
             android:layout_alignParentTop="true"
             android:gravity="top"
-            android:layout_marginRight="100px"
+            android:layout_marginRight="80px"
             android:text="@{bookInfo.bookTitle}"
             android:textSize="24px"
             android:lineSpacingExtra="-5px"
+            android:includeFontPadding="false"
             android:textColor="@color/text_color_black"
             android:maxEms="23"
             android:singleLine="true"
@@ -63,10 +60,11 @@
             android:layout_alignLeft="@+id/book_name"
             android:layout_below="@+id/book_name"
             android:lineSpacingExtra="-3px"
-            android:layout_marginTop="18px"
-            android:layout_marginRight="100px"
+            android:layout_marginTop="20px"
+            android:layout_marginRight="80px"
             android:text="@{bookSummary}"
             android:textSize="20px"
+            android:includeFontPadding="false"
             android:textColor="@color/black"
             android:ellipsize="end"
             android:maxEms="50"
@@ -78,29 +76,34 @@
             android:layout_alignLeft="@+id/book_intro"
             android:layout_toRightOf="@+id/book_img"
             android:layout_alignBottom="@+id/book_img"
+            android:includeFontPadding="false"
             android:text="@{bookInfo.bookAuthor}"
-            android:textSize="18px"
+            android:textSize="20px"
             android:textColor="@color/black"
             />
-        <com.yougy.view.MyTextView
-            android:id="@+id/book_classify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18px"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/black"
-            android:layout_alignBottom="@+id/book_img"
-            android:layout_marginRight="100px"
-            android:gravity="center"
-            android:text="@{bookInfo.bookCategoryFamilyName}"
-            android:background="@drawable/img_normal_filtrate"
-            />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/directory_text"
             android:layout_below="@+id/book_img"
-            android:layout_marginTop="16px"
+            android:layout_marginTop="15px"
             />
+
+        <com.yougy.view.MyTextView
+            android:id="@+id/book_classify"
+            android:layout_width="80px"
+            android:layout_height="30px"
+            android:textSize="20px"
+            android:layout_alignParentRight="true"
+            android:includeFontPadding="false"
+            android:textColor="@color/black"
+            android:layout_marginTop="131px"
+            android:layout_marginRight="80px"
+            android:gravity="center"
+            android:text="@{bookInfo.bookCategoryFamilyName}"
+            android:background="@drawable/img_keben"
+            />
+
     </RelativeLayout>
 </layout>

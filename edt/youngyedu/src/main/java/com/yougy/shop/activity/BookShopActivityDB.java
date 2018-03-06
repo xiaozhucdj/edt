@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,6 +27,7 @@ import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ResultUtils;
 import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.rx_subscriber.ShopSubscriber;
@@ -123,7 +123,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 LogUtils.e(tag, "call.........................");
                 handleCategoryInfo(categoryInfos);
                 LogUtils.e(tag, "categoryInfos' size is : " + categoryInfos.size() + ",bookinfos' size is : " + bookInfos.size());
-                LogUtils.e(tag,"bookinfos : " + bookInfos);
+                LogUtils.e(tag, "bookinfos : " + bookInfos);
                 return bookInfos;
             }
         }).subscribeOn(Schedulers.io())
@@ -212,7 +212,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 textbooks = infos;
             } else if ("教辅".equals(category)) {
                 guidbooks = infos;
-                LogUtils.e(tag,"教辅："+infos);
+                LogUtils.e(tag, "教辅：" + infos);
             } else {
                 extrabooks = infos;
             }
@@ -305,32 +305,26 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.allClassifyRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.singleClassifyRecycler.addItemDecoration(new GridSpacingItemDecoration(SPAN_COUNT, UIUtils.px2dip(32), false));
         binding.singleClassifyRecycler.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
-        binding.correspondSchool.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                hideRecycler();
-                if (isChecked) {
-                    hideFiltrateTv();
-                    hideFiltrateLayout();
-                    mVersion = mSchoolVersion;
-                } else {
-                    showFiltrateTv();
-                    mVersion = mAllVersion;
-                }
-                setCompositeText();
+        binding.correspondSchool.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            hideRecycler();
+            if (isChecked) {
+                hideFiltrateTv();
+                hideFiltrateLayout();
+                mVersion = mSchoolVersion;
+            } else {
+                showFiltrateTv();
+                mVersion = mAllVersion;
             }
+            setCompositeText();
         });
-        binding.subjectWrap.setHorizontalMargin(50);
-        binding.subjectWrap.setVerticalMargin(10);
-        binding.versionWrap.setHorizontalMargin(50);
-        binding.versionWrap.setVerticalMargin(10);
-        binding.searchEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    hideRecycler();
-                    LogUtils.e(tag, "search et onFocusChange...........");
-                }
+        binding.subjectWrap.setHorizontalMargin(22);
+        binding.subjectWrap.setVerticalMargin(20);
+        binding.versionWrap.setHorizontalMargin(22);
+        binding.versionWrap.setVerticalMargin(20);
+        binding.searchEt.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                hideRecycler();
+                LogUtils.e(tag, "search et onFocusChange...........");
             }
         });
         binding.searchEt.addTextChangedListener(new TextWatcher() {
@@ -375,17 +369,17 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     public void stageClick(View view) {
         LogUtils.e(tag, "stage click.............");
-        binding.stageRecycler.setVisibility(binding.stageRecycler.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        if (binding.classifyRecycler.getVisibility() == View.VISIBLE) {
-            binding.classifyRecycler.setVisibility(View.GONE);
+        binding.stageRecyclerLayout.setVisibility(binding.stageRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+        if (binding.classifyRecyclerLayout.getVisibility() == View.VISIBLE) {
+            binding.classifyRecyclerLayout.setVisibility(View.GONE);
         }
     }
 
     public void classifyClick(View view) {
         LogUtils.e(tag, "classify click......");
-        binding.classifyRecycler.setVisibility(binding.classifyRecycler.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        if (binding.stageRecycler.getVisibility() == View.VISIBLE) {
-            binding.stageRecycler.setVisibility(View.GONE);
+        binding.classifyRecyclerLayout.setVisibility(binding.classifyRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE) {
+            binding.stageRecyclerLayout.setVisibility(View.GONE);
         }
     }
 
@@ -396,7 +390,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         int count = mBookInfos.size() % COUNT_PER_PAGE == 0 ? mBookInfos.size() / COUNT_PER_PAGE : mBookInfos.size() / COUNT_PER_PAGE + 1;
         for (int index = 1; index <= count; index++) {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = UIUtils.px2dip(20);
+            params.leftMargin = UIUtils.px2dip(25);
             View pageLayout = View.inflate(this, R.layout.page_item, null);
             final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
             if (index == 1) {
@@ -405,23 +399,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             pageBtn.setText(Integer.toString(index));
             btns.add(pageBtn);
             final int page = index - 1;
-            pageBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    hideRecycler();
-                    for (Button btn : btns) {
-                        btn.setSelected(false);
-                    }
-                    pageBtn.setSelected(true);
-                    mPageInfos.clear();
-                    int start = page * COUNT_PER_PAGE;
-                    int end = (page + 1) * COUNT_PER_PAGE;
-                    if (end > mBookInfos.size()) {
-                        end = mBookInfos.size();
-                    }
-                    mPageInfos.addAll(mBookInfos.subList(start, end));
-                    mBookAdapter.notifyDataSetChanged();
+            pageBtn.setOnClickListener(v -> {
+                hideRecycler();
+                for (Button btn : btns) {
+                    btn.setSelected(false);
                 }
+                pageBtn.setSelected(true);
+                mPageInfos.clear();
+                int start = page * COUNT_PER_PAGE;
+                int end = (page + 1) * COUNT_PER_PAGE;
+                if (end > mBookInfos.size()) {
+                    end = mBookInfos.size();
+                }
+                mPageInfos.addAll(mBookInfos.subList(start, end));
+                mBookAdapter.notifyDataSetChanged();
             });
             binding.pageNumberLayout.addView(pageLayout, params);
         }
@@ -435,15 +426,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         for (final String record : mHistoryRecords) {
             TextView recordTv = new TextView(this);
             recordTv.setText(record);
-            recordTv.setTextSize(UIUtils.px2dip(20));
+            recordTv.setIncludeFontPadding(false);
+            recordTv.setTextSize(UIUtils.px2dip(24));
             recordTv.setTextColor(getResources().getColor(R.color.text_color_black));
-            recordTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSearchKey = record;
-                    hideSearchLayout();
-                    search();
-                }
+            recordTv.setOnClickListener(v -> {
+                mSearchKey = record;
+                hideSearchLayout();
+                search();
             });
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.bottomMargin = UIUtils.px2dip(20);
@@ -486,6 +475,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     public void clickExtraBook(View view) {
         hideRecycler();
+        guidebookSelected();
         extrabookSelected();
     }
 
@@ -523,9 +513,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             binding.versionLayout.setVisibility(View.GONE);
         } else {
             binding.filtrateLayout.setVisibility(View.VISIBLE);
-        }
-        if (binding.filtrateEmpty.getVisibility() == View.VISIBLE) {
-            binding.filtrateEmpty.setVisibility(View.GONE);
         }
         for (int j = 0; j < binding.subjectWrap.getChildCount(); j++) {
             View v = binding.subjectWrap.getChildAt(j);
@@ -607,7 +594,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.stageButton.setText(info.getCategoryDisplay());
         setCompositeText();
         getSingleBookInfo();
-        binding.stageRecycler.setVisibility(View.GONE);
+        binding.stageRecyclerLayout.setVisibility(View.GONE);
     }
 
     private void classifyItemClick(int position) {
@@ -619,11 +606,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         mVersion = "";
         setCompositeText();
         getSingleBookInfo();
-        binding.classifyRecycler.setVisibility(View.GONE);
+        binding.classifyRecyclerLayout.setVisibility(View.GONE);
     }
 
     private void guidebookSelected() {
         mClassifyPosition = 1;
+        LogUtils.e(tag,"stage's size : " + gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).size());
         mStageAdapter = new RecyclerAdapter(gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)));
         binding.stageRecycler.setAdapter(mStageAdapter);
 
@@ -685,7 +673,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         }
         int end = infos.size() > COUNT_PER_PAGE ? COUNT_PER_PAGE : infos.size();
         mPageInfos.addAll(infos.subList(0, end));
-        mBookAdapter = new BookAdapter(mPageInfos,this);
+        mBookAdapter = new BookAdapter(mPageInfos, this);
         binding.singleClassifyRecycler.setAdapter(mBookAdapter);
         binding.singleClassifyRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.singleClassifyRecycler) {
             @Override
@@ -724,11 +712,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private void hideRecycler() {
-        if (binding.stageRecycler.getVisibility() == View.VISIBLE) {
-            binding.stageRecycler.setVisibility(View.GONE);
+        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE) {
+            binding.stageRecyclerLayout.setVisibility(View.GONE);
         }
-        if (binding.classifyRecycler.getVisibility() == View.VISIBLE) {
-            binding.classifyRecycler.setVisibility(View.GONE);
+        if (binding.classifyRecyclerLayout.getVisibility() == View.VISIBLE) {
+            binding.classifyRecyclerLayout.setVisibility(View.GONE);
         }
     }
 
@@ -744,10 +732,21 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void showSpinnerLayout() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
-//            mStage = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
             mStage = SpUtil.getStudent().getGradeName();
             binding.stageButton.setText(mStage);
             setCompositeText();
+        }
+    }
+
+    public void hideStageRecyclerLayout(View view){
+        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE){
+            binding.stageRecyclerLayout.setVisibility(View.GONE);
+        }
+    }
+
+    public void hideClassifyRecyclerLayout(View view){
+        if (binding.classifyRecyclerLayout.getVisibility() == View.VISIBLE){
+            binding.classifyRecyclerLayout.setVisibility(View.GONE);
         }
     }
 
@@ -808,9 +807,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         if (binding.versionLayout.getVisibility() == View.VISIBLE) {
             binding.versionLayout.setVisibility(View.GONE);
         }
-        if (binding.filtrateEmpty.getVisibility() == View.VISIBLE) {
-            binding.filtrateEmpty.setVisibility(View.GONE);
-        }
 
     }
 
@@ -836,82 +832,80 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.subjectWrap.removeAllViews();
         for (int i = 0; i < subjectInfos.size(); i++) {
             final CategoryInfo info = subjectInfos.get(i);
-            final TextView subjectTv = (TextView) View.inflate(this, R.layout.text_view, null);
+            View layout = View.inflate(this,R.layout.text_view,null);
+            final TextView subjectTv = (TextView) layout.findViewById(R.id.text_tv);
             subjectTv.setText(info.getCategoryDisplay());
-            subjectTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    for (int i = 0; i < binding.subjectWrap.getChildCount(); i++) {
-                        View view = binding.subjectWrap.getChildAt(i);
-                        if (view.isSelected()) {
-                            view.setSelected(false);
-                        }
+            subjectTv.setOnClickListener(v -> {
+                for (int i1 = 0; i1 < binding.subjectWrap.getChildCount(); i1++) {
+                    View child = binding.subjectWrap.getChildAt(i1);
+                    TextView tv = (TextView) child.findViewById(R.id.text_tv);
+                    if (tv.isSelected()) {
+                        tv.setSelected(false);
                     }
-                    subjectTv.setSelected(true);
-                    bookCategory = info.getCategoryId();
-                    mSubject = info.getCategoryDisplay();
-                    generateVersionLayout(info);
                 }
+                subjectTv.setSelected(true);
+                bookCategory = info.getCategoryId();
+                mSubject = info.getCategoryDisplay();
+                generateVersionLayout(info);
             });
-            binding.subjectWrap.addView(subjectTv);
+            binding.subjectWrap.addView(layout);
         }
     }
 
     private void generateVersionLayout(CategoryInfo info) {
         binding.versionWrap.removeAllViews();
         List<CategoryInfo> versionInfos = versionSparseArray.get(info.getCategoryId());
-        LogUtils.e(tag,"version's size : " + versionInfos.size());
+        if (versionInfos == null || versionInfos.size() == 0){
+            ToastUtil.showToast(this,"没有对应版本。。。");
+            return;
+        }
+        LogUtils.e(tag, "version's size : " + versionInfos.size());
         for (int j = 0; j < versionInfos.size(); j++) {
             final CategoryInfo versionInfo = versionInfos.get(j);
-            final TextView versionTv = (TextView) View.inflate(BookShopActivityDB.this, R.layout.text_view, null);
+            View layout = View.inflate(this,R.layout.text_view,null);
+            final TextView versionTv = (TextView) layout.findViewById(R.id.text_tv);
             versionTv.setText(versionInfo.getCategoryDisplay());
-            versionTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    for (int i = 0; i < binding.versionWrap.getChildCount(); i++) {
-                        View child = binding.versionWrap.getChildAt(i);
-                        if (child.isSelected()) {
-                            child.setSelected(false);
-                        }
+            versionTv.setOnClickListener(v -> {
+                for (int i = 0; i < binding.versionWrap.getChildCount(); i++) {
+                    View child = binding.versionWrap.getChildAt(i);
+                    TextView tv = (TextView) child.findViewById(R.id.text_tv);
+                    if (tv.isSelected()) {
+                        tv.setSelected(false);
                     }
-                    LogUtils.e(tag, "category id : " + bookCategory + ",version id : " + versionInfo.getCategoryId());
-                    mVersion = versionInfo.getCategoryDisplay();
-                    versionTv.setSelected(true);
-                    int bookVersion = versionInfo.getCategoryId();
-                    //TODO:图书查询接口
-                    NewBookStoreBookReq req = new NewBookStoreBookReq();
-                    req.setBookCategory(bookCategory);
-                    req.setBookVersion(bookVersion);
-                    queryBookByVersion(req);
-
                 }
+                LogUtils.e(tag, "category id : " + bookCategory + ",version id : " + versionInfo.getCategoryId());
+                mVersion = versionInfo.getCategoryDisplay();
+                versionTv.setSelected(true);
+                int bookVersion = versionInfo.getCategoryId();
+                //TODO:图书查询接口
+                NewBookStoreBookReq req = new NewBookStoreBookReq();
+                req.setBookCategory(bookCategory);
+                req.setBookVersion(bookVersion);
+                queryBookByVersion(req);
+
             });
-            binding.versionWrap.addView(versionTv);
+            binding.versionWrap.addView(layout);
         }
-        binding.filtrateEmpty.setVisibility(View.VISIBLE);
         binding.versionLayout.setVisibility(View.VISIBLE);
     }
 
     private void queryBookByVersion(final NewBookStoreBookReq req) {
-        Observable<List<BookInfo>> observable = create(new Observable.OnSubscribe<List<BookInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                Response response = NewProtocolManager.queryBook(req);
-                try {
-                    String resultJson = response.body().string();
-                    LogUtils.e(tag, "result Json : " + resultJson);
-                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-                    if (result.getCode() == 200) {
-                        if (!subscriber.isUnsubscribed()) {
-                            subscriber.onNext(result.getData());
-                            subscriber.onCompleted();
-                        }
-                    } else {
-                        subscriber.onError(new Throwable());
+        Observable<List<BookInfo>> observable = create((Observable.OnSubscribe<List<BookInfo>>) subscriber -> {
+            Response response = NewProtocolManager.queryBook(req);
+            try {
+                String resultJson = response.body().string();
+                LogUtils.e(tag, "result Json : " + resultJson);
+                Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
+                if (result.getCode() == 200) {
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onNext(result.getData());
+                        subscriber.onCompleted();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } else {
+                    subscriber.onError(new Throwable());
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

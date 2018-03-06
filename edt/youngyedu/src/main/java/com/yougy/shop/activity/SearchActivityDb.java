@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -96,24 +97,21 @@ public class SearchActivityDb extends ShopBaseActivity {
             pageBtn.setText(index + "");
             btns.add(pageBtn);
             final int page = index - 1;
-            pageBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    for (Button btn : btns) {
-                        btn.setSelected(false);
-                    }
-                    pageBtn.setSelected(true);
-                    mPageInfos.clear();
-                    int start = page * COUNT_PER_PAGE;
-                    int end = (page + 1) * COUNT_PER_PAGE;
-                    if (end > mBookInfos.size()) {
-                        end = mBookInfos.size();
-                    }
-                    mPageInfos.addAll(mBookInfos.subList(start, end));
-                    mAdapter.notifyDataSetChanged();
+            pageBtn.setOnClickListener(v -> {
+                for (Button btn : btns) {
+                    btn.setSelected(false);
                 }
+                pageBtn.setSelected(true);
+                mPageInfos.clear();
+                int start = page * COUNT_PER_PAGE;
+                int end = (page + 1) * COUNT_PER_PAGE;
+                if (end > mBookInfos.size()) {
+                    end = mBookInfos.size();
+                }
+                mPageInfos.addAll(mBookInfos.subList(start, end));
+                mAdapter.notifyDataSetChanged();
             });
-            binding.pageNumberLayout.addView(pageBtn, params);
+            binding.pageNumberLayout.addView(pageLayout, params);
         }
     }
 
@@ -128,9 +126,9 @@ public class SearchActivityDb extends ShopBaseActivity {
         binding.resultRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         binding.subjectWrap.setHorizontalMargin(40);
-        binding.subjectWrap.setVerticalMargin(20);
+        binding.subjectWrap.setVerticalMargin(25);
         binding.versionWrap.setHorizontalMargin(40);
-        binding.versionWrap.setVerticalMargin(20);
+        binding.versionWrap.setVerticalMargin(25);
         binding.stageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -170,19 +168,17 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.subjectWrap.removeAllViews();
         }
         for (final CategoryInfo item : info.getChilds()) {
-            final TextView tv = (TextView) View.inflate(this, R.layout.text_view, null);
+            View layout = View.inflate(this,R.layout.text_view,null);
+            final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
             tv.setText(item.getCategoryDisplay());
-            tv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    resetSubjectTv();
-                    generateVersionLayout(item);
-                    binding.versionLayout.setVisibility(View.VISIBLE);
-                    bookCategory = item.getCategoryId();
-                    tv.setSelected(true);
-                }
+            tv.setOnClickListener(v -> {
+                resetSubjectTv();
+                generateVersionLayout(item);
+                binding.versionLayout.setVisibility(View.VISIBLE);
+                bookCategory = item.getCategoryId();
+                tv.setSelected(true);
             });
-            binding.subjectWrap.addView(tv);
+            binding.subjectWrap.addView(layout);
         }
     }
 
@@ -191,31 +187,31 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.versionWrap.removeAllViews();
         }
         for (final CategoryInfo item : info.getChilds()) {
-            final TextView tv = (TextView) View.inflate(this, R.layout.text_view, null);
+            View layout = View.inflate(this,R.layout.text_view,null);
+            final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
             tv.setText(item.getCategoryDisplay());
-            tv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    resetVersionTv();
-                    tv.setSelected(true);
-                    bookVersion = item.getCategoryId();
-                }
+            tv.setOnClickListener(v -> {
+                resetVersionTv();
+                tv.setSelected(true);
+                bookVersion = item.getCategoryId();
             });
-            binding.versionWrap.addView(tv);
+            binding.versionWrap.addView(layout);
         }
     }
 
     private void resetSubjectTv() {
         int count = binding.subjectWrap.getChildCount();
         for (int i = 0; i < count; i++) {
-            binding.subjectWrap.getChildAt(i).setSelected(false);
+            FrameLayout layout = (FrameLayout) binding.subjectWrap.getChildAt(i);
+            layout.getChildAt(0).setSelected(false);
         }
     }
 
     private void resetVersionTv() {
         int count = binding.versionWrap.getChildCount();
         for (int i = 0; i < count; i++) {
-            binding.versionWrap.getChildAt(i).setSelected(false);
+            FrameLayout layout = (FrameLayout) binding.versionWrap.getChildAt(i);
+            layout.getChildAt(0).setSelected(false);
         }
     }
 
@@ -225,7 +221,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     @Override
     protected void loadData() {
         final NewBookStoreBookReq req = new NewBookStoreBookReq();
-        req.setBookTitle(bookTitle);
+        req.setBookTitleMatch(bookTitle);
         queryBook(req);
 
     }
@@ -341,7 +337,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         hideFiltrateLayout();
         //TODO:集合数据中，根据条件进行筛选
         NewBookStoreBookReq req = new NewBookStoreBookReq();
-        req.setBookTitle(bookTitle);
+        req.setBookTitleMatch(bookTitle);
         req.setBookVersion(bookVersion);
         req.setBookCategory(bookCategory);
         req.setBookCategoryMatch(bookCategoryMatch);

@@ -90,4 +90,23 @@
     <dimen name="shop_search_text_size">22px</dimen>
     <dimen name="shop_text_margin_left">30px</dimen>
     <dimen name="search_icon_padding_left">235px</dimen>
+    <dimen name="shop_recycler_margin_top">15px</dimen>
+    <dimen name="shop_recycler_margin_left">30px</dimen>
+    <dimen name="shop_classify_text_size">28px</dimen>
+    <dimen name="shop_more_margin_right">30px</dimen>
+    <dimen name="shop_book_list_margin_top">20px</dimen>
+    <dimen name="shop_book_margin_left">25px</dimen>
+    <dimen name="shop_book_list_width">162px</dimen>
+    <dimen name="shop_book_img_height">212px</dimen>
+    <dimen name="shop_book_img_padding">11px</dimen>
+    <dimen name="shop_book_price_text_size">24px</dimen>
+    <dimen name="shop_book_name_text_size">20px</dimen>
+    <dimen name="shop_book_price_margin_top">5px</dimen>
+    <dimen name="shop_book_name_margin_top">15px</dimen>
+    <dimen name="shop_book_name_margin_bottom">20px</dimen>
+    <dimen name="shop_spinner_layout_height">50px</dimen>
+    <dimen name="shop_spinner_padding_left">30px</dimen>
+    <dimen name="stage_button_width">170px</dimen>
+    <dimen name="stage_button_height">36px</dimen>
+    <dimen name="stage_text_size">20px</dimen>
 </resources>
