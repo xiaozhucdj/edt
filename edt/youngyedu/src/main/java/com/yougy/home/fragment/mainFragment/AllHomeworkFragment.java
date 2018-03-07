@@ -23,8 +23,8 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
+import com.yougy.home.adapter.AllHomeworkAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
-import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
@@ -89,7 +89,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 12;
+    private static final int COUNT_PER_PAGE = FileContonst.SMALL_PAGE_COUNTS;
 
     /***
      * 当前翻页的角标
@@ -120,7 +120,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     private ViewGroup mLoadingNull;
     private boolean mIsPackUp;
     private LinearLayout llTerm;
-    private HomeworkAdapter mHomeworkAdapter;
+    private AllHomeworkAdapter mHomeworkAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -269,11 +269,11 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     private void initBookAdapter() {
         mBookView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
         mBookView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);
         mBookView.setLayoutManager(layout);
 
-        mHomeworkAdapter = new HomeworkAdapter(mBooks);
+        mHomeworkAdapter = new AllHomeworkAdapter(mBooks);
         mBookView.setAdapter(mHomeworkAdapter);
         mBookView.addOnItemTouchListener(new OnRecyclerItemClickListener(mBookView) {
             @Override
@@ -425,7 +425,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
-            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, FileContonst.MIN_ALL_ITEM_SUBJECT);
         } else {
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
