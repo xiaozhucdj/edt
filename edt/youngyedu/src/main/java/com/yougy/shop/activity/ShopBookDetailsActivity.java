@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yolanda.nohttp.Headers;
@@ -99,8 +98,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     TextView mTvBookDownloadSize;
     @BindView(R.id.tv_bookSalePrice)
     TextView mTvBookSalePrice;
-    @BindView(R.id.ll_bookInfos)
-    LinearLayout mLlBookInfos;
     @BindView(R.id.btn_buy)
     Button mBtnBuy;
     @BindView(R.id.btn_addCar)
@@ -111,7 +108,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     Button mBtnRead;
     @BindView(R.id.tv_bookDetails)
     TextView mTvBookDetails;
-    @BindView(R.id.recycler_iew)
+    @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
     ////////////////////////global Files//////////////////////////////////////////////////
