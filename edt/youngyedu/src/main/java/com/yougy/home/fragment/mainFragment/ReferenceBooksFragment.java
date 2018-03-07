@@ -39,7 +39,6 @@ import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
-import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.SearchBookDialog;
 
@@ -81,10 +80,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      */
     private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
 
+
     /***
      * 搜索结果 显示的页数
      */
-    private static final int COUNT_SEARCH_PAGE = FileContonst.PAGE_COUNTS;
+    private static final int COUNT_SEARCH_PAGE = FileContonst.SEARCH_PAGE_COUNTS;
     /***
      * 当前翻页的角标
      */
@@ -124,16 +124,17 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
-
+    private DividerItemDecoration divider ;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
 
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
-        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+
+//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
 
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
@@ -162,11 +163,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     }
 
     private void itemClick(int position) {
-        mDownPosition = position ;
+        mDownPosition = position;
         BookInfo info = mBooks.get(position);
         LogUtils.i("book id ....." + info.toString());
 //        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
@@ -243,13 +244,20 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.tv_referenceBooks){
+        if (v.getId() == R.id.tv_referenceBooks) {
             mLlSearchKeyTitle.setVisibility(View.GONE);
             mLlSearchKeyResut.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
+
+            //TODO:设置 recyleview ,和adapter大小
+            mRecyclerView.addItemDecoration(divider);
+            CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
+            layout.setScrollEnabled(false);
+            mRecyclerView.setLayoutManager(layout);
+            mBookAdapter.setPicL(true);
             initPages(mServerBooks, COUNT_PER_PAGE);
 
-        }else if(v.getId() == R.id.tv_page_item){
+        } else if (v.getId() == R.id.tv_page_item) {
             refreshAdapterData(v);
         }
     }
@@ -376,6 +384,13 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             mLlSearchKeyResut.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
             //判断搜索是否有内容
+            //TODO:设置 recyleview ,和adapter大小
+            mRecyclerView.removeItemDecoration(divider);
+
+            CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.SMALL_PAGE_LINES);
+            layout.setScrollEnabled(false);
+            mRecyclerView.setLayoutManager(layout);
+            mBookAdapter.setPicL(false);
             initPages(mSerachBooks, COUNT_SEARCH_PAGE);
         } else {
             mLlSearchKeyTitle.setVisibility(View.VISIBLE);
@@ -493,7 +508,19 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EventBusConstant.current_reference_book)) {
             LogUtils.i("type .." + EventBusConstant.current_reference_book);
-            loadData();
+//            mLlSearchKeyTitle.setVisibility(View.GONE);
+//            mLlSearchKeyResut.setVisibility(View.GONE);
+//            mRecyclerView.setVisibility(View.VISIBLE);
+
+//            mRecyclerView.addItemDecoration(divider);
+//            //TODO:设置 recyleview ,和adapter大小
+//            CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
+//            layout.setScrollEnabled(false);
+//            mRecyclerView.setLayoutManager(layout);
+//            mBookAdapter.setPicL(true);
+            if (mLlSearchKeyTitle.getVisibility() == View.GONE){
+                loadData();
+            }
         } else if (event.getType().equalsIgnoreCase(EventBusConstant.serch_reference)) {
             LogUtils.i("type .." + EventBusConstant.serch_reference);
             if (mServerBooks.size() < 0) {

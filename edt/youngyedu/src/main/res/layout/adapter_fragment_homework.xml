@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="25px"
             android:background="@null"
-            android:src="@drawable/note_cover_iv_normal" />
+            android:src="@drawable/home_work_cover_iv_normal" />
 
     </RelativeLayout>
 </FrameLayout>
