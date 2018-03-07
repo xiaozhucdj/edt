@@ -24,16 +24,16 @@
         android:paddingRight="30px"
         android:src="@drawable/icon_gouwuche" />
 
-    <ImageButton
-        android:id="@+id/recommand_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_toLeftOf="@id/img_btn_right"
-        android:background="@null"
-        android:onClick="recommandBook"
-        android:paddingLeft="15px"
-        android:paddingRight="15px"
-        android:src="@drawable/icon_share" />
+    <!--<ImageButton-->
+        <!--android:id="@+id/recommand_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_toLeftOf="@id/img_btn_right"-->
+        <!--android:background="@null"-->
+        <!--android:onClick="recommandBook"-->
+        <!--android:paddingLeft="15px"-->
+        <!--android:paddingRight="15px"-->
+        <!--android:src="@drawable/icon_share" />-->
 
     <TextView
         android:id="@+id/tv_title"

@@ -15,44 +15,39 @@
     <RelativeLayout
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp"
         android:background="@color/background_white"
         android:id="@+id/ll_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="76px"
      >
 
         <ImageButton
             android:id="@+id/imgbtn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40px"
+            android:layout_height="40px"
             android:layout_centerVertical="true"
-            android:background="@null"
-            android:src="@drawable/img_back" />
+            android:src="@drawable/icon_fanhui" />
 
         <ImageButton
             android:id="@+id/imgbtn_jumpCar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40px"
+            android:layout_height="40px"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
             android:layout_toRightOf="@id/imgbtn_back"
-            android:background="@null"
-            android:src="@drawable/icon_gouwuche" />
+            android:background="@drawable/icon_gouwuche"/>
 
         <TextView
             android:id="@+id/cart_count_tv"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="20px"
+            android:layout_height="20px"
             android:layout_alignLeft="@id/imgbtn_jumpCar"
             android:layout_alignTop="@id/imgbtn_jumpCar"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginLeft="25px"
             android:background="@drawable/black_dot"
             android:gravity="center"
-            android:textColor="@color/zl_white"
-            android:textSize="9sp" />
+            android:textColor="@color/white"
+            android:textSize="12px" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,33 +55,31 @@
             android:layout_centerInParent="true"
             android:text="在线试读"
             android:textColor="@color/black"
-            android:textSize="28dp" />
+            android:textSize="30px" />
 
         <ImageButton
             android:id="@+id/imgbtn_addCar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40px"
+            android:layout_height="40px"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@null"
-            android:src="@drawable/img_addcar_selsect" />
+            android:background="@drawable/img_tianjia"  />
 
         <ImageButton
             android:id="@+id/imgbtn_favor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40px"
+            android:layout_height="40px"
             android:layout_centerVertical="true"
             android:layout_marginRight="30dp"
             android:layout_toLeftOf="@id/imgbtn_addCar"
-            android:background="@null"
-            android:src="@drawable/img_collect_selsect" />
+            android:background="@drawable/icon_shoucang" />
 
         <Button
             android:id="@+id/btn_buy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="140px"
+            android:layout_height="40px"
             android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="30px"
             android:layout_toLeftOf="@id/imgbtn_favor"
             android:background="@drawable/btn_buy_backgroud"
             android:minHeight="0dp"
@@ -94,7 +87,7 @@
             android:padding="5dp"
             android:text="购买"
             android:textColor="@color/text_color_black"
-            android:textSize="20dp" />
+            android:textSize="20px" />
     </RelativeLayout>
     
     <View
