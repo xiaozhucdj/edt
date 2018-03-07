@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:clickable="true">
 
-
     <LinearLayout
         android:id="@+id/ll_referenceKey"
         android:layout_width="match_parent"
@@ -14,7 +13,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60px"
+            android:layout_marginLeft="30px"
             android:orientation="horizontal">
 
             <TextView
@@ -24,7 +24,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="全部课外书>>"
                 android:textColor="@color/text_color_black"
-                android:textSize="24dp"
+                android:textSize="26px"
                 android:textStyle="bold" />
 
 
@@ -35,61 +35,56 @@
                 android:layout_gravity="center_vertical"
                 android:text="搜索大的结果"
                 android:textColor="@color/directory_text"
-                android:textSize="24dp"
+                android:textSize="26px"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#cccccc" />
+            android:layout_height="10px"
+            android:background="#dbdbdb" />
     </LinearLayout>
 
 
     <LinearLayout
         android:id="@+id/ll_referenceResult"
-        android:layout_width="540dp"
-        android:layout_height="wrap_content"
+        android:layout_width="600px"
+        android:layout_height="180px"
         android:layout_below="@id/ll_referenceKey"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="200px"
         android:background="@drawable/img_search_error_gb"
-        android:minHeight="200dp"
         android:orientation="vertical"
-        android:paddingBottom="25dp"
-        android:paddingLeft="65dp"
-        android:paddingRight="65dp"
+        android:paddingLeft="21px"
+        android:paddingRight="21px"
         android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_referenceResultTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:lineSpacingExtra="12dp"
+            android:layout_marginTop="20px"
+            android:singleLine="true"
             android:text="很抱歉没搜索到大的关键字"
             android:textColor="@color/text_color_black"
-            android:textSize="24dp"
-            android:textStyle="bold" />
+            android:textSize="26px" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="30px"
             android:text="1.看看输入的文字是否有错误"
             android:textColor="@color/text_color_black"
-            android:textSize="22dp"
-            android:textStyle="bold" />
+            android:textSize="24px" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10px"
             android:text="2.调整关键字"
             android:textColor="@color/text_color_black"
-            android:textSize="22dp"
-            android:textStyle="bold" />
+            android:textSize="24px" />
 
     </LinearLayout>
 
@@ -97,8 +92,7 @@
         android:id="@+id/recycler_View"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ll_referenceKey"
-      />
+        android:layout_below="@id/ll_referenceKey" />
 
     <LinearLayout
         android:id="@+id/ll_page"
@@ -111,12 +105,12 @@
         android:orientation="horizontal" />
 
     <LinearLayout
-        android:clickable="true"
-        android:orientation="vertical"
-        android:layout_centerInParent="true"
         android:id="@+id/loading_null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:clickable="true"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
@@ -124,13 +118,14 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:src="@drawable/img_error" />
+
         <TextView
             android:id="@+id/tv_errMsg"
-            android:textSize="22dp"
-            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="亲暂时没有数据哦!"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textSize="22dp"
+            android:textStyle="bold" />
     </LinearLayout>
 </RelativeLayout>
