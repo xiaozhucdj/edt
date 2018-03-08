@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/page_btn_pressed"/>
-    <item android:state_selected="true" android:drawable="@drawable/page_btn_pressed"/>
-    <item android:drawable="@drawable/page_btn_normal"/>
+    <item android:state_pressed="true" android:drawable="@drawable/img_press_yema"/>
+    <item android:state_selected="true" android:drawable="@drawable/img_press_yema"/>
+    <item android:drawable="@drawable/img_normal_yema"/>
 </selector>

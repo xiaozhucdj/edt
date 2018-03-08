@@ -4,13 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
@@ -28,14 +30,12 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
-import com.yougy.view.DividerGridItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ import static android.content.ContentValues.TAG;
  * Created by Administrator on 2016/7/12.
  * 辅导书
  */
-public class CoachBookFragment extends BFragment implements View.OnClickListener{
+public class CoachBookFragment extends BFragment implements View.OnClickListener {
     /**
      * 适配器 数据
      */
@@ -60,7 +60,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE =FileContonst.PAGE_COUNTS;
+    private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
     /***
      * 当前翻页的角标
      */
@@ -71,7 +71,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     private boolean mIsFist;
     private LinearLayout mLlPager;
 
-//    private Subscription mSub;
+    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
@@ -80,7 +80,11 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
-        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        mRecyclerView.addItemDecoration(divider);
+
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
@@ -99,11 +103,11 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
         return mRootView;
     }
 
-    private void itemClick(int position){
-        mDownPosition = position ;
+    private void itemClick(int position) {
+        mDownPosition = position;
         BookInfo info = mBooks.get(position);
 //        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
@@ -115,7 +119,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             extras.putInt(FileContonst.BOOK_ID, info.getBookId());
             //分类码
             extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId()) ;
+            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (NetUtils.isNetConnected()) {
@@ -125,6 +129,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             }
         }
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -153,8 +158,8 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             //设置年级
             req.setBookFitGradeName(SpUtil.getGradeName());
             req.setBookCategoryMatch(20000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity() ,req) ;
-            NewProtocolManager.bookShelf(req,mNewTextBookCallBack);
+            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
+            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
 
         } else {
             Log.e(TAG, "query book from database...");
@@ -162,6 +167,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
 //            mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -169,8 +175,6 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
 //            mSub.unsubscribe();
 //        }
     }
-
-
 
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
@@ -185,34 +189,31 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
     }
 
 
-
     /***
      * 刷新适配器数据
      */
     private void refreshAdapterData(View v) {
-        switch (v.getId()) {
-            case R.id.page_btn:
-                if ((int) v.getTag() == mPagerIndex) {
-                    return;
-                }
 
-                //还原上个按钮状态
-                mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
-                mPagerIndex = (int) v.getTag();
-                //设置当前按钮状态
-                mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
-
-                //设置page页数数据
-                mBooks.clear();
-
-                if ((mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
-                    mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
-                } else {
-                    mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
-                }
-                notifyDataSetChanged();
-                break;
+        if ((int) v.getTag() == mPagerIndex) {
+            return;
         }
+
+        //还原上个按钮状态
+        mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
+        mPagerIndex = (int) v.getTag();
+        //设置当前按钮状态
+        mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
+
+        //设置page页数数据
+        mBooks.clear();
+
+        if ((mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
+            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
+        } else {
+            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
+        }
+        notifyDataSetChanged();
+
     }
 
     /**
@@ -263,10 +264,11 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
      */
     private void addBtnCounts(int counts) {
         for (int index = 1; index <= counts; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = 20;
-            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
             if (index == 1) {
                 mPagerIndex = 1;
                 pageBtn.setSelected(true);
@@ -274,7 +276,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             pageBtn.setTag(index);
             pageBtn.setText(Integer.toString(index));
             pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn, params);
+            mLlPager.addView(pageBtn);
         }
     }
 
@@ -291,42 +293,43 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof NewBookShelfRep && !mHide &&  mNewTextBookCallBack!=null) { //网数据库存储 协议返回的JSON
+                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
                     NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
                     List<BookInfo> bookInfos = shelfProtocol.getData();
                     freshUI(bookInfos);
-                }else if (o instanceof String && !mHide && StringUtils.isEquals((String) o,NewProtocolManager.NewCacheId.CODE_COACH_BOOK+"")){
+                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_COACH_BOOK + "")) {
                     LogUtils.i("yuanye...请求服务器 加载出错 ---CoachBookFragment");
-                    freshUI(getCacheBooks( NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
+                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
                 }
             }
         }));
     }
 
 
-
     private void freshUI(List<BookInfo> bookInfos) {
-        mIsRefresh =false ;
-        mNewTextBookCallBack = null ;
-        if (bookInfos!=null && bookInfos.size()>0){
+        mIsRefresh = false;
+        mNewTextBookCallBack = null;
+        if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();
             mCountBooks.addAll(bookInfos);
             initPages();
-        }else {
+        } else {
             mLoadingNull.setVisibility(View.VISIBLE);
         }
 
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRecyclerView =null;
-        if (mBookAdapter !=null){
-            mBookAdapter = null ;
+        mRecyclerView = null;
+        if (mBookAdapter != null) {
+            mBookAdapter = null;
         }
     }
-    private void notifyDataSetChanged(){
+
+    private void notifyDataSetChanged() {
         mBookAdapter.notifyDataSetChanged();
         EpdController.invalidate(mRootView, UpdateMode.GC);
     }
@@ -339,6 +342,7 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             loadData();
         }
     }
+
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();

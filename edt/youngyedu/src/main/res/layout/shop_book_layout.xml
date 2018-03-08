@@ -13,28 +13,28 @@
         android:id="@+id/shop_book_second"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/thirty_two_dp"
+        android:layout_marginLeft="@dimen/shop_book_margin_left"
         android:visibility="invisible"
         />
     <com.yougy.view.ShopBookView
         android:id="@+id/shop_book_third"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/thirty_two_dp"
+        android:layout_marginLeft="@dimen/shop_book_margin_left"
         android:visibility="invisible"
         />
     <com.yougy.view.ShopBookView
         android:id="@+id/shop_book_fourth"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/thirty_two_dp"
+        android:layout_marginLeft="@dimen/shop_book_margin_left"
         android:visibility="invisible"
         />
     <com.yougy.view.ShopBookView
         android:id="@+id/shop_book_five"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/thirty_two_dp"
+        android:layout_marginLeft="@dimen/shop_book_margin_left"
         android:visibility="invisible"
         />
 </LinearLayout>

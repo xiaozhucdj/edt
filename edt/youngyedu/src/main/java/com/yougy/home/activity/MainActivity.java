@@ -8,7 +8,6 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -20,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
-import com.yougy.anwser.AnsweringActivity;
+import com.yougy.TestImgActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -57,7 +56,6 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 
-
 /**
  * V1
  * Created by Administrator on 2016/8/24.
@@ -77,12 +75,6 @@ import de.greenrobot.event.EventBus;
  * 增加需求:侧边栏 区分 全部 可当前学期 ，和按钮的动态变化
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
-    private ViewGroup mRlFolder;
-    private ViewGroup mRHomework;
-    private ViewGroup mRlNotes;
-    private ViewGroup mRlReferenceBooks;
-    private ViewGroup mRlCoachBook;
-    private ViewGroup mRlTextBook;
     private CoachBookFragment mCoachBookFragment;
     private HomeworkFragment mHomeworkFragment;
     private FolderFragment mFolderFragment;
@@ -97,23 +89,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private AllHomeworkFragment mAllHomeworkFragment;
 
     private TextView mTvFolder;
-    private View mViewFolder;
     private TextView mTvHomework;
-    private View mViewHomework;
     private TextView mTvNotes;
-    private View mViewNotes;
     private TextView mTvReferenceBooks;
-    private View mViewReferenceBooks;
     private TextView mTvCoachBook;
-    private View mViewCoachBook;
     private TextView mTvTextBook;
-    private View mViewTextBook;
+
     private Button mBtnBookStore;
     private Button mBtnCurrentBook;
     private Button mBtnAllBook;
     private Button mBtnMsg;
 
-    TextView unreadMsgCountTextview1;
     //    private WifiStatusChangedReceiver receiver = new WifiStatusChangedReceiver();
 //    private IntentFilter filter;
 
@@ -137,25 +123,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView mTvSysTime;
     private Button mBtnSysSeeting;
     private View mRootView;
+    private ImageView mIvMsg;
 
-//    private ImageButton mImgBtnRefresh;
 
-
-    Handler mHandler = new Handler(){
+    Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int totalUnreadMsgCount = msg.what;
-            if (totalUnreadMsgCount != 0){
+            if (totalUnreadMsgCount != 0) {
                 mBtnMsg.setText("我的消息    未读" + totalUnreadMsgCount);
-                unreadMsgCountTextview1.setVisibility(View.VISIBLE);
-                unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
-            }
-            else {
+                mIvMsg.setVisibility(View.VISIBLE);
+//                unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
+            } else {
                 mBtnMsg.setText("我的消息");
-                unreadMsgCountTextview1.setVisibility(View.GONE);
+                mIvMsg.setVisibility(View.GONE);
             }
         }
     };
+
 
     /***************************************************************************/
 
@@ -169,7 +154,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 recentContactList.addAll(YXClient.getInstance().getRecentContactList());
                 int totalUnreadCount = 0;
                 for (RecentContact recentContact : recentContactList) {
-                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId(), recentContact.getSessionType());
                 }
                 mHandler.sendEmptyMessage(totalUnreadCount);
             }
@@ -224,39 +209,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetManager.getInstance().registerReceiver(this);
         PowerManager.getInstance().registerReceiver(this);
 
-        mRlFolder = (ViewGroup) findViewById(R.id.rl_folder);
-        mRlFolder.setOnClickListener(this);
-        //TODO:文件夹还未实现 ，暂时关闭点击切换Fragment 功能
-        mRlFolder.setEnabled(true);
         mTvFolder = (TextView) findViewById(R.id.tv_folder);
-        mViewFolder = findViewById(R.id.view_folder);
-
-        mRHomework = (ViewGroup) findViewById(R.id.rl_homework);
-        mRHomework.setOnClickListener(this);
-        mRHomework.setEnabled(true);
+        mTvFolder.setOnClickListener(this);
 
         mTvHomework = (TextView) findViewById(R.id.tv_homework);
-        mViewHomework = findViewById(R.id.view_homework);
+        mTvHomework.setOnClickListener(this);
 
-        mRlNotes = (ViewGroup) findViewById(R.id.rl_notes);
-        mRlNotes.setOnClickListener(this);
         mTvNotes = (TextView) findViewById(R.id.tv_notes);
-        mViewNotes = findViewById(R.id.view_notes);
+        mTvNotes.setOnClickListener(this);
 
-        mRlReferenceBooks = (ViewGroup) findViewById(R.id.rl_reference_books);
-        mRlReferenceBooks.setOnClickListener(this);
         mTvReferenceBooks = (TextView) findViewById(R.id.tv_reference_books);
-        mViewReferenceBooks = findViewById(R.id.view_reference_books);
+        mTvReferenceBooks.setOnClickListener(this);
 
-        mRlCoachBook = (ViewGroup) findViewById(R.id.rl_coach_book);
-        mRlCoachBook.setOnClickListener(this);
         mTvCoachBook = (TextView) findViewById(R.id.tv_coach_book);
-        mViewCoachBook = findViewById(R.id.view_coach_book);
+        mTvCoachBook.setOnClickListener(this);
 
-        mRlTextBook = (ViewGroup) findViewById(R.id.rl_text_book);
-        mRlTextBook.setOnClickListener(this);
         mTvTextBook = (TextView) findViewById(R.id.tv_text_book);
-        mViewTextBook = findViewById(R.id.view_text_book);
+        mTvTextBook.setOnClickListener(this);
 
         //有侧边栏显示按钮
         mImgBtnShowRight = (ImageButton) this.findViewById(R.id.imgBtn_showRight);
@@ -289,7 +258,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnAccout = (Button) this.findViewById(R.id.btn_account);
         mBtnAccout.setOnClickListener(this);
 
-        unreadMsgCountTextview1 = (TextView) findViewById(R.id.unread_msg_count_textview1);
+        mIvMsg = (ImageView) findViewById(R.id.iv_home_msg);
 
         //订单
         findViewById(R.id.btn_order).setOnClickListener(this);
@@ -308,12 +277,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         findViewById(R.id.btn_upload).setOnClickListener(this);
         findViewById(R.id.btn_download).setOnClickListener(this);
+        findViewById(R.id.btn_test_img).setOnClickListener(this);
     }
 
 
     @Override
     protected void loadData() {
-        mRlTextBook.callOnClick();
+        mTvTextBook.callOnClick();
     }
 
     @Override
@@ -331,40 +301,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btn_download:
                 startService(new Intent(this, DownloadService.class));
                 break;
-            case R.id.rl_folder:
-//                refreshTabBtnState(clickedViewId);
-//                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
+            case R.id.btn_test_img:
+                startActivity(new Intent(this, TestImgActivity.class));
+                break;
+            case R.id.tv_folder:
+                  refreshTabBtnState(clickedViewId);
+                  bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
-                startActivity(new Intent(this , AnsweringActivity.class));
+//                startActivity(new Intent(this, AnsweringActivity.class));
                 break;
 
-            case R.id.rl_homework:
+            case R.id.tv_homework:
 //                XSharedPref.putString(this, "loadApp", "student");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_HOMEWORK_FRAGMENT : FragmentDisplayOption.HOMEWORK_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
-            case R.id.rl_notes:
+            case R.id.tv_notes:
 //                XSharedPref.putString(this, "loadApp", "");
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_NOTES_FRAGMENT : FragmentDisplayOption.NOTES_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
-            case R.id.rl_reference_books:
+            case R.id.tv_reference_books:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(FragmentDisplayOption.REFERENCE_BOOKS_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
-            case R.id.rl_coach_book:
+            case R.id.tv_coach_book:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_COACH_BOOK_FRAGMENT : FragmentDisplayOption.COACH_BOOK_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
-            case R.id.rl_text_book:
+            case R.id.tv_text_book:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_TEXT_BOOK_FRAGMENT : FragmentDisplayOption.TEXT_BOOK_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
@@ -377,12 +350,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 recentContactList.addAll(YXClient.getInstance().getRecentContactList());
                 int totalUnreadCount = 0;
                 for (RecentContact recentContact : recentContactList) {
-                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                    totalUnreadCount += YXClient.getInstance().getUnreadMsgCount(recentContact.getContactId(), recentContact.getSessionType());
                 }
-                if (totalUnreadCount != 0){
+                if (totalUnreadCount != 0) {
                     mBtnMsg.setText("我的消息    未读" + totalUnreadCount);
-                }
-                else {
+                } else {
                     mBtnMsg.setText("我的消息");
                 }
                 break;
@@ -442,7 +414,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_msg:
-                LogUtils.e(getClass().getName() , "我的消息");
+                LogUtils.e(getClass().getName(), "我的消息");
                 gotoMyMessage();
                 mFlRight.setVisibility(View.GONE);
                 break;
@@ -488,10 +460,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 mFlRight.setVisibility(View.GONE);
                 break;
+            default:
+                break;
         }
     }
 
-    private void gotoMyMessage(){
+    private void gotoMyMessage() {
         if (!NetUtils.isNetConnected()) {
             showCancelAndDetermineDialog(R.string.jump_to_net);
             return;
@@ -533,6 +507,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case ALL_HOMEWORK_FRAGMENT:
                 type = EventBusConstant.all_home_work;
+                break;
+
+            case  FOLDER_FRAGMENT:
+                type = EventBusConstant.answer_event;
                 break;
         }
 
@@ -737,6 +715,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnSearChBook.setVisibility(View.GONE);
         mBtnSearChBook.setSelected(false);
 
+        mBtnCurrentBook.setVisibility(View.VISIBLE);
+        mBtnAllBook.setVisibility(View.VISIBLE);
+
         switch (mDisplayOption) {
             case TEXT_BOOK_FRAGMENT:
                 mBtnCurrentBook.setText("本学期课本");
@@ -798,6 +779,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mBtnAllBook.setEnabled(false);
                 break;
             case FOLDER_FRAGMENT:
+                mBtnCurrentBook.setVisibility(View.GONE);
+                mBtnAllBook.setVisibility(View.GONE);
                 break;
         }
     }
@@ -869,37 +852,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void refreshTabBtnState(int clickedViewId) {
 
-        mRlTextBook = (ViewGroup) findViewById(R.id.rl_text_book);
-        mRlTextBook.setOnClickListener(this);
+//        mRlTextBook = (ViewGroup) findViewById(R.id.rl_text_book);
+//        mRlTextBook.setOnClickListener(this);
 
-        boolean isCoachBookFragment = clickedViewId == R.id.rl_coach_book;
-        boolean isHomeworkFragment = clickedViewId == R.id.rl_homework;
-        boolean isFolderFragment = clickedViewId == R.id.rl_folder;
-        boolean isNotesFragment = clickedViewId == R.id.rl_notes;
-        boolean isReferenceBooksFragment = clickedViewId == R.id.rl_reference_books;
-        boolean isTextBookFragment = clickedViewId == R.id.rl_text_book;
+        boolean isCoachBookFragment = clickedViewId == R.id.tv_coach_book;
+        boolean isHomeworkFragment = clickedViewId == R.id.tv_homework;
+        boolean isFolderFragment = clickedViewId == R.id.tv_folder;
+        boolean isNotesFragment = clickedViewId == R.id.tv_notes;
+        boolean isReferenceBooksFragment = clickedViewId == R.id.tv_reference_books;
+        boolean isTextBookFragment = clickedViewId == R.id.tv_text_book;
 
         int hideView = View.INVISIBLE;
         int showView = View.VISIBLE;
 
         //isCoachBookFragment
         mTvCoachBook.setSelected(isCoachBookFragment);
-        mViewCoachBook.setVisibility(isCoachBookFragment == true ? showView : hideView);
+//        mViewCoachBook.setVisibility(isCoachBookFragment == true ? showView : hideView);
         //isFolderFragment
         mTvFolder.setSelected(isFolderFragment);
-        mViewFolder.setVisibility(isFolderFragment == true ? showView : hideView);
+//        mViewFolder.setVisibility(isFolderFragment == true ? showView : hideView);
         //isHomeworkFragment
         mTvHomework.setSelected(isHomeworkFragment);
-        mViewHomework.setVisibility(isHomeworkFragment == true ? showView : hideView);
+//        mViewHomework.setVisibility(isHomeworkFragment == true ? showView : hideView);
         //isNotesFragment
         mTvNotes.setSelected(isNotesFragment);
-        mViewNotes.setVisibility(isNotesFragment == true ? showView : hideView);
+//        mViewNotes.setVisibility(isNotesFragment == true ? showView : hideView);
         //isReferenceBooksFragment
         mTvReferenceBooks.setSelected(isReferenceBooksFragment);
-        mViewReferenceBooks.setVisibility(isReferenceBooksFragment == true ? showView : hideView);
+//        mViewReferenceBooks.setVisibility(isReferenceBooksFragment == true ? showView : hideView);
         //isTextBookFragment
         mTvTextBook.setSelected(isTextBookFragment);
-        mViewTextBook.setVisibility(isTextBookFragment == true ? showView : hideView);
+//        mViewTextBook.setVisibility(isTextBookFragment == true ? showView : hideView);
     }
 
     public enum FragmentDisplayOption {
@@ -949,10 +932,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         initSysIcon();
-        YXClient.checkNetAndRefreshLogin(this , new Runnable() {
+        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
-                new AsyncTask(){
+                new AsyncTask() {
                     @Override
                     protected Object doInBackground(Object[] params) {
                         try {
@@ -967,19 +950,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     protected void onPostExecute(Object o) {
                         int totalUnreadMsgCount = 0;
                         for (RecentContact recentContact : YXClient.getInstance().getRecentContactList()) {
-                            totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId() , recentContact.getSessionType());
+                            totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId(), recentContact.getSessionType());
                         }
-                        if (totalUnreadMsgCount != 0){
-                            unreadMsgCountTextview1.setVisibility(View.VISIBLE);
-                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
-                        }
-                        else {
-                            unreadMsgCountTextview1.setVisibility(View.GONE);
+                        if (totalUnreadMsgCount != 0) {
+                            mIvMsg.setVisibility(View.VISIBLE);
+//                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
+                        } else {
+                            mIvMsg.setVisibility(View.GONE);
                         }
                     }
                 }.execute((Object[]) null);
             }
-        } , null);
+        }, null);
     }
 
     private void setSysWifi() {

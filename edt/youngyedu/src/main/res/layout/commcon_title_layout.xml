@@ -1,41 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
-    >
+    android:layout_height="76px">
 
     <ImageButton
-        android:paddingRight="32dp"
         android:id="@+id/btn_left"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_height="match_parent"
         android:background="@null"
-        android:src="@drawable/img_back"
-        android:paddingLeft="32dp"
-        />
+        android:onClick="onBack"
+        android:paddingLeft="30px"
+        android:paddingRight="30px"
+        android:src="@drawable/icon_fanhui" />
 
     <ImageButton
-        android:paddingLeft="32dp"
         android:id="@+id/img_btn_right"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
         android:background="@null"
-        android:src="@drawable/img_shop_car"
-        android:paddingRight="32dp"
-        />
+        android:onClick="toCart"
+        android:paddingLeft="15px"
+        android:paddingRight="30px"
+        android:src="@drawable/icon_gouwuche" />
+
+    <!--<ImageButton-->
+        <!--android:id="@+id/recommand_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_toLeftOf="@id/img_btn_right"-->
+        <!--android:background="@null"-->
+        <!--android:onClick="recommandBook"-->
+        <!--android:paddingLeft="15px"-->
+        <!--android:paddingRight="15px"-->
+        <!--android:src="@drawable/icon_share" />-->
 
     <TextView
-        android:text="详情"
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textColor="@color/text_border_focused"
-        android:textSize="24dp"
-        />
-
+        android:text="@string/book_details_text"
+        android:textColor="@color/black"
+        android:textSize="30px" />
 </RelativeLayout>

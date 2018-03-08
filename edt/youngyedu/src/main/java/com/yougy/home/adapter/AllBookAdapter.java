@@ -75,7 +75,7 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
-               refreshImg(mImgBookIcon, mInfos.get(position).getBookCoverL());
+               refreshImg(mImgBookIcon, mInfos.get(position).getBookCoverS());
             }
         }
     }
@@ -85,8 +85,8 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                158,
-                208,
+                162,
+                212,
                 view);
     }
 }

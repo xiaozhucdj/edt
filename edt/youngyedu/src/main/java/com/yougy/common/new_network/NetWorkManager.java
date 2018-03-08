@@ -2,6 +2,7 @@ package com.yougy.common.new_network;
 
 import android.util.Log;
 
+import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
@@ -228,6 +229,13 @@ public final class NetWorkManager {
         Log.v("FH", "!!!!!调用ServerApi设置错题上次自评结果:setMistakeLastScore");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
                 , "{\"item\":" + itemId + ",\"extra\":{\"lastScore\":" + score + "}}")
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<CourseInfo>> queryCourse(Integer userId){
+        Log.v("FH", "!!!!!调用ServerApi查询课程:queryCourse");
+        return getInstance().getServerApi().queryCourse(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

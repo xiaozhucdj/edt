@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,8 +23,8 @@ import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
+import com.yougy.home.adapter.AllHomeworkAdapter;
 import com.yougy.home.adapter.FitGradeAdapter;
-import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
@@ -40,8 +39,6 @@ import java.util.List;
 import java.util.TreeSet;
 
 import rx.functions.Action1;
-
-import static android.view.View.inflate;
 
 
 /**
@@ -92,7 +89,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 12;
+    private static final int COUNT_PER_PAGE = FileContonst.SMALL_PAGE_COUNTS;
 
     /***
      * 当前翻页的角标
@@ -123,7 +120,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     private ViewGroup mLoadingNull;
     private boolean mIsPackUp;
     private LinearLayout llTerm;
-    private HomeworkAdapter mHomeworkAdapter;
+    private AllHomeworkAdapter mHomeworkAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -272,11 +269,11 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     private void initBookAdapter() {
         mBookView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
         mBookView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);
         mBookView.setLayoutManager(layout);
 
-        mHomeworkAdapter = new HomeworkAdapter(mBooks);
+        mHomeworkAdapter = new AllHomeworkAdapter(mBooks);
         mBookView.setAdapter(mHomeworkAdapter);
         mBookView.addOnItemTouchListener(new OnRecyclerItemClickListener(mBookView) {
             @Override
@@ -384,7 +381,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.page_btn:
+            case R.id.tv_page_item:
                 if ((int) v.getTag() == mPagerIndex) {
                     return;
                 }
@@ -428,7 +425,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
-            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, FileContonst.MIN_ALL_ITEM_SUBJECT);
         } else {
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
@@ -553,10 +550,11 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
      */
     private void addBtnCounts(int counts) {
         for (int index = 1; index <= counts; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = 20;
-            View pageLayout = inflate(getActivity(), R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            View pageLayout = inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
             if (index == 1) {
                 mPagerIndex = 1;
                 pageBtn.setSelected(true);
@@ -564,7 +562,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
             pageBtn.setTag(index);
             pageBtn.setText(Integer.toString(index));
             pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn, params);
+            mLlPager.addView(pageBtn);
         }
     }
 

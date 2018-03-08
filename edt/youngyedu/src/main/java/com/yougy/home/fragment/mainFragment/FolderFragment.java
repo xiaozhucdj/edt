@@ -1,33 +1,37 @@
 package com.yougy.home.fragment.mainFragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.yolanda.nohttp.Headers;
-import com.yolanda.nohttp.download.DownloadListener;
+import com.yougy.anwser.CourseInfo;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
-import com.yougy.common.manager.DownloadManager;
-import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.nohttp.DownInfo;
-import com.yougy.common.utils.FileUtils;
+import com.yougy.common.global.FileContonst;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.UIUtils;
+import com.yougy.home.activity.ControlFragmentActivity;
+import com.yougy.home.adapter.CoursekAdapter;
+import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.ui.activity.R;
-import com.zhy.http.okhttp.callback.Callback;
+import com.yougy.view.CustomGridLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Response;
+import rx.functions.Action1;
 
 
 /**
@@ -35,183 +39,255 @@ import okhttp3.Response;
  * 文件夹
  */
 public class FolderFragment extends BFragment implements View.OnClickListener {
+    /**
+     * 适配器 数据
+     */
+    private List<CourseInfo> mCourseInfos = new ArrayList<>();
+    private List<CourseInfo> mCountCourses = new ArrayList<>();
+    /***
+     * 一页数据个数
+     */
+    private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
+    /***
+     * 当前翻页的角标
+     */
+    private int mPagerIndex;
     private ViewGroup mRootView;
-    private Button mBtnLogin;
-    private Button mBtnFileHas;
-    private ArrayList<String> fiels;
-    private Button mBtnDeleteFile;
-    private Button mBtnBreakpoint;
-    private Button mBtnCount;
-    private Button mBtnDrable;
-    private ImageView mImgDrable;
-    private Button mBtnSize;
-    private TextView mTvSize;
+    private RecyclerView mRecyclerView;
+    private CoursekAdapter mCourseAdapter;
+    private boolean mIsFist;
+    private LinearLayout mLlPager;
+    private ViewGroup mLoadingNull;
+    private TextView tvErrMsg;
 
-    @Nullable
     @Override
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_folder, null);
-        mBtnLogin = (Button) mRootView.findViewById(R.id.btn_login);
-        mBtnLogin.setOnClickListener(this);
-
-        mBtnFileHas = (Button) mRootView.findViewById(R.id.btn_fileHas);
-        mBtnFileHas.setOnClickListener(this);
-
-        mBtnBreakpoint = (Button) mRootView.findViewById(R.id.btn_breakpoint);
-
-        fiels = new ArrayList<>();
-        fiels.add("10001.pdf");
-        fiels.add("10002.pdf");
-        fiels.add("10003.pdf");
-
-        mBtnDeleteFile = (Button) mRootView.findViewById(R.id.btn_deleteFile);
-        mBtnDeleteFile.setOnClickListener(this);
-
-        mBtnBreakpoint = (Button) mRootView.findViewById(R.id.btn_breakpoint);
-        mBtnBreakpoint.setOnClickListener(this);
-
-        mBtnCount = (Button) mRootView.findViewById(R.id.btn_todocount);
-        mBtnCount.setOnClickListener(this);
-
-        mBtnDrable = (Button) mRootView.findViewById(R.id.btn_testDrable);
-        mBtnDrable.setOnClickListener(this);
-        mImgDrable = (ImageView) mRootView.findViewById(R.id.img);
-
-        mBtnSize = (Button) mRootView.findViewById(R.id.btn_size);
-        mBtnSize.setOnClickListener(this);
+        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
+//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        mRecyclerView.addItemDecoration(divider);
 
 
-        mTvSize = (TextView) mRootView.findViewById(R.id.tv_size);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
+        layout.setScrollEnabled(false);
+        mRecyclerView.setLayoutManager(layout);
+
+        mCourseAdapter = new CoursekAdapter(mCourseInfos);
+        mRecyclerView.setAdapter(mCourseAdapter);
+        mCourseAdapter.notifyDataSetChanged();
+
+        mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder vh) {
+                itemClick(vh.getAdapterPosition());
+            }
+        });
+        mCourseAdapter.notifyDataSetChanged();
+        mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
+        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+
+        tvErrMsg = (TextView) mRootView.findViewById(R.id.tv_errMsg);
+
         return mRootView;
-
     }
 
+    /**
+     * 点击事件
+     */
+    private void itemClick(int position) {
+        CourseInfo info = mCourseInfos.get(position);
+        Bundle extras = new Bundle();
+        loadIntentWithExtras(ControlFragmentActivity.class, extras);
+    }
+
+    @Override
+    protected void handleEvent() {
+        super.handleEvent();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mIsFist = true;
+    }
+
+    private void freshUI(List<CourseInfo> beans) {
+        if (beans != null && beans.size() > 0) {
+            mLoadingNull.setVisibility(View.GONE);
+            mCountCourses.clear();
+            mCountCourses.addAll(beans);
+            initPages();
+        } else {
+            // 数据返回为null
+            mLoadingNull.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_login:
-                testDownFiles();
-                break;
-            case R.id.btn_fileHas:
-
-                for (String name : fiels) {
-                    String str = FileUtils.getTextBookFilesDir() + name;
-                    LogUtils.i("判断文件夹是否存在 " + name + "是否成功 == " + FileUtils.exists(str));
-                }
-                break;
-
-            case R.id.btn_deleteFile:
-
-                for (String name : fiels) {
-                    String str = FileUtils.getTextBookFilesDir() + name;
-                    LogUtils.i("删除全部文件 " + name + "是否成功 == " + FileUtils.delFileOrFolder(str));
-                }
-                break;
-
-            case R.id.btn_breakpoint:
-                DownloadManager.cancel();
-                break;
-
-            case R.id.btn_todocount:
-                ProtocolManager.getHomework_todo_count(SpUtil.getAccountId(), 1, new Callback() {
-                    @Override
-                    public Object parseNetworkResponse(Response response, int id) throws Exception {
-                        LogUtils.i("  response.body().string() ==" + response.body().string());
-                        return null;
-                    }
-
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        e.printStackTrace();
-                        LogUtils.i("onError..........................");
-                    }
-
-                    @Override
-                    public void onResponse(Object response, int id) {
-
-                    }
-                });
-                break;
-
-            case R.id.btn_testDrable:
-//                mImgDrable.setImageDrawable(UIUtils.getDrawable(R.drawable.drabke_e));
-                break;
-            case R.id.btn_size:
-                testSize();
-                break;
+        if (mIsFist && !hidden && mCountCourses.size() == 0) {
+            loadData();
         }
     }
 
-
-    private void testDownFiles() {
-        /**
-         *
-         * @param url         下载地址。
-         * @param fileFolder  保存的文件夹。
-         * @param filename    文件名。
-         * @param isRange     是否断点续传下载。
-         * @param isDeleteOld 如果发现存在同名文件，是否删除后重新下载，如果不删除，则直接下载成功
-         * @param what 请求标识
-         */
-
-        String str1 = "http://192.168.12.2:8080/leke_platform/pupload/preview20160930115152.pdf";
-        String str2 = "http://192.168.12.2:8080/leke_platform/dupload/download20160930115204.pdf";
-        List<DownInfo> downInfos = new ArrayList<>();
-        DownInfo info1 = new DownInfo(str1, FileUtils.getTextBookFilesDir(), "10001.pdf", true, false, 1);
-        DownInfo info2 = new DownInfo(str2, FileUtils.getTextBookFilesDir(), "10002.pdf", true, false, 2);
-
-        downInfos.add(info1);
-        downInfos.add(info2);
-
-        DownloadManager.downloadFile(downInfos, new DownloadListener() {
-            @Override
-            public void onDownloadError(int what, Exception exception) {
-                LogUtils.i("  onDownloadError     what ........" + what);
-                DownloadManager.cancel();
-            }
-
-            @Override
-            public void onStart(int what, boolean isResume, long rangeSize, Headers responseHeaders, long allCount) {
-                LogUtils.i("  onStart     what ........" + what);
-            }
-
-            @Override
-            public void onProgress(int what, int progress, long fileCount) {
-                LogUtils.i("  onProgress     what ........" + what + "....progress" + progress);
-
-            }
-
-            @Override
-            public void onFinish(int what, String filePath) {
-                LogUtils.i("  onFinish     what ........" + what + "....filePath" + filePath);
-                // 下载完成后 回调 onFinish ，request.isFinished() 函数不能立刻反应下来 所以延迟3S 后在查询结果
-                if (DownloadManager.isFinish()) {
-                    LogUtils.i("  onFinish     全部下载完成");
-                    UIUtils.showToastSafe("全部下载完成", Toast.LENGTH_LONG);
-                }
-            }
-
-            @Override
-            public void onCancel(int what) {
-                LogUtils.i("  onCancel     what ........" + what);
-                DownloadManager.cancel();
-                UIUtils.showToastSafe("下载失败", Toast.LENGTH_LONG);
-            }
-        });
+    private void loadData() {
+        if (NetUtils.isNetConnected()) {
+            NetWorkManager.queryCourse(SpUtil.getUserId() )
+                    .subscribe(new Action1<List<CourseInfo>>() {
+                        @Override
+                        public void call(List<CourseInfo> courseInfos) {
+                            freshUI(courseInfos);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+        } else {
+            showCancelAndDetermineDialog(R.string.jump_to_net);
+        }
     }
 
-    private void testSize() {
-        int w = UIUtils.getScreenHeight();
-        int h = UIUtils.getScreenWidth();
-        LogUtils.i("getScreenHeight==" + w);
-        LogUtils.i("getScreenWidth==" + h);
-        mTvSize.setText("w==" + w + ",h==" + h);
+    public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
+        Intent intent = new Intent(getActivity(), cls);
+        intent.putExtras(extras);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        refreshAdapterData(v);
+    }
+
+    /***
+     * 刷新适配器数据
+     */
+    private void refreshAdapterData(View v) {
+
+        if ((int) v.getTag() == mPagerIndex) {
+            return;
+        }
+
+        //还原上个按钮状态
+        mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
+        mPagerIndex = (int) v.getTag();
+        //设置当前按钮状态
+        mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
+
+        //设置page页数数据
+        mCourseInfos.clear();
+
+        if ((mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountCourses.size()) { // 不是 正数被
+            mCourseInfos.addAll(mCountCourses.subList((mPagerIndex - 1) * COUNT_PER_PAGE, mCountCourses.size()));
+        } else {
+            mCourseInfos.addAll(mCountCourses.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
+        }
+        mCourseAdapter.notifyDataSetChanged();
+    }
+
+
+    /**
+     * 初始化翻页角标
+     */
+    private void initPages() {
+        int counts = 0;
+        int quotient = mCountCourses.size() / COUNT_PER_PAGE;
+        int remainder = mCountCourses.size() % COUNT_PER_PAGE;
+        if (quotient == 0) {
+            if (remainder == 0) {
+                //没有数据
+                counts = 0;
+            } else {
+                //不足16个item
+                counts = 1;
+            }
+        }
+        if (quotient != 0) {
+            if (remainder == 0) {
+                //没有数据
+                counts = quotient; //.正好是16的倍数
+            } else {
+                //不足16个item
+                counts = quotient + 1; // 不足16个 +1
+            }
+        }
+        //删除之前的按钮
+        mLlPager.removeAllViews();
+        //设置显示按钮
+        addBtnCounts(counts);
+        mCourseInfos.clear();
+        if (mCountCourses.size() > COUNT_PER_PAGE) { // 大于1页
+            mCourseInfos.addAll(mCountCourses.subList(0, COUNT_PER_PAGE));
+        } else {
+            LogUtils.i("initPages2.."); //小于1页
+            mCourseInfos.addAll(mCountCourses.subList(0, mCountCourses.size()));
+        }
+        mCourseAdapter.notifyDataSetChanged();
+    }
+
+    /***
+     * 添加按钮
+     *
+     * @param counts
+     */
+    private void addBtnCounts(int counts) {
+        for (int index = 1; index <= counts; index++) {
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            LogUtils.e(TAG, "getActivity is null ? " + (getActivity() == null));
+//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
+            if (index == 1) {
+                mPagerIndex = 1;
+                pageBtn.setSelected(true);
+            }
+            pageBtn.setTag(index);
+            pageBtn.setText(Integer.toString(index));
+            pageBtn.setOnClickListener(this);
+            mLlPager.addView(pageBtn);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mRecyclerView = null;
+        if (mCourseAdapter != null) {
+            mCourseAdapter = null;
+        }
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.answer_event)) {
+            LogUtils.i("type .." + EventBusConstant.answer_event);
+            loadData();
+        }
+    }
+
+    @Override
+    public void onUiDetermineListener() {
+        super.onUiDetermineListener();
+        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+        startActivity(intent);
+        dissMissUiPromptDialog();
+    }
+
+    @Override
+    public void onUiCancelListener() {
+        super.onUiCancelListener();
+        dissMissUiPromptDialog();
     }
 }

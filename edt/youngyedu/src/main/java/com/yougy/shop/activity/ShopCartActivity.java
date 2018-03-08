@@ -57,7 +57,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity implements View
     //每次最多展示的页数
     final int ONCE_SHOW_PAGE_NUM = 5;
     //每一页的条数
-    final int ITEM_NUM = 4;
+    final int ITEM_NUM = 5;
 
     //当前展示的第一页页号(从0开始)
     int currentShowFirstPageIndex = 0;

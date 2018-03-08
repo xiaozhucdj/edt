@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -98,7 +97,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 12;
+    private static final int COUNT_PER_PAGE = FileContonst.SMALL_PAGE_COUNTS;
 
     /***
      * 当前翻页的角标
@@ -267,7 +266,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     private void initBookAdapter() {
         mBookView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
         mBookView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);
         mBookView.setLayoutManager(layout);
         mAdaptetFragmentAllTextBook = new AllBookAdapter(getActivity(), mBooks, this);
@@ -397,7 +396,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.page_btn:
+            case R.id.tv_page_item:
                 if ((int) v.getTag() == mPagerIndex) {
                     return;
                 }
@@ -438,7 +437,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
-            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, FileContonst.MIN_ALL_ITEM_SUBJECT);
         } else {
             params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
@@ -565,10 +564,12 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      */
     private void addBtnCounts(int counts) {
         for (int index = 1; index <= counts; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = 20;
-            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
+
             if (index == 1) {
                 mPagerIndex = 1;
                 pageBtn.setSelected(true);
@@ -576,7 +577,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             pageBtn.setTag(index);
             pageBtn.setText(Integer.toString(index));
             pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn, params);
+            mLlPager.addView(pageBtn);
         }
     }
 

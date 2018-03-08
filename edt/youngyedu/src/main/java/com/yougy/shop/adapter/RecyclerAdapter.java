@@ -47,17 +47,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         RecyclerHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView;
+            textView = (TextView) itemView.findViewById(R.id.item_tv);
         }
 
         void bindView(CategoryInfo info) {
-            textView.setTextSize(20);
             textView.setTextColor(textView.getContext().getResources().getColor(R.color.text_color_black));
             textView.setText(info.getCategoryDisplay());
         }
 
         static RecyclerHolder create(ViewGroup parent) {
-            return new RecyclerHolder(new TextView(parent.getContext()));
+            View view = View.inflate(parent.getContext(),R.layout.spinner_item,null);
+            return new RecyclerHolder(view);
         }
     }
 

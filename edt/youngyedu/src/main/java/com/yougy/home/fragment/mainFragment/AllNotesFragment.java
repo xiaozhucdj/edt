@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -102,7 +101,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 12;
+    private static final int COUNT_PER_PAGE = FileContonst.SMALL_PAGE_COUNTS;
     /***
      * 当前翻页的角标
      */
@@ -286,7 +285,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     private void initBookAdapter() {
         mNoteView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
         mNoteView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);
         mNoteView.setLayoutManager(layout);
         mNotesAdapter = new AllNotesAdapter(getActivity(), mInfos);
@@ -654,10 +653,11 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         mLlPager.removeAllViews();
 
         for (int index = 1; index <= counts; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = 20;
-            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
             if (index == 1) {
                 mPagerIndex = 1;
                 pageBtn.setSelected(true);
@@ -665,7 +665,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             pageBtn.setTag(index);
             pageBtn.setText(Integer.toString(index));
             pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn, params);
+            mLlPager.addView(pageBtn);
         }
     }
 
@@ -673,7 +673,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.page_btn:
+            case R.id.tv_page_item:
                 if ((int) v.getTag() == mPagerIndex) {
                     return;
                 }
@@ -743,7 +743,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
-            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, FileContonst.MIN_ALL_ITEM_SUBJECT);
 //            mFitGradeView.setVisibility(View.GONE);
 //            mSubjectView.setVisibility(View.GONE);
         } else {

@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,21 +21,17 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
-import com.yougy.view.DividerGridItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.functions.Action1;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by Administrator on 2016/7/12.
@@ -67,7 +64,12 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
-        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        mRecyclerView.addItemDecoration(divider);
+
+
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
@@ -178,8 +180,7 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
      * 刷新适配器数据
      */
     private void refreshAdapterData(View v) {
-        switch (v.getId()) {
-            case R.id.page_btn:
+
                 if ((int) v.getTag() == mPagerIndex) {
                     return;
                 }
@@ -199,9 +200,6 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
                     mHomewroks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
                 }
                 mHomeworkAdapter.notifyDataSetChanged();
-                break;
-        }
-
     }
 
 
@@ -251,11 +249,12 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
      */
     private void addBtnCounts(int counts) {
         for (int index = 1; index <= counts; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = 20;
-            LogUtils.e(TAG, "getActivity is null ? " + (getActivity() == null));
-            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            params.leftMargin = 20;
+//            LogUtils.e(TAG, "getActivity is null ? " + (getActivity() == null));
+//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
+//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
             if (index == 1) {
                 mPagerIndex = 1;
                 pageBtn.setSelected(true);
@@ -263,7 +262,7 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
             pageBtn.setTag(index);
             pageBtn.setText(Integer.toString(index));
             pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn, params);
+            mLlPager.addView(pageBtn);
         }
     }
 

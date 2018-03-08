@@ -1,90 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="245px"
+    android:layout_height="224px"
     android:paddingLeft="30px"
-    android:paddingRight="30px"
-    >
+    android:paddingRight="30px">
+
     <ImageButton
         android:id="@+id/shop_book_item_checkbox"
-        android:layout_width="22px"
-        android:layout_height="22px"
-        android:background="@drawable/btn_check_select"
+        android:layout_width="18px"
+        android:layout_height="18px"
         android:layout_centerVertical="true"
-        />
+        android:background="@drawable/btn_check_select" />
 
     <ImageView
         android:id="@+id/shop_book_item_book_img"
-        android:layout_width="128px"
-        android:layout_height="170px"
-        android:layout_marginLeft="30px"
-        android:layout_toRightOf="@id/shop_book_item_checkbox"
-        android:layout_centerVertical="true"
-        android:background="@drawable/img_shu"
-        android:paddingLeft="1px"
-        android:paddingRight="5px"
-        android:paddingTop="1px"
-        android:paddingBottom="5px"
-        android:scaleType="fitXY"
-        />
-    <LinearLayout
-        android:id="@+id/shop_book_item_text_group"
-        android:layout_width="413px"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_width="132px"
+        android:layout_height="172px"
         android:layout_marginLeft="20px"
-        android:layout_toRightOf="@id/shop_book_item_book_img"
-        android:layout_alignTop="@id/shop_book_item_book_img"
-        >
-        <TextView
-            android:id="@+id/shop_book_item_book_name_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="22px"
-            android:textColor="@color/zl_black"
-            android:text="轻巧夺冠-优化训练:三年级数学(上)(人教版)(北师大版)"
-            />
-        <TextView
-            android:id="@+id/shop_book_item_book_author_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20px"
-            android:textColor="@color/zl_black"
-            android:text="作者:洛夫斯基"
-            android:layout_marginTop="15px"
-            />
-        <TextView
-            android:id="@+id/shop_book_item_book_price_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="19px"
-            android:textColor="@color/zl_black"
-            android:text="价格:￥8888.88"
-            android:layout_marginTop="15px"
-            />
-    </LinearLayout>
+        android:layout_marginTop="26px"
+        android:layout_toRightOf="@id/shop_book_item_checkbox"
+        android:background="@drawable/img_bg_xiangqing"
+        android:paddingBottom="11px"
+        android:paddingRight="11px" />
+
+    <TextView
+        android:id="@+id/shop_book_item_book_name_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/shop_book_item_book_img"
+        android:layout_alignTop="@+id/shop_book_item_book_img"
+        android:includeFontPadding="false"
+        android:layout_marginLeft="10px"
+        android:textSize="26px"
+        android:textColor="@color/black"
+        android:text="轻巧夺冠-优化训练:三年级数学(上)(人教版)(北师大版)" />
+
+    <TextView
+        android:id="@+id/shop_book_item_book_author_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shop_book_item_book_name_tv"
+        android:layout_alignLeft="@+id/shop_book_item_book_name_tv"
+        android:textSize="20px"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        android:text="作者:洛夫斯基"
+        android:layout_marginTop="20px" />
+
+    <TextView
+        android:id="@+id/shop_book_item_book_price_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20px"
+        android:includeFontPadding="false"
+        android:layout_below="@+id/shop_book_item_book_author_tv"
+        android:layout_alignLeft="@+id/shop_book_item_book_author_tv"
+        android:textColor="@color/black"
+        android:text="价格:￥8888.88"
+        android:layout_marginTop="20px" />
+
     <Button
         android:id="@+id/shop_book_item_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/shop_btn_bg_selector"
+        android:background="@drawable/shoucang_selector"
         android:textSize="24px"
         android:textColor="@drawable/page_text_selector"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:maxLines="1"
-        android:clickable="true"
-        android:minHeight="0dp"
-        android:minWidth="0dp"
-        android:padding="10px"
-        />
+        android:layout_centerVertical="true" />
 
     <View
         android:id="@+id/shop_book_item_separator_line"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/zl_black"
+        android:background="@color/black"
         android:layout_alignParentBottom="true"
-        />
+        android:layout_marginTop="16px" />
 
 </RelativeLayout>
