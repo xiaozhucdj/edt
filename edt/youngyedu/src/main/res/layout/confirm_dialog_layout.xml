@@ -1,65 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <data>
 
     </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/half_transparent">
+
         <RelativeLayout
-            android:layout_width="536px"
-            android:layout_height="wrap_content"
+            android:layout_width="600px"
+            android:layout_height="269px"
+            android:layout_centerInParent="true"
             android:background="@drawable/shape_rounded_rectangle_all_white"
             android:paddingBottom="30px"
-            android:paddingLeft="40px"
-            android:paddingRight="40px"
-            android:paddingTop="42px"
-            android:layout_centerInParent="true"
-            >
+            android:paddingLeft="53px"
+            android:paddingRight="53px"
+            android:paddingTop="30px">
+
             <TextView
                 android:id="@+id/title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="25px"
+                android:layout_centerHorizontal="true"
                 android:text="xxxxxxx"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="50px"
-                />
+                android:textSize="30px"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/content_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22px"
+                android:layout_below="@id/title_tv"
+                android:layout_marginBottom="40px"
+                android:layout_marginTop="40px"
+                android:gravity="center"
                 android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                 android:textColor="@color/black"
-                android:gravity="center"
-                android:layout_below="@id/title_tv"
-                android:layout_marginBottom="50px"
-                />
-            <Button
-                android:id="@+id/confirm_btn"
-                android:layout_width="201px"
-                android:layout_height="50px"
-                android:textSize="21px"
-                android:text="@string/confirm"
-                android:layout_below="@id/content_tv"
-                android:textColor="@drawable/page_text_selector"
-                android:background="@drawable/shop_btn_bg_selector"
-                />
+                android:textSize="24px" />
+
+
             <Button
                 android:id="@+id/cancle_btn"
-                android:layout_width="201px"
-                android:layout_height="50px"
-                android:textSize="21px"
-                android:layout_alignParentRight="true"
-                android:text="@string/cancel"
+                android:layout_width="200px"
+                android:layout_height="48px"
                 android:layout_below="@id/content_tv"
-                android:textColor="@drawable/page_text_selector"
-                android:background="@drawable/shop_btn_bg_selector"
-                />
+                android:background="@drawable/bind_cancel_btn_bg"
+                android:text="@string/cancel"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <Button
+                android:id="@+id/confirm_btn"
+                android:layout_width="200px"
+                android:layout_height="48px"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/content_tv"
+                android:background="@drawable/bind_confirm_btn_bg"
+                android:text="@string/confirm"
+                android:textColor="@color/white"
+                android:textSize="24px" />
+
         </RelativeLayout>
     </RelativeLayout>
 </layout>
