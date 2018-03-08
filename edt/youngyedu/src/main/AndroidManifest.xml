@@ -195,6 +195,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <!--问答中界面-->
         <activity android:name="com.yougy.anwser.AnsweringActivity" />
+
         <!--错题本图书章节选择界面-->
         <activity
             android:name="com.yougy.homework.mistake_note.BookStructureActivity"
@@ -216,6 +217,10 @@
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
         <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
         <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity" />
+        <!--问答图书章节列表-->
+        <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" />
+        <!--问答记录题目列表-->
+        <activity android:name="com.yougy.anwser.AnswerRecordListActivity" />
 
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
             <intent-filter>

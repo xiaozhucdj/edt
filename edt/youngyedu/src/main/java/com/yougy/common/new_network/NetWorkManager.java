@@ -26,6 +26,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Field;
 import rx.Observable;
 
 /**
@@ -238,6 +239,14 @@ public final class NetWorkManager {
         return getInstance().getServerApi().queryCourse(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<HomeworkDetail>> queryAnswer(String classId, String bookId , Integer cursor){
+        Log.v("FH", "!!!!!调用ServerApi查询问答:queryAnswer");
+        return getInstance().getServerApi().queryAnswer(classId , bookId , cursor)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+                .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
 

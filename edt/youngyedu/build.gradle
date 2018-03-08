@@ -12,7 +12,7 @@ android {
             storePassword 'leke54321'
         }
     }
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
     useLibrary 'org.apache.http.legacy'
 
@@ -99,7 +99,7 @@ dependencies {
     compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
     compile files('libs/commons-net-3.5.jar')
     compile 'com.google.protobuf:protobuf-java:3.1.0'
-    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:design:25.+'
     compile files('libs/volley.jar')
     compile 'org.sufficientlysecure:html-textview:3.0'
     compile files('libs/eventbus-2.2.1.jar')
@@ -139,5 +139,8 @@ dependencies {
 
 
     compile 'com.aliyun.dpa:oss-android-sdk:2.4.3'
+
+    //FH's tools kit
+    compile 'com.frank:etude:1.2.2'
 
 }

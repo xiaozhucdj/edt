@@ -11,20 +11,6 @@ import java.util.List;
  */
 
 public class HomeworkDetail {
-    /**
-     * examCreateTime : 2017-11-13 16:59:19
-     * examReceiver : 3940121
-     * examPaper : {"paperScope":"","paperStatus":"","paperOwner":10000001,"paperContent":[{"paperItemWeight":1,"paperItem":59,"paperItemContent":[{"questionType":"选择","itemStatusCode":"IB01","notation":[],"itemScope":"私人","notationType":null,"question":[{"questionTypeCode":"IC02","questionId":54944,"questionItem":59,"questionCreateTime":"2017-08-15 11:34:33","questionContent":[{"value":"1+2+3","version":0.1,"format":"TEXT"}],"questionType":"选择","questionCreator":10000001}],"answerType":"参考","questionTypeCode":"IC02","itemId":59,"answerTypeCode":"ID02","notationTypeCode":null,"itemScopeCode":"IA01","answer":[{"answerContent":[{"value":6,"version":0.1,"format":"TEXT"}],"answerItem":59,"answerTypeCode":"ID02","answerCreator":10000001,"answerType":"参考","answerCreateTime":"2017-08-15 11:34:33","answerId":39}],"itemOwner":10000001,"itemStatus":"编辑"}],"paperItemRank":null,"paperId":499},{"paperItemWeight":1,"paperItem":60,"paperItemContent":[{"questionType":"填空","itemStatusCode":"IB01","notation":[],"itemScope":"私人","notationType":null,"question":[{"questionTypeCode":"IC01","questionId":54945,"questionItem":60,"questionCreateTime":"2017-08-15 11:35:21","questionContent":[{"value":"3+2+1","version":0.1,"format":"TEXT"}],"questionType":"填空","questionCreator":10000001}],"answerType":null,"questionTypeCode":"IC01","itemId":60,"answerTypeCode":null,"notationTypeCode":null,"itemScopeCode":"IA01","answer":[],"itemOwner":10000001,"itemStatus":"编辑"}],"paperItemRank":null,"paperId":499}],"paperId":499}
-     * examScope :
-     * examSponsor : 10000001
-     * examStartTime : 2017-10-01 00:00:00
-     * examStatus : 未批改
-     * examName : 作业一
-     * examEndTime : 2017-10-08 00:00:00
-     * examStatusCode : IH03
-     * examId : 529
-     */
-
     private String examCreateTime;
     private int examReceiver;
     private ExamPaper examPaper;
@@ -36,6 +22,7 @@ public class HomeworkDetail {
     private String examEndTime;
     private String examStatusCode;
     private int examId;
+    private List<ExamPostscriptBean> examPostscript;
 
     public String getExamCreateTime() {
         return examCreateTime;
@@ -123,6 +110,14 @@ public class HomeworkDetail {
 
     public void setExamId(int examId) {
         this.examId = examId;
+    }
+
+    public List<ExamPostscriptBean> getExamPostscript() {
+        return examPostscript;
+    }
+
+    public void setExamPostscript(List<ExamPostscriptBean> examPostscript) {
+        this.examPostscript = examPostscript;
     }
 
     public static class ExamPaper {
@@ -244,6 +239,27 @@ public class HomeworkDetail {
                 this.parsedQuestionItemList = parsedQuestionItemList;
                 return this;
             }
+        }
+    }
+
+    public static class ExamPostscriptBean{
+        private String book;
+        private String cursor;
+
+        public String getBook() {
+            return book;
+        }
+
+        public void setBook(String book) {
+            this.book = book;
+        }
+
+        public String getCursor() {
+            return cursor;
+        }
+
+        public void setCursor(String cursor) {
+            this.cursor = cursor;
         }
     }
 }

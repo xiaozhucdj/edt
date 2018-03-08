@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yougy.anwser.AnswerBookStructureActivity;
 import com.yougy.anwser.CourseInfo;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -99,8 +100,10 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
      */
     private void itemClick(int position) {
         CourseInfo info = mCourseInfos.get(position);
-        Bundle extras = new Bundle();
-        loadIntentWithExtras(ControlFragmentActivity.class, extras);
+        Intent intent = new Intent(getActivity() , AnswerBookStructureActivity.class);
+        intent.putExtra("bookName" , info.getCourseBookTitle());
+        intent.putExtra("bookId" , info.getCourseBook());
+        startActivity(intent);
     }
 
     @Override
