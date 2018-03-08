@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="540dp"
-    android:layout_height="200dp"
+    android:layout_width="600dp"
+    android:layout_height="250dp"
     android:layout_gravity="center"
     android:background="@drawable/img_down_book_bg"
     android:orientation="vertical">
@@ -10,40 +10,39 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="75dp"
         android:gravity="center"
         android:textColor="@color/text_color_black"
-        android:textSize="24dp"
+        android:textSize="26dp"
         android:textStyle="bold" />
 
     <RelativeLayout
         android:id="@+id/rl_cancelAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="42dp"
-        android:layout_marginRight="42dp"
-        android:layout_marginTop="55dp">
+        android:layout_marginTop="65dp">
 
 
         <Button
             android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/img_down_book_confirm"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/buy_selector"
             android:gravity="center"
+            android:layout_marginLeft="40dp"
             android:text="取消"
-            android:textColor="@color/text_color_white"
+            android:textColor="@drawable/btn_text_color_selector"
             android:textSize="24dp"
             android:textStyle="bold" />
 
         <Button
             android:id="@+id/btn_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-
-            android:background="@drawable/img_down_book_cancel"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/buy_selector"
+            android:layout_marginRight="40px"
             android:gravity="center"
             android:text="确定"
             android:textColor="@color/text_color_black"
@@ -59,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="42dp"
         android:layout_marginRight="42dp"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="40dp"
         android:visibility="gone">
 
         <Button
