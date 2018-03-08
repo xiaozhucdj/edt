@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="15dp"
-    >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <TextView
-        android:maxLength="4"
-        android:background="@drawable/item_bg_select"
-        android:layout_gravity="center"
         android:id="@+id/tv_grade"
-        android:layout_width="110dp"
-        android:layout_height="36dp"
+        android:layout_width="140px"
+        android:layout_height="48px"
+        android:layout_gravity="center"
+        android:layout_marginBottom="40px"
+        android:background="@drawable/item_bg_select"
         android:gravity="center"
+        android:maxLength="4"
         android:textColor="@drawable/item_color_select"
         android:textSize="22dp" />
-</FrameLayout>
+</RelativeLayout>

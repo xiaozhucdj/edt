@@ -12,7 +12,6 @@
         android:background="@drawable/img_book_backgroud_s"
         android:gravity="center">
 
-
         <ImageView
             android:id="@+id/img_book_icon"
             android:layout_width="wrap_content"
@@ -20,7 +19,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20px"
             android:background="@null"
-            android:src="@drawable/note_cover_iv_normal_s" />
+            android:src="@drawable/home_work_cover_iv_normal_s" />
 
         <TextView
             android:paddingBottom="11px"

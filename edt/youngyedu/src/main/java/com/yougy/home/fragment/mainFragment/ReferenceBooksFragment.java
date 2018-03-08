@@ -289,18 +289,21 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
         //设置page页数数据
         mBooks.clear();
-        if ((mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
-            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
+        if ((mPagerIndex - 1) * mCountsPage + mCountsPage > mCountBooks.size()) { // 不是 正数被
+            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * mCountsPage, mCountBooks.size()));
         } else {
-            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
+            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * mCountsPage, (mPagerIndex - 1) * mCountsPage + mCountsPage)); //正数被
         }
         notifyDataSetChanged();
     }
+
+    private int  mCountsPage ;
 
     /**
      * 初始化翻页角标
      */
     private void initPages(List infos, int count_page) {
+        mCountsPage = count_page ;
         mCountBooks.clear();
         mCountBooks.addAll(infos);
         int counts = 0;

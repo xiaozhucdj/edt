@@ -101,4 +101,9 @@ public class FileContonst {
 
     public final  static  int  SMALL_PAGE_LINES= 5;
 
+    public final  static  int  SMALL_PAGE_COUNTS= 15;
+
+    public final  static  int  MIN_ALL_ITEM_SUBJECT= 200;
+
+
 }

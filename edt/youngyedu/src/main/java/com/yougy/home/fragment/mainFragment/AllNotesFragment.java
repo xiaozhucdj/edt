@@ -101,7 +101,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     /***
      * 一页数据个数
      */
-    private static final int COUNT_PER_PAGE = 12;
+    private static final int COUNT_PER_PAGE = FileContonst.SMALL_PAGE_COUNTS;
     /***
      * 当前翻页的角标
      */
@@ -285,7 +285,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     private void initBookAdapter() {
         mNoteView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
         mNoteView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
+        CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);
         mNoteView.setLayoutManager(layout);
         mNotesAdapter = new AllNotesAdapter(getActivity(), mInfos);
@@ -743,7 +743,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
-            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 120);
+            params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, FileContonst.MIN_ALL_ITEM_SUBJECT);
 //            mFitGradeView.setVisibility(View.GONE);
 //            mSubjectView.setVisibility(View.GONE);
         } else {

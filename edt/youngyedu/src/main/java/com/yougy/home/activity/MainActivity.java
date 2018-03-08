@@ -508,6 +508,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case ALL_HOMEWORK_FRAGMENT:
                 type = EventBusConstant.all_home_work;
                 break;
+
+            case  FOLDER_FRAGMENT:
+                type = EventBusConstant.answer_event;
+                break;
         }
 
         LogUtils.i("刷新" + type);

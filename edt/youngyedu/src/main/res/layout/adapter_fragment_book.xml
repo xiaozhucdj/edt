@@ -37,7 +37,7 @@
             android:layout_width="162px"
             android:layout_height="212px"
             android:layout_centerVertical="true"
-            android:background="@drawable/img_book_backgroud"
+            android:background="@drawable/img_book_backgroud_s"
             android:paddingBottom="11px"
             android:paddingRight="11px"
             android:src="@drawable/book_adaper_item_icon_test_normal" />
