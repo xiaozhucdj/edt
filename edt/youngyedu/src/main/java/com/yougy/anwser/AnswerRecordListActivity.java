@@ -1,5 +1,6 @@
 package com.yougy.anwser;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.message.AskQuestionAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerRecordListBinding;
 
@@ -99,7 +101,13 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
         binding.contentDisplayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 点击题目
+                HomeworkDetail homeworkDetail = homeworkDetailList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
+                Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                newIntent.putExtra("itemId" , homeworkDetail.getExamPaper().getPaperContent().get(0).getPaperItem() + "");
+                newIntent.putExtra("from" , homeworkDetail.getExamPaper().getPaperOwner() + "");
+                newIntent.putExtra("examId" , homeworkDetail.getExamId());
+                startActivity(newIntent);
             }
         });
         binding.contentDisplayer.setScrollEnable(false);

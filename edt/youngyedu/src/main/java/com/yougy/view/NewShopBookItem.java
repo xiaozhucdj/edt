@@ -3,7 +3,6 @@ package com.yougy.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -86,7 +85,7 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
     private void init(Context context) {
         setVisibility(GONE);
         View.inflate(context, R.layout.shop_cart_favorite_list_book_item, this);
-        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , 245));
+//        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , 245));
         AutoUtils.auto(this);
         ButterKnife.bind(this);
         setOnClickListener(this);

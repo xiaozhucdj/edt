@@ -66,6 +66,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
     TextView tvSubmitHomeWork;
+    @BindView(R.id.tv_add_page)
+    TextView tvAddPage;
+    @BindView(R.id.tv_clear_write)
+    TextView tvClearWrite;
 
     @BindView(R.id.iv_last_zp_result)
     ImageView ivZpResult;
@@ -164,7 +168,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     if (selectPageIndex == 0) {
                         isFirstComeInQuestion = true;
                     }
-                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
+//                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
 
                 }
 
@@ -257,6 +261,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                                 isAddAnswerBoard = false;
                             }
                             rcvChooese.setVisibility(View.VISIBLE);
+
+                            //选择题不能加页
+                            tvAddPage.setVisibility(View.GONE);
+                            tvClearWrite.setVisibility(View.GONE);
                             chooeseAnswerList = questionItem.answerList;
 
                             setChooeseResult();
@@ -272,6 +280,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                                 isAddAnswerBoard = true;
                             }
                             rcvChooese.setVisibility(View.GONE);
+                            tvAddPage.setVisibility(View.VISIBLE);
+                            tvClearWrite.setVisibility(View.VISIBLE);
 
                             //从之前bytesList中回显之前保存的手写笔记，如果有的话
                             if (bytesList.size() > position) {
@@ -512,22 +522,12 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
             holder.mTvPageId.setText((position + 1) + "");
 
-            int tag = 2;
-            tag = position % 2;
-
-            if (holder.mTvPageId.getTag() != null) {
-                tag = (int) holder.mTvPageId.getTag();
-            }
-            switch (tag) {
-                default:
-                case 0://错误
-                    holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
-                    holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
-                    break;
-                case 1://选中
-                    holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
-                    holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
-                    break;
+            if (position == saveQuestionPage) {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
             }
 
             holder.mTvPageId.setOnClickListener(new View.OnClickListener() {

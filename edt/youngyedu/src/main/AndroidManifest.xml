@@ -216,7 +216,6 @@
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
         <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
-        <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity" />
         <!--问答图书章节列表-->
         <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" />
         <!--问答记录题目列表-->

@@ -135,68 +135,69 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> postReply(String userId, String itemId, String examId, String content , String replyUseTime) {
-        return getInstance().getServerApi().postReply(userId, itemId, examId, content , replyUseTime)
+    public static Observable<Object> postReply(String userId, String itemId, String examId, String content, String replyUseTime) {
+        return getInstance().getServerApi().postReply(userId, itemId, examId, content, replyUseTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
     public static Observable<Object> postReply(String userId, String data) {
         return getInstance().getServerApi().postReply(userId, data)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> queryToken(String userId){
-        Log.v("FH","!!!!!调用ServerApi查询云信对应token:queryToken");
+    public static Observable<Object> queryToken(String userId) {
+        Log.v("FH", "!!!!!调用ServerApi查询云信对应token:queryToken");
         return getInstance().getServerApi().queryToken(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<DownloadInfo>> downloadBook (String userId , String bookId){
+    public static Observable<List<DownloadInfo>> downloadBook(String userId, String bookId) {
         Log.v("FH", "!!!!!调用ServerApi下载图书:downloadBook");
-        return getInstance().getServerApi().downloadBook(userId , bookId)
+        return getInstance().getServerApi().downloadBook(userId, bookId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<HomeworkBookSummary>> queryHomeworkBookList(String userId , String homeworkFitGradeName){
+    public static Observable<List<HomeworkBookSummary>> queryHomeworkBookList(String userId, String homeworkFitGradeName) {
         Log.v("FH", "!!!!!调用ServerApi获取作业本列表:queryHomeworkBookList");
-        return getInstance().getServerApi().queryHomeworkBookList(userId , homeworkFitGradeName)
+        return getInstance().getServerApi().queryHomeworkBookList(userId, homeworkFitGradeName)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId){
+    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId) {
         Log.v("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
         return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Object>> queryBook(Integer bookId){
+    public static Observable<List<Object>> queryBook(Integer bookId) {
         Log.v("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
         return getInstance().getServerApi().queryBook(bookId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> refreshHomeworkBook(Integer homeworkId){
+    public static Observable<Object> refreshHomeworkBook(Integer homeworkId) {
         Log.v("FH", "!!!!!调用ServerApi刷新作业本:refreshHomeworkBook");
         return getInstance().getServerApi().refreshHomeworkBook(homeworkId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<QuestionReplyDetail>> queryReplyDetail(Integer examId , Integer itemId , String userId){
+    public static Observable<List<QuestionReplyDetail>> queryReplyDetail(Integer examId, Integer itemId, String userId) {
         Log.v("FH", "!!!!!调用ServerApi查询学生解答详情:queryReplyDetail");
-        return getInstance().getServerApi().reviewComment(examId , itemId , userId)
+        return getInstance().getServerApi().reviewComment(examId, itemId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReplyDetail());
     }
 
-    public static Observable<List<HomeworkDetail>> queryHomeworkDetail(Integer examId){
+    public static Observable<List<HomeworkDetail>> queryHomeworkDetail(Integer examId) {
         Log.v("FH", "!!!!!调用ServerApi查询作业详情:queryHomeworkDetail");
         return getInstance().getServerApi().queryHomeworkDetail(examId)
                 .compose(RxSchedulersHelper.io_main())
@@ -204,21 +205,21 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId , Integer userId){
+    public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId, Integer userId) {
         Log.v("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
-        return getInstance().getServerApi().queryReply(examId , userId)
+        return getInstance().getServerApi().queryReply(examId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> deleteMistake_thorough(Integer homeworkId , String itemId){
+    public static Observable<Object> deleteMistake_thorough(Integer homeworkId, String itemId) {
         Log.v("FH", "!!!!!调用ServerApi移除错题(彻底删除):deleteMistake_thorough");
-        return getInstance().getServerApi().removeHomeworkExcerpt(homeworkId , "{\"item\":" + itemId + "}")
+        return getInstance().getServerApi().removeHomeworkExcerpt(homeworkId, "{\"item\":" + itemId + "}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> deleteMistake(Integer homeworkId , String itemId){
+    public static Observable<Object> deleteMistake(Integer homeworkId, String itemId) {
         Log.v("FH", "!!!!!调用ServerApi移除错题(标记为删除):deleteMistake");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
                 , "{\"item\":" + itemId + ",\"extra\":{\"deleted\":true}}")
@@ -226,7 +227,7 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> setMistakeLastScore(Integer homeworkId , String itemId , int score){
+    public static Observable<Object> setMistakeLastScore(Integer homeworkId, String itemId, int score) {
         Log.v("FH", "!!!!!调用ServerApi设置错题上次自评结果:setMistakeLastScore");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
                 , "{\"item\":" + itemId + ",\"extra\":{\"lastScore\":" + score + "}}")
