@@ -220,6 +220,8 @@
         <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" />
         <!--问答记录题目列表-->
         <activity android:name="com.yougy.anwser.AnswerRecordListActivity" />
+        <!--问答记录某次问答详情界面-->
+        <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity"/>
 
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
             <intent-filter>

@@ -8,10 +8,10 @@ import android.view.View;
 
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.HomeworkDetail;
-import com.yougy.message.AskQuestionAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerRecordListBinding;
 
@@ -102,12 +102,30 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
             @Override
             public void onClick(View v) {
                 HomeworkDetail homeworkDetail = homeworkDetailList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
-                Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
-                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                newIntent.putExtra("itemId" , homeworkDetail.getExamPaper().getPaperContent().get(0).getPaperItem() + "");
-                newIntent.putExtra("from" , homeworkDetail.getExamPaper().getPaperOwner() + "");
-                newIntent.putExtra("examId" , homeworkDetail.getExamId());
-                startActivity(newIntent);
+                Intent newIntent;
+                switch (homeworkDetail.getExamStatus()){
+                    case "作答中":
+                        newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                        newIntent.putExtra("itemId" , homeworkDetail.getExamPaper().getPaperContent().get(0).getPaperItem() + "");
+                        newIntent.putExtra("from" , homeworkDetail.getExamPaper().getPaperOwner() + "");
+                        newIntent.putExtra("examId" , homeworkDetail.getExamId());
+                        newIntent.putExtra("startTimeMill" , DateUtils.convertTimeStrToTimeStamp(homeworkDetail.getExamStartTime() , "yyyy-MM-dd HH:mm:ss"));
+                        startActivity(newIntent);
+                        break;
+                    case "未批改":
+                    case "批改中":
+                        newIntent = new Intent(getApplicationContext() , AnswerRecordDetailActivity.class);
+                        newIntent.putExtra("examId" , homeworkDetail.getExamId());
+                        newIntent.putExtra("question" , homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0));
+                        startActivity(newIntent);
+                        break;
+                    case "已批改":
+                        newIntent = new Intent(getApplicationContext() , AnswerRecordDetailActivity.class);
+                        newIntent.putExtra("examId" , homeworkDetail.getExamId());
+                        newIntent.putExtra("question" , homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0));
+                        startActivity(newIntent);
+                        break;
+                }
             }
         });
         binding.contentDisplayer.setScrollEnable(false);

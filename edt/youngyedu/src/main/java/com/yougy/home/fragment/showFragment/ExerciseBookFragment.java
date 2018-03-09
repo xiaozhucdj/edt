@@ -303,6 +303,7 @@ public class ExerciseBookFragment extends BFragment {
         public void setData(HomeworkSummary data) {
             this.data = data;
             binding.homeworkNameTv.setText(data.getExtra().getName());
+            binding.timeTv.setText("时间:" + data.getExtra().getStartTime()+ "~" + data.getExtra().getEndTime());
         }
 
         public HomeworkSummary getData() {

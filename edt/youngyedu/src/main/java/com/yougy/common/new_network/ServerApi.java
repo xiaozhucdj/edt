@@ -138,7 +138,8 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryReply"})
-    Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId , @Field("userId") Integer userId);
+    Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
+            , @Field("userId") Integer userId);
 
     /**
      * 作业本错题移除
