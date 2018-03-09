@@ -74,6 +74,8 @@ import rx.schedulers.Schedulers;
 public class AnsweringActivity extends AnswerBaseActivity {
     ActivityAnsweringBinding binding;
     private NoteBookView2 mNbvAnswerBoard;
+    //作业草稿纸
+    private NoteBookView2 mCaogaoNoteBoard;
 
     long startTimeMill;
     private TimedTask timedTask;
@@ -106,6 +108,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
     private List<ParsedQuestionItem.Answer> chooeseAnswerList;
     //选择题选择的结果
     private ArrayList<String> checkedAnswerList = new ArrayList<String>();
+    //byte数组集合，（用来保存每一页草稿的笔记数据）
+    private ArrayList<byte[]> cgBytes = new ArrayList<>();
     //是否第一次自动点击进入第一页
     private boolean isFirstComeInQuestion;
 
@@ -209,6 +213,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
+        mCaogaoNoteBoard = new NoteBookView2(this);
 
         binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper() {
             @Override
@@ -222,11 +227,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                     for (int i = 0; i < newAddPageNum; i++) {
                         bytesList.add(null);
-                    }
-                    for (int i = 0; i < newAddPageNum; i++) {
                         pathList.add(null);
+                        cgBytes.add(null);
                     }
-
                     //更新最新的页面数据
                     questionPageSize = newPageCount;
                     questionPageNumAdapter.notifyDataSetChanged();
@@ -245,6 +248,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
 
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+            mCaogaoNoteBoard.invalidate();
+        }
+
         switch (view.getId()) {
 
             case R.id.btn_left:
@@ -262,8 +270,47 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 questionPageSize++;
                 bytesList.add(null);
                 pathList.add(null);
+                cgBytes.add(null);
                 questionPageNumAdapter.notifyDataSetChanged();
                 questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize - 1);
+
+                break;
+            case R.id.tv_caogao_text:
+
+                if (binding.tvCaogaoText.getText().toString().startsWith("扔掉")) {
+                    binding.tvCaogaoText.setText("草稿纸");
+
+                    cgBytes.set(saveQuestionPage, null);
+                    mCaogaoNoteBoard.clearAll();
+                    binding.llCaogaoControl.setVisibility(View.GONE);
+
+                    if (binding.rlCaogaoBox.getChildCount() > 0) {
+                        binding.rlCaogaoBox.removeView(mCaogaoNoteBoard);
+                    }
+
+                } else {
+                    binding.tvCaogaoText.setText("扔掉\n草稿纸");
+                    binding.llCaogaoControl.setVisibility(View.VISIBLE);
+
+                    if (binding.rlCaogaoBox.getChildCount() == 0) {
+                        binding.rlCaogaoBox.addView(mCaogaoNoteBoard);
+                    }
+
+                    byte[] tmpBytes = cgBytes.get(saveQuestionPage);
+                    if (tmpBytes != null) {
+                        mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    }
+
+                }
+
+
+                break;
+            case R.id.tv_dismiss_caogao:
+                if (binding.llCaogaoControl.getVisibility() == View.VISIBLE) {
+                    binding.tvCaogaoText.setText("草稿纸");
+                    cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+                    binding.llCaogaoControl.setVisibility(View.GONE);
+                }
 
                 break;
         }
@@ -308,10 +355,25 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     EpdController.leaveScribbleMode(mNbvAnswerBoard);
                     mNbvAnswerBoard.invalidate();
 
+                    if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                        EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+                        mCaogaoNoteBoard.invalidate();
+                    }
+
 
                     if (isFirstComeInQuestion) {
                         isFirstComeInQuestion = false;
                     } else {
+
+                        //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
+                        if (binding.llCaogaoControl.getVisibility() == View.VISIBLE) {
+                            cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+
+                            binding.tvCaogaoText.setText("草稿纸");
+                            mCaogaoNoteBoard.clear();
+                            binding.llCaogaoControl.setVisibility(View.GONE);
+                        }
+
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                         if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
                             //保存上一个题目多页数据中的某一页手写笔记。
@@ -398,6 +460,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             for (int i = 0; i < questionPageSize; i++) {
                 bytesList.add(null);
                 pathList.add(null);
+                cgBytes.add(null);
             }
 
             isFirstComeInQuestion = true;
@@ -483,6 +546,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     public void back(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+        }
         ToastUtil.showToast(this, "请完成作答");
         // TODO: 2017/9/13 这里先保留关闭页面，做测试使用
         finish();
@@ -691,9 +757,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
      */
     private void writeInfoToS() {
 
-        String content = new Gson().toJson(stsResultbeanArrayList);
+        String picContent = new Gson().toJson(stsResultbeanArrayList);
+        String txtContent = new Gson().toJson(checkedAnswerList);
 
-        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", content, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
+        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
