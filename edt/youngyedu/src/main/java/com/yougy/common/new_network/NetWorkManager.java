@@ -26,7 +26,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Field;
 import rx.Observable;
 
 /**
@@ -135,8 +134,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> postReply(String userId, String itemId, String examId, String content, String replyUseTime) {
-        return getInstance().getServerApi().postReply(userId, itemId, examId, content, replyUseTime)
+    public static Observable<Object> postReply(String userId, String itemId, String examId, String picContent, String txtContent, String replyUseTime) {
+        return getInstance().getServerApi().postReply(userId, itemId, examId, picContent, txtContent, replyUseTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -235,16 +234,16 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<CourseInfo>> queryCourse(Integer userId){
+    public static Observable<List<CourseInfo>> queryCourse(Integer userId) {
         Log.v("FH", "!!!!!调用ServerApi查询课程:queryCourse");
         return getInstance().getServerApi().queryCourse(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<HomeworkDetail>> queryAnswer(String classId, String bookId , Integer cursor){
+    public static Observable<List<HomeworkDetail>> queryAnswer(String classId, String bookId, Integer cursor) {
         Log.v("FH", "!!!!!调用ServerApi查询问答:queryAnswer");
-        return getInstance().getServerApi().queryAnswer(classId , bookId , cursor)
+        return getInstance().getServerApi().queryAnswer(classId, bookId, cursor)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());
