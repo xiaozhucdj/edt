@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.badoo.mobile.util.WeakHandler;
+import com.onyx.android.sdk.api.device.FrontLightController;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
@@ -28,6 +29,7 @@ import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.init.activity.LocalLockActivity;
@@ -100,6 +102,34 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
     @Override
     protected void init() {
+
+
+        //打开背光 一共18等级  减到0，打开默认为7级，直接关闭，打开默认为之前关闭是级数。
+
+
+        //保存打开app前的背光情况。
+        boolean isLightOn = FrontLightController.isLightOn(this);
+        int nowBrightness = FrontLightController.getBrightness(this);
+        SharedPreferencesUtil.getSpUtil().putBoolean("OLD_ISLIGHTON", isLightOn);
+        SharedPreferencesUtil.getSpUtil().putInt("OLD_BRIGHTNESS", nowBrightness);
+
+        FrontLightController.turnOn(this);
+
+
+
+        /*//获取当前亮级
+        int now = FrontLightController.getBrightness(this);
+        //获取可展示级别  0-160
+        List<Integer> list = FrontLightController.getFrontLightValueList(this);
+        Collections.reverse(list);
+
+        for (Integer target : list) {
+            if (target < now) {
+                //设置背光亮度级别
+                FrontLightController.setBrightness(this, target);
+                return;
+            }
+        }*/
     }
 
     @Override
@@ -121,7 +151,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         Log.v("FH", "开始检测版本更新...");
         if (NetUtils.isNetConnected()) {
             Log.v("FH", "有网络,更新UUID");
-            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":", "") + "-" + Settings.System.getString(getContentResolver() , Settings.Secure.ANDROID_ID);
+            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":", "") + "-" + Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             SpUtil.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
@@ -172,15 +202,14 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             public void onResponse(NewLoginRep response, int id) {
                 if (response.getCode() == ProtocolId.RET_SUCCESS && response.getCount() > 0) {
                     Student student = response.getData().get(0);
-                    if (!student.getUserRole().equals("学生")){
+                    if (!student.getUserRole().equals("学生")) {
                         new HintDialog(getThisActivity(), "权限错误:本设备已被其他账号绑定过,请先解绑后重新登录", "退出程序", new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
                                 finishAll();
                             }
                         }).show();
-                    }
-                    else {
+                    } else {
                         Log.v("FH", "自动登录成功");
                         SpUtil.saveStudent(response.getData().get(0));
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), null);

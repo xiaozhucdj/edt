@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:textSize="20px"
             android:textColor="@color/black"
-            android:text="时间 : 10-23 18:04~10-24 18:04"
+            android:text="时间 : xxxxxxxxxxxx"
             android:layout_alignTop="@id/clock_icon_tv"
             android:layout_toRightOf="@id/clock_icon_tv"
             android:layout_marginLeft="10px"

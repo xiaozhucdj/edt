@@ -48,7 +48,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"} , values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
-            , @Field("examId") String examId, @Field("content") String content , @Field("replyUseTime") String replyUseTime);
+            , @Field("examId") String examId, @Field("picContent") String picContent, @Field("txtContent") String txtContent , @Field("replyUseTime") String replyUseTime);
 /**
      *  解答上传（多题，作业）
      */
@@ -87,7 +87,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"}, values = {"queryHomeworkDetail"})
+    @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
     Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(@Field("homeworkId") Integer homeworkId);
 
     /**
@@ -124,12 +124,22 @@ public interface ServerApi {
     Observable<BaseResult<List<HomeworkDetail>>> queryHomeworkDetail(@Field("examId") Integer examId);
 
     /**
+     * 查询问答
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m" , "examTypeCode"}, values = {"queryExam" , "II01"})
+    Observable<BaseResult<List<HomeworkDetail>>> queryAnswer(@Field("classId") String classId
+            , @Field("book") String bookId , @Field("cursor") Integer cursor);
+
+    /**
      * 查询解答摘要
      */
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryReply"})
-    Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId , @Field("userId") Integer userId);
+    Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
+            , @Field("userId") Integer userId);
 
     /**
      * 作业本错题移除

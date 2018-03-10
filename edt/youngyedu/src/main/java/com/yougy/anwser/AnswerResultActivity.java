@@ -14,6 +14,7 @@ import com.yougy.ui.activity.databinding.ActivityAnswerResultBinding;
 
 /**
  * Created by FH on 2017/9/6.
+ * 学生点击提交问答后学生查看答案和题干的界面.
  */
 
 public class AnswerResultActivity extends BaseActivity{

@@ -5,10 +5,15 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
@@ -32,12 +37,19 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.adapter.OnItemClickListener;
+import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.message.EndQuestionAttachment;
+import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
+import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
+import com.yougy.view.CustomGridLayoutManager;
+import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
+import com.zhy.autolayout.utils.AutoUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,6 +57,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -59,18 +73,18 @@ import rx.schedulers.Schedulers;
 
 public class AnsweringActivity extends AnswerBaseActivity {
     ActivityAnsweringBinding binding;
-    ParsedQuestionItem parsedQuestionItem;
     private NoteBookView2 mNbvAnswerBoard;
+    //作业草稿纸
+    private NoteBookView2 mCaogaoNoteBoard;
 
-    long startTimeMill;
+    long startTimeMill = -1;
     private TimedTask timedTask;
 
     //图片地址的集合（用来保存截图生长的图片路径）
-    private ArrayList<String> picPathList = new ArrayList<>();
+    private ArrayList<String> pathList = new ArrayList<>();
     //byte数组集合，（用来保存每一页书写的笔记数据）
     private ArrayList<byte[]> bytesList = new ArrayList<>();
-    //当前页，默认从1开始
-    private int position = 1;
+
     //图片上传成功后，统计上传数据到集合中，方便将该信息提交到服务器
     private ArrayList<STSResultbean> stsResultbeanArrayList = new ArrayList<>();
 
@@ -78,8 +92,32 @@ public class AnsweringActivity extends AnswerBaseActivity {
     String fromUserId;
     int examId;
 
-    private Bitmap firstResultBitmap;
 
+    private ParsedQuestionItem questionItem;
+
+    private static final int PAGE_SHOW_SIZE = 5;
+    private int questionPageSize = 1;
+
+    //底部页码数偏移量
+    private int pageDeviationNum = 0;
+    private QuestionPageNumAdapter questionPageNumAdapter;
+
+    //底部某一题多页数据
+    private List<Content_new> questionList;
+    //如果是选择题，这里存储选择题的结果
+    private List<ParsedQuestionItem.Answer> chooeseAnswerList;
+    //选择题选择的结果
+    private ArrayList<String> checkedAnswerList = new ArrayList<String>();
+    //byte数组集合，（用来保存每一页草稿的笔记数据）
+    private ArrayList<byte[]> cgBytes = new ArrayList<>();
+    //是否第一次自动点击进入第一页
+    private boolean isFirstComeInQuestion;
+
+    //是否添加了手写板
+    private boolean isAddAnswerBoard;
+
+    //保存当前题目页面分页，默认从0开始
+    private int saveQuestionPage = 0;
 
     @Override
     protected void setContentView() {
@@ -92,27 +130,33 @@ public class AnsweringActivity extends AnswerBaseActivity {
     public void init() {
         Log.v("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
-//        itemId = "73";
+//        itemId = "73";//填空
+//        itemId = "189";//选择
         if (TextUtils.isEmpty(itemId)) {
             ToastUtil.showToast(this, "item 为空,开始问答失败");
             Log.v("FH", "item 为空,开始问答失败");
             finish();
         }
         fromUserId = getIntent().getStringExtra("from");
-//        fromUserId = "10000200";
+//        fromUserId = "10000200";//填空
+//        fromUserId = "10000239";//选择
         if (TextUtils.isEmpty(fromUserId)) {
             ToastUtil.showToast(this, "from userId 为空,开始问答失败");
             Log.v("FH", "from userId 为空,开始问答失败");
             finish();
         }
         examId = getIntent().getIntExtra("examId", -1);
-//        examId = 148;
+//        examId = 148;//填空
+//        examId = 772;//选择
         if (examId == -1) {
             ToastUtil.showToast(this, "examId 为空,开始问答失败");
             Log.v("FH", "examId 为空,开始问答失败");
             finish();
         }
-        startTimeMill = System.currentTimeMillis();
+        startTimeMill = getIntent().getLongExtra("startTimeMill" , -1);
+        if (startTimeMill == -1){
+            startTimeMill = System.currentTimeMillis();
+        }
     }
 
     @Override
@@ -147,9 +191,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
                         if (parsedQuestionItems != null && parsedQuestionItems.size() > 0) {
-                            parsedQuestionItem = parsedQuestionItems.get(0);
-                            binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);
-                            refreshView();
+                            questionItem = parsedQuestionItems.get(0);
+
+                            fillData();
                         } else {
                             ToastUtil.showToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
                             Log.v("FH", "获取到的题目为空,开始问答失败");
@@ -167,217 +211,325 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     protected void initLayout() {
-        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(System.currentTimeMillis(), "yyyy-MM-dd HH:mm"));
+        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(startTimeMill , "yyyy-MM-dd HH:mm"));
 
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
+        mCaogaoNoteBoard = new NoteBookView2(this);
 
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper());
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper() {
+            @Override
+            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
+                super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
+
+                //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
+                if (newPageCount > questionPageSize) {
+                    //需要添加的页码数目。
+                    int newAddPageNum = newPageCount - questionPageSize;
+
+                    for (int i = 0; i < newAddPageNum; i++) {
+                        bytesList.add(null);
+                        pathList.add(null);
+                        cgBytes.add(null);
+                    }
+                    //更新最新的页面数据
+                    questionPageSize = newPageCount;
+                    questionPageNumAdapter.notifyDataSetChanged();
+                    if (selectPageIndex == 0) {
+                        isFirstComeInQuestion = true;
+                    }
+//                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
+
+                }
+
+            }
+        });
     }
-
 
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
-        switch (view.getId()) {
-            case R.id.start_answer_btn:
-                binding.startAnswerBtn.setVisibility(View.GONE);
-                binding.pageBtnLayout.setVisibility(View.VISIBLE);
-                binding.rlAnswer.addView(mNbvAnswerBoard);
 
-                bytesList.add(mNbvAnswerBoard.bitmap2Bytes());
-                ToastUtil.showToast(this, "请开始作答");
-
-                break;
-            case R.id.last_page_btn:
-                /*
-                上一页 ，下一页逻辑
-                1.保存当期页面数据到集合中
-                2.清理当前页面数据
-                3.将上一页，下一页数据从集合中取出，并回复到页面
-                */
-
-                if (position == 1) {
-                    firstResultBitmap = saveScreenBitmap();
-                }
-
-                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
-
-                if (position == 1) {
-                    ToastUtil.showToast(this, "已经是第一页了");
-                    return;
-                }
-                mNbvAnswerBoard.clearAll();
-
-                position--;
-                binding.pageNumTv.setText(position + "/" + bytesList.size());
-
-
-                byte[] tmpBytes = bytesList.get(position - 1);
-                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-                if (position == 1) {
-                    binding.contentDisplayer.setVisibility(View.VISIBLE);
-                }
-
-                break;
-            case R.id.next_page_btn:
-
-                if (position == 1) {
-                    firstResultBitmap = saveScreenBitmap();
-                    binding.contentDisplayer.setVisibility(View.VISIBLE);
-                }
-                if (position == bytesList.size()) {
-                    ToastUtil.showToast(this, "已经是最后一页了");
-                    return;
-                }
-                binding.contentDisplayer.setVisibility(View.GONE);
-                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
-
-                mNbvAnswerBoard.clearAll();
-                position++;
-                binding.pageNumTv.setText(position + "/" + bytesList.size());
-
-
-                tmpBytes = bytesList.get(position - 1);
-                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-
-                break;
-            case R.id.add_page_btn:
-                if (position == 1) {
-                    firstResultBitmap = saveScreenBitmap();
-                }
-                binding.contentDisplayer.setVisibility(View.GONE);
-
-                bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
-                mNbvAnswerBoard.clearAll();
-                position++;
-                bytesList.add(mNbvAnswerBoard.bitmap2Bytes());
-
-                binding.pageNumTv.setText(position + "/" + bytesList.size());
-
-
-                break;
-            case R.id.delete_current_page_btn:
-                if (position == 1) {
-                    ToastUtil.showToast(this, "第一页不能删除");
-                    return;
-                }
-                mNbvAnswerBoard.clearAll();
-                bytesList.remove(position - 1);
-                position--;
-
-                binding.pageNumTv.setText(position + "/" + bytesList.size());
-
-
-                tmpBytes = bytesList.get(position - 1);
-                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-                if (position == 1) {
-                    binding.contentDisplayer.setVisibility(View.VISIBLE);
-                }
-
-                break;
-            case R.id.cancle_btn:
-//                mNbvAnswerBoard.clearAll();
-//                ToastUtil.showToast(this, "清理成功");
-
-                break;
-            case R.id.commit_answer_btn:
-                if (bytesList.size() == 0) {
-                    ToastUtil.showToast(this, "请作答后再提交");
-                    return;
-                }
-                if (position == 1) {
-                    firstResultBitmap = saveScreenBitmap();
-                } else {
-                    bytesList.set(position - 1, mNbvAnswerBoard.bitmap2Bytes());
-                }
-
-                makePicbyList();
-                break;
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+            mCaogaoNoteBoard.invalidate();
         }
 
+        switch (view.getId()) {
+
+            case R.id.btn_left:
+                finish();
+                break;
+            case R.id.commit_answer_btn:
+                saveHomeWorkData();
+                getUpLoadInfo();
+
+                break;
+            case R.id.tv_clear_write:
+                mNbvAnswerBoard.clearAll();
+                break;
+            case R.id.tv_add_page:
+                questionPageSize++;
+                bytesList.add(null);
+                pathList.add(null);
+                cgBytes.add(null);
+                questionPageNumAdapter.notifyDataSetChanged();
+                questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize - 1);
+
+                break;
+            case R.id.tv_caogao_text:
+
+                if (binding.tvCaogaoText.getText().toString().startsWith("扔掉")) {
+                    binding.tvCaogaoText.setText("草稿纸");
+
+                    cgBytes.set(saveQuestionPage, null);
+                    mCaogaoNoteBoard.clearAll();
+                    binding.llCaogaoControl.setVisibility(View.GONE);
+
+                    if (binding.rlCaogaoBox.getChildCount() > 0) {
+                        binding.rlCaogaoBox.removeView(mCaogaoNoteBoard);
+                    }
+
+                } else {
+                    binding.tvCaogaoText.setText("扔掉\n草稿纸");
+                    binding.llCaogaoControl.setVisibility(View.VISIBLE);
+
+                    if (binding.rlCaogaoBox.getChildCount() == 0) {
+                        binding.rlCaogaoBox.addView(mCaogaoNoteBoard);
+                    }
+
+                    byte[] tmpBytes = cgBytes.get(saveQuestionPage);
+                    if (tmpBytes != null) {
+                        mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    }
+
+                }
+
+
+                break;
+            case R.id.tv_dismiss_caogao:
+                if (binding.llCaogaoControl.getVisibility() == View.VISIBLE) {
+                    binding.tvCaogaoText.setText("草稿纸");
+                    cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+                    binding.llCaogaoControl.setVisibility(View.GONE);
+                }
+
+                break;
+        }
+    }
+
+    /**
+     * 保存之前操作题目结果数据
+     */
+    private void saveHomeWorkData() {
+        //刷新最后没有保存的数据
+        bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
+        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+        mNbvAnswerBoard.clearAll();
+    }
+
+    //填充数据
+    private void fillData() {
+        if (questionItem == null) {
+            ToastUtil.showToast(getBaseContext(), "该题可能已经被删除");
+            return;
+        }
+        questionList = questionItem.questionContentList;
+        binding.questionTypeTextview.setText("题目类型 : " + questionItem.questionContentList.get(0).getExtraData());
+        binding.contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
+        if (questionList != null && questionList.size() > 0) {
+
+            questionPageSize = questionList.size();
+
+            //作业中某一题题目、答案切换
+            questionPageNumAdapter = new QuestionPageNumAdapter();
+            CustomLinearLayoutManager linearLayoutManager = new CustomLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            linearLayoutManager.setScrollEnabled(false);
+            binding.rcvAllQuestionPage.setLayoutManager(linearLayoutManager);
+            binding.rcvAllQuestionPage.setAdapter(questionPageNumAdapter);
+
+            questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick1(int position) {
+                    ToastUtil.showToast(AnsweringActivity.this, position + 1 + "页");
+
+                    //离开手绘模式，并刷新界面ui
+                    EpdController.leaveScribbleMode(mNbvAnswerBoard);
+                    mNbvAnswerBoard.invalidate();
+
+                    if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                        EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+                        mCaogaoNoteBoard.invalidate();
+                    }
+
+
+                    if (isFirstComeInQuestion) {
+                        isFirstComeInQuestion = false;
+                    } else {
+
+                        //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
+                        if (binding.llCaogaoControl.getVisibility() == View.VISIBLE) {
+                            cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+
+                            binding.tvCaogaoText.setText("草稿纸");
+                            mCaogaoNoteBoard.clear();
+                            binding.llCaogaoControl.setVisibility(View.GONE);
+                        }
+
+                        //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
+                        if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
+                            //保存上一个题目多页数据中的某一页手写笔记。
+                            bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
+                        }
+                        //是否是选择题。都需要截屏保存图片
+                        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+                    }
+
+
+                    mNbvAnswerBoard.clearAll();
+
+                    //将本页设置为选中页
+                    saveQuestionPage = position;
+
+
+                    if (position < questionList.size()) {
+                        //切换当前题目的分页
+                        binding.contentDisplayer.getmContentAdaper().toPage("question", position, false);
+                        binding.contentDisplayer.setVisibility(View.VISIBLE);
+                    } else {
+                        //加白纸
+                        binding.contentDisplayer.setVisibility(View.GONE);
+
+                    }
+                    if (questionList.get(0) != null) {
+                        if ("选择".equals(questionList.get(0).getExtraData())) {
+                            if (isAddAnswerBoard) {
+                                binding.rlAnswer.removeView(mNbvAnswerBoard);
+                                isAddAnswerBoard = false;
+                            }
+                            binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+                            //选择题不能加页
+                            binding.tvAddPage.setVisibility(View.GONE);
+                            binding.tvClearWrite.setVisibility(View.GONE);
+                            chooeseAnswerList = questionItem.answerList;
+
+                            setChooeseResult();
+
+                            //刷新当前选择结果的reciv
+                            if (binding.rcvChooeseItem.getAdapter() != null) {
+                                binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
+                            }
+
+                        } else {
+                            if (!isAddAnswerBoard) {
+                                binding.rlAnswer.addView(mNbvAnswerBoard);
+                                isAddAnswerBoard = true;
+                            }
+                            binding.rcvChooeseItem.setVisibility(View.GONE);
+                            binding.tvAddPage.setVisibility(View.VISIBLE);
+                            binding.tvClearWrite.setVisibility(View.VISIBLE);
+
+                            //从之前bytesList中回显之前保存的手写笔记，如果有的话
+                            if (bytesList.size() > position) {
+                                byte[] tmpBytes = bytesList.get(position);
+                                if (tmpBytes != null) {
+                                    mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                                }
+                            }
+
+                        }
+                    }
+                    questionPageNumAdapter.notifyDataSetChanged();
+
+
+                    //以下逻辑为调整列表中角标位置。
+                    if (questionPageSize <= PAGE_SHOW_SIZE) {
+                        return;
+                    }
+
+                    if (position <= 2) {
+                        pageDeviationNum = 0;
+                    } else {
+                        pageDeviationNum = (position - 2);
+                    }
+                    moveToPosition(linearLayoutManager, pageDeviationNum);
+
+
+                }
+            });
+
+
+            for (int i = 0; i < questionPageSize; i++) {
+                bytesList.add(null);
+                pathList.add(null);
+                cgBytes.add(null);
+            }
+
+            isFirstComeInQuestion = true;
+            questionPageNumAdapter.onItemClickListener.onItemClick1(0);
+        } else {
+            ToastUtil.showToast(getBaseContext(), "该题可能已经被删除");
+        }
+    }
+
+    /**
+     * RecyclerView 移动到当前位置，
+     *
+     * @param manager 设置RecyclerView对应的manager
+     * @param n       要跳转的位置
+     */
+    public static void moveToPosition(LinearLayoutManager manager, int n) {
+        manager.scrollToPositionWithOffset(n, 0);
+        manager.setStackFromEnd(true);
     }
 
 
     /**
-     * 保存所有学生答案的图片地址到集合中去
+     * 设置选择题的结果界面
      */
-    private void makePicbyList() {
+    private void setChooeseResult() {
 
+        //清理掉其他题中的作业结果。
+        checkedAnswerList.clear();
 
-        Observable.create(new Observable.OnSubscribe<Object>() {
+        binding.rcvChooeseItem.setAdapter(new RecyclerView.Adapter() {
             @Override
-            public void call(Subscriber<? super Object> subscriber) {
-
-                String firstFileName = saveBitmapToFile(firstResultBitmap);
-                picPathList.add(firstFileName);
-
-                for (int i = 1; i < bytesList.size(); i++) {
-
-                    byte[] mbyte = bytesList.get(i);
-
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(mbyte, 0, mbyte.length);
-
-                    String filePath = saveBitmapToFile(bitmap);
-                    picPathList.add(filePath);
-
-                }
-
-
-                subscriber.onNext(new Object());//将执行结果返回
-                subscriber.onCompleted();//结束异步任务
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(AnsweringActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
+                AutoUtils.auto(view);
+                return new AnswerItemHolder(view);
             }
-        })
-                .subscribeOn(Schedulers.io())//异步任务在IO线程执行
-                .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
-                .subscribe(new Subscriber<Object>() {
-                    LoadingProgressDialog loadingProgressDialog;
 
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                        if (loadingProgressDialog == null) {
-                            loadingProgressDialog = new LoadingProgressDialog(AnsweringActivity.this);
-                            loadingProgressDialog.show();
-                            loadingProgressDialog.setTitle("答案生成中...");
-                        }
-                    }
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ParsedQuestionItem.Answer answer = chooeseAnswerList.get(position);
+                ((AnswerItemHolder) holder).setAnswer(answer);
+            }
 
-                    @Override
-                    public void onCompleted() {
-                        if (loadingProgressDialog != null) {
-                            loadingProgressDialog.dismiss();
-                            loadingProgressDialog = null;
-                        }
-                        ToastUtil.showToast(AnsweringActivity.this, "答案生成完毕");
-                        getUpLoadInfo();
-                    }
+            @Override
+            public int getItemCount() {
+                if (chooeseAnswerList != null) {
+                    return chooeseAnswerList.size();
+                } else {
+                    return 0;
+                }
+            }
+        });
+        CustomGridLayoutManager gridLayoutManager = new CustomGridLayoutManager(this, chooeseAnswerList.size());
+        gridLayoutManager.setScrollEnabled(false);
+        binding.rcvChooeseItem.setLayoutManager(gridLayoutManager);
+        binding.rcvChooeseItem.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.rcvChooeseItem) {
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder vh) {
+                ((AnswerItemHolder) vh).reverseCheckbox();
+            }
+        });
 
-                    @Override
-                    public void onError(Throwable e) {
-                        if (loadingProgressDialog != null) {
-                            loadingProgressDialog.dismiss();
-                            loadingProgressDialog = null;
-                        }
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                    }
-                });
-
-
-        ToastUtil.showToast(this, "保存完毕");
     }
-
 
     @Override
     protected void refreshView() {
-        ParsedQuestionItem.Question question = parsedQuestionItem.questionList.get(0);
-        binding.questionTypeTextview.setText("题目类型 : " + question.questionType);
-        binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , false);
     }
-
 
     private void startClock() {
         timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
@@ -396,6 +548,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     public void back(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+        }
         ToastUtil.showToast(this, "请完成作答");
         // TODO: 2017/9/13 这里先保留关闭页面，做测试使用
         finish();
@@ -515,9 +670,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
             @Override
             public void call(Subscriber<? super Object> subscriber) {
 
-                for (int i = 0; i < picPathList.size(); i++) {
+                for (int i = 0; i < pathList.size(); i++) {
 
-                    String picPath = picPathList.get(i);
+                    String picPath = pathList.get(i);
                     String picName = picPath.substring(picPath.lastIndexOf("/"));
 
 
@@ -604,15 +759,16 @@ public class AnsweringActivity extends AnswerBaseActivity {
      */
     private void writeInfoToS() {
 
-        String content = new Gson().toJson(stsResultbeanArrayList);
+        String picContent = new Gson().toJson(stsResultbeanArrayList);
+        String txtContent = new Gson().toJson(checkedAnswerList);
 
-        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", content, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
+        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
                         timedTask.stop();
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
-                        intent.putExtra("question", parsedQuestionItem);
+                        intent.putExtra("question", questionItem);
                         startActivity(intent);
                         finish();
                     }
@@ -624,5 +780,113 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 });
 
     }
+
+
+    /*底部页面的adapter相关*/
+    class QuestionPageNumViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_page_id)
+        TextView mTvPageId;
+
+
+        public QuestionPageNumViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            int margin = UIUtils.dip2px(10);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) ((UIUtils.getScreenWidth() - UIUtils.dip2px(660) - PAGE_SHOW_SIZE * 2 * margin) / PAGE_SHOW_SIZE), ViewGroup.LayoutParams.MATCH_PARENT);
+            params.setMargins(margin, 0, margin, 0);
+            itemView.setLayoutParams(params);
+
+        }
+    }
+
+    class QuestionPageNumAdapter extends RecyclerView.Adapter<QuestionPageNumViewHolder> {
+
+        OnItemClickListener onItemClickListener;
+
+        public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+            this.onItemClickListener = onItemClickListener;
+        }
+
+        @Override
+        public QuestionPageNumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_page_check_homework, parent, false);
+            return new QuestionPageNumViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(QuestionPageNumViewHolder holder, final int position) {
+
+            holder.mTvPageId.setText((position + 1) + "");
+
+            if (position == saveQuestionPage) {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+            }
+
+
+            holder.mTvPageId.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick1(position);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return questionPageSize;
+        }
+    }
+
+
+    public class AnswerItemHolder extends RecyclerView.ViewHolder {
+        ItemAnswerChooseGridviewBinding itemBinding;
+        ParsedQuestionItem.Answer answer;
+
+        public AnswerItemHolder(View itemView) {
+            super(itemView);
+            itemBinding = DataBindingUtil.bind(itemView);
+        }
+
+        public AnswerItemHolder setAnswer(ParsedQuestionItem.Answer answer) {
+            this.answer = answer;
+            if (answer instanceof ParsedQuestionItem.TextAnswer) {
+                itemBinding.textview.setText(((ParsedQuestionItem.TextAnswer) answer).text);
+                if (ListUtil.conditionalContains(checkedAnswerList, new ListUtil.ConditionJudger<String>() {
+                    @Override
+                    public boolean isMatchCondition(String nodeInList) {
+                        return nodeInList.equals(((ParsedQuestionItem.TextAnswer) answer).text);
+                    }
+                })) {
+                    itemBinding.checkbox.setSelected(true);
+                } else {
+                    itemBinding.checkbox.setSelected(false);
+                }
+            } else {
+                itemBinding.textview.setText("格式错误");
+                itemBinding.checkbox.setSelected(false);
+            }
+            return this;
+        }
+
+        public void reverseCheckbox() {
+            if (answer instanceof ParsedQuestionItem.TextAnswer) {
+                if (itemBinding.checkbox.isSelected()) {
+                    checkedAnswerList.remove(((ParsedQuestionItem.TextAnswer) answer).text);
+                } else {
+                    String chooeseText = ((ParsedQuestionItem.TextAnswer) answer).text;
+                    if (!checkedAnswerList.contains(chooeseText)) {
+                        checkedAnswerList.add(chooeseText);
+                    }
+                }
+                binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
+            }
+        }
+    }
+
 
 }

@@ -66,12 +66,24 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
     TextView tvSubmitHomeWork;
+    @BindView(R.id.tv_add_page)
+    TextView tvAddPage;
+    @BindView(R.id.tv_clear_write)
+    TextView tvClearWrite;
 
     @BindView(R.id.iv_last_zp_result)
     ImageView ivZpResult;
+    @BindView(R.id.tv_caogao_text)
+    TextView tvCaogaoText;
+    @BindView(R.id.ll_caogao_control)
+    LinearLayout llCaogaoControl;
+    @BindView(R.id.rl_caogao_box)
+    RelativeLayout rlCaogaoBox;
 
 
     private NoteBookView2 mNbvAnswerBoard;
+    //作业草稿纸
+    private NoteBookView2 mCaogaoNoteBoard;
 
     private static final int PAGE_SHOW_SIZE = 5;
 
@@ -97,6 +109,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     private ArrayList<byte[]> bytesList = new ArrayList<>();
     //存储每一页截屏图片地址
     private ArrayList<String> pathList = new ArrayList<>();
+    //byte数组集合，（用来保存每一页草稿的笔记数据）
+    private ArrayList<byte[]> cgBytes = new ArrayList<>();
 
     //是否第一次自动点击进入第一页
     private boolean isFirstComeInQuestion;
@@ -129,6 +143,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     protected void initLayout() {
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
+        mCaogaoNoteBoard = new NoteBookView2(this);
         switch (lastScore) {
             case 0:
                 ivZpResult.setImageResource(R.drawable.img_ziping_cuowu);
@@ -153,9 +168,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
                     for (int i = 0; i < newAddPageNum; i++) {
                         bytesList.add(null);
-                    }
-                    for (int i = 0; i < newAddPageNum; i++) {
                         pathList.add(null);
+                        cgBytes.add(null);
                     }
 
                     //更新最新的页面数据
@@ -164,7 +178,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     if (selectPageIndex == 0) {
                         isFirstComeInQuestion = true;
                     }
-                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
+//                    questionPageNumAdapter.onItemClickListener.onItemClick1(selectPageIndex);
 
                 }
 
@@ -220,11 +234,22 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     //离开手绘模式，并刷新界面ui
                     EpdController.leaveScribbleMode(mNbvAnswerBoard);
                     mNbvAnswerBoard.invalidate();
-
+                    if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                        EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+                        mCaogaoNoteBoard.invalidate();
+                    }
 
                     if (isFirstComeInQuestion) {
                         isFirstComeInQuestion = false;
                     } else {
+                        //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
+                        if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+                            cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+
+                            tvCaogaoText.setText("草稿纸");
+                            mCaogaoNoteBoard.clear();
+                            llCaogaoControl.setVisibility(View.GONE);
+                        }
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                         if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
                             //保存上一个题目多页数据中的某一页手写笔记。
@@ -257,6 +282,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                                 isAddAnswerBoard = false;
                             }
                             rcvChooese.setVisibility(View.VISIBLE);
+
+                            //选择题不能加页
+                            tvAddPage.setVisibility(View.GONE);
+                            tvClearWrite.setVisibility(View.GONE);
                             chooeseAnswerList = questionItem.answerList;
 
                             setChooeseResult();
@@ -272,6 +301,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                                 isAddAnswerBoard = true;
                             }
                             rcvChooese.setVisibility(View.GONE);
+                            tvAddPage.setVisibility(View.VISIBLE);
+                            tvClearWrite.setVisibility(View.VISIBLE);
 
                             //从之前bytesList中回显之前保存的手写笔记，如果有的话
                             if (bytesList.size() > position) {
@@ -306,6 +337,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             for (int i = 0; i < questionPageSize; i++) {
                 bytesList.add(null);
                 pathList.add(null);
+                cgBytes.add(null);
             }
 
             isFirstComeInQuestion = true;
@@ -377,10 +409,15 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left})
+    @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left, R.id.tv_caogao_text, R.id.tv_dismiss_caogao})
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
+
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+            mCaogaoNoteBoard.invalidate();
+        }
 
         switch (view.getId()) {
 
@@ -398,10 +435,51 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 questionPageSize++;
                 bytesList.add(null);
                 pathList.add(null);
+                cgBytes.add(null);
                 questionPageNumAdapter.notifyDataSetChanged();
                 questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize - 1);
 
                 break;
+
+            case R.id.tv_caogao_text:
+
+                if (tvCaogaoText.getText().toString().startsWith("扔掉")) {
+                    tvCaogaoText.setText("草稿纸");
+
+                    cgBytes.set(saveQuestionPage, null);
+                    mCaogaoNoteBoard.clearAll();
+                    llCaogaoControl.setVisibility(View.GONE);
+
+                    if (rlCaogaoBox.getChildCount() > 0) {
+                        rlCaogaoBox.removeView(mCaogaoNoteBoard);
+                    }
+
+                } else {
+                    tvCaogaoText.setText("扔掉\n草稿纸");
+                    llCaogaoControl.setVisibility(View.VISIBLE);
+
+                    if (rlCaogaoBox.getChildCount() == 0) {
+                        rlCaogaoBox.addView(mCaogaoNoteBoard);
+                    }
+
+                    byte[] tmpBytes = cgBytes.get(saveQuestionPage);
+                    if (tmpBytes != null) {
+                        mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    }
+
+                }
+
+
+                break;
+            case R.id.tv_dismiss_caogao:
+                if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+                    tvCaogaoText.setText("草稿纸");
+                    cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+                    llCaogaoControl.setVisibility(View.GONE);
+                }
+
+                break;
+
         }
     }
 
@@ -512,22 +590,12 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
             holder.mTvPageId.setText((position + 1) + "");
 
-            int tag = 2;
-            tag = position % 2;
-
-            if (holder.mTvPageId.getTag() != null) {
-                tag = (int) holder.mTvPageId.getTag();
-            }
-            switch (tag) {
-                default:
-                case 0://错误
-                    holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
-                    holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
-                    break;
-                case 1://选中
-                    holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
-                    holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
-                    break;
+            if (position == saveQuestionPage) {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_press_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_normal_question_bg);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
             }
 
             holder.mTvPageId.setOnClickListener(new View.OnClickListener() {

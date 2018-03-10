@@ -43,6 +43,7 @@ public class SpUtil {
     private static final String GRADE_NAME = "gradeName";
 
     private static final String CLASS_NAME = "class_name";
+    private static final String CLASS_ID = "class_Id";
     private static final String REAL_NAME = "real_name";
     private static String GRADE_DISPLAY = "gradeDisplay" ;
 
@@ -107,6 +108,7 @@ public class SpUtil {
         editor.putString(REAL_NAME , student.getUserRealName());
         editor.putString(GRADE_DISPLAY , student.getGradeDisplay());
         editor.putString(SUBJECT_NAMES , student.getSubjectNames());
+        editor.putString(CLASS_ID , student.getClassId());
         editor.apply();
     }
 
@@ -122,6 +124,7 @@ public class SpUtil {
         student.setUserRealName(sp.getString(REAL_NAME , ""));
         student.setGradeName(sp.getString(GRADE_NAME,""));
         student.setSubjectNames(sp.getString(SUBJECT_NAMES , ""));
+        student.setClassId(sp.getString(CLASS_ID , ""));
         return student;
     }
 
