@@ -30,6 +30,7 @@ import com.yougy.common.protocol.request.NewQueryUserReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.NewUpdateUserReq;
+import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
@@ -392,6 +393,13 @@ public class NewProtocolManager {
     }
 
     /**
+     * 促销活动查询
+     */
+    public static Response queryPromotionActivityInfo(PromotionReq req){
+        return setCommon(GsonUtil.toJson(req),NewProtocolId.ID_PROMOTION_ACTIVITY);
+    }
+
+    /**
      * 19 查询阿里云数据
      */
     public static Response queryAliyunData(AliyunDataUploadReq req){
@@ -401,6 +409,8 @@ public class NewProtocolManager {
     public static Response queryAliyunData(AliyunDataDownloadReq req){
         return setCommon(Commons.ALIYUNDATE_URL,GsonUtil.toJson(req),NewProtocolId.ID_ALIYUN_DATA);
     }
+
+
     /**
      * 图书查询
      */
@@ -493,6 +503,7 @@ public class NewProtocolManager {
         public static final int ID_BOOKSHOP_BOOK = 42;
         public static final int ID_UPDATE_NOTE= 20;
         public static final int ID_ALIYUN_DATA = 50;
+        public static final int ID_PROMOTION_ACTIVITY = 51;
 
     }
 

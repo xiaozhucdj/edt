@@ -4,6 +4,8 @@ package com.yougy.init.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.yougy.shop.bean.PromotionResult;
+
 import org.litepal.crud.DataSupport;
 
 
@@ -129,7 +131,7 @@ public class BookInfo extends DataSupport implements Parcelable {
      * 笔记标题
      */
     private String bookFitNoteTitle;
-
+    private double bookOriginalPrice;
     /***
      * 笔记类型
      */
@@ -177,6 +179,8 @@ public class BookInfo extends DataSupport implements Parcelable {
      * 图书密码
      */
     private String bookDownloadKey = "";
+
+    private PromotionResult bookCoupon;
 
     public String getDownloadkey() {
         return bookDownloadKey;
@@ -265,6 +269,14 @@ public class BookInfo extends DataSupport implements Parcelable {
 
     public String getBookPublisherName() {
         return bookPublisherName;
+    }
+
+    public double getBookOriginalPrice() {
+        return bookOriginalPrice;
+    }
+
+    public void setBookOriginalPrice(double bookOriginalPrice) {
+        this.bookOriginalPrice = bookOriginalPrice;
     }
 
     public BookInfo setBookPublisherName(String bookPublisherName) {
@@ -420,6 +432,14 @@ public class BookInfo extends DataSupport implements Parcelable {
 
     public void setCheck(boolean check) {
         isCheck = check;
+    }
+
+    public PromotionResult getBookCoupon() {
+        return bookCoupon;
+    }
+
+    public void setBookCoupon(PromotionResult bookCoupon) {
+        this.bookCoupon = bookCoupon;
     }
 
     public BookInfo() {

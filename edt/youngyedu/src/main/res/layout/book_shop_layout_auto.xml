@@ -282,7 +282,7 @@
                         android:id="@+id/subject_wrap"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="20px" />
+                        android:paddingBottom="30px" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -294,7 +294,6 @@
                     android:orientation="horizontal"
                     android:paddingBottom="30px"
                     android:paddingLeft="30px"
-                    android:paddingTop="30px"
                     android:visibility="gone">
 
                     <TextView
@@ -310,7 +309,7 @@
                         android:id="@+id/version_wrap"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15px" />
+                        />
                 </LinearLayout>
 
                 <View

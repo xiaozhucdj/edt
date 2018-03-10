@@ -216,7 +216,7 @@
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
         <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
         <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity" />
-
+        <activity android:name="com.yougy.shop.activity.ShopPromotionActivity"/>
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
