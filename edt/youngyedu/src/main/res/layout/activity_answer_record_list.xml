@@ -103,7 +103,7 @@
                 android:layout_marginTop="29px"
                 android:textColor="@color/white"
                 android:textSize="20px"
-                android:text="已\nP\n改"
+                android:text=""
                 android:paddingLeft="10px"
                 android:paddingTop="10px"
                 />

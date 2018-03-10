@@ -12,6 +12,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerRecordListBinding;
 
@@ -28,6 +29,7 @@ import rx.functions.Action1;
 public class AnswerRecordListActivity extends AnswerBaseActivity{
     ActivityAnswerRecordListBinding binding;
     int bookId,cursorId;
+    String bookName;
     ArrayList<HomeworkDetail> homeworkDetailList = new ArrayList<HomeworkDetail>();
     @Override
     protected void setContentView() {
@@ -42,7 +44,8 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
         bookId = getIntent().getIntExtra("bookId" , -1);
         cursorId = getIntent().getIntExtra("cursor" , -1);
         binding.currentChapterBtn.setText(getIntent().getStringExtra("chapterName"));
-        binding.titleTv.setText(getIntent().getStringExtra("bookName" + "问答"));
+        bookName = getIntent().getStringExtra("bookName");
+        binding.titleTv.setText(bookName + "问答");
     }
 
     @Override
@@ -69,25 +72,40 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                         binding.statusTv.setText("未\n开\n始");
                         binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
                         break;
-                    case "IH02":
-                        binding.statusTv.setText("作\n答\n中");
-                        binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
-                        break;
-                    case "IH03":
-                        binding.statusTv.setText("未\n批\n改");
-                        binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
-                        break;
-                    case "IH04":
-                        binding.statusTv.setText("批\n改\n中");
-                        binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
-                        break;
-                    case "IH05":
-                        binding.statusTv.setText("已\n批\n改");
-                        binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_green);
-                        break;
                     case "IH51":
                         binding.statusTv.setText("未\n提\n交");
                         binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
+                        break;
+                    case "IH02"://作答中
+                    case "IH03"://未批改
+                    case "IH04"://批改中
+                    case "IH05"://已批改
+                        NetWorkManager.queryReply(homeworkDetail.getExamId() , SpUtil.getUserId())
+                                .subscribe(new Action1<List<QuestionReplySummary>>() {
+                                    @Override
+                                    public void call(List<QuestionReplySummary> replySummaries) {
+                                        if (replySummaries.size() == 0){
+                                            binding.statusTv.setText("作\n答\n中");
+                                            binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
+                                        }
+                                        else {
+                                            QuestionReplySummary replySummary = replySummaries.get(0);
+                                            if(replySummary.getReplyStatus().equals("已答完")){
+                                                binding.statusTv.setText("批\n改\n中");
+                                                binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
+                                            }
+                                            else {
+                                                binding.statusTv.setText("已\n批\n改");
+                                                binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_green);
+                                            }
+                                        }
+                                    }
+                                }, new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        throwable.printStackTrace();
+                                    }
+                                });
                         break;
                 }
             }
@@ -103,8 +121,8 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
             public void onClick(View v) {
                 HomeworkDetail homeworkDetail = homeworkDetailList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
                 Intent newIntent;
-                switch (homeworkDetail.getExamStatus()){
-                    case "作答中":
+                switch (binding.statusTv.getText().toString()){
+                    case "作\n答\n中":
                         newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
                         newIntent.putExtra("itemId" , homeworkDetail.getExamPaper().getPaperContent().get(0).getPaperItem() + "");
                         newIntent.putExtra("from" , homeworkDetail.getExamPaper().getPaperOwner() + "");
@@ -112,17 +130,31 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                         newIntent.putExtra("startTimeMill" , DateUtils.convertTimeStrToTimeStamp(homeworkDetail.getExamStartTime() , "yyyy-MM-dd HH:mm:ss"));
                         startActivity(newIntent);
                         break;
-                    case "未批改":
-                    case "批改中":
+                    case "未\n批\n改":
                         newIntent = new Intent(getApplicationContext() , AnswerRecordDetailActivity.class);
                         newIntent.putExtra("examId" , homeworkDetail.getExamId());
                         newIntent.putExtra("question" , homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0));
+                        newIntent.putExtra("status" , "未批改");
+                        newIntent.putExtra("bookName" , bookName);
+                        newIntent.putExtra("startTime" , homeworkDetail.getExamStartTime());
                         startActivity(newIntent);
                         break;
-                    case "已批改":
+                    case "批\n改\n中":
                         newIntent = new Intent(getApplicationContext() , AnswerRecordDetailActivity.class);
                         newIntent.putExtra("examId" , homeworkDetail.getExamId());
                         newIntent.putExtra("question" , homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0));
+                        newIntent.putExtra("status" , "批改中");
+                        newIntent.putExtra("bookName" , bookName);
+                        newIntent.putExtra("startTime" , homeworkDetail.getExamStartTime());
+                        startActivity(newIntent);
+                        break;
+                    case "已\n批\n改":
+                        newIntent = new Intent(getApplicationContext() , AnswerRecordDetailActivity.class);
+                        newIntent.putExtra("examId" , homeworkDetail.getExamId());
+                        newIntent.putExtra("question" , homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0));
+                        newIntent.putExtra("status" , "已批改");
+                        newIntent.putExtra("bookName" , bookName);
+                        newIntent.putExtra("startTime" , homeworkDetail.getExamStartTime());
                         startActivity(newIntent);
                         break;
                 }

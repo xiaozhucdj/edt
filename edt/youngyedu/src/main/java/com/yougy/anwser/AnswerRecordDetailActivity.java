@@ -49,6 +49,16 @@ public class AnswerRecordDetailActivity extends BaseActivity{
             return;
         }
         parsedQuestionItem = getIntent().getParcelableExtra("question");
+        String status = getIntent().getStringExtra("status");
+        if ("批改中".equals(status)){
+            binding.statusHintTv.setVisibility(View.VISIBLE);
+        }
+        else if ("已批改".equals(status)){
+            binding.buttomBtn.setVisibility(View.VISIBLE);
+        }
+        binding.titleTv.setText(getIntent().getStringExtra("bookName") + "问答");
+        binding.startTimeTv.setText("问答开始时间:" + getIntent().getStringExtra("startTime"));
+        binding.questionTypeTextview.setText(parsedQuestionItem.questionContentList.get(0).getExtraData().toString());
     }
 
     @Override
@@ -147,6 +157,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
 
                                    binding.contentDisplayer.getmContentAdaper().toPage("reply" , 0 , false);
                                    refreshPageBtns();
+                                   binding.spendTimeTv.setText("用时 : " + studentReply.getReplyUseTime());
                                }
                            }
                         , new Action1<Throwable>() {

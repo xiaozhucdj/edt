@@ -26,6 +26,7 @@
                 android:src="@drawable/img_normal_fanhui" />
 
             <TextView
+                android:id="@+id/title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -91,25 +92,25 @@
             <!--开始时间-->
             <TextView
                 android:id="@+id/start_time_tv"
-                android:layout_width="0px"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30px"
-                android:layout_weight="1"
-                android:text="问答开始时间："
+                android:text="问答开始时间：xxxxxxx"
                 android:textColor="@color/black"
                 android:textSize="22px" />
             <!--已用时间-->
             <TextView
                 android:id="@+id/spend_time_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="0px"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginLeft="30px"
-                android:text="已用时："
+                android:text="已用时：xxxxxxx"
                 android:textColor="@color/black"
                 android:textSize="22px" />
             <!--问答中指示块-->
             <TextView
-                android:id="@+id/checking_hint_tv"
+                android:id="@+id/status_hint_tv"
                 android:layout_width="120px"
                 android:layout_height="56px"
                 android:layout_marginLeft="30px"
@@ -118,7 +119,9 @@
                 android:paddingRight="10px"
                 android:text="批改中"
                 android:textColor="@color/white"
-                android:textSize="24px" />
+                android:textSize="24px"
+                android:visibility="invisible"
+                />
         </LinearLayout>
         <!--题目显示和左右翻页按钮-->
         <LinearLayout
@@ -157,12 +160,14 @@
             android:background="@color/black"/>
         <!--底部按钮-->
         <LinearLayout
+            android:id="@+id/buttom_btn"
             android:layout_width="match_parent"
             android:layout_height="70px"
             android:layout_marginTop="20px"
             android:background="@drawable/bmp_bg_green"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
             <ImageView
                 android:id="@+id/buttom_icon"
                 android:layout_width="wrap_content"
@@ -176,7 +181,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="10px"
                 android:gravity="center_vertical"
-                android:text="正确"
+                android:text="xx"
                 android:textColor="@color/white"
                 android:textSize="24px"
                 />
