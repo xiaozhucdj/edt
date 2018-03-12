@@ -545,7 +545,15 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
             FrontLightController.setBrightness(this, nowBrightness);
 
 
-            finishAll();
+            //延迟500毫秒退出程序，避免背光状态还没有恢复
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finishAll();
+                }
+            }, 500);
+
+
         }
     }
 
