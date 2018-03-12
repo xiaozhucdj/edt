@@ -18,17 +18,14 @@ import rx.Subscriber;
 
 public abstract class ShopSubscriber<T> extends Subscriber<T> implements UiPromptDialog.Listener {
     private LoadingProgressDialog loadingDialog;
-//    private LoadingErrorDialog loadErrorDialog;
     protected WeakReference<Context> mWeakReference;
     protected Context mContext  ;
-    protected UiPromptDialog mUiPromptDialog;
+    private UiPromptDialog mUiPromptDialog;
     public ShopSubscriber(Context context){
         mContext = context ;
         mWeakReference = new WeakReference<>(context);
         loadingDialog = new LoadingProgressDialog(mWeakReference.get());
         mUiPromptDialog = new UiPromptDialog(mWeakReference.get()) ;
-//        loadErrorDialog = new LoadingErrorDialog(mWeakReference.get());
-//        loadErrorDialog.setOnScreenClickListener(this);
         mUiPromptDialog.setListener(this);
     }
 
@@ -47,11 +44,6 @@ public abstract class ShopSubscriber<T> extends Subscriber<T> implements UiPromp
     @Override
     public void onError(Throwable e) {
         LogUtils.e(getClass().getName(),"on error ...... " + e.getMessage());
-//       if (!loadErrorDialog.isShowing()) {
-//            loadErrorDialog.show();
-//            loadingDialog.dismiss();
-//        }
-
         if (!mUiPromptDialog.isShowing()) {
             mUiPromptDialog.show();
             mUiPromptDialog.setDialogStyle(false);
@@ -62,24 +54,14 @@ public abstract class ShopSubscriber<T> extends Subscriber<T> implements UiPromp
         }
     }
     public abstract void require();
-//    @Override
-//    public void onClick() {
-//        if (isUnsubscribed()){
-//            unsubscribe();
-//        }
-//        require();
-//        if (loadErrorDialog.isShowing()) {
-//            loadErrorDialog.dismiss();
-//        }
-//    }
 
-    public void showLoadingDialog(){
+    private void showLoadingDialog(){
         if (!loadingDialog.isShowing()) {
             loadingDialog.show();
         }
     }
 
-    public void hideLoadingDialog(){
+    private void hideLoadingDialog(){
         if (loadingDialog.isShowing()){
             loadingDialog.dismiss();
         }

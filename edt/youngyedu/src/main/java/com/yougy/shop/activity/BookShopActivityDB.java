@@ -51,9 +51,7 @@ import butterknife.BindArray;
 import butterknife.BindString;
 import okhttp3.Response;
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 import static rx.Observable.create;
@@ -116,16 +114,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     @Override
     protected void loadData() {
         mHistoryRecords = SpUtil.getHistoryRecord();
-        Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), new Func2<List<CategoryInfo>, List<BookInfo>, List<BookInfo>>() {
-
-            @Override
-            public List<BookInfo> call(List<CategoryInfo> categoryInfos, List<BookInfo> bookInfos) {
-                LogUtils.e(tag, "call.........................");
-                handleCategoryInfo(categoryInfos);
-                LogUtils.e(tag, "categoryInfos' size is : " + categoryInfos.size() + ",bookinfos' size is : " + bookInfos.size());
-                LogUtils.e(tag, "bookinfos : " + bookInfos);
-                return bookInfos;
-            }
+        Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), (categoryInfos, bookInfos) -> {
+            LogUtils.e(tag, "call.........................");
+            handleCategoryInfo(categoryInfos);
+            LogUtils.e(tag, "categoryInfos' size is : " + categoryInfos.size() + ",bookinfos' size is : " + bookInfos.size());
+            LogUtils.e(tag, "bookinfos : " + bookInfos);
+            return bookInfos;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
         ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
@@ -178,23 +172,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取分类数据
      */
     private Observable<List<CategoryInfo>> getCategoryInfo() {
-        return create(new Observable.OnSubscribe<List<CategoryInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<CategoryInfo>> subscriber) {
-                try {
-                    Response response = NewProtocolManager.queryBookCategory(new NewBookStoreCategoryReq());
-                    if (response.isSuccessful()) {
-                        String resultJson = response.body().string();
-                        LogUtils.e(tag, "category info : " + resultJson);
-                        Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
-                        List<CategoryInfo> categories = result.getData();
-                        LogUtils.e(tag, "categories' size : " + categories.size());
-                        subscriber.onNext(categories);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    LogUtils.e(tag, "IOException : " + e.getMessage());
+        return create(subscriber -> {
+            try {
+                Response response = NewProtocolManager.queryBookCategory(new NewBookStoreCategoryReq());
+                if (response.isSuccessful()) {
+                    String resultJson = response.body().string();
+                    LogUtils.e(tag, "category info : " + resultJson);
+                    Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
+                    List<CategoryInfo> categories = result.getData();
+                    LogUtils.e(tag, "categories' size : " + categories.size());
+                    subscriber.onNext(categories);
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                LogUtils.e(tag, "IOException : " + e.getMessage());
             }
         });
     }
@@ -227,19 +218,16 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取首页数据
      */
     private Observable<List<BookInfo>> getHomeInfo() {
-        return create(new Observable.OnSubscribe<List<BookInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                Response response = NewProtocolManager.queryBookShopHome(new NewBookStoreHomeReq());
-                if (response.isSuccessful()) {
-                    try {
-                        String resultJson = response.body().string();
-                        LogUtils.e(tag, "home info : " + resultJson);
-                        Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-                        subscriber.onNext(result.getData());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        return create(subscriber -> {
+            Response response = NewProtocolManager.queryBookShopHome(new NewBookStoreHomeReq());
+            if (response.isSuccessful()) {
+                try {
+                    String resultJson = response.body().string();
+                    LogUtils.e(tag, "home info : " + resultJson);
+                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
+                    subscriber.onNext(result.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -249,25 +237,22 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 根据类别获取图书信息
      */
     private void getSingleBookInfo() {
-        Observable<List<BookInfo>> observable = Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                LogUtils.e(tag, "classify id : " + mClassifyId);
-                Response response = ProtocolManager.queryBookProtocol(SpUtil.getUserId(), "", mClassifyId, -1, -1);
-                if (response.isSuccessful()) {
-                    try {
-                        String resultJson = response.body().string();
-                        LogUtils.e(tag, "result json : " + resultJson);
-                        Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-                        List<BookInfo> bookInfos = result.getData();
-                        subscriber.onNext(bookInfos);
-                        subscriber.onCompleted();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        Observable<List<BookInfo>> observable = Observable.create((Observable.OnSubscribe<List<BookInfo>>) subscriber -> {
+            LogUtils.e(tag, "classify id : " + mClassifyId);
+            Response response = ProtocolManager.queryBookProtocol(SpUtil.getUserId(), "", mClassifyId, -1, -1);
+            if (response.isSuccessful()) {
+                try {
+                    String resultJson = response.body().string();
+                    LogUtils.e(tag, "result json : " + resultJson);
+                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
+                    List<BookInfo> bookInfos = result.getData();
+                    subscriber.onNext(bookInfos);
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
             }
+
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
         ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
@@ -289,6 +274,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                         break;
                     case 2:
                         extrabooks = bookInfos;
+                        break;
+                    default:
                         break;
                 }
             }

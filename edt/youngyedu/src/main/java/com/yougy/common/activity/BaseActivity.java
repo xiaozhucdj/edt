@@ -15,7 +15,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.onyx.android.sdk.api.device.FrontLightController;
 import com.yougy.common.dialog.BaseDialog;
+import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -117,10 +119,12 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         initLayout();
         loadData();
     }
+
     /**
      * 设置界面布局文件
      */
     protected abstract void setContentView();
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
@@ -467,14 +471,14 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         startActivity(intent);
     }
 
-    public void loadIntentWithExtra (Class<? extends Activity> cls , String key , int value){
-        Intent intent = new Intent(this , cls);
-        intent.putExtra(key , value);
+    public void loadIntentWithExtra(Class<? extends Activity> cls, String key, int value) {
+        Intent intent = new Intent(this, cls);
+        intent.putExtra(key, value);
         startActivity(intent);
     }
 
-    public void loadIntentWithSpecificFlag(Class<?> cls , int flag){
-        Intent intent = new Intent(this , cls);
+    public void loadIntentWithSpecificFlag(Class<?> cls, int flag) {
+        Intent intent = new Intent(this, cls);
         intent.setFlags(flag);
         startActivity(intent);
     }
@@ -530,6 +534,16 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
             mLastBackPressedTime = currTime;
         } else {
             super.onBackPressed();
+            //恢复打开app前的背光情况。
+            int nowBrightness = SharedPreferencesUtil.getSpUtil().getInt("OLD_BRIGHTNESS", 0);
+            FrontLightController.setBrightness(this, nowBrightness);
+            boolean isLightOn = SharedPreferencesUtil.getSpUtil().getBoolean("OLD_ISLIGHTON", true);
+            if (isLightOn) {
+                FrontLightController.turnOn(this);
+            } else {
+                FrontLightController.turnOff(this);
+            }
+
             finishAll();
         }
     }
@@ -683,13 +697,12 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 
     protected UiPromptDialog mUiPromptDialog;
 
-    protected UiPromptDialog getUiPromptDialog(){
-        return mUiPromptDialog ;
+    protected UiPromptDialog getUiPromptDialog() {
+        return mUiPromptDialog;
     }
     //---------------------------------CancelAndDetermine--------------------------------------------
 
     /**
-     *
      * @param titleId 标题
      */
     protected void showCancelAndDetermineDialog(int titleId) {
@@ -704,12 +717,11 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
     /**
-     *
-     * @param titleId  标题
-     * @param cancleId  取消按钮
+     * @param titleId     标题
+     * @param cancleId    取消按钮
      * @param determineId 确定按钮
      */
-    protected void showCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId) {
+    protected void showCancelAndDetermineDialog(int titleId, int cancleId, int determineId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -721,7 +733,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
 
-    protected void showTagCancelAndDetermineDialog(int titleId ,int tag) {
+    protected void showTagCancelAndDetermineDialog(int titleId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -733,15 +745,13 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
 
-
     /**
-     *
-     * @param titleId  标题
-     * @param cancleId  取消按钮
+     * @param titleId     标题
+     * @param cancleId    取消按钮
      * @param determineId 确定按钮
-     * @param tag        tag 处理分类
+     * @param tag         tag 处理分类
      */
-    protected void showTagCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId,int tag) {
+    protected void showTagCancelAndDetermineDialog(int titleId, int cancleId, int determineId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -758,7 +768,6 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     //---------------------------------CenterDetermine--------------------------------------------
 
     /**
-     *
      * @param titleId 标题
      */
     protected void showCenterDetermineDialog(int titleId) {
@@ -773,10 +782,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
     /**
-     *
      * @param titleId 标题
      */
-    protected void showCenterDetermineDialog(int titleId ,int confirmId) {
+    protected void showCenterDetermineDialog(int titleId, int confirmId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -789,10 +797,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
     /**
-     *
      * @param titleId 标题
      */
-    protected void showTagCenterDetermineDialog(int titleId,int tag) {
+    protected void showTagCenterDetermineDialog(int titleId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -804,10 +811,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
     /**
-     *
      * @param titleId 标题
      */
-    protected void showTagCenterDetermineDialog(int titleId ,int confirmId,int tag) {
+    protected void showTagCenterDetermineDialog(int titleId, int confirmId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -819,14 +825,14 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         mUiPromptDialog.setDialogStyle(true);
     }
 
-    protected BaseActivity getThisActivity(){
+    protected BaseActivity getThisActivity() {
         return this;
     }
 
 
     //---------------------------------dissmiss--------------------------------------------
 
-    protected void dissMissUiPromptDialog( ) {
+    protected void dissMissUiPromptDialog() {
         if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
             mUiPromptDialog.dismiss();
         }
@@ -848,7 +854,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         dissMissUiPromptDialog();
     }
 
-    public void jumpTonet(){
+    public void jumpTonet() {
         Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
         startActivity(intent);
     }

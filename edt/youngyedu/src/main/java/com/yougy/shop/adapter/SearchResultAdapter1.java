@@ -45,17 +45,17 @@ public class SearchResultAdapter1 extends RecyclerView.Adapter<SearchResultAdapt
         BookInfo bookInfo = mBookInfos.get(position);
         String infoSummary = bookInfo.getBookSummary();
         if (!TextUtils.isEmpty(infoSummary) && infoSummary.length() > 65) {
-            bookSummary = infoSummary.substring(0, 65) + "......";
+            bookSummary = "简介："+infoSummary.substring(0, 65) + "......";
         } else {
-            bookSummary = infoSummary;
+            bookSummary = "简介："+infoSummary;
         }
         if (TextUtils.isEmpty(bookSummary)){
             bookSummary = "暂无简介";
         }
-        LogUtils.e(getClass().getName(),"bookSummary is : " + bookSummary);
-        LogUtils.e(getClass().getName(),"book info : " + mBookInfos.get(position));
         if (TextUtils.isEmpty(bookInfo.getBookAuthor())){
-            bookInfo.setBookAuthor("无名氏。。。");
+            bookInfo.setBookAuthor("作者：无名氏。。。");
+        }else{
+            bookInfo.setBookAuthor("作者："+bookInfo.getBookAuthor());
         }
         LogUtils.e(getClass().getName(),"book info : " + bookInfo);
         holder.getBinding().setVariable(BR.bookInfo, bookInfo);

@@ -20,6 +20,7 @@ import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.TestImgActivity;
+import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -303,6 +304,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.btn_test_img:
                 startActivity(new Intent(this, TestImgActivity.class));
+                // TODO: 2018/3/8
+                Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                startActivity(newIntent);
+                
                 break;
             case R.id.tv_folder:
                   refreshTabBtnState(clickedViewId);

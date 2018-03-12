@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data class=".PromotionBinding">
+
+        <variable
+            name="activity"
+            type="com.yougy.shop.activity.ShopPromotionActivity" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/shop_favorite_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="76px"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/shop_favorite_back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:paddingLeft="30px"
+                android:paddingRight="30px"
+                android:src="@drawable/icon_fanhui" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="促销活动"
+                android:textColor="@color/text_color_black"
+                android:textSize="28px" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_alignParentBottom="true"
+                android:background="@color/black" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/promotion_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/shop_favorite_title_bar"
+            android:layout_marginTop="30px"
+            android:orientation="horizontal"
+            android:paddingLeft="30px">
+
+            <TextView
+                android:id="@+id/promotion_name"
+                android:layout_width="60px"
+                android:layout_height="32px"
+                android:layout_marginLeft="10px"
+                android:layout_marginRight="10px"
+                android:background="@drawable/img_manjian"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/manjian_text"
+                android:textColor="@color/text_color_white"
+                android:textSize="20px" />
+
+            <TextView
+                android:id="@+id/promotion_content"
+                style="@style/bookPromotionStyle"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:id="@+id/activity_time"
+                style="@style/bookPromotionStyle"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="90px"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/page_number_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16px"
+            android:gravity="center"
+            android:orientation="horizontal" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/promotion_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/shop_favorite_page_btn_container"
+            android:layout_below="@+id/promotion_layout"
+            android:paddingLeft="30px"
+            android:paddingRight="30px"
+            />
+
+    </RelativeLayout>
+</layout>
