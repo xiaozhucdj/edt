@@ -1,103 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <data>
-    </data>
+
+    <data></data>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="113px"
-        android:paddingRight="113px"
-        android:gravity="center_horizontal"
-        >
-        <ImageView
-            android:id="@+id/avatar_imv"
-            android:layout_width="160px"
-            android:layout_height="160px"
-            android:layout_marginTop="150px"
-            android:src="@drawable/icon_student_large"
-            />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/name_tv"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/rl_system"
+            android:layout_width="match_parent"
+            android:layout_height="50px"
+            android:background="@color/text_color_black"
+            android:paddingLeft="36px"
+            android:paddingRight="36px">
+
+            <ImageView
+                android:id="@+id/img_wifi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="姓名:XXXXX"
-                android:textSize="22px"
-                android:textColor="@color/black"
-                android:layout_marginTop="30px"
-                />
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:onClick="wifi" />
+
+            <ImageView
+                android:id="@+id/img_electricity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/tv_power"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10px"
+                android:layout_toLeftOf="@+id/img_electricity"
+                android:textColor="@color/text_color_white"
+                android:textSize="30px" />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/text_color_white"
+                android:textSize="30px" />
+        </RelativeLayout>
+
+
+        <ImageView
+            android:id="@+id/avatar_imv"
+            android:layout_width="162px"
+            android:layout_height="162px"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200px"
+            android:src="@drawable/icon_student_large" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="387px"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/school_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30px"
+                android:lines="1"
                 android:text="学校:XXXXXXXXXXXXXXXXXX"
-                android:textSize="22px"
                 android:textColor="@color/black"
-                android:layout_marginTop="20px"
-                />
+                android:textSize="24px" />
+
+
             <TextView
                 android:id="@+id/class_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="班级:XXXXXXXXXXXXXXX"
-                android:textSize="22px"
-                android:textColor="@color/black"
                 android:layout_marginTop="20px"
-                />
+                android:lines="1"
+                android:text="班级:XXXXXXXXXXXXXXX"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+
+            <TextView
+                android:id="@+id/name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20px"
+                android:lines="1"
+                android:text="姓名:XXXXX"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
             <TextView
                 android:id="@+id/num_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="编号:XXXXXXXXXXXXXXXXX"
-                android:textSize="22px"
-                android:textColor="@color/black"
                 android:layout_marginTop="20px"
-                />
+                android:lines="1"
+                android:text="编号:XXXXXXXXXXXXXXXXX"
+                android:textColor="@color/black"
+                android:textSize="24px" />
         </LinearLayout>
+
         <EditText
             android:id="@+id/local_lock_edittext"
-            android:layout_width="match_parent"
+            android:layout_width="600px"
             android:layout_height="wrap_content"
-            android:textSize="24px"
-            android:textColor="@color/black"
-            android:hint="请输入您的开机密码"
-            android:textColorHint="@color/black"
-            android:layout_marginTop="125px"
+            android:layout_marginLeft="180px"
+            android:layout_marginRight="180px"
+            android:layout_marginTop="220px"
             android:background="@drawable/shape_rounded_rectangle_black_border_login"
+            android:hint="请输入您的开机密码"
+            android:inputType="textPassword"
             android:padding="18px"
             android:singleLine="true"
             android:text="123456"
-            android:inputType="textPassword"
-            />
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="24px" />
+
         <TextView
             android:id="@+id/forget_pwd_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="忘记密码?"
-            android:textSize="18px"
-            android:textColor="@color/gray_999999"
-            android:layout_gravity="left"
-            android:layout_marginTop="20px"
-            android:onClick="forgetPwd"
+            android:layout_marginLeft="180px"
+            android:layout_marginRight="180px"
+            android:layout_marginTop="15px"
             android:clickable="true"
-            />
+            android:onClick="forgetPwd"
+            android:text="忘记密码?"
+            android:textColor="@color/black"
+            android:textSize="18px" />
+
         <TextView
             android:id="@+id/enter_btn"
-            android:layout_width="match_parent"
+            android:layout_width="600px"
             android:layout_height="60px"
-            android:text="进入"
-            android:background="@color/black"
-            android:textColor="@color/white"
-            android:textSize="28px"
+            android:layout_marginLeft="180px"
+            android:layout_marginRight="180px"
+            android:layout_marginTop="27px"
+            android:background="@drawable/longin_btn_bg_normal"
+            android:clickable="true"
             android:gravity="center"
             android:minHeight="0px"
             android:minWidth="0px"
-            android:layout_marginTop="20px"
             android:onClick="enter"
-            android:clickable="true"
-            />
+            android:text="进入"
+            android:textColor="@color/white"
+            android:textSize="28px" />
     </LinearLayout>
 </layout>

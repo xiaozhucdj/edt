@@ -16,8 +16,8 @@
             android:layout_centerInParent="true"
             android:background="@drawable/shape_rounded_rectangle_all_white"
             android:paddingBottom="30px"
-            android:paddingLeft="53px"
-            android:paddingRight="53px"
+            android:paddingLeft="50px"
+            android:paddingRight="50px"
             android:paddingTop="30px">
 
             <TextView
@@ -47,8 +47,8 @@
                 android:id="@+id/cancle_btn"
                 android:layout_width="200px"
                 android:layout_height="48px"
-                android:layout_below="@id/content_tv"
                 android:background="@drawable/bind_cancel_btn_bg"
+                android:layout_below="@id/content_tv"
                 android:text="@string/cancel"
                 android:textColor="@color/black"
                 android:textSize="24px" />
