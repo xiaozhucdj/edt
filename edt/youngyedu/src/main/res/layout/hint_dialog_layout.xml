@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="536px"
+    android:layout_width="600px"
     android:layout_height="wrap_content"
-    android:background="@drawable/shop_btn_bg_unchecked"
-    android:paddingBottom="30px"
-    android:paddingLeft="40px"
-    android:paddingRight="40px"
-    android:paddingTop="42px"
     android:layout_gravity="center"
-    >
+    android:background="@drawable/shop_btn_bg_unchecked">
+
     <TextView
+        android:layout_marginTop="40px"
+        android:layout_marginLeft="50px"
+        android:layout_marginRight="50px"
         android:id="@+id/hint_dialog_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25px"
-        android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-        android:layout_marginBottom="55px"
         android:gravity="center"
-        />
+        android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        android:textSize="30px" />
+
     <Button
+        android:layout_marginBottom="40px"
+        android:layout_marginRight="50px"
+        android:layout_marginLeft="50px"
+        android:layout_marginTop="40px"
         android:id="@+id/hint_dialog_confirm_btn"
-        android:layout_width="match_parent"
-        android:layout_height="50px"
-        android:textSize="21px"
-        android:text="@string/confirm"
+        android:layout_width="500px"
+        android:layout_height="48px"
         android:layout_below="@id/hint_dialog_tv"
-        android:textColor="@drawable/page_text_selector"
-        android:background="@drawable/shop_btn_bg_selector"
-        />
+        android:background="@drawable/bind_btn_doing_bg_normal"
+        android:text="@string/confirm"
+        android:textColor="@color/white"
+        android:textSize="24px" />
 </RelativeLayout>
