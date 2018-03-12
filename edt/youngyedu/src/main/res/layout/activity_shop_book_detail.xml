@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- 标题-->
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="76px"
+            >
+            <TextView
+                android:id="@+id/back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_fanhui"
+                android:onClick="onBack"
+                android:layout_marginLeft="30px"
+                android:layout_centerVertical="true"
+                />
+            <ImageButton
+                android:id="@+id/to_cart_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/icon_gouwuche"
+                android:onClick="toCart"
+                android:layout_marginRight="30px"
+                android:layout_centerVertical="true"
+                />
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:text="@string/book_details_text"
+                android:textColor="@color/black"
+                android:textSize="30px"
+                android:gravity="center"
+                />
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/background_black"
+            />
+
+        <!-- 图书 标题 价格信息-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40px"
+            android:paddingLeft="30px"
+            android:paddingRight="30px">
+
+            <ImageView
+                android:id="@+id/book_cover_imv"
+                android:layout_width="162px"
+                android:layout_height="212px"
+                android:layout_gravity="center"
+                android:background="@drawable/img_shu"
+                android:paddingBottom="11px"
+                android:paddingRight="11px"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_book_cover" />
+
+            <TextView
+                android:id="@+id/book_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/book_cover_imv"
+                android:layout_marginLeft="20px"
+                android:layout_toRightOf="@id/book_cover_imv"
+                android:includeFontPadding="false"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <TextView
+                android:id="@+id/book_author_tv"
+                style="@style/bookDetailStyle"
+                android:layout_alignLeft="@id/book_name_tv"
+                android:layout_below="@id/book_name_tv"
+                android:layout_marginTop="15px"
+                android:layout_toRightOf="@id/book_cover_imv" />
+
+
+            <TextView
+                android:id="@+id/book_publisher_tv"
+                style="@style/bookDetailStyle"
+                android:layout_alignBottom="@id/book_author_tv"
+                android:layout_marginLeft="300px"
+                android:layout_toRightOf="@id/book_cover_imv" />
+
+            <TextView
+                android:id="@+id/book_download_size_tv"
+                style="@style/bookDetailStyle"
+                android:layout_alignLeft="@id/book_author_tv"
+                android:layout_below="@id/book_author_tv"
+                android:layout_toRightOf="@id/book_cover_imv" />
+
+            <TextView
+                android:id="@+id/book_publish_time_tv"
+                style="@style/bookDetailStyle"
+                android:layout_alignBottom="@id/book_download_size_tv"
+                android:layout_alignLeft="@id/book_publisher_tv"
+                android:layout_below="@id/book_publisher_tv"
+                android:layout_toRightOf="@id/book_download_size_tv" />
+
+            <TextView
+                android:id="@+id/book_origin_price_tv"
+                style="@style/bookDetailStyle"
+                android:layout_alignLeft="@id/book_download_size_tv"
+                android:layout_below="@id/book_download_size_tv"
+                />
+
+            <TextView
+                android:id="@+id/book_sale_price_tv"
+                style="@style/bookDetailStyle"
+                android:layout_alignLeft="@id/book_origin_price_tv"
+                android:layout_below="@id/book_origin_price_tv" />
+
+            <LinearLayout
+                android:id="@+id/promotion_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/book_origin_price_tv"
+                android:layout_below="@id/book_sale_price_tv"
+                android:layout_marginTop="10px"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/bookPromotionStyle"
+                    android:text="@string/promotion_text"
+                    />
+
+                <TextView
+                    android:id="@+id/promotion_name"
+                    android:layout_width="60px"
+                    android:layout_height="32px"
+                    android:layout_marginLeft="10px"
+                    android:layout_marginRight="10px"
+                    android:background="@drawable/img_manjian"
+                    android:gravity="center"
+                    android:textColor="@color/text_color_white"
+                    android:textSize="20px"
+                    />
+
+                <TextView
+                    android:id="@+id/promotion_content"
+                    style="@style/bookPromotionStyle"
+                    />
+
+                <TextView
+                    android:id="@+id/look_more_promotion_btn"
+                    style="@style/bookPromotionStyle"
+                    android:layout_marginLeft="60px"
+                    android:clickable="true"
+                    android:onClick="lookMorePromotion"
+                    android:text="查看更多满减活动>>"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="40px"
+            android:paddingLeft="30px"
+            android:paddingRight="30px">
+
+            <Button
+                android:id="@+id/add_car_btn"
+                style="@style/bookOperateStyle"
+                android:text="加入购物车"
+                android:onClick="addCart"/>
+
+            <Button
+                android:id="@+id/add_favor_btn"
+                style="@style/bookOperateStyle"
+                android:text="加入收藏夹"
+                android:onClick="addFavor"/>
+
+            <Button
+                android:id="@+id/try_read_btn"
+                style="@style/bookOperateStyle"
+                android:text="在线试读"
+                android:onClick="tryRead"
+                />
+
+            <Button
+                android:id="@+id/buy_btn"
+                style="@style/bookOperateStyle"
+                android:onClick="buyBook"
+                />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10px"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:layout_marginTop="40px"
+            android:background="#dbdbdb"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="30px"
+            android:layout_marginTop="20px"
+            >
+            <TextView
+                android:layout_width="6px"
+                android:layout_height="26px"
+                android:background="@drawable/bmp_bg_green"
+                android:layout_marginTop="-10px"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="26px"
+                android:text="图书详情"
+                android:textColor="@color/black"
+                android:layout_marginLeft="15px"
+                />
+        </LinearLayout>
+
+        <com.yougy.view.AlignTextView
+            android:id="@+id/book_detail_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="315px"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:layout_marginTop="20px"
+            android:gravity="left"
+            android:includeFontPadding="false"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10px"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:layout_marginTop="50px"
+            android:background="#dbdbdb" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="30px"
+            android:layout_marginTop="19px"
+            >
+            <TextView
+                android:layout_width="6px"
+                android:layout_height="26px"
+                android:background="@drawable/bmp_bg_green"
+                android:layout_marginTop="-10px"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="26px"
+                android:text="相关推荐"
+                android:textColor="@color/black"
+                android:layout_marginLeft="15px"
+                />
+        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/book_recommand_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:layout_marginTop="20px"
+            />
+    </LinearLayout>
+</layout>

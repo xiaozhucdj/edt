@@ -1,17 +1,15 @@
 package com.yougy.shop.activity;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
@@ -58,6 +56,7 @@ import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
+import com.yougy.ui.activity.databinding.ActivityShopBookDetailBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.DownBookDialog;
@@ -68,8 +67,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -78,50 +75,7 @@ import de.greenrobot.event.EventBus;
  */
 
 public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBookDialog.DownBookListener {
-    ////////////////////View//////////////////////////////////////////////////////
-    @BindView(R.id.btn_left)
-    ImageButton mBtnLeft;
-    @BindView(R.id.img_btn_right)
-    ImageButton mImgBtnRight;
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
-    @BindView(R.id.img_book_icon)
-    ImageView mImgBookIcon;
-    @BindView(R.id.tv_book_name)
-    TextView mTvBookName;
-    @BindView(R.id.tv_bookPublisher)
-    TextView mTvBookPublisher;
-    @BindView(R.id.tv_bookAuthor)
-    TextView mTvBookAuthor;
-    @BindView(R.id.tv_bookPublishTime)
-    TextView mTvBookPublishTime;
-    @BindView(R.id.tv_bookDownloadSize)
-    TextView mTvBookDownloadSize;
-    @BindView(R.id.tv_bookSalePrice)
-    TextView mTvBookSalePrice;
-    @BindView(R.id.book_list_price_tv)
-    TextView mOriginalPrice;
-    @BindView(R.id.btn_buy)
-    Button mBtnBuy;
-    @BindView(R.id.btn_addCar)
-    Button mBtnAddCar;
-    @BindView(R.id.btn_addFavor)
-    Button mBtnAddFavor;
-    @BindView(R.id.btn_read)
-    Button mBtnRead;
-    @BindView(R.id.tv_bookDetails)
-    TextView mTvBookDetails;
-    @BindView(R.id.recycler_view)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.promotion_name)
-    TextView mPromotionName;
-    @BindView(R.id.promotion_content)
-    TextView mPromotionContent;
-    @BindView(R.id.look_more_activity)
-    TextView mMorePromotionActivity;
-    @BindView(R.id.promotion_layout)
-    LinearLayout mPromotionLayout;
-
+    ActivityShopBookDetailBinding binding;
     ////////////////////////global Files//////////////////////////////////////////////////
     /**
      * 图书
@@ -173,8 +127,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
      */
     @Override
     protected void setContentView() {
-        LogUtils.e(tag, "setContentView..................");
-        setContentView(R.layout.activity_shop_new_book_item_details);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(ShopBookDetailsActivity.this)
+                , R.layout.activity_shop_book_detail , null , false);
+        setContentView(binding.getRoot());
     }
 
     /**
@@ -190,8 +145,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
      */
     @Override
     protected void initLayout() {
+
         //初始化推荐列表
-        initRecycler();
+        initRecommandRecyclerView();
     }
 
     /***
@@ -220,70 +176,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
      */
     @Override
     protected void refreshView() {
-    }
-
-    @OnClick({R.id.btn_left, R.id.img_btn_right, R.id.btn_buy, R.id.btn_addCar, R.id.btn_addFavor, R.id.btn_read,R.id.look_more_activity})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_left:
-                LogUtils.e(tag, "finish ................. ");
-                this.finish();
-                break;
-            case R.id.img_btn_right:
-                //进入购物车
-                loadIntent(ShopCartActivity.class);
-                break;
-            case R.id.btn_buy:
-                if (mBookInfo.isBookInShelf()) {
-                    //这本书已经购买过 ,打开PDF
-                    showReaderForPackage();
-                } else {
-                    requestOrder();
-                }
-                break;
-            case R.id.btn_addCar:
-                if (mBookInfo.isBookInCart()) {
-                    //书加入了购物车
-                    showCenterDetermineDialog(R.string.books_already_add_car);
-                } else if (mBookInfo.isBookInShelf()) {
-                    showReaderForPackage();
-                } else {
-                    addBooksToCar(new ArrayList<BookInfo>() {{
-                        add(mBookInfo);
-                    }});
-                }
-                break;
-            case R.id.btn_addFavor:
-                if (mBookInfo.isBookInFavor()) {
-                    showCenterDetermineDialog(R.string.books_already_add_collection);
-                } else {
-                    addBooksToFavor(new ArrayList<BookInfo>() {{
-                        add(mBookInfo);
-                    }});
-                }
-                break;
-            case R.id.btn_read:
-                LogUtils.i("aaaaaaaaaaaa");
-                if (mBookInfo.isBookInShelf()) {
-                    showReaderForPackage();
-                    LogUtils.i("bbbbbbbbb");
-                    return;
-                }
-                //跳转在线试读
-//                String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
-
-                if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookProbation))) {
-                    jumpProbationActivity();
-                } else {
-                    downBookDialog();
-                }
-                break;
-            case R.id.look_more_activity:
-                startActivity(new Intent(this,ShopPromotionActivity.class));
-                break;
-            default:
-                break;
-        }
     }
 
     private void showReaderForPackage() {
@@ -333,15 +225,15 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     /***
      * 初始化 推荐列表
      */
-    private void initRecycler() {
-        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+    private void initRecommandRecyclerView() {
+        binding.bookRecommandRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(this, PROMOTE_BOOK_COUT);
         layout.setScrollEnabled(true);
-        mRecyclerView.setLayoutManager(layout);
+        binding.bookRecommandRecyclerView.setLayoutManager(layout);
 
         mPromoteBookAdapter = new PromoteBookAdapter(this, mBooks);
-        mRecyclerView.setAdapter(mPromoteBookAdapter);
-        mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
+        binding.bookRecommandRecyclerView.setAdapter(mPromoteBookAdapter);
+        binding.bookRecommandRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.bookRecommandRecyclerView) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 PromoteBookAdapter.HolerPromoteBook bookHolder = (PromoteBookAdapter.HolerPromoteBook) vh;
@@ -393,42 +285,42 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             requestPromoteBook();
                         }
                         //图片
-                        refreshImg(mImgBookIcon, mBookInfo.getBookCoverL());
+                        refreshImg(binding.bookCoverImv, mBookInfo.getBookCoverL());
                         //标题
-                        mTvTitle.setText("图书详情");
+                        binding.titleTv.setText("图书详情");
                         //图书名称
-                        mTvBookName.setText(mBookInfo.getBookTitle());
+                        binding.bookNameTv.setText(mBookInfo.getBookTitle());
                         //出版社
-                        mTvBookPublisher.setText(getString(R.string.publisher_text, mBookInfo.getBookPublisherName()));
+                        binding.bookPublisherTv.setText(getString(R.string.publisher_text, mBookInfo.getBookPublisherName()));
                         //作者
-                        mTvBookAuthor.setText(getString(R.string.author_text, mBookInfo.getBookAuthor()));
+                        binding.bookAuthorTv.setText(getString(R.string.author_text, mBookInfo.getBookAuthor()));
                         //出版时间
-                        mTvBookPublishTime.setText(getString(R.string.publish_time, mBookInfo.getBookPublishTime()));
+                        binding.bookPublishTimeTv.setText(getString(R.string.publish_time, mBookInfo.getBookPublishTime()));
                         //文件大小
-                        mTvBookDownloadSize.setText(getString(R.string.file_size_text, mBookInfo.getBookDownloadSize()));
+                        binding.bookDownloadSizeTv.setText(getString(R.string.file_size_text, mBookInfo.getBookDownloadSize()));
                         //价格
-                        mOriginalPrice.setText(getString(R.string.list_price, mBookInfo.getBookOriginalPrice() + ""));
-                        mTvBookSalePrice.setText(getString(R.string.sale_price, mBookInfo.getBookSalePrice() + ""));
+                        binding.bookOriginPriceTv.setText(getString(R.string.list_price, mBookInfo.getBookOriginalPrice() + ""));
+                        binding.bookSalePriceTv.setText(getString(R.string.sale_price, mBookInfo.getBookSalePrice() + ""));
                         //购买按钮价格
-                        mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
+                        binding.buyBtn.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                         PromotionResult promotionResult = mBookInfo.getBookCoupon();
                         if (null != promotionResult) {
-                            mPromotionLayout.setVisibility(View.VISIBLE);
-                            mPromotionName.setText(promotionResult.getCouponName());
-                            mPromotionContent.setText(promotionResult.getCouponContentExplain());
-                            mMorePromotionActivity.setText(getString(R.string.look_more_promotion_activity, promotionResult.getCouponName()));
+                            binding.promotionLayout.setVisibility(View.VISIBLE);
+                            binding.promotionName.setText(promotionResult.getCouponName());
+                            binding.promotionContent.setText(promotionResult.getCouponContentExplain());
+                            binding.lookMorePromotionBtn.setText(getString(R.string.look_more_promotion_activity, promotionResult.getCouponName()));
                         }
                         //图书详情
                         if (TextUtils.isEmpty(mBookInfo.getBookSummary())) {
-                            mTvBookDetails.setText("");
+                            binding.bookDetailTv.setText("");
                         } else {
-                            mTvBookDetails.setText(Html.fromHtml(mBookInfo.getBookSummary()));
+                            binding.bookDetailTv.setText(Html.fromHtml(mBookInfo.getBookSummary()));
                         }
                         //在线试读是否可点
                         if (TextUtils.isEmpty(mBookInfo.getBookPreview())) {
-                            mBtnRead.setEnabled(false);
+                            binding.tryReadBtn.setEnabled(false);
                         } else {
-                            mBtnRead.setEnabled(true);
+                            binding.tryReadBtn.setEnabled(true);
                         }
                         //修改按钮状态
                         setBtnCarState();
@@ -705,15 +597,75 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
     private void setBtnCarState() {
         if (mBookInfo.isBookInCart()) {
-            mBtnAddCar.setText(R.string.books_already_add_car);
-            mBtnAddCar.setTextColor(UIUtils.getColor(R.color.directory_text));
+            binding.addCarBtn.setText(R.string.books_already_add_car);
+            binding.addCarBtn.setBackgroundResource(R.drawable.shape_rectangle_black_border_gray_fill);
+            binding.addCarBtn.setClickable(false);
         }
     }
 
     private void setBtnFavorState() {
         if (mBookInfo.isBookInFavor()) {
-            mBtnAddFavor.setText(R.string.books_already_add_collection);
-            mBtnAddFavor.setTextColor(UIUtils.getColor(R.color.directory_text));
+            binding.addFavorBtn.setText(R.string.books_already_add_collection);
+            binding.addFavorBtn.setBackgroundResource(R.drawable.shape_rectangle_black_border_gray_fill);
+            binding.addFavorBtn.setClickable(false);
         }
+    }
+
+    public void onBack(View view){
+        onBackPressed();
+    }
+
+    public void toCart(View view){
+        //进入购物车
+        loadIntent(ShopCartActivity.class);
+    }
+    public void buyBook(View view){
+        if (mBookInfo.isBookInShelf()) {
+            //这本书已经购买过 ,打开PDF
+            showReaderForPackage();
+        } else {
+            requestOrder();
+        }
+    }
+
+    public void addCart(View view){
+        if (mBookInfo.isBookInCart()) {
+            //书加入了购物车
+            showCenterDetermineDialog(R.string.books_already_add_car);
+        } else if (mBookInfo.isBookInShelf()) {
+            showReaderForPackage();
+        } else {
+            addBooksToCar(new ArrayList<BookInfo>() {{
+                add(mBookInfo);
+            }});
+        }
+    }
+    public void addFavor(View view){
+        if (mBookInfo.isBookInFavor()) {
+            showCenterDetermineDialog(R.string.books_already_add_collection);
+        } else {
+            addBooksToFavor(new ArrayList<BookInfo>() {{
+                add(mBookInfo);
+            }});
+        }
+    }
+
+    public void tryRead(View view){
+        if (mBookInfo.isBookInShelf()) {
+            showReaderForPackage();
+            return;
+        }
+        //跳转在线试读
+//                String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
+
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookProbation))) {
+            jumpProbationActivity();
+        } else {
+            downBookDialog();
+        }
+    }
+
+    public void lookMorePromotion(View view){
+        startActivity(new Intent(this,ShopPromotionActivity.class));
     }
 }
