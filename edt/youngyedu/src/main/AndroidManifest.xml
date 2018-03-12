@@ -218,11 +218,18 @@
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
         <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
+<<<<<<< HEAD
+        <activity android:name="com.yougy.anwser.ObjectiveAnsweringActivity" />
+        <activity android:name="com.yougy.shop.activity.ShopPromotionActivity"/>
+=======
         <!--问答图书章节列表-->
         <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" />
         <!--问答记录题目列表-->
         <activity android:name="com.yougy.anwser.AnswerRecordListActivity" />
+        <!--问答记录某次问答详情界面-->
+        <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity"/>
 
+>>>>>>> 7295776e95bc7c9ae88b846a6ac0d87057a4d0c5
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />

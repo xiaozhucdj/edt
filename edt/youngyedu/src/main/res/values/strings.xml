@@ -120,7 +120,14 @@
     <string name="book_details_text">图书详情</string>
     <string name="promotion_text">促销 :</string>
     <string name="manjian_text">满减</string>
-
+    <string name="activity_time">有效期：%1$s-%2$s</string>
+    <string name="look_more_promotion_activity">查看更多%1$s活动>></string>
+    <string name="list_price">定价：%1$s</string>
+    <string name="sale_price">销售价：￥%1$s</string>
+    <string name="file_size_text">文件大小 :%1$s</string>
+    <string name="publish_time">出版时间 :%1$s</string>
+    <string name="author_text">作者 :%1$s</string>
+    <string name="publisher_text">出版社 :%1$s</string>
 
 
     <string-array name="titles">

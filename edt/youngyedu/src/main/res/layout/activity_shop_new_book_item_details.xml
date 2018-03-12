@@ -77,7 +77,7 @@
             style="@style/bookDetailStyle"
             android:layout_alignLeft="@+id/tv_bookDownloadSize"
             android:layout_below="@id/tv_bookDownloadSize"
-            android:text="定价为：100.0" />
+            />
 
         <TextView
             android:id="@+id/tv_bookSalePrice"
@@ -92,32 +92,37 @@
             android:layout_alignLeft="@id/book_list_price_tv"
             android:layout_below="@id/tv_bookSalePrice"
             android:layout_marginTop="10px"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="visible"
+            >
 
             <TextView
                 style="@style/bookPromotionStyle"
                 android:text="@string/promotion_text" />
 
             <TextView
+                android:id="@+id/promotion_name"
                 android:layout_width="60px"
                 android:layout_height="32px"
                 android:layout_marginLeft="10px"
                 android:layout_marginRight="10px"
                 android:background="@drawable/img_manjian"
                 android:gravity="center"
-                android:text="@string/manjian_text"
                 android:textColor="@color/text_color_white"
                 android:textSize="20px" />
 
             <TextView
+                android:id="@+id/promotion_content"
                 style="@style/bookPromotionStyle"
-                android:text="满59.00元减9.00元" />
+                />
 
             <TextView
+                android:id="@+id/look_more_activity"
                 style="@style/bookPromotionStyle"
                 android:layout_marginLeft="60px"
                 android:onClick="lookMoreActivity"
-                android:text="查看更多满减活动>>" />
+                android:text="查看更多满减活动"
+                />
         </LinearLayout>
     </RelativeLayout>
 

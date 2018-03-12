@@ -2,6 +2,14 @@ package com.yougy.homework.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
+
+import com.google.gson.internal.LinkedTreeMap;
+import com.yougy.anwser.Content_new;
+import com.yougy.common.utils.AliyunUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/11/17.
@@ -38,6 +46,10 @@ public class QuestionReplySummary implements Parcelable {
     private String replyCreatorName;
     private String replyCommentTime;
     private String replyCreateTime;
+    //学生回答原始数据
+    private List<Object> replyContent;
+    //解析后的回答数据
+    private List<Content_new> parsedContentList = new ArrayList<Content_new>();
 
     public String getReplyStatus() {
         return replyStatus;
@@ -135,6 +147,57 @@ public class QuestionReplySummary implements Parcelable {
         this.replyCreateTime = replyCreateTime;
     }
 
+    public List<Object> getReplyContent() {
+        return replyContent;
+    }
+
+    public void setReplyContent(List<Object> replyContent) {
+        this.replyContent = replyContent;
+    }
+
+    public List<Content_new> getParsedContentList() {
+        return parsedContentList;
+    }
+
+    public void setParsedContentList(List<Content_new> parsedContentList) {
+        this.parsedContentList = parsedContentList;
+    }
+
+    public QuestionReplySummary parsedContent(){
+        parsedContentList.clear();
+        for (Object obj : replyContent) {
+            Content_new content = null;
+            LinkedTreeMap contentTreeMap = (LinkedTreeMap) obj;
+            String format = (String) contentTreeMap.get("format");
+            String bucked = (String) contentTreeMap.get("bucket");
+            double version = (double) contentTreeMap.get("version");
+            if (format.startsWith("ATCH/")) {
+                if (contentTreeMap.get("remote") != null
+                        && !TextUtils.isEmpty((String)contentTreeMap.get("remote"))){
+                    String url = "http://" + bucked + AliyunUtil.ANSWER_PIC_HOST + contentTreeMap.get("remote");
+                    if (url.endsWith(".gif")
+                            || url.endsWith(".jpg")
+                            || url.endsWith(".png")
+                            ){
+                        content = new Content_new(Content_new.Type.IMG_URL , version , url , null);
+                    }
+                    else if (url.endsWith(".htm")){
+                        content = new Content_new(Content_new.Type.HTML_URL , version , url , null);;
+                    }
+                }
+            }
+            else if (format.equals("TEXT")){
+                String contentText = "" + contentTreeMap.get("value");
+                content = new Content_new(Content_new.Type.IMG_URL , version , contentText , null);;
+            }
+            if (content != null){
+                parsedContentList.add(content);
+            }
+        }
+        return this;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -154,6 +217,8 @@ public class QuestionReplySummary implements Parcelable {
         dest.writeString(this.replyCreatorName);
         dest.writeString(this.replyCommentTime);
         dest.writeString(this.replyCreateTime);
+        dest.writeList(this.replyContent);
+        dest.writeTypedList(this.parsedContentList);
     }
 
     public QuestionReplySummary() {
@@ -172,9 +237,12 @@ public class QuestionReplySummary implements Parcelable {
         this.replyCreatorName = in.readString();
         this.replyCommentTime = in.readString();
         this.replyCreateTime = in.readString();
+        this.replyContent = new ArrayList<Object>();
+        in.readList(this.replyContent, Object.class.getClassLoader());
+        this.parsedContentList = in.createTypedArrayList(Content_new.CREATOR);
     }
 
-    public static final Parcelable.Creator<QuestionReplySummary> CREATOR = new Parcelable.Creator<QuestionReplySummary>() {
+    public static final Creator<QuestionReplySummary> CREATOR = new Creator<QuestionReplySummary>() {
         @Override
         public QuestionReplySummary createFromParcel(Parcel source) {
             return new QuestionReplySummary(source);

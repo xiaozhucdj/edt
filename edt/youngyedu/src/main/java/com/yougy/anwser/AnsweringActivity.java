@@ -77,7 +77,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     //作业草稿纸
     private NoteBookView2 mCaogaoNoteBoard;
 
-    long startTimeMill;
+    long startTimeMill = -1;
     private TimedTask timedTask;
 
     //图片地址的集合（用来保存截图生长的图片路径）
@@ -119,7 +119,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
     //保存当前题目页面分页，默认从0开始
     private int saveQuestionPage = 0;
 
-
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answering, null, false);
@@ -154,7 +153,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
             Log.v("FH", "examId 为空,开始问答失败");
             finish();
         }
-        startTimeMill = System.currentTimeMillis();
+        startTimeMill = getIntent().getLongExtra("startTimeMill" , -1);
+        if (startTimeMill == -1){
+            startTimeMill = System.currentTimeMillis();
+        }
     }
 
     @Override
@@ -209,7 +211,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     protected void initLayout() {
-        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(System.currentTimeMillis(), "yyyy-MM-dd HH:mm"));
+        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(startTimeMill , "yyyy-MM-dd HH:mm"));
 
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
