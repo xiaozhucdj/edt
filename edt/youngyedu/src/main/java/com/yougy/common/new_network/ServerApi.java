@@ -9,6 +9,7 @@ import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.shop.bean.RemoveRequestObj;
@@ -99,7 +100,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"queryBook"})
-    Observable<BaseResult<List<Object>>> queryBook(@Field("bookId") Integer bookId);
+    Observable<BaseResult<List<BookInfo>>> queryBook(@Field("bookId") String bookId ,@Field("userId") String userId);
 
     /**
      * 刷新作业本中所有作业的状态

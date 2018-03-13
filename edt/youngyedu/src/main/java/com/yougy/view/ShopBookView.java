@@ -52,7 +52,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
         mInfo = info;
         mBookIv.setImageResource(R.drawable.cart_book);
         mBookNameTv.setText(info.getBookTitle());
-        mBookPriceTv.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price),info.getBookSalePrice()));
+        mBookPriceTv.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSalePrice() + ""));
         refreshImg(mBookIv ,info.getBookCoverS());
     }
 
@@ -60,7 +60,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(getContext(), ShopBookDetailsActivity.class);
-        intent.putExtra(ShopGloble.BOOK_ID , Integer.parseInt(mInfo.getBookId()));
+        intent.putExtra(ShopGloble.BOOK_ID , Integer.parseInt(mInfo.getBookId() + ""));
         getContext().startActivity(intent);
         LogUtils.e("ShopBookView","onClick................." + mInfo.getBookTitle());
     }

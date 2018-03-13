@@ -11,6 +11,7 @@ import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.shop.bean.RemoveRequestObj;
@@ -176,9 +177,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Object>> queryBook(Integer bookId) {
+    public static Observable<List<BookInfo>> queryBook(String bookId , String userId) {
         Log.v("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
-        return getInstance().getServerApi().queryBook(bookId)
+        return getInstance().getServerApi().queryBook(bookId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -271,4 +272,6 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+
 }

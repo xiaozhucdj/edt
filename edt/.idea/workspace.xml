@@ -11,15 +11,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="修改购物车 首页请求失败后 处理">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/bean/BookStructureNode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_manjian.png" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerBookStructureActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerBookStructureActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/PromoteBookRep.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/PromoteBookRep.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/QueryShopBookDetailRep.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/QueryShopBookDetailRep.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/BookStructureActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/BookStructureActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/MistakeListActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/MistakeListActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ConfirmOrderActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ConfirmOrderActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/OrderListActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/OrderListActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ProbationReadBookActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ProbationReadBookActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/SearchActivityDb.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/SearchActivityDb.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/CartItem.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/CartItem.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/NewShopBookItem.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/NewShopBookItem.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopPromotionActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopPromotionActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BookInfo.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BookInfo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BriefOrder.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BriefOrder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/ShopBookView.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/ShopBookView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_promotion_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_promotion_layout.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/shop_cart_favorite_list_book_item.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/shop_cart_favorite_list_book_item.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" />
     </list>
     <ignored path="edt.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -93,58 +111,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ShopCartActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java">
+      <file leaf-file-name="activity_shop_book_detail.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="74" column="59" selection-start-line="74" selection-start-column="59" selection-end-line="74" selection-end-column="59" />
+            <state relative-caret-position="140">
+              <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1540#1550#0" expanded="true" />
-                <element signature="e#1624#1634#0" expanded="true" />
-                <element signature="e#3024#3025#0" expanded="true" />
-                <element signature="e#3082#3083#0" expanded="true" />
-                <element signature="e#9986#10006#0" expanded="true" />
-                <element signature="e#11806#11807#0" expanded="true" />
-                <element signature="e#11837#11838#0" expanded="true" />
-                <element signature="e#12021#12041#0" expanded="true" />
-                <element signature="e#13216#13217#0" expanded="true" />
-                <element signature="e#13299#13300#0" expanded="true" />
-                <element signature="e#13506#13534#0" expanded="true" />
-                <element signature="e#14037#14057#0" expanded="true" />
-                <marker date="1520850324993" expanded="false" signature="5882:5906" ph="&quot;移除购物车失败&quot;" />
-                <marker date="1520850324993" expanded="false" signature="8242:8265" ph="&quot;获取订单失败&quot;" />
+                <element signature="e#5939#5963#0" expanded="true" />
               </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="shop_cart_favorite_list_book_item.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/shop_cart_favorite_list_book_item.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="39" column="48" selection-start-line="39" selection-start-column="48" selection-end-line="39" selection-end-column="48" />
-              <folding />
-            </state>
-          </provider>
           <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="shoucang_selector.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/shoucang_selector.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
-              <caret line="2" column="77" selection-start-line="2" selection-start-column="77" selection-end-line="2" selection-end-column="77" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="img_press_shoucang.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shoucang.png">
-          <provider selected="true" editor-type-id="images">
             <state />
           </provider>
         </entry>
@@ -156,11 +133,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="activity_shop_cart.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml">
+      <file leaf-file-name="activity_promotion_layout.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_promotion_layout.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="739">
-              <caret line="119" column="8" selection-start-line="119" selection-start-column="8" selection-end-line="119" selection-end-column="8" />
+            <state relative-caret-position="166">
+              <caret line="60" column="60" selection-start-line="60" selection-start-column="60" selection-end-line="60" selection-end-column="60" />
               <folding />
             </state>
           </provider>
@@ -169,21 +146,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RemoveRequestObj.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/RemoveRequestObj.java">
+      <file leaf-file-name="styles.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="8" column="11" selection-start-line="8" selection-start-column="11" selection-end-line="8" selection-end-column="11" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConfirmDialog.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/ConfirmDialog.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="167">
-              <caret line="37" column="11" selection-start-line="37" selection-start-column="11" selection-end-line="37" selection-end-column="11" />
+            <state relative-caret-position="260">
+              <caret line="66" column="17" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -192,22 +159,28 @@
       <file leaf-file-name="ShopBookDetailsActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20">
-              <caret line="76" column="13" selection-start-line="76" selection-start-column="13" selection-end-line="76" selection-end-column="13" />
+            <state relative-caret-position="840">
+              <caret line="210" column="29" selection-start-line="210" selection-start-column="29" selection-end-line="210" selection-end-column="29" />
               <folding>
-                <element signature="e#4596#4597#0" expanded="true" />
-                <element signature="e#4668#4669#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#4633#4634#0" expanded="true" />
+                <element signature="e#4705#4706#0" expanded="true" />
+                <element signature="e#5953#6011#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AutoLayoutBaseActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/activity/AutoLayoutBaseActivity.java">
+      <file leaf-file-name="BookInfo.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BookInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="227">
-              <caret line="738" column="19" selection-start-line="738" selection-start-column="19" selection-end-line="738" selection-end-column="19" />
-              <folding />
+            <state relative-caret-position="269">
+              <caret line="613" column="39" selection-start-line="613" selection-start-column="39" selection-end-line="613" selection-end-column="39" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#17232#17233#0" expanded="true" />
+                <element signature="e#17276#17277#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -3524,19 +3497,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/spinner_item.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/NewBookStoreBookReq.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/search_result_item1.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/search_result_layout_db.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/search_click_selector.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/classify_color_selector.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/SearchActivityDb.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/recommend_item.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_promote_book.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/commcon_title_layout.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_probation_read_book.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/dialog_down_book.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/btn_check_select.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_favorite.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopFavoriteActivity.java" />
@@ -3544,7 +3504,6 @@
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/PromotionReq.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/SearchResultAdapter1.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/NewProtocolManager.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout_auto.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/promotion_item.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml" />
@@ -3553,8 +3512,6 @@
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/PromotionResult.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromotionAdapter.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/rx_subscriber/ShopSubscriber.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopPromotionActivity.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_promotion_layout.xml" />
         <option value="$PROJECT_DIR$/.idea/misc.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -3563,18 +3520,34 @@
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/btn_selector_rectangle_white_green_gray.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/shop_color_btn_selector.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/shape_rectangle_black_border_gray_fill.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/activity/AutoLayoutBaseActivity.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/CartItem.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/RemoveRequestObj.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BookIdObj.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerBookStructureActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/BookStructureActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/MistakeListActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BriefOrder.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/PromoteBookRep.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/ShopBookView.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ConfirmOrderActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/OrderListActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ProbationReadBookActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/QueryShopBookDetailRep.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/SearchActivityDb.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopPromotionActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/shop_cart_favorite_list_book_item.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BookInfo.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_promotion_layout.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml" />
       </list>
     </option>
   </component>
@@ -3737,181 +3710,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-mdpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="youngyedu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="youngyedu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yougy" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="youngyedu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yougy" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="youngyedu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yougy" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bean" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="edt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="youngyedu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3925,7 +3724,11 @@
   <component name="PropertiesComponent">
     <property name="device.picker.selection" value="C8W7KSDZPY" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="SearchEverywhereHistoryKey" value="Net&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java&#10;NEwSHop&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/view/NewShopBookItem.java&#10;Netw&#9;PSI&#9;JAVA://com.yougy.common.new_network.NetWorkManager&#10;Networ&#9;PSI&#9;JAVA://com.inkscreen.utils.NetworkManager&#10;PromotionResult&#9;PSI&#9;JAVA://com.yougy.ui.activity.PromotionResult" />
+    <property name="SearchEverywhereHistoryKey" value="St&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/homework/bean/BookStructureNode.java&#10;Netw&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java&#10;Ser&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java&#10;Net&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java&#10;NEwSHop&#9;FILE&#9;file://C:/myCode/outer/leke_android/edt/youngyedu/src/main/java/com/yougy/view/NewShopBookItem.java&#10;Networ&#9;PSI&#9;JAVA://com.inkscreen.utils.NetworkManager&#10;PromotionResult&#9;PSI&#9;JAVA://com.yougy.ui.activity.PromotionResult" />
+    <property name="DEBUGGABLE_DEVICE" value="onyx-edu-C8W7KSDZPY" />
+    <property name="DEBUGGABLE_PROCESS" value="com.youngy.ui" />
+    <property name="SHOW_ALL_PROCESSES" value="false" />
+    <property name="DEBUGGER_ID" value="Auto" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -4375,350 +4178,11 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="42" />
+      <option name="time" value="47" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/btn_selector_rectangle_white_green_gray.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="3" column="66" selection-start-line="3" selection-start-column="66" selection-end-line="3" selection-end-column="66" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/dialog_down_book.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="30" column="81" selection-start-line="30" selection-start-column="42" selection-end-line="30" selection-end-column="81" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/page_text_selector.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="3" column="60" selection-start-line="3" selection-start-column="60" selection-end-line="3" selection-end-column="60" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/AlignTextView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Android/sdk/sources/android-25/android/content/Context.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="490" column="24" selection-start-line="490" selection-start-column="24" selection-end-line="490" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2460">
-          <caret line="123" column="18" selection-start-line="123" selection-start-column="18" selection-end-line="123" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/PromotionResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_fanhui.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_gouwuche.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/shape_rectangle_black_border_gray_fill.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="4" column="44" selection-start-line="4" selection-start-column="44" selection-end-line="4" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/colors.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.android/build-cache/78c0261c8b33de866394e38cdf0da243f679261b/output/res/drawable/bmp_bg_green.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBaseActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/shop_color_btn_selector.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="3" column="69" selection-start-line="3" selection-start-column="69" selection-end-line="3" selection-end-column="69" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1539">
-          <caret line="271" column="48" selection-start-line="271" selection-start-column="48" selection-end-line="271" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="441">
-          <caret line="88" column="58" selection-start-line="88" selection-start-column="58" selection-end-line="88" selection-end-column="58" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xuankuang.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xuankuang_03.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/btn_check_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="2" column="45" selection-start-line="2" selection-start-column="45" selection-end-line="2" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/shop_btn_bg_checked.9.png">
-      <provider selected="true" editor-type-id="ninepatcheditor">
-        <state />
-      </provider>
-      <provider editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/shop_btn_bg_selector.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="2" column="50" selection-start-line="2" selection-start-column="50" selection-end-line="2" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/shop_page_item.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shoucang.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/build/generated/source/r/debug/com/yougy/ui/activity/R.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="6199" column="32" selection-start-line="6199" selection-start-column="32" selection-end-line="6199" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/inkscreen/utils/NetworkManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4800">
-          <caret line="101" column="0" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/Commons.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="23" column="62" selection-start-line="23" selection-start-column="62" selection-end-line="23" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/ProtocolManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="449">
-          <caret line="516" column="38" selection-start-line="516" selection-start-column="38" selection-end-line="516" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/MistakeListActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="889">
-          <caret line="172" column="56" selection-start-line="138" selection-start-column="0" selection-end-line="172" selection-end-column="56" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/QueryBookCartRep.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/CartItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-11">
-          <caret line="161" column="0" selection-start-line="161" selection-start-column="0" selection-end-line="161" selection-end-column="0" />
-          <folding>
-            <element signature="e#3774#3775#0" expanded="false" />
-            <element signature="e#3807#3808#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/PageableRecyclerView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="144" column="0" selection-start-line="144" selection-start-column="0" selection-end-line="144" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/NewShopBookItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="53" column="9" selection-start-line="49" selection-start-column="44" selection-end-line="53" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/build/generated/source/apt/debug/com/yougy/ui/activity/databinding/ShopCartFavoriteListBookItemBinding.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/MistakeGradeActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="214" column="39" selection-start-line="214" selection-start-column="39" selection-end-line="214" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BookIdObj.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="6" column="21" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="188" column="35" selection-start-line="188" selection-start-column="35" selection-end-line="188" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="273" column="0" selection-start-line="273" selection-start-column="0" selection-end-line="273" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/ImageLoaderManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="43" column="18" selection-start-line="43" selection-start-column="18" selection-end-line="43" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/hint_dialog_layout.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="23" column="20" selection-start-line="23" selection-start-column="20" selection-end-line="23" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/HintDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/init/activity/LocalLockActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="155" column="12" selection-start-line="155" selection-start-column="12" selection-end-line="155" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/ConfirmDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="37" column="11" selection-start-line="37" selection-start-column="11" selection-end-line="37" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/RemoveRequestObj.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
@@ -4735,33 +4199,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20">
-          <caret line="76" column="13" selection-start-line="76" selection-start-column="13" selection-end-line="76" selection-end-column="13" />
-          <folding>
-            <element signature="e#4596#4597#0" expanded="true" />
-            <element signature="e#4668#4669#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="739">
-          <caret line="119" column="8" selection-start-line="119" selection-start-column="8" selection-end-line="119" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_manjian.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shoucang.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -4775,10 +4212,235 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/shop_cart_favorite_list_book_item.xml">
+    <entry file="file://E:/Android/sdk/sources/android-25/android/os/Parcel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="39" column="48" selection-start-line="39" selection-start-column="48" selection-end-line="39" selection-end-column="48" />
+        <state relative-caret-position="279">
+          <caret line="1489" column="22" selection-start-line="1489" selection-start-column="22" selection-end-line="1489" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/bean/BookStructureNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40">
+          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1285">
+          <caret line="179" column="54" selection-start-line="179" selection-start-column="45" selection-end-line="179" selection-end-column="54" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="93" column="61" selection-start-line="93" selection-start-column="61" selection-end-line="93" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/ProtocolManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="719">
+          <caret line="655" column="25" selection-start-line="655" selection-start-column="25" selection-end-line="655" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerBookStructureActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding>
+            <element signature="e#1429#1466#0" expanded="false" />
+            <element signature="e#9264#9301#0" expanded="false" />
+            <element signature="e#10163#10164#0" expanded="false" />
+            <element signature="e#10204#10205#0" expanded="false" />
+            <element signature="e#10254#10255#0" expanded="false" />
+            <element signature="e#10300#10301#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/MistakeListActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="640">
+          <caret line="98" column="43" selection-start-line="98" selection-start-column="43" selection-end-line="98" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1493#1530#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/mistake_note/BookStructureActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="407">
+          <caret line="122" column="67" selection-start-line="122" selection-start-column="67" selection-end-line="122" selection-end-column="67" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#1533#1570#0" expanded="false" />
+            <element signature="e#7732#7733#0" expanded="false" />
+            <element signature="e#7807#7808#0" expanded="false" />
+            <element signature="e#9960#9997#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/SpUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="230" column="22" selection-start-line="230" selection-start-column="22" selection-end-line="230" selection-end-column="22" />
+          <folding>
+            <element signature="e#8932#8933#0" expanded="false" />
+            <element signature="e#8979#8980#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-25/android/content/Context.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="490" column="24" selection-start-line="490" selection-start-column="24" selection-end-line="490" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/PromotionResult.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-20">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/adapter/PromoteBookAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40">
+          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BriefOrder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="8" column="3" selection-start-line="8" selection-start-column="3" selection-end-line="8" selection-end-column="3" />
+          <folding>
+            <element signature="e#392#393#0" expanded="false" />
+            <element signature="e#425#426#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ConfirmOrderActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="85" column="29" selection-start-line="85" selection-start-column="29" selection-end-line="85" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#2470#2480#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/OrderListActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-629">
+          <caret line="112" column="62" selection-start-line="112" selection-start-column="62" selection-end-line="112" selection-end-column="62" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ProbationReadBookActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1151">
+          <caret line="289" column="43" selection-start-line="289" selection-start-column="40" selection-end-line="289" selection-end-column="47" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopPromotionActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="655">
+          <caret line="115" column="0" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/QueryShopBookDetailRep.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
+          <folding>
+            <element signature="e#310#311#0" expanded="false" />
+            <element signature="e#337#338#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/OrderInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="509">
+          <caret line="283" column="18" selection-start-line="283" selection-start-column="18" selection-end-line="283" selection-end-column="18" />
+          <folding>
+            <element signature="e#6425#6426#0" expanded="false" />
+            <element signature="e#6457#6458#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/response/PromoteBookRep.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_xiangqing.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bucanjiamanjian.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="49" column="4" selection-start-line="49" selection-start-column="4" selection-end-line="49" selection-end-column="4" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1440#1450#0" expanded="true" />
+            <element signature="e#1524#1534#0" expanded="true" />
+            <marker date="1520906151207" expanded="false" signature="5782:5806" ph="&quot;移除购物车失败&quot;" />
+            <marker date="1520906151207" expanded="false" signature="8142:8165" ph="&quot;获取订单失败&quot;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1100">
+          <caret line="55" column="13" selection-start-line="55" selection-start-column="13" selection-end-line="55" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -4786,28 +4448,204 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/shop_cart_favorite_list_book_item.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="74" column="59" selection-start-line="74" selection-start-column="59" selection-end-line="74" selection-end-column="59" />
+        <state relative-caret-position="560">
+          <caret line="28" column="21" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/SearchActivityDb.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="75" column="28" selection-start-line="75" selection-start-column="28" selection-end-line="75" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/ui/ChattingActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="352" column="78" selection-start-line="352" selection-start-column="78" selection-end-line="352" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="647">
+          <caret line="683" column="5" selection-start-line="677" selection-start-column="34" selection-end-line="683" selection-end-column="5" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1540#1550#0" expanded="true" />
-            <element signature="e#1624#1634#0" expanded="true" />
-            <element signature="e#3024#3025#0" expanded="true" />
-            <element signature="e#3082#3083#0" expanded="true" />
-            <element signature="e#9986#10006#0" expanded="true" />
-            <element signature="e#11806#11807#0" expanded="true" />
-            <element signature="e#11837#11838#0" expanded="true" />
-            <element signature="e#12021#12041#0" expanded="true" />
-            <element signature="e#13216#13217#0" expanded="true" />
-            <element signature="e#13299#13300#0" expanded="true" />
-            <element signature="e#13506#13534#0" expanded="true" />
-            <element signature="e#14037#14057#0" expanded="true" />
-            <marker date="1520850324993" expanded="false" signature="5882:5906" ph="&quot;移除购物车失败&quot;" />
-            <marker date="1520850324993" expanded="false" signature="8242:8265" ph="&quot;获取订单失败&quot;" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/ShopBookView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-23/android/os/Looper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="147" column="0" selection-start-line="147" selection-start-column="0" selection-end-line="147" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-23/android/app/Activity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="6265" column="0" selection-start-line="6265" selection-start-column="0" selection-end-line="6265" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-23/android/app/Instrumentation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="1106" column="0" selection-start-line="1106" selection-start-column="0" selection-end-line="1106" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-23/android/os/Handler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="101" column="0" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-23/java/lang/reflect/Method.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="369" column="25" selection-start-line="369" selection-start-column="25" selection-end-line="369" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-23/com/android/internal/os/ZygoteInit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="661" column="0" selection-start-line="661" selection-start-column="0" selection-end-line="661" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Android/sdk/sources/android-23/android/app/ActivityThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="2369" column="17" selection-start-line="2369" selection-start-column="17" selection-end-line="2369" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/Android/sdk/extras/android/m2repository/com/android/support/support-fragment/25.3.1/support-fragment-25.3.1-sources.jar!/android/support/v4/app/FragmentActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="440" column="19" selection-start-line="440" selection-start-column="19" selection-end-line="440" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBaseActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="14" column="38" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_manjian.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="120" column="18" selection-start-line="120" selection-start-column="18" selection-end-line="120" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_manjian.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_promotion_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="60" column="60" selection-start-line="60" selection-start-column="60" selection-end-line="60" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/values/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="66" column="17" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="210" column="29" selection-start-line="210" selection-start-column="29" selection-end-line="210" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4633#4634#0" expanded="true" />
+            <element signature="e#4705#4706#0" expanded="true" />
+            <element signature="e#5953#6011#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/activity/BaseActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="110" column="0" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/BookInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="613" column="39" selection-start-line="613" selection-start-column="39" selection-end-line="613" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#17232#17233#0" expanded="true" />
+            <element signature="e#17276#17277#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+          <folding>
+            <element signature="e#5939#5963#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
   </component>

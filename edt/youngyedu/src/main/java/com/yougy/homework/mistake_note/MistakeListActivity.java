@@ -16,9 +16,9 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
-import com.yougy.homework.bean.BookStructureNode;
 import com.yougy.homework.bean.MistakeSummary;
 import com.yougy.message.ListUtil;
+import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeListBinding;
 import com.yougy.ui.activity.databinding.ItemMistakeListBinding;
@@ -37,8 +37,8 @@ public class MistakeListActivity extends HomeworkBaseActivity{
     ActivityMistakeListBinding binding;
     ArrayList<MistakeSummary> mistakeSummaryList;
     ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
-    BookStructureNode topNode , currentNode;
-    ArrayList<BookStructureNode> nodeTree = new ArrayList<BookStructureNode>();
+    BookInfo.BookContentsBean.NodesBean topNode , currentNode;
+    ArrayList<BookInfo.BookContentsBean.NodesBean> nodeTree = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
     int homeworkId;
     @Override
     protected void setContentView() {
@@ -107,7 +107,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         }
     }
 
-    private boolean findCurrentNode(BookStructureNode from , BookStructureNode tofind){
+    private boolean findCurrentNode(BookInfo.BookContentsBean.NodesBean from , BookInfo.BookContentsBean.NodesBean tofind){
         if (from.getId() == tofind.getId()){
             nodeTree.add(from);
             return true;
@@ -117,7 +117,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                 return false;
             }
             else {
-                for (BookStructureNode child : from.getNodes()){
+                for (BookInfo.BookContentsBean.NodesBean child : from.getNodes()){
                     if (findCurrentNode(child , tofind)){
                         nodeTree.add(from);
                         return true;

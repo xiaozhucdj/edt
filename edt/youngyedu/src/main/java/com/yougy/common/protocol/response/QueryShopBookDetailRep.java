@@ -1,7 +1,8 @@
 package com.yougy.common.protocol.response;
 
-import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.bean.BaseData;
+import com.yougy.shop.bean.BookInfo;
+
 import java.util.List;
 
 /**

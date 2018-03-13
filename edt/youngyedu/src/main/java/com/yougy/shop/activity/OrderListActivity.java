@@ -20,7 +20,7 @@ import com.yougy.common.protocol.response.IsOrderPaySuccessRep;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.globle.ShopGloble;
