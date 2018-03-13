@@ -186,7 +186,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     //购买按钮价格
                     binding.buyBtn.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                     List<BookInfo.BookCouponBean> bookCouponBeanList = mBookInfo.getBookCoupon();
-                    if (null != bookCouponBeanList) {
+                    if (null != bookCouponBeanList && bookCouponBeanList.size() != 0) {
                         List<BookInfo.BookCouponBean.CouponContentBean> contentBeanList = bookCouponBeanList.get(0).getCouponContent();
                         if (contentBeanList != null && contentBeanList.size() != 0){
                             BookInfo.BookCouponBean.CouponContentBean couponContentBean = contentBeanList.get(0);
@@ -205,9 +205,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                                 binding.promotionName.setText("满减");
                                 binding.promotionContent.setText("限时满减 满" + couponContentBean.getOver()
                                         + "元减" + couponContentBean.getCut() + "元");
-                            }
-                            else {
-                                binding.promotionLayout.setVisibility(View.GONE);
                             }
                         }
                     }

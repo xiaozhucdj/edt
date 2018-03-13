@@ -39,8 +39,8 @@
                 android:background="@null"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/icon_shanchu"
-                android:visibility="invisible"
-                android:onClick="onDeleteClick"/>
+                android:onClick="onDeleteClick"
+                />
 
             <View
                 android:layout_width="match_parent"

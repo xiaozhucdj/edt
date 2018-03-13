@@ -5,22 +5,34 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.QueryOrderListCallBack;
+import com.yougy.common.protocol.callback.RequireOrderCallBack;
+import com.yougy.common.protocol.request.RequirePayOrderRequest;
+import com.yougy.common.protocol.response.QueryBookOrderListRep;
+import com.yougy.common.protocol.response.RequirePayOrderRep;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.shop.bean.BookIdObj;
+import com.yougy.shop.bean.BookInfo;
+import com.yougy.shop.bean.BriefOrder;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityShopCartBinding;
 import com.yougy.ui.activity.databinding.ShopCartFavoriteListBookItemBinding;
@@ -30,6 +42,7 @@ import com.yougy.view.dialog.HintDialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -84,121 +97,73 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
                 return cartItemList.size();
             }
         });
-//        binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
-//            @Override
-//            public void onItemClick(RecyclerView.ViewHolder vh) {
-//                MyHolder holder = (MyHolder) vh;
-//                loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, holder.cartItem.getBookId());
-//            }
-//        });
     }
 
     @Override
     protected void handleEvent() {
-//        tapEventEmitter.subscribe(new Action1<Object>() {
-//            @Override
-//            public void call(Object o) {
-//                if (o instanceof QueryBookCartRep) {
-//                    //获取购物车列表的回调在这
-//                    QueryBookCartRep protocol = (QueryBookCartRep) o;
-//                    cartItemList.clear();
-//                    if (protocol.getData() != null) {
-//                        cartItemList.addAll(protocol.getData());
-//                    }
-//                    //如果已选中的某些项在新的数据中不存在,则删除它们
-//                    for (int i = 0; i < checkedCartItemList.size(); ) {
-//                        CartItem checkedCartItem = checkedCartItemList.get(i);
-//                        if (findCartItemByID(cartItemList, checkedCartItem.getBookId()) == null) {
-//                            checkedCartItemList.remove(checkedCartItem);
-//                            continue;
-//                        }
-//                        i++;
-//                    }
-//                    //如果之前选中的页号在新的数据中已经不存在了,则把选中的页号确定为最后一页.
-//                    if (cartItemList.size() <= currentSelectedPageIndex * ITEM_NUM) {
-//                        currentSelectedPageIndex = (cartItemList.size() - 1) / ITEM_NUM;
-//                        if (currentSelectedPageIndex < 0) {
-//                            currentSelectedPageIndex = 0;
-//                        }
-//                    }
-//                    //此处得到新的显示第一页的页号,如(11/5*5 = 10)
-//                    currentShowFirstPageIndex = currentSelectedPageIndex / ONCE_SHOW_PAGE_NUM * ONCE_SHOW_PAGE_NUM;
-//                    //请求刷新items和下方合计栏.
-//                    needRefreshItems = true;
-//                    refreshViewSafe();
-//                    if (cartItemList.size() == 0) {
-//                        deleteBtn.setVisibility(View.INVISIBLE);
-//                    } else {
-//                        deleteBtn.setVisibility(View.VISIBLE);
-//                    }
-//                } else if (o instanceof RemoveBookCartProtocol) {
-//                    //删除购物车的回调在这
-//                    RemoveBookCartProtocol protocal = (RemoveBookCartProtocol) o;
-//                    if (protocal.getCode() == 200) {
-//                        loadData();
-//                    }else{
-//                        showCenterDetermineDialog(R.string.remove_car_fail);
-//                    }
-//                } else if (o instanceof RequirePayOrderRep) {
-//                    //生成订单的回调
-//                    RequirePayOrderRep rep = (RequirePayOrderRep) o;
-//                    if (rep.getCode() == 200) {
-//                        BriefOrder orderObj = rep.getData().get(0);
-//                        orderObj.setOrderStatus("待支付");
-//                        orderObj.setOrderTime(DateUtils.getCalendarAndTimeString());
-//                        Log.v("FH" , "orderPrice : " + orderObj.getOrderPrice());
-//                        if(orderObj.getOrderPrice() == 0d){
-//                            YougyApplicationManager.getRxBus(ShopCartActivity.this).send("refreshOrderList");
-//                            Intent intent = new Intent(ShopCartActivity.this, PaySuccessActivity.class);
-//                            intent.putExtra(ShopGloble.ORDER, orderObj);
-//                            startActivity(intent);
-//                            //通知主界面刷新
-//                            BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
-//                            EventBus.getDefault().post(baseEvent);
-//                        }
-//                        else {
-//                            orderObj.setBookList(new ArrayList<BookInfo>() {
-//                                {
-//                                    for (CartItem cartItem : checkedCartItemList) {
-//                                        BookInfo bookInfo = new BookInfo();
-//                                        bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
-//                                        bookInfo.setBookCoverL(cartItem.getBookCoverS());
-//                                        bookInfo.setBookTitle(cartItem.getBookTitle());
-//                                        add(bookInfo);
-//                                    }
-//                                }
-//                            });
-//                            Intent intent = new Intent(ShopCartActivity.this, ConfirmOrderActivity.class);
-//                            intent.putExtra(ShopGloble.ORDER, orderObj);
-//                            startActivity(intent);
-//                        }
-//                        finish();
-//                    } else {
-//                        showCenterDetermineDialog(R.string.get_order_fail);
-//                    }
-//                }
-//                else if (o instanceof QueryBookOrderListRep){
-//                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
-//                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
-//                        if (((QueryBookOrderListRep) o).getData().size() > 0) {
-//                            new HintDialog(ShopCartActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
-//                            return;
-//                        }
-//                        RequirePayOrderRequest request = new RequirePayOrderRequest();
-//                        request.setOrderOwner(SpUtil.getAccountId());
-//                        for (CartItem cartItem : checkedCartItemList) {
-//                            request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
-//                        }
-//                        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
-//                                , new RequireOrderCallBack(ShopCartActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
-//                    }
-//                    else {
-//                        new HintDialog(ShopCartActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
-//                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
-//                    }
-//                }
-//            }
-//        });
+        tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof RequirePayOrderRep) {
+                    //生成订单的回调
+                    RequirePayOrderRep rep = (RequirePayOrderRep) o;
+                    if (rep.getCode() == 200) {
+                        BriefOrder orderObj = rep.getData().get(0);
+                        orderObj.setOrderStatus("待支付");
+                        orderObj.setOrderTime(DateUtils.getCalendarAndTimeString());
+                        Log.v("FH" , "orderPrice : " + orderObj.getOrderPrice());
+                        if(orderObj.getOrderPrice() == 0d){
+                            YougyApplicationManager.getRxBus(ShopCartActivity.this).send("refreshOrderList");
+                            Intent intent = new Intent(ShopCartActivity.this, PaySuccessActivity.class);
+                            intent.putExtra(ShopGloble.ORDER, orderObj);
+                            startActivity(intent);
+                            //通知主界面刷新
+                            BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                            EventBus.getDefault().post(baseEvent);
+                        }
+                        else {
+                            orderObj.setBookList(new ArrayList<BookInfo>() {
+                                {
+                                    for (CartItem cartItem : checkedCartItemList) {
+                                        BookInfo bookInfo = new BookInfo();
+                                        bookInfo.setBookSalePrice(cartItem.getBookSalePrice());
+                                        bookInfo.setBookCoverL(cartItem.getBookCoverS());
+                                        bookInfo.setBookTitle(cartItem.getBookTitle());
+                                        add(bookInfo);
+                                    }
+                                }
+                            });
+                            Intent intent = new Intent(ShopCartActivity.this, ConfirmOrderActivity.class);
+                            intent.putExtra(ShopGloble.ORDER, orderObj);
+                            startActivity(intent);
+                        }
+                        finish();
+                    } else {
+                        showCenterDetermineDialog(R.string.get_order_fail);
+                    }
+                }
+                else if (o instanceof QueryBookOrderListRep){
+                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                        if (((QueryBookOrderListRep) o).getData().size() > 0) {
+                            new HintDialog(ShopCartActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
+                            return;
+                        }
+                        RequirePayOrderRequest request = new RequirePayOrderRequest();
+                        request.setOrderOwner(SpUtil.getAccountId());
+                        for (CartItem cartItem : checkedCartItemList) {
+                            request.getData().add(new RequirePayOrderRequest.BookIdObj(cartItem.getBookId()));
+                        }
+                        ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
+                                , new RequireOrderCallBack(ShopCartActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
+                    }
+                    else {
+                        new HintDialog(ShopCartActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
+                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
+                    }
+                }
+            }
+        });
         super.handleEvent();
     }
 
@@ -217,38 +182,6 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
                 binding.mainRecyclerview.notifyDataSetChanged();
             }
         });
-    }
-
-    /**
-     * 操作CartItem列表的方法,CartItem
-     *
-     * @param cartItemList 要查找的CartItem列表
-     * @param bookID       指定的bookID
-     * @return 如果找到, 则返回该CartItem, 如果有多个, 返回第一个, 如果没有, 返回null.
-     */
-    public CartItem findCartItemByID(ArrayList<CartItem> cartItemList, int bookID) {
-        for (CartItem cartItem : cartItemList) {
-            if (cartItem.getBookId() == bookID) {
-                return cartItem;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 操作CartItem列表的方法,在指定的CartItem列表中删除拥有给定的CartItem列表中CartItem的项
-     *
-     * @param fromCartItemList     在其中删除的CartItem列表
-     * @param toRemoveCartItemList 指定的CartItem列表
-     * @return 返回删除后的CartItem列表
-     */
-    public void removeCartItemByID(ArrayList<CartItem> fromCartItemList, ArrayList<CartItem> toRemoveCartItemList) {
-        for (CartItem toRemoveCartItem : toRemoveCartItemList) {
-            CartItem cartItem = findCartItemByID(fromCartItemList, toRemoveCartItem.getBookId());
-            if (cartItem != null) {
-                fromCartItemList.remove(cartItem);
-            }
-        }
     }
 
     @Override
@@ -284,6 +217,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
                             cartItemList.removeAll(checkedCartItemList);
                             checkedCartItemList.clear();
                             binding.mainRecyclerview.notifyDataSetChanged();
+                            dialog.dismiss();
                         }
                     }, new Action1<Throwable>() {
                         @Override
@@ -303,11 +237,27 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
         }
     }
     public void onSelectAllClick(View view){
-//        boolean setCheck = !selectAllCheckbox.isSelected();
-//        for (int i = 0; i < bookItems.size() && i < cartItemList.size(); i++) {
-//            NewShopBookItem everyItem = bookItems.get(i);
-//            everyItem.setChecked(setCheck, true);
-//        }
+        boolean setCheck = !binding.selectAllCheckbox.isSelected();
+        int currentPageIndex = binding.mainRecyclerview.getCurrentSelectPage() - 1;
+        if (currentPageIndex == -1){
+            return;
+        }
+        int firstIndex = currentPageIndex* binding.mainRecyclerview.getMaxItemNumInOnePage();
+        int lastIndex = firstIndex + binding.mainRecyclerview.getMaxItemNumInOnePage() - 1;
+        for (int i = firstIndex ; i <= lastIndex && i < cartItemList.size() ; i++){
+            CartItem cartItem = cartItemList.get(i);
+            if (setCheck){
+                if (!checkedCartItemList.contains(cartItem)){
+                    checkedCartItemList.add(cartItem);
+                }
+            }
+            else {
+                checkedCartItemList.remove(cartItem);
+            }
+        }
+        binding.mainRecyclerview.notifyDataSetChanged();
+        binding.checkoutBtn.setText("结算(" + checkedCartItemList.size() + ")");
+        binding.selectAllCheckbox.setSelected(setCheck);
     }
     private void requestOrder() {
         if (!NetUtils.isNetConnected()) {
@@ -332,8 +282,19 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
      * @return 如果所有item都被选中, 返回true, 只要有任意一个没有被选中, 返回false.
      */
     private boolean isAllChecked() {
-        boolean allChecked = true;
-        return allChecked;
+        int currentPageIndex = binding.mainRecyclerview.getCurrentSelectPage() - 1;
+        if (currentPageIndex == -1){
+            return false;
+        }
+        int firstIndex = currentPageIndex* binding.mainRecyclerview.getMaxItemNumInOnePage();
+        int lastIndex = firstIndex + binding.mainRecyclerview.getMaxItemNumInOnePage() - 1;
+        for (int i = firstIndex ; i <= lastIndex && i < cartItemList.size() ; i++){
+            CartItem cartItem = cartItemList.get(i);
+            if (!checkedCartItemList.contains(cartItem)){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -367,7 +328,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
 
         public void setData(CartItem item){
             cartItem = item;
-            if (itemBinding.shopBookItemBtn.getText().equals("")){
+            if (!"删除".equals(itemBinding.shopBookItemBtn.getText())){
                 itemBinding.shopBookItemBtn.setText("删除");
                 itemBinding.shopBookItemBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -385,6 +346,7 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
                                         cartItemList.remove(cartItem);
                                         checkedCartItemList.remove(cartItem);
                                         binding.mainRecyclerview.notifyDataSetChanged();
+                                        dialog.dismiss();
                                     }
                                 }, new Action1<Throwable>() {
                                     @Override
@@ -396,6 +358,29 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
                         }).show();
                     }
                 });
+                itemBinding.centerLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, cartItem.getBookId());
+                    }
+                });
+                itemBinding.shopBookItemCheckbox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (itemBinding.shopBookItemCheckbox.isSelected()){
+                            checkedCartItemList.remove(cartItem);
+                            binding.selectAllCheckbox.setSelected(false);
+                        }
+                        else {
+                            checkedCartItemList.add(cartItem);
+                            if (isAllChecked()){
+                                binding.selectAllCheckbox.setSelected(true);
+                            }
+                        }
+                        itemBinding.shopBookItemCheckbox.setSelected(!itemBinding.shopBookItemCheckbox.isSelected());
+                        binding.checkoutBtn.setText("结算(" + checkedCartItemList.size() + ")");
+                    }
+                });
             }
             itemBinding.shopBookItemBookNameTv.setText(cartItem.getBookTitle());
             if (cartItem.getBookStatus().contains("下架")){
@@ -403,6 +388,9 @@ public class ShopCartActivity extends ShopAutoLayoutBaseActivity {
             }
             itemBinding.shopBookItemBookAuthorTv.setText("作者:" + cartItem.getBookAuthor());
             itemBinding.shopBookItemBookPriceTv.setText("价格:￥" + cartItem.getBookSalePrice());
+
+            itemBinding.shopBookItemCheckbox.setSelected(checkedCartItemList.contains(cartItem));
+
             refreshImg(itemBinding.shopBookItemBookImg , cartItem.getBookCoverS());
         }
     }

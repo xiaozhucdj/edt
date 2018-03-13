@@ -139,13 +139,5 @@
                 android:text="价格:￥8888.88"
                 android:layout_marginTop="20px" />
         </LinearLayout>
-        <View
-            android:id="@+id/shop_book_item_separator_line"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/black"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="16px"
-            android:visibility="gone"/>
     </RelativeLayout>
 </layout>

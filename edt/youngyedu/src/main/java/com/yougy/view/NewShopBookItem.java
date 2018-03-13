@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yougy.common.manager.ImageLoaderManager;
-import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.Favor;
 import com.yougy.ui.activity.R;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -36,8 +36,6 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
     public TextView bookPriceTv;
     @BindView(R.id.shop_book_item_btn)
     public Button btn;
-    @BindView(R.id.shop_book_item_separator_line)
-    public View separatorLine;
 
     Context mContext;
     Object mData;
@@ -45,9 +43,9 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
     int position = -1;
 
 
-    @OnClick({R.id.shop_book_item_btn})
+    @OnClick({R.id.shop_book_item_btn , R.id.center_layout})
     public void onClick(View view){
-        if (view instanceof NewShopBookItem){
+        if (view instanceof NewShopBookItem || view instanceof LinearLayout){
             if (mOnItemActionListener != null){
                 mOnItemActionListener.onItemClick(position);
             }
@@ -92,15 +90,6 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
         checkbox.setOnClickListener(this);
     }
 
-    public void setIsLast(boolean isLast) {
-        if (isLast) {
-            separatorLine.setVisibility(GONE);
-        }
-        else {
-            separatorLine.setVisibility(VISIBLE);
-        }
-    }
-
     public void setData(Object data){
         mData = data;
         if (data == null){
@@ -108,26 +97,14 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
         }
         else {
             setVisibility(VISIBLE);
-            if (data instanceof Favor){
-                Favor favor = (Favor) data;
-                bookNameTv.setText(favor.getBookTitle());
-                if (favor.getBookStatus().contains("下架")){
-                    bookNameTv.setText(bookNameTv.getText() + "(下架)");
-                }
-                bookAuthorTv.setText("作者:" + favor.getBookAuthor());
-                bookPriceTv.setText("价格:￥" +  favor.getBookSalePrice());
-                refreshImg(bookImgview , favor.getBookCover());
+            Favor favor = (Favor) data;
+            bookNameTv.setText(favor.getBookTitle());
+            if (favor.getBookStatus().contains("下架")) {
+                bookNameTv.setText(bookNameTv.getText() + "(下架)");
             }
-            else if (data instanceof CartItem){
-                CartItem cartItem = (CartItem) data;
-                bookNameTv.setText(cartItem.getBookTitle());
-                if (cartItem.getBookStatus().contains("下架")){
-                    bookNameTv.setText(bookNameTv.getText() + "(下架)");
-                }
-                bookAuthorTv.setText("作者:" + cartItem.getBookAuthor());
-                bookPriceTv.setText("价格:￥" + cartItem.getBookSalePrice());
-                refreshImg(bookImgview , cartItem.getBookCoverS());
-            }
+            bookAuthorTv.setText("作者:" + favor.getBookAuthor());
+            bookPriceTv.setText("价格:￥" + favor.getBookSalePrice());
+            refreshImg(bookImgview, favor.getBookCoverS());
         }
     }
 

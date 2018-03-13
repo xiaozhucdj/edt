@@ -10,7 +10,7 @@ public class Favor {
      * bookTitle : 语文
      * userStatus : 启用
      * bookId : 7146306
-     * bookCover : http://espo.oss-cn-shanghai.aliyuncs.com/leke/book/cover/img20161102052955.png
+     * bookCoverS : http://espo.oss-cn-shanghai.aliyuncs.com/leke/book/cover/img20161102052955.png
      * favorId : 1
      * userGender :
      * userId : 1000000001
@@ -27,7 +27,7 @@ public class Favor {
     private String bookTitle;
     private String userStatus;
     private int bookId;
-    private String bookCover;
+    private String bookCoverS;
     private int favorId;
     private String userGender;
     private int userId;
@@ -75,12 +75,12 @@ public class Favor {
         this.bookId = bookId;
     }
 
-    public String getBookCover() {
-        return bookCover;
+    public String getBookCoverS() {
+        return bookCoverS;
     }
 
-    public void setBookCover(String bookCover) {
-        this.bookCover = bookCover;
+    public void setBookCoverS(String bookCoverS) {
+        this.bookCoverS = bookCoverS;
     }
 
     public int getFavorId() {
