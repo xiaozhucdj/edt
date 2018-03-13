@@ -40,6 +40,7 @@ import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
