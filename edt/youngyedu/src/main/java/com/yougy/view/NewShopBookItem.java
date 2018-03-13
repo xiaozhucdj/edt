@@ -126,7 +126,7 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
                 }
                 bookAuthorTv.setText("作者:" + cartItem.getBookAuthor());
                 bookPriceTv.setText("价格:￥" + cartItem.getBookSalePrice());
-                refreshImg(bookImgview , cartItem.getBookCover());
+                refreshImg(bookImgview , cartItem.getBookCoverS());
             }
         }
     }

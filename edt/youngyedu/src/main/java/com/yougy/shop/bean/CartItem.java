@@ -25,7 +25,7 @@ public class CartItem implements Parcelable {
      * bookSubtitle : 无
      * bookStatus : 审查通过
      * bookPrice : 1
-     * bookCover : http://espo.oss-cn-shanghai.aliyuncs.com/leke/book/cover/img20161102052955.png
+     * bookCoverS : http://espo.oss-cn-shanghai.aliyuncs.com/leke/book/cover/img20161102052955.png
      * userRealName : 袁野
      */
 
@@ -45,7 +45,7 @@ public class CartItem implements Parcelable {
     private String bookSubtitle;
     private String bookStatus;
     private double bookPrice;
-    private String bookCover;
+    private String bookCoverS;
     private String userRealName;
 
     public int getBookId() {
@@ -176,12 +176,12 @@ public class CartItem implements Parcelable {
         this.bookPrice = bookPrice;
     }
 
-    public String getBookCover() {
-        return bookCover;
+    public String getBookCoverS() {
+        return bookCoverS;
     }
 
-    public void setBookCover(String bookCover) {
-        this.bookCover = bookCover;
+    public void setBookCoverS(String bookCoverS) {
+        this.bookCoverS = bookCoverS;
     }
 
     public String getUserRealName() {
@@ -216,7 +216,7 @@ public class CartItem implements Parcelable {
         dest.writeString(this.bookSubtitle);
         dest.writeString(this.bookStatus);
         dest.writeDouble(this.bookPrice);
-        dest.writeString(this.bookCover);
+        dest.writeString(this.bookCoverS);
         dest.writeString(this.userRealName);
     }
 
@@ -240,7 +240,7 @@ public class CartItem implements Parcelable {
         this.bookSubtitle = in.readString();
         this.bookStatus = in.readString();
         this.bookPrice = in.readDouble();
-        this.bookCover = in.readString();
+        this.bookCoverS = in.readString();
         this.userRealName = in.readString();
     }
 

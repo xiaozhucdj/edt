@@ -97,7 +97,7 @@ public class OrderListActivity extends ShopBaseActivity {
                                         setBookList(new ArrayList<BookInfo>(){{
                                             add(new BookInfo(){{
                                                 setBookTitle(newOrderInfo.getBookTitle());
-//                                                setBookCover(newOrderInfo.getBookCover());
+//                                                setBookCoverS(newOrderInfo.getBookCoverS());
                                                 Log.v("FH" , "newOrderInfo.getBookPrice " + newOrderInfo.getBookPrice());
                                                 setBookSalePrice(newOrderInfo.getBookPrice());
                                             }});
@@ -108,7 +108,7 @@ public class OrderListActivity extends ShopBaseActivity {
                                 else {
                                     oldOrder.getBookList().add(new BookInfo(){{
                                         setBookTitle(newOrderInfo.getBookTitle());
-//                                        setBookCover(newOrderInfo.getBookCover());
+//                                        setBookCoverS(newOrderInfo.getBookCoverS());
                                         setBookSalePrice(newOrderInfo.getBookPrice());
                                         Log.v("FH" , "222newOrderInfo.getBookPrice " + newOrderInfo.getBookPrice());
                                     }});

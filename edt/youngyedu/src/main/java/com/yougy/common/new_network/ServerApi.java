@@ -9,10 +9,13 @@ import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.DownloadInfo;
+import com.yougy.shop.bean.RemoveRequestObj;
 
 import java.util.List;
 
+import retrofit2.http.Body;
 import retrofit2.http.DefaultField;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -166,4 +169,23 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryCourse"})
     Observable<BaseResult<List<CourseInfo>>> queryCourse(@Field("userId") Integer userId);
+
+    /**
+     * 查询学生课程
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryCart"})
+    Observable<BaseResult<List<CartItem>>> queryCart(@Field("userId") String userId);
+
+    /**
+     * 批量删除购物车
+     *
+     * @param removeRequestObj
+     * @return
+     */
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"removeCart"})
+    Observable<BaseResult<Object>> removeCart(@Body RemoveRequestObj removeRequestObj);
+
 }
