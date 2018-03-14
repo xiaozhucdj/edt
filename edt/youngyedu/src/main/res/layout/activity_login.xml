@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -60,12 +59,14 @@
         <ImageView
             android:layout_width="162px"
             android:layout_height="162px"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="200px"
             android:src="@drawable/icon_student_large" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="25px"
             android:text="欢迎使用乐课"
             android:textColor="@color/black"
