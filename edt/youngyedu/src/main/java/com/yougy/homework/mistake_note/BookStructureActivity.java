@@ -21,10 +21,10 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.PageableRecyclerView;
-import com.yougy.homework.bean.BookStructureNode;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.MistakeSummary;
 import com.yougy.message.ListUtil;
+import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeNoteBookStructureBinding;
 import com.yougy.ui.activity.databinding.ItemBookChapterBinding;
@@ -41,7 +41,7 @@ import rx.functions.Action1;
 
 public class BookStructureActivity extends HomeworkBaseActivity {
     ActivityMistakeNoteBookStructureBinding binding;
-    List<BookStructureNode> bookStructureNodeList = new ArrayList<BookStructureNode>();
+    List<BookInfo.BookContentsBean.NodesBean> bookStructureNodeList = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
     List<MistakeSummary> mistakeList = new ArrayList<MistakeSummary>();
     int bookId;
     int homeworkId;
@@ -104,7 +104,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        BookStructureNode node;
+                        BookInfo.BookContentsBean.NodesBean node;
                         if (position == 0){
                             node = ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).fatherNode;
                         }
@@ -153,16 +153,15 @@ public class BookStructureActivity extends HomeworkBaseActivity {
         }
         bookStructureNodeList.clear();
         //先获取图书章节信息
-        NetWorkManager.queryBook(bookId)
-                .subscribe(new Action1<List<Object>>() {
+        NetWorkManager.queryBook(bookId + "" , null)
+                .subscribe(new Action1<List<BookInfo>>() {
                     @Override
-                    public void call(List<Object> objects) {
-                        if (objects.size() > 0){
+                    public void call(List<BookInfo> bookInfoList) {
+                        if (bookInfoList.size() > 0){
                             //再获取错题列表
                             getMistakes();
-                            bookTitle = (String) ((LinkedTreeMap) objects.get(0)).get("bookTitle");
-                            List<LinkedTreeMap> nodeList =(List<LinkedTreeMap>)((LinkedTreeMap) ((LinkedTreeMap) objects.get(0)).get("bookContents")).get("nodes");
-                            bookStructureNodeList.addAll(parseNode(nodeList));
+                            bookTitle = bookInfoList.get(0).getBookTitle();
+                            bookStructureNodeList.addAll(bookInfoList.get(0).getBookContents().getNodes());
                             binding.mainRecyclerview.notifyDataSetChanged();
                         }
                     }
@@ -214,25 +213,6 @@ public class BookStructureActivity extends HomeworkBaseActivity {
         onBackPressed();
     }
 
-    /**
-     * 按深度遍历的顺序遍历图书章节的节点树,按照遍历顺序把节点放在一个list里
-     * @param list
-     * @return
-     */
-    private List<BookStructureNode> parseNode(List<LinkedTreeMap> list){
-        List<BookStructureNode> returnList = new ArrayList<BookStructureNode>();
-        for (LinkedTreeMap linkedTreeMap : list) {
-            BookStructureNode node = new BookStructureNode();
-            node.setId((int)((double) linkedTreeMap.get("id")));
-            node.setLevel((int)((double) linkedTreeMap.get("level")));
-            node.setName((String) linkedTreeMap.get("name"));
-            if (linkedTreeMap.get("nodes") != null){
-                node.setNodes(parseNode((List<LinkedTreeMap>)linkedTreeMap.get("nodes")));
-            }
-            returnList.add(node);
-        }
-        return returnList;
-    }
 
     private class MyHolder extends RecyclerView.ViewHolder{
         ListView listview;
@@ -245,29 +225,29 @@ public class BookStructureActivity extends HomeworkBaseActivity {
     }
 
     private class MyAdapter extends BaseAdapter {
-        private BookStructureNode fatherNode;
-        private List<BookStructureNode> nodeList = new ArrayList<BookStructureNode>();
-        public void setFatherNode(BookStructureNode fatherNode){
+        private BookInfo.BookContentsBean.NodesBean fatherNode;
+        private List<BookInfo.BookContentsBean.NodesBean> nodeList = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
+        public void setFatherNode(BookInfo.BookContentsBean.NodesBean fatherNode){
             this.fatherNode = fatherNode;
             nodeList.clear();
             if (fatherNode .getNodes()!= null && fatherNode .getNodes().size() != 0){
-                for (BookStructureNode node : fatherNode.getNodes()) {
+                for (BookInfo.BookContentsBean.NodesBean node : fatherNode.getNodes()) {
                     addNode(node);
                 }
             }
             notifyDataSetChanged();
         }
 
-        private void addNode(BookStructureNode node){
+        private void addNode(BookInfo.BookContentsBean.NodesBean node){
             nodeList.add(node);
             if (node.getNodes() != null && node.getNodes().size() != 0){
-                for (BookStructureNode childNode : node.getNodes()) {
+                for (BookInfo.BookContentsBean.NodesBean childNode : node.getNodes()) {
                     addNode(childNode);
                 }
             }
         }
 
-        public BookStructureNode getFatherNode(){
+        public BookInfo.BookContentsBean.NodesBean getFatherNode(){
             return fatherNode;
         }
         @Override
@@ -294,7 +274,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                 convertView.setTag(bookChapterBinding);
             }
             bookChapterBinding = (ItemBookChapterBinding) convertView.getTag();
-            BookStructureNode node = nodeList.get(position);
+            BookInfo.BookContentsBean.NodesBean node = nodeList.get(position);
             bookChapterBinding.textview.setText(node.getName());
             if (ListUtil.conditionalContains(mistakeList, new ListUtil.ConditionJudger<MistakeSummary>() {
                 @Override

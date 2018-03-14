@@ -73,7 +73,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     private void itemClick(int position) {
         BookInfo info = mPageInfos.get(position);
         LogUtils.e(tag, "onItemClick......" + info.getBookTitle());
-        loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, Integer.parseInt(info.getBookId()));
+        loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, Integer.parseInt(info.getBookId() + ""));
     }
 
     @Override

@@ -224,12 +224,12 @@ public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements 
                 }
                 bookItems.get(j).setChecked(checked, false);
                 bookItems.get(j).setPosition(i);
-                //隐藏最后一个Item的下分割线
-                if (i == endIndex) {
-                    bookItems.get(j).setIsLast(true);
-                } else {
-                    bookItems.get(j).setIsLast(false);
-                }
+//                //隐藏最后一个Item的下分割线
+//                if (i == endIndex) {
+//                    bookItems.get(j).setIsLast(true);
+//                } else {
+//                    bookItems.get(j).setIsLast(false);
+//                }
             } else {
                 bookItems.get(j).setData(null);
             }

@@ -117,6 +117,10 @@ public class PageableRecyclerView extends LinearLayout {
         return this;
     }
 
+    public int getMaxItemNumInOnePage(){
+        return maxItemNumInOnePage;
+    }
+
     public PageableRecyclerView setLayoutManager(RecyclerView.LayoutManager manager) {
         recyclerView.setLayoutManager(manager);
         return this;
@@ -178,6 +182,10 @@ public class PageableRecyclerView extends LinearLayout {
 
     public void setCurrentPage(int page){
         currentSelectPageIndex = page - 1;
+    }
+
+    public int getCurrentSelectPage(){
+        return currentSelectPageIndex + 1;
     }
 
     public RecyclerView getRealRcyView() {

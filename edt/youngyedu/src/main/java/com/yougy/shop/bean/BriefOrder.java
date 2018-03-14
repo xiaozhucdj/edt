@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.List;
-import com.yougy.init.bean.BookInfo;
 
 /**
  * Created by FH on 2017/7/3.

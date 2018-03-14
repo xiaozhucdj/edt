@@ -11,7 +11,10 @@ import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.shop.bean.BookInfo;
+import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.DownloadInfo;
+import com.yougy.shop.bean.RemoveRequestObj;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -174,9 +177,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Object>> queryBook(Integer bookId) {
+    public static Observable<List<BookInfo>> queryBook(String bookId , String userId) {
         Log.v("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
-        return getInstance().getServerApi().queryBook(bookId)
+        return getInstance().getServerApi().queryBook(bookId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -256,6 +259,19 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<List<CartItem>> queryCart(String userId) {
+        Log.v("FH", "!!!!!调用ServerApi查询用户购物车:queryCart");
+        return getInstance().getServerApi().queryCart(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> removeCart(RemoveRequestObj removeRequestObj) {
+        Log.v("FH", "!!!!!调用ServerApi删除多项收藏夹:removeCart");
+        return getInstance().getServerApi().removeCart(removeRequestObj)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
 
 }
