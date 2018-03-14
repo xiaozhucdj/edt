@@ -2,57 +2,53 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/screen_cut_layout"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:background="@color/background_white"
+    android:layout_height="60px"
+    android:background="@color/white"
     android:clickable="true"
     android:orientation="horizontal"
     android:visibility="gone">
 
     <Button
-        android:gravity="center"
         android:id="@+id/cancel_cut"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_width="318px"
+        android:layout_height="60px"
         android:background="@drawable/edu_img_snapshot_common_select"
-        android:textColor="@drawable/edu_color_snapshot_common_select"
+        android:gravity="center"
         android:text="取消"
-        android:textSize="@dimen/cut_screen_text_size" />
-
-    <Button
-        android:gravity="center"
-        android:layout_marginRight="2dp"
-        android:id="@+id/copy_cut"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_weight="1"
-        android:background="@drawable/edu_img_snapshot_common_select"
         android:textColor="@drawable/edu_color_snapshot_common_select"
-        android:text="拷贝"
-        android:textSize="@dimen/cut_screen_text_size" />
+        android:textSize="24px" />
 
     <Button
+        android:id="@+id/copy_cut"
+        android:layout_width="318px"
+        android:layout_height="60px"
+        android:layout_marginLeft="2px"
+        android:background="@drawable/edu_img_snapshot_common_select"
         android:gravity="center"
-        android:visibility="gone"
+        android:text="拷贝"
+        android:textColor="@drawable/edu_color_snapshot_common_select"
+        android:textSize="24px" />
+
+    <Button
         android:id="@+id/send_cut"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="1dp"
-        android:layout_weight="1"
         android:background="@drawable/edu_img_snapshot_common_select"
-        android:textColor="@drawable/edu_color_snapshot_common_select"
+        android:gravity="center"
         android:text="发送"
-        android:textSize="@dimen/cut_screen_text_size" />
+        android:textColor="@drawable/edu_color_snapshot_common_select"
+        android:textSize="@dimen/cut_screen_text_size"
+        android:visibility="gone" />
 
     <Button
-        android:gravity="center"
         android:id="@+id/save_cut"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_width="318px"
+        android:layout_height="60px"
+        android:layout_marginLeft="2px"
         android:background="@drawable/edu_img_snapshot_common_select"
-        android:textColor="@drawable/edu_color_snapshot_common_select"
+        android:gravity="center"
         android:text="保存"
-        android:textSize="@dimen/cut_screen_text_size" />
+        android:textColor="@drawable/edu_color_snapshot_common_select"
+        android:textSize="24px" />
 </LinearLayout>
