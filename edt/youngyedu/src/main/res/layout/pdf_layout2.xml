@@ -15,7 +15,7 @@
         android:layout_marginTop="78px"
         android:background="#cc000000"
         android:clickable="true"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="450px"
@@ -48,7 +48,7 @@
                     <View
                         android:id="@+id/view_item_directory"
                         android:layout_width="225px"
-                        android:layout_height="2px"
+                        android:layout_height="4px"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/img_color_line" />
@@ -72,7 +72,7 @@
                     <View
                         android:id="@+id/view_item_bookmarks"
                         android:layout_width="225px"
-                        android:layout_height="2px"
+                        android:layout_height="4px"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/img_color_line" />
