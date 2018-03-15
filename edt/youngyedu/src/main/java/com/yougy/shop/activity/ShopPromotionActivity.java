@@ -133,7 +133,7 @@ public class ShopPromotionActivity extends ShopBaseActivity{
 
     private void itemClick(BookInfo bookInfo) {
         Intent intent = new Intent(this, ShopBookDetailsActivity.class);
-        intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(bookInfo.getBookId()));
+        intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(bookInfo.getBookId() + ""));
         startActivity(intent);
     }
 
@@ -170,6 +170,4 @@ public class ShopPromotionActivity extends ShopBaseActivity{
             binding.pageNumberLayout.addView(pageLayout, params);
         }
     }
-
-
 }

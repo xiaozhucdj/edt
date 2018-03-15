@@ -58,7 +58,7 @@
                 android:layout_height="32px"
                 android:layout_marginLeft="10px"
                 android:layout_marginRight="10px"
-                android:background="@drawable/img_manjian"
+                android:background="@drawable/img_bg_manjian"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/manjian_text"

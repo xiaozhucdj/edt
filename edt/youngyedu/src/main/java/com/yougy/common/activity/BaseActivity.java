@@ -535,15 +535,14 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         } else {
             super.onBackPressed();
             //恢复打开app前的背光情况。
+            int nowBrightness = SharedPreferencesUtil.getSpUtil().getInt("OLD_BRIGHTNESS", 0);
+            FrontLightController.setBrightness(this, nowBrightness);
             boolean isLightOn = SharedPreferencesUtil.getSpUtil().getBoolean("OLD_ISLIGHTON", true);
             if (isLightOn) {
                 FrontLightController.turnOn(this);
             } else {
                 FrontLightController.turnOff(this);
             }
-            int nowBrightness = SharedPreferencesUtil.getSpUtil().getInt("OLD_BRIGHTNESS", 0);
-            FrontLightController.setBrightness(this, nowBrightness);
-
 
             finishAll();
         }
