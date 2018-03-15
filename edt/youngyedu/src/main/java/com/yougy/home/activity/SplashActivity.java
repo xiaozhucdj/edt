@@ -115,6 +115,8 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
         FrontLightController.turnOn(this);
 
+        //展示设备亮度为10/16
+        FrontLightController.setBrightness(this, 160*10/16);
 
 
         /*//获取当前亮级
