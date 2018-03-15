@@ -109,8 +109,6 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
         mUndoIv.setOnClickListener(this);
         mRedoIv.setOnClickListener(this);
         mInputByGestureIv.setSelected(true);
-
-
     }
 
     @Override

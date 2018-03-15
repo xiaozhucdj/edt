@@ -16,71 +16,37 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_normal_fanhui.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_chehui.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_student_122px.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_10px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_11px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_12px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_13px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_14px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_15px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_2px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_3px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_4px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_5px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_6px_jindukua.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_7px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_8px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_9px_jindukuai.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_shangyibu.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_xiayibu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_bi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_bi.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_biji.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_biji.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fanhui.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fanhui.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fasong.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fasong.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_gengduo.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_gengduo.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_huihua.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_huihua.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_jietu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_jietu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_mulv.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_mulv.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_niantie.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_niantie.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shanchu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shanchu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shangyibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shangyibu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shuqian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shuqian.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_tupian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_tupian.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiangpi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiangpi.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiayibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiayibu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiugai.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiugai.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_zuoye.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_zuoye.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press__xiangpi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press__xiangpi.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_bi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_bi.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_biji.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_biji.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fanhui.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fanhui.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fasong.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fasong.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_gengduo.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_gengduo.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_huihua.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_huihua.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_jietu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_jietu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_mulv.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_mulv.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_niantie.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_niantie.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shanchu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shanchu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shangyibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shangyibu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shuqian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shuqian.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_tupian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_tupian.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiayibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiayibu.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiugai.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiugai.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_zuoye.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_zuoye.png" />
+    <list default="true" id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="适配器">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_unabled.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_bi.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_shangyibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_xiayibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_bi.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_shangyibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_xiayibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unable_shangyibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unable_xiayibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unabled_bi.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_quxiao.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_pen_select.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_redo_select.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_undo_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_label_pressed.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_label_pressed.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_bg.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_bg.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_minimize.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_minimize.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_minimize.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_minimize.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_redo_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_redo_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ShortNoteFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ShortNoteFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_et_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_et_select.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_bg_selector.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_bg_selector.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_huihua_thumb_selector.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_huihua_thumb_selector.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_login.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_login.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main_ui.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main_ui.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/note_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/note_layout.xml" />
     </list>
     <ignored path="edt.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -150,17 +116,37 @@
     <favorites_list name="edt" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="opt_layout.xml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml">
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
+    <leaf>
+      <file leaf-file-name="BaseFragment.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="200" column="32" selection-start-line="200" selection-start-column="32" selection-end-line="200" selection-end-column="32" />
+            <state relative-caret-position="96">
+              <caret line="164" column="24" selection-start-line="164" selection-start-column="24" selection-end-line="164" selection-end-column="24" />
               <folding />
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MoveImageView.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MoveImageView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="37">
+              <caret line="143" column="1" selection-start-line="143" selection-start-column="1" selection-end-line="144" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="insert_pic_layout.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/insert_pic_layout.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer2">
+            <state />
           </provider>
         </entry>
       </file>
@@ -3452,29 +3438,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/BookAdapter.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/shape_rounded_rectangle_black_border_login.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/recyle_dirvier_tras.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/SearchBookDialog.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/search_text_color_selector.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/search_btn_bg_selector.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/dialog_search_book.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/FileContonst.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_subject.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_grade.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllTextBookFragment.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllNotesFragment.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllCoachBookFragment.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_all_book.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_all_fragment_book.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_book.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_homework.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/AllNotesAdapter.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllHomeworkFragment.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_fragment_notes.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/AllHomeworkAdapter.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_all_fragment_notes.xml" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_all_fragment_homework.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/ReferenceBooksFragment.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/AllBookAdapter.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/eventbus/EventBusConstant.java" />
@@ -3498,11 +3461,34 @@
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main_ui.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_login.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java" />
-        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_redo_select.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_bg_selector.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_huihua_thumb_selector.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/values/dimens.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_color_snapshot_common_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_snapshot_common_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/screencut_opt_layout.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/TextThumbSeekBar.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/seek_layout.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pageprev_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pagenext_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/btn_close_dialog_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/BookMarksDialog.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_marksadd_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/dialog_book_marks.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/pdf_layout2.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_book_marks.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_outline_entry.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ShortNoteFragment.java" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pen_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_et_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_pen_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_undo_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_redo_select.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/note_layout.xml" />
       </list>
     </option>
   </component>
@@ -3521,6 +3507,9 @@
     <OptionsSetting value="true" id="Edit" />
     <ConfirmationsSetting value="0" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="1" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -3541,10 +3530,6 @@
         <subPane />
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="Scratches">
-        <subPane />
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -3673,14 +3658,234 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yougy" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yougy" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="home" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yougy" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="home" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fragment" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="showFragment" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yougy" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="home" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fragment" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches">
+        <subPane />
+      </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="device.picker.selection" value="C8W7KLW7QW" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="SearchEverywhereHistoryKey" value="spl&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java&#10;bind_btn_doing_bg_normal&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/res/drawable-mdpi/bind_btn_doing_bg_normal.png&#10;logi&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/init/activity/LoginActivity.java&#10;main&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/res/layout/activity_main_ui.xml&#10;sp&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java&#10;ma&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/AndroidManifest.xml&#10;not&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/view/NoteBookView.java&#10;se&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/setting/ui/SettingMainActivity.java&#10;DividerGridItemDecoration&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/view/DividerGridItemDecoration.java" />
+    <property name="SearchEverywhereHistoryKey" value="icon_label_pressed&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/res/drawable-mdpi/icon_label_pressed.png&#10;icon_label&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/res/drawable-mdpi/icon_label.png&#10;se&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/setting/ui/SettingMainActivity.java&#10;SET&#9;PSI&#9;JAVA://com.yougy.setting.ui.SettingMainActivity&#10;login&#9;PSI&#9;JAVA://com.yougy.init.activity.LoginActivity&#10;spl&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java&#10;bind_btn_doing_bg_normal&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/res/drawable-mdpi/bind_btn_doing_bg_normal.png&#10;logi&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/init/activity/LoginActivity.java&#10;main&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/res/layout/activity_main_ui.xml&#10;sp&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java&#10;ma&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/AndroidManifest.xml&#10;not&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/view/NoteBookView.java&#10;DividerGridItemDecoration&#9;FILE&#9;file://D:/rongjieWorkSpace/leke_student/leke_android/edt/youngyedu/src/main/java/com/yougy/view/DividerGridItemDecoration.java" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -4126,7 +4331,56 @@
       <option name="project" value="LOCAL" />
       <updated>1520838499427</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="适配阅读界面 顶部菜单栏UI">
+      <created>1521007921554</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1521007921554</updated>
+    </task>
+    <task id="LOCAL-00014" summary="截图Ui适配">
+      <created>1521018320175</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1521018320175</updated>
+    </task>
+    <task id="LOCAL-00015" summary="截图 阅读底部菜单栏目">
+      <created>1521082217902</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1521082217902</updated>
+    </task>
+    <task id="LOCAL-00016" summary="添加阅读 书签对话框">
+      <created>1521092994048</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1521092994048</updated>
+    </task>
+    <task id="LOCAL-00017" summary="修改 图书目录">
+      <created>1521094708909</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1521094708909</updated>
+    </task>
+    <task id="LOCAL-00018" summary="更新">
+      <created>1521094831939</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1521094831939</updated>
+    </task>
+    <task id="LOCAL-00019" summary="适配器">
+      <created>1521097425828</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1521097425828</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -4134,27 +4388,27 @@
     <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32756633" sideWeight="0.49511003" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36520737" sideWeight="0.44498777" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3644752" sideWeight="0.44498777" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23655257" sideWeight="0.50687283" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2768166" sideWeight="0.41442543" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5524798" sideWeight="0.41748166" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="WINDOWED" visible="false" show_stripe_button="true" weight="0.29296425" sideWeight="0.8838631" order="9" side_tool="false" content_ui="tabs" x="0" y="0" width="1680" height="1028" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32090464" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.116136916" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.62168396" sideWeight="0.58251834" order="10" side_tool="false" content_ui="tabs" x="0" y="348" width="1680" height="313" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32871974" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6516724" sideWeight="0.58557457" order="10" side_tool="false" content_ui="tabs" x="0" y="348" width="1680" height="313" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16147636" sideWeight="0.49511003" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.71280277" sideWeight="0.40525672" order="12" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2958435" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42560554" sideWeight="0.6143032" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.038062282" sideWeight="0.41748166" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2292176" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.0057670125" sideWeight="0.6143032" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.071515895" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294621" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40023068" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23655257" sideWeight="0.50687283" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40023068" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -4171,7 +4425,7 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23655257" sideWeight="0.50687283" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2768166" sideWeight="0.41442543" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5524798" sideWeight="0.41748166" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="WINDOWED" visible="false" show_stripe_button="true" weight="0.29296425" sideWeight="0.8838631" order="9" side_tool="false" content_ui="tabs" x="0" y="0" width="1680" height="1028" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.0" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -4182,20 +4436,20 @@
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294621" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40023068" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32756633" sideWeight="0.49511003" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36520737" sideWeight="0.44498777" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3644752" sideWeight="0.44498777" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32090464" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.116136916" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.03877791" sideWeight="0.58251834" order="10" side_tool="false" content_ui="tabs" x="0" y="348" width="1680" height="313" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32871974" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6516724" sideWeight="0.58557457" order="10" side_tool="false" content_ui="tabs" x="0" y="348" width="1680" height="313" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16147636" sideWeight="0.49511003" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.71280277" sideWeight="0.40525672" order="12" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29645476" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.038062282" sideWeight="0.41748166" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2292176" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Freeline" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42560554" sideWeight="0.6143032" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.009400705" sideWeight="0.6143032" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.071515895" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23655257" sideWeight="0.50687283" order="6" side_tool="true" content_ui="tabs" />
@@ -4231,6 +4485,7 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <confirmMoveToFailedCommit value="1" />
     <MESSAGE value="适配角标" />
     <MESSAGE value="适配侧边栏。。。" />
     <MESSAGE value="适配本学期 图书 笔记 作业" />
@@ -4243,7 +4498,14 @@
     <MESSAGE value="适配设置页 对话框" />
     <MESSAGE value="适配初始化" />
     <MESSAGE value="解决配置文件冲突问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="解决配置文件冲突问题" />
+    <MESSAGE value="适配阅读界面 顶部菜单栏UI" />
+    <MESSAGE value="截图Ui适配" />
+    <MESSAGE value="截图 阅读底部菜单栏目" />
+    <MESSAGE value="添加阅读 书签对话框" />
+    <MESSAGE value="修改 图书目录" />
+    <MESSAGE value="更新" />
+    <MESSAGE value="适配器" />
+    <option name="LAST_COMMIT_MESSAGE" value="适配器" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -4265,194 +4527,171 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/dialog_book_marks.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#411#758#0" expanded="false" />
+            <element signature="e#1172#1302#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/setting/ui/SettingMainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="210" column="16" selection-start-line="210" selection-start-column="16" selection-end-line="210" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_color_line.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_color_lv_selector.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fanhui.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fanhui.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_back_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pen_select.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_book_marks.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="2" column="50" selection-start-line="2" selection-start-column="38" selection-end-line="2" selection-end-column="50" />
+        <state relative-caret-position="290">
+          <caret line="49" column="11" selection-start-line="49" selection-start-column="10" selection-end-line="49" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/BookMarkAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="47" column="66" selection-start-line="47" selection-start-column="66" selection-end-line="47" selection-end-column="66" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Android/sdk/sources/android-25/android/widget/ImageButton.java">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_outline_entry.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1590">
-          <caret line="69" column="13" selection-start-line="69" selection-start-column="13" selection-end-line="69" selection-end-column="13" />
+        <state relative-caret-position="236">
+          <caret line="24" column="44" selection-start-line="24" selection-start-column="44" selection-end-line="24" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/adapter/HandlerDirAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="53" column="68" selection-start-line="53" selection-start-column="68" selection-end-line="53" selection-end-column="68" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MyFrameLayout.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7140">
-          <caret line="341" column="56" selection-start-line="341" selection-start-column="56" selection-end-line="341" selection-end-column="56" />
+        <state relative-caret-position="210">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shangyibu.png">
-      <provider selected="true" editor-type-id="images">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/pdf_layout2.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="17" column="32" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="32" />
+          <folding>
+            <element signature="e#3340#3598#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shangyibu.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_shangyibu.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/HandleOnyxReaderFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="69" column="56" selection-start-line="69" selection-start-column="56" selection-end-line="69" selection-end-column="56" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/seek_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="439">
+          <caret line="66" column="43" selection-start-line="66" selection-start-column="43" selection-end-line="66" selection-end-column="43" />
+          <folding>
+            <element signature="e#252#659#0" expanded="false" />
+            <element signature="e#665#882#0" expanded="false" />
+            <element signature="e#1154#1564#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
       <provider editor-type-id="android-designer2">
         <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_base_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="18" column="31" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="18" column="29" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiayibu.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_title.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_eraser_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="56" selection-start-line="4" selection-start-column="38" selection-end-line="4" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_redo_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="56" selection-start-line="4" selection-start-column="38" selection-end-line="4" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shuqian.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_bi.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shuqian.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_bg.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_bookmark_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="2" column="59" selection-start-line="2" selection-start-column="59" selection-end-line="2" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_mulv.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_minimize.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_mulv.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_minimize.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_bookdirectory_select.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="44" selection-start-line="4" selection-start-column="44" selection-end-line="4" selection-end-column="44" />
+        <state relative-caret-position="143">
+          <caret line="44" column="25" selection-start-line="44" selection-start-column="25" selection-end-line="44" selection-end-column="25" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_notedeltete_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="55" selection-start-line="3" selection-start-column="38" selection-end-line="3" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiugai.png">
-      <provider selected="true" editor-type-id="images">
+      <provider editor-type-id="android-designer2">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiugai.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_noteupdata_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="44" selection-start-line="3" selection-start-column="44" selection-end-line="3" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_textbook_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="5" column="52" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_more_select.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pen_select.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
@@ -4460,162 +4699,205 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_pen_item_bg.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="9" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_big_small_bg_selector.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_redo_select.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_seek_pager_press_bg.9.png">
-      <provider editor-type-id="images">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="ninepatcheditor">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_press.png">
+      <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_seek_size_press_bg.9.png">
-      <provider editor-type-id="images">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="ninepatcheditor">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_normal.png">
+      <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_seek_size_normal_bg.9.png">
-      <provider editor-type-id="images">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="ninepatcheditor">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_bg_selector.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_delete_select.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
-          <caret line="3" column="54" selection-start-line="3" selection-start-column="54" selection-end-line="3" selection-end-column="54" />
+          <caret line="3" column="49" selection-start-line="3" selection-start-column="49" selection-end-line="3" selection-end-column="49" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_huihua_thumb_selector.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="10" column="2" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_zuoye.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unable_xiayibu.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_zuoye.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_xiayibu.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_homework_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_biji.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_xiayibu.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_biji.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_note_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="44" selection-start-line="4" selection-start-column="44" selection-end-line="4" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_huihua.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_draw_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="50" selection-start-line="3" selection-start-column="38" selection-end-line="3" selection-end-column="54" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pase_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="56" selection-start-line="3" selection-start-column="38" selection-end-line="3" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_jietu.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_screenshot_select.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_redo_select.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="2" column="53" selection-start-line="2" selection-start-column="38" selection-end-line="2" selection-end-column="53" />
+          <caret line="2" column="50" selection-start-line="2" selection-start-column="50" selection-end-line="2" selection-end-column="50" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_send_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="55" selection-start-line="3" selection-start-column="38" selection-end-line="3" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_addimg_select.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="3" column="41" selection-start-line="3" selection-start-column="41" selection-end-line="3" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_tupian.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unable_shangyibu.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_cebianlan.png">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_shangyibu.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml">
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_shangyibu.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_undo_select.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="2" column="51" selection-start-line="2" selection-start-column="51" selection-end-line="2" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_unabled.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_normal.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_press.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_et_select.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="3" column="48" selection-start-line="3" selection-start-column="48" selection-end-line="3" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_bi.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_bi.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unabled_bi.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_pen_select.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="4" column="52" selection-start-line="4" selection-start-column="52" selection-end-line="4" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/note_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="900">
+          <caret line="39" column="54" selection-start-line="39" selection-start-column="54" selection-end-line="39" selection-end-column="54" />
+          <folding />
+        </state>
+      </provider>
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_minimize_select.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="200" column="32" selection-start-line="200" selection-start-column="32" selection-end-line="200" selection-end-column="32" />
+        <state relative-caret-position="150">
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_press.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_save_select.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="3" column="59" selection-start-line="3" selection-start-column="38" selection-end-line="3" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ShortNoteFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="288" column="85" selection-start-line="288" selection-start-column="85" selection-end-line="288" selection-end-column="85" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/insert_pic_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_label.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="164" column="24" selection-start-line="164" selection-start-column="24" selection-end-line="164" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_label_pressed.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/MoveImageView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="37">
+          <caret line="143" column="1" selection-start-line="143" selection-start-column="1" selection-end-line="144" selection-end-column="1" />
           <folding />
         </state>
       </provider>
