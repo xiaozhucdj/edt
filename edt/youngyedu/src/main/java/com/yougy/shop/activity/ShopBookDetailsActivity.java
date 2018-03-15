@@ -279,7 +279,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }
                 break;
             case R.id.look_more_activity:
-                startActivity(new Intent(this,ShopPromotionActivity.class));
+                Intent intent = new Intent(this,ShopPromotionActivity.class);
+                intent.putExtra(ShopPromotionActivity.COUPON_ID,mBookInfo.getBookCoupon().get(0).getCouponId());
+                startActivity(intent);
                 break;
             default:
                 break;
