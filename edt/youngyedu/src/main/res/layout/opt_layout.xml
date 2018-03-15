@@ -337,7 +337,6 @@
             android:id="@+id/seek_pen_or_eraser"
             android:layout_width="250px"
             android:layout_height="wrap_content"
-
             android:indeterminate="false"
             android:max="13"
             android:maxHeight="8px"

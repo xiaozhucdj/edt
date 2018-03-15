@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="540dp"
-    android:layout_height="290dp"
+    android:layout_width="600px"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="@drawable/img_marks_bg"
     android:orientation="vertical">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/img_marks_title">
+        android:layout_height="50px">
 
         <TextView
             android:id="@+id/tv_title"
@@ -18,8 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="添加书签"
-            android:textColor="@color/background_white"
-            android:textSize="24dp"
+            android:textColor="@color/black"
+            android:textSize="26px"
             android:textStyle="bold" />
 
         <ImageButton
@@ -44,8 +42,8 @@
         android:background="@drawable/img_marks_et"
         android:gravity="center|left"
         android:maxLength="20"
-        android:singleLine="true"
         android:paddingLeft="5dp"
+        android:singleLine="true"
         android:text="书签"
         android:textColor="@color/directory_text"
         android:textSize="22dp" />
@@ -69,8 +67,8 @@
             android:gravity="center"
             android:text="添加书签"
             android:textColor="@drawable/edu_color_marksadd_selector"
-            android:textStyle="bold"
-            android:textSize="24dp" />
+            android:textSize="24dp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/ll_ChangeOrDelete"
@@ -88,8 +86,8 @@
                 android:gravity="center"
                 android:text="修改书签"
                 android:textColor="@drawable/edu_color_marksaupdata_selector"
-                android:textStyle="bold"
-                android:textSize="24dp" />
+                android:textSize="24dp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btn_delete"
@@ -102,8 +100,8 @@
                 android:gravity="center"
                 android:text="删除书签"
                 android:textColor="@drawable/edu_color_marksadelete_selector"
-                android:textStyle="bold"
-                android:textSize="24dp" />
+                android:textSize="24dp"
+                android:textStyle="bold" />
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>

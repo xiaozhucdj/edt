@@ -34,10 +34,10 @@ public class TextThumbSeekBar extends SeekBar {
 
     public TextThumbSeekBar(Context context, AttributeSet attrs, int defStyleAttr){
         super(context,attrs,defStyleAttr);
-        mThumbSize=94;
+        mThumbSize=125;
         mTextPaint = new TextPaint();
         mTextPaint.setColor(Color.BLACK);
-        mTextPaint.setTextSize(16);
+        mTextPaint.setTextSize(24);
         mTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
     }
