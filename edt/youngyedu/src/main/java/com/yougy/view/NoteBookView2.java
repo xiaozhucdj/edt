@@ -178,8 +178,8 @@ public class NoteBookView2 extends View {
         //适用于设备PL107
 
         EpdController.setStrokeColor(0xff000000);
-        EpdController.setStrokeStyle(1);
-        EpdController.setStrokeWidth(2.0f);
+//        EpdController.setStrokeStyle(1);
+//        EpdController.setStrokeWidth(2.0f);
     }
 
     @Override
