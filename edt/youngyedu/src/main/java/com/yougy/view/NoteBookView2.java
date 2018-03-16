@@ -585,7 +585,7 @@ public class NoteBookView2 extends View {
 
     private void setScreenPaint() {
         EpdController.setStrokeColor(0xff000000);
-        EpdController.setStrokeWidth(2.0f);
+        EpdController.setStrokeWidth(1.80f);
     }
 
     private void setScreenEraser() {
