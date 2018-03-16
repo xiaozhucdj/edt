@@ -5,101 +5,111 @@
     android:clickable="true">
 
     <RelativeLayout
-        android:layout_width="544dp"
-        android:layout_height="617dp"
+        android:layout_width="640px"
+        android:layout_height="660px"
         android:layout_gravity="center"
-        android:background="@drawable/img_lable_bg">
+        android:background="@drawable/img_lable_bg"
+        android:padding="20px">
 
         <LinearLayout
             android:id="@+id/note_opt_layout"
             android:layout_width="wrap_content"
-            android:layout_height="52dp"
-            android:background="@drawable/img_lable_title"
+            android:layout_height="60px"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/save_label"
-                android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="33dp"
+                android:layout_width="32px"
+                android:layout_height="32px"
+                android:layout_marginLeft="35px"
+                android:layout_marginRight="33px"
                 android:src="@drawable/edu_img_lable_minimize_select" />
 
             <View
-                android:layout_width="1dp"
+                android:layout_width="2px"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
-                android:background="@color/background_black" />
+                android:background="@color/black" />
 
             <ImageView
                 android:id="@+id/input_gesture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="39dp"
-                android:src="@drawable/edu_img_pen_select" />
+                android:layout_width="32px"
+                android:layout_height="32px"
+                android:layout_marginLeft="34px"
+                android:layout_marginRight="33px"
+                android:src="@drawable/edu_lable_img_pen_select" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="match_parent"
+                android:background="@color/black" />
 
             <ImageView
                 android:id="@+id/input_soft"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="40dp"
+                android:layout_width="32px"
+                android:layout_height="32px"
+                android:layout_marginLeft="34px"
+                android:layout_marginRight="33px"
                 android:src="@drawable/edu_img_lable_et_select" />
 
 
             <View
-                android:layout_width="1dp"
+                android:layout_width="2px"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="39dp"
-                android:background="@color/background_black" />
+                android:background="@color/black" />
 
             <ImageView
                 android:id="@+id/undo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="36dp"
-                android:src="@drawable/edu_img_undo_select"
+                android:layout_width="36px"
+                android:layout_height="32px"
+                android:layout_marginLeft="31px"
+                android:layout_marginRight="32px"
+                android:src="@drawable/edu_lable_img_undo_select" />
 
-                />
+            <View
+                android:layout_width="2px"
+                android:layout_height="match_parent"
+                android:background="@color/black" />
 
             <ImageView
                 android:id="@+id/redo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="37dp"
-                android:src="@drawable/edu_img_redo_select" />
+                android:layout_width="36px"
+                android:layout_height="32px"
+                android:layout_marginLeft="31px"
+                android:layout_marginRight="32px"
+                android:src="@drawable/edu_lable_img_redo_select" />
 
             <View
-                android:layout_width="1dp"
+                android:layout_width="2px"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="36dp"
-                android:background="@color/background_black" />
+                android:background="@color/black" />
 
             <ImageView
                 android:id="@+id/cancel_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="31dp"
+                android:layout_width="32px"
+                android:layout_height="32px"
+                android:layout_marginLeft="33px"
+                android:layout_marginRight="33px"
                 android:src="@drawable/edu_img_lable_delete_select" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_below="@+id/note_opt_layout"
+            android:background="@color/black" />
 
         <com.yougy.view.NoteBookView
             android:id="@+id/booknote"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/note_opt_layout"
-            android:layout_margin="10dp" />
+            android:layout_below="@+id/note_opt_layout" />
 
         <EditText
             android:id="@+id/edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/note_opt_layout"
-            android:layout_margin="10dp"
             android:background="@color/background"
             android:gravity="start|top"
             android:visibility="gone" />

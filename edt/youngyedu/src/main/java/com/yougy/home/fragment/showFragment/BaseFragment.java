@@ -113,7 +113,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     protected ImageButton mPencil;
     protected ImageButton mOliBlackPen;
     protected ImageButton mMakerPen;
-    protected ImageButton mEraser;
+    protected ImageView mEraser;
     protected ImageButton mColor;
     protected SeekBar mPenSizePg;
     protected ImageView mPenSizeIv;
@@ -313,7 +313,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //马克笔
         mMakerPen = (ImageButton) mRoot.findViewById(R.id.maker_pen);
         //橡皮
-        mEraser = (ImageButton) mRoot.findViewById(R.id.eraser);
+        mEraser = (ImageView) mRoot.findViewById(R.id.eraser);
         // 颜色 ImageButton
         mColor = (ImageButton) mRoot.findViewById(R.id.color);
         // 笔大小 SeekBar
