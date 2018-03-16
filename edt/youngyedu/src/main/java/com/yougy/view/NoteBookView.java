@@ -604,7 +604,7 @@ public class NoteBookView extends View {
     private void userOutPen() {
         LogUtils.i("yuanye  userOutPen ...."+mOutSetPenSize);
         mPaint.setXfermode(null);
-        mPaint.setStrokeWidth(mOutSetPenSize);
+        mPaint.setStrokeWidth(mOutSetPenSize-0.2f);
         mPaint.setColor(Color.BLACK);
         EpdController.setStrokeColor(0xff000000);
         EpdController.setStrokeWidth(mOutSetPenSize);
