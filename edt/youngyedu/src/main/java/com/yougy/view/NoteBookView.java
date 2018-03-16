@@ -168,7 +168,7 @@ public class NoteBookView extends View {
             LogUtils.e(getClass().getName(), "PL107");
             matrix.postRotate(90);
             matrix.postTranslate(UIUtils.getScreenHeight(), 0);
-        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")){
+        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
             LogUtils.e(getClass().getName(), "N96");
             matrix.postRotate(270);
             matrix.postTranslate(0, UIUtils.getScreenWidth());
@@ -177,9 +177,9 @@ public class NoteBookView extends View {
 
         //适用于设备PL107
 
-        EpdController.setStrokeColor(0xff000000);
-        EpdController.setStrokeStyle(1);
-        EpdController.setStrokeWidth(2.0f);
+          EpdController.setStrokeColor(0xff000000);
+//        EpdController.setStrokeStyle(1);
+//        EpdController.setStrokeWidth(2.0f);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class NoteBookView extends View {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        setPen();
+           userOutPen();
     }
 
     public void drawBitmap(Bitmap bitmap) {
@@ -412,21 +412,18 @@ public class NoteBookView extends View {
         if (!isEnabled() || event.getPointerCount() > 1) {
             return false;
         }
-        LogUtils.i("yuanye .......event.getToolType(0)......."+event.getToolType(0));
-        LogUtils.i("yuanye .......flagOfErase)......."+flagOfErase);
 
-        if (!flagOfErase) {
-            LogUtils.i("yuanye ..............11111");
+        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
+           useInEraser();
+        } else {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
-                LogUtils.i("yuanye ..............2222222222");
-                setPen();
+                if (!flagOfErase) {
+                  userOutPen();
+                }else {
+                    useOutEraser();
+                }
             }
         }
-        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
-            LogUtils.i("yuanye ..............33333333");
-            useEraser();
-        }
-
         contentChanged = true;
         float x = event.getX();
         float y = event.getY();
@@ -513,7 +510,7 @@ public class NoteBookView extends View {
         return dst;
     }
 
-    public void setPaintSize(float width) {
+/*    public void setPaintSize(float width) {
         mPaint.setStrokeWidth(width);
     }
 
@@ -524,34 +521,34 @@ public class NoteBookView extends View {
     public void setPaintColor(int color) {
         mPaint.setColor(color);
         setColorPenAlpha();
-    }
+    }*/
 
-    public void setPen() {
+/*    public void setPen() {
         mPaint.setXfermode(null);
         isColorPen = false;
         mPaint.setStrokeWidth(2.0f);
         mPaint.setColor(Color.BLACK);
         setScreenPaint();
-    }
+    }*/
 
-    public void setOilBlackPen() {
+   /* public void setOilBlackPen() {
         mPaint.setXfermode(null);
         isColorPen = false;
         mPaint.setStrokeWidth(5.0f);
         mPaint.setColor(Color.BLACK);
         setScreenPaint();
-    }
+    }*/
 
-    private void setColorPenAlpha() {
+/*    private void setColorPenAlpha() {
         mPaint.setXfermode(null);
         if (isColorPen) {
             mPaint.setAlpha(100);
         }
     }
 
-    private boolean isColorPen;
+    private boolean isColorPen;*/
 
-    public void setMakerPen() {
+  /*  public void setMakerPen() {
         isColorPen = true;
         flagOfErase = false;
         mPaint.setXfermode(null);
@@ -559,28 +556,74 @@ public class NoteBookView extends View {
         mPaint.setColor(Color.GREEN);
         mPaint.setAlpha(100);
         setScreenPaint();
-    }
+    }*/
 
-    private boolean flagOfErase;
+//    private boolean flagOfErase;
 
-    public void useEraser() {
+ /*   public void useEraser() {
         mPaint.setAntiAlias(true);
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(20);
         setScreenEraser();
-    }
+    }*/
 
-    public void setEraserFlag(boolean flag) {
+ /*   public void setEraserFlag(boolean flag) {
         flagOfErase = flag;
-    }
+    }*/
 
-    private void setScreenPaint() {
+/*    private void setScreenPaint() {
         EpdController.setStrokeColor(0xff000000);
         EpdController.setStrokeWidth(2.0f);
+    }*/
+
+/*
+    private void setScreenEraser() {
+        EpdController.setStrokeColor(0xffffffff);
+        EpdController.setStrokeWidth(20.0f);
     }
 
-    private void setScreenEraser() {
+*/
+
+    private float mOutSetPenSize =2.0f;
+
+    public void outSetPenSize(int outSetPenSize) {
+        mOutSetPenSize = (float) outSetPenSize;
+        flagOfErase = false;
+    }
+
+    private float mOutSetEraserSize =2.0f;
+
+    public void outSetEraserSize(int outSetEraserSize) {
+        mOutSetEraserSize = (float) outSetEraserSize;
+        flagOfErase = true;
+    }
+
+    private boolean flagOfErase = false;
+
+    private void userOutPen() {
+        LogUtils.i("yuanye  userOutPen ...."+mOutSetPenSize);
+        mPaint.setXfermode(null);
+        mPaint.setStrokeWidth(mOutSetPenSize);
+        mPaint.setColor(Color.BLACK);
+        EpdController.setStrokeColor(0xff000000);
+        EpdController.setStrokeWidth(mOutSetPenSize);
+    }
+
+    private void useOutEraser() {
+        mPaint.setAntiAlias(true);
+        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        mPaint.setColor(Color.WHITE);
+        mPaint.setStrokeWidth(mOutSetEraserSize);
+        EpdController.setStrokeColor(0xffffffff);
+        EpdController.setStrokeWidth(mOutSetEraserSize);
+    }
+
+    private void useInEraser() {
+        mPaint.setAntiAlias(true);
+        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        mPaint.setColor(Color.WHITE);
+        mPaint.setStrokeWidth(20.0f);
         EpdController.setStrokeColor(0xffffffff);
         EpdController.setStrokeWidth(20.0f);
     }
