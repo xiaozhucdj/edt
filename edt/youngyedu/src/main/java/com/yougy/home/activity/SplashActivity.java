@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.badoo.mobile.util.WeakHandler;
 import com.onyx.android.sdk.api.device.FrontLightController;
+import com.onyx.android.sdk.utils.NetworkUtil;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
@@ -153,7 +154,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         Log.v("FH", "开始检测版本更新...");
         if (NetUtils.isNetConnected()) {
             Log.v("FH", "有网络,更新UUID");
-            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":", "") + "-" + Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "") ;
             SpUtil.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
