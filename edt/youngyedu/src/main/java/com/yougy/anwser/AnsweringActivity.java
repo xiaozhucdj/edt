@@ -246,6 +246,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
