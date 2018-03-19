@@ -535,19 +535,19 @@ public class SystemUtils {
      * 获取手机总内存
      * @return 单位为byte
      */
-    public static long getTotalMemory() {
-        long size = 0;
-        String path = "/proc/meminfo";// 系统内存信息文件
-        try {
-            String totalMemory = FileUtils.readProperties(path, "MemTotal", null);// 读出来是带单位kb的，并且单位前有空格，所以去掉最后三位
-            if (!StringUtils.isEmpty(totalMemory) && totalMemory.length() > 3) {
-                size = Long.valueOf(totalMemory.substring(0, totalMemory.length() - 3)) * 1024;
-            }
-        } catch (Exception e) {
-//            LogUtils.e(e);
-        }
-        return size;
-    }
+//    public static long getTotalMemory() {
+//        long size = 0;
+//        String path = "/proc/meminfo";// 系统内存信息文件
+//        try {
+//            String totalMemory = FileUtils.readProperties(path, "MemTotal", null);// 读出来是带单位kb的，并且单位前有空格，所以去掉最后三位
+//            if (!StringUtils.isEmpty(totalMemory) && totalMemory.length() > 3) {
+//                size = Long.valueOf(totalMemory.substring(0, totalMemory.length() - 3)) * 1024;
+//            }
+//        } catch (Exception e) {
+////            LogUtils.e(e);
+//        }
+//        return size;
+//    }
 
     /**
      * 手机低内存运行阀值
