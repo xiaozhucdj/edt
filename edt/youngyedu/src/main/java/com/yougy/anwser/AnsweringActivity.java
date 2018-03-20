@@ -397,7 +397,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     saveQuestionPage = position;
 
 
-                    if (position < questionPageSize) {
+                    if (position < binding.contentDisplayer.getmContentAdaper().getPageCount("question")) {
                         //切换当前题目的分页
                         binding.contentDisplayer.getmContentAdaper().toPage("question", position, false);
                         binding.contentDisplayer.setVisibility(View.VISIBLE);
