@@ -12,6 +12,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
@@ -154,7 +155,7 @@ public class SettingMainActivity extends BaseActivity {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
 
-                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init"  ,"0");
+                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init"  , FileContonst.LOAD_APP_RESET);
                         Intent intent = new Intent(getApplicationContext(), UploadService.class);
                         startService(intent);
                         SpUtil.clearSP();

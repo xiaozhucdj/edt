@@ -134,14 +134,14 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        NetManager.getInstance().registerReceiver(this);
+        PowerManager.getInstance().registerReceiver(this);
+
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
 
-
-        EventBus.getDefault().register(this);
-        NetManager.getInstance().registerReceiver(this);
-        PowerManager.getInstance().registerReceiver(this);
     }
 
     @Override
@@ -217,7 +217,7 @@ public class LoginActivity extends BaseActivity {
         if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
             setSysWifi();
         } else if (EventBusConstant.EVENTBUS_POWER.equals(event.getType())) {
-            setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
         }
+        setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
     }
 }
