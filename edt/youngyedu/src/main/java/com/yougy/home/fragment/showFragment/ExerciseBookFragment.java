@@ -36,7 +36,6 @@ import java.util.List;
 
 import rx.functions.Action1;
 
-
 /**
  * Created by FH on 2016/7/14.
  * 作业本中的作业列表界面
@@ -59,6 +58,7 @@ public class ExerciseBookFragment extends BFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v("FH" , "-----------onCreateView ");
         binding = DataBindingUtil.inflate(LayoutInflater.from(getActivity()), R.layout.fragment_exercise_book, container, false);
         UIUtils.recursiveAuto(binding.getRoot());
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
@@ -210,22 +210,36 @@ public class ExerciseBookFragment extends BFragment {
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
-        refreshData();
         return binding.getRoot();
     }
 
     @Override
     protected void handleEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof String || o.equals("refreshHomeworkList")){
-                    refreshData();
-                }
-            }
-        }));
+//        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+//            @Override
+//            public void call(Object o) {
+//                if (o instanceof String || o.equals("refreshHomeworkList")){
+//                    refreshData();
+//                }
+//            }
+//        }));
         super.handleEvent();
     }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden){
+            refreshData();
+        }
+        super.onHiddenChanged(hidden);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+    }
+
 
     private void refreshData() {
         NetWorkManager.queryHomeworkBookDetail(mControlActivity.mHomewrokId)
@@ -315,11 +329,6 @@ public class ExerciseBookFragment extends BFragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     //TODO:袁野
     public ControlFragmentActivity mControlActivity;
 
@@ -352,6 +361,5 @@ public class ExerciseBookFragment extends BFragment {
     protected void onDownBookFinish() {
         super.onDownBookFinish();
         mControlActivity.switch2TextBookFragment();
-
     }
 }

@@ -771,7 +771,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
 
-                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+//                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
                         onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
@@ -1166,7 +1166,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             public void call(Object o) {
 
                                 ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
-                                YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+//                                YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
                                 onBackPressed();
                             }
                         }, new Action1<Throwable>() {
