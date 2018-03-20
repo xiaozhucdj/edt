@@ -44,6 +44,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
@@ -1184,7 +1185,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         throwable.printStackTrace();
                     }
                 });
-
     }
 
 

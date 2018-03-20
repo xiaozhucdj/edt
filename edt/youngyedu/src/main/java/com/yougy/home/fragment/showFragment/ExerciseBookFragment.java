@@ -88,9 +88,15 @@ public class ExerciseBookFragment extends BFragment {
                         holder.setData(waitForCheckList.get(position));
                         break;
                     case CHECKED:
-                        holder.binding.statusTv.setText("已\n批\n改");
+                        HomeworkSummary homeworkSummary = checkedList.get(position);
+                        if (homeworkSummary.getExtra().getStatusCode().equals("IH51")){
+                            holder.binding.statusTv.setText("未\n提\n交");
+                        }
+                        else if (homeworkSummary.getExtra().getStatusCode().equals("IH05")){
+                            holder.binding.statusTv.setText("已\n批\n改");
+                        }
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
-                        holder.setData(checkedList.get(position));
+                        holder.setData(homeworkSummary);
                         break;
                 }
             }
@@ -113,12 +119,19 @@ public class ExerciseBookFragment extends BFragment {
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
+                Intent intent;
                 switch (currentStatus) {
                     case CHECKED:
-                        Intent intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
-                        intent.putExtra("examId", ((MyHolder) vh).getData().getExam());
-                        intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
-                        startActivity(intent);
+                        MyHolder holder = (MyHolder) vh;
+                        if (holder.getData().getExtra().getStatusCode().equals("IH51")){
+                            ToastUtil.showToast(getActivity() , "本次作业您未提交,无法查看");
+                        }
+                        else if (holder.getData().getExtra().getStatusCode().equals("IH05")){
+                            intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
+                            intent.putExtra("examId", holder.getData().getExam());
+                            intent.putExtra("examName", holder.getData().getExtra().getName());
+                            startActivity(intent);
+                        }
                         break;
                     case WAIT_FOR_CHECK:
                         //TODO 待批改项点击
@@ -288,7 +301,7 @@ public class ExerciseBookFragment extends BFragment {
                                     doingList.add(homeworkSummary);
                                 } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中都算待批改
                                     waitForCheckList.add(homeworkSummary);
-                                } else if (statusCode.equals("IH05")) {//已批改
+                                } else if (statusCode.equals("IH05") || statusCode.equals("IH51")) {//已批改,未提交都算已批改
                                     checkedList.add(homeworkSummary);
                                 }
                             }
