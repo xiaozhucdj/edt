@@ -266,7 +266,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     saveQuestionPage = position;
 
 
-                    if (position < questionList.size()) {
+                    if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
                         //切换当前题目的分页
                         contentDisplayer.getmContentAdaper().toPage("question" , position , false);
                         contentDisplayer.setVisibility(View.VISIBLE);
