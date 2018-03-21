@@ -141,6 +141,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     };
+    private ImageView imgSextIcon;
 
 
     /***************************************************************************/
@@ -279,11 +280,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_upload).setOnClickListener(this);
         findViewById(R.id.btn_download).setOnClickListener(this);
         findViewById(R.id.btn_test_img).setOnClickListener(this);
+
+        imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
     }
 
 
     @Override
     protected void loadData() {
+        String sex = SpUtil.getSex();
+        if ("男".equalsIgnoreCase(sex)) {
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));
+        } else {
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_woman));
+        }
         mTvTextBook.callOnClick();
         setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
     }
@@ -306,13 +315,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btn_test_img:
                 startActivity(new Intent(this, TestImgActivity.class));
                 // TODO: 2018/3/8
-                Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                 startActivity(newIntent);
-                
+
                 break;
             case R.id.tv_folder:
-                  refreshTabBtnState(clickedViewId);
-                  bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
+                refreshTabBtnState(clickedViewId);
+                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
 //                startActivity(new Intent(this, AnsweringActivity.class));
                 break;
@@ -515,7 +524,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 type = EventBusConstant.all_home_work;
                 break;
 
-            case  FOLDER_FRAGMENT:
+            case FOLDER_FRAGMENT:
                 type = EventBusConstant.answer_event;
                 break;
         }
