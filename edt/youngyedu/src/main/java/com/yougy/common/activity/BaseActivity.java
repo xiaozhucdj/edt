@@ -13,11 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.onyx.android.sdk.api.device.FrontLightController;
 import com.yougy.common.dialog.BaseDialog;
-import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -523,7 +520,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 
     @Override
     public void onBackPressed() {
-        if (!mIsPressTwiceToExit) {
+       /* if (!mIsPressTwiceToExit) {
             super.onBackPressed();
             return;
         }
@@ -545,7 +542,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
             }
 
             finishAll();
-        }
+        }*/
     }
 
 
