@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.badoo.mobile.util.WeakHandler;
-import com.onyx.android.sdk.api.device.FrontLightController;
 import com.onyx.android.sdk.utils.NetworkUtil;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
@@ -30,9 +28,7 @@ import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.SystemUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -107,7 +103,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
         //打开背光 一共18等级  减到0，打开默认为7级，直接关闭，打开默认为之前关闭是级数。
 
-
+/*
         //保存打开app前的背光情况。
         boolean isLightOn = FrontLightController.isLightOn(this);
         int nowBrightness = FrontLightController.getBrightness(this);
@@ -117,7 +113,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         FrontLightController.turnOn(this);
 
         //展示设备亮度为10/16
-        FrontLightController.setBrightness(this, 160*10/16);
+        FrontLightController.setBrightness(this, 160*10/16);*/
 
 
         /*//获取当前亮级
