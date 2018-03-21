@@ -539,6 +539,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
        /* if (!mIsPressTwiceToExit) {
             super.onBackPressed();
             return;

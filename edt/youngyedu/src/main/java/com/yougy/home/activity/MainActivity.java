@@ -1079,5 +1079,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         jumpTonet();
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
 }
 
