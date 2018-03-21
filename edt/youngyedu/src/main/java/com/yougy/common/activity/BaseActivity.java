@@ -11,10 +11,13 @@ import android.os.Process;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.yougy.common.dialog.BaseDialog;
+import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -132,8 +135,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         super.onNewIntent(intent);
     }
 
+    private  Runnable mRefreshRun ;
     @Override
     protected void onResume() {
+        super.onResume();
         mForegroundActivity = this;
         weakReference = new WeakReference<>(mForegroundActivity);
         //onResume  中启用
@@ -142,7 +147,17 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 //                        | PowerManager.ON_AFTER_RELEASE, BaseActivity.this.getClass().getName());
 //        mWakeLock.acquire();
 
-        super.onResume();
+
+
+        if (mRefreshRun== null ){
+            mRefreshRun = new Runnable() {
+                @Override
+                public void run() {
+                    RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
+                }
+            } ;
+        }
+        YougyApplicationManager.getMainThreadHandler().postDelayed( mRefreshRun, 2000) ;
     }
 
     @Override
@@ -151,6 +166,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 //        if (mWakeLock != null) {
 //            mWakeLock.release();
 //        }
+
+        if (mRefreshRun!=null){
+            YougyApplicationManager.getMainThreadHandler().removeCallbacks(mRefreshRun);
+        }
         super.onPause();
     }
 
