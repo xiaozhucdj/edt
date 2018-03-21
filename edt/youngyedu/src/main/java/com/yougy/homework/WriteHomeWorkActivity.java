@@ -44,7 +44,6 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
@@ -360,7 +359,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     mCaogaoNoteBoard.invalidate();
                 }
 
-
                 //存储之前一题的结果
                 //两种情况（一种直接点击，此时showHomeWorkPosition为之前页码位。另一种上一页或下一页点击，此时showHomeWorkPosition为当前展示页码位，获取之前页面位需+1或-1）
 
@@ -449,11 +447,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 startTimeMill = System.currentTimeMillis();
                 startClock();
 
-//                HomeWorkPageNumViewHolder holder = (HomeWorkPageNumViewHolder) allHomeWorkPage.findViewHolderForAdapterPosition(position);
-//                homeWorkPageNumAdapter.notifyDataSetChanged();
-//                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_zhengqu);
-//                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
-
+                homeWorkPageNumAdapter.notifyDataSetChanged();
             }
         });
 
@@ -1277,8 +1271,16 @@ public class WriteHomeWorkActivity extends BaseActivity {
             holder.mTvPageId.setText((position + 1) + "");
 
 
-            holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_chooese);
-            holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+
+
+            if (position == showHomeWorkPosition) {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_cuowu);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_chooese);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+            }
+
 
            /* //判断题目回答状态
             int tag = 2;

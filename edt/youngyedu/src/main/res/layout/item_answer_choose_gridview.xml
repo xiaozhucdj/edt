@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal" android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        >
+        android:orientation="horizontal">
+
         <ImageButton
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_check_sidaan"
-            />
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_check_sidaan" />
+
         <TextView
             android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="xxxx"
-            android:textSize="24px"
             android:textColor="@drawable/btn_text_color_selector_black_white"
-            />
+            android:textSize="24px" />
     </RelativeLayout>
 </layout>
