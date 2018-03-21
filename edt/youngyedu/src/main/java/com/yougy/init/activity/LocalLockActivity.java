@@ -185,6 +185,7 @@ public class LocalLockActivity extends BaseActivity {
 
 
     public void onEventMainThread(BaseEvent event) {
+        System.out.println("onEventMainThread  lockac");
         if (event == null)
             return;
         setSysTime();

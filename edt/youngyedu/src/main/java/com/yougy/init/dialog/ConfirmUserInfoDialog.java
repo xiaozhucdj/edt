@@ -15,6 +15,7 @@ import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -23,6 +24,7 @@ import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.AliyunUtil;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
@@ -109,6 +111,8 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                                     new HintDialog(mActivity , "云信SDK登录失败 : code : " + code).show();
                                 }
                                 else {
+
+                                    FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" ,FileContonst.LOAD_APP_STUDENT);
                                     Log.v("FH" , "云信SDK登录成功 , 重置本机锁密码并提示");
                                     binding.confirmBtn.setVisibility(View.GONE);
                                     binding.cancleBtn.setVisibility(View.GONE);

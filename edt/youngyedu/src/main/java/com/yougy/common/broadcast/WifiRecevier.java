@@ -15,7 +15,8 @@ public class WifiRecevier extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         Log.v("FH" , "wifi状态改变 " + manager.getWifiState());
-        if (manager.getWifiState() == 0 || manager.getWifiState() == 1){
+        if (manager.getWifiState() == 1){
+            Log.v("FH" , "检测到wifi关闭,重连!");
             manager.setWifiEnabled(true);
         }
     }

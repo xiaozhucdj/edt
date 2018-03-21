@@ -106,4 +106,8 @@ public class FileContonst {
     public final  static  int  MIN_ALL_ITEM_SUBJECT= 200;
 
 
+    public final static String LOAD_APP_STUDENT = "1" ;
+
+    public final static String LOAD_APP_RESET = "0" ;
+
 }

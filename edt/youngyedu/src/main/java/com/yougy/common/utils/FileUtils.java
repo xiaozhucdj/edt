@@ -2,11 +2,12 @@ package com.yougy.common.utils;
 
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 /**
  * Created by Administrator on 2016/7/13.
@@ -71,15 +72,15 @@ public class FileUtils {
     }
 
     public static File ifNotExistCreateFile(String filePath) throws IOException {
-        if (TextUtils.isEmpty(filePath)){
+        if (TextUtils.isEmpty(filePath)) {
             throw new IOException("filePath is empty");
         }
-        String saveFileDir = filePath.substring(0 , filePath.lastIndexOf("/"));
-        if (TextUtils.isEmpty(saveFileDir) || !createDirs(saveFileDir)){
+        String saveFileDir = filePath.substring(0, filePath.lastIndexOf("/"));
+        if (TextUtils.isEmpty(saveFileDir) || !createDirs(saveFileDir)) {
             throw new IOException("create saveFileDir fail");
         }
         File file = new File(filePath);
-        if (!file.exists()){
+        if (!file.exists()) {
             file.createNewFile();
         }
         return file;
@@ -215,27 +216,52 @@ public class FileUtils {
     /**
      * 根据值读取
      */
-    public static String readProperties(String filePath, String key, String defaultValue) {
-        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(filePath)) {
-            return null;
+    public static void readProperties(String filePath, String value) {
+        if (StringUtils.isEmpty(filePath)) {
+            return;
         }
-        String value = null;
-        FileInputStream fis = null;
+        FileInputStream inputStream = null ;
         File f = new File(filePath);
         try {
             if (!f.exists() || !f.isFile()) {
                 f.createNewFile();
             }
-            fis = new FileInputStream(f);
-            Properties p = new Properties();
-            p.load(fis);
-            value = p.getProperty(key, defaultValue);
+            inputStream = new FileInputStream(f);
+            byte temp[] = new byte[1024];
+            StringBuilder sb = new StringBuilder("");
+            int len = 0;
+            while ((len = inputStream.read(temp)) > 0){
+                sb.append(new String(temp, 0, len));
+            }
+            Log.d("msg", "readSaveFile: \n" + sb.toString());
+            inputStream.close();
         } catch (IOException e) {
 //            LogUtils.e(e);
         } finally {
-            IOUtils.close(fis);
+            IOUtils.close(inputStream);
         }
-        return value;
+    }
+
+
+    /**
+     * 根据值读取
+     */
+    public static void writeProperties(String filePath, String value) {
+        FileOutputStream fos = null;
+        File f = new File(filePath);
+        try {
+            if (!f.exists() || !f.isFile()) {
+                f.createNewFile();
+            }
+            fos = new FileOutputStream(f);
+            fos.write(value.getBytes());
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+//            LogUtils.e(e);
+        } finally {
+            IOUtils.close(fos);
+        }
     }
 
     /**

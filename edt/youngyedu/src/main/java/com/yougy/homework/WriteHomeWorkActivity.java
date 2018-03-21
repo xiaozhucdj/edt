@@ -44,6 +44,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
@@ -771,7 +772,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
 
-                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+//                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
                         onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
@@ -1166,7 +1167,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             public void call(Object o) {
 
                                 ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
-                                YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+//                                YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
                                 onBackPressed();
                             }
                         }, new Action1<Throwable>() {
@@ -1184,7 +1185,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         throwable.printStackTrace();
                     }
                 });
-
     }
 
 

@@ -285,6 +285,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void loadData() {
         mTvTextBook.callOnClick();
+        setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
     }
 
     @Override
@@ -1055,8 +1056,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             setSysWifi();
         } else if (EventBusConstant.EVENTBUS_POWER.equals(event.getType())) {
             LogUtils.i("event ...power");
-            LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
-            LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
+//            LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
+//            LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
             setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
         } else if (EventBusConstant.need_refresh.equalsIgnoreCase(event.getType())) {
             postEvent();
