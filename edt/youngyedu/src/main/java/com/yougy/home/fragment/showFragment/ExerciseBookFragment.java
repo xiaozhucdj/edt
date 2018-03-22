@@ -58,7 +58,6 @@ public class ExerciseBookFragment extends BFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v("FH" , "-----------onCreateView ");
         binding = DataBindingUtil.inflate(LayoutInflater.from(getActivity()), R.layout.fragment_exercise_book, container, false);
         UIUtils.recursiveAuto(binding.getRoot());
         binding.backBtn.setOnClickListener(new View.OnClickListener() {

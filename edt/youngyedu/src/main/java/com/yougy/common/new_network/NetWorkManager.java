@@ -35,7 +35,7 @@ import rx.Observable;
  */
 public final class NetWorkManager {
 
-    private static final int HTTP_CONNECTION_TIMEOUT = 10 * 1000;
+    private static final int HTTP_CONNECTION_TIMEOUT = 20 * 1000;
 
     private ServerApi mServerApi;
 

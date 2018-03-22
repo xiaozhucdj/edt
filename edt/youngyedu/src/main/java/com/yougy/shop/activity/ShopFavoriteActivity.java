@@ -63,7 +63,6 @@ public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements 
 
     @BindView(R.id.shop_favorite_item_container)
     LinearLayout itemContainer;//条目容器
-
     @BindView(R.id.shop_favorite_empty_layout)
     LinearLayout emptyLayout; //没有收藏的提示层
 
@@ -106,7 +105,6 @@ public class ShopFavoriteActivity extends ShopAutoLayoutBaseActivity implements 
         tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                Log.v("FH", "-----------------" + o);
                 if (o instanceof QueryBookFavorRep) {
                     //获取收藏列表的回调在这
                     QueryBookFavorRep protocol = (QueryBookFavorRep) o;

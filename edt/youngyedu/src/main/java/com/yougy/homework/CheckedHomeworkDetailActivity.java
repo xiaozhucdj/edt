@@ -1,7 +1,7 @@
 package com.yougy.homework;
 
 import android.databinding.DataBindingUtil;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -116,30 +116,25 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                                 return nodeInList.getReplyId() == currentShow.getReplyId();
                             }
                         });
-                        binding.questionNumTv.setText("第" + (questionIndex + 1) + "题");
-                        if (questionIndex == 0){
-                            binding.lastQuestionBtn.setClickable(false);
-                        }
-                        else {
-                            binding.lastQuestionBtn.setClickable(true);
-                        }
-                        if (questionIndex + 1 == allReplyList.size()){
-                            binding.nextQuestionBtn.setClickable(false);
-                        }
-                        else {
-                            binding.nextQuestionBtn.setClickable(true);
-                        }
+                        binding.questionNumTv.setText("第" + (questionIndex+1) + "题");
                         switch (currentShow.getReplyScore()){
                             case 0:
-                                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_cuowu);
+                                binding.scoreIconImv.setImageResource(R.drawable.icon_wrong_1);
                                 break;
                             case 100:
-                                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_zhengque);
+                                binding.scoreIconImv.setImageResource(R.drawable.icon_correct_1);
                                 break;
                             default:
-                                binding.rightOrWrongIcon.setImageResource(R.drawable.img_ziping_bandui);
+                                binding.scoreIconImv.setImageResource(R.drawable.icon_half_correct_1);
                                 break;
                         }
+                        if (data.getParsedReplyCommentList().size() == 0){
+                            binding.showCommentBtn.setVisibility(View.GONE);
+                        }
+                        else {
+                            binding.showCommentBtn.setVisibility(View.VISIBLE);
+                        }
+
                         currentShowQuestionPageIndex = 0;
                         currentShowAnalysisPageIndex = 0;
                         refreshViewSafe();
@@ -165,26 +160,26 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
     public void refreshPageChangeBtns(){
         int currentSelectPageIndex = binding.contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex();
         if (currentSelectPageIndex == 0){
-            binding.lastPageBtn.setClickable(false);
+            binding.lastPageBtn.setVisibility(View.GONE);
         }
         else {
-            binding.lastPageBtn.setClickable(true);
+            binding.lastPageBtn.setVisibility(View.VISIBLE);
         }
 
         if (binding.questionBodyBtn.isSelected()){
             if ((currentSelectPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("reply")){
-                binding.nextPageBtn.setClickable(false);
+                binding.nextPageBtn.setVisibility(View.GONE);
             }
             else {
-                binding.nextPageBtn.setClickable(true);
+                binding.nextPageBtn.setVisibility(View.VISIBLE);
             }
         }
         else if (binding.answerAnalysisBtn.isSelected()){
             if ((currentSelectPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("analysis")){
-                binding.nextPageBtn.setClickable(false);
+                binding.nextPageBtn.setVisibility(View.GONE);
             }
             else {
-                binding.nextPageBtn.setClickable(true);
+                binding.nextPageBtn.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -228,10 +223,16 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                 return nodeInList.getReplyId() == currentShow.getReplyId();
             }
         });
-        currentShow = allReplyList.get(questionIndex - 1);
-        binding.questionBodyBtn.setSelected(true);
-        binding.answerAnalysisBtn.setSelected(false);
-        loadData();
+        if (questionIndex != 0){
+            currentShow = allReplyList.get(questionIndex - 1);
+            binding.questionBodyBtn.setSelected(true);
+            binding.answerAnalysisBtn.setSelected(false);
+            binding.commentDialog.setVisibility(View.GONE);
+            loadData();
+        }
+        else {
+            ToastUtil.showToast(getApplicationContext() , "已经是第一题了");
+        }
     }
     public void nextQuestion(View view){
         int questionIndex = ListUtil.conditionalIndexOf(allReplyList, new ListUtil.ConditionJudger<QuestionReplySummary>() {
@@ -240,11 +241,32 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                 return nodeInList.getReplyId() == currentShow.getReplyId();
             }
         });
-        currentShow = allReplyList.get(questionIndex + 1);
-        binding.questionBodyBtn.setSelected(true);
-        binding.answerAnalysisBtn.setSelected(false);
-        loadData();
+        if (questionIndex+1 < allReplyList.size()){
+            currentShow = allReplyList.get(questionIndex + 1);
+            binding.questionBodyBtn.setSelected(true);
+            binding.answerAnalysisBtn.setSelected(false);
+            binding.commentDialog.setVisibility(View.GONE);
+            loadData();
+        }
+        else {
+            ToastUtil.showToast(getApplicationContext() , "已经是最后一题了");
+        }
+    }
+    public void showComment(View view){
+        String commentStr = "";
+        for (String comment : data.getParsedReplyCommentList()) {
+            if (!TextUtils.isEmpty(comment)){
+                commentStr+=comment;
+            }
+        }
+        if (!TextUtils.isEmpty(commentStr)){
+            binding.commentTv.setText(commentStr);
+            binding.commentDialog.setVisibility(View.VISIBLE);
+        }
     }
 
+    public void dismissComment(View view){
+        binding.commentDialog.setVisibility(View.GONE);
+    }
 
 }

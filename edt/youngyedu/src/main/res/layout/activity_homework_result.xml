@@ -60,12 +60,40 @@
                 android:layout_marginLeft="60px"/>
 
             <ImageView
-                android:id="@+id/right_or_wrong_icon"
+                android:id="@+id/score_icon_imv"
                 android:layout_width="28px"
                 android:layout_height="28px"
-                android:layout_marginLeft="20px"
-                android:src="@drawable/img_ziping_zhengque"
+                android:layout_marginLeft="21px"
                 />
+            <!--占位符-->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+            <LinearLayout
+                android:id="@+id/show_comment_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:onClick="showComment"
+                android:clickable="true"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="22px"
+                    android:layout_height="22px"
+                    android:background="@drawable/img_disable_pizhu"
+                    android:layout_marginRight="10px"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24px"
+                    android:textColor="@color/black"
+                    android:text="查看批注"
+                    android:layout_marginRight="20px"
+                    />
+            </LinearLayout>
         </LinearLayout>
         <View android:layout_width="match_parent" android:layout_height="10px" android:background="@color/gray_dbdbdb"/>
         <LinearLayout
@@ -130,9 +158,51 @@
                 android:onClick="nextPage"
                 android:layout_marginRight="20px"
                 />
+            <RelativeLayout
+                android:id="@+id/comment_dialog"
+                android:layout_width="640px"
+                android:layout_height="660px"
+                android:background="@drawable/img_bg_bianqian"
+                android:layout_centerInParent="true"
+                android:padding="20px"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:layout_width="20px"
+                    android:layout_height="20px"
+                    android:background="@drawable/img_quxiao"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30px"
+                    android:layout_marginTop="20px"
+                    android:onClick="dismissComment"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="批注"
+                    android:textColor="@color/black"
+                    android:textSize="24px"
+                    android:layout_marginLeft="30px"
+                    android:layout_marginTop="20px"
+                    />
+                <View android:layout_width="match_parent" android:layout_height="2px" android:background="@color/black"
+                    android:layout_marginTop="60px"/>
+                <TextView
+                    android:id="@+id/comment_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="XXXXXXXXXXX"
+                    android:textSize="22px"
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="30px"
+                    android:layout_marginRight="30px"
+                    android:layout_marginTop="80px"
+                    />
+
+            </RelativeLayout>
         </RelativeLayout>
         <LinearLayout
-            android:id="@+id/bottom_btn_bar"
+            android:id="@+id/bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="70px"
             android:orientation="horizontal">
