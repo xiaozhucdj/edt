@@ -17,8 +17,6 @@ import android.widget.TextView;
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.onyx.android.sdk.api.device.epd.EpdController;
-import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.TestImgActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
@@ -305,6 +303,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         int clickedViewId = v.getId();
         setSysTime();
+
+        if (v.getId() == R.id.imgBtn_showRight) {
+            mFlRight.setVisibility(mFlRight.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+        }else{
+            mFlRight.setVisibility(View.GONE);
+        }
+
         switch (clickedViewId) {
             case R.id.btn_upload:
                 startService(new Intent(this, UploadService.class));
@@ -359,8 +364,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.imgBtn_showRight:
-                mFlRight.setVisibility(View.VISIBLE);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                mFlRight.setVisibility(View.VISIBLE);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 ArrayList<RecentContact> recentContactList = new ArrayList<RecentContact>();
                 recentContactList.addAll(YXClient.getInstance().getRecentContactList());
                 int totalUnreadCount = 0;
@@ -376,7 +381,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.fl_right:
                 mFlRight.setVisibility(View.GONE);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.btn_currentBook:
@@ -417,7 +422,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 LogUtils.i("搜索课外书");
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.serch_reference, "");
                 EventBus.getDefault().post(baseEvent);
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_bookStore:
                 LogUtils.e(getClass().getName(), "书城");
@@ -426,12 +430,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_msg:
                 LogUtils.e(getClass().getName(), "我的消息");
                 gotoMyMessage();
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_account:
                 LogUtils.i("账号设置");
@@ -441,7 +443,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
 
                 break;
             case R.id.btn_order:
@@ -451,7 +452,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");
@@ -460,7 +460,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
                 break;
 
             case R.id.img_wifi:
@@ -473,7 +472,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.onyx.android.settings", "com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
-                mFlRight.setVisibility(View.GONE);
                 break;
             default:
                 break;
