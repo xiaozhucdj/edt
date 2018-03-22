@@ -781,29 +781,29 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     COMEIN_HOMEWORK_PAGE_MODE = 2;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
 
-                    //打开未完成提示
-                    fullScreenHintDialog = new FullScreenHintDialog(this, "");
-                    fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("是否提交作业").setBtn1("检查作业", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            fullScreenHintDialog.dismiss();
-                        }
-                    }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // 去提交
-                            getUpLoadInfo();
-
-                        }
-                    }, false).setShowNoMoreAgainHint(false).show();
-
 
                 } else {
                     //如果已经是最后一题，直接提交
                     //前提是先保存最后一题结果到本地存储
                     saveLastHomeWorkData(showHomeWorkPosition);
-                    getUpLoadInfo();
+//                    getUpLoadInfo();
                 }
+
+                //打开未完成提示
+                fullScreenHintDialog = new FullScreenHintDialog(this, "");
+                fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("是否提交作业").setBtn1("检查作业", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        fullScreenHintDialog.dismiss();
+                    }
+                }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // 去提交
+                        getUpLoadInfo();
+
+                    }
+                }, false).setShowNoMoreAgainHint(false).show();
 
 
                 break;
@@ -1269,8 +1269,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
 
             holder.mTvPageId.setText((position + 1) + "");
-
-
 
 
             if (position == showHomeWorkPosition) {
