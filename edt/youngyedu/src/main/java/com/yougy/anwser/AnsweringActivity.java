@@ -246,6 +246,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     public void onClick(View view) {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
         mNbvAnswerBoard.invalidate();
@@ -392,7 +397,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     saveQuestionPage = position;
 
 
-                    if (position < questionList.size()) {
+                    if (position < binding.contentDisplayer.getmContentAdaper().getPageCount("question")) {
                         //切换当前题目的分页
                         binding.contentDisplayer.getmContentAdaper().toPage("question", position, false);
                         binding.contentDisplayer.setVisibility(View.VISIBLE);

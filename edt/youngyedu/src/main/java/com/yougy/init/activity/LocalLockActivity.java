@@ -127,6 +127,15 @@ public class LocalLockActivity extends BaseActivity {
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
         binding.numTv.setText("编号 : " + student.getUserNum());
+
+        String sex = SpUtil.getSex();
+        if ("男".equalsIgnoreCase(sex)) {
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_man));
+        } else {
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
+        }
+
+
         initSysIcon();
     }
 

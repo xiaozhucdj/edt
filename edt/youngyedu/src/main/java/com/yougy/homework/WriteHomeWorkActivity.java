@@ -44,7 +44,6 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtil;
 import com.yougy.common.utils.ToastUtil;
@@ -360,7 +359,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     mCaogaoNoteBoard.invalidate();
                 }
 
-
                 //存储之前一题的结果
                 //两种情况（一种直接点击，此时showHomeWorkPosition为之前页码位。另一种上一页或下一页点击，此时showHomeWorkPosition为当前展示页码位，获取之前页面位需+1或-1）
 
@@ -449,11 +447,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 startTimeMill = System.currentTimeMillis();
                 startClock();
 
-//                HomeWorkPageNumViewHolder holder = (HomeWorkPageNumViewHolder) allHomeWorkPage.findViewHolderForAdapterPosition(position);
-//                homeWorkPageNumAdapter.notifyDataSetChanged();
-//                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_zhengqu);
-//                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
-
+                homeWorkPageNumAdapter.notifyDataSetChanged();
             }
         });
 
@@ -776,6 +770,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
+                fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
 
 
                 break;
@@ -787,29 +782,30 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     COMEIN_HOMEWORK_PAGE_MODE = 2;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
 
-                    //打开未完成提示
-                    fullScreenHintDialog = new FullScreenHintDialog(this, "");
-                    fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("是否提交作业").setBtn1("检查作业", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            fullScreenHintDialog.dismiss();
-                        }
-                    }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // 去提交
-                            getUpLoadInfo();
-
-                        }
-                    }, false).setShowNoMoreAgainHint(false).show();
-
 
                 } else {
                     //如果已经是最后一题，直接提交
                     //前提是先保存最后一题结果到本地存储
                     saveLastHomeWorkData(showHomeWorkPosition);
-                    getUpLoadInfo();
+//                    getUpLoadInfo();
                 }
+
+                //打开未完成提示
+                fullScreenHintDialog = new FullScreenHintDialog(this, "");
+                fullScreenHintDialog.setIconResId(R.drawable.icon_correct).setContentText("是否提交作业").setBtn1("检查作业", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        fullScreenHintDialog.dismiss();
+                    }
+                }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // 去提交
+                        getUpLoadInfo();
+
+                    }
+                }, false).setShowNoMoreAgainHint(false).show();
+                fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
 
 
                 break;
@@ -1277,8 +1273,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
             holder.mTvPageId.setText((position + 1) + "");
 
 
-            holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_chooese);
-            holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+            if (position == showHomeWorkPosition) {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_cuowu);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_chooese);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+            }
+
 
            /* //判断题目回答状态
             int tag = 2;

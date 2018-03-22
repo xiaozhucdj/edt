@@ -204,8 +204,9 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="122px"
-                    android:layout_height="122px"
+                    android:id="@+id/img_sex_icon"
+                    android:layout_width="120px"
+                    android:layout_height="120px"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="22px"
                     android:background="@null"

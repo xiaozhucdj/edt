@@ -379,4 +379,8 @@ public class SpUtil {
     public static String justForTest(){
         return "test10";
     }
+
+    public static String getSex() {
+        return sp.getString(GRADE_NAME, "");
+    }
 }
