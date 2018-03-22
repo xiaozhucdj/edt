@@ -20,6 +20,8 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FullScreenHintDialogBinding;
 
+import static com.yougy.common.utils.UIUtils.getResources;
+
 /**
  * Created by FH on 2017/11/27.
  * 全屏的提示Dialog
@@ -212,5 +214,11 @@ public class FullScreenHintDialog extends Dialog {
         else {
             super.show();
         }
+    }
+
+
+    public void setBtn1Style(int iconResId,int colorId){
+        binding.btn1.setBackgroundResource(iconResId);
+        binding.btn1.setTextColor(getResources().getColor(colorId));
     }
 }

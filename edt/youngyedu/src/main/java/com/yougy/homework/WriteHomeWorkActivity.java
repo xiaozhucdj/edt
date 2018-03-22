@@ -770,6 +770,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
+                fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
 
 
                 break;
@@ -791,7 +792,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 //打开未完成提示
                 fullScreenHintDialog = new FullScreenHintDialog(this, "");
-                fullScreenHintDialog.setIconResId(R.drawable.aa).setContentText("是否提交作业").setBtn1("检查作业", new DialogInterface.OnClickListener() {
+                fullScreenHintDialog.setIconResId(R.drawable.icon_correct).setContentText("是否提交作业").setBtn1("检查作业", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
@@ -804,6 +805,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
+                fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
 
 
                 break;
