@@ -66,7 +66,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     /**
      * 图书id
      */
-    public int mBookId;
+    public int mBookId =-1;
     /**
      * 关联分类编码
      */

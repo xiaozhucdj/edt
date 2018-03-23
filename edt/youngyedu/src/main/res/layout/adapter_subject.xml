@@ -13,5 +13,5 @@
         android:gravity="center"
         android:maxLength="4"
         android:textColor="@drawable/item_color_select"
-        android:textSize="22dp" />
+        android:textSize="22px" />
 </RelativeLayout>
