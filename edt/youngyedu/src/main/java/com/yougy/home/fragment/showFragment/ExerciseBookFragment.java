@@ -254,6 +254,19 @@ public class ExerciseBookFragment extends BFragment {
 
 
     private void refreshData() {
+
+        binding.switch2homeworkBtn.setEnabled(false);
+        if (mControlActivity.mNoteId<=0){
+            binding.switch2noteBtn.setEnabled(false);
+        }
+
+        if (mControlActivity.mBookId <= 0){
+            binding.switch2bookBtn.setEnabled(false);
+        }
+
+
+
+
         NetWorkManager.queryHomeworkBookDetail(mControlActivity.mHomewrokId)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
@@ -348,12 +361,12 @@ public class ExerciseBookFragment extends BFragment {
         mControlActivity = activity;
     }
 
-    public void aaaa() {
+ /*   public void aaaa() {
         int id1 = mControlActivity.mHomewrokId;
         int id2 = mControlActivity.mNoteId;
         int id3 = mControlActivity.mBookId;
     }
-
+*/
 
     @Override
     public void onUiDetermineListener() {
