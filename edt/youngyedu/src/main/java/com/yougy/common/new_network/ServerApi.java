@@ -9,9 +9,16 @@ import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.shop.CreateOrderRequestObj;
+import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.DownloadInfo;
+import com.yougy.shop.bean.Favor;
+import com.yougy.shop.bean.OrderDetailBean;
+import com.yougy.shop.bean.OrderIdObj;
+import com.yougy.shop.bean.OrderInfo;
+import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.RemoveRequestObj;
 
 import java.util.List;
@@ -189,4 +196,97 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"removeCart"})
     Observable<BaseResult<Object>> removeCart(@Body RemoveRequestObj removeRequestObj);
 
+    /**
+     * 获取订单树,包括订单的拆分的子订单信息
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryOrderTree"})
+    Observable<BaseResult<List<OrderDetailBean>>> queryOrderTree(@Field("orderId") String orderId);
+
+    /**
+     * 获取我的订单列表,不包含子订单信息
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m" , "orderParent"}, values = {"queryOrderSole" , "0"})
+    Observable<BaseResult<List<OrderSummary>>> queryOrderSole(@Field("orderOwner") String orderOwner);
+
+    /**
+     * 订单结算,获取支付二维码
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"checkOrder"})
+    Observable<BaseResult<List<QueryQRStrObj>>> checkOrder(@Field("orderId") String orderId, @Field("orderOwner") int orderOwner
+            , @Field("orderPrice") double orderPrice, @Field("payMethod") int payMethod);
+
+    /**
+     * 查询支付状态
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"closeOrder"})
+    Observable<BaseResult<Object>> isOrderPaySuccess(@Field("orderId") String orderId, @Field("orderOwner") int orderOwner);
+
+    /**
+     * 取消订单
+     *
+     * @param orderId
+     * @param orderOwner
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"cancelOrder"})
+    Observable<BaseResult<Object>> cancelOrder(@Field("orderId") String orderId, @Field("orderOwner") Integer orderOwner);
+
+    /**
+     * 查询我的订单列表
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryOrder"})
+    Observable<BaseResult<List<OrderInfo>>> queryMyOrderList(@Field("orderOwner") String orderOwner, @Field("orderStatus") String orderStatus);
+
+    /**
+     * 创建个人订单
+     */
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"createOrder"})
+    Observable<BaseResult<List<OrderIdObj>>> createOrder(@Body CreateOrderRequestObj createOrderRequestObj);
+
+
+    /**
+     * 删除单个收藏夹
+     *
+     * @param userId
+     * @param bookId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"removeFavor"})
+    Observable<BaseResult<Object>> removeFavor(@Field("userId") Integer userId, @Field("bookId") Integer bookId);
+
+    /**
+     * 批量删除收藏夹
+     *
+     * @param removeRequestObj
+     * @return
+     */
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"removeFavor"})
+    Observable<BaseResult<Object>> removeFavor(@Body RemoveRequestObj removeRequestObj);
+
+    /**
+     * 查询收藏夹
+     *
+     * @param userId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryFavor"})
+    Observable<BaseResult<List<Favor>>> queryFavor(@Field("userId") Integer userId);
 }

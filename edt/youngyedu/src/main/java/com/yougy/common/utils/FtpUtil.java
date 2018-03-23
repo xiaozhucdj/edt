@@ -75,8 +75,8 @@ public class FtpUtil {
         FileInputStream fileInputStream = null;
         try {
             //设置存储路径
-            ftpClient.makeDirectory("/data/" + SpUtil.getAccountId());
-            ftpClient.changeWorkingDirectory("/data/" + SpUtil.getAccountId());
+            ftpClient.makeDirectory("/data/" + SpUtils.getAccountId());
+            ftpClient.changeWorkingDirectory("/data/" + SpUtils.getAccountId());
 
             //设置上传文件需要的一些基本信息
             ftpClient.setBufferSize(1024);
@@ -122,11 +122,11 @@ public class FtpUtil {
         try {
             ftpClient.enterLocalPassiveMode();
             // 转到指定下载目录
-            ftpClient.changeWorkingDirectory("/data/" + SpUtil.getAccountId());
+            ftpClient.changeWorkingDirectory("/data/" + SpUtils.getAccountId());
 
             // 列出该目录下所有文件
-            FTPFile[] files = ftpClient.listFiles("/data/" + SpUtil.getAccountId());
-            LogUtils.e(TAG, "account id is : " + SpUtil.getAccountId() + ",files' size is : " + files.length);
+            FTPFile[] files = ftpClient.listFiles("/data/" + SpUtils.getAccountId());
+            LogUtils.e(TAG, "account id is : " + SpUtils.getAccountId() + ",files' size is : " + files.length);
             if (files.length == 0) {
                 return false;
             }

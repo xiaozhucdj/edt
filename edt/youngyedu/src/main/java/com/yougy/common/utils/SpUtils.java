@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * Created by jiangliang on 2016/6/30.
  */
-public class SpUtil {
+public class SpUtils {
     private static final String LABEL_LOCATION = "label_location";
     private static final String LOCATION_X = "locationX";
     private static final String LOCATION_Y = "locationY";

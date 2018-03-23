@@ -9,7 +9,7 @@ import android.view.View;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
@@ -80,7 +80,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                     case "IH03"://未批改
                     case "IH04"://批改中
                     case "IH05"://已批改
-                        NetWorkManager.queryReply(homeworkDetail.getExamId() , SpUtil.getUserId())
+                        NetWorkManager.queryReply(homeworkDetail.getExamId() , SpUtils.getUserId())
                                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                                     @Override
                                     public void call(List<QuestionReplySummary> replySummaries) {
@@ -166,7 +166,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryAnswer(SpUtil.getStudent().getClassId() , bookId + "" , cursorId).subscribe(new Action1<List<HomeworkDetail>>() {
+        NetWorkManager.queryAnswer(SpUtils.getStudent().getClassId() , bookId + "" , cursorId).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
                 homeworkDetailList.clear();

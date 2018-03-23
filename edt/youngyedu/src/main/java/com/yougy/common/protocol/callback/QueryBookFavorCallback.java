@@ -9,7 +9,7 @@ import com.yougy.common.protocol.response.QueryBookFavorRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 
 import okhttp3.Response;
 
@@ -44,6 +44,6 @@ public class QueryBookFavorCallback extends BaseCallBack<QueryBookFavorRep> {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryBookFavorProtocol(SpUtil.getAccountId(), mProtocol, this);
+        ProtocolManager.queryBookFavorProtocol(SpUtils.getAccountId(), mProtocol, this);
     }
 }

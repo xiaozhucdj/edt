@@ -14,7 +14,7 @@ import com.yougy.common.rx.RxBus;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 
 import java.io.File;
 
@@ -55,7 +55,7 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     private void downloadDb(){
         Log.v("FH" , "注意这儿:DATABASE_NAME=" + DATABASE_NAME);
         final File dbfile = mWeakReference.get().getDatabasePath(DATABASE_NAME);
-        if (YougyApplicationManager.isWifiAvailable() && !SpUtil.isInit()) {
+        if (YougyApplicationManager.isWifiAvailable() && !SpUtils.isInit()) {
             Observable.create(new Observable.OnSubscribe<Boolean>() {
 
                 @Override

@@ -1,6 +1,6 @@
 package com.yougy.common.protocol.request;
 
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 
 /**
  * Created by jiangliang on 2017/10/13.
@@ -12,7 +12,7 @@ public class AliyunDataUploadReq extends NewBaseReq {
 
     public AliyunDataUploadReq(){
         m = "saveDeviceDB";
-        userId = SpUtil.getUserId();
+        userId = SpUtils.getUserId();
     }
 
     public int getUserId() {

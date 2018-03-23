@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplySummary;
@@ -129,7 +129,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
     protected void loadData() {
         binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
         NetWorkManager
-                .queryReply(examId, SpUtil.getUserId())
+                .queryReply(examId, SpUtils.getUserId())
 //                .queryReply("238")//TODO 测试用,删掉
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                                @Override

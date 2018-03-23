@@ -46,8 +46,8 @@ public class AliyunUtil {
     private static String objectKey;
 
     public AliyunUtil(AliyunData data) {
-        DATABASE_NAME = SpUtil.getUserId() + ".db";
-        JOURNAL_NAME = SpUtil.getUserId() + ".db-journal";
+        DATABASE_NAME = SpUtils.getUserId() + ".db";
+        JOURNAL_NAME = SpUtils.getUserId() + ".db-journal";
         OSSCredentialProvider credentialProvider = new OSSStsTokenCredentialProvider(data.getAccessKeyId(), data.getAccessKeySecret(),data.getSecurityToken());
         filePath = YougyApplicationManager.getContext().getDatabasePath(DATABASE_NAME).getAbsolutePath();
         objectKey = "leke" + File.separator + "appDB" + File.separator + DATABASE_NAME;
@@ -68,8 +68,8 @@ public class AliyunUtil {
             @Override
             public void onSuccess(PutObjectRequest putObjectRequest, PutObjectResult putObjectResult) {
                 LogUtils.e("AliyunUtil", "onSuccess put object result................");
-                SpUtil.changeContent(false);
-                SpUtil.changeInitFlag(false);
+                SpUtils.changeContent(false);
+                SpUtils.changeInitFlag(false);
                 Connector.resetHelper();
                 deleteDatabase(DATABASE_NAME);
                 deleteDatabase(JOURNAL_NAME);
@@ -81,7 +81,7 @@ public class AliyunUtil {
                 LogUtils.e("AliyunUtil", "onFailure ServiceException : " + e.getMessage());
             }
         });
-        SpUtil.clearSP();
+        SpUtils.clearSP();
     }
 
 
@@ -118,15 +118,15 @@ public class AliyunUtil {
                         }
                     }
                 }
-                SpUtil.changeInitFlag(downloadDb);
-                LitePalDB litePalDB = LitePalDB.fromDefault(Integer.toString(SpUtil.getUserId()));
+                SpUtils.changeInitFlag(downloadDb);
+                LitePalDB litePalDB = LitePalDB.fromDefault(Integer.toString(SpUtils.getUserId()));
                 LitePal.use(litePalDB);
                 LitePal.getDatabase();
             }
 
             @Override
             public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
-                LitePalDB litePalDB = LitePalDB.fromDefault(Integer.toString(SpUtil.getUserId()));
+                LitePalDB litePalDB = LitePalDB.fromDefault(Integer.toString(SpUtils.getUserId()));
                 LitePal.use(litePalDB);
                 LitePal.getDatabase();
                 // 请求异常

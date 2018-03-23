@@ -11,9 +11,16 @@ import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.shop.CreateOrderRequestObj;
+import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.DownloadInfo;
+import com.yougy.shop.bean.Favor;
+import com.yougy.shop.bean.OrderDetailBean;
+import com.yougy.shop.bean.OrderIdObj;
+import com.yougy.shop.bean.OrderInfo;
+import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.RemoveRequestObj;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -272,6 +279,77 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<List<OrderDetailBean>> queryOrderTree(String orderId) {
+        Log.v("FH", "!!!!!调用ServerApi查询订单树,包含分拆的子订单");
+        return getInstance().getServerApi().queryOrderTree(orderId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<OrderSummary>> queryMyOrderList(String orderOwner) {
+        Log.v("FH", "!!!!!调用ServerApi查询我的订单");
+        return getInstance().getServerApi().queryOrderSole(orderOwner)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<QueryQRStrObj>> checkOrder(String orderId, int orderOwner, double orderPrice, int payMethod) {
+        Log.v("FH", "!!!!!调用ServerApi进行订单结算获取二维码:checkOrder");
+        return getInstance().getServerApi().checkOrder(orderId, orderOwner, orderPrice, payMethod)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> isOrderPaySuccess(String orderId, int orderOwner) {
+        Log.v("FH", "!!!!!调用ServerApi查询订单支付情况:isOrderPaySuccess");
+        return getInstance().getServerApi().isOrderPaySuccess(orderId, orderOwner)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> cancelOrder(String orderId, Integer orderOwner) {
+        Log.v("FH", "!!!!!调用ServerApi取消订单:cancelOrder");
+        return getInstance().getServerApi().cancelOrder(orderId, orderOwner)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<OrderInfo>> queryOrder(String orderOwner, String orderStatus) {
+        Log.v("FH", "!!!!!调用ServerApi查询我的订单列表:queryOrder");
+        return getInstance().getServerApi().queryMyOrderList(orderOwner, orderStatus)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<OrderIdObj>> createOrder(CreateOrderRequestObj createOrderRequestObj) {
+        Log.v("FH", "!!!!!调用ServerApi创建订单:createOrder");
+        return getInstance().getServerApi().createOrder(createOrderRequestObj)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> removeFavor(Integer userId, Integer bookId) {
+        Log.v("FH", "!!!!!调用ServerApi删除单项收藏夹:removeFavor");
+        return getInstance().getServerApi().removeFavor(userId, bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> removeFavor(RemoveRequestObj removeRequestObj) {
+        Log.v("FH", "!!!!!调用ServerApi删除多项收藏夹:removeFavor");
+        return getInstance().getServerApi().removeFavor(removeRequestObj)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<Favor>> queryFavor(Integer userId) {
+        Log.v("FH", "!!!!!调用ServerApi查询收藏夹:queryFavor");
+        return getInstance().getServerApi().queryFavor(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
 
 }

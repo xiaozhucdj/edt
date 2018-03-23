@@ -15,7 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FullScreenHintDialogBinding;
@@ -107,12 +107,12 @@ public class FullScreenHintDialog extends Dialog {
                 }
             });
         }
-        binding.checkbox.setSelected(SpUtil.isThisDialogNotShowAgain(tag));
+        binding.checkbox.setSelected(SpUtils.isThisDialogNotShowAgain(tag));
         binding.notAgainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 binding.checkbox.setSelected(!binding.checkbox.isSelected());
-                SpUtil.setNotSHowAgainDialogTag(tag , binding.checkbox.isSelected());
+                SpUtils.setNotSHowAgainDialogTag(tag , binding.checkbox.isSelected());
             }
         });
         if (!showNoMoreAgainHint){
@@ -203,7 +203,7 @@ public class FullScreenHintDialog extends Dialog {
 
     @Override
     public void show() {
-        if (SpUtil.isThisDialogNotShowAgain(tag)){
+        if (SpUtils.isThisDialogNotShowAgain(tag)){
             if (nextStepOnclickListener != null){
                 nextStepOnclickListener.onClick(this  , 0);
             }

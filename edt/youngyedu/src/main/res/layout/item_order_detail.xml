@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data></data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="230px"
+        android:paddingLeft="30px"
+        android:paddingRight="30px">
+
+        <LinearLayout
+            android:id="@+id/promotion_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50px"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/no_promotion_tv"
+                android:layout_width="160px"
+                android:layout_height="32px"
+                android:background="@drawable/img_bucanjiamanjian"
+                android:gravity="center"
+                android:text="不参加任何满减"
+                android:textColor="@color/white"
+                android:textSize="20px" />
+
+            <TextView
+                android:id="@+id/promotion_name_tv"
+                android:layout_width="60px"
+                android:layout_height="32px"
+                android:background="@drawable/img_bg_manjian"
+                android:gravity="center"
+                android:text="满减"
+                android:textColor="@color/white"
+                android:textSize="20px"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/promotion_content_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="32px"
+                android:layout_marginLeft="15px"
+                android:text="满XX减XX元"
+                android:textColor="@color/black"
+                android:textSize="24px"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/promotion_price_sum_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="共计 : ￥xx.xx元,已优惠￥x.xx元"
+                android:textColor="@color/black"
+                android:textSize="20px"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/book_cover_imv_1"
+            android:layout_width="132px"
+            android:layout_height="172px"
+            android:layout_marginLeft="20px"
+            android:layout_marginTop="72px"
+            android:background="@drawable/img_bg_xiangqing"
+            android:paddingBottom="11px"
+            android:paddingRight="11px" />
+
+        <TextView
+            android:id="@+id/book_name_tv1"
+            android:layout_width="272px"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/book_cover_imv_1"
+            android:layout_marginLeft="10px"
+            android:layout_toRightOf="@id/book_cover_imv_1"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:text="xxx轻巧夺冠-优化训练:三年级数学(上)(人教版)(北师大版)"
+            android:textColor="@color/black"
+            android:textSize="26px" />
+
+        <TextView
+            android:id="@+id/book_author_tv1"
+            android:layout_width="272px"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/book_name_tv1"
+            android:layout_below="@id/book_name_tv1"
+            android:layout_marginTop="15px"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="xxx作者:洛夫斯基"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+
+        <TextView
+            android:id="@+id/book_price_tv1"
+            android:layout_width="272px"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/book_author_tv1"
+            android:layout_below="@id/book_author_tv1"
+            android:layout_marginTop="15px"
+            android:includeFontPadding="false"
+            android:text="xxx价格:￥8888.88"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+        <ImageView
+            android:id="@+id/book_cover_imv_2"
+            android:layout_width="132px"
+            android:layout_height="172px"
+            android:layout_marginLeft="72px"
+            android:layout_marginTop="72px"
+            android:background="@drawable/img_bg_xiangqing"
+            android:paddingBottom="11px"
+            android:paddingRight="11px"
+            android:layout_toRightOf="@id/book_name_tv1"/>
+        <TextView
+            android:id="@+id/book_name_tv2"
+            android:layout_width="272px"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/book_cover_imv_2"
+            android:layout_marginLeft="10px"
+            android:layout_toRightOf="@id/book_cover_imv_2"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:text="xxx轻巧夺冠-优化训练:三年级数学(上)(人教版)(北师大版)"
+            android:textColor="@color/black"
+            android:textSize="26px" />
+
+        <TextView
+            android:id="@+id/book_author_tv2"
+            android:layout_width="272px"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/book_name_tv2"
+            android:layout_below="@id/book_name_tv2"
+            android:layout_marginTop="15px"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="xxx作者:洛夫斯基"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+
+        <TextView
+            android:id="@+id/book_price_tv2"
+            android:layout_width="272px"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/book_author_tv2"
+            android:layout_below="@id/book_author_tv2"
+            android:layout_marginTop="15px"
+            android:includeFontPadding="false"
+            android:text="xxx价格:￥8888.88"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+    </RelativeLayout>
+</layout>

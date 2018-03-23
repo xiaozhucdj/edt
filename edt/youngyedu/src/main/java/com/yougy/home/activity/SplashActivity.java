@@ -28,7 +28,7 @@ import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -151,10 +151,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         if (NetUtils.isNetConnected()) {
             Log.v("FH", "有网络,更新UUID");
             Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "") ;
-            SpUtil.saveUUID(Commons.UUID);
+            SpUtils.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
-            if (-1 == SpUtil.getAccountId()) {
+            if (-1 == SpUtils.getAccountId()) {
                 Log.v("FH", "没有网络,没有之前的登录信息,跳转到wifi设置");
                 jumpWifiActivity();
             } else {
@@ -166,7 +166,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
 
     private void checkLocalLockAndJump() {
-        if (TextUtils.isEmpty(SpUtil.getLocalLockPwd())) {
+        if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
             Log.v("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
             new HintDialog(SplashActivity.this
                     , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
@@ -174,7 +174,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                     , new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    SpUtil.setLocalLockPwd("123456");
+                    SpUtils.setLocalLockPwd("123456");
                     loadIntent(LocalLockActivity.class);
                     finish();
                 }
@@ -210,8 +210,8 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         }).show();
                     } else {
                         Log.v("FH", "自动登录成功");
-                        SpUtil.saveStudent(response.getData().get(0));
-                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), null);
+                        SpUtils.saveStudent(response.getData().get(0));
+                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
                 } else {
@@ -223,7 +223,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             @Override
             public void onError(Call call, Exception e, int id) {
                 Log.v("FH", "自动登录失败原因:其他错误:" + e.getMessage());
-                if (-1 == SpUtil.getAccountId()) {
+                if (-1 == SpUtils.getAccountId()) {
                     Log.v("FH", "自动登录失败,没有之前的登录信息,跳转到wifi设置");
                     jumpWifiActivity();
                 } else {

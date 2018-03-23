@@ -9,7 +9,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.response.BookShelfProtocol;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 
 import okhttp3.Response;
 
@@ -42,6 +42,6 @@ public class BookShelfCallBack extends BaseCallBack<BookShelfProtocol> {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.bookShelfProtocol(SpUtil.getAccountId(), -1, -1, "", ProtocolId.PROTOCOL_ID_BOOK_SHELF, this);
+        ProtocolManager.bookShelfProtocol(SpUtils.getAccountId(), -1, -1, "", ProtocolId.PROTOCOL_ID_BOOK_SHELF, this);
     }
 }

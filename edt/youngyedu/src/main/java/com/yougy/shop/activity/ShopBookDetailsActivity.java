@@ -14,13 +14,10 @@ import android.widget.ImageView;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.activity.BaseActivity;
-import com.yougy.common.eventbus.BaseEvent;
-import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.protocol.ProtocolId;
@@ -39,11 +36,10 @@ import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.protocol.response.PromoteBookRep;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
-import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -66,7 +62,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -158,7 +153,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
     private void refreshData() {
         if (NetUtils.isNetConnected()) {
-            NetWorkManager.queryBook(bookId + "" , SpUtil.getAccountId() + "").subscribe(new Action1<List<com.yougy.shop.bean.BookInfo>>() {
+            NetWorkManager.queryBook(bookId + "" , SpUtils.getAccountId() + "").subscribe(new Action1<List<com.yougy.shop.bean.BookInfo>>() {
                 @Override
                 public void call(List<com.yougy.shop.bean.BookInfo> bookInfos) {
                     mBookInfo = bookInfos.get(0);
@@ -230,7 +225,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     throwable.printStackTrace();
                 }
             });
-            ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId(), bookId, ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL, new QueryShopBookDetailCallBack(this, bookId));
+            ProtocolManager.queryShopBookDetailByIdProtocol(SpUtils.getAccountId(), bookId, ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL, new QueryShopBookDetailCallBack(this, bookId));
         } else {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForRequestDetailsNoNet);
         }
@@ -353,26 +348,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
                     if (rep.getCode() == 200) {
                         BriefOrder orderObj = rep.getData().get(0);
-                        orderObj.setOrderStatus("待支付");
-                        orderObj.setOrderTime(DateUtils.getCalendarAndTimeString());
-                        if (orderObj.getOrderPrice() == 0d) {
-                            YougyApplicationManager.getRxBus(ShopBookDetailsActivity.this).send("refreshOrderList");
-                            Intent intent = new Intent(ShopBookDetailsActivity.this, PaySuccessActivity.class);
-                            intent.putExtra(ShopGloble.ORDER, orderObj);
-                            startActivity(intent);
-                            //通知主界面刷新
-                            BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
-                            EventBus.getDefault().post(baseEvent);
-                        } else {
-                            orderObj.setBookList(new ArrayList<BookInfo>() {
-                                {
-                                    add(mBookInfo);
-                                }
-                            });
-                            Intent intent = new Intent(ShopBookDetailsActivity.this, ConfirmOrderActivity.class);
-                            intent.putExtra(ShopGloble.ORDER, orderObj);
-                            startActivity(intent);
-                        }
+                        Intent intent = new Intent(ShopBookDetailsActivity.this, OrderDetailActivity.class);
+                        intent.putExtra("orderId", orderObj.getOrderId());
+                        startActivity(intent);
                         finish();
                     } else {
                         showCenterDetermineDialog(R.string.books_request_order_fail);
@@ -395,7 +373,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             return;
                         }
                         RequirePayOrderRequest request = new RequirePayOrderRequest();
-                        request.setOrderOwner(SpUtil.getAccountId());
+                        request.setOrderOwner(SpUtils.getAccountId());
                         request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
                         ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
                                 , new RequireOrderCallBack(ShopBookDetailsActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
@@ -437,7 +415,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
             return;
         }
-        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtils.getAccountId())
                 , "[\"已支付\",\"待支付\"]"
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
                 , new QueryOrderListCallBack(ShopBookDetailsActivity.this, ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
@@ -449,7 +427,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     private void addBooksToCar(List<BookInfo> bookInfoList) {
         if (NetUtils.isNetConnected()) {
             AppendBookCartRequest request = new AppendBookCartRequest();
-            request.setUserId(SpUtil.getAccountId());
+            request.setUserId(SpUtils.getAccountId());
             for (BookInfo bookInfo : bookInfoList) {
                 request.getData().add(new AppendBookCartRequest.BookIdObj(bookInfo.getBookId()));
             }
@@ -466,7 +444,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     private void addBooksToFavor(List<BookInfo> bookInfoList) {
         if (NetUtils.isNetConnected()) {
             AppendBookFavorRequest request = new AppendBookFavorRequest();
-            request.setUserId(SpUtil.getAccountId());
+            request.setUserId(SpUtils.getAccountId());
             for (BookInfo bookInfo : bookInfoList) {
                 request.getData().add(new AppendBookFavorRequest.BookIdObj(bookInfo.getBookId()));
             }

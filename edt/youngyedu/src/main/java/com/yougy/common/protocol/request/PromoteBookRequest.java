@@ -1,7 +1,7 @@
 package com.yougy.common.protocol.request;
 
 
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 
 /**
  *  图书推荐 请求协议
@@ -12,7 +12,7 @@ public class PromoteBookRequest {
     private int bookId = -1;
 
     public PromoteBookRequest(int bookId) {
-        this.userId = SpUtil.getAccountId();
+        this.userId = SpUtils.getAccountId();
         this.bookId = bookId;
     }
 

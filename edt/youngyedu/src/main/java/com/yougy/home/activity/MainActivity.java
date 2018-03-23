@@ -30,7 +30,7 @@ import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
 import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
@@ -195,7 +195,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mAllNotesFragment = null;
         mAllHomeworkFragment = null;
 
-        if (YougyApplicationManager.isWifiAvailable() && SpUtil.isContentChanged()) {
+        if (YougyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
             startService(new Intent(this, UploadService.class));
         }
         super.onDestroy();
@@ -235,10 +235,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mFlRight.setOnClickListener(this);
         //班级
         mTvClassName = (TextView) this.findViewById(R.id.tv_className);
-        mTvClassName.setText(SpUtil.getAccountClass());
+        mTvClassName.setText(SpUtils.getAccountClass());
         //学生名字
         mTvUserName = (TextView) this.findViewById(R.id.tv_userName);
-        mTvUserName.setText(SpUtil.getAccountName());
+        mTvUserName.setText(SpUtils.getAccountName());
         //当前学期使用的书
         mBtnCurrentBook = (Button) this.findViewById(R.id.btn_currentBook);
         mBtnCurrentBook.setOnClickListener(this);
@@ -285,7 +285,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
-        String sex = SpUtil.getSex();
+        String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
             imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));
         } else {

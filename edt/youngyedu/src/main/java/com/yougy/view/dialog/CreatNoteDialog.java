@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yougy.common.dialog.BaseDialog;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.DialogNoteSubjectAdapter;
@@ -118,8 +118,8 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
         fist.setSubject("无");
          mInfos.add(fist);
 
-        if (!StringUtils.isEmpty(SpUtil.getSubjectNames())){
-            String[] subs = SpUtil.getSubjectNames().split(",");
+        if (!StringUtils.isEmpty(SpUtils.getSubjectNames())){
+            String[] subs = SpUtils.getSubjectNames().split(",");
             for (String str : subs) {
                 DialogNoteSubjectInfo info = new DialogNoteSubjectInfo();
                 info.setSubject(str);

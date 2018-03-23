@@ -40,7 +40,7 @@ import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
@@ -187,9 +187,9 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             return;
         }
 
-        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getAccountId(), mBookInfo.getBookId()
+        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtils.getAccountId(), mBookInfo.getBookId()
                 , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL, new QueryShopBookDetailCallBack(this, mBookInfo.getBookId()));
-        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
+        ProtocolManager.queryBookCartProtocol(SpUtils.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
                 , new QueryBookCartCallBack(this, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
     }
 
@@ -249,7 +249,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagForNoNet);
             return;
         }
-        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId())
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtils.getAccountId())
                 , "[\"已支付\",\"待支付\"]"
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
                 , new QueryOrderListCallBack(ProbationReadBookActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
@@ -305,13 +305,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                     RequirePayOrderRep rep = (RequirePayOrderRep) o;
                     if (rep.getCode() == 200) {
                         BriefOrder orderObj = rep.getData().get(0);
-                        orderObj.setBookList(new ArrayList<BookInfo>() {
-                            {
-                                add(mBookInfo);
-                            }
-                        });
-                        Intent intent = new Intent(ProbationReadBookActivity.this, ConfirmOrderActivity.class);
-                        intent.putExtra(ShopGloble.ORDER, orderObj);
+                        Intent intent = new Intent(ProbationReadBookActivity.this, OrderDetailActivity.class);
+                        intent.putExtra("orderId", orderObj.getOrderId());
                         startActivity(intent);
                         finish();
                     } else {
@@ -326,7 +321,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                             return;
                         }
                         RequirePayOrderRequest request = new RequirePayOrderRequest();
-                        request.setOrderOwner(SpUtil.getAccountId());
+                        request.setOrderOwner(SpUtils.getAccountId());
                         request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
                         ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
                                 , new RequireOrderCallBack(ProbationReadBookActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
@@ -351,7 +346,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         }
 
         AppendBookCartRequest request = new AppendBookCartRequest();
-        request.setUserId(SpUtil.getAccountId());
+        request.setUserId(SpUtils.getAccountId());
         for (BookInfo bookInfo :
                 bookInfoList) {
             request.getData().add(new AppendBookCartRequest.BookIdObj(bookInfo.getBookId()));
@@ -369,7 +364,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             return;
         }
         AppendBookFavorRequest request = new AppendBookFavorRequest();
-        request.setUserId(SpUtil.getAccountId());
+        request.setUserId(SpUtils.getAccountId());
         for (BookInfo bookInfo :
                 bookInfoList) {
             request.getData().add(new AppendBookFavorRequest.BookIdObj(bookInfo.getBookId()));

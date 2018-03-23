@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.yougy.common.dialog.BaseDialog;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.DialogChangePwdBinding;
@@ -69,11 +69,11 @@ public class ChangePwdDialog extends BaseDialog {
         else if (!binding.newPwdEdtv.getText().toString().equals(binding.againNewPwdEdtv.getText().toString())){
             new HintDialog(mContext , "您两次输入的新密码不一致,请输入一致的新密码").show();
         }
-        else if (!SpUtil.getLocalLockPwd().equals(binding.oldPwdEdtv.getText().toString())){
+        else if (!SpUtils.getLocalLockPwd().equals(binding.oldPwdEdtv.getText().toString())){
             new HintDialog(mContext , "您输入的旧密码不正确").show();
         }
         else {
-            SpUtil.setLocalLockPwd(binding.newPwdEdtv.getText().toString());
+            SpUtils.setLocalLockPwd(binding.newPwdEdtv.getText().toString());
             dismiss();
             new HintDialog(mContext , "修改成功!").show();
         }

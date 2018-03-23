@@ -33,7 +33,7 @@ import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -174,14 +174,14 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                         //设置 笔记名字
                         mCreatInfo.setNoteTitle(noteTitle);
                         //笔记所有者
-                        mCreatInfo.setNoteAuthor(SpUtil.getAccountId());
+                        mCreatInfo.setNoteAuthor(SpUtils.getAccountId());
                         // 笔记创建者
-                        mCreatInfo.setNoteCreator(SpUtil.getAccountId());
+                        mCreatInfo.setNoteCreator(SpUtils.getAccountId());
                         //设置 笔记类型 ,内部转换对应的int 后期修改
                         mCreatInfo.setNoteStyleOption(mNoteDialog.getNoteOptionStyle());
 //                        UIUtils.showToastSafe(mCreatInfo.getNoteType() + "", 1);
                         //笔记年级
-                        mCreatInfo.setNoteFitGradeName(SpUtil.getGradeName());
+                        mCreatInfo.setNoteFitGradeName(SpUtils.getGradeName());
                         //笔记学科
                         mCreatInfo.setNoteFitSubjectName(subject);
                         //独立笔记
@@ -380,7 +380,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
      */
     private void requestOffLineUpdataNote() {
         NewUpdateNoteReq req = new NewUpdateNoteReq();
-        req.setUserId(SpUtil.getAccountId());
+        req.setUserId(SpUtils.getAccountId());
         req.setData(GsonUtil.fromNotes(mUpdataStr));
         NewProtocolManager.updateNote(req, new BaseCallBack<NewUpdateNoteRep>(getActivity()) {
 
@@ -410,7 +410,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
      */
     private void requestOffLineAddNote() {
         NewInserAllNoteReq req = new NewInserAllNoteReq();
-        req.setUserId(SpUtil.getAccountId());
+        req.setUserId(SpUtils.getAccountId());
         req.setData(GsonUtil.fromNotes(mAddStr));
         NewProtocolManager.inserAllNote(req, new BaseCallBack<NewInserAllNoteRep>(getActivity()) {
             @Override
@@ -457,11 +457,11 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
         if (NetUtils.isNetConnected()) {
             NewQueryNoteReq req = new NewQueryNoteReq();
             //设置学生ID
-            req.setUserId(SpUtil.getAccountId());
+            req.setUserId(SpUtils.getAccountId());
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE));
             //设置年级
-            req.setNoteFitGradeName(SpUtil.getGradeName());
+            req.setNoteFitGradeName(SpUtils.getGradeName());
             mNewNoteBookCallBack = new NewNoteBookCallBack(getActivity(), req);
             NewProtocolManager.queryNote(req, mNewNoteBookCallBack);
 
@@ -592,7 +592,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
     private void creatNoteInfoProtocol() {
         if (NetUtils.isNetConnected()) {
             NewInserAllNoteReq req = new NewInserAllNoteReq();
-            req.setUserId(SpUtil.getAccountId());
+            req.setUserId(SpUtils.getAccountId());
             List<NoteInfo> infos = new ArrayList<>();
             infos.add(mCreatInfo);
             req.setData(infos);

@@ -29,7 +29,7 @@ import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -361,7 +361,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     /**更新离线修改的笔记*/
     private void requestOffLineUpdataNote() {
         NewUpdateNoteReq req = new NewUpdateNoteReq();
-        req.setUserId(SpUtil.getAccountId());
+        req.setUserId(SpUtils.getAccountId());
         req.setData(GsonUtil.fromNotes(mUpdataStr));
         NewProtocolManager.updateNote(req ,  new BaseCallBack<NewUpdateNoteRep>(getActivity()){
 
@@ -389,7 +389,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     /**离线上传笔记*/
     private void requestOffLineAddNote() {
         NewInserAllNoteReq req = new NewInserAllNoteReq();
-        req.setUserId(SpUtil.getAccountId());
+        req.setUserId(SpUtils.getAccountId());
         req.setData(GsonUtil.fromNotes(mAddStr));
         NewProtocolManager.inserAllNote(req, new BaseCallBack<NewInserAllNoteRep>(getActivity()) {
             @Override
@@ -436,7 +436,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         if (NetUtils.isNetConnected()) {
             NewQueryNoteReq req = new NewQueryNoteReq();
             //设置学生ID
-            req.setUserId(SpUtil.getAccountId());
+            req.setUserId(SpUtils.getAccountId());
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_NOTE));
             //设置年级
@@ -531,7 +531,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         if (mServerInfos.size() > 0) {
             for (NoteInfo noteInfo : mServerInfos) {
                 //设置当前年级锁需要的书 ，并且做分页显示
-                if (StringUtils.isEquals(SpUtil.getGradeName(), noteInfo.getNoteFitGradeName())) {
+                if (StringUtils.isEquals(SpUtils.getGradeName(), noteInfo.getNoteFitGradeName())) {
                     mCountInfos.add(noteInfo);
                 }
                 //设置 年级分类
@@ -554,7 +554,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             if (mTreeFitGrade.size() > 0) {
                 for (BookCategory infoGrade : mTreeFitGrade) {
                     //设置年级选中状态
-                    if (StringUtils.isEquals(SpUtil.getGradeName(), infoGrade.getCategoryName())) {
+                    if (StringUtils.isEquals(SpUtils.getGradeName(), infoGrade.getCategoryName())) {
                         infoGrade.setSelect(true);
                     }
                     mBookFitGrade.add(infoGrade);
@@ -578,7 +578,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
-            mBookItemTile.setText(SpUtil.getGradeName() + "课本");
+            mBookItemTile.setText(SpUtils.getGradeName() + "课本");
 
 
          /*   if (mBookFitGrade.size() > 4) {
@@ -802,7 +802,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         NoteInfo1.setNoteFitSubjectName("语文");
         NoteInfo1.setNoteFitSubjectId(1);
         //设置笔记创建者
-        NoteInfo1.setNoteAuthor(SpUtil.getAccountId());
+        NoteInfo1.setNoteAuthor(SpUtils.getAccountId());
         //设置笔记对应书的id
         NoteInfo1.setBookId(-1);
         //设置是否和书绑定
@@ -814,7 +814,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         NoteInfo2.setNoteFitSubjectName("语文");
         NoteInfo2.setNoteFitSubjectId(1);
         //设置笔记创建者
-        NoteInfo2.setNoteAuthor(SpUtil.getAccountId());
+        NoteInfo2.setNoteAuthor(SpUtils.getAccountId());
         //设置笔记对应书的id
         NoteInfo2.setBookId(-1);
         //设置是否和书绑定
