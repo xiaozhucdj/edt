@@ -53,6 +53,7 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.ImageLoader;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -377,7 +378,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //修改笔记
         mImgupdataNote = (ImageView) mRoot.findViewById(R.id.img_updataNote);
 
-        if (mControlActivity.mBookId > 0 && !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
+//        if (mControlActivity.mBookId > 0 && !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
+
+        if (mControlActivity.mBookId > 0) {
             mTextbookIv.setEnabled(true);
         } else {
             mTextbookIv.setEnabled(false);
@@ -526,9 +529,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     public void initNoteView() {
 //        updatePaintColor(Color.BLACK);
         mNoteBookView = new NoteBookView(mContext);
-        if (mIsUserPen){
+        if (mIsUserPen) {
             mNoteBookView.outSetPenSize(mCutterPenSize);
-        }else{
+        } else {
             mNoteBookView.outSetEraserSize(mCutterEraserSize);
         }
         mNoteBookView.setReDoOptListener(this);
@@ -696,10 +699,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         /*        mNoteBookView.useEraser();
                 mNoteBookView.setEraserFlag(true);*/
 
-                if (mPaintChoose.getVisibility() == View.VISIBLE){
+                if (mPaintChoose.getVisibility() == View.VISIBLE) {
                     mPaintChoose.setVisibility(View.GONE);
-                }else{
-                    mIsUserPen =false ;
+                } else {
+                    mIsUserPen = false;
                     mSeekPenOrEraser.setProgress(mCutterEraserSize);
                     mPaintChoose.setVisibility(View.VISIBLE);
                 }
@@ -736,10 +739,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 //                }
 //                mIsIntercept = false;
 
-                if (mPaintChoose.getVisibility() == View.VISIBLE){
+                if (mPaintChoose.getVisibility() == View.VISIBLE) {
                     mPaintChoose.setVisibility(View.GONE);
-                }else{
-                    mIsUserPen =true ;
+                } else {
+                    mIsUserPen = true;
                     mSeekPenOrEraser.setProgress(mCutterPenSize);
                     mPaintChoose.setVisibility(View.VISIBLE);
                 }
@@ -787,7 +790,15 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 send();
                 break;
             case R.id.textbook:
-                toTextBookFragment();
+                if(!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))){
+                    toTextBookFragment();
+                }else{
+                    if (NetUtils.isNetConnected()) {
+                        downBookTask(mControlActivity.mBookId);
+                    } else {
+                        showCancelAndDetermineDialog(R.string.jump_to_net);
+                    }
+                }
                 break;
             case R.id.notebook:
                 toNoteBookFragment();
@@ -1980,8 +1991,15 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             , R.drawable.img_6px_jindukua, R.drawable.img_7px_jindukuai, R.drawable.img_8px_jindukuai, R.drawable.img_9px_jindukuai, R.drawable.img_10px_jindukuai
             , R.drawable.img_11px_jindukuai, R.drawable.img_12px_jindukuai, R.drawable.img_13px_jindukuai, R.drawable.img_14px_jindukuai, R.drawable.img_15px_jindukuai
     };
+
     private void setThum(float progress) {
         Drawable thumD = getActivity().getResources().getDrawable(thums[((int) progress) - 2]);
         mSeekPenOrEraser.setThumb(thumD);
+    }
+
+    @Override
+    protected void onDownBookFinish() {
+        super.onDownBookFinish();
+        toTextBookFragment();
     }
 }
