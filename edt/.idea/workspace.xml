@@ -7,31 +7,264 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="修改购物车 首页请求失败后 处理">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_gousuwshuliang.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_gouwuche.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_shaixuan.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_shanchu.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_share.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_shoucang.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_shubao.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_shoucang_yitianjia.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_tianjia.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/gouwuche_selector.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/shaixuan_selector.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/shanchu_selector.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/share_selector.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/shoucang_ic_selector.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/shubao_selector.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_correct_1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_half_correct_1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_normal_fanhui.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_press_chehui.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_student_122px.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_wrong_1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_10px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_11px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_12px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_13px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_14px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_15px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_160px_student_man.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_160px_student_woman.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_2px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_3px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_4px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_5px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_6px_jindukua.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_7px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_8px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_9px_jindukuai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_bianqian.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_btn_bg_green_150_48.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_color_line.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_disable_pizhu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_unabled.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_bi.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_shangyibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_normal_xiayibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_bi.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_shangyibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_press_xiayibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unable_shangyibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unable_xiayibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_unabled_bi.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_login_student.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_marks_close_normal.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_marks_close_press.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_pizhu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_quxiao.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_quxiao.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_student_man.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_student_woman.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_tab_screenshot_bg.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_timu_last_black.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_timu_next_black.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_biji.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_shangyibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_shu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_xiayibu.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_unable_zuoye.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_xiugai.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/model/BaseData.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/model/BookInfo.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/RefreshUtil.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/CreateOrderRequestObj.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/QueryQRStrObj.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/OrderDetailActivity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/Coupon.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/OrderDetailBean.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/OrderIdObj.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/OrderSummary.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/ShopBookItem2.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/btn_bg_selector.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/btn_close_dialog_select.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_pen_select.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_redo_select.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_lable_img_undo_select.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_pen_bg_selector.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_order_detail.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/item_order_detail.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/item_shop_cart_favorite_list.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/CancelBookOrderCallBack.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/IsOrderPaySuccessCallBack.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/xsharedpre/SharedPrefProvider.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/xsharedpre/XSharedPref.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ConfirmOrderActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_objective_answering.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_label_pressed.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_label_pressed.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_cebianlan.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_bg_cebianlan.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_bg.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_bg.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_delete_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_et_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_lable_save_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_marks_add_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_marks_add_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_marks_close.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_marks_close.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_bi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_bi.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_bianqian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_bianqian.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_biji.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_biji.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fanhui.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fanhui.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fasong.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_fasong.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_gengduo.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_gengduo.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_huihua.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_huihua.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_jietu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_jietu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_minimize.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_minimize.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_mulv.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_mulv.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_niantie.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_niantie.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shanchu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shanchu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shangyibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shangyibu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shuqian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_shuqian.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_tupian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_tupian.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiangpi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiangpi.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiayibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiayibu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiugai.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_xiugai.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_zuoye.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_normal_zuoye.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_note_line.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_note_line.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_next_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_next_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_next_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_next_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_prev_normal.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_prev_normal.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_prev_press.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_page_prev_press.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press__xiangpi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press__xiangpi.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_bi.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_bi.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_bianqian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_bianqian.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_biji.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_biji.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fanhui.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fanhui.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fasong.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_fasong.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_gengduo.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_gengduo.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_huihua.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_huihua.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_jietu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_jietu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_minimize.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_minimize.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_mulv.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_mulv.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_niantie.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_niantie.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shanchu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shanchu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shangyibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shangyibu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shuqian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_shuqian.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_tupian.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_tupian.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiayibu.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiayibu.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiugai.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_xiugai.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_zuoye.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_press_zuoye.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_seek_size_normal_bg.9.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_seek_size_normal_bg.9.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_seek_size_press_bg.9.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_seek_size_press_bg.9.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_thumb.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_thumb.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_timu_last.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_timu_last.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_timu_next.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/img_timu_next.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/imgz_note_grid.png" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/imgz_note_grid.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/inkscreen/callback/LoginRjCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/inkscreen/callback/LoginRjCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerBookStructureActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerBookStructureActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerRecordDetailActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerRecordDetailActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerRecordListActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnswerRecordListActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnsweringActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/AnsweringActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/ContentDisplayer.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/anwser/ContentDisplayer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/activity/BaseActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/activity/BaseActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/broadcast/WifiRecevier.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/broadcast/WifiRecevier.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/fragment/BFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/fragment/BFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/FileContonst.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/global/FileContonst.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/YougyApplicationManager.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/manager/YougyApplicationManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/NetWorkManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/new_network/ServerApi.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/BindCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/BindCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/BookShelfCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/BookShelfCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/NoteBookCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/NoteBookCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryBookCartCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryBookCartCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryBookFavorCallback.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryBookFavorCallback.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryOrderListCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryOrderListCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryShopBookDetailCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/QueryShopBookDetailCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/TextBookCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/TextBookCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/UnBindCallback.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/callback/UnBindCallback.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/AliyunDataDownloadReq.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/AliyunDataDownloadReq.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/AliyunDataUploadReq.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/AliyunDataUploadReq.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/PromoteBookRequest.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/protocol/request/PromoteBookRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/AliyunUtil.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/AliyunUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/DataCacheUtils.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/DataCacheUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/FileUtils.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/FileUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/FtpUtil.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/FtpUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/SystemUtils.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/SystemUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/ControlFragmentActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/ControlFragmentActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/MainActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/SplashActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/TabMainActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/activity/TabMainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllCoachBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllCoachBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllHomeworkFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllHomeworkFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllNotesFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllNotesFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllTextBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/AllTextBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/CoachBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/CoachBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/FolderFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/FolderFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/HomeworkFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/HomeworkFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/NotesFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/NotesFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/ReferenceBooksFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/ReferenceBooksFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/TextBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/mainFragment/TextBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/BaseFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ExerciseBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ExerciseBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/NoteBookFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/NoteBookFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ShortNoteFragment.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/home/fragment/showFragment/ShortNoteFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/CheckedHomeworkDetailActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/CheckedHomeworkDetailActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/CheckedHomeworkOverviewActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/CheckedHomeworkOverviewActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/FullScreenHintDialog.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/FullScreenHintDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/PageableRecyclerView.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/PageableRecyclerView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/WriteErrorHomeWorkActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/WriteErrorHomeWorkActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/WriteHomeWorkActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/homework/WriteHomeWorkActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/init/activity/LocalLockActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/init/activity/LocalLockActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/init/activity/LoginActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/init/activity/LoginActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/init/dialog/ConfirmUserInfoDialog.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/init/dialog/ConfirmUserInfoDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/YXClient.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/YXClient.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/ui/ContactListActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/ui/ContactListActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/ui/MessageBaseActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/ui/MessageBaseActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/ui/RecentContactListActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/message/ui/RecentContactListActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/plide/LoadController.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/plide/LoadController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/setting/ui/ChangePwdDialog.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/setting/ui/ChangePwdDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/setting/ui/SettingMainActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/setting/ui/SettingMainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/BookShopActivityDB.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/OrderListActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/OrderListActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/PaySuccessActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/PaySuccessActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ProbationReadBookActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ProbationReadBookActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_book_detail.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopCartActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopFavoriteActivity.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopFavoriteActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/CartItem.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/bean/CartItem.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/callback/BookCategoryCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/callback/BookCategoryCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/callback/QueryBookCallBack.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/callback/QueryBookCallBack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/NoteBookView.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/NoteBookView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/NoteBookView2.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/NoteBookView2.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/BookMarksDialog.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/BookMarksDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/CreatNoteDialog.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/dialog/CreatNoteDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/TextThumbSeekBar.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/view/showView/TextThumbSeekBar.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_homework_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_homework_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_et_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_lable_et_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_marksadd_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_marksadd_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_note_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_note_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pageprev_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_pageprev_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_redo_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_redo_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_snapshot_common_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_snapshot_common_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_textbook_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_textbook_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/edu_img_undo_select.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_bg_selector.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_bg_selector.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_huihua_thumb_selector.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/drawable/seekbar_huihua_thumb_selector.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_answering.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_answering.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_homework_result.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_homework_result.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_local_lock.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_local_lock.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_login.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main_ui.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_main_ui.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_favorite.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_favorite.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_probation_read_book.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_probation_read_book.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout_auto.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout_auto.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/commcon_title_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/commcon_title_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/search_result_layout_db.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/search_result_layout_db.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_order_list.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_order_list.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_splash.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_splash.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_write_error_homework.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_write_error_homework.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_write_homework.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_write_homework.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_book_marks.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_book_marks.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_grade.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_grade.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_outline_entry.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_outline_entry.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_subject.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/adapter_subject.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/dialog_book_marks.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/dialog_book_marks.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_exercise_book.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/fragment_exercise_book.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/item_answer_choose_gridview.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/item_answer_choose_gridview.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/note_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/note_layout.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/opt_layout.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/pdf_layout2.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/pdf_layout2.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/screencut_opt_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/screencut_opt_layout.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/layout/seek_layout.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/layout/seek_layout.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/youngyedu/src/main/res/values/strings.xml" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/SpUtil.java" afterPath="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/common/utils/SpUtils.java" />
     </list>
     <ignored path="edt.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -133,6 +366,18 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="ShopBookDetailsActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4550">
+              <caret line="246" column="0" selection-start-line="246" selection-start-column="0" selection-end-line="246" selection-end-column="0" />
+              <folding>
+                <element signature="e#13030#13060#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="activity_shop_probation_read_book.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_probation_read_book.xml">
           <provider editor-type-id="android-designer2">
@@ -172,7 +417,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="commcon_title_layout.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="commcon_title_layout.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/layout/commcon_title_layout.xml">
           <provider editor-type-id="android-designer2">
             <state />
@@ -3467,7 +3712,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_cart.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/activity_shop_favorite.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/search_result_layout_db.xml" />
@@ -3476,6 +3720,7 @@
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/book_shop_layout_auto.xml" />
         <option value="$PROJECT_DIR$/youngyedu/src/main/res/layout/commcon_title_layout.xml" />
+        <option value="$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java" />
       </list>
     </option>
   </component>
@@ -3606,7 +3851,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="java" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3632,11 +3877,139 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="java" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="drawable" />
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yougy" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yougy" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shop" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yougy" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shop" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="activity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="youngyedu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".idea" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3994,9 +4367,6 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
-  <component name="SvnConfiguration">
-    <configuration />
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="13cb0eaf-acc9-4202-9400-e8552acc83c9" name="Default" comment="修改购物车 首页请求失败后 处理" />
@@ -4009,7 +4379,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32756633" sideWeight="0.49511003" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27232635" sideWeight="0.6295844" order="13" side_tool="false" content_ui="tabs" />
@@ -4025,7 +4395,7 @@
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298731" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22860636" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22860636" sideWeight="0.49312714" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Freeline" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298731" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35524797" sideWeight="0.49511003" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294621" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -4194,6 +4564,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="379">
           <caret line="108" column="22" selection-start-line="108" selection-start-column="8" selection-end-line="108" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4393,14 +4764,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="769">
-          <caret line="334" column="47" selection-start-line="334" selection-start-column="47" selection-end-line="334" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/youngyedu/src/main/res/drawable-mdpi/icon_share.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -4547,6 +4910,16 @@
         <state relative-caret-position="166">
           <caret line="24" column="48" selection-start-line="24" selection-start-column="48" selection-end-line="24" selection-end-column="48" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/youngyedu/src/main/java/com/yougy/shop/activity/ShopBookDetailsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4550">
+          <caret line="246" column="0" selection-start-line="246" selection-start-column="0" selection-end-line="246" selection-end-column="0" />
+          <folding>
+            <element signature="e#13030#13060#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

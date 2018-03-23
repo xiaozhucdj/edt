@@ -12,6 +12,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
@@ -22,9 +23,10 @@ import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.response.NewUnBindDeviceRep;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -152,9 +154,11 @@ public class SettingMainActivity extends BaseActivity {
             public void call(Object o) {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
+
+                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init"  , FileContonst.LOAD_APP_RESET);
                         Intent intent = new Intent(getApplicationContext(), UploadService.class);
                         startService(intent);
-                        SpUtil.clearSP();
+                        SpUtils.clearSP();
                         showCenterDetermineDialog(R.string.unbind_success);
                         YXClient.getInstance().logout();
                     } else {
@@ -180,11 +184,17 @@ public class SettingMainActivity extends BaseActivity {
 
     @Override
     public void loadData() {
-        Student student = SpUtil.getStudent();
+        Student student = SpUtils.getStudent();
         binding.nameTv.setText("姓名 : " + student.getUserRealName());
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
         binding.numTv.setText("编号 : " + student.getUserNum());
+        String sex  = SpUtils.getSex() ;
+        if ("男".equalsIgnoreCase(sex)){
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_man));
+        }else{
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
+        }
         initSysIcon();
     }
 

@@ -2,6 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/img_press_biji" android:state_pressed="true"/>
     <item android:drawable="@drawable/img_press_biji" android:state_selected="true"/>
-    <item android:drawable="@drawable/img_press_biji" android:state_enabled="false"/>
+    <item android:drawable="@drawable/img_unable_biji" android:state_enabled="false"/>
     <item android:drawable="@drawable/img_normal_biji"/>
 </selector>

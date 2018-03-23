@@ -9,7 +9,7 @@ import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.shop.bean.CategoryInfo;
 
 import okhttp3.Response;
@@ -41,6 +41,6 @@ public class BookCategoryCallBack extends BaseCallBack<CategoryInfo> {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryBookCategoryProtocol(SpUtil.getUserId(),-1, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CATEGORY,this);
+        ProtocolManager.queryBookCategoryProtocol(SpUtils.getUserId(),-1, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CATEGORY,this);
     }
 }

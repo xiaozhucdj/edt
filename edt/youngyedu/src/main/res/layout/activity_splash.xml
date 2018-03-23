@@ -5,10 +5,20 @@
     >
 
     <ImageView
+        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:id="@+id/img_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/icon_logo" />
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:text="请稍候..."
+        android:textSize="30px"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 
 </RelativeLayout>

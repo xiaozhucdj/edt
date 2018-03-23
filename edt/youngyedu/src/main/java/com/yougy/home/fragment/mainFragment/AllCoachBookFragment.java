@@ -25,7 +25,7 @@ import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -331,7 +331,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         if (YougyApplicationManager.isWifiAvailable()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
-            req.setUserId(SpUtil.getAccountId());
+            req.setUserId(SpUtils.getAccountId());
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
             //设置年级
@@ -462,7 +462,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         if (mServerBooks.size() > 0) {
             for (BookInfo book : mServerBooks) {
                 //设置当前年级锁需要的书 ，并且做分页显示
-                if (StringUtils.isEquals(SpUtil.getGradeName(), book.getBookFitGradeName())) {
+                if (StringUtils.isEquals(SpUtils.getGradeName(), book.getBookFitGradeName())) {
                     mCountBooks.add(book);
                 }
                 //设置 年级分类
@@ -486,7 +486,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             if (mTreeFitGrade.size() > 0) {
                 for (BookCategory infoGrade : mTreeFitGrade) {
                     //设置年级选中状态
-                    if (StringUtils.isEquals(SpUtil.getGradeName(), infoGrade.getCategoryName())) {
+                    if (StringUtils.isEquals(SpUtils.getGradeName(), infoGrade.getCategoryName())) {
                         infoGrade.setSelect(true);
                     }
                     mBookFitGrade.add(infoGrade);
@@ -510,7 +510,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
-            mBookItemTile.setText(SpUtil.getGradeName() + "课本");
+            mBookItemTile.setText(SpUtils.getGradeName() + "课本");
         } else {
             LogUtils.i("当前还没有书");
         }

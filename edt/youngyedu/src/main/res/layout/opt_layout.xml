@@ -6,7 +6,7 @@
     <LinearLayout
         android:id="@+id/opt_layout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="76px"
         android:background="@color/background_white"
         android:clickable="true"
         android:gravity="center_vertical"
@@ -15,75 +15,73 @@
 
         <ImageView
             android:id="@+id/book_package"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="30dp"
-            android:paddingRight="23dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_back_select"
             android:text="书包" />
 
-
         <View
-            android:layout_width="1dp"
-            android:layout_height="40dp"
-            android:background="@color/directory_text" />
+            android:layout_width="2px"
+            android:layout_height="50px"
+            android:layout_marginLeft="30px"
+            android:background="@color/black" />
 
         <!-- 取消手势按钮-->
         <ImageView
             android:id="@+id/gesture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="32px"
             android:src="@drawable/xuanze_img_btn"
             android:text="手势"
             android:visibility="gone" />
 
         <ImageView
             android:id="@+id/paint_draw"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="22dp"
-            android:paddingRight="22dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_pen_select"
             android:text="笔" />
 
         <ImageView
-            android:id="@+id/draw_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="23dp"
-            android:paddingRight="23dp"
-            android:src="@drawable/edu_img_draw_select"
-            android:text="绘图" />
+            android:id="@+id/eraser"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="32px"
+            android:background="@null"
+            android:src="@drawable/edu_img_eraser_select" />
+
 
         <View
-            android:layout_width="1dp"
-            android:layout_height="40dp"
-            android:background="@color/directory_text" />
+            android:layout_width="2px"
+            android:layout_height="50px"
+            android:layout_marginLeft="30px"
+            android:background="@color/black" />
 
         <ImageView
             android:id="@+id/undo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="19dp"
-            android:paddingRight="20dp"
+            android:layout_width="46px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_undo_select"
             android:text="@string/undo_text" />
 
 
         <ImageView
             android:id="@+id/redo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:layout_width="46px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_redo_select"
             android:text="@string/redo_text" />
 
         <View
-            android:layout_width="1dp"
-            android:layout_height="40dp"
-            android:background="@color/directory_text" />
+            android:layout_width="2px"
+            android:layout_height="50px"
+            android:layout_marginLeft="30px"
+            android:background="@color/black" />
 
 
         <LinearLayout
@@ -94,122 +92,111 @@
 
             <ImageView
                 android:id="@+id/bookmark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="25dp"
-                android:paddingRight="24dp"
+                android:layout_width="30px"
+                android:layout_height="40px"
+                android:layout_marginLeft="30px"
                 android:src="@drawable/edu_img_bookmark_select"
                 android:text="@string/bookmark" />
 
 
             <ImageView
                 android:id="@+id/directory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="24dp"
-                android:paddingRight="23dp"
+                android:layout_width="40px"
+                android:layout_height="40px"
+                android:layout_marginLeft="33px"
                 android:src="@drawable/edu_img_bookdirectory_select"
                 android:text="@string/directory" />
         </LinearLayout>
 
 
-
         <ImageView
             android:id="@+id/img_deleteNote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
-            android:paddingRight="24dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_notedeltete_select"
             android:text="删除笔记"
             android:visibility="gone" />
 
         <ImageView
             android:id="@+id/img_updataNote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="24dp"
-            android:paddingRight="23dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="33px"
             android:src="@drawable/edu_img_noteupdata_select"
             android:text="修改笔记"
             android:visibility="gone" />
 
         <View
-            android:layout_width="1dp"
-            android:layout_height="40dp"
+            android:layout_width="2dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30px"
             android:background="@color/directory_text" />
 
         <ImageView
             android:id="@+id/textbook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="22dp"
-            android:paddingRight="23dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_textbook_select"
             android:text="课本" />
 
         <ImageView
             android:id="@+id/notebook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="23dp"
-            android:paddingRight="23dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_note_select"
             android:text="笔记" />
 
 
-
-
         <ImageView
             android:id="@+id/exercise_book"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="22dp"
-            android:paddingRight="23dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginLeft="30px"
             android:src="@drawable/edu_img_homework_select"
             android:text="作业" />
 
         <View
-            android:layout_width="1dp"
-            android:layout_height="40dp"
-            android:background="@color/directory_text" />
+            android:layout_width="2px"
+            android:layout_height="50px"
+            android:layout_marginLeft="30px"
+            android:background="@color/black" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginTop="58dp"
-        android:background="@color/background_black" />
+        android:layout_marginTop="76px"
+        android:background="@color/black" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="58dp"
+        android:layout_height="76px"
         android:layout_gravity="right"
         android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
-            android:paddingRight="30dp"
-            android:paddingLeft="22dp"
             android:id="@+id/img_showOhterIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginRight="30px"
             android:src="@drawable/edu_img_more_select"
             android:text="更多" />
     </LinearLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/paint_choose"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/img_pen_item_bg"
+        android:layout_height="60px"
+        android:layout_marginTop="78px"
+        android:background="@color/white"
         android:clickable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <!--钢笔 -->
 
@@ -220,7 +207,8 @@
             android:layout_marginLeft="30dp"
             android:background="@null"
             android:scaleType="fitXY"
-            android:src="@drawable/edu_img_pen_steel_select" />
+            android:src="@drawable/edu_img_pen_steel_select"
+            android:visibility="gone" />
 
         <!--铅笔 -->
 
@@ -231,7 +219,8 @@
             android:layout_marginLeft="30dp"
             android:background="@null"
             android:scaleType="fitXY"
-            android:src="@drawable/edu_img_pencil_select" />
+            android:src="@drawable/edu_img_pencil_select"
+            android:visibility="gone" />
 
 
         <!--油性黑笔 -->
@@ -243,7 +232,8 @@
             android:layout_marginLeft="30dp"
             android:background="@null"
             android:scaleType="fitXY"
-            android:src="@drawable/edu_img_pen_black_select" />
+            android:src="@drawable/edu_img_pen_black_select"
+            android:visibility="gone" />
 
 
         <!--马克笔 -->
@@ -255,22 +245,17 @@
             android:layout_marginLeft="30dp"
             android:background="@null"
             android:scaleType="fitXY"
-            android:src="@drawable/edu_img_penmark_select" />
+            android:src="@drawable/edu_img_penmark_select"
+            android:visibility="gone" />
         <!--橡皮 -->
 
-        <ImageButton
-            android:id="@+id/eraser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:background="@null"
-            android:src="@drawable/edu_img_eraser_select" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="50dp"
             android:layout_marginLeft="30dp"
-            android:background="@color/search_color" />
+            android:background="@color/search_color"
+            android:visibility="gone" />
 
         <!--颜色 -->
 
@@ -295,14 +280,16 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:progressDrawable="@drawable/seekbar_big_small_bg_selector"
-            android:thumb="@drawable/seekbar_huihua_thumb_selector" />
+            android:thumb="@drawable/seekbar_huihua_thumb_selector"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/pen_size"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="20dp"
-            android:background="@drawable/pensize_bg" />
+            android:background="@drawable/pensize_bg"
+            android:visibility="gone" />
 
         <SeekBar
             android:id="@+id/pen_alpha_pg"
@@ -332,97 +319,147 @@
                 android:background="@drawable/pensize_bg"
                 android:scaleType="fitXY" />
         </RelativeLayout>
-    </LinearLayout>
+
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/tv_pen_or_eraser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:text="画笔粗细："
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
+
+        <SeekBar
+            android:layout_marginLeft="20px"
+            android:layout_toRightOf="@id/tv_pen_or_eraser"
+            android:layout_centerVertical="true"
+            android:id="@+id/seek_pen_or_eraser"
+            android:layout_width="250px"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            android:max="13"
+            android:maxHeight="8px"
+            android:minHeight="8px"
+            android:progressDrawable="@drawable/seekbar_pen_bg_selector"
+            android:thumb="@drawable/seekbar_huihua_thumb_selector"
+            android:thumbOffset="0px" />
+
+
+        
+        <View
+            android:layout_alignParentBottom="true"
+            android:background="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="2px" />
+    </RelativeLayout>
 
 
     <LinearLayout
         android:id="@+id/ll_OtherIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="230dp"
+        android:layout_width="82px"
+        android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginRight="10px"
+        android:layout_marginTop="78px"
         android:background="@drawable/img_bg_cebianlan"
         android:clickable="true"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <!--android:src="@drawable/bianqian_img_btn"-->
         <ImageView
             android:id="@+id/label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginTop="34px"
             android:src="@drawable/edu_img_label_select"
             android:text="便签" />
 
         <View
-            android:layout_width="40dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/directory_text" />
+            android:layout_width="40px"
+            android:layout_height="2px"
+            android:layout_marginTop="20px"
+            android:background="@color/black" />
 
         <!--android:src="@drawable/tupian_img_btn"-->
         <ImageView
             android:id="@+id/image"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginTop="20px"
             android:src="@drawable/edu_img_addimg_select"
-            android:text="图片" />
+            android:text="图片"
+            android:visibility="visible" />
 
         <View
-            android:layout_width="40dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/directory_text" />
-        <!--android:src="@drawable/jietu_img_btn"-->
-        <ImageView
-            android:id="@+id/screenshot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/edu_img_screenshot_select"
-            android:text="截图" />
+            android:layout_width="40px"
+            android:layout_height="2px"
+            android:layout_marginTop="20px"
+            android:background="@color/black" />
 
-        <View
-            android:layout_width="40dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/directory_text" />
 
-        <!--android:src="@drawable/fasong_img_btn"-->
         <ImageView
             android:id="@+id/send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginTop="20px"
             android:src="@drawable/edu_img_send_select"
             android:text="发送" />
 
 
         <View
-            android:layout_width="40dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/directory_text" />
+            android:layout_width="40px"
+            android:layout_height="2px"
+            android:layout_marginTop="20px"
+            android:background="@color/black" />
+
+
+        <!--android:src="@drawable/jietu_img_btn"-->
+        <ImageView
+            android:id="@+id/screenshot"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginTop="20px"
+            android:src="@drawable/edu_img_screenshot_select"
+            android:text="截图" />
+
+
+        <!--android:src="@drawable/fasong_img_btn"-->
+
+        <View
+            android:layout_width="40px"
+            android:layout_height="2px"
+            android:layout_marginTop="20px"
+            android:background="@color/black" />
+
 
         <ImageView
             android:id="@+id/paste"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginTop="20px"
             android:src="@drawable/edu_img_pase_select"
             android:text="粘贴" />
+
+        <View
+            android:layout_width="40px"
+            android:layout_height="2px"
+            android:layout_marginTop="20px"
+            android:background="@color/black" />
+
+
+        <ImageView
+            android:id="@+id/draw_pic"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_marginBottom="30px"
+            android:layout_marginTop="20px"
+            android:src="@drawable/edu_img_draw_select"
+            android:text="绘图" />
+
+
     </LinearLayout>
 
 </FrameLayout>

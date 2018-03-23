@@ -16,12 +16,10 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
-import com.yougy.common.utils.SpUtil;
-import com.yougy.message.GlideCircleTransform;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.message.ListUtil;
 import com.yougy.message.Pair;
 import com.yougy.message.YXClient;
@@ -179,7 +177,7 @@ public class ContactListActivity extends MessageBaseActivity{
         while (iterator.hasNext()){
             List<TeamMember> teamMemberList = allTeamMemberMap.get(iterator.next());
             for (final TeamMember teamMember : teamMemberList) {
-                if (isTeacher(teamMember) && !teamMember.getAccount().equals(String.valueOf(SpUtil.getUserId()))){
+                if (isTeacher(teamMember) && !teamMember.getAccount().equals(String.valueOf(SpUtils.getUserId()))){
                     if (!ListUtil.conditionalContains(mainAdapter.idList, new ListUtil.ConditionJudger<String>() {
                         @Override
                         public boolean isMatchCondition(String nodeInList) {

@@ -36,7 +36,6 @@ import java.util.List;
 
 import rx.functions.Action1;
 
-
 /**
  * Created by FH on 2016/7/14.
  * 作业本中的作业列表界面
@@ -88,9 +87,15 @@ public class ExerciseBookFragment extends BFragment {
                         holder.setData(waitForCheckList.get(position));
                         break;
                     case CHECKED:
-                        holder.binding.statusTv.setText("已\n批\n改");
+                        HomeworkSummary homeworkSummary = checkedList.get(position);
+                        if (homeworkSummary.getExtra().getStatusCode().equals("IH51")){
+                            holder.binding.statusTv.setText("未\n提\n交");
+                        }
+                        else if (homeworkSummary.getExtra().getStatusCode().equals("IH05")){
+                            holder.binding.statusTv.setText("已\n批\n改");
+                        }
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
-                        holder.setData(checkedList.get(position));
+                        holder.setData(homeworkSummary);
                         break;
                 }
             }
@@ -113,12 +118,19 @@ public class ExerciseBookFragment extends BFragment {
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
+                Intent intent;
                 switch (currentStatus) {
                     case CHECKED:
-                        Intent intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
-                        intent.putExtra("examId", ((MyHolder) vh).getData().getExam());
-                        intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
-                        startActivity(intent);
+                        MyHolder holder = (MyHolder) vh;
+                        if (holder.getData().getExtra().getStatusCode().equals("IH51")){
+                            ToastUtil.showToast(getActivity() , "本次作业您未提交,无法查看");
+                        }
+                        else if (holder.getData().getExtra().getStatusCode().equals("IH05")){
+                            intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
+                            intent.putExtra("examId", holder.getData().getExam());
+                            intent.putExtra("examName", holder.getData().getExtra().getName());
+                            startActivity(intent);
+                        }
                         break;
                     case WAIT_FOR_CHECK:
                         //TODO 待批改项点击
@@ -210,24 +222,51 @@ public class ExerciseBookFragment extends BFragment {
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
-        refreshData();
         return binding.getRoot();
     }
 
     @Override
     protected void handleEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof String || o.equals("refreshHomeworkList")){
-                    refreshData();
-                }
-            }
-        }));
+//        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+//            @Override
+//            public void call(Object o) {
+//                if (o instanceof String || o.equals("refreshHomeworkList")){
+//                    refreshData();
+//                }
+//            }
+//        }));
         super.handleEvent();
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden){
+            refreshData();
+        }
+        super.onHiddenChanged(hidden);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+    }
+
+
     private void refreshData() {
+
+        binding.switch2homeworkBtn.setEnabled(false);
+        if (mControlActivity.mNoteId<=0){
+            binding.switch2noteBtn.setEnabled(false);
+        }
+
+        if (mControlActivity.mBookId <= 0){
+            binding.switch2bookBtn.setEnabled(false);
+        }
+
+
+
+
         NetWorkManager.queryHomeworkBookDetail(mControlActivity.mHomewrokId)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
@@ -274,7 +313,7 @@ public class ExerciseBookFragment extends BFragment {
                                     doingList.add(homeworkSummary);
                                 } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中都算待批改
                                     waitForCheckList.add(homeworkSummary);
-                                } else if (statusCode.equals("IH05")) {//已批改
+                                } else if (statusCode.equals("IH05") || statusCode.equals("IH51")) {//已批改,未提交都算已批改
                                     checkedList.add(homeworkSummary);
                                 }
                             }
@@ -315,11 +354,6 @@ public class ExerciseBookFragment extends BFragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     //TODO:袁野
     public ControlFragmentActivity mControlActivity;
 
@@ -327,12 +361,12 @@ public class ExerciseBookFragment extends BFragment {
         mControlActivity = activity;
     }
 
-    public void aaaa() {
+ /*   public void aaaa() {
         int id1 = mControlActivity.mHomewrokId;
         int id2 = mControlActivity.mNoteId;
         int id3 = mControlActivity.mBookId;
     }
-
+*/
 
     @Override
     public void onUiDetermineListener() {
@@ -352,6 +386,5 @@ public class ExerciseBookFragment extends BFragment {
     protected void onDownBookFinish() {
         super.onDownBookFinish();
         mControlActivity.switch2TextBookFragment();
-
     }
 }

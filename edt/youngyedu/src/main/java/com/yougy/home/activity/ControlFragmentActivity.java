@@ -11,7 +11,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.home.fragment.showFragment.BaseFragment;
 import com.yougy.home.fragment.showFragment.ExerciseBookFragment;
@@ -66,7 +66,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     /**
      * 图书id
      */
-    public int mBookId;
+    public int mBookId =-1;
     /**
      * 关联分类编码
      */
@@ -119,7 +119,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             subjectId = bundle.getInt(FileContonst.NOTE_SUBJECT_ID);
             info = (NoteInfo) bundle.getSerializable(FileContonst.NOTE_OBJECT);
 
-            params.put(FileContonst.USER_ID, SpUtil.getAccountId() + "");
+            params.put(FileContonst.USER_ID, SpUtils.getAccountId() + "");
             params.put(FileContonst.NOTE_ID, mNoteId + "");
             params.put(FileContonst.NOTE_Style, mNoteStyle + "");
             params.put(FileContonst.NOTE_TITLE, mNotetitle);
@@ -161,7 +161,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         LogUtils.i("mNoteCreator===" + mNoteCreator);
         LogUtils.i("mCategoryId===" + mCategoryId);
 
-        if (mBookId > 0 /***&& mNoteCreator != Integer.parseInt(SpUtil.getAccountId()) && mCategoryId > 0*/) {
+        if (mBookId > 0 /***&& mNoteCreator != Integer.parseInt(SpUtils.getAccountId()) && mCategoryId > 0*/) {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             if (FileContonst.OPEN_ONYX_READER){

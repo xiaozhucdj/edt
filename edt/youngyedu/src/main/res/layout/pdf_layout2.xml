@@ -6,88 +6,85 @@
     <com.yougy.view.controlView.ControlView
         android:id="@+id/rl_pdf"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
 
     <RelativeLayout
         android:id="@+id/rl_directory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="78px"
         android:background="#cc000000"
         android:clickable="true"
         android:visibility="gone">
 
         <RelativeLayout
-            android:layout_width="450dp"
+            android:layout_width="450px"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:background="#e3e3e3">
 
-            <LinearLayout
+             <LinearLayout
                 android:id="@+id/ll_check_button"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="70px"
                 android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
 
                     <Button
-                        android:textColor="@drawable/edu_color_marks_selector"
-                        android:textStyle="bold"
                         android:id="@+id/btn_item_directory"
-                        android:layout_width="match_parent"
+                        android:layout_width="225px"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:gravity="center"
                         android:text="章节"
-                        android:textSize="28dp" />
+                        android:textColor="@color/black"
+                        android:textSize="28px"
+                        android:textStyle="bold" />
 
                     <View
                         android:id="@+id/view_item_directory"
-                        android:layout_width="100dp"
-                        android:layout_height="2dp"
+                        android:layout_width="225px"
+                        android:layout_height="4px"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:background="@color/background_black" />
+                        android:background="@drawable/img_color_line" />
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                  >
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
 
                     <Button
-                        android:textColor="@drawable/edu_color_marks_selector"
-                        android:textStyle="bold"
                         android:id="@+id/btn_item_bookmarks"
-                        android:layout_width="match_parent"
+                        android:layout_width="225px"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:gravity="center"
                         android:text="书签"
-                        android:textSize="28dp" />
+                        android:textColor="@color/black"
+                        android:textSize="28px"
+                        android:textStyle="bold" />
 
                     <View
                         android:id="@+id/view_item_bookmarks"
-                        android:layout_width="100dp"
-                        android:layout_height="2dp"
+                        android:layout_width="225px"
+                        android:layout_height="4px"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:background="@color/background_black" />
+                        android:background="@drawable/img_color_line" />
                 </RelativeLayout>
             </LinearLayout>
+
             <View
                 android:id="@+id/view_line1"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@id/ll_check_button"
-                android:background="@color/background_black" />
+                android:background="@color/black" />
 
             <ListView
                 android:id="@+id/lv_item_book_directory"

@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
@@ -28,7 +29,7 @@ public class BookMarksDialog extends BaseDialog {
     private Button btnaddmarks;
     private Button btnchange;
     private Button btndelete;
-    private LinearLayout llChangeOrDelete;
+    private RelativeLayout llChangeOrDelete;
     private FrameLayout fmConfirmOrCancel;
     private ImageButton imgBtn_close;
 
@@ -61,7 +62,7 @@ public class BookMarksDialog extends BaseDialog {
     protected void initLayout() {
         setContentView(R.layout.dialog_book_marks);
         this.fmConfirmOrCancel = (FrameLayout) findViewById(R.id.fm_ConfirmOrCancel);
-        this.llChangeOrDelete = (LinearLayout) findViewById(R.id.ll_ChangeOrDelete);
+        this.llChangeOrDelete = (RelativeLayout) findViewById(R.id.ll_ChangeOrDelete);
         this.btndelete = (Button) findViewById(R.id.btn_delete);
         this.btnchange = (Button) findViewById(R.id.btn_change);
         this.btnaddmarks = (Button) findViewById(R.id.btn_add_marks);

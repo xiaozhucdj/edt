@@ -6,13 +6,13 @@
     <RelativeLayout
         android:id="@+id/rl_manger"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:paddingRight="20dp">
+        android:layout_height="60px"
+        android:paddingRight="20px">
 
         <View
             android:id="@+id/view_line"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="2px"
             android:layout_alignParentBottom="true"
             android:background="@color/background_black" />
 
@@ -22,10 +22,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="80dp"
+            android:layout_marginRight="80px"
             android:singleLine="true"
             android:textColor="@drawable/edu_color_lv_selector"
-            android:textSize="24dp"
+            android:textSize="24px"
             android:textStyle="bold" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:textColor="@drawable/edu_color_lv_selector"
-            android:textSize="22dp" />
+            android:textSize="22px" />
     </RelativeLayout>
 
 </RelativeLayout>

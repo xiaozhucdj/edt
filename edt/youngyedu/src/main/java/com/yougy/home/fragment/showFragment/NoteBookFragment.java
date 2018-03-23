@@ -25,7 +25,7 @@ import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.Note;
@@ -405,7 +405,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         }
 //       mNoteBookView.setBackgroundResource(R.drawable.biji_canvas_bg);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.setMargins(0, 60, 0, 62);
+        params.setMargins(0, 78, 0, 78);
         mFrameLayout.addView(mNoteBookView, params);
         if (flag) {
             mControlView.addView(mFrameLayout, 0);
@@ -560,7 +560,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                         if (StringUtils.isEmpty(subject)) {
                             subject = "无";
                         }
-                        if (StringUtils.isEmpty(noteTitle) && SpUtil.getAccountId() == mControlActivity.mNoteCreator) {
+                        if (StringUtils.isEmpty(noteTitle) && SpUtils.getAccountId() == mControlActivity.mNoteCreator) {
                             showCenterDetermineDialog(R.string.note_name_null);
                             return;
                         }
@@ -568,9 +568,9 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                         mUpdateInfo = new NoteInfo();
                         mUpdateInfo.setNoteId(mControlActivity.mNoteId);
                         //标题 ,后台创建笔记不可以修改名称
-                        mUpdateInfo.setNoteTitle(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? noteTitle : mControlActivity.mNotetitle);
+                        mUpdateInfo.setNoteTitle(SpUtils.getAccountId() == mControlActivity.mNoteCreator ? noteTitle : mControlActivity.mNotetitle);
                         //学科 ，后台创建笔记不可以修改学科
-                        mUpdateInfo.setNoteFitSubjectName(SpUtil.getAccountId() == mControlActivity.mNoteCreator ? subject : mControlActivity.mNoteSubject);
+                        mUpdateInfo.setNoteFitSubjectName(SpUtils.getAccountId() == mControlActivity.mNoteCreator ? subject : mControlActivity.mNoteSubject);
                         //笔记样式
                         mUpdateInfo.setNoteStyleOption(mNoteUpdataDialog.getNoteOptionStyle());
                         mUpdateInfo.setNoteMark(mControlActivity.mNoteMark);
@@ -595,7 +595,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 });
                 mNoteUpdataDialog.show();
 //                mNoteUpdataDialog.setNoteTypeGone();
-                if (SpUtil.getAccountId() != mControlActivity.mNoteCreator) {
+                if (SpUtils.getAccountId() != mControlActivity.mNoteCreator) {
                     mNoteUpdataDialog.setEditNameEnable(false);
                     mNoteUpdataDialog.setRecyclerViewGone();
                 }
@@ -606,7 +606,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
 
             case R.id.img_deleteNote:
 
-                if (SpUtil.getAccountId() == mControlActivity.mNoteCreator) {
+                if (SpUtils.getAccountId() == mControlActivity.mNoteCreator) {
                     if (mDelteDialog == null) {
                         mDelteDialog = new DeleteDialog(getActivity());
                         mDelteDialog.setSureListener(new DeleteDialog.SureListener() {
@@ -676,7 +676,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
 
     private void delteNoteProtocol() {
         NewDeleteNoteReq req = new NewDeleteNoteReq();
-        req.setUserId(SpUtil.getAccountId());
+        req.setUserId(SpUtils.getAccountId());
         req.setNoteId(mControlActivity.mNoteId);
         NewProtocolManager.deleteNote(req ,new NewDelteNoteCallBack(getActivity(),req));
     }
@@ -715,7 +715,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
      */
     private void updataNoteProtocol() {
         NewUpdateNoteReq req = new NewUpdateNoteReq() ;
-        req.setUserId(SpUtil.getAccountId());
+        req.setUserId(SpUtils.getAccountId());
         List<NoteInfo> infos = new ArrayList<>() ;
         infos.add(mUpdateInfo) ;
         req.setData(infos);

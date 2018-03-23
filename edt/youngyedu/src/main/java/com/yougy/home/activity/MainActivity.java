@@ -17,8 +17,6 @@ import android.widget.TextView;
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.onyx.android.sdk.api.device.epd.EpdController;
-import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.TestImgActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
@@ -32,7 +30,7 @@ import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
 import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
@@ -141,6 +139,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     };
+    private ImageView imgSextIcon;
 
 
     /***************************************************************************/
@@ -196,7 +195,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mAllNotesFragment = null;
         mAllHomeworkFragment = null;
 
-        if (YougyApplicationManager.isWifiAvailable() && SpUtil.isContentChanged()) {
+        if (YougyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
             startService(new Intent(this, UploadService.class));
         }
         super.onDestroy();
@@ -236,10 +235,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mFlRight.setOnClickListener(this);
         //班级
         mTvClassName = (TextView) this.findViewById(R.id.tv_className);
-        mTvClassName.setText(SpUtil.getAccountClass());
+        mTvClassName.setText(SpUtils.getAccountClass());
         //学生名字
         mTvUserName = (TextView) this.findViewById(R.id.tv_userName);
-        mTvUserName.setText(SpUtil.getAccountName());
+        mTvUserName.setText(SpUtils.getAccountName());
         //当前学期使用的书
         mBtnCurrentBook = (Button) this.findViewById(R.id.btn_currentBook);
         mBtnCurrentBook.setOnClickListener(this);
@@ -279,12 +278,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_upload).setOnClickListener(this);
         findViewById(R.id.btn_download).setOnClickListener(this);
         findViewById(R.id.btn_test_img).setOnClickListener(this);
+
+        imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
     }
 
 
     @Override
     protected void loadData() {
+        String sex = SpUtils.getSex();
+        if ("男".equalsIgnoreCase(sex)) {
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));
+        } else {
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_woman));
+        }
         mTvTextBook.callOnClick();
+        setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
     }
 
     @Override
@@ -295,6 +303,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         int clickedViewId = v.getId();
         setSysTime();
+
+        if (v.getId() == R.id.imgBtn_showRight) {
+            mFlRight.setVisibility(mFlRight.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+        }else{
+            mFlRight.setVisibility(View.GONE);
+        }
+
         switch (clickedViewId) {
             case R.id.btn_upload:
                 startService(new Intent(this, UploadService.class));
@@ -305,13 +320,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btn_test_img:
                 startActivity(new Intent(this, TestImgActivity.class));
                 // TODO: 2018/3/8
-                Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                 startActivity(newIntent);
-                
+
                 break;
             case R.id.tv_folder:
-                  refreshTabBtnState(clickedViewId);
-                  bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
+                refreshTabBtnState(clickedViewId);
+                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
 //                startActivity(new Intent(this, AnsweringActivity.class));
                 break;
@@ -349,8 +364,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.imgBtn_showRight:
-                mFlRight.setVisibility(View.VISIBLE);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                mFlRight.setVisibility(View.VISIBLE);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 ArrayList<RecentContact> recentContactList = new ArrayList<RecentContact>();
                 recentContactList.addAll(YXClient.getInstance().getRecentContactList());
                 int totalUnreadCount = 0;
@@ -366,7 +381,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.fl_right:
                 mFlRight.setVisibility(View.GONE);
-                EpdController.invalidate(mRootView, UpdateMode.GC);
+//                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
 
             case R.id.btn_currentBook:
@@ -407,7 +422,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 LogUtils.i("搜索课外书");
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.serch_reference, "");
                 EventBus.getDefault().post(baseEvent);
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_bookStore:
                 LogUtils.e(getClass().getName(), "书城");
@@ -416,12 +430,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_msg:
                 LogUtils.e(getClass().getName(), "我的消息");
                 gotoMyMessage();
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_account:
                 LogUtils.i("账号设置");
@@ -431,7 +443,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
 
                 break;
             case R.id.btn_order:
@@ -441,7 +452,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
                 break;
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");
@@ -450,7 +460,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
-                mFlRight.setVisibility(View.GONE);
                 break;
 
             case R.id.img_wifi:
@@ -463,7 +472,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.onyx.android.settings", "com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
-                mFlRight.setVisibility(View.GONE);
                 break;
             default:
                 break;
@@ -514,7 +522,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 type = EventBusConstant.all_home_work;
                 break;
 
-            case  FOLDER_FRAGMENT:
+            case FOLDER_FRAGMENT:
                 type = EventBusConstant.answer_event;
                 break;
         }
@@ -1055,8 +1063,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             setSysWifi();
         } else if (EventBusConstant.EVENTBUS_POWER.equals(event.getType())) {
             LogUtils.i("event ...power");
-            LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
-            LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
+//            LogUtils.i("event...lever..." + PowerManager.getInstance().getlevelPercent());
+//            LogUtils.i("event...status..." + PowerManager.getInstance().getBatteryStatus());
             setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
         } else if (EventBusConstant.need_refresh.equalsIgnoreCase(event.getType())) {
             postEvent();
@@ -1069,5 +1077,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         jumpTonet();
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
 }
 

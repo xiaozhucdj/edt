@@ -15,7 +15,7 @@ public class DataCacheUtils {
     private static String studentId;
 
     private static ACache init(Context context) {
-        studentId = SpUtil.getAccountId()+"";
+        studentId = SpUtils.getAccountId()+"";
         if (aCache != null) {
             return aCache;
         }

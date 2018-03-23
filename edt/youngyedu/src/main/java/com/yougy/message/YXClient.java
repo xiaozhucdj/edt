@@ -49,7 +49,7 @@ import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 
@@ -60,11 +60,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by FH on 2017/4/7.
@@ -189,14 +185,14 @@ public class YXClient {
                                 exception.printStackTrace();
                             }
                         });
-                        SpUtil.addUnreadMsgCount(localMessage.getSessionId());
+                        SpUtils.addUnreadMsgCount(localMessage.getSessionId());
                         for (OnMessageListener listener : onNewMessageListenerList) {
                             listener.onNewMessage(localMessage);
                         }
                     }
                 }
                 else {
-                    SpUtil.addUnreadMsgCount(newMessage.getSessionId());
+                    SpUtils.addUnreadMsgCount(newMessage.getSessionId());
                     for (OnMessageListener listener : onNewMessageListenerList) {
                         listener.onNewMessage(newMessage);
                     }
@@ -268,7 +264,7 @@ public class YXClient {
                     continue;
                 }
                 if (newRecentContact.getContactId().length() == 6
-                        || (newRecentContact.getContactId().length() == 10 && !newRecentContact.getContactId().equals(SpUtil.getUserId()))){
+                        || (newRecentContact.getContactId().length() == 10 && !newRecentContact.getContactId().equals(SpUtils.getUserId()))){
                     //另外,学生端10位id的其他学生和6位id的管理员都不需要显示在最近通话中,此处滤掉
                     newRecentContactList.remove(newRecentContact);
                     continue;
@@ -348,7 +344,7 @@ public class YXClient {
         public void onEvent(List<TeamMember> members) {
             lv("收到群成员资料变化观察者通知 数量 " + members.size());
             for (final TeamMember newMember : members) {
-                if (newMember.getAccount().length() == 6 || (newMember.getAccount().length() == 10 && !newMember.getAccount().equals(SpUtil.getUserId() + ""))){
+                if (newMember.getAccount().length() == 6 || (newMember.getAccount().length() == 10 && !newMember.getAccount().equals(SpUtils.getUserId() + ""))){
                     //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
                     continue;
                 }
@@ -388,7 +384,7 @@ public class YXClient {
         @Override
         public void onEvent(final TeamMember teamMember) {
             lv("收到群成员被移除通知" + teamMember);
-            if (teamMember.getAccount().length() == 6 || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtil.getUserId()+""))){
+            if (teamMember.getAccount().length() == 6 || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtils.getUserId()+""))){
                 //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
                 return;
             }
@@ -425,7 +421,7 @@ public class YXClient {
                     if (memberChangeAttachment.getType() == NotificationType.InviteMember){
                         ArrayList<String> target = memberChangeAttachment.getTargets();
                         for (String id : target) {
-                            if (id.equals(SpUtil.justForTest())){
+                            if (id.equals(SpUtils.justForTest())){
                                 NIMClient.getService(TeamService.class).queryTeam(message.getSessionId()).setCallback(new RequestCallbackWrapper<Team>() {
                                     @Override
                                     public void onResult(int code, final Team result, Throwable exception) {
@@ -651,7 +647,7 @@ public class YXClient {
 //                        @Override
 //                        public void call(Subscriber<? super String> subscriber) {
 //                            //TODO 从我方服务器上拉取最新的account对应的token,接口暂时未实现,使用假数据
-//                            subscriber.onNext(SpUtil.getUserId() + "");
+//                            subscriber.onNext(SpUtils.getUserId() + "");
 //                        }
 //                    })
 //                    .subscribeOn(Schedulers.io())
@@ -1009,7 +1005,7 @@ public class YXClient {
             mKeyPointController.onFail(-999);
             return;
         }
-        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), new RequestCallbackWrapper() {
+        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), new RequestCallbackWrapper() {
             @Override
             public void onResult(int code, Object result, Throwable exception) {
                 if (code == ResponseCode.RES_SUCCESS) {
@@ -1124,7 +1120,7 @@ public class YXClient {
                             @Override
                             public boolean isMatchCondition(TeamMember nodeInList) {
                                 return nodeInList.getAccount().length() == 6
-                                        || (nodeInList.getAccount().length() == 10 && !nodeInList.getAccount().equals(SpUtil.getUserId()+""));
+                                        || (nodeInList.getAccount().length() == 10 && !nodeInList.getAccount().equals(SpUtils.getUserId()+""));
                             }
                         }
                 );
@@ -1399,10 +1395,10 @@ public class YXClient {
     public static int getUnreadMsgCount (String ssid , SessionTypeEnum sessionType){
         int unreadMsgCount = 0;
         if (sessionType == SessionTypeEnum.P2P){
-            unreadMsgCount = SpUtil.getUnreadMsgCount(ssid);
+            unreadMsgCount = SpUtils.getUnreadMsgCount(ssid);
         }
         else if (sessionType == SessionTypeEnum.Team){
-            unreadMsgCount = SpUtil.getUnreadMsgCount("g" + ssid);
+            unreadMsgCount = SpUtils.getUnreadMsgCount("g" + ssid);
         }
         lv("获取未读消息数 ssid=" + ssid + "  setSessionType=" + sessionType + "  获取结果为 : " + unreadMsgCount);
         return unreadMsgCount;
@@ -1416,10 +1412,10 @@ public class YXClient {
     public static void clearUnreadMsgCount(String ssid , SessionTypeEnum sessionType){
         lv("清除未读消息计数 ssid=" + ssid + "  setSessionType=" + sessionType);
         if (sessionType == SessionTypeEnum.P2P){
-            SpUtil.clearUnreadMsgCount(ssid);
+            SpUtils.clearUnreadMsgCount(ssid);
         }
         else if (sessionType == SessionTypeEnum.Team){
-            SpUtil.clearUnreadMsgCount("g" + ssid);
+            SpUtils.clearUnreadMsgCount("g" + ssid);
         }
     }
 
@@ -1428,7 +1424,7 @@ public class YXClient {
      */
     public static void clearAllUnreadMsgCount(){
         lv("清除所有未读计数");
-        SpUtil.clearAllUnreadMsgCount();
+        SpUtils.clearAllUnreadMsgCount();
     }
 
     public void callOnRecentContactChangeLiseners(){

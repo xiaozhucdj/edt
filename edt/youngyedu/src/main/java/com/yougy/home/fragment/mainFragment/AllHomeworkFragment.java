@@ -19,7 +19,7 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -324,7 +324,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
 
     private void loadData() {
         if (NetUtils.isNetConnected()) {
-            NetWorkManager.queryHomeworkBookList(SpUtil.getUserId()+"",null)
+            NetWorkManager.queryHomeworkBookList(SpUtils.getUserId()+"",null)
                     .subscribe(new Action1<List<HomeworkBookSummary>>() {
                         @Override
                         public void call(List<HomeworkBookSummary> homeworkBookInfos) {
@@ -450,7 +450,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
         if (mServerBooks.size() > 0) {
             for (HomeworkBookSummary book : mServerBooks) {
                 //设置当前年级锁需要的书 ，并且做分页显示
-                if (StringUtils.isEquals(SpUtil.getGradeName(), book.getHomeworkFitGradeName())) {
+                if (StringUtils.isEquals(SpUtils.getGradeName(), book.getHomeworkFitGradeName())) {
                     mCountBooks.add(book);
                 }
                 //设置 年级分类
@@ -473,7 +473,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
             if (mTreeFitGrade.size() > 0) {
                 for (BookCategory infoGrade : mTreeFitGrade) {
                     //设置年级选中状态
-                    if (StringUtils.isEquals(SpUtil.getGradeName(), infoGrade.getCategoryName())) {
+                    if (StringUtils.isEquals(SpUtils.getGradeName(), infoGrade.getCategoryName())) {
                         infoGrade.setSelect(true);
                     }
                     mBookFitGrade.add(infoGrade);
@@ -497,7 +497,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
-            mBookItemTile.setText(SpUtil.getGradeName() + "课本");
+            mBookItemTile.setText(SpUtils.getGradeName() + "课本");
             //显示隐藏更多
         } else {
             LogUtils.i("当前还没有书");

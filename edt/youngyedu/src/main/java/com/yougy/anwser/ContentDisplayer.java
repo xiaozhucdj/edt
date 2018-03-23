@@ -39,6 +39,10 @@ import java.util.Iterator;
  */
 
 public class ContentDisplayer extends RelativeLayout {
+    public enum LOADING_STATUS {
+        LOADING , ERROR , SUCCESS
+    }
+
     //提供数据的adapter
     private ContentAdaper mContentAdaper;
 
@@ -58,11 +62,14 @@ public class ContentDisplayer extends RelativeLayout {
     //次要作用是在scrollEnable为false的时候显示为透明层,遮挡在主显示控件上屏蔽主显示控件的滑动.
     private TextView clickOrHintlayer;
 
-    private OnClickListener mListener = null;
+    private OnClickListener mOnClickListener = null;
 
     private boolean needRefresh = false;
 
     private boolean scrollEnable = false;
+
+    private OnLoadingStatusChangedListener mOnLoadingStatusChangedListener;
+
     public ContentDisplayer(@NonNull Context context) {
         this(context , null);
     }
@@ -110,9 +117,11 @@ public class ContentDisplayer extends RelativeLayout {
                 if (view.getTitle() != null && view.getTitle().contains("找不到网页")){
                     setHintText("加载失败,点击重试");
                     needRefresh = true;
+                    callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                 }
                 else {
                     setHintText(null);
+                    callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                 }
             }
         });
@@ -147,8 +156,8 @@ public class ContentDisplayer extends RelativeLayout {
                 if (needRefresh){
                     mContentAdaper.refresh();
                 }
-                else if (mListener != null){
-                    mListener.onClick(v);
+                else if (mOnClickListener != null){
+                    mOnClickListener.onClick(v);
                 }
             }
         });
@@ -182,7 +191,11 @@ public class ContentDisplayer extends RelativeLayout {
 
     @Override
     public void setOnClickListener(@Nullable OnClickListener l) {
-        mListener = l;
+        mOnClickListener = l;
+    }
+
+    public void setOnLoadingStatusChangedListener(OnLoadingStatusChangedListener mOnLoadingStatusChangedListener){
+        this.mOnLoadingStatusChangedListener = mOnLoadingStatusChangedListener;
     }
 
     public ContentDisplayer setScrollEnable(boolean scrollEnable) {
@@ -207,6 +220,7 @@ public class ContentDisplayer extends RelativeLayout {
         mainTextView.setText(text);
         needRefresh = false;
         setHintText(null);
+        callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
     }
     private void setImgUrl(String url , boolean useCache){
         webview.setVisibility(GONE);
@@ -222,12 +236,14 @@ public class ContentDisplayer extends RelativeLayout {
                             e.printStackTrace();
                             Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
                             setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
+                            callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                             needRefresh = true;
                             return false;
                         }
 
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                             return false;
                         }
                     }).into(picImageView);
@@ -243,12 +259,14 @@ public class ContentDisplayer extends RelativeLayout {
                             e.printStackTrace();
                             Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
                             setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
+                            callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                             needRefresh = true;
                             return false;
                         }
 
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                             return false;
                         }
                     }).into(picImageView);
@@ -276,6 +294,7 @@ public class ContentDisplayer extends RelativeLayout {
                     if (newStatus == LoadController.PDF_STATUS.ERROR){
                         setHintText("题目pdf加载失败"  + ",点击重新加载...");
                         needRefresh = true;
+                        callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                     }
                     else if (newStatus == LoadController.PDF_STATUS.LOADED){
                         if (!content.getValue().endsWith("##")){
@@ -300,9 +319,11 @@ public class ContentDisplayer extends RelativeLayout {
                                 if (typeKey.equals(mContentAdaper.getCurrentShowTypeKey())) {
                                     mContentAdaper.onPageInfoChanged(typeKey, mContentAdaper.getPageCount(typeKey), mContentAdaper.getCurrentSelectPageIndex());
                                 }
+                                callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                             }
                         }
                         setHintText(null);
+                        callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                     }
                     else if (newStatus == LoadController.PDF_STATUS.DOWNLOADING){
                         setHintText("正在下载pdf....");
@@ -472,8 +493,10 @@ public class ContentDisplayer extends RelativeLayout {
         }
 
         public void toPage(String typeKey , int pageIndex , boolean showSubText , boolean useCache){
+            mContentDisplayer.callOnLoadingStatusChangedListener(LOADING_STATUS.LOADING);
             if (typeKey == null || pageIndex == -1){
                 mContentDisplayer.setMainText("没有内容");
+                mContentDisplayer.callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                 return;
             }
             if (mContentDisplayer != null){
@@ -598,6 +621,15 @@ public class ContentDisplayer extends RelativeLayout {
                     break;
             }
         }
+    }
+
+    public void callOnLoadingStatusChangedListener(LOADING_STATUS loadingStatus){
+        if (mOnLoadingStatusChangedListener != null){
+            mOnLoadingStatusChangedListener.onLoadingStatusChanged(loadingStatus);
+        }
+    }
+    public interface OnLoadingStatusChangedListener{
+        public void onLoadingStatusChanged(LOADING_STATUS loadingStatus);
     }
 
 }

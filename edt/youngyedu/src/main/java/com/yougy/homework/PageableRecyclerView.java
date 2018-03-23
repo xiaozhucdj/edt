@@ -182,6 +182,8 @@ public class PageableRecyclerView extends LinearLayout {
 
     public void setCurrentPage(int page){
         currentSelectPageIndex = page - 1;
+        notifyDataSetChanged();
+        customAdapter.onSelectPageChanged(currentSelectPageIndex);
     }
 
     public int getCurrentSelectPage(){
@@ -203,6 +205,8 @@ public class PageableRecyclerView extends LinearLayout {
         public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
         public abstract void onBindViewHolder(VH holder, int position);
         public abstract int getItemCount();
+        public void onSelectPageChanged(int changedPageIndex){
+        }
 
         private Button makePageBtn(final String text) {
             Button button = (Button) LayoutInflater.from(pageableRecyclerView.getContext())
@@ -214,6 +218,7 @@ public class PageableRecyclerView extends LinearLayout {
                     int index = Integer.parseInt(text) - 1;
                     pageableRecyclerView.currentSelectPageIndex = index;
                     pageableRecyclerView.notifyDataSetChanged();
+                    onSelectPageChanged(index);
                 }
             });
             return button;

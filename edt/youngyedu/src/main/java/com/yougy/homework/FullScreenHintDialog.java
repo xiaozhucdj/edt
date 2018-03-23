@@ -15,10 +15,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FullScreenHintDialogBinding;
+
+import static com.yougy.common.utils.UIUtils.getResources;
 
 /**
  * Created by FH on 2017/11/27.
@@ -105,12 +107,12 @@ public class FullScreenHintDialog extends Dialog {
                 }
             });
         }
-        binding.checkbox.setSelected(SpUtil.isThisDialogNotShowAgain(tag));
+        binding.checkbox.setSelected(SpUtils.isThisDialogNotShowAgain(tag));
         binding.notAgainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 binding.checkbox.setSelected(!binding.checkbox.isSelected());
-                SpUtil.setNotSHowAgainDialogTag(tag , binding.checkbox.isSelected());
+                SpUtils.setNotSHowAgainDialogTag(tag , binding.checkbox.isSelected());
             }
         });
         if (!showNoMoreAgainHint){
@@ -201,7 +203,7 @@ public class FullScreenHintDialog extends Dialog {
 
     @Override
     public void show() {
-        if (SpUtil.isThisDialogNotShowAgain(tag)){
+        if (SpUtils.isThisDialogNotShowAgain(tag)){
             if (nextStepOnclickListener != null){
                 nextStepOnclickListener.onClick(this  , 0);
             }
@@ -212,5 +214,11 @@ public class FullScreenHintDialog extends Dialog {
         else {
             super.show();
         }
+    }
+
+
+    public void setBtn1Style(int iconResId,int colorId){
+        binding.btn1.setBackgroundResource(iconResId);
+        binding.btn1.setTextColor(getResources().getColor(colorId));
     }
 }

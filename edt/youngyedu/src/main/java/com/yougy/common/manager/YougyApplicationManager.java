@@ -23,7 +23,7 @@ import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.AskQuestionAttachment;
 import com.yougy.message.EndQuestionAttachment;
@@ -133,7 +133,7 @@ public class YougyApplicationManager extends LitePalApplication {
 //        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().build());
 //        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
 
-            Commons.UUID = SpUtil.getUUID();
+            Commons.UUID = SpUtils.getUUID();
             LogUtils.i("mac_application__"+Commons.UUID );
             Context context = getApplicationContext();
             // 获取当前包名
@@ -162,7 +162,7 @@ public class YougyApplicationManager extends LitePalApplication {
                 public void onReceive(Context context, Intent intent) {
                     if (BaseActivity.getForegroundActivity() != null
                             && !(BaseActivity.getForegroundActivity() instanceof LocalLockActivity)
-                            && !TextUtils.isEmpty(SpUtil.getLocalLockPwd())){
+                            && !TextUtils.isEmpty(SpUtils.getLocalLockPwd())){
                         Intent newIntent = new Intent(context , LocalLockActivity.class);
                         newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         newIntent.putExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, true);

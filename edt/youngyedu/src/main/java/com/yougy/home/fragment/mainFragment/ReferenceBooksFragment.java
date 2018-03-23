@@ -29,7 +29,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
@@ -212,7 +212,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         if (YougyApplicationManager.isWifiAvailable()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
-            req.setUserId(SpUtil.getAccountId());
+            req.setUserId(SpUtils.getAccountId());
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
             //设置年级

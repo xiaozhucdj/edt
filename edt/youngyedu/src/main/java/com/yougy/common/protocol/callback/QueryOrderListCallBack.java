@@ -5,14 +5,12 @@ import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.shop.activity.OrderListActivity;
-import com.yougy.shop.activity.ShopCartActivity;
 
 import okhttp3.Response;
 
@@ -47,7 +45,7 @@ public class QueryOrderListCallBack extends BaseCallBack<QueryBookOrderListRep> 
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtil.getAccountId()), null , mProtocol, this);
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtils.getAccountId()), null , mProtocol, this);
     }
 
     @Override

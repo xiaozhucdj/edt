@@ -22,8 +22,7 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
-import com.yougy.home.activity.ControlFragmentActivity;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.home.adapter.CoursekAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.ui.activity.R;
@@ -139,7 +138,7 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
 
     private void loadData() {
         if (NetUtils.isNetConnected()) {
-            NetWorkManager.queryCourse(SpUtil.getUserId() )
+            NetWorkManager.queryCourse(SpUtils.getUserId() )
                     .subscribe(new Action1<List<CourseInfo>>() {
                         @Override
                         public void call(List<CourseInfo> courseInfos) {

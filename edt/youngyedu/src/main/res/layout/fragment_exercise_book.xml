@@ -14,34 +14,34 @@
             >
             <ImageView
                 android:id="@+id/back_btn"
-                android:layout_width="30px"
-                android:layout_height="30px"
-                android:src="@drawable/le_btn_back_new_selector"
+                android:layout_width="40px"
+                android:layout_height="40px"
                 android:layout_marginLeft="30px"
+                android:src="@drawable/edu_img_back_select"
                 android:onClick="back"
                 />
             <TextView
                 android:id="@+id/switch2homework_btn"
-                android:layout_width="32px"
-                android:layout_height="32px"
+                android:layout_width="40px"
+                android:layout_height="40px"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/icon_homework_selected"
+                android:background="@drawable/edu_img_homework_select"
                 android:layout_marginRight="30px"
                 />
             <TextView
                 android:id="@+id/switch2note_btn"
-                android:layout_width="32px"
-                android:layout_height="32px"
+                android:layout_width="40px"
+                android:layout_height="40px"
                 android:layout_toLeftOf="@id/switch2homework_btn"
-                android:background="@drawable/note_btn_selector"
+                android:background="@drawable/edu_img_note_select"
                 android:layout_marginRight="50px"
                 />
             <TextView
                 android:id="@+id/switch2book_btn"
-                android:layout_width="32px"
-                android:layout_height="32px"
+                android:layout_width="40px"
+                android:layout_height="40px"
                 android:layout_toLeftOf="@id/switch2note_btn"
-                android:background="@drawable/book_btn_selector"
+                android:background="@drawable/edu_img_textbook_select"
                 android:layout_marginRight="50px"
                 />
             <View

@@ -26,7 +26,7 @@ import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
 import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ResultUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -113,7 +113,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     @Override
     protected void loadData() {
-        mHistoryRecords = SpUtil.getHistoryRecord();
+        mHistoryRecords = SpUtils.getHistoryRecord();
         Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), (categoryInfos, bookInfos) -> {
             LogUtils.e(tag, "call.........................");
             handleCategoryInfo(categoryInfos);
@@ -239,7 +239,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void getSingleBookInfo() {
         Observable<List<BookInfo>> observable = Observable.create((Observable.OnSubscribe<List<BookInfo>>) subscriber -> {
             LogUtils.e(tag, "classify id : " + mClassifyId);
-            Response response = ProtocolManager.queryBookProtocol(SpUtil.getUserId(), "", mClassifyId, -1, -1);
+            Response response = ProtocolManager.queryBookProtocol(SpUtils.getUserId(), "", mClassifyId, -1, -1);
             if (response.isSuccessful()) {
                 try {
                     String resultJson = response.body().string();
@@ -518,7 +518,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     public void clearHistoryRecord(View view) {
-        SpUtil.clearHistoryRecord();
+        SpUtils.clearHistoryRecord();
         mHistoryRecords.clear();
         generateHistoryRecord();
     }
@@ -536,7 +536,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 mHistoryRecords.clear();
             }
             mHistoryRecords.add(mSearchKey);
-            SpUtil.putHistoryRecord(mHistoryRecords);
+            SpUtils.putHistoryRecord(mHistoryRecords);
         }
         Bundle extras = new Bundle();
         extras.putString("search_key", mSearchKey);
@@ -719,7 +719,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void showSpinnerLayout() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
-            mStage = SpUtil.getStudent().getGradeName();
+            mStage = SpUtils.getStudent().getGradeName();
             binding.stageButton.setText(mStage);
             setCompositeText();
         }

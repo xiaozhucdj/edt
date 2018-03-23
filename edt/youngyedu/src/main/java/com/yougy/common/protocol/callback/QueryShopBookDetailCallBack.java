@@ -9,7 +9,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 
 import okhttp3.Response;
 
@@ -50,7 +50,7 @@ public class QueryShopBookDetailCallBack extends BaseCallBack<QueryShopBookDetai
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtil.getUserId(), bookId , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , this);
+        ProtocolManager.queryShopBookDetailByIdProtocol(SpUtils.getUserId(), bookId , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL , this);
     }
 
     @Override

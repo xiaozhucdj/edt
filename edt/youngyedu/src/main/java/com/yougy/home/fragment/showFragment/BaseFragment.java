@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Picture;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
@@ -44,6 +45,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.onyx.android.sdk.api.device.epd.EpdController;
@@ -51,7 +53,8 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.ImageLoader;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -113,7 +116,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     protected ImageButton mPencil;
     protected ImageButton mOliBlackPen;
     protected ImageButton mMakerPen;
-    protected ImageButton mEraser;
+    protected ImageView mEraser;
     protected ImageButton mColor;
     protected SeekBar mPenSizePg;
     protected ImageView mPenSizeIv;
@@ -135,7 +138,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     protected ImageView mBookMarkerIv;
     protected ImageView mDirectoryIv;
     protected NoteBookView mNoteBookView;
-    protected LinearLayout mPaintChoose;
+    protected RelativeLayout mPaintChoose;
     protected LinearLayout mBookNeedLayout;
     protected LinearLayout mOptionLayout;
     protected ScreenShotView mScreenShotView;
@@ -200,6 +203,13 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     protected ImageView mImgupdataNote;
     private ImageView mImgDeleteNote;
     protected static final int DURATION = 1;
+    private TextView mTvPenOrEraser;
+    private SeekBar mSeekPenOrEraser;
+    private int mSeekPenOrEraserSize;
+    private int mCutterPenSize = 2;
+    private int mCutterEraserSize = 2;
+
+    private boolean mIsUserPen = true;
 
     private String generatePicturePath() {
         picturePath = fileName + "-" + "picture" + "-" + position + "-" + pictureCount;
@@ -215,7 +225,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         if (mPaintDrawState == null) {
             mPaintDrawState = new PaintDrawStateInfo();
             //从XML 文件中读取数据
-            SpUtil.readPaintDrawStates(mPaintDrawState);
+            SpUtils.readPaintDrawStates(mPaintDrawState);
             if (mPaintDrawState.getPanSize() == -1 && mPaintDrawState.getPanColor() == -1) {
                 mPaintDrawState.setPanSize(2.0f);
                 mPaintDrawState.setPanColor(Color.BLACK);
@@ -303,7 +313,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
 
         // 显示笔工具栏  LinearLayout
-        mPaintChoose = (LinearLayout) mRoot.findViewById(R.id.paint_choose);
+        mPaintChoose = (RelativeLayout) mRoot.findViewById(R.id.paint_choose);
         //钢笔
         mPen = (ImageButton) mRoot.findViewById(R.id.pen);
         //铅笔
@@ -313,7 +323,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //马克笔
         mMakerPen = (ImageButton) mRoot.findViewById(R.id.maker_pen);
         //橡皮
-        mEraser = (ImageButton) mRoot.findViewById(R.id.eraser);
+        mEraser = (ImageView) mRoot.findViewById(R.id.eraser);
         // 颜色 ImageButton
         mColor = (ImageButton) mRoot.findViewById(R.id.color);
         // 笔大小 SeekBar
@@ -368,7 +378,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //修改笔记
         mImgupdataNote = (ImageView) mRoot.findViewById(R.id.img_updataNote);
 
-        if (mControlActivity.mBookId > 0   && !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
+//        if (mControlActivity.mBookId > 0 && !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
+
+        if (mControlActivity.mBookId > 0) {
             mTextbookIv.setEnabled(true);
         } else {
             mTextbookIv.setEnabled(false);
@@ -387,7 +399,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         mExerciseBookIv.setEnabled(mControlActivity.mHomewrokId > 0);
 
 
-        if (mControlActivity.mNoteCreator == SpUtil.getAccountId()) {
+        if (mControlActivity.mNoteCreator == SpUtils.getAccountId()) {
             mNotebookIv.setVisibility(View.GONE);
             mTextbookIv.setVisibility(View.GONE);
             mExerciseBookIv.setVisibility(View.GONE);
@@ -432,6 +444,36 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         mImgPaste = (ImageView) mRoot.findViewById(R.id.paste);
         setPasteEnable();
 
+
+        mTvPenOrEraser = (TextView) mRoot.findViewById(R.id.tv_pen_or_eraser);
+        mSeekPenOrEraser = (SeekBar) mRoot.findViewById(R.id.seek_pen_or_eraser);
+        mSeekPenOrEraser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mSeekPenOrEraserSize = progress + 2;
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                leaveScribbleMode(true);
+                if (mNoteBookView != null) {
+                    if (mIsUserPen) {
+                        mCutterPenSize = mSeekPenOrEraserSize;
+                        mNoteBookView.outSetPenSize(mCutterPenSize);
+                    } else {
+                        mCutterEraserSize = mSeekPenOrEraserSize;
+                        mNoteBookView.outSetEraserSize(mCutterEraserSize);
+                    }
+                    setThum(mSeekPenOrEraserSize);
+                }
+            }
+        });
     }
 
     @NonNull
@@ -485,8 +527,13 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
 
     public void initNoteView() {
-        updatePaintColor(Color.BLACK);
+//        updatePaintColor(Color.BLACK);
         mNoteBookView = new NoteBookView(mContext);
+        if (mIsUserPen) {
+            mNoteBookView.outSetPenSize(mCutterPenSize);
+        } else {
+            mNoteBookView.outSetEraserSize(mCutterEraserSize);
+        }
         mNoteBookView.setReDoOptListener(this);
         mNoteBookView.setUndoOptListener(this);
         mFrameLayout.setOnTouchListener(this);
@@ -528,7 +575,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         if (mNoteBookView != null) {
             LogUtils.e(TAG, "save content.................");
             if (mNoteBookView.isContentChanged()) {
-                SpUtil.changeContent(true);
+                SpUtils.changeContent(true);
                 if (inUIThread) {
                     save();
                 } else {
@@ -609,7 +656,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         view = null;
         switch (v.getId()) {
             /************************************************设置 笔栏目 点击事件*************************************/
-            case R.id.pen: //笔 ，显示 笔栏目
+          /*  case R.id.pen: //笔 ，显示 笔栏目
                 view = mPen;
                 isNeedHide = true;
                 //设置笔属性
@@ -617,8 +664,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 updateStatus(Color.BLACK, 2, 255);
                 mNoteBookView.setPen();
                 mNoteBookView.setEraserFlag(false);
-                break;
-            case R.id.pencil:
+                break;*/
+           /* case R.id.pencil:
                 //TODO:设置画笔为铅笔
                 view = mPencil;
                 isNeedHide = true;
@@ -627,8 +674,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 setPanDrawStates(3.0f, Color.BLACK, 3, 255);
                 updateStatus(Color.BLACK, 3, 255);
                 mNoteBookView.setOilBlackPen();
-                break;
-            case R.id.oli_black_pen:
+                break;*/
+         /*   case R.id.oli_black_pen:
                 view = mOliBlackPen;
                 isNeedHide = true;
 
@@ -636,51 +683,71 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 setPanDrawStates(5.0f, Color.BLACK, 5, 255);
                 updateStatus(Color.BLACK, 5, 255);
                 mNoteBookView.setOilBlackPen();
-                break;
-            case R.id.maker_pen:
+                break;*/
+     /*       case R.id.maker_pen:
                 view = mMakerPen;
                 isNeedHide = true;
                 //设置马克笔属性
                 setPanDrawStates(5.0f, Color.BLACK, 15, 100);
                 updateStatus(Color.GREEN, 15, 100);
                 mNoteBookView.setMakerPen();
-                break;
+                break;*/
             case R.id.eraser:
                 view = mEraser;
                 isNeedHide = true;
                 //设置橡皮属性
-                mNoteBookView.useEraser();
-                mNoteBookView.setEraserFlag(true);
+        /*        mNoteBookView.useEraser();
+                mNoteBookView.setEraserFlag(true);*/
+
+                if (mPaintChoose.getVisibility() == View.VISIBLE) {
+                    mPaintChoose.setVisibility(View.GONE);
+                } else {
+                    mIsUserPen = false;
+                    mSeekPenOrEraser.setProgress(mCutterEraserSize);
+                    mPaintChoose.setVisibility(View.VISIBLE);
+                }
+                mNoteBookView.outSetEraserSize(mCutterEraserSize);
+                mTvPenOrEraser.setText("橡皮大小：");
                 break;
-            case R.id.color:
-                view = mColor;
-                /**打开 调色板  选择颜色*/
-                showColorSelector();
-                isNeedHide = false;
-                break;
+//            case R.id.color:
+//                view = mColor;
+//                /**打开 调色板  选择颜色*/
+//                showColorSelector();
+//                isNeedHide = false;
+//                break;
 
             /************************************************设置 按钮栏目点击事件*************************************/
-            case R.id.gesture:
-                //TODO:切换为手势控制
-                view = mGestureIv;
-                // 点击手势时候 对数据进行保存操作
-                saveContent(false);
-                mIsShowPaintChoose = false;
-                mIsIntercept = true;
-                break;
+//            case R.id.gesture:
+//                //TODO:切换为手势控制
+//                view = mGestureIv;
+//                // 点击手势时候 对数据进行保存操作
+//                saveContent(false);
+//                mIsShowPaintChoose = false;
+//                mIsIntercept = true;
+//                break;
             case R.id.paint_draw:
                 //TODO：切换为绘制输入
                 view = mPaintDrawIv;
-                if (mIsShowPaintChoose) {
-                    if (mPaintChoose.getVisibility() == View.VISIBLE) {
-                        outAnimator();
-                    } else {
-                        inAnimatior();
-                    }
+//                if (mIsShowPaintChoose) {
+//                    if (mPaintChoose.getVisibility() == View.VISIBLE) {
+//                        outAnimator();
+//                    } else {
+//                        inAnimatior();
+//                    }
+//                } else {
+//                    mIsShowPaintChoose = true;
+//                }
+//                mIsIntercept = false;
+
+                if (mPaintChoose.getVisibility() == View.VISIBLE) {
+                    mPaintChoose.setVisibility(View.GONE);
                 } else {
-                    mIsShowPaintChoose = true;
+                    mIsUserPen = true;
+                    mSeekPenOrEraser.setProgress(mCutterPenSize);
+                    mPaintChoose.setVisibility(View.VISIBLE);
                 }
-                mIsIntercept = false;
+                mNoteBookView.outSetPenSize(mCutterPenSize);
+                mTvPenOrEraser.setText("画笔大小：");
                 break;
             case R.id.draw_pic:
                 //TODO:使用绘图工具
@@ -723,7 +790,15 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 send();
                 break;
             case R.id.textbook:
-                toTextBookFragment();
+                if(!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))){
+                    toTextBookFragment();
+                }else{
+                    if (NetUtils.isNetConnected()) {
+                        downBookTask(mControlActivity.mBookId);
+                    } else {
+                        showCancelAndDetermineDialog(R.string.jump_to_net);
+                    }
+                }
                 break;
             case R.id.notebook:
                 toNoteBookFragment();
@@ -781,9 +856,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 getActivity().onBackPressed();
                 break;
         }
-        if (null != view && isNeedHide && view != mPaintDrawIv && mPaintChoose.getVisibility() == View.VISIBLE) {
-            outAnimator();
-        }
+//        if (null != view && isNeedHide && view != mPaintDrawIv && mPaintChoose.getVisibility() == View.VISIBLE) {
+//            outAnimator();
+//        }
 
 
         /**
@@ -1548,7 +1623,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             animatorSet.setDuration(100);
             animatorSet.start();
             if (mNoteBookView != null) {
-                mNoteBookView.setPaintSize(temp * 30);
+//                mNoteBookView.setPaintSize(temp * 30);
             }
         } else {
             mPenAlphaIv.setAlpha(temp);
@@ -1586,7 +1661,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         savePage();
         // 失去焦点的时候存储数据
         saveContent(false);
-        SpUtil.putPaintDrawStates(mPaintDrawState);
+        SpUtils.putPaintDrawStates(mPaintDrawState);
     }
 
     /**
@@ -1909,5 +1984,22 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     public void setActivity(ControlFragmentActivity activity) {
         mControlActivity = activity;
+    }
+
+
+    private int[] thums = {R.drawable.img_2px_jindukuai, R.drawable.img_3px_jindukuai, R.drawable.img_4px_jindukuai, R.drawable.img_5px_jindukuai
+            , R.drawable.img_6px_jindukua, R.drawable.img_7px_jindukuai, R.drawable.img_8px_jindukuai, R.drawable.img_9px_jindukuai, R.drawable.img_10px_jindukuai
+            , R.drawable.img_11px_jindukuai, R.drawable.img_12px_jindukuai, R.drawable.img_13px_jindukuai, R.drawable.img_14px_jindukuai, R.drawable.img_15px_jindukuai
+    };
+
+    private void setThum(float progress) {
+        Drawable thumD = getActivity().getResources().getDrawable(thums[((int) progress) - 2]);
+        mSeekPenOrEraser.setThumb(thumD);
+    }
+
+    @Override
+    protected void onDownBookFinish() {
+        super.onDownBookFinish();
+        toTextBookFragment();
     }
 }

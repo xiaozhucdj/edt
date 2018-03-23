@@ -7,8 +7,6 @@ import android.widget.TextView;
 
 import com.yougy.common.utils.DateUtils;
 import com.yougy.home.activity.MainActivity;
-import com.yougy.shop.bean.BriefOrder;
-import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 
 import butterknife.BindView;
@@ -29,7 +27,7 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
     @BindView(R.id.pay_succcess_actvt_to_shop_frontpage_btn)
     Button toShopFrontpageBtn;
 
-    BriefOrder order;
+    double orderPrice;
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_pay_success);
@@ -37,7 +35,7 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
 
     @Override
     protected void init() {
-        order = getIntent().getParcelableExtra(ShopGloble.ORDER);
+        orderPrice = getIntent().getDoubleExtra("price" , -1);
     }
 
     @Override
@@ -47,7 +45,7 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
 
     @Override
     protected void loadData() {
-        moneySumTv.setText("支付金额 : ￥" + order.getOrderPrice());
+        moneySumTv.setText("支付金额 : ￥" + orderPrice);
         payTimeTv.setText("支付时间 :　" + DateUtils.getCalendarAndTimeString());
 
     }
@@ -69,9 +67,9 @@ public class PaySuccessActivity extends ShopAutoLayoutBaseActivity {
                 break;
         }
     }
-
-    @Override
-    public void onBackPressed() {
-
-    }
+//
+//    @Override
+//    public void onBackPressed() {
+//
+//    }
 }

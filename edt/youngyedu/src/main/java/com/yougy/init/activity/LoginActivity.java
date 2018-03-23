@@ -1,5 +1,6 @@
 package com.yougy.init.activity;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -113,7 +114,20 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void init() {
+        binding.tvGoHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginActivity.this.finish();
+            }
+        });
 
+        binding.tvNetSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -134,14 +148,14 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        NetManager.getInstance().registerReceiver(this);
+        PowerManager.getInstance().registerReceiver(this);
+
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
 
-
-        EventBus.getDefault().register(this);
-        NetManager.getInstance().registerReceiver(this);
-        PowerManager.getInstance().registerReceiver(this);
     }
 
     @Override
@@ -217,7 +231,31 @@ public class LoginActivity extends BaseActivity {
         if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
             setSysWifi();
         } else if (EventBusConstant.EVENTBUS_POWER.equals(event.getType())) {
-            setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
         }
+        setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
     }
+
+    @Override
+    public void onBackPressed() {
+      super.onBackPressed();
+    }
+
+   /* *//**
+     * 检查系统应用程序，并打开
+     *//*
+    public void openApp(String appPag, String cls) {
+        PackageManager packageManager = this.getPackageManager();
+        try {
+            PackageInfo pi = packageManager.getPackageInfo(appPag, 0);
+            if (null != pi) {
+                Intent intent = new Intent();
+                intent.setClassName(appPag, cls);
+                startActivity(intent);
+                LoginActivity.this.finish();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplication(), "当前没有安装APP 。。。", Toast.LENGTH_LONG).show();
+        }
+    }*/
 }

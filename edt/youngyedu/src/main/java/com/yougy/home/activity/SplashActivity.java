@@ -6,14 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.badoo.mobile.util.WeakHandler;
-import com.onyx.android.sdk.api.device.FrontLightController;
+import com.onyx.android.sdk.utils.NetworkUtil;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
@@ -29,9 +28,7 @@ import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SharedPreferencesUtil;
-import com.yougy.common.utils.SpUtil;
-import com.yougy.common.utils.SystemUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -106,7 +103,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
         //打开背光 一共18等级  减到0，打开默认为7级，直接关闭，打开默认为之前关闭是级数。
 
-
+/*
         //保存打开app前的背光情况。
         boolean isLightOn = FrontLightController.isLightOn(this);
         int nowBrightness = FrontLightController.getBrightness(this);
@@ -115,6 +112,8 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
         FrontLightController.turnOn(this);
 
+        //展示设备亮度为10/16
+        FrontLightController.setBrightness(this, 160*10/16);*/
 
 
         /*//获取当前亮级
@@ -151,11 +150,11 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         Log.v("FH", "开始检测版本更新...");
         if (NetUtils.isNetConnected()) {
             Log.v("FH", "有网络,更新UUID");
-            Commons.UUID = SystemUtils.getMacAddress().replaceAll(":", "") + "-" + Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            SpUtil.saveUUID(Commons.UUID);
+            Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "") ;
+            SpUtils.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
-            if (-1 == SpUtil.getAccountId()) {
+            if (-1 == SpUtils.getAccountId()) {
                 Log.v("FH", "没有网络,没有之前的登录信息,跳转到wifi设置");
                 jumpWifiActivity();
             } else {
@@ -167,7 +166,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
 
     private void checkLocalLockAndJump() {
-        if (TextUtils.isEmpty(SpUtil.getLocalLockPwd())) {
+        if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
             Log.v("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
             new HintDialog(SplashActivity.this
                     , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
@@ -175,7 +174,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                     , new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    SpUtil.setLocalLockPwd("123456");
+                    SpUtils.setLocalLockPwd("123456");
                     loadIntent(LocalLockActivity.class);
                     finish();
                 }
@@ -211,8 +210,8 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         }).show();
                     } else {
                         Log.v("FH", "自动登录成功");
-                        SpUtil.saveStudent(response.getData().get(0));
-                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtil.getUserId()), null);
+                        SpUtils.saveStudent(response.getData().get(0));
+                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
                 } else {
@@ -224,7 +223,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             @Override
             public void onError(Call call, Exception e, int id) {
                 Log.v("FH", "自动登录失败原因:其他错误:" + e.getMessage());
-                if (-1 == SpUtil.getAccountId()) {
+                if (-1 == SpUtils.getAccountId()) {
                     Log.v("FH", "自动登录失败,没有之前的登录信息,跳转到wifi设置");
                     jumpWifiActivity();
                 } else {

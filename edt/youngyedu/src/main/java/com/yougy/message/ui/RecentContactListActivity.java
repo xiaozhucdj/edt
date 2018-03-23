@@ -13,12 +13,9 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.yougy.common.utils.SpUtil;
 import com.yougy.message.BookRecommandAttachment;
-import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityRecentContactBinding;

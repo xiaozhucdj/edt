@@ -2,11 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rl_page"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="78px"
     android:clickable="true">
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/tv_page_number"
         android:layout_width="150dp"
         android:layout_height="54dp"
@@ -15,18 +14,19 @@
         android:gravity="center"
         android:text="0/0"
         android:textColor="@color/search_color"
-        android:textSize="24dp" />
+        android:textSize="24dp"
+        android:visibility="gone" />
 
     <View
         android:id="@+id/line_page"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="2px"
         android:layout_below="@+id/tv_page_number"
-        android:background="@color/background_black" />
+        android:background="@color/black" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="76px"
         android:layout_below="@id/line_page"
         android:background="#ccd9d9d9"
         android:clickable="true"
@@ -45,45 +45,45 @@
 
 
         <ImageView
+            android:layout_centerVertical="true"
             android:id="@+id/img_pageBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="22px"
+            android:layout_height="38px"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
             android:background="@null"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:scaleType="fitXY"
             android:src="@drawable/edu_img_pageprev_select" />
 
         <ImageView
+            android:layout_centerVertical="true"
             android:id="@+id/img_pageNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="22px"
+            android:layout_height="38px"
             android:layout_alignParentRight="true"
-            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
             android:background="@null"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:scaleType="fitXY"
             android:src="@drawable/edu_img_pagenext_select" />
 
         <com.yougy.view.showView.TextThumbSeekBar
-            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:thumbOffset="0px"
             android:id="@+id/seekbar_page"
-            android:layout_width="300dp"
+            android:layout_width="736px"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/img_pageNext"
             android:layout_toRightOf="@id/img_pageBack"
             android:indeterminate="false"
-            android:minHeight="8dp"
-            android:maxHeight="8dp"
+            android:maxHeight="26px"
+            android:minHeight="26px"
             android:progressDrawable="@drawable/seekbar_bg_selector"
-            android:thumb="@drawable/seekbar_thumb_selector" />
+            android:thumb="@drawable/seekbar_thumb_selector"
+            android:visibility="gone" />
 
 
         <TextView
-            android:textStyle="bold"
-            android:visibility="gone"
+            android:layout_centerVertical="true"
             android:id="@+id/tv_notePages"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,8 +91,10 @@
             android:layout_toRightOf="@id/img_pageBack"
             android:gravity="center"
             android:text="0/0"
-            android:textColor="@color/background_black"
-            android:textSize="24dp" />
+            android:textColor="@color/black"
+            android:textSize="24px"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
     </RelativeLayout>
 </RelativeLayout>

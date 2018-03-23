@@ -13,7 +13,7 @@ import com.yougy.common.rx.RxBus;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 
 import okhttp3.Response;
 
@@ -35,7 +35,7 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
 //            String path = mWeakReference.get().getDatabasePath(DATABASE_NAME).getAbsolutePath();
 //            boolean uploadDb = FtpUtil.uploadFile(path, DATABASE_NAME);
 //            if (uploadDb) {
-//                SpUtil.changeContent(false);
+//                SpUtils.changeContent(false);
 //            }
             Intent intent = new Intent(mWeakReference.get(), UploadService.class);
             mWeakReference.get().startService(intent);
@@ -58,7 +58,7 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
         super.onUiDetermineListener();
         NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
         unBindDeviceReq.setDeviceId(Commons.UUID);
-        unBindDeviceReq.setUserId(SpUtil.getUserId());
+        unBindDeviceReq.setUserId(SpUtils.getUserId());
         NewProtocolManager.unbindDevice(unBindDeviceReq, this);
     }
 }
