@@ -185,6 +185,25 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             }
         };
         contentDisplayer.setmContentAdaper(contentAdaper);
+
+        contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
+            @Override
+            public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
+                switch (loadingStatus){
+                    case ERROR:
+                        mNbvAnswerBoard.setVisibility(View.GONE);
+                        break;
+                    case LOADING:
+                        break;
+                    case SUCCESS:
+                        mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+
+
+
     }
 
     @Override

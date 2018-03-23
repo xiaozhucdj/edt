@@ -213,6 +213,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
         screenWidth = dm.widthPixels;
         screenHeight = dm.heightPixels - 50;
 
+        /*mNbvAnswerBoard.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+                    onClick(findViewById(R.id.tv_caogao_text));
+                }
+                return false;
+            }
+        });*/
+
 
         llCaogaoControl.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -305,6 +316,24 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         };
         contentDisplayer.setmContentAdaper(contentAdaper);
+
+
+        contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
+            @Override
+            public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
+                switch (loadingStatus){
+                    case ERROR:
+                        mNbvAnswerBoard.setVisibility(View.GONE);
+                        break;
+                    case LOADING:
+                        break;
+                    case SUCCESS:
+                        mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+
     }
 
     @Override
