@@ -22,7 +22,7 @@
         android:onClick="toCart"
         android:paddingLeft="15px"
         android:paddingRight="30px"
-        android:src="@drawable/icon_gouwuche" />
+        android:src="@drawable/gouwuche_selector" />
 
     <!--<ImageButton-->
         <!--android:id="@+id/recommand_btn"-->

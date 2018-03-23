@@ -38,7 +38,6 @@ import com.yougy.common.protocol.response.AppendBookCartRep;
 import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.protocol.response.PromoteBookRep;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
-import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.protocol.response.RequirePayOrderRep;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
@@ -248,71 +247,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
      */
     @Override
     protected void refreshView() {
-    }
-
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_left:
-                LogUtils.e(tag, "finish ................. ");
-                this.finish();
-                break;
-            case R.id.img_btn_right:
-                //进入购物车
-                loadIntent(ShopCartActivity.class);
-                break;
-            case R.id.btn_buy:
-                if (mBookInfo.isBookInShelf()) {
-                    //这本书已经购买过 ,打开PDF
-                    showReaderForPackage();
-                } else {
-                    requestOrder();
-                }
-                break;
-            case R.id.btn_addCar:
-                if (mBookInfo.isBookInCart()) {
-                    //书加入了购物车
-                    showCenterDetermineDialog(R.string.books_already_add_car);
-                } else if (mBookInfo.isBookInShelf()) {
-                    showReaderForPackage();
-                } else {
-                    addBooksToCar(new ArrayList<BookInfo>() {{
-                        add(mBookInfo);
-                    }});
-                }
-                break;
-            case R.id.btn_addFavor:
-                if (mBookInfo.isBookInFavor()) {
-                    showCenterDetermineDialog(R.string.books_already_add_collection);
-                } else {
-                    addBooksToFavor(new ArrayList<BookInfo>() {{
-                        add(mBookInfo);
-                    }});
-                }
-                break;
-            case R.id.btn_read:
-                LogUtils.i("aaaaaaaaaaaa");
-                if (mBookInfo.isBookInShelf()) {
-                    showReaderForPackage();
-                    LogUtils.i("bbbbbbbbb");
-                    return;
-                }
-                //跳转在线试读
-//                String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
-
-                if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookProbation))) {
-                    jumpProbationActivity();
-                } else {
-                    downBookDialog();
-                }
-                break;
-            case R.id.look_more_activity:
-                Intent intent = new Intent(this,ShopPromotionActivity.class);
-                intent.putExtra(ShopPromotionActivity.COUPON_ID,mBookInfo.getBookCoupon().get(0).getCouponId());
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
     }
 
     private void showReaderForPackage() {

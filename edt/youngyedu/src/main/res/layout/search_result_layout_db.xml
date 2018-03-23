@@ -31,7 +31,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/shop_img_padding"
                 android:onClick="@{activity.search}"
-                android:src="@drawable/icon_shaixuan" />
+                android:src="@drawable/shaixuan_selector" />
 
             <EditText
                 android:id="@+id/search_key"

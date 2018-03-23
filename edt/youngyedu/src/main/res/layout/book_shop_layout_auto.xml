@@ -82,7 +82,7 @@
                     style="@style/shopImgStyle"
                     android:layout_marginLeft="@dimen/shop_img_padding"
                     android:onClick="@{activity.clickShoolBag}"
-                    android:src="@drawable/icon_shubao" />
+                    android:src="@drawable/shubao_selector" />
 
                 <ImageView
                     android:id="@+id/cart_go"
@@ -90,14 +90,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/shop_img_padding"
                     android:onClick="@{activity.clickCartGo}"
-                    android:src="@drawable/icon_gouwuche" />
+                    android:src="@drawable/gouwuche_selector" />
 
                 <ImageView
                     android:id="@+id/favorite"
                     style="@style/shopImgStyle"
                     android:layout_toLeftOf="@+id/cart_go"
                     android:onClick="@{activity.clickFavorite}"
-                    android:src="@drawable/icon_shoucang" />
+                    android:src="@drawable/shoucang_ic_selector" />
 
                 <TextView
                     android:id="@+id/search"
