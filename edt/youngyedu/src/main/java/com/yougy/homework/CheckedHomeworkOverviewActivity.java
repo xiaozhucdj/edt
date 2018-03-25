@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -94,7 +94,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity{
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReplySummary(examId , SpUtil.getUserId())
+        NetWorkManager.queryReplySummary(examId , SpUtils.getUserId())
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                     @Override
                     public void call(List<QuestionReplySummary> replySummaries) {

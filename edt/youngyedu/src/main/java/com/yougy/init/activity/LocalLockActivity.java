@@ -17,7 +17,7 @@ import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.DateUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.init.bean.Student;
@@ -122,13 +122,13 @@ public class LocalLockActivity extends BaseActivity {
 
     @Override
     public void loadData() {
-        Student student = SpUtil.getStudent();
+        Student student = SpUtils.getStudent();
         binding.nameTv.setText("姓名 : " + student.getUserRealName());
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
         binding.numTv.setText("编号 : " + student.getUserNum());
 
-        String sex = SpUtil.getSex();
+        String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_man));
         } else {
@@ -149,8 +149,8 @@ public class LocalLockActivity extends BaseActivity {
             new HintDialog(getThisActivity(), "密码不能为空").show();
             return;
         }
-        Log.v("FH", "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtil.getLocalLockPwd());
-        if (binding.localLockEdittext.getText().toString().equals(SpUtil.getLocalLockPwd())) {
+        Log.v("FH", "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtils.getLocalLockPwd());
+        if (binding.localLockEdittext.getText().toString().equals(SpUtils.getLocalLockPwd())) {
             finish();
             if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)) {
                 startService(new Intent(this, DownloadService.class));

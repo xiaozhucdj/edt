@@ -71,10 +71,6 @@
 
 
         <!--确认订单页-->
-        <activity
-            android:name="com.yougy.shop.activity.ConfirmOrderActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
         <!--用户名密码登录界面-->
         <activity
             android:name="com.yougy.init.activity.LoginActivity"
@@ -225,6 +221,7 @@
         <activity android:name="com.yougy.anwser.AnswerRecordListActivity" />
         <!--问答记录某次问答详情界面-->
         <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity"/>
+        <activity android:name="com.yougy.shop.activity.OrderDetailActivity" />
 
         <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
             <intent-filter>

@@ -10,7 +10,7 @@ import com.yougy.anwser.Content_new;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.RxResultHelper;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplyDetail;
@@ -87,7 +87,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReplyDetail(examId , currentShow.getReplyItem() , SpUtil.getUserId() + "")
+        NetWorkManager.queryReplyDetail(examId , currentShow.getReplyItem() , SpUtils.getUserId() + "")
                 .subscribe(new Action1<List<QuestionReplyDetail>>() {
                     @Override
                     public void call(List<QuestionReplyDetail> questionReplyDetails) {

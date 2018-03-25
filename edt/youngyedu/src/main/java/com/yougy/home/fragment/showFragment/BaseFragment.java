@@ -54,7 +54,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.ImageLoader;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -225,7 +225,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         if (mPaintDrawState == null) {
             mPaintDrawState = new PaintDrawStateInfo();
             //从XML 文件中读取数据
-            SpUtil.readPaintDrawStates(mPaintDrawState);
+            SpUtils.readPaintDrawStates(mPaintDrawState);
             if (mPaintDrawState.getPanSize() == -1 && mPaintDrawState.getPanColor() == -1) {
                 mPaintDrawState.setPanSize(2.0f);
                 mPaintDrawState.setPanColor(Color.BLACK);
@@ -399,7 +399,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         mExerciseBookIv.setEnabled(mControlActivity.mHomewrokId > 0);
 
 
-        if (mControlActivity.mNoteCreator == SpUtil.getAccountId()) {
+        if (mControlActivity.mNoteCreator == SpUtils.getAccountId()) {
             mNotebookIv.setVisibility(View.GONE);
             mTextbookIv.setVisibility(View.GONE);
             mExerciseBookIv.setVisibility(View.GONE);
@@ -575,7 +575,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         if (mNoteBookView != null) {
             LogUtils.e(TAG, "save content.................");
             if (mNoteBookView.isContentChanged()) {
-                SpUtil.changeContent(true);
+                SpUtils.changeContent(true);
                 if (inUIThread) {
                     save();
                 } else {
@@ -1661,7 +1661,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         savePage();
         // 失去焦点的时候存储数据
         saveContent(false);
-        SpUtil.putPaintDrawStates(mPaintDrawState);
+        SpUtils.putPaintDrawStates(mPaintDrawState);
     }
 
     /**

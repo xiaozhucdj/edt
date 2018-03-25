@@ -128,6 +128,7 @@
     <string name="publish_time">出版时间 :%1$s</string>
     <string name="author_text">作者 :%1$s</string>
     <string name="publisher_text">出版社 :%1$s</string>
+    <string name="load_error_tost">网络连接失败,刷新试试</string>
 
 
     <string-array name="titles">

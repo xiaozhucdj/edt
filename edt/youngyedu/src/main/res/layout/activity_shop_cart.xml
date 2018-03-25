@@ -38,7 +38,7 @@
                 android:paddingRight="30px"
                 android:background="@null"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/icon_shanchu"
+                android:src="@drawable/shanchu_selector"
                 android:onClick="onDeleteClick"
                 />
 
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20px"
                 android:layout_toRightOf="@id/select_all_checkbox"
-                android:text="@string/select_all"
+                android:text="全选"
                 android:textColor="@color/zl_black"
                 android:textSize="26px"
                 android:layout_centerVertical="true"

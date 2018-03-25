@@ -35,7 +35,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
             android:layout_toRightOf="@id/imgbtn_back"
-            android:background="@drawable/icon_gouwuche"/>
+            android:background="@drawable/gouwuche_selector"/>
 
         <TextView
             android:id="@+id/cart_count_tv"
@@ -72,7 +72,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="30dp"
             android:layout_toLeftOf="@id/imgbtn_addCar"
-            android:background="@drawable/icon_shoucang" />
+            android:background="@drawable/shoucang_ic_selector" />
 
         <Button
             android:id="@+id/btn_buy"

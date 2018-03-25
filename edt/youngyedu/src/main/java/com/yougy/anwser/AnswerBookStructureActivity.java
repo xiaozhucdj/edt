@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.PageableRecyclerView;
@@ -165,7 +165,7 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
     }
 
     private void getAnswers(){
-        NetWorkManager.queryAnswer(SpUtil.getStudent().getClassId() + "" , bookId+ "" , null)
+        NetWorkManager.queryAnswer(SpUtils.getStudent().getClassId() + "" , bookId+ "" , null)
                 .subscribe(new Action1<List<HomeworkDetail>>() {
                     @Override
                     public void call(List<HomeworkDetail> homeworkBookDetails) {

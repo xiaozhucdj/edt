@@ -22,7 +22,7 @@ import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.NoteInfo;
@@ -403,7 +403,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
      * 查询下载图书 信息
      */
     private void queryBookDownLoadSyn(int bookId) {
-        NetWorkManager.downloadBook(SpUtil.getUserId()+"" ,bookId+"") .filter(new Func1<List<DownloadInfo>, Boolean>() {
+        NetWorkManager.downloadBook(SpUtils.getUserId()+"" ,bookId+"") .filter(new Func1<List<DownloadInfo>, Boolean>() {
             @Override
             public Boolean call(List<DownloadInfo> downloadInfos) {
                 return downloadInfos != null;

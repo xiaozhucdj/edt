@@ -45,7 +45,7 @@ import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
@@ -987,7 +987,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 获取oss上传所需信息
      */
     private void getUpLoadInfo() {
-        NetWorkManager.queryReplyRequest(SpUtil.getUserId() + "")
+        NetWorkManager.queryReplyRequest(SpUtils.getUserId() + "")
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
@@ -1180,7 +1180,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         String content = new Gson().toJson(homeWorkResultbeanList);
 
-        NetWorkManager.postReply(SpUtil.getUserId() + "", content)
+        NetWorkManager.postReply(SpUtils.getUserId() + "", content)
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {

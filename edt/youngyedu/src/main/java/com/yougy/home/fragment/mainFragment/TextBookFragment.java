@@ -27,7 +27,7 @@ import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
@@ -201,11 +201,11 @@ public class TextBookFragment extends BFragment implements View.OnClickListener 
         if (NetUtils.isNetConnected()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
-            req.setUserId(SpUtil.getAccountId());
+            req.setUserId(SpUtils.getAccountId());
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
             //设置年级
-            req.setBookFitGradeName(SpUtil.getGradeName());
+            req.setBookFitGradeName(SpUtils.getGradeName());
             req.setBookCategoryMatch(10000);
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);

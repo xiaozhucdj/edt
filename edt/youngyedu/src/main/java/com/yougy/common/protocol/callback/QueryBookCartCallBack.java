@@ -9,7 +9,7 @@ import com.yougy.common.protocol.response.QueryBookCartRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.shop.activity.ShopCartActivity;
 
 import okhttp3.Response;
@@ -46,7 +46,7 @@ public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartRep> {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryBookCartProtocol(SpUtil.getAccountId(),  mProtocol, this);
+        ProtocolManager.queryBookCartProtocol(SpUtils.getAccountId(),  mProtocol, this);
     }
 
     @Override

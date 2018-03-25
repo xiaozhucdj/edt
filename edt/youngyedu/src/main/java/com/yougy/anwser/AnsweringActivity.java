@@ -34,7 +34,7 @@ import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
@@ -638,7 +638,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * 获取oss上传所需信息
      */
     private void getUpLoadInfo() {
-        NetWorkManager.queryReplyRequest(SpUtil.getUserId() + "")
+        NetWorkManager.queryReplyRequest(SpUtils.getUserId() + "")
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
@@ -784,7 +784,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         String picContent = new Gson().toJson(stsResultbeanArrayList);
         String txtContent = new Gson().toJson(checkedAnswerList);
 
-        NetWorkManager.postReply(SpUtil.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
+        NetWorkManager.postReply(SpUtils.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {

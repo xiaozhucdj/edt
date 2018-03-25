@@ -70,22 +70,22 @@ public class LoginRjCallBack extends BaseCallBack<LogInProtocol> {
 //            //设置数据 ,
 //            if (response.getUserList() != null && response.getUserList().get(0) != null) {
 //                UserInfo.User user = response.getUserList().get(0);
-//                SpUtil.saveAccountId(user.getUserId());
-//                SpUtil.saveAccountSchool(user.getSchoolName());
-//                SpUtil.saveAccountClass(user.getClassName());
-//                SpUtil.saveAccountNumber(user.getUserNumber());
-//                SpUtil.saveGradeName(user.getGradeName());
-//                SpUtil.saveAccountName(user.getUserName());
+//                SpUtils.saveAccountId(user.getUserId());
+//                SpUtils.saveAccountSchool(user.getSchoolName());
+//                SpUtils.saveAccountClass(user.getClassName());
+//                SpUtils.saveAccountNumber(user.getUserNumber());
+//                SpUtils.saveGradeName(user.getGradeName());
+//                SpUtils.saveAccountName(user.getUserName());
 //                if (StringUtils.isEmpty(user.getSubjectNames())){
 //                    user.setSubjectNames("语文,数学,外语");
 //                }
-//                SpUtil.saveSubjectNames(user.getSubjectNames());
+//                SpUtils.saveSubjectNames(user.getSubjectNames());
 //            }
 //            if (listener != null) {
 //                listener.jumpActivity(MainActivity.class);
 //            }
 //        } else {
-//            SpUtil.clearAccount();
+//            SpUtils.clearAccount();
 //            if (listener != null) {
 //                listener.jumpActivity(InitInfoActivity.class);
 //            }

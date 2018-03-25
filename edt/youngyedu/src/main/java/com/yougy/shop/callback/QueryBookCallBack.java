@@ -8,7 +8,7 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.shop.bean.QueryBookInfo;
 
 import okhttp3.Response;
@@ -45,6 +45,6 @@ public class QueryBookCallBack extends BaseCallBack<QueryBookInfo>{
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryBookProtocol(SpUtil.getUserId(),bookName,-1,0,0, ProtocolId.PROTOCOL_ID_QUERY_BOOK,this);
+        ProtocolManager.queryBookProtocol(SpUtils.getUserId(),bookName,-1,0,0, ProtocolId.PROTOCOL_ID_QUERY_BOOK,this);
     }
 }

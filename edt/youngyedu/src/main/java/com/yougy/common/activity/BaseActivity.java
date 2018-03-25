@@ -761,6 +761,16 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         mUiPromptDialog.setDialogStyle(false);
     }
 
+    protected void showTagCancelAndDetermineDialog(String title, int tag) {
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(this);
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(tag);
+        mUiPromptDialog.setTitle(title);
+        mUiPromptDialog.setDialogStyle(false);
+    }
 
     /**
      * @param titleId     标题

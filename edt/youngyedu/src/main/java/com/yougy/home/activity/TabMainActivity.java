@@ -20,7 +20,7 @@ import com.yougy.common.protocol.response.AppendNotesProtocol;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.MainPagerAdapter;
 import com.yougy.home.bean.DataNoteBean;
@@ -148,8 +148,8 @@ public class TabMainActivity extends BaseActivity {
     protected void initLayout() {
 
         ButterKnife.bind(this);
-        mTvClassName.setText(SpUtil.getAccountClass());
-        mTvUserName.setText(SpUtil.getAccountName());
+        mTvClassName.setText(SpUtils.getAccountClass());
+        mTvUserName.setText(SpUtils.getAccountName());
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mAdapter = new MainPagerAdapter(getSupportFragmentManager());
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -280,7 +280,7 @@ public class TabMainActivity extends BaseActivity {
     // 上传 离线添加笔记 列表
     private void addRequestNotes() {
         AppendNotesRequest request = new AppendNotesRequest();
-        request.setUserId(SpUtil.getAccountId());
+        request.setUserId(SpUtils.getAccountId());
         request.setCount(1);
         DataNoteBean bean = new DataNoteBean();
         bean.setCount(mAddInfos.size());
@@ -314,7 +314,7 @@ public class TabMainActivity extends BaseActivity {
      */
     private void updaRequestNotes() {
         UpdateNotesRequest request = new UpdateNotesRequest();
-        request.setUserId(SpUtil.getAccountId());
+        request.setUserId(SpUtils.getAccountId());
         request.setCount(1);
 
         DataNoteBean bean = new DataNoteBean();
