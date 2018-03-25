@@ -790,9 +790,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 send();
                 break;
             case R.id.textbook:
-                if(!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))){
+                if (!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
                     toTextBookFragment();
-                }else{
+                } else {
                     if (NetUtils.isNetConnected()) {
                         downBookTask(mControlActivity.mBookId);
                     } else {
@@ -842,10 +842,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 saveCutOpt();
                 break;
 
-         /*   case R.id.img_showOhterIcon:
+            case R.id.img_showOhterIcon:
                 isNeedHide = true;
                 mLlOtherIcon.setVisibility(mLlOtherIcon.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                break;*/
+                break;
 
             case R.id.paste:
                 mLlOtherIcon.setVisibility(View.GONE);
