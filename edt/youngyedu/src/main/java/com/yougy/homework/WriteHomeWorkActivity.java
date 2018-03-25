@@ -321,19 +321,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
-                switch (loadingStatus){
-                    case ERROR:
-                        mNbvAnswerBoard.setVisibility(View.GONE);
-                        break;
-                    case LOADING:
-                        break;
-                    case SUCCESS:
+                if ("选择".equals(questionList.get(0).getExtraData())) {
+                    mNbvAnswerBoard.setVisibility(View.GONE);
+                } else {
+                    if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
                         mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                        break;
+                    } else {
+                        mNbvAnswerBoard.setVisibility(View.GONE);
+                    }
                 }
             }
         });
-
     }
 
     @Override
