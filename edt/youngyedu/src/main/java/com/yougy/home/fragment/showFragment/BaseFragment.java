@@ -790,9 +790,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 send();
                 break;
             case R.id.textbook:
-                if(!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))){
+                if (!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
                     toTextBookFragment();
-                }else{
+                } else {
                     if (NetUtils.isNetConnected()) {
                         downBookTask(mControlActivity.mBookId);
                     } else {
