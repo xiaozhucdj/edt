@@ -19,8 +19,10 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.UiPromptDialog;
@@ -144,7 +146,8 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         super.onNewIntent(intent);
     }
 
-    private  Runnable mRefreshRun ;
+    private Runnable mRefreshRun;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -157,16 +160,15 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 //        mWakeLock.acquire();
 
 
-
-        if (mRefreshRun== null ){
+        if (mRefreshRun == null) {
             mRefreshRun = new Runnable() {
                 @Override
                 public void run() {
                     RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
                 }
-            } ;
+            };
         }
-        YougyApplicationManager.getMainThreadHandler().postDelayed( mRefreshRun, 2000) ;
+        YougyApplicationManager.getMainThreadHandler().postDelayed(mRefreshRun, 2000);
     }
 
     @Override
@@ -176,7 +178,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 //            mWakeLock.release();
 //        }
 
-        if (mRefreshRun!=null){
+        if (mRefreshRun != null) {
             YougyApplicationManager.getMainThreadHandler().removeCallbacks(mRefreshRun);
         }
         super.onPause();
@@ -896,5 +898,38 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     public void jumpTonet() {
         Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
         startActivity(intent);
+    }
+
+    /***
+     * 网络请求 提示的对话框
+     */
+    public final void showNetDialog() {
+        if (NetUtils.isNetConnected()) {
+            return;
+        }
+        if (mUiPromptDialog == null) {
+            mUiPromptDialog = new UiPromptDialog(this);
+            mUiPromptDialog.setListener(new UiPromptDialog.Listener() {
+                @Override
+                public void onUiCancelListener() {
+                    dissMissUiPromptDialog();
+                }
+
+                @Override
+                public void onUiDetermineListener() {
+                    dissMissUiPromptDialog();
+                    jumpTonet();
+                }
+
+                @Override
+                public void onUiCenterDetermineListener() {
+                    dissMissUiPromptDialog();
+                }
+            });
+        }
+        mUiPromptDialog.show();
+        mUiPromptDialog.setTag(0);
+        mUiPromptDialog.setTitle(R.string.jump_to_net);
+        mUiPromptDialog.setDialogStyle(false);
     }
 }
