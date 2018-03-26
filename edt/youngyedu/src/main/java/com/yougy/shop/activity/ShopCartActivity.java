@@ -291,6 +291,7 @@ public class ShopCartActivity extends ShopBaseActivity {
                         public void call(Object o) {
                             cartItemList.removeAll(checkedCartItemList);
                             checkedCartItemList.clear();
+                            sortCartItem();
                             refreshView();
                             dialog.dismiss();
                         }
@@ -399,6 +400,7 @@ public class ShopCartActivity extends ShopBaseActivity {
                                     public void call(Object o) {
                                         cartItemList.remove(cartItem);
                                         checkedCartItemList.remove(cartItem);
+                                        sortCartItem();
                                         refreshView();
                                         dialog.dismiss();
                                     }

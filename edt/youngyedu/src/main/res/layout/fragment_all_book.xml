@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30px"
         android:layout_marginTop="234px"
-        android:text="小学一年级课本："
+
         android:textColor="@color/black"
         android:textSize="26px" />
 

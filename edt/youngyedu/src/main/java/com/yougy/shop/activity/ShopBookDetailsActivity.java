@@ -49,6 +49,7 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.shop.adapter.PromoteBookAdapter;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
+import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityShopBookDetailBinding;
@@ -231,12 +232,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        refreshData();
-    }
-
     /**
      * 刷新数据在主线程
      */
@@ -331,6 +326,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         showCenterDetermineDialog(R.string.books_add_car_success);
                         mBookInfo.setBookInCart(true);
                         setBtnCarState();
+                        refreshCartCount();
                     } else {
                         showCenterDetermineDialog(R.string.books_add_car_fail);
                     }
@@ -399,7 +395,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     @Override
     protected void onResume() {
         super.onResume();
-
+        refreshData();
+        refreshCartCount();
         mActivityHide = false;
     }
 
@@ -598,6 +595,11 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             binding.addCarBtn.setBackgroundResource(R.drawable.shape_rectangle_black_border_gray_fill);
             binding.addCarBtn.setClickable(false);
         }
+        else {
+            binding.addCarBtn.setText("加入购物车");
+            binding.addCarBtn.setBackgroundResource(R.drawable.img_normal_button);
+            binding.addCarBtn.setClickable(true);
+        }
     }
 
     private void setBtnFavorState() {
@@ -605,6 +607,11 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             binding.addFavorBtn.setText(R.string.books_already_add_collection);
             binding.addFavorBtn.setBackgroundResource(R.drawable.shape_rectangle_black_border_gray_fill);
             binding.addFavorBtn.setClickable(false);
+        }
+        else {
+            binding.addFavorBtn.setText("加入收藏夹");
+            binding.addFavorBtn.setBackgroundResource(R.drawable.img_normal_button);
+            binding.addFavorBtn.setClickable(true);
         }
     }
 
@@ -665,5 +672,30 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
     public void lookMorePromotion(View view){
         startActivity(new Intent(this,ShopPromotionActivity.class));
+    }
+
+
+    private void refreshCartCount() {
+        NetWorkManager.queryCart(String.valueOf(SpUtils.getUserId()))
+                .subscribe(new Action1<List<CartItem>>() {
+                    @Override
+                    public void call(List<CartItem> cartItems) {
+                        if (cartItems == null) {
+                            binding.cartCountTv.setText("0");
+                        } else {
+                            if (cartItems.size() > 99) {
+                                binding.cartCountTv.setText("…");
+                            } else {
+                                binding.cartCountTv.setText("" + cartItems.size());
+                            }
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.v("FH", "获取购物车失败");
+                        throwable.printStackTrace();
+                    }
+                });
     }
 }

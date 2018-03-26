@@ -254,7 +254,6 @@ public class ExerciseBookFragment extends BFragment {
 
 
     private void refreshData() {
-
         binding.switch2homeworkBtn.setEnabled(false);
         if (mControlActivity.mNoteId<=0){
             binding.switch2noteBtn.setEnabled(false);
@@ -263,10 +262,6 @@ public class ExerciseBookFragment extends BFragment {
         if (mControlActivity.mBookId <= 0){
             binding.switch2bookBtn.setEnabled(false);
         }
-
-
-
-
         NetWorkManager.queryHomeworkBookDetail(mControlActivity.mHomewrokId)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
