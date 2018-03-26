@@ -5,36 +5,40 @@
 
 
     <RelativeLayout
-        android:layout_width="162px"
-        android:layout_height="212px"
-        android:layout_gravity="center"
-        android:layout_marginBottom="50px"
-        android:background="@drawable/img_book_backgroud_s"
-        android:gravity="center">
+        android:layout_width="wrap_content"
+        android:layout_height="262px">
+
+        <RelativeLayout
+            android:layout_width="162px"
+            android:layout_height="212px"
+            android:layout_gravity="center"
+            android:background="@drawable/img_book_backgroud_s">
 
 
-        <ImageView
-            android:id="@+id/img_book_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20px"
-            android:background="@null"
-            android:src="@drawable/note_cover_iv_normal_s" />
+            <ImageView
+                android:id="@+id/img_book_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20px"
+                android:background="@null"
+                android:src="@drawable/note_cover_iv_normal_s" />
 
-        <TextView
-            android:paddingBottom="11px"
-            android:paddingRight="11px"
-            android:layout_below="@+id/img_book_icon"
-            android:id="@+id/tv_myTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20px"
-            android:gravity="center"
-            android:maxLength="12"
-            android:text="啊啊啊"
-            android:textColor="@color/black"
-            android:textSize="28px"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_myTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_book_icon"
+                android:layout_marginTop="20px"
+                android:gravity="center"
+                android:maxLength="12"
+                android:paddingBottom="11px"
+                android:paddingRight="11px"
+                android:text="啊啊啊"
+                android:textColor="@color/black"
+                android:textSize="28px"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
     </RelativeLayout>
 </FrameLayout>

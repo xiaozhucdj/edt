@@ -212,7 +212,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
 
         //替换位置
         mBookFitGrade.get(position).setSelect(true);
-        mBookItemTile.setText(mBookFitGrade.get(position).getCategoryName() + "课本");
+        mBookItemTile.setText(mBookFitGrade.get(position).getCategoryName() + "笔记");
         mFitGradeAdapter.notifyDataSetChanged();
         //根据条件设置显示数据
         refreshAdapterData(mBookFitGrade.get(position).getCategoryName(), true);
@@ -272,7 +272,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         mSubjectIndex = position;
         //替换位置
         mBookSubject.get(position).setSelect(true);
-        mBookItemTile.setText(mBookSubject.get(position).getCategoryName() + "课本");
+        mBookItemTile.setText(mBookSubject.get(position).getCategoryName() + "笔记");
         mSubjectAdapter.notifyDataSetChanged();
         //根据条件设置显示数据
         refreshAdapterData(mBookSubject.get(position).getCategoryName(), false);
@@ -578,7 +578,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
-            mBookItemTile.setText(SpUtils.getGradeName() + "课本");
+            mBookItemTile.setText(SpUtils.getGradeName() + "笔记");
 
 
          /*   if (mBookFitGrade.size() > 4) {
