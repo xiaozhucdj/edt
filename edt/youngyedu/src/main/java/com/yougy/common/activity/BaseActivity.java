@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
 import android.os.Process;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -16,6 +15,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.yougy.common.dialog.BaseDialog;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.manager.NetManager;
+import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.StringUtils;
@@ -29,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Administrator on 2016/8/24.
@@ -55,7 +58,6 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         }
     };
 
-    private PowerManager.WakeLock mWakeLock;
 
     /**
      * 记录处于前台的Activity
@@ -106,6 +108,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     // ==========================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EventBus.getDefault().register(this);
+        NetManager.getInstance().registerReceiver(this);
+        PowerManager.getInstance().registerReceiver(this);
         //设置无标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView();
@@ -118,6 +123,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         init();
         initLayout();
         loadData();
+    }
+
+    public void onEventMainThread(BaseEvent event) {
+
     }
 
     /**
@@ -176,6 +185,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        NetManager.getInstance().unregisterReceiver(this);
+        PowerManager.getInstance().unregisterReceiver(this);
         mDialogs.clear();
         mActivities.remove(this);
     }

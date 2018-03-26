@@ -178,9 +178,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        NetManager.getInstance().unregisterReceiver(this);
-        PowerManager.getInstance().unregisterReceiver(this);
         Glide.get(this).clearMemory();
         mCoachBookFragment = null;
         mHomeworkFragment = null;
@@ -205,9 +202,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void initLayout() {
         mRootView = UIUtils.inflate(R.layout.activity_main_ui);
         setContentView(mRootView);
-        EventBus.getDefault().register(this);
-        NetManager.getInstance().registerReceiver(this);
-        PowerManager.getInstance().registerReceiver(this);
 
         mTvFolder = (TextView) findViewById(R.id.tv_folder);
         mTvFolder.setOnClickListener(this);
@@ -1051,7 +1045,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    @Override
     public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
         if (event == null)
             return;
 
