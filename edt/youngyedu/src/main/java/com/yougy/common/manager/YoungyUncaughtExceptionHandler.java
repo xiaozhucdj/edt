@@ -103,7 +103,7 @@ public class YoungyUncaughtExceptionHandler implements Thread.UncaughtExceptionH
                     file.write(header); // 存储头信息
                     file.write(errInfos); // 存储异常信息正文
                 } catch (Exception e) {
-//                    LogUtils.e(e);
+                    LogUtils.e(e);
                 } finally {
                     Intent intent = new Intent(YougyApplicationManager.getContext(),SplashActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

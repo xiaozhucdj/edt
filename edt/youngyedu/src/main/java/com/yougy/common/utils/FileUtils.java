@@ -207,9 +207,9 @@ public class FileUtils {
 
     public static String getLogFilesDir() {
         if (isSDcardExist()) {
-            return getSDCardPath() + "rongjie" + "/" + "edt" + "/" + "log" + "/";
+            return getSDCardPath() + APP_CACHE_DIR_NAME + "/" + "error" + "/" + "log" + "/";
         } else {
-            return getAppFilesDirByData() + "rongjie" + "/" + "edt" + "/" + "log" + "/";
+            return getAppFilesDirByData() + APP_CACHE_DIR_NAME + "/" + "error" + "/" + "log" + "/";
         }
     }
 
