@@ -902,6 +902,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 保存之前操作题目结果数据
      */
     private void saveLastHomeWorkData(int position) {
+        if (bytesList.size() == 0) {
+            return;
+        }
+        if (pathList.size() == 0) {
+            return;
+        }
 
         //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
         if (llCaogaoControl.getVisibility() == View.VISIBLE) {
