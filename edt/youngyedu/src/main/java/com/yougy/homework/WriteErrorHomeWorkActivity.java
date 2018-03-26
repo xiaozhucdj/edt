@@ -448,6 +448,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
+                if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                    ToastUtil.showToast(this, "最多只能加5张纸");
+                    return;
+                }
+
                 questionPageSize++;
                 bytesList.add(null);
                 pathList.add(null);
