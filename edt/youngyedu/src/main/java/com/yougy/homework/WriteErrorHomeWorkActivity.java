@@ -155,7 +155,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 ivZpResult.setImageResource(R.drawable.img_ziping_zhengque);
                 break;
         }
-        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper(){
+        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper() {
 
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
@@ -189,21 +189,18 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
-                switch (loadingStatus){
-                    case ERROR:
-                        mNbvAnswerBoard.setVisibility(View.GONE);
-                        break;
-                    case LOADING:
-                        break;
-                    case SUCCESS:
+
+                if ("选择".equals(questionList.get(0).getExtraData())) {
+                    mNbvAnswerBoard.setVisibility(View.GONE);
+                } else {
+                    if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
                         mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                        break;
+                    } else {
+                        mNbvAnswerBoard.setVisibility(View.GONE);
+                    }
                 }
             }
         });
-
-
-
     }
 
     @Override
@@ -233,7 +230,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             return;
         }
         questionList = questionItem.questionContentList;
-        contentDisplayer.getmContentAdaper().updateDataList("question" , (ArrayList<Content_new>) questionList);
+        contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
             questionPageSize = questionList.size();
@@ -287,7 +284,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
                     if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
                         //切换当前题目的分页
-                        contentDisplayer.getmContentAdaper().toPage("question" , position , false);
+                        contentDisplayer.getmContentAdaper().toPage("question", position, false);
                         contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
