@@ -77,7 +77,7 @@
             android:indeterminate="false"
             android:maxHeight="26px"
             android:minHeight="26px"
-            android:progressDrawable="@drawable/seekbar_bg_selector"
+            android:progressDrawable="@drawable/seekbar_pen_bg_selector"
             android:thumb="@drawable/seekbar_thumb_selector"
             android:visibility="gone" />
 
