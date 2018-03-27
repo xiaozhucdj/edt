@@ -179,7 +179,7 @@ public final class NetWorkManager {
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId) {
         Log.v("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId , "作业")
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId , "II02")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
