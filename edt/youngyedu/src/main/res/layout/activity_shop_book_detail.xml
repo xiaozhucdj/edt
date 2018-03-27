@@ -240,17 +240,23 @@
                 />
         </LinearLayout>
 
-        <com.yougy.view.AlignTextView
-            android:id="@+id/book_detail_tv"
-            android:layout_width="wrap_content"
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="315px"
             android:layout_marginLeft="30px"
             android:layout_marginRight="30px"
             android:layout_marginTop="20px"
-            android:gravity="left"
-            android:includeFontPadding="false"
-            android:textColor="@color/black"
-            android:textSize="20px" />
+            >
+            <com.yougy.view.AlignTextView
+                android:id="@+id/book_detail_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:includeFontPadding="false"
+                android:textColor="@color/black"
+                android:textSize="20px"
+                />
+        </ScrollView>
 
         <View
             android:layout_width="match_parent"

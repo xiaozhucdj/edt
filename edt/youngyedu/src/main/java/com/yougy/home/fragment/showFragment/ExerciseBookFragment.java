@@ -315,6 +315,35 @@ public class ExerciseBookFragment extends BFragment {
                         }
                         binding.mainRecyclerview.setCurrentPage(1);
                         binding.mainRecyclerview.notifyDataSetChanged();
+                        switch (currentStatus){
+                            case CHECKED:
+                                if (checkedList.size() == 0){
+                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
+                                    binding.emptyHintTv.setText("您还没有已批改的作业哦");
+                                }
+                                else {
+                                    binding.emptyHintLayout.setVisibility(View.GONE);
+                                }
+                                break;
+                            case DOING:
+                                if (doingList.size() == 0){
+                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
+                                    binding.emptyHintTv.setText("您已经完成所有作业啦! 继续努力!");
+                                }
+                                else {
+                                    binding.emptyHintLayout.setVisibility(View.GONE);
+                                }
+                                break;
+                            case WAIT_FOR_CHECK:
+                                if (waitForCheckList.size() == 0){
+                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
+                                    binding.emptyHintTv.setText("您还没有待批改的作业哦");
+                                }
+                                else {
+                                    binding.emptyHintLayout.setVisibility(View.GONE);
+                                }
+                                break;
+                        }
                     }
                 }, new Action1<Throwable>() {
                     @Override

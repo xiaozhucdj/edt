@@ -57,6 +57,26 @@ public class BookInfo implements Parcelable{
     private String bookFitSubjectName;
     private int bookFitHomeworkId;
     private String bookFitNoteTitle;
+    private long bookDownloadSize;
+    private double bookSpotPrice;
+
+
+
+    public double getBookSpotPrice() {
+        return bookSpotPrice;
+    }
+
+    public void setBookSpotPrice(double bookSpotPrice) {
+        this.bookSpotPrice = bookSpotPrice;
+    }
+
+    public long getBookDownloadSize() {
+        return bookDownloadSize;
+    }
+
+    public void setBookDownloadSize(long bookDownloadSize) {
+        this.bookDownloadSize = bookDownloadSize;
+    }
 
     public String getBookAuthor() {
         return bookAuthor;
@@ -1168,6 +1188,8 @@ public class BookInfo implements Parcelable{
         dest.writeString(this.bookFitSubjectName);
         dest.writeInt(this.bookFitHomeworkId);
         dest.writeString(this.bookFitNoteTitle);
+        dest.writeLong(this.bookDownloadSize);
+        dest.writeDouble(this.bookSpotPrice);
     }
 
     protected BookInfo(Parcel in) {
@@ -1216,6 +1238,8 @@ public class BookInfo implements Parcelable{
         this.bookFitSubjectName = in.readString();
         this.bookFitHomeworkId = in.readInt();
         this.bookFitNoteTitle = in.readString();
+        this.bookDownloadSize = in.readLong();
+        this.bookSpotPrice = in.readDouble();
     }
 
     public static final Creator<BookInfo> CREATOR = new Creator<BookInfo>() {

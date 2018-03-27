@@ -46,6 +46,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.message.SizeUtil;
 import com.yougy.shop.adapter.PromoteBookAdapter;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.BriefOrder;
@@ -174,10 +175,10 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     //出版时间
                     binding.bookPublishTimeTv.setText(getString(R.string.publish_time, mBookInfo.getBookPublishTime()));
                     //文件大小
-                    binding.bookDownloadSizeTv.setText(getString(R.string.file_size_text, mBookInfo.getBookDownloads()));
+                    binding.bookDownloadSizeTv.setText(getString(R.string.file_size_text, SizeUtil.convertSizeLong2String(mBookInfo.getBookDownloadSize())));
                     //价格
-                    binding.bookOriginPriceTv.setText(getString(R.string.list_price, mBookInfo.getBookOriginalPrice() + ""));
-                    binding.bookSalePriceTv.setText(getString(R.string.sale_price, mBookInfo.getBookSalePrice() + ""));
+                    binding.bookOriginPriceTv.setText(getString(R.string.list_price, mBookInfo.getBookSalePrice() + ""));
+                    binding.bookSalePriceTv.setText(getString(R.string.sale_price, mBookInfo.getBookSpotPrice() + ""));
                     //购买按钮价格
                     binding.buyBtn.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                     List<BookInfo.BookCouponBean> bookCouponBeanList = mBookInfo.getBookCoupon();
