@@ -18,7 +18,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@null"
-            android:paddingRight="25px"
             android:src="@drawable/img_serachbook_cancel" />
 
         <TextView
@@ -30,6 +29,11 @@
             android:textSize="26px" />
 
     </RelativeLayout>
+    
+    <View
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="2px" />
 
     <EditText
         android:textColorHint="@color/black"
