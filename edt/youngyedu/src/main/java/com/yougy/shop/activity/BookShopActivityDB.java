@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.KeyEvent;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
 import com.yougy.common.protocol.request.NewBookStoreHomeReq;
@@ -36,6 +38,7 @@ import com.yougy.shop.adapter.BookAdapter;
 import com.yougy.shop.adapter.BookShopAdapter;
 import com.yougy.shop.adapter.RecyclerAdapter;
 import com.yougy.shop.bean.BookInfo;
+import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.CategoryInfo;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
@@ -53,6 +56,7 @@ import butterknife.BindString;
 import okhttp3.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static rx.Observable.create;
@@ -963,5 +967,35 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     public void clickEmpty(View view) {
         hideFiltrateLayout();
+    }
+
+    private void refreshCartCount() {
+        NetWorkManager.queryCart(String.valueOf(SpUtils.getUserId()))
+                .subscribe(new Action1<List<CartItem>>() {
+                    @Override
+                    public void call(List<CartItem> cartItems) {
+                        if (cartItems == null) {
+                            binding.cartCountTv.setText("0");
+                        } else {
+                            if (cartItems.size() > 99) {
+                                binding.cartCountTv.setText("…");
+                            } else {
+                                binding.cartCountTv.setText("" + cartItems.size());
+                            }
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.v("FH", "获取购物车失败");
+                        throwable.printStackTrace();
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshCartCount();
     }
 }

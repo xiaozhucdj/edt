@@ -321,19 +321,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
-                switch (loadingStatus){
-                    case ERROR:
-                        mNbvAnswerBoard.setVisibility(View.GONE);
-                        break;
-                    case LOADING:
-                        break;
-                    case SUCCESS:
+                if ("选择".equals(questionList.get(0).getExtraData())) {
+                    mNbvAnswerBoard.setVisibility(View.GONE);
+                } else {
+                    if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
                         mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                        break;
+                    } else {
+                        mNbvAnswerBoard.setVisibility(View.GONE);
+                    }
                 }
             }
         });
-
     }
 
     @Override
@@ -842,6 +840,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
+
+                if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                    ToastUtil.showToast(this, "最多只能加5张纸");
+                    return;
+                }
+
                 questionPageSize++;
                 bytesList.add(null);
                 pathList.add(null);
@@ -904,6 +908,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 保存之前操作题目结果数据
      */
     private void saveLastHomeWorkData(int position) {
+        if (bytesList.size() == 0) {
+            return;
+        }
+        if (pathList.size() == 0) {
+            return;
+        }
 
         //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
         if (llCaogaoControl.getVisibility() == View.VISIBLE) {

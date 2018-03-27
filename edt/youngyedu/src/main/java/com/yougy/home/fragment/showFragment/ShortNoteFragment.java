@@ -1,10 +1,8 @@
 package com.yougy.home.fragment.showFragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +26,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.bean.Label;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView;
+import com.yougy.view.dialog.CancelAndConfirmDialog;
 
 import java.util.concurrent.Executors;
 
@@ -123,11 +122,11 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
                 break;
             case R.id.input_gesture:
                 showGestureInput();
-                updateIvStatus(true);
+//                updateIvStatus(true);
                 break;
             case R.id.input_soft:
                 showSoftInput();
-                updateIvStatus(false);
+//                updateIvStatus(false);
                 break;
             case R.id.undo:
                 mShortNoteBookView.undo();
@@ -215,7 +214,25 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
     }
 
     private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        CancelAndConfirmDialog dialog = new CancelAndConfirmDialog(getActivity());
+
+        dialog.setListener(new CancelAndConfirmDialog.ConfirmClickListener() {
+            @Override
+            public void clickListener() {
+                mShortNoteBookView.clear();
+                if (null != deleteLabelListener) {
+                    deleteLabelListener.deleteLabel();
+                }
+                hideInputMethodWindow();
+                hideView();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        dialog.setTitle(R.string.give_up_paper);
+
+ /*       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.give_up_paper);
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
@@ -235,7 +252,7 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
                 dialog.dismiss();
             }
         });
-        builder.create().show();
+        builder.create().show();*/
     }
 
     @Override

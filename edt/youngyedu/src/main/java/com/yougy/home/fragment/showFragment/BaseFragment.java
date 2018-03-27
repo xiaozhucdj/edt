@@ -470,7 +470,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                         mCutterEraserSize = mSeekPenOrEraserSize;
                         mNoteBookView.outSetEraserSize(mCutterEraserSize);
                     }
-                    setThum(mSeekPenOrEraserSize);
+                  setThum(mSeekPenOrEraserSize);
                 }
             }
         });
@@ -654,6 +654,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         isNeedCutScreen = false;
         isNeedHide = true;
         view = null;
+        if (v.getId()!=R.id.eraser && v.getId()!=R.id.paint_draw){
+            mPaintChoose.setVisibility(View.GONE);
+        }
+
         switch (v.getId()) {
             /************************************************设置 笔栏目 点击事件*************************************/
           /*  case R.id.pen: //笔 ，显示 笔栏目
@@ -790,9 +794,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 send();
                 break;
             case R.id.textbook:
-                if(!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))){
+                if (!StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
                     toTextBookFragment();
-                }else{
+                } else {
                     if (NetUtils.isNetConnected()) {
                         downBookTask(mControlActivity.mBookId);
                     } else {
@@ -1993,8 +1997,15 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     };
 
     private void setThum(float progress) {
-        Drawable thumD = getActivity().getResources().getDrawable(thums[((int) progress) - 2]);
-        mSeekPenOrEraser.setThumb(thumD);
+        int index = ((int) progress) - 2 ;
+        Drawable thumD = getActivity().getResources().getDrawable(thums[index]);
+        mSeekPenOrEraser.setThumb(thumD);//设置新的图片
+        if (index<3){
+            mSeekPenOrEraser.setThumbOffset(0);
+        }else{
+            mSeekPenOrEraser.setThumbOffset(30);
+        }
+
     }
 
     @Override

@@ -13,6 +13,8 @@ import com.yougy.common.eventbus.EventBusConstant;
 
 import de.greenrobot.event.EventBus;
 
+import static android.net.wifi.WifiManager.WIFI_STATE_CHANGED_ACTION;
+
 /**
  * Created by Administrator on 2017/4/26.
  */
@@ -90,7 +92,10 @@ public class NetManager {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) || action.equalsIgnoreCase(WIFI_STATE_CHANGED_ACTION )) {
+//                boolean isConnected = NetManager.getInstance().isWifiConnected(context);
+//                LogUtils.i("yuanye ...ccccccccc"+isConnected);
+                NetManager.getInstance().changeWiFi(context,true);
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_WIIF, "");
                 EventBus.getDefault().post(baseEvent);
             }

@@ -13,8 +13,8 @@
             >
             <TextView
                 android:id="@+id/back_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40px"
+                android:layout_height="40px"
                 android:background="@drawable/icon_fanhui"
                 android:onClick="onBack"
                 android:layout_marginLeft="30px"
@@ -22,14 +22,25 @@
                 />
             <ImageButton
                 android:id="@+id/to_cart_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40px"
+                android:layout_height="40px"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/gouwuche_selector"
                 android:onClick="toCart"
                 android:layout_marginRight="30px"
                 android:layout_centerVertical="true"
                 />
+            <TextView
+                android:id="@+id/cart_count_tv"
+                android:layout_width="20px"
+                android:layout_height="20px"
+                android:layout_alignLeft="@id/to_cart_btn"
+                android:layout_alignTop="@id/to_cart_btn"
+                android:layout_marginLeft="25px"
+                android:background="@drawable/black_dot"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="12px" />
             <TextView
                 android:id="@+id/title_tv"
                 android:layout_width="wrap_content"
@@ -229,17 +240,23 @@
                 />
         </LinearLayout>
 
-        <com.yougy.view.AlignTextView
-            android:id="@+id/book_detail_tv"
-            android:layout_width="wrap_content"
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="315px"
             android:layout_marginLeft="30px"
             android:layout_marginRight="30px"
             android:layout_marginTop="20px"
-            android:gravity="left"
-            android:includeFontPadding="false"
-            android:textColor="@color/black"
-            android:textSize="20px" />
+            >
+            <com.yougy.view.AlignTextView
+                android:id="@+id/book_detail_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:includeFontPadding="false"
+                android:textColor="@color/black"
+                android:textSize="20px"
+                />
+        </ScrollView>
 
         <View
             android:layout_width="match_parent"

@@ -248,15 +248,15 @@ public class AnsweringActivity extends AnswerBaseActivity {
         binding.contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
-                switch (loadingStatus){
-                    case ERROR:
-                        mNbvAnswerBoard.setVisibility(View.GONE);
-                        break;
-                    case LOADING:
-                        break;
-                    case SUCCESS:
+
+                if ("选择".equals(questionList.get(0).getExtraData())) {
+                    mNbvAnswerBoard.setVisibility(View.GONE);
+                } else {
+                    if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
                         mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                        break;
+                    } else {
+                        mNbvAnswerBoard.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -291,6 +291,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
+                if (questionPageSize - binding.contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                    ToastUtil.showToast(this, "最多只能加5张纸");
+                    return;
+                }
+
                 questionPageSize++;
                 bytesList.add(null);
                 pathList.add(null);
@@ -344,6 +349,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * 保存之前操作题目结果数据
      */
     private void saveHomeWorkData() {
+        if (bytesList.size() == 0) {
+            return;
+        }
+        if (pathList.size() == 0) {
+            return;
+        }
         //刷新最后没有保存的数据
         bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
         pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));

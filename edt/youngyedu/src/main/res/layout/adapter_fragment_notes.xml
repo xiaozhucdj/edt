@@ -5,42 +5,47 @@
 
 
     <RelativeLayout
-        android:layout_width="222px"
-        android:layout_height="288px"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20px"
-        android:layout_marginTop="40px"
-        android:background="@drawable/img_book_backgroud"
-        android:gravity="center"
-        android:paddingRight="21px">
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="348px">
 
-        <TextView
-            android:id="@+id/tv_myTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="131px"
+        <RelativeLayout
+            android:layout_width="222px"
+            android:layout_height="288px"
+            android:layout_marginBottom="20px"
+            android:layout_marginTop="40px"
+            android:background="@drawable/img_book_backgroud"
             android:gravity="center"
-            android:maxLength="12"
-            android:text="啊啊啊"
-            android:textColor="@color/black"
-            android:textSize="30px"
-            android:textStyle="bold" />
+            android:paddingRight="21px">
 
-        <ImageView
-            android:layout_centerHorizontal="true"
-            android:id="@+id/img_book_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25px"
-            android:background="@null"
-            android:src="@drawable/note_cover_iv_normal" />
+            <TextView
+                android:id="@+id/tv_myTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="131px"
+                android:gravity="center"
+                android:maxLength="12"
+                android:text="啊啊啊"
+                android:textColor="@color/black"
+                android:textSize="30px"
+                android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/img_add_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@null"
-            android:src="@drawable/note_add_iv_normal" />
+            <ImageView
+                android:id="@+id/img_book_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25px"
+                android:background="@null"
+                android:src="@drawable/note_cover_iv_normal" />
+
+            <ImageView
+                android:id="@+id/img_add_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:src="@drawable/note_add_iv_normal" />
+        </RelativeLayout>
     </RelativeLayout>
 </FrameLayout>

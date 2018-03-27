@@ -77,7 +77,7 @@ public class ExerciseBookFragment extends BFragment {
             public void onBindViewHolder(MyHolder holder, int position) {
                 switch (currentStatus) {
                     case DOING:
-                        holder.binding.statusTv.setText("作\n业\n中");
+                        holder.binding.statusTv.setText("作\n答\n中");
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
                         holder.setData(doingList.get(position));
                         break;
@@ -254,7 +254,6 @@ public class ExerciseBookFragment extends BFragment {
 
 
     private void refreshData() {
-
         binding.switch2homeworkBtn.setEnabled(false);
         if (mControlActivity.mNoteId<=0){
             binding.switch2noteBtn.setEnabled(false);
@@ -263,10 +262,6 @@ public class ExerciseBookFragment extends BFragment {
         if (mControlActivity.mBookId <= 0){
             binding.switch2bookBtn.setEnabled(false);
         }
-
-
-
-
         NetWorkManager.queryHomeworkBookDetail(mControlActivity.mHomewrokId)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
@@ -320,6 +315,35 @@ public class ExerciseBookFragment extends BFragment {
                         }
                         binding.mainRecyclerview.setCurrentPage(1);
                         binding.mainRecyclerview.notifyDataSetChanged();
+                        switch (currentStatus){
+                            case CHECKED:
+                                if (checkedList.size() == 0){
+                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
+                                    binding.emptyHintTv.setText("您还没有已批改的作业哦");
+                                }
+                                else {
+                                    binding.emptyHintLayout.setVisibility(View.GONE);
+                                }
+                                break;
+                            case DOING:
+                                if (doingList.size() == 0){
+                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
+                                    binding.emptyHintTv.setText("您已经完成所有作业啦! 继续努力!");
+                                }
+                                else {
+                                    binding.emptyHintLayout.setVisibility(View.GONE);
+                                }
+                                break;
+                            case WAIT_FOR_CHECK:
+                                if (waitForCheckList.size() == 0){
+                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
+                                    binding.emptyHintTv.setText("您还没有待批改的作业哦");
+                                }
+                                else {
+                                    binding.emptyHintLayout.setVisibility(View.GONE);
+                                }
+                                break;
+                        }
                     }
                 }, new Action1<Throwable>() {
                     @Override

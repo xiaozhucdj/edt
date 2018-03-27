@@ -26,8 +26,6 @@ import com.yougy.ui.activity.databinding.ActivityLocalLockBinding;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * Created by FH on 2017/6/22.
  */
@@ -40,9 +38,7 @@ public class LocalLockActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-        NetManager.getInstance().registerReceiver(this);
-        PowerManager.getInstance().registerReceiver(this);
+
     }
 
     @Override
@@ -180,9 +176,6 @@ public class LocalLockActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
-        NetManager.getInstance().unregisterReceiver(this);
-        PowerManager.getInstance().unregisterReceiver(this);
     }
 
 
@@ -192,8 +185,9 @@ public class LocalLockActivity extends BaseActivity {
         binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
     }
 
-
+    @Override
     public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
         System.out.println("onEventMainThread  lockac");
         if (event == null)
             return;

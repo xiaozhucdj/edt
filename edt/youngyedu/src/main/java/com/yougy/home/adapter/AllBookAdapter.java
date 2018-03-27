@@ -85,8 +85,8 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                162,
-                212,
+                151,
+                201,
                 view);
     }
 }

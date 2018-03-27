@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">学生端1.4</string>
+    <string name="app_name">学生端1.6</string>
     <string name="give_up_paper">确定扔掉这张纸吗？</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
@@ -92,7 +92,7 @@
     <string name="note_name_null">请填写笔记昵称</string>
     <string name="add_note_fail">添加笔记失败</string>
     <string name="books_already_buy">您已经购买过该图书</string>
-    <string name="books_already_add_car">已加入购物车</string>
+    <string name="books_already_add_car">已在购物车</string>
     <string name="books_already_add_collection">已收藏</string>
     <string name="books_add_car_fail">添加到购物车失败</string>
     <string name="books_add_collection_fail">添加到收藏失败</string>
@@ -105,7 +105,7 @@
     <string name="retry">重试</string>
     <string name="play_package">在书包打开</string>
     <string name="cancle_collection_book">确实要取消收藏%1$s这本书么？</string>
-    <string name="cancle_collection_all_book">确实要取消收藏这本%1$s书么？</string>
+    <string name="cancle_collection_all_book">确实要取消收藏这%1$s本书么？</string>
     <string name="cancle_collection_fail">取消收藏失败</string>
     <string name="remove_car_all">确实要移除这本%1$s书么？</string>
     <string name="remove_car">确实要移除%1$s这本书么？</string>
@@ -122,7 +122,7 @@
     <string name="manjian_text">满减</string>
     <string name="activity_time">有效期：%1$s-%2$s</string>
     <string name="look_more_promotion_activity">查看更多%1$s活动>></string>
-    <string name="list_price">定价：%1$s</string>
+    <string name="list_price">定价：￥%1$s</string>
     <string name="sale_price">销售价：￥%1$s</string>
     <string name="file_size_text">文件大小 :%1$s</string>
     <string name="publish_time">出版时间 :%1$s</string>

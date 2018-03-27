@@ -223,11 +223,11 @@
         <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity"/>
         <activity android:name="com.yougy.shop.activity.OrderDetailActivity" />
 
-        <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
+      <!--  <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
         <!--===================云信相关start===================-->
         <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。

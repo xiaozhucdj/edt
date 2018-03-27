@@ -5,10 +5,13 @@
 
 
     <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="262px">
+
+    <RelativeLayout
         android:layout_width="162px"
         android:layout_height="212px"
         android:layout_gravity="center"
-        android:layout_marginBottom="50px"
         android:background="@drawable/img_book_backgroud_s"
         android:gravity="center">
 
@@ -35,5 +38,6 @@
             android:textColor="@color/black"
             android:textSize="28px"
             android:textStyle="bold" />
+    </RelativeLayout>
     </RelativeLayout>
 </FrameLayout>

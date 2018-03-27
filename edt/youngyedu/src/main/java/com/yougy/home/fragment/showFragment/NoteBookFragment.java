@@ -498,7 +498,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 break;
             case 2:
                 LogUtils.i("2");
-                mNoteBookView.setBackgroundResource(R.drawable.imgz_note_grid);
+                mNoteBookView.setBackgroundResource(R.drawable.img_note_grid);
                 break;
         }
     }

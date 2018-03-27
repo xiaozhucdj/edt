@@ -28,7 +28,6 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLoginBinding;
 import com.yougy.view.dialog.HintDialog;
 
-import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
@@ -148,9 +147,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-        NetManager.getInstance().registerReceiver(this);
-        PowerManager.getInstance().registerReceiver(this);
 
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
@@ -167,9 +163,6 @@ public class LoginActivity extends BaseActivity {
         }
         tapEventEmitter = null;
 
-        EventBus.getDefault().unregister(this);
-        NetManager.getInstance().unregisterReceiver(this);
-        PowerManager.getInstance().unregisterReceiver(this);
     }
 
     protected void handleEvent() {
@@ -223,8 +216,9 @@ public class LoginActivity extends BaseActivity {
         binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
     }
 
-
+    @Override
     public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
         if (event == null)
             return;
         setSysTime();

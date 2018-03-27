@@ -92,11 +92,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                 mRlL.setVisibility(View.VISIBLE);
                 mRlS.setVisibility(View.GONE);
 
-                loadImage( mInfos.get(position).getBookCoverL(), 200, 266, mImgBookIconL);
+                loadImage( mInfos.get(position).getBookCoverL(), 201, 267, mImgBookIconL);
             } else {
                 mRlL.setVisibility(View.GONE);
                 mRlS.setVisibility(View.VISIBLE);
-                loadImage( mInfos.get(position).getBookCoverS(), 121, 201, mImgBookIconS);
+                loadImage( mInfos.get(position).getBookCoverS(), 151, 201, mImgBookIconS);
             }
         }
 

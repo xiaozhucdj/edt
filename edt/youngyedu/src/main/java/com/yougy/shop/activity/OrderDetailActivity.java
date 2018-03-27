@@ -384,6 +384,10 @@ public class OrderDetailActivity extends ShopBaseActivity{
         }
     }
 
+    public void onBack(View view){
+        onBackPressed();
+    }
+
     public class MyHolder extends RecyclerView.ViewHolder{
         ItemOrderDetailBinding binding;
         OrderDetailBean.OrderInfo orderInfo1 , orderInfo2;

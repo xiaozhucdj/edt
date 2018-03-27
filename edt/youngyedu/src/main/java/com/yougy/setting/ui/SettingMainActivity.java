@@ -35,7 +35,6 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivitySettingBinding;
 import com.yougy.view.dialog.ConfirmDialog;
 
-import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
@@ -128,10 +127,6 @@ public class SettingMainActivity extends BaseActivity {
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
-
-        EventBus.getDefault().register(this);
-        NetManager.getInstance().registerReceiver(this);
-        PowerManager.getInstance().registerReceiver(this);
     }
 
     @Override
@@ -142,10 +137,6 @@ public class SettingMainActivity extends BaseActivity {
             subscription = null;
         }
         tapEventEmitter = null;
-
-        EventBus.getDefault().unregister(this);
-        NetManager.getInstance().unregisterReceiver(this);
-        PowerManager.getInstance().unregisterReceiver(this);
     }
 
     protected void handleEvent() {
@@ -155,7 +146,7 @@ public class SettingMainActivity extends BaseActivity {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
 
-                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init"  , FileContonst.LOAD_APP_RESET);
+                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET);
                         Intent intent = new Intent(getApplicationContext(), UploadService.class);
                         startService(intent);
                         SpUtils.clearSP();
@@ -189,10 +180,10 @@ public class SettingMainActivity extends BaseActivity {
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
         binding.numTv.setText("编号 : " + student.getUserNum());
-        String sex  = SpUtils.getSex() ;
-        if ("男".equalsIgnoreCase(sex)){
+        String sex = SpUtils.getSex();
+        if ("男".equalsIgnoreCase(sex)) {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_man));
-        }else{
+        } else {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
         }
         initSysIcon();
@@ -262,9 +253,9 @@ public class SettingMainActivity extends BaseActivity {
         loadIntent(LoginActivity.class);
     }
 
-
-
+    @Override
     public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
         if (event == null)
             return;
 
