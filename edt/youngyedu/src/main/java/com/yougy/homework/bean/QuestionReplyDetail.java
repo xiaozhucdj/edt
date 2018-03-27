@@ -248,7 +248,10 @@ public class QuestionReplyDetail {
         }
 
         for (LinkedTreeMap linkedTreeMap : replyComment) {
-            parsedReplyCommentList.add((String) linkedTreeMap.get("value"));
+            String commentStr = (String) linkedTreeMap.get("value");
+            if (!TextUtils.isEmpty(commentStr)){
+                parsedReplyCommentList.add(commentStr);
+            }
         }
 
         parsedQuestionItem = replyItemContent.parseQuestion();

@@ -99,7 +99,8 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
-    Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(@Field("homeworkId") Integer homeworkId , @Field("examType") String examType);
+    Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(
+            @Field("homeworkId") Integer homeworkId , @Field("examTypeCode") String type);
 
     /**
      * 获取图书信息
