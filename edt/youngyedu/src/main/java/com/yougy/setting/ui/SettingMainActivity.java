@@ -146,7 +146,7 @@ public class SettingMainActivity extends BaseActivity {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
 
-                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init"  , FileContonst.LOAD_APP_RESET);
+                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET);
                         Intent intent = new Intent(getApplicationContext(), UploadService.class);
                         startService(intent);
                         SpUtils.clearSP();
@@ -180,10 +180,10 @@ public class SettingMainActivity extends BaseActivity {
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
         binding.numTv.setText("编号 : " + student.getUserNum());
-        String sex  = SpUtils.getSex() ;
-        if ("男".equalsIgnoreCase(sex)){
+        String sex = SpUtils.getSex();
+        if ("男".equalsIgnoreCase(sex)) {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_man));
-        }else{
+        } else {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
         }
         initSysIcon();

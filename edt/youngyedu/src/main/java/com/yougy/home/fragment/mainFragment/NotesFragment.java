@@ -263,13 +263,13 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
 
     private void appendNote(int noteId) {
         // 移除+号
-        mServerInfos.remove(mServerInfos.size() - 1);
+        mServerInfos.remove(0);
         //设置到生成笔记的id
         //添加到全部集合
         mCreatInfo.setNoteId(noteId);
         mServerInfos.add(mCreatInfo);
         // 添加+号到集合尾部
-        mServerInfos.add(addCreatNoteItem());
+        mServerInfos.add(0,addCreatNoteItem());
         //刷新数据 计算分页 以及设置集合数据
         refresh();
         //当前分页大于1 ，需要收到设置到分页尾部。
@@ -316,7 +316,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                         }
                         //添加addItem
                         if (!mServerInfos.contains(addCreatNoteItem())) {
-                            mServerInfos.add(addCreatNoteItem());
+                            mServerInfos.add(0,addCreatNoteItem());
                         }
                         refresh();
                     }
@@ -328,7 +328,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                     if (infos != null) {
                         mServerInfos.addAll(infos);
                     }
-                    mServerInfos.add(addCreatNoteItem());
+                    mServerInfos.add(0,addCreatNoteItem());
 
                 }
             }
@@ -472,7 +472,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
             if (infos != null) {
                 mServerInfos.addAll(infos);
             }
-            mServerInfos.add(addCreatNoteItem());
+            mServerInfos.add(0,addCreatNoteItem());
             refresh();
         }
     }
