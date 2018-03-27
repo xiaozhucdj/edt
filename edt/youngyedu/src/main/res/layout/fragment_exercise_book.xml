@@ -71,7 +71,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="作业中"
+                    android:text="作答中"
                     android:textSize="24px"
                     android:textColor="@drawable/btn_text_color_selector_black_white"
                     />

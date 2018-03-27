@@ -448,6 +448,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
+                if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                    ToastUtil.showToast(this, "最多只能加5张纸");
+                    return;
+                }
+
                 questionPageSize++;
                 bytesList.add(null);
                 pathList.add(null);
@@ -515,6 +520,14 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
      * 保存之前操作题目结果数据
      */
     private void saveHomeWorkData() {
+
+        if (bytesList.size() == 0) {
+            return;
+        }
+        if (pathList.size() == 0) {
+            return;
+        }
+
         //刷新最后没有保存的数据
         bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
         pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
