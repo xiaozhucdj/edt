@@ -92,7 +92,7 @@
     <string name="note_name_null">请填写笔记昵称</string>
     <string name="add_note_fail">添加笔记失败</string>
     <string name="books_already_buy">您已经购买过该图书</string>
-    <string name="books_already_add_car">该图书已在购物车中</string>
+    <string name="books_already_add_car">已在购物车</string>
     <string name="books_already_add_collection">已收藏</string>
     <string name="books_add_car_fail">添加到购物车失败</string>
     <string name="books_add_collection_fail">添加到收藏失败</string>
