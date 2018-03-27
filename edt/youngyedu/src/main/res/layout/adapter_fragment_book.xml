@@ -4,22 +4,21 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:layout_gravity="center_horizontal"
         android:id="@+id/rl_book_itemL"
         android:layout_width="wrap_content"
-        android:layout_height="348px"
-        android:layout_gravity="center"
-        android:gravity="center">
+        android:layout_height="348px">
 
         <ImageView
             android:id="@+id/img_book_iconL"
             android:layout_width="222px"
             android:layout_height="288px"
-            android:layout_centerVertical="true"
             android:layout_marginBottom="20px"
             android:layout_marginTop="40px"
             android:background="@drawable/img_book_backgroud"
             android:paddingBottom="21px"
             android:paddingRight="21px"
+            android:scaleType="fitXY"
             android:src="@drawable/book_adaper_item_icon_test_normal" />
     </RelativeLayout>
 
@@ -27,19 +26,18 @@
         android:id="@+id/rl_book_itemS"
         android:layout_width="wrap_content"
         android:layout_height="242px"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_gravity="center_horizontal"
         android:visibility="gone">
 
         <ImageView
             android:id="@+id/img_book_iconS"
             android:layout_width="162px"
             android:layout_height="212px"
-            android:layout_centerVertical="true"
             android:layout_marginTop="30px"
             android:background="@drawable/img_book_backgroud_s"
             android:paddingBottom="11px"
             android:paddingRight="11px"
+            android:scaleType="fitXY"
             android:src="@drawable/book_adaper_item_icon_test_normal" />
     </RelativeLayout>
 </FrameLayout>

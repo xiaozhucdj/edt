@@ -6,7 +6,8 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="262px">
+        android:layout_height="262px"
+        android:layout_gravity="center_horizontal">
 
         <RelativeLayout
             android:layout_width="162px"
