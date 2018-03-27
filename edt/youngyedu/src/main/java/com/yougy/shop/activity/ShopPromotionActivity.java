@@ -170,4 +170,8 @@ public class ShopPromotionActivity extends ShopBaseActivity{
             binding.pageNumberLayout.addView(pageLayout, params);
         }
     }
+
+    public void onBack(View view){
+        onBackPressed();
+    }
 }
