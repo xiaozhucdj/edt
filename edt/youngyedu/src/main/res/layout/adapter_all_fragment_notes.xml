@@ -12,7 +12,7 @@
         <RelativeLayout
             android:layout_width="162px"
             android:layout_height="212px"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:background="@drawable/img_book_backgroud_s">
 
 
