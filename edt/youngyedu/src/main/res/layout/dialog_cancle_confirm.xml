@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="600px"
+        android:layout_height="250px"
+        android:layout_centerInParent="true"
+        android:background="@drawable/img_searbook_bg">
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="75px"
+            android:textColor="@color/black"
+            android:textSize="30px"
+            android:textStyle="bold" />
+
+
+        <Button
+            android:id="@+id/cancle_btn"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_below="@id/title_tv"
+            android:layout_marginLeft="40px"
+            android:layout_marginTop="74px"
+            android:background="@drawable/bind_cancel_btn_bg"
+            android:text="@string/cancel"
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
+        <Button
+            android:id="@+id/confirm_btn"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/title_tv"
+            android:layout_marginRight="40px"
+            android:layout_marginTop="74px"
+            android:background="@drawable/bind_confirm_btn_bg"
+            android:text="@string/confirm"
+            android:textColor="@color/white"
+            android:textSize="24px" />
+    </RelativeLayout>
+</RelativeLayout>
