@@ -77,7 +77,7 @@ public class ExerciseBookFragment extends BFragment {
             public void onBindViewHolder(MyHolder holder, int position) {
                 switch (currentStatus) {
                     case DOING:
-                        holder.binding.statusTv.setText("作\n业\n中");
+                        holder.binding.statusTv.setText("作\n答\n中");
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
                         holder.setData(doingList.get(position));
                         break;

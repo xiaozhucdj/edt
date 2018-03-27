@@ -528,22 +528,29 @@ public class ShopCartActivity extends ShopBaseActivity {
             }
         }
         result[0] = totalPrice;
-        CartItem firstCartItem = sortedCartItemList.get(0);
-        Coupon bookCouponBean = findManjianCoupon(firstCartItem);
-        if (bookCouponBean == null){
-            result[1] = -1;
-            result[2] = totalPrice;
-        }
-        else {
-            double overPrice = Double.valueOf(bookCouponBean.getCouponContent().get(0).getOver());
-            if (totalPrice >= overPrice){
-                result[1] = Double.valueOf(bookCouponBean.getCouponContent().get(0).getCut());
-                result[2] = result[0] - result[1];
+        CartItem firstCartItem;
+        if (sortedCartItemList.size() != 0){
+            firstCartItem= sortedCartItemList.get(0);
+            Coupon bookCouponBean = findManjianCoupon(firstCartItem);
+            if (bookCouponBean != null){
+                double overPrice = Double.valueOf(bookCouponBean.getCouponContent().get(0).getOver());
+                if (totalPrice >= overPrice){
+                    result[1] = Double.valueOf(bookCouponBean.getCouponContent().get(0).getCut());
+                    result[2] = result[0] - result[1];
+                }
+                else {
+                    result[1] = 0;
+                    result[2] = totalPrice;
+                }
             }
             else {
-                result[1] = 0;
+                result[1] = -1;
                 result[2] = totalPrice;
             }
+        }
+        else {
+            result[1] = -1;
+            result[2] = totalPrice;
         }
         result[0] = formatDouble(result[0] , 1);
         result[1] = formatDouble(result[1] , 1);
