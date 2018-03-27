@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -328,6 +329,17 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             @Override
             public void afterTextChanged(Editable s) {
                 binding.searchOrCancelTv.setText(s.length() == 0 ? R.string.cancel : R.string.search);
+            }
+        });
+        binding.searchEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                hideSearchLayout();
+                mSearchKey = binding.searchEt.getText().toString();
+                if (!TextUtils.isEmpty(mSearchKey)) {
+                    search();
+                }
+                return false;
             }
         });
 

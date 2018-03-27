@@ -30,7 +30,7 @@
                 style="@style/shopImgStyle"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/shop_img_padding"
-                android:onClick="@{activity.search}"
+                android:onClick="@{activity.filtrate}"
                 android:src="@drawable/shaixuan_selector" />
 
             <EditText
@@ -45,6 +45,8 @@
                 android:background="@drawable/img_bg_sousuo"
                 android:drawableLeft="@drawable/icon_sousuo"
                 android:drawablePadding="10px"
+                android:singleLine="true"
+                android:imeOptions="actionSearch"
                 android:paddingLeft="20px"
                 android:textSize="22px" />
         </RelativeLayout>

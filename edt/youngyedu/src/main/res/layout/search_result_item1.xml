@@ -13,13 +13,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="25px"
         >
 
         <ImageView
             android:id="@+id/book_img"
             android:layout_width="132px"
             android:layout_height="172px"
+            android:paddingTop="25px"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/shu_bg"
@@ -35,7 +35,7 @@
             android:layout_centerVertical="true"
             android:src="@drawable/img_more" />
 
-        <com.yougy.view.MyTextView
+        <TextView
             android:id="@+id/book_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
             android:ellipsize="end"
             android:maxEms="50"
             />
-        <com.yougy.view.MyTextView
+        <TextView
             android:id="@+id/book_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
             android:layout_marginTop="15px"
             />
 
-        <com.yougy.view.MyTextView
+        <TextView
             android:id="@+id/book_classify"
             android:layout_width="80px"
             android:layout_height="30px"
