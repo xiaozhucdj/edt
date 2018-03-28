@@ -605,8 +605,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         mClassifyId = info.getCategoryId();
         LogUtils.e("Spinner", "subject is : " + mSubject);
         binding.classifyButton.setText(info.getCategoryDisplay());
+        binding.compositeInfo.setText(mSubject);
         mVersion = "";
-        setCompositeText();
         getSingleBookInfo();
         binding.classifyRecyclerLayout.setVisibility(View.GONE);
     }
