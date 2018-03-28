@@ -488,8 +488,8 @@ public class DateUtils {
 		Calendar target = Calendar.getInstance();
 		target.setTime(date);
 		if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR)){
-			int nowDayOfYear = now.get(Calendar.YEAR);
-			int targetDayOfYear = target.get(Calendar.YEAR);
+			int nowDayOfYear = now.get(Calendar.DAY_OF_YEAR);
+			int targetDayOfYear = target.get(Calendar.DAY_OF_YEAR);
 			if (nowDayOfYear == targetDayOfYear){
 				if (simplified){
 					return "今天";
