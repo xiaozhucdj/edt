@@ -318,7 +318,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         bookTitle = binding.searchKey.getText().toString();
         if (!TextUtils.isEmpty(bookTitle)) {
             NewBookStoreBookReq req = new NewBookStoreBookReq();
-            req.setBookTitle(bookTitle);
+            req.setBookTitleMatch(bookTitle);
             queryBook(req);
         }
     }

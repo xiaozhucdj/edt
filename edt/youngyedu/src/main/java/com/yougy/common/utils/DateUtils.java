@@ -79,6 +79,25 @@ public class DateUtils {
 		}
 	}
 
+	/**
+	 *
+	 * @param time
+	 * 待转换时间
+	 * @return 转换后的时间单位：秒
+	 */
+	public static long transformToTime(String time) {
+		long allSeconds = 0;
+		if (time.contains(":")) {
+			String temp[] = time.split(":");
+			int hours = Integer.valueOf(temp[0]);
+			int minutes = Integer.valueOf(temp[1]);
+			long seconds = Long.valueOf(temp[2]);
+			allSeconds = hours * 60 * 60 + minutes * 60 + seconds;
+		}
+		return allSeconds;
+	}
+
+
 	/** 字符串转换 date */
 	@SuppressLint("SimpleDateFormat")
 	public static Date getStringDateTime(String strDate) {
