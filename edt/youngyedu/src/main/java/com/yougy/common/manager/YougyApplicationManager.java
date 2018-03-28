@@ -136,7 +136,7 @@ public class YougyApplicationManager extends LitePalApplication {
 
             Commons.UUID = SpUtils.getUUID();
             if (TextUtils.isEmpty(Commons.UUID)){
-                Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "");
+                Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "") ;
             }
             LogUtils.i("mac_application__"+Commons.UUID );
             Context context = getApplicationContext();
