@@ -348,6 +348,8 @@
                     android:background="@drawable/search_bg"
                     android:drawableLeft="@drawable/search_icon"
                     android:drawablePadding="@dimen/twelve_dp"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
                     android:hint="@string/search"
                     android:paddingLeft="@dimen/ten_dp"
                     android:textColor="@color/search_color"

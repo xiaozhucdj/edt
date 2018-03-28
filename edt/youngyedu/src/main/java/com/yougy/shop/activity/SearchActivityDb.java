@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -122,7 +123,6 @@ public class SearchActivityDb extends ShopBaseActivity {
     @Override
     protected void initLayout() {
         binding.searchKey.setText(bookTitle);
-        binding.resultRecycler.addItemDecoration(new SpaceItemDecoration(10));
         binding.resultRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         binding.subjectWrap.setHorizontalMargin(40);
@@ -159,7 +159,10 @@ public class SearchActivityDb extends ShopBaseActivity {
                 mSearchFlag = true;
             }
         });
-
+        binding.searchKey.setOnEditorActionListener((v, actionId, event) -> {
+            search();
+            return false;
+        });
     }
 
     private void generateSubjectLayout(CategoryInfo info) {
@@ -168,7 +171,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.subjectWrap.removeAllViews();
         }
         for (final CategoryInfo item : info.getChilds()) {
-            View layout = View.inflate(this,R.layout.text_view,null);
+            View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
             tv.setText(item.getCategoryDisplay());
             tv.setOnClickListener(v -> {
@@ -187,7 +190,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.versionWrap.removeAllViews();
         }
         for (final CategoryInfo item : info.getChilds()) {
-            View layout = View.inflate(this,R.layout.text_view,null);
+            View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
             tv.setText(item.getCategoryDisplay());
             tv.setOnClickListener(v -> {
@@ -228,7 +231,7 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void queryBook(final NewBookStoreBookReq req) {
 
-        if (!NetUtils.isNetConnected()){
+        if (!NetUtils.isNetConnected()) {
             showCancelAndDetermineDialog(R.string.jump_to_net);
             return;
         }
@@ -277,6 +280,8 @@ public class SearchActivityDb extends ShopBaseActivity {
     private void refreshResultView(List<BookInfo> bookInfos) {
         if (bookInfos == null || bookInfos.size() == 0) {
             binding.noResult.setVisibility(View.VISIBLE);
+            binding.pageNumberLayout.removeAllViews();
+            binding.resultRecycler.setVisibility(View.GONE);
             mSearchFlag = true;
         } else {
             mSearchFlag = false;
@@ -290,6 +295,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             generateBtn();
             mAdapter = new SearchResultAdapter1(mPageInfos);
             binding.resultRecycler.setAdapter(mAdapter);
+            binding.resultRecycler.setVisibility(View.VISIBLE);
             binding.resultRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.resultRecycler) {
                 @Override
                 public void onItemClick(RecyclerView.ViewHolder vh) {
@@ -308,19 +314,21 @@ public class SearchActivityDb extends ShopBaseActivity {
         finish();
     }
 
-    public void search(View view) {
-        if (mSearchFlag) {
-            bookTitle = binding.searchKey.getText().toString();
-            if (!TextUtils.isEmpty(bookTitle)) {
-                NewBookStoreBookReq req = new NewBookStoreBookReq();
-                req.setBookTitle(bookTitle);
-                queryBook(req);
-            }
-            mSearchFlag = false;
-        } else {
-            //进行筛选
-            showFiltrateLayout();
+    private void search() {
+        bookTitle = binding.searchKey.getText().toString();
+        if (!TextUtils.isEmpty(bookTitle)) {
+            NewBookStoreBookReq req = new NewBookStoreBookReq();
+            req.setBookTitle(bookTitle);
+            queryBook(req);
         }
+    }
+
+    public void search(View view) {
+        search();
+    }
+
+    public void filtrate(View view) {
+        showFiltrateLayout();
     }
 
     public void reset(View view) {
@@ -408,9 +416,6 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void showGradeLayout() {
         List<CategoryInfo> infos = BookShopActivityDB.grades.get(currentItem).getChilds();
-//        CategoryInfo info = new CategoryInfo();
-//        info.setCategoryDisplay(mAllGrade);
-//        infos.add(0,info);
         mStageAdapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item, infos);
         mStageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.stageSpinner.setAdapter(mStageAdapter);
