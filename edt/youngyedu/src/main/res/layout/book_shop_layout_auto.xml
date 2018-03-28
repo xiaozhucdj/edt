@@ -169,7 +169,6 @@
                         android:id="@+id/classify_button"
                         android:layout_width="170px"
                         android:layout_height="36px"
-                        android:layout_marginLeft="40px"
                         android:background="@drawable/img_bg_xuankuang"
                         android:gravity="center_vertical"
                         android:onClick="@{activity.classifyClick}"
@@ -342,43 +341,7 @@
                     android:onClick="@{activity.clickEmpty}" />
             </RelativeLayout>
 
-            <FrameLayout
-                android:id="@+id/stage_recycler_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:onClick="@{activity.hideStageRecyclerLayout}"
-                android:clickable="true">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/stage_recycler"
-                    android:layout_width="170px"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30px"
-                    android:background="@drawable/identity_list_bg"
-                    android:paddingBottom="5px"
-                    android:paddingLeft="5px"
-                    android:paddingTop="5px"
-                     />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/classify_recycler_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:visibility="gone"
-                android:onClick="@{activity.hideClassifyRecyclerLayout}"
-                >
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/classify_recycler"
-                    android:layout_width="170px"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="240px"
-                    android:background="@drawable/identity_list_bg"
-                    />
-            </FrameLayout>
         </FrameLayout>
 
         <RelativeLayout
@@ -478,5 +441,44 @@
                     android:background="@color/black" />
             </RelativeLayout>
         </RelativeLayout>
+        <FrameLayout
+            android:id="@+id/stage_recycler_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:onClick="@{activity.hideStageRecyclerLayout}"
+            android:clickable="true">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/stage_recycler"
+                android:layout_width="170px"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="181px"
+                android:background="@drawable/identity_list_bg"
+                android:paddingBottom="5px"
+                android:paddingLeft="5px"
+                android:paddingTop="5px"
+                />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/classify_recycler_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:visibility="gone"
+            android:onClick="@{activity.hideClassifyRecyclerLayout}"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/classify_recycler"
+                android:layout_width="170px"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="181px"
+                android:background="@drawable/identity_list_bg"
+                />
+        </FrameLayout>
     </RelativeLayout>
 </layout>

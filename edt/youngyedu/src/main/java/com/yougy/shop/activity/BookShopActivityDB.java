@@ -564,7 +564,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private void extrabookSelected() {
         mClassifyPosition = 2;
-        showSpinnerLayout();
         hideFiltrateLayout();
         binding.tvAll.setSelected(false);
         binding.textbook.setSelected(false);
@@ -735,9 +734,25 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void showSpinnerLayout() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
-            mStage = SpUtils.getStudent().getGradeName();
+            String grade = SpUtils.getStudent().getGradeDisplay();
+            if (TextUtils.isEmpty(grade)) {
+                mStage = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
+                mClassifyId = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryId();
+            } else {
+                mStage = grade;
+                for (CategoryInfo info : gradeSparseArray.get(mClassifyIds.get(mClassifyPosition))) {
+                    if (mStage.equals(info.getCategoryDisplay())) {
+                        mClassifyId = info.getCategoryId();
+                        LogUtils.e(tag,"show spinner layout classify id : " + mClassifyId +", stage : " + mStage);
+                        break;
+                    }
+                }
+            }
             binding.stageButton.setText(mStage);
             setCompositeText();
+        }
+        if (binding.stageButton.getVisibility() == View.GONE) {
+            binding.stageButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -944,9 +959,18 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 显示课外书分类下拉列表
      */
     private void showClassifySpinner() {
+        if (binding.spinnerLayout.getVisibility() == View.GONE){
+            binding.spinnerLayout.setVisibility(View.VISIBLE);
+        }
+        if (binding.stageButton.getVisibility() == View.VISIBLE) {
+            binding.stageButton.setVisibility(View.GONE);
+        }
         if (binding.classifyButton.getVisibility() == View.GONE) {
             binding.classifyButton.setVisibility(View.VISIBLE);
-            binding.classifyButton.setText(gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay());
+            String classify = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
+            mClassifyId = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryId();
+            binding.classifyButton.setText(classify);
+            binding.compositeInfo.setText(classify);
         }
     }
 
