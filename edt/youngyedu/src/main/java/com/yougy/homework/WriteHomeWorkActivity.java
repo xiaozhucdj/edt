@@ -642,7 +642,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
 
-        tvSubmitHomeWork.setText("提交（时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
+        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
 
@@ -947,7 +947,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         String textInfo = tvSubmitHomeWork.getText().toString();
         if (textInfo.contains("(") && textInfo.contains(")")) {
-            getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 2, textInfo.lastIndexOf(")")));
+            getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
         }
 
         //本题所有数据保存完毕
