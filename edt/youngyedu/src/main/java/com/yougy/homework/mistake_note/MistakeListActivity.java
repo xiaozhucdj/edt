@@ -2,7 +2,6 @@ package com.yougy.homework.mistake_note;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -10,15 +9,15 @@ import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
+import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.MistakeSummary;
-import com.yougy.message.ListUtil;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeListBinding;
-import com.yougy.ui.activity.databinding.ItemMistakeListBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ import rx.functions.Action1;
 
 public class MistakeListActivity extends HomeworkBaseActivity{
     ActivityMistakeListBinding binding;
-    ArrayList<MistakeSummary> mistakeSummaryList;
+    ArrayList<MistakeSummary> mistakeSummaryList = new ArrayList<MistakeSummary>();
     ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
     BookInfo.BookContentsBean.NodesBean topNode , currentNode;
     ArrayList<BookInfo.BookContentsBean.NodesBean> nodeTree = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
@@ -49,35 +48,35 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                //自评界面我已学会按钮点击后,会发消息通知本界面移除错题
-                if (o instanceof String && ((String) o).startsWith("removeMistakeItem:")){
-                    String[] tempStrs = ((String) o).split(":");
-                    if (tempStrs.length == 2){
-                        int removeItemId = Integer.parseInt(tempStrs[1]);
-                        ListUtil.conditionalRemove(mistakeSummaryList, new ListUtil.ConditionJudger<MistakeSummary>() {
-                            @Override
-                            public boolean isMatchCondition(MistakeSummary nodeInList) {
-                                return nodeInList.getItem() == removeItemId;
-                            }
-                        });
-                        loadData();
-                    }
-                }
-                //自评界面自评按钮点击后,会通知本界面更新原来的上次自评结果字段
-                else if (o instanceof String && ((String) o).startsWith("lastScoreChanged:")){
-                    String[] tempStrs = ((String) o).split(":");
-                    if (tempStrs.length == 3){
-                        int itemId = Integer.parseInt(tempStrs[1]);
-                        int lastScore = Integer.parseInt(tempStrs[2]);
-                        for (MistakeSummary mistakeSummary :
-                                mistakeSummaryList) {
-                            if (mistakeSummary.getItem() == itemId){
-                                mistakeSummary.getExtra().setLastScore(lastScore);
-                            }
-                        }
-                        loadData();
-                    }
-                }
+//                //自评界面我已学会按钮点击后,会发消息通知本界面移除错题
+//                if (o instanceof String && ((String) o).startsWith("removeMistakeItem:")){
+//                    String[] tempStrs = ((String) o).split(":");
+//                    if (tempStrs.length == 2){
+//                        int removeItemId = Integer.parseInt(tempStrs[1]);
+//                        ListUtil.conditionalRemove(mistakeSummaryList, new ListUtil.ConditionJudger<MistakeSummary>() {
+//                            @Override
+//                            public boolean isMatchCondition(MistakeSummary nodeInList) {
+//                                return nodeInList.getItem() == removeItemId;
+//                            }
+//                        });
+//                        loadData();
+//                    }
+//                }
+//                //自评界面自评按钮点击后,会通知本界面更新原来的上次自评结果字段
+//                if (o instanceof String && ((String) o).startsWith("lastScoreChanged:")){
+//                    String[] tempStrs = ((String) o).split(":");
+//                    if (tempStrs.length == 3){
+//                        int itemId = Integer.parseInt(tempStrs[1]);
+//                        int lastScore = Integer.parseInt(tempStrs[2]);
+//                        for (MistakeSummary mistakeSummary :
+//                                mistakeSummaryList) {
+//                            if (mistakeSummary.getItem() == itemId){
+//                                mistakeSummary.getExtra().setLastScore(lastScore);
+//                            }
+//                        }
+//                        loadData();
+//                    }
+//                }
             }
         }));
         super.handleEvent();
@@ -87,7 +86,6 @@ public class MistakeListActivity extends HomeworkBaseActivity{
     protected void init() {
         //标记本activity在onstop后仍然接收其他界面发送的RxBus消息
         setNeedRecieveEventAfterOnStop(true);
-        mistakeSummaryList = getIntent().getParcelableArrayListExtra("mistakeList");
         topNode = getIntent().getParcelableExtra("topNode");
         currentNode = getIntent().getParcelableExtra("currentNode");
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
@@ -142,7 +140,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
                 ParsedQuestionItem item = questionList.get(btnIndex);
-                refreshUI(item);
+                refreshItem(item);
             }
         });
         binding.contentDisplayer.setOnClickListener(new View.OnClickListener() {
@@ -170,9 +168,9 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         });
     }
 
-    public void refreshUI(ParsedQuestionItem item){
+    public void refreshItem(ParsedQuestionItem item){
         binding.contentDisplayer.getmContentAdaper().updateDataList("question" , item.questionContentList);
-        String subTextStr = "题目类型 : " + item.questionContentList.get(0).getExtraData();
+        String subTextStr = "        题目类型 : " + item.questionContentList.get(0).getExtraData();
         for (MistakeSummary mistakeSummary : mistakeSummaryList) {
             if (item.itemId.equals("" + mistakeSummary.getItem())){
                 subTextStr = subTextStr + "         来自于 : " + mistakeSummary.getExtra().getName();
@@ -183,65 +181,88 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , true);
     }
 
+
     @Override
     protected void loadData() {
-        if (mistakeSummaryList == null || mistakeSummaryList.size() == 0){
-            binding.noResultTextview.setVisibility(View.VISIBLE);
-            binding.pageBtnBar.setVisibility(View.GONE);
-            binding.contentDisplayer.setVisibility(View.GONE);
-            return;
-        }
-        binding.noResultTextview.setVisibility(View.GONE);
-        binding.contentDisplayer.setVisibility(View.VISIBLE);
-        binding.pageBtnBar.setVisibility(View.VISIBLE);
-        //根据传进来的错题的id的list拼接请求查询错题详情的list
-        String itemIdStr = "";
-        for (int i = 0; i < mistakeSummaryList.size() ; i++) {
-            if (i == 0){
-                itemIdStr = itemIdStr + "[";
-            }
-            itemIdStr = itemIdStr + mistakeSummaryList.get(i).getItem();
-            if(i == mistakeSummaryList.size() - 1){
-                itemIdStr = itemIdStr + "]";
-            }
-            else {
-                itemIdStr = itemIdStr + ",";
-            }
-        }
-        NetWorkManager.queryQuestionItemList(null , null , itemIdStr , null).subscribe(new Action1<List<ParsedQuestionItem>>() {
-            @Override
-            public void call(List<ParsedQuestionItem> parsedQuestionItems) {
-                questionList.clear();
-                questionList.addAll(parsedQuestionItems);
-                binding.pageBtnBar.refreshPageBar();
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                throwable.printStackTrace();
-            }
-        });
     }
 
     @Override
     protected void refreshView() {
-
     }
 
-    private class MyHolder extends RecyclerView.ViewHolder{
-        private ItemMistakeListBinding binding;
-        private ParsedQuestionItem questionItem;
-        public MyHolder(ItemMistakeListBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+    private void refreshUI(){
+        if (homeworkId == -1){
+            ToastUtil.showToast(getApplicationContext() , "homeworkId 为空");
+            finish();
+            return;
         }
+        NetWorkManager.queryHomeworkBookDetail(homeworkId)
+                .subscribe(new Action1<List<HomeworkBookDetail>>() {
+                    @Override
+                    public void call(List<HomeworkBookDetail> homeworkBookDetails) {
+                        mistakeSummaryList.clear();
+                        if (homeworkBookDetails != null && homeworkBookDetails.size() != 0
+                                && homeworkBookDetails.get(0).getHomeworkExcerpt() != null
+                                && homeworkBookDetails.get(0).getHomeworkExcerpt().size() != 0){
+                            for (MistakeSummary mistakeSummary : homeworkBookDetails.get(0).getHomeworkExcerpt()) {
+                                //被标记为"我已学会"的错题不算作错题,排除
+                                if (!mistakeSummary.getExtra().isDeleted()){
+                                    if (mistakeSummary.getExtra().getCursor() == currentNode.getId()) {
+                                        mistakeSummaryList.add(mistakeSummary);
+                                    }
+                                }
+                            }
+                        }
+                        if (mistakeSummaryList == null || mistakeSummaryList.size() == 0){
+                            binding.noResultTextview.setVisibility(View.VISIBLE);
+                            binding.pageBtnBar.setVisibility(View.GONE);
+                            binding.contentDisplayer.setVisibility(View.GONE);
+                            return;
+                        }
+                        binding.noResultTextview.setVisibility(View.GONE);
+                        binding.contentDisplayer.setVisibility(View.VISIBLE);
+                        binding.pageBtnBar.setVisibility(View.VISIBLE);
+                        //根据传进来的错题的id的list拼接请求查询错题详情的list
+                        String itemIdStr = "";
+                        for (int i = 0; i < mistakeSummaryList.size() ; i++) {
+                            if (i == 0){
+                                itemIdStr = itemIdStr + "[";
+                            }
+                            itemIdStr = itemIdStr + mistakeSummaryList.get(i).getItem();
+                            if(i == mistakeSummaryList.size() - 1){
+                                itemIdStr = itemIdStr + "]";
+                            }
+                            else {
+                                itemIdStr = itemIdStr + ",";
+                            }
+                        }
+                        NetWorkManager.queryQuestionItemList(null , null , itemIdStr , null).subscribe(new Action1<List<ParsedQuestionItem>>() {
+                            @Override
+                            public void call(List<ParsedQuestionItem> parsedQuestionItems) {
+                                questionList.clear();
+                                questionList.addAll(parsedQuestionItems);
+                                binding.pageBtnBar.refreshPageBar();
+                                ParsedQuestionItem item = questionList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
+                                refreshItem(item);
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+                        });
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
+    }
 
-        public void setQuestionItem(ParsedQuestionItem item){
-            questionItem = item;
-            ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper();
-            contentAdaper.addData("question" , questionItem.questionContentList.get(0));
-            binding.contentDisplayer.setmContentAdaper(contentAdaper);
-            contentAdaper.toPage("question" , 0 , false);
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshUI();
     }
 }

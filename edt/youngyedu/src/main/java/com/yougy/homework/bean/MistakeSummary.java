@@ -62,7 +62,7 @@ public class MistakeSummary implements Parcelable {
         private boolean display;
         private String name;
         private boolean deleted;
-        private int lastScore;
+        private int lastScore = -1;
 
         public int getExam() {
             return exam;

@@ -79,23 +79,19 @@
 
                 <ImageView
                     android:id="@+id/schoolbag"
-                    android:layout_height="40px"
-                    android:layout_width="40px"
+                    style="@style/shopImgStyle"
                     android:layout_marginLeft="@dimen/shop_img_padding"
                     android:onClick="@{activity.clickShoolBag}"
-                    android:background="@drawable/shubao_selector"
-                    android:layout_centerVertical="true"
+                    android:src="@drawable/shubao_selector"
                     />
 
                 <ImageView
                     android:id="@+id/cart_go"
-                    android:layout_height="40px"
-                    android:layout_width="40px"
+                    style="@style/shopImgStyle"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="30px"
+                    android:layout_marginRight="@dimen/shop_img_padding"
                     android:onClick="@{activity.clickCartGo}"
-                    android:background="@drawable/gouwuche_selector"
-                    android:layout_centerVertical="true"
+                    android:src="@drawable/gouwuche_selector"
                     />
                 <TextView
                     android:id="@+id/cart_count_tv"
@@ -103,7 +99,8 @@
                     android:layout_height="20px"
                     android:layout_alignLeft="@id/cart_go"
                     android:layout_alignTop="@id/cart_go"
-                    android:layout_marginLeft="25px"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="18px"
                     android:background="@drawable/black_dot"
                     android:gravity="center"
                     android:textColor="@color/white"
@@ -111,13 +108,11 @@
 
                 <ImageView
                     android:id="@+id/favorite"
-                    android:layout_height="40px"
-                    android:layout_width="40px"
+                    style="@style/shopImgStyle"
                     android:layout_toLeftOf="@+id/cart_go"
                     android:onClick="@{activity.clickFavorite}"
-                    android:background="@drawable/shoucang_ic_selector"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15px"
+                    android:src="@drawable/shoucang_ic_selector"
+                    android:layout_marginLeft="@dimen/shop_img_padding"
                     />
 
                 <TextView
@@ -126,7 +121,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/shop_img_padding"
-                    android:layout_marginRight="@dimen/shop_img_padding"
                     android:layout_toLeftOf="@+id/favorite"
                     android:layout_toRightOf="@+id/schoolbag"
                     android:background="@drawable/img_bg_sousuo"

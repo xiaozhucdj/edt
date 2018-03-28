@@ -10,7 +10,7 @@
         <!-- 标题-->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="55px"
+            android:layout_height="76px"
             android:layout_marginLeft="32px"
             android:layout_marginRight="32px">
             <ImageView
@@ -69,7 +69,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg_selector_white_blue"
                 android:gravity="center"
-                android:text="解析与解析"
+                android:text="答案与解析"
                 android:textColor="@drawable/btn_text_color_selector_black_white"
                 android:textSize="24px" />
         </LinearLayout>

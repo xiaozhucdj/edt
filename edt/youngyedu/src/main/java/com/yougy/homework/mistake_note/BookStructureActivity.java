@@ -65,13 +65,19 @@ public class BookStructureActivity extends HomeworkBaseActivity {
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                if (o instanceof String
-                        && (((String) o).startsWith("removeMistakeItem:") || ((String) o).startsWith("lastScoreChanged"))){
-                    getMistakes();
-                }
+//                if (o instanceof String
+//                        && (((String) o).startsWith("removeMistakeItem:") || ((String) o).startsWith("lastScoreChanged"))){
+//                    getMistakes();
+//                }
             }
         }));
         super.handleEvent();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getMistakes();
     }
 
     @Override
@@ -158,8 +164,6 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                     @Override
                     public void call(List<BookInfo> bookInfoList) {
                         if (bookInfoList.size() > 0){
-                            //再获取错题列表
-                            getMistakes();
                             bookTitle = bookInfoList.get(0).getBookTitle();
                             bookStructureNodeList.addAll(bookInfoList.get(0).getBookContents().getNodes());
                             binding.mainRecyclerview.notifyDataSetChanged();
