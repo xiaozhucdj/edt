@@ -89,7 +89,7 @@
     <dimen name="search_padding_left">204px</dimen>
     <dimen name="shop_search_text_size">22px</dimen>
     <dimen name="shop_text_margin_left">30px</dimen>
-    <dimen name="search_icon_padding_left">235px</dimen>
+    <dimen name="search_icon_padding_left">301px</dimen>
     <dimen name="shop_recycler_margin_top">15px</dimen>
     <dimen name="shop_recycler_margin_left">30px</dimen>
     <dimen name="shop_classify_text_size">28px</dimen>
