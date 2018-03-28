@@ -136,6 +136,14 @@ public interface ServerApi {
     Observable<BaseResult<List<HomeworkDetail>>> queryHomeworkDetail(@Field("examId") Integer examId);
 
     /**
+     * 查询多个考试
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryExam"})
+    Observable<BaseResult<List<HomeworkDetail>>> queryHomeworkDetailList(@Field("examId") String examIds);
+
+    /**
      * 查询问答
      */
     @FormUrlEncoded

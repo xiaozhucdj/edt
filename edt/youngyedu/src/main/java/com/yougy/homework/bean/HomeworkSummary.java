@@ -63,6 +63,24 @@ public class HomeworkSummary {
         private String name;
         private String startTime;
         private String statusCode;
+        private String book;
+        private String cursor;
+
+        public String getBook() {
+            return book;
+        }
+
+        public void setBook(String book) {
+            this.book = book;
+        }
+
+        public String getCursor() {
+            return cursor;
+        }
+
+        public void setCursor(String cursor) {
+            this.cursor = cursor;
+        }
 
         public String getEndTime() {
             return endTime;

@@ -24,7 +24,9 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.home.adapter.CoursekAdapter;
+import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 
@@ -42,8 +44,8 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
     /**
      * 适配器 数据
      */
-    private List<CourseInfo> mCourseInfos = new ArrayList<>();
-    private List<CourseInfo> mCountCourses = new ArrayList<>();
+    private List<HomeworkBookSummary> mCourseInfos = new ArrayList<>();
+    private List<HomeworkBookSummary> mCountCourses = new ArrayList<>();
     /***
      * 一页数据个数
      */
@@ -54,7 +56,7 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
     private int mPagerIndex;
     private ViewGroup mRootView;
     private RecyclerView mRecyclerView;
-    private CoursekAdapter mCourseAdapter;
+    private HomeworkAdapter mCourseAdapter;
     private boolean mIsFist;
     private LinearLayout mLlPager;
     private ViewGroup mLoadingNull;
@@ -75,7 +77,7 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
 
-        mCourseAdapter = new CoursekAdapter(mCourseInfos);
+        mCourseAdapter = new HomeworkAdapter(mCourseInfos);
         mRecyclerView.setAdapter(mCourseAdapter);
         mCourseAdapter.notifyDataSetChanged();
 
@@ -98,10 +100,11 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
      * 点击事件
      */
     private void itemClick(int position) {
-        CourseInfo info = mCourseInfos.get(position);
+        HomeworkBookSummary info = mCourseInfos.get(position);
         Intent intent = new Intent(getActivity() , AnswerBookStructureActivity.class);
         intent.putExtra("bookName" , info.getCourseBookTitle());
-        intent.putExtra("bookId" , info.getCourseBook());
+        intent.putExtra("bookId" , info.getCourseBookId());
+        intent.putExtra("homeworkId" , info.getHomeworkId());
         startActivity(intent);
     }
 
@@ -116,7 +119,7 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
         mIsFist = true;
     }
 
-    private void freshUI(List<CourseInfo> beans) {
+    private void freshUI(List<HomeworkBookSummary> beans) {
         if (beans != null && beans.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountCourses.clear();
@@ -138,11 +141,11 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
 
     private void loadData() {
         if (NetUtils.isNetConnected()) {
-            NetWorkManager.queryCourse(SpUtils.getUserId() )
-                    .subscribe(new Action1<List<CourseInfo>>() {
+            NetWorkManager.queryHomeworkBookList(SpUtils.getUserId() + "", SpUtils.getGradeName())
+                    .subscribe(new Action1<List<HomeworkBookSummary>>() {
                         @Override
-                        public void call(List<CourseInfo> courseInfos) {
-                            freshUI(courseInfos);
+                        public void call(List<HomeworkBookSummary> homeworkBookSummaries) {
+                            freshUI(homeworkBookSummaries);
                         }
                     }, new Action1<Throwable>() {
                         @Override

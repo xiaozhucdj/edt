@@ -21,7 +21,9 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.PageableRecyclerView;
+import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerBookStructureBinding;
@@ -41,10 +43,11 @@ import rx.functions.Action1;
 public class AnswerBookStructureActivity extends AnswerBaseActivity {
     ActivityAnswerBookStructureBinding binding;
     List<BookInfo.BookContentsBean.NodesBean> bookStructureNodeList = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
-    HashMap<String , Integer> examNumSumMap = new HashMap<String, Integer>();
+    HashMap<String , ArrayList<Integer>> examNumSumMap = new HashMap<String, ArrayList<Integer>>();
     int bookId;
     String bookName;
     String bookTitle;
+    int homeworkId;
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this)
@@ -57,6 +60,15 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
         setNeedRecieveEventAfterOnStop(true);
         bookId = getIntent().getIntExtra("bookId" , -1);
         bookName = getIntent().getStringExtra("bookName");
+        homeworkId = getIntent().getIntExtra("homeworkId" , -1);
+        if (bookId == -1){
+            ToastUtil.showToast(getApplicationContext() , "bookId为空,无法进入!");
+            finish();
+        }
+        else if (homeworkId == -1){
+            ToastUtil.showToast(getApplicationContext() , "homeworkId为空,无法进入!");
+            finish();
+        }
     }
 
     @Override
@@ -111,10 +123,11 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
                             node = ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).nodeList.get(position - 1);
                         }
                         Intent intent = new Intent(getApplicationContext() , AnswerRecordListActivity.class);
-                        intent.putExtra("bookId" , bookId);
+                        ArrayList<Integer> list = examNumSumMap.get(String.valueOf(node.getId()));
+                        intent.putExtra("itemIdList" , list);
                         intent.putExtra("bookName" , bookName);
-                        intent.putExtra("cursor" , node.getId());
                         intent.putExtra("chapterName" , node.getName());
+
                         startActivity(intent);
                     }
                 });
@@ -165,34 +178,30 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
     }
 
     private void getAnswers(){
-        NetWorkManager.queryAnswer(SpUtils.getStudent().getClassId() + "" , bookId+ "" , null)
-                .subscribe(new Action1<List<HomeworkDetail>>() {
-                    @Override
-                    public void call(List<HomeworkDetail> homeworkBookDetails) {
-                        examNumSumMap.clear();
-                        for (HomeworkDetail homeworkDetail : homeworkBookDetails) {
-                            List<HomeworkDetail.ExamPostscriptBean> examPostscriptList = homeworkDetail.getExamPostscript();
-                            if (examPostscriptList.size() > 0){
-                                String cursorID = examPostscriptList.get(0).getCursor();
-                                if (!TextUtils.isEmpty(cursorID)){
-                                    Integer count = examNumSumMap.get(cursorID);
-                                    if (count ==  null){
-                                        examNumSumMap.put(cursorID , 1);
-                                    }
-                                    else {
-                                        examNumSumMap.put(cursorID , count + 1);
-                                    }
-                                }
-                            }
+        NetWorkManager.queryHomeworkBookDetail_Anwser(homeworkId).subscribe(new Action1<List<HomeworkBookDetail>>() {
+            @Override
+            public void call(List<HomeworkBookDetail> homeworkBookDetails) {
+                examNumSumMap.clear();
+                HomeworkBookDetail homeworkBookDetail = homeworkBookDetails.get(0);
+                for (HomeworkSummary homeworkSummary : homeworkBookDetail.getHomeworkContent()) {
+                    String cursorID = homeworkSummary.getExtra().getCursor();
+                    if (!TextUtils.isEmpty(cursorID)) {
+                        ArrayList<Integer> itemIdList = examNumSumMap.get(cursorID);
+                        if (itemIdList == null) {
+                            itemIdList = new ArrayList<Integer>();
+                            examNumSumMap.put(cursorID , itemIdList);
                         }
-                        binding.mainRecyclerview.notifyDataSetChanged();
+                        itemIdList.add(homeworkSummary.getExam());
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+                }
+                binding.mainRecyclerview.notifyDataSetChanged();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -266,8 +275,8 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
             bookChapterBinding = (ItemBookChapterBinding) convertView.getTag();
             BookInfo.BookContentsBean.NodesBean node = nodeList.get(position);
             bookChapterBinding.textview.setText(node.getName());
-            Integer examCountInNode = examNumSumMap.get(String.valueOf(node.getId()));
-            if (examCountInNode != null && examCountInNode > 0){
+            ArrayList<Integer> list = examNumSumMap.get(String.valueOf(node.getId()));
+            if (list != null && list.size() != 0){
                 bookChapterBinding.redDot.setVisibility(View.VISIBLE);
             }
             else {

@@ -183,6 +183,12 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
+        Log.v("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId , "II01")
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
     public static Observable<List<BookInfo>> queryBook(String bookId , String userId) {
         Log.v("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
@@ -209,6 +215,13 @@ public final class NetWorkManager {
     public static Observable<List<HomeworkDetail>> queryHomeworkDetail(Integer examId) {
         Log.v("FH", "!!!!!调用ServerApi查询作业详情:queryHomeworkDetail");
         return getInstance().getServerApi().queryHomeworkDetail(examId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+                .compose(RxResultHelper.parseHomeworkQuestion());
+    }
+    public static Observable<List<HomeworkDetail>> queryHomeworkDetailList(String examIds) {
+        Log.v("FH", "!!!!!调用ServerApi查询多个作业详情:queryHomeworkDetailList");
+        return getInstance().getServerApi().queryHomeworkDetailList(examIds)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());

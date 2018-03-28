@@ -275,7 +275,7 @@ public class ExerciseBookFragment extends BFragment {
                             List<HomeworkSummary> homeworkSummaryList = homeworkBookDetails.get(0).getHomeworkContent();
                             for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
                                 String statusCode = homeworkSummary.getExtra().getStatusCode();
-                                if (statusCode.equals("IH01")) {
+                                if ("IH01".equals(statusCode)) {
                                     //如果作业开始时间已经早于现在的时间,说明作业已经开始了,
                                     //但是如果此时这个作业的状态还是IH01未开始,则调一次刷新接口刷新整个作业本,这样这个作业的状态就可以更正了.
                                     long startTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getStartTime() , "yyyy-MM-dd HH:mm:ss");
@@ -304,11 +304,11 @@ public class ExerciseBookFragment extends BFragment {
                                                 });
                                         return;
                                     }
-                                } else if (statusCode.equals("IH02")) {//作答中
+                                } else if ("IH02".equals(statusCode)) {//作答中
                                     doingList.add(homeworkSummary);
-                                } else if (statusCode.equals("IH03") || statusCode.equals("IH04")) {//未批改,批改中都算待批改
+                                } else if ("IH03".equals(statusCode) || "IH04".equals(statusCode)) {//未批改,批改中都算待批改
                                     waitForCheckList.add(homeworkSummary);
-                                } else if (statusCode.equals("IH05") || statusCode.equals("IH51")) {//已批改,未提交都算已批改
+                                } else if ("IH05".equals(statusCode) || "IH51".equals(statusCode)) {//已批改,未提交都算已批改
                                     checkedList.add(homeworkSummary);
                                 }
                             }
