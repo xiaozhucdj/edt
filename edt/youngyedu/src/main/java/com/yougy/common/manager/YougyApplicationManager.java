@@ -14,6 +14,7 @@ import android.util.Log;
 import com.inkscreen.LeController;
 import com.inkscreen.utils.NetworkManager;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.onyx.android.sdk.utils.NetworkUtil;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.anwser.AnsweringActivity;
@@ -134,6 +135,9 @@ public class YougyApplicationManager extends LitePalApplication {
 //        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
 
             Commons.UUID = SpUtils.getUUID();
+            if (TextUtils.isEmpty(Commons.UUID)){
+                Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "");
+            }
             LogUtils.i("mac_application__"+Commons.UUID );
             Context context = getApplicationContext();
             // 获取当前包名

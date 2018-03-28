@@ -2,19 +2,16 @@ package com.yougy.homework.mistake_note;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.HomeworkBaseActivity;
-import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.bean.MistakeSummary;
 import com.yougy.message.ListUtil;
@@ -136,52 +133,67 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                 onBackPressed();
             }
         });
-        binding.mainRecyclerview.setMaxItemNumInOnePage(4);
-        binding.mainRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext() , LinearLayoutManager.VERTICAL , false));
-        binding.mainRecyclerview.setAdapter(new PageableRecyclerView.Adapter<MyHolder>() {
+        binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getApplicationContext()) {
             @Override
-            public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new MyHolder(DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()) , R.layout.item_mistake_list , parent , false));
-            }
-
-            @Override
-            public void onBindViewHolder(MyHolder holder, int position) {
-                ParsedQuestionItem parsedQuestionItem = questionList.get(position);
-                holder.setQuestionItem(parsedQuestionItem);
-            }
-
-            @Override
-            public int getItemCount() {
+            public int getPageBtnCount() {
                 return questionList.size();
             }
-        });
-        binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
+
             @Override
-            public void onItemClick(RecyclerView.ViewHolder vh) {
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+                ParsedQuestionItem item = questionList.get(btnIndex);
+                refreshUI(item);
+            }
+        });
+        binding.contentDisplayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParsedQuestionItem clickItem = questionList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
+
                 Intent intent = new Intent(getApplicationContext() , WriteErrorHomeWorkActivity.class);
-                intent.putExtra("QUESTION_ITEMID" , ((MyHolder) vh).questionItem.itemId);
+                intent.putExtra("QUESTION_ITEMID" , clickItem.itemId);
                 intent.putExtra("HOMEWORKID" , homeworkId);
                 intent.putExtra("BOOKTITLE" , getIntent().getStringExtra("bookTitle"));
                 for (MistakeSummary mistakeSummary : mistakeSummaryList) {
-                    if (mistakeSummary.getItem() == Integer.parseInt(((MyHolder) vh).questionItem.itemId)){
+                    if (mistakeSummary.getItem() == Integer.parseInt(clickItem.itemId)){
                         intent.putExtra("LASTSCORE" , mistakeSummary.getExtra().getLastScore());
                     }
                 }
                 startActivity(intent);
             }
         });
-        binding.mainRecyclerview.notifyDataSetChanged();
+        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
+            @Override
+            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
+                super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
+            }
+        });
+    }
+
+    public void refreshUI(ParsedQuestionItem item){
+        binding.contentDisplayer.getmContentAdaper().updateDataList("question" , item.questionContentList);
+        String subTextStr = "题目类型 : " + item.questionContentList.get(0).getExtraData();
+        for (MistakeSummary mistakeSummary : mistakeSummaryList) {
+            if (item.itemId.equals("" + mistakeSummary.getItem())){
+                subTextStr = subTextStr + "         来自于 : " + mistakeSummary.getExtra().getName();
+                break;
+            }
+        }
+        binding.contentDisplayer.getmContentAdaper().setSubText(subTextStr);
+        binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , true);
     }
 
     @Override
     protected void loadData() {
         if (mistakeSummaryList == null || mistakeSummaryList.size() == 0){
             binding.noResultTextview.setVisibility(View.VISIBLE);
-            binding.mainRecyclerview.setVisibility(View.GONE);
+            binding.pageBtnBar.setVisibility(View.GONE);
+            binding.contentDisplayer.setVisibility(View.GONE);
             return;
         }
         binding.noResultTextview.setVisibility(View.GONE);
-        binding.mainRecyclerview.setVisibility(View.VISIBLE);
+        binding.contentDisplayer.setVisibility(View.VISIBLE);
+        binding.pageBtnBar.setVisibility(View.VISIBLE);
         //根据传进来的错题的id的list拼接请求查询错题详情的list
         String itemIdStr = "";
         for (int i = 0; i < mistakeSummaryList.size() ; i++) {
@@ -201,7 +213,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
             public void call(List<ParsedQuestionItem> parsedQuestionItems) {
                 questionList.clear();
                 questionList.addAll(parsedQuestionItems);
-                binding.mainRecyclerview.notifyDataSetChanged();
+                binding.pageBtnBar.refreshPageBar();
             }
         }, new Action1<Throwable>() {
             @Override
@@ -230,12 +242,6 @@ public class MistakeListActivity extends HomeworkBaseActivity{
             contentAdaper.addData("question" , questionItem.questionContentList.get(0));
             binding.contentDisplayer.setmContentAdaper(contentAdaper);
             contentAdaper.toPage("question" , 0 , false);
-            for (MistakeSummary mistakeSummary : mistakeSummaryList) {
-                if (questionItem.itemId.equals("" + mistakeSummary.getItem())){
-                    binding.fromTextview.setText("来自于 : " + mistakeSummary.getExtra().getName());
-                    break;
-                }
-            }
         }
     }
 }
