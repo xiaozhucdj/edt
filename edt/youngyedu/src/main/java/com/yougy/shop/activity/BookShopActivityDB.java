@@ -882,7 +882,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             final CategoryInfo versionInfo = versionInfos.get(j);
             View layout = View.inflate(this,R.layout.text_view,null);
             final TextView versionTv = (TextView) layout.findViewById(R.id.text_tv);
-            versionTv.setText(versionInfo.getCategoryDisplay());
+            String display = versionInfo.getCategoryDisplay();
+            if (display.length() > 4) {
+                display = display.substring(0, 4);
+            }
+            versionTv.setText(display);
             versionTv.setOnClickListener(v -> {
                 for (int i = 0; i < binding.versionWrap.getChildCount(); i++) {
                     View child = binding.versionWrap.getChildAt(i);
