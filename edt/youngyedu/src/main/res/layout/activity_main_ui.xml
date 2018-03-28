@@ -97,7 +97,7 @@
                 android:text="课本"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_coach_book"
@@ -109,7 +109,7 @@
                 android:text="辅导书"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_reference_books"
@@ -121,7 +121,7 @@
                 android:text="课外书"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_notes"
@@ -133,7 +133,7 @@
                 android:text="笔记"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_homework"
@@ -145,7 +145,7 @@
                 android:text="作业"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_folder"
@@ -157,7 +157,7 @@
                 android:text="问答"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
         </LinearLayout>
 
@@ -382,6 +382,7 @@
                     android:background="@color/black" />
 
                 <Button
+                    android:visibility="gone"
                     android:id="@+id/btn_upload"
                     android:text="上传"
                     android:layout_width="match_parent"
@@ -393,11 +394,13 @@
                     android:textSize="24px" />
 
                 <View
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />
 
                 <Button
+                    android:visibility="gone"
                     android:id="@+id/btn_download"
                     android:text="下载"
                     android:layout_width="match_parent"
@@ -409,11 +412,13 @@
                     android:textSize="24px" />
 
                 <View
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />
 
                 <Button
+                    android:visibility="gone"
                     android:id="@+id/btn_test_img"
                     android:text="测试图片"
                     android:layout_width="match_parent"
@@ -425,6 +430,7 @@
                     android:textSize="24px" />
 
                 <View
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />
