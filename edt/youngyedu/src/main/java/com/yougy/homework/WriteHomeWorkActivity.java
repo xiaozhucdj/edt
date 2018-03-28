@@ -475,7 +475,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     questionPageNumAdapter.onItemClickListener.onItemClick1(0);
                 }
 
-                startTimeMill = System.currentTimeMillis();
+                String useTime = SharedPreferencesUtil.getSpUtil().getString(examId + "_" + showHomeWorkPosition + "_use_time", "");
+
+                long alreadyUseTime = 0;
+                if (!TextUtils.isEmpty(useTime)) {
+                    alreadyUseTime = DateUtils.transformToTime(useTime) * 1000;
+                }
+
+                startTimeMill = System.currentTimeMillis() - alreadyUseTime;
                 startClock();
 
                 homeWorkPageNumAdapter.notifyDataSetChanged();
