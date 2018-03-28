@@ -97,7 +97,7 @@
                 android:text="课本"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_coach_book"
@@ -109,7 +109,7 @@
                 android:text="辅导书"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_reference_books"
@@ -121,7 +121,7 @@
                 android:text="课外书"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_notes"
@@ -133,7 +133,7 @@
                 android:text="笔记"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_homework"
@@ -145,7 +145,7 @@
                 android:text="作业"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/tv_folder"
@@ -157,7 +157,7 @@
                 android:text="问答"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                android:textStyle="bold" />
+                />
 
         </LinearLayout>
 
