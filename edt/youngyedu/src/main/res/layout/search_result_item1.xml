@@ -12,7 +12,7 @@
     <!--android:layout_height="160dp"-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="223px"
         >
 
         <ImageView
@@ -82,28 +82,26 @@
             android:textColor="@color/black"
             />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/directory_text"
-            android:layout_below="@+id/book_img"
-            android:layout_marginTop="15px"
-            />
-
         <TextView
             android:id="@+id/book_classify"
             android:layout_width="80px"
             android:layout_height="30px"
             android:textSize="20px"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:includeFontPadding="false"
             android:textColor="@color/black"
-            android:layout_marginTop="131px"
+            android:layout_marginBottom="25px"
             android:layout_marginRight="80px"
             android:gravity="center"
             android:text="@{bookInfo.bookCategoryFamilyName}"
             android:background="@drawable/img_keben"
             />
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/directory_text"
+            android:layout_alignParentBottom="true"
+            />
     </RelativeLayout>
 </layout>
