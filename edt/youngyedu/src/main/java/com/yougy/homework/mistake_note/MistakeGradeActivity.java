@@ -186,7 +186,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                         ToastUtil.showToast(getApplicationContext() , "自评失败" + throwable.getMessage());
                     }
                 });
-        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 100);
+//        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 100);
     }
     //错误
     public void onWrongBtnClick(View view){
@@ -202,7 +202,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                         ToastUtil.showToast(getApplicationContext() , "自评失败" + throwable.getMessage());
                     }
                 });
-        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 0);
+//        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 0);
     }
     //我已学会
     public void onHasLearnedBtnCLick(View view){
@@ -217,7 +217,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                             public void call(Object o) {
                                 ToastUtil.showToast(getApplicationContext() , "已学会");
                                 finish();
-                                YougyApplicationManager.getRxBus(getApplicationContext()).send("removeMistakeItem:" + questionItem.itemId);
+//                                YougyApplicationManager.getRxBus(getApplicationContext()).send("removeMistakeItem:" + questionItem.itemId);
                             }
                         }, new Action1<Throwable>() {
                             @Override

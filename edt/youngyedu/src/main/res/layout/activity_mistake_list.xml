@@ -59,7 +59,11 @@
             android:layout_marginBottom="30px"
             android:layout_marginLeft="30px"
             android:layout_marginRight="30px"
-            android:background="@drawable/shape_rectangle_black_border"
+            android:paddingTop="15px"
+            android:paddingLeft="5px"
+            android:paddingRight="5px"
+            android:paddingBottom="5px"
+            android:background="@drawable/shape_rounded_rectangle_black_border"
             />
         <com.frank.etude.pageBtnBar.PageBtnBar
             android:id="@+id/page_btn_bar"
