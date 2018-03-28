@@ -40,6 +40,7 @@ import com.yougy.anwser.STSbean;
 import com.yougy.anwser.TimedTask;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
@@ -57,6 +58,7 @@ import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
+import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -913,9 +915,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (bytesList.size() == 0) {
             return;
         }
-        if (pathList.size() == 0) {
-            return;
-        }
+//        if (pathList.size() == 0) {
+//            return;
+//        }
 
         //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
         if (llCaogaoControl.getVisibility() == View.VISIBLE) {
@@ -1212,6 +1214,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             @Override
                             public void call(Throwable throwable) {
                                 throwable.printStackTrace();
+
+                                if (throwable instanceof ApiException) {
+                                    String errorCode = ((ApiException) throwable).getCode();
+                                    if (errorCode.equals("400")) {
+
+                                        new HintDialog(getBaseContext(), "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(DialogInterface dialog) {
+                                                onBackPressed();
+                                            }
+                                        }).show();
+                                    }
+                                } else {
+                                    ToastUtil.showToast(getBaseContext(), "提交失败，请重试");
+                                }
+
                             }
                         });
 
