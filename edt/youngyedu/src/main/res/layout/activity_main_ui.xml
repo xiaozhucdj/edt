@@ -73,8 +73,8 @@
 
         <ImageButton
             android:id="@+id/imgBtn_showRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40px"
+            android:layout_height="40px"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@null"
