@@ -7,24 +7,24 @@ package com.yougy.common.global;
 
 public class Commons {
 
-    /**
-     * 融捷 内部API 接口
-     */
-//    private static final String URL = " http://192.168.10.16:8080/leke_api/android";
+    public static boolean isRelase = false;
 
+    //全部接口
+    public static String NEW_URL;
+    //书城接口
+    public static String SHOP_URL;
+    //阿里云OSS
+    public static String ALIYUNDATE_URL;
 
-    /**
-     * 外网接口
-     */
-//    private static final String URL = "http://api.learningpad.cn:8080/leke_api/android";
-    public static final String URL = "http://api.learningpad.cn:8080/leke_api/android";
-    public static final String VERSION_URL = "http://api.learningpad.cn:10002/version";
-
-    public static final String SHOP_URL = "http://api.learningpad.cn:10002/bookStore";
-    public static final String NEW_URL = "http://api.learningpad.cn:10002/";
-
-    public static final String CLASSROOM_URL = "http://api.learningpad.cn:10002/classRoom";
-    public static final String ALIYUNDATE_URL = "http://api.learningpad.cn:10002/device";
+    static {
+        if (isRelase) {
+            NEW_URL = "http://api.edu-pad.com.cn/";
+        } else {
+            NEW_URL = "http://api.learningpad.cn:10002/";
+        }
+        SHOP_URL = NEW_URL + "bookStore";
+        ALIYUNDATE_URL = NEW_URL + "device";
+    }
 
     //常量 ,设备ID
     public static String UUID;

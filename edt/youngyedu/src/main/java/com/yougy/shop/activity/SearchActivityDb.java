@@ -25,12 +25,14 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.ResultUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.rx_subscriber.ShopSubscriber;
+import com.yougy.shop.adapter.RecyclerAdapter;
 import com.yougy.shop.adapter.SearchResultAdapter1;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CategoryInfo;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.SearchBinding;
+import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.decoration.SpaceItemDecoration;
 
 import java.io.IOException;
@@ -54,7 +56,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     String mAllGrade;
 
     private SearchBinding binding;
-    private ArrayAdapter<CategoryInfo> mStageAdapter;
+    private RecyclerAdapter mStageAdapter;
     private boolean mSearchFlag;
     private List<BookInfo> mBookInfos;
     private List<BookInfo> mPageInfos = new ArrayList<>();
@@ -129,17 +131,14 @@ public class SearchActivityDb extends ShopBaseActivity {
         binding.subjectWrap.setVerticalMargin(25);
         binding.versionWrap.setHorizontalMargin(40);
         binding.versionWrap.setVerticalMargin(25);
-        binding.stageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        CustomLinearLayoutManager stageManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        stageManager.setScrollEnabled(false);
+        binding.stageRecycler.setLayoutManager(stageManager);
+        binding.stageRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.stageRecycler) {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                LogUtils.e(tag, "onItemSelected item : " + mStageAdapter.getItem(position));
-                generateSubjectLayout(mStageAdapter.getItem(position));
-                showSubjectLayout();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onItemClick(RecyclerView.ViewHolder vh) {
+                hideStageRecyclerLayout(null);
+                generateSubjectLayout(mStageAdapter.getItem(vh.getAdapterPosition()));
             }
         });
 
@@ -168,11 +167,14 @@ public class SearchActivityDb extends ShopBaseActivity {
     private void generateSubjectLayout(CategoryInfo info) {
         bookCategoryMatch = info.getCategoryId();
         List<CategoryInfo> childs = info.getChilds();
-        if (null == childs || childs.size() == 0) {
-            return;
-        }
         if (binding.subjectWrap.getChildCount() != 0) {
             binding.subjectWrap.removeAllViews();
+        }
+        if (null == childs || childs.size() == 0) {
+            binding.subjectLayout.setVisibility(View.GONE);
+            return;
+        }else{
+            showSubjectLayout();
         }
         for (final CategoryInfo item : info.getChilds()) {
             View layout = View.inflate(this, R.layout.text_view, null);
@@ -393,7 +395,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     private void resetFiltrate() {
-        binding.stageSpinner.setSelection(0);
+        binding.stageButton.setText(mStageAdapter.getItem(0).getCategoryDisplay());
         binding.subjectLayout.setVisibility(View.GONE);
         binding.versionLayout.setVisibility(View.GONE);
         binding.textBookTv.setSelected(false);
@@ -424,12 +426,22 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void showGradeLayout() {
         List<CategoryInfo> infos = BookShopActivityDB.grades.get(currentItem).getChilds();
-        mStageAdapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item, infos);
-        mStageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.stageSpinner.setAdapter(mStageAdapter);
+        mStageAdapter = new RecyclerAdapter(infos);
+        binding.stageRecycler.setAdapter(mStageAdapter);
+        binding.stageButton.setText(mStageAdapter.getItem(0).getCategoryDisplay());
         binding.gradeLayout.setVisibility(View.VISIBLE);
+        binding.subjectLayout.setVisibility(View.GONE);
+    }
+    public void stageClick(View view) {
+        LogUtils.e(tag, "stage click............." + binding.stageRecyclerLayout.getVisibility()+"");
+        binding.stageRecyclerLayout.setVisibility(binding.stageRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
     }
 
+    public void hideStageRecyclerLayout(View view) {
+        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE) {
+            binding.stageRecyclerLayout.setVisibility(View.GONE);
+        }
+    }
     private void hideGradeLayout() {
         binding.gradeLayout.setVisibility(View.GONE);
     }

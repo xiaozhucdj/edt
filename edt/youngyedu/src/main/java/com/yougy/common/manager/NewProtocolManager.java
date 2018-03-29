@@ -67,11 +67,15 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        if (Commons.isRelase) {
+            builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
+        }
         RequestCall call = builder.build();
         // 执行请求，
         call.execute(callbac);
     }
-    private static Response setCommon(String url, String json, int id ) {
+
+    private static Response setCommon(String url, String json, int id) {
 
         LogUtils.i("请求地址.......url..." + url);
         LogUtils.i("请求数据.......json..." + json);
@@ -91,17 +95,22 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        if (Commons.isRelase) {
+            builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
+        }
+
         RequestCall call = builder.build();
         // 执行请求，
         try {
-            return   call.execute();
+            return call.execute();
         } catch (IOException e) {
             e.printStackTrace();
-            return  null ;
+            return null;
         }
     }
-    private static Response setCommon(String json, int id){
-        LogUtils.e("NewProtocolManager","requst json : " + json);
+
+    private static Response setCommon(String json, int id) {
+        LogUtils.e("NewProtocolManager", "requst json : " + json);
         String url = Commons.SHOP_URL;
         //防止用户的多次请求
 //        OkHttpUtils.getInstance().cancelTag(url);
@@ -117,6 +126,9 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        if (Commons.isRelase) {
+            builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
+        }
         RequestCall call = builder.build();
         // 执行请求，
         Response response = null;
@@ -127,7 +139,6 @@ public class NewProtocolManager {
         }
         return response;
     }
-
 
 
     /////////////////////////////////版本接口,web/version ////////////////////////////////////////
@@ -316,6 +327,7 @@ public class NewProtocolManager {
 
     /**
      * 15添加笔记
+     *
      * @param req
      * @param callbac
      */
@@ -354,32 +366,33 @@ public class NewProtocolManager {
     /**
      * 促销活动查询
      */
-    public static Response queryPromotionActivityInfo(PromotionReq req){
-        return setCommon(GsonUtil.toJson(req),NewProtocolId.ID_PROMOTION_ACTIVITY);
+    public static Response queryPromotionActivityInfo(PromotionReq req) {
+        return setCommon(GsonUtil.toJson(req), NewProtocolId.ID_PROMOTION_ACTIVITY);
     }
 
     /**
      * 19 查询阿里云数据
      */
-    public static Response queryAliyunData(AliyunDataUploadReq req){
-        return setCommon(Commons.ALIYUNDATE_URL,GsonUtil.toJson(req),NewProtocolId.ID_ALIYUN_DATA);
+    public static Response queryAliyunData(AliyunDataUploadReq req) {
+        return setCommon(Commons.ALIYUNDATE_URL, GsonUtil.toJson(req), NewProtocolId.ID_ALIYUN_DATA);
     }
 
-    public static Response queryAliyunData(AliyunDataDownloadReq req){
-        return setCommon(Commons.ALIYUNDATE_URL,GsonUtil.toJson(req),NewProtocolId.ID_ALIYUN_DATA);
+    public static Response queryAliyunData(AliyunDataDownloadReq req) {
+        return setCommon(Commons.ALIYUNDATE_URL, GsonUtil.toJson(req), NewProtocolId.ID_ALIYUN_DATA);
     }
 
 
     /**
      * 图书查询
      */
-    public static Response queryBook(NewBookStoreBookReq req){
-        return setCommon(GsonUtil.toJson(req),NewProtocolId.ID_BOOKSHOP_BOOK);
+    public static Response queryBook(NewBookStoreBookReq req) {
+        return setCommon(GsonUtil.toJson(req), NewProtocolId.ID_BOOKSHOP_BOOK);
     }
 
 
     /**
      * 添加笔记 --数组
+     *
      * @param req
      * @param callbac
      */
@@ -388,14 +401,15 @@ public class NewProtocolManager {
     }
 
 
-    /**20 更新笔记
+    /**
+     * 20 更新笔记
+     *
      * @param req
      * @param callbac
      */
     public static void updateNote(NewUpdateNoteReq req, Callback callbac) {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE, callbac);
     }
-
 
 
     /***协议请求 id*/
@@ -424,7 +438,7 @@ public class NewProtocolManager {
 
         public static final int ID_QUERY_SCHOOL_ORG = 12;
 
-        public static final int ID_BOOK_SHELF= 13 ;
+        public static final int ID_BOOK_SHELF = 13;
 
 //        public static final int ID_QUERY_NOTE= 14 ;
 
@@ -445,7 +459,7 @@ public class NewProtocolManager {
         public static final int ID_BOOKSHOP_HOME = 40;
         public static final int ID_BOOKSHOP_CATEGORY_ALL = 41;
         public static final int ID_BOOKSHOP_BOOK = 42;
-        public static final int ID_UPDATE_NOTE= 20;
+        public static final int ID_UPDATE_NOTE = 20;
         public static final int ID_ALIYUN_DATA = 50;
         public static final int ID_PROMOTION_ACTIVITY = 51;
 

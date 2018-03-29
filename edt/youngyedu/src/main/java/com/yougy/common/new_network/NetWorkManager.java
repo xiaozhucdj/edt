@@ -6,6 +6,7 @@ import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.global.Commons;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
@@ -72,13 +73,15 @@ public final class NetWorkManager {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
                 Request orignaRequest = chain.request();
-                Request request = orignaRequest.newBuilder()
-//                        .header("AppType", "POST")
-                        .header("Content-Type", "application/json")
-                        .header("Accept", "application/json")
-                        .method(orignaRequest.method(), orignaRequest.body())
-                        .build();
+                Request.Builder newBuilder = orignaRequest.newBuilder();
+                newBuilder.header("Content-Type", "application/json");
+                newBuilder.header("Accept", "application/json");
+                newBuilder.method(orignaRequest.method(), orignaRequest.body());
+                if (Commons.isRelase){
+                    newBuilder.addHeader("X-Auth-Options" ,"1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo") ;
+                }
 
+                Request request =  newBuilder.build() ;
                 return chain.proceed(request);
             }
         };
@@ -94,7 +97,7 @@ public final class NetWorkManager {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(mClient)
-                .baseUrl(NetConfig.SERVER_HOST)
+                .baseUrl(Commons.NEW_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
@@ -179,18 +182,19 @@ public final class NetWorkManager {
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId) {
         Log.v("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId , "II02")
-                .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
-    }
-    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
-        Log.v("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId , "II01")
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "II02")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<BookInfo>> queryBook(String bookId , String userId) {
+    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
+        Log.v("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "II01")
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<BookInfo>> queryBook(String bookId, String userId) {
         Log.v("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
         return getInstance().getServerApi().queryBook(bookId, userId)
                 .compose(RxSchedulersHelper.io_main())
@@ -219,6 +223,7 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
+
     public static Observable<List<HomeworkDetail>> queryHomeworkDetailList(String examIds) {
         Log.v("FH", "!!!!!调用ServerApi查询多个作业详情:queryHomeworkDetailList");
         return getInstance().getServerApi().queryHomeworkDetailList(examIds)
@@ -272,9 +277,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId , Integer userId) {
+    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId) {
         Log.v("FH", "!!!!!调用ServerApi查询考试回答情况:queryReply");
-        return getInstance().getServerApi().queryReply(examId , userId)
+        return getInstance().getServerApi().queryReply(examId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -362,7 +367,6 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
-
 
 
 }

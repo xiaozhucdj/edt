@@ -59,6 +59,7 @@
             android:layout_above="@id/bottom_bar_layout"
             android:paddingLeft="30px"
             android:paddingRight="30px"
+            android:listSelector="#00000000"
             />
     </RelativeLayout>
 </layout>

@@ -113,8 +113,6 @@ public class RecentContactListActivity extends MessageBaseActivity {
         titleTv.setText("我的消息");
         rightBtn.setBackgroundResource(R.drawable.img_contact_list_icon);
         rightBtn.setText("");
-        rightBtn.getLayoutParams().width = 28;
-        rightBtn.getLayoutParams().height = 28;
     }
 
     @Override

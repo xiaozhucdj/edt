@@ -58,6 +58,9 @@ public class ProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        if (Commons.isRelase) {
+            builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
+        }
         RequestCall call = builder.build();
         // 执行请求，
         call.execute(callbac);
@@ -79,6 +82,9 @@ public class ProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        if (Commons.isRelase) {
+            builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
+        }
         RequestCall call = builder.build();
         // 执行请求，
         Response response = null;
