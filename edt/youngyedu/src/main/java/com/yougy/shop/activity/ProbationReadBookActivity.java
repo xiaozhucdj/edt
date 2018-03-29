@@ -217,7 +217,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 break;
             case R.id.imgbtn_addCar:
                 if (mBookInfo.isBookInCart()) {
-                    showCenterDetermineDialog(R.string.books_already_add_car);
+                    showCenterDetermineDialog(R.string.books_already_add_car_2);
                 } else if (mBookInfo.isBookInShelf()) {
                     showCenterDetermineDialog(R.string.books_already_buy);
                 } else {

@@ -189,7 +189,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     binding.bookOriginPriceTv.setText(getString(R.string.list_price, mBookInfo.getBookSalePrice() + ""));
                     binding.bookSalePriceTv.setText(getString(R.string.sale_price, mBookInfo.getBookSpotPrice() + ""));
                     //购买按钮价格
-                    binding.buyBtn.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
+                    binding.buyBtn.setText("￥" + mBookInfo.getBookSpotPrice() + "购买");
                     //图书详情
                     if (TextUtils.isEmpty(mBookInfo.getBookSummary())) {
                         binding.bookDetailTv.setText("");
@@ -741,7 +741,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     public void addCart(View view){
         if (mBookInfo.isBookInCart()) {
             //书加入了购物车
-            showCenterDetermineDialog(R.string.books_already_add_car);
+            showCenterDetermineDialog(R.string.books_already_add_car_2);
         } else if (mBookInfo.isBookInShelf()) {
             showReaderForPackage();
         } else {

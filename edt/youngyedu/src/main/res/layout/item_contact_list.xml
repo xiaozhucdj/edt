@@ -13,6 +13,7 @@
             android:background="@drawable/btn_check_select"
             android:layout_marginLeft="20px"
             android:layout_marginTop="2px"
+            android:clickable="false"
             />
         <ImageView
             android:id="@+id/avatar_imv"

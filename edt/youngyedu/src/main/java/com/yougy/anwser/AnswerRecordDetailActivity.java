@@ -89,7 +89,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
         binding.answerAnalysisBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //答案与解析
+                //解答
                 if (binding.questionBodyBtn.isSelected()) {
                     binding.questionBodyBtn.setSelected(false);
                     binding.answerAnalysisBtn.setSelected(true);
