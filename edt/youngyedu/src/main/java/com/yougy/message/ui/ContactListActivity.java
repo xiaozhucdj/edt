@@ -48,6 +48,8 @@ public class ContactListActivity extends MessageBaseActivity{
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
         titleTv.setText("联系人");
         rightBtn.setText("发送");
+        rightBtn.getLayoutParams().width = rightBtn.getLayoutParams().WRAP_CONTENT;
+        rightBtn.getLayoutParams().height = rightBtn.getLayoutParams().WRAP_CONTENT;
     }
 
     @Override
@@ -78,6 +80,7 @@ public class ContactListActivity extends MessageBaseActivity{
             };
             intent.putExtra("idList" , idList);
             intent.putExtra("nameList" , nameList);
+            intent.putExtra("type" , SessionTypeEnum.P2P.toString());
             startActivity(intent);
         }
     }
