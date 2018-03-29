@@ -189,6 +189,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
         ProtocolManager.queryShopBookDetailByIdProtocol(SpUtils.getAccountId(), mBookInfo.getBookId()
                 , ProtocolId.PROTOCOL_ID_QUERY_SHOP_BOOK_DETAIL, new QueryShopBookDetailCallBack(this, mBookInfo.getBookId()));
+
         ProtocolManager.queryBookCartProtocol(SpUtils.getAccountId(), ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART
                 , new QueryBookCartCallBack(this, ProtocolId.PROTOCOL_ID_QUERY_BOOK_CART));
     }

@@ -5,12 +5,10 @@ package com.yougy.common.protocol.callback;
  */
 
 import android.content.Context;
-import android.util.Log;
 
-import com.yougy.common.global.Commons;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.ProtocolId;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
@@ -22,8 +20,10 @@ import okhttp3.Response;
  * 登录接口回调
  */
 public class LoginCallBack extends BaseCallBack<NewLoginRep> {
-    public LoginCallBack(Context context) {
+    private NewLoginReq mReq ;
+    public LoginCallBack(Context context ,NewLoginReq req) {
         super(context);
+        mReq = req ;
     }
 
     @Override
@@ -43,7 +43,8 @@ public class LoginCallBack extends BaseCallBack<NewLoginRep> {
 
     @Override
     public void onUiDetermineListener() {
-        ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, this);
+//        ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, this);
+          NewProtocolManager.login(mReq,this);
     }
 
     public interface OnJumpListener {
