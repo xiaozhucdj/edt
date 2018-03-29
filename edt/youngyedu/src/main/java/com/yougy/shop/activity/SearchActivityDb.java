@@ -134,7 +134,6 @@ public class SearchActivityDb extends ShopBaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 LogUtils.e(tag, "onItemSelected item : " + mStageAdapter.getItem(position));
                 generateSubjectLayout(mStageAdapter.getItem(position));
-                showSubjectLayout();
             }
 
             @Override
@@ -168,11 +167,14 @@ public class SearchActivityDb extends ShopBaseActivity {
     private void generateSubjectLayout(CategoryInfo info) {
         bookCategoryMatch = info.getCategoryId();
         List<CategoryInfo> childs = info.getChilds();
-        if (null == childs || childs.size() == 0) {
-            return;
-        }
         if (binding.subjectWrap.getChildCount() != 0) {
             binding.subjectWrap.removeAllViews();
+        }
+        if (null == childs || childs.size() == 0) {
+            binding.subjectLayout.setVisibility(View.GONE);
+            return;
+        }else{
+            showSubjectLayout();
         }
         for (final CategoryInfo item : info.getChilds()) {
             View layout = View.inflate(this, R.layout.text_view, null);
