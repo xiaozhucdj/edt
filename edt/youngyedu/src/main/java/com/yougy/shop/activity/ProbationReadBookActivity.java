@@ -96,8 +96,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     private View mRootView;
     private int mCurrentMarksPage = 0;
     private int mTagForNoNet = 1;
-    private int mTagForRequestDetailsFail =2;
-    private int mTagForQueryNoNet =3;
+    private int mTagForRequestDetailsFail = 2;
+    private int mTagForQueryNoNet = 3;
 
     /////////////////////////////////Files///////////////////////////
 
@@ -111,6 +111,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     @Override
     protected void init() {
         mBookInfo = getIntent().getParcelableExtra(ShopGloble.BOOK_INFO);
+        mImgbtnFavor.setImageResource(mBookInfo.isBookInFavor() ? R.drawable.icon_shoucang_yitianjia : R.drawable.icon_shoucang);
     }
 
     @Override
@@ -130,12 +131,12 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     private void initPDF() {
 //     mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
 
-        mProbationUrl =   FileUtils.getBookFileName(mBookInfo.getBookId() ,FileUtils.bookProbation) ;
+        mProbationUrl = FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookProbation);
         LogUtils.i("mProbationUrl ......" + mProbationUrl);
         mOnyxImgView = new ImageView(this);
         mOnyxImgView.setLayoutParams(new LinearLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
         mLlPdfFather.addView(mOnyxImgView, 0);
-        getReaderPresenter().openDocument(mProbationUrl,"");
+        getReaderPresenter().openDocument(mProbationUrl, "");
     }
 
     //////////////////////////////////////////解析PDF////////////////////////////////////////////////////
@@ -253,7 +254,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtils.getAccountId())
                 , "[\"已支付\",\"待支付\"]"
                 , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER
-                , new QueryOrderListCallBack(ProbationReadBookActivity.this , ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
+                , new QueryOrderListCallBack(ProbationReadBookActivity.this, ProtocolId.PROTOCOL_ID_QUERY_BOOK_ORDER));
     }
 
     /***
@@ -287,7 +288,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                     }
                 } else if (o instanceof QueryShopBookDetailRep) {
                     QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
-                    if (rep.getData() != null && rep.getData() .size()>0) {
+                    if (rep.getData() != null && rep.getData().size() > 0) {
                         mBookInfo = rep.getData().get(0);
                         mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
                     } else {
@@ -313,9 +314,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                     } else {
                         showCenterDetermineDialog(R.string.get_order_fail);
                     }
-                }
-                else if (o instanceof QueryBookOrderListRep){
-                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                } else if (o instanceof QueryBookOrderListRep) {
+                    if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS) {
                         Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
                         if (((QueryBookOrderListRep) o).getData().size() > 0) {
                             new HintDialog(ProbationReadBookActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
@@ -326,8 +326,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         request.getData().add(new RequirePayOrderRequest.BookIdObj(mBookInfo.getBookId()));
                         ProtocolManager.requirePayOrderProtocol(request, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER
                                 , new RequireOrderCallBack(ProbationReadBookActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
-                    }
-                    else {
+                    } else {
                         new HintDialog(ProbationReadBookActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
                         Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
                     }
@@ -372,6 +371,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         }
         AppendBookFavorCallBack call = new AppendBookFavorCallBack(this, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, request);
         ProtocolManager.appendBookFavorProtocol(request, ProtocolId.PROTOCOL_ID_APPEND_BOOK_FAVOR, call);
+        mImgbtnFavor.setImageResource(R.drawable.icon_shoucang_yitianjia);
     }
 
     @Override
@@ -403,7 +403,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     public void openDocumentFinsh() {
 
         mPageCounts = mReaderPresenter.getPages();
-        LogUtils.i("mPageCounts ..."+mPageCounts);
+        LogUtils.i("mPageCounts ..." + mPageCounts);
         initSeekBar();
         requestPageTask(mCurrentMarksPage);
     }
@@ -463,7 +463,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
             return;
         }
         mCurrentMarksPage = position;
-        LogUtils.i("position ..."+position);
+        LogUtils.i("position ..." + position);
         getReaderPresenter().gotoPage(position);
     }
 
@@ -481,7 +481,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     @Override
     public void onUiCancelListener() {
         super.onUiCancelListener();
-        if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail ||  getUiPromptDialog().getTag() == mTagForQueryNoNet) {
+        if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail || getUiPromptDialog().getTag() == mTagForQueryNoNet) {
             this.finish();
         }
     }

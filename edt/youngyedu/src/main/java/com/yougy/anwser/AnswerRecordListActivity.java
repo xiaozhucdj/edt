@@ -10,6 +10,7 @@ import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
@@ -28,9 +29,9 @@ import rx.functions.Action1;
 
 public class AnswerRecordListActivity extends AnswerBaseActivity{
     ActivityAnswerRecordListBinding binding;
-    int bookId,cursorId;
     String bookName;
     ArrayList<HomeworkDetail> homeworkDetailList = new ArrayList<HomeworkDetail>();
+    ArrayList<Integer> itemIdList = new ArrayList<Integer>();
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this)
@@ -41,8 +42,14 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
 
     @Override
     protected void init() {
-        bookId = getIntent().getIntExtra("bookId" , -1);
-        cursorId = getIntent().getIntExtra("cursor" , -1);
+        ArrayList<Integer> list = (ArrayList<Integer>) getIntent().getSerializableExtra("itemIdList");
+        if (list == null || list.size() == 0){
+            ToastUtil.showToast(getApplicationContext() , "没有问答");
+            finish();
+        }
+        else {
+            itemIdList.addAll(list);
+        }
         binding.currentChapterBtn.setText(getIntent().getStringExtra("chapterName"));
         bookName = getIntent().getStringExtra("bookName");
         binding.titleTv.setText(bookName + "问答");
@@ -85,7 +92,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                                     @Override
                                     public void call(List<QuestionReplySummary> replySummaries) {
                                         if (replySummaries.size() == 0){
-                                            binding.statusTv.setText("作\n答\n中");
+                                            binding.statusTv.setText("未\n提\n交");
                                             binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
                                         }
                                         else {
@@ -157,6 +164,9 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                         newIntent.putExtra("startTime" , homeworkDetail.getExamStartTime());
                         startActivity(newIntent);
                         break;
+                    case "未\n提\n交":
+                        ToastUtil.showToast(getApplicationContext() , "本次问答您未提交");
+                        break;
                 }
             }
         });
@@ -166,19 +176,30 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryAnswer(SpUtils.getStudent().getClassId() , bookId + "" , cursorId).subscribe(new Action1<List<HomeworkDetail>>() {
-            @Override
-            public void call(List<HomeworkDetail> homeworkDetails) {
-                homeworkDetailList.clear();
-                homeworkDetailList.addAll(homeworkDetails);
-                binding.pageBtnBar.refreshPageBar();
+        String itemIdStr = "[";
+        for (int i = 0 ; i < itemIdList.size() ; i++) {
+            Integer itemId = itemIdList.get(i);
+            itemIdStr = itemIdStr + itemId;
+            if (i + 1 < itemIdList.size()){
+                itemIdStr = itemIdStr + ",";
             }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                throwable.printStackTrace();
-            }
-        });
+        }
+        itemIdStr = itemIdStr + "]";
+        if (!itemIdStr.equals("[]")){
+            NetWorkManager.queryHomeworkDetailList(itemIdStr).subscribe(new Action1<List<HomeworkDetail>>() {
+                @Override
+                public void call(List<HomeworkDetail> homeworkDetails) {
+                    homeworkDetailList.clear();
+                    homeworkDetailList.addAll(homeworkDetails);
+                    binding.pageBtnBar.refreshPageBar();
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override

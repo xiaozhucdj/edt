@@ -167,13 +167,21 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void generateSubjectLayout(CategoryInfo info) {
         bookCategoryMatch = info.getCategoryId();
+        List<CategoryInfo> childs = info.getChilds();
+        if (null == childs || childs.size() == 0) {
+            return;
+        }
         if (binding.subjectWrap.getChildCount() != 0) {
             binding.subjectWrap.removeAllViews();
         }
         for (final CategoryInfo item : info.getChilds()) {
             View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
-            tv.setText(item.getCategoryDisplay());
+            String display = item.getCategoryDisplay();
+            if (display.length() > 4) {
+                display = display.substring(0, 4);
+            }
+            tv.setText(display);
             tv.setOnClickListener(v -> {
                 resetSubjectTv();
                 generateVersionLayout(item);
@@ -318,7 +326,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         bookTitle = binding.searchKey.getText().toString();
         if (!TextUtils.isEmpty(bookTitle)) {
             NewBookStoreBookReq req = new NewBookStoreBookReq();
-            req.setBookTitle(bookTitle);
+            req.setBookTitleMatch(bookTitle);
             queryBook(req);
         }
     }

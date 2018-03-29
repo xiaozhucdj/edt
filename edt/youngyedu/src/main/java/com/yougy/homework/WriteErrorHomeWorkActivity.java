@@ -73,13 +73,16 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @BindView(R.id.iv_last_zp_result)
     ImageView ivZpResult;
+    @BindView(R.id.tv_last_zp_result)
+    TextView tvZpResult;
     @BindView(R.id.tv_caogao_text)
     TextView tvCaogaoText;
     @BindView(R.id.ll_caogao_control)
     LinearLayout llCaogaoControl;
     @BindView(R.id.rl_caogao_box)
     RelativeLayout rlCaogaoBox;
-
+    @BindView(R.id.sub_title_tv)
+    TextView subTitleTv;
 
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -141,18 +144,31 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void initLayout() {
+        if (!TextUtils.isEmpty(bookTitle)){
+            subTitleTv.setText(" - " + bookTitle);
+        }
         //新建写字板，并添加到界面上
         mNbvAnswerBoard = new NoteBookView2(this);
         mCaogaoNoteBoard = new NoteBookView2(this);
         switch (lastScore) {
             case 0:
+                tvZpResult.setText("上次自评结果 : ");
+                ivZpResult.setVisibility(View.VISIBLE);
                 ivZpResult.setImageResource(R.drawable.img_ziping_cuowu);
                 break;
             case 50:
+                tvZpResult.setText("上次自评结果 : ");
+                ivZpResult.setVisibility(View.VISIBLE);
                 ivZpResult.setImageResource(R.drawable.img_ziping_bandui);
                 break;
             case 100:
+                tvZpResult.setText("上次自评结果 : ");
+                ivZpResult.setVisibility(View.VISIBLE);
                 ivZpResult.setImageResource(R.drawable.img_ziping_zhengque);
+                break;
+            case -1:
+                tvZpResult.setText("上次自评结果 : 无");
+                ivZpResult.setVisibility(View.GONE);
                 break;
         }
         ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper() {
@@ -205,6 +221,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        showNetDialog();
         NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override

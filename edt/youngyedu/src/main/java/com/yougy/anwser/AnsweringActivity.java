@@ -186,6 +186,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     public void loadData() {
+        showNetDialog();
         NetWorkManager.queryQuestionItemList(fromUserId, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
@@ -649,6 +650,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * 获取oss上传所需信息
      */
     private void getUpLoadInfo() {
+        showNetDialog();
         NetWorkManager.queryReplyRequest(SpUtils.getUserId() + "")
                 .subscribe(new Action1<STSbean>() {
                     @Override

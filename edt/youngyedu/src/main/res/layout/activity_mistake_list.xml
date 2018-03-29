@@ -50,12 +50,26 @@
                 />
         </LinearLayout>
         <View android:layout_width="match_parent" android:layout_height="2px" android:background="@color/black"/>
-        <com.yougy.homework.PageableRecyclerView
-            android:id="@+id/main_recyclerview"
+        <com.yougy.anwser.ContentDisplayer
+            android:id="@+id/content_displayer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:layout_marginTop="30px"
             android:layout_marginBottom="30px"
-            android:layout_marginTop="3px"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:paddingTop="15px"
+            android:paddingLeft="5px"
+            android:paddingRight="5px"
+            android:paddingBottom="5px"
+            android:background="@drawable/shape_rounded_rectangle_black_border"
+            />
+        <com.frank.etude.pageBtnBar.PageBtnBar
+            android:id="@+id/page_btn_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30px"
             />
         <TextView
             android:id="@+id/no_result_textview"

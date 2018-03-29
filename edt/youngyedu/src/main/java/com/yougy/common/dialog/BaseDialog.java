@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Window;
+import android.view.WindowManager;
 
 /**
  * Created by Administrator on 2016/7/11.
@@ -22,6 +23,7 @@ public abstract class BaseDialog extends Dialog {
         init();
         Window window = getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);
+        this.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
 //        super.setOnDismissListener(mInnerListener);
     }
 
@@ -30,6 +32,7 @@ public abstract class BaseDialog extends Dialog {
         init();
         Window window = getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);
+        this.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
 //        super.setOnDismissListener(mInnerListener);
     }
 
