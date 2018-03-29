@@ -167,6 +167,10 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void generateSubjectLayout(CategoryInfo info) {
         bookCategoryMatch = info.getCategoryId();
+        List<CategoryInfo> childs = info.getChilds();
+        if (null == childs || childs.size() == 0) {
+            return;
+        }
         if (binding.subjectWrap.getChildCount() != 0) {
             binding.subjectWrap.removeAllViews();
         }
