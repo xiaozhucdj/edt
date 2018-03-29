@@ -177,7 +177,11 @@ public class SearchActivityDb extends ShopBaseActivity {
         for (final CategoryInfo item : info.getChilds()) {
             View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
-            tv.setText(item.getCategoryDisplay());
+            String display = item.getCategoryDisplay();
+            if (display.length() > 4) {
+                display = display.substring(0, 4);
+            }
+            tv.setText(display);
             tv.setOnClickListener(v -> {
                 resetSubjectTv();
                 generateVersionLayout(item);
