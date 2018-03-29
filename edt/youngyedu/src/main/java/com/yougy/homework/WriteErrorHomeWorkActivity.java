@@ -221,6 +221,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        showNetDialog();
         NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override

@@ -92,7 +92,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                                     @Override
                                     public void call(List<QuestionReplySummary> replySummaries) {
                                         if (replySummaries.size() == 0){
-                                            binding.statusTv.setText("作\n答\n中");
+                                            binding.statusTv.setText("未\n提\n交");
                                             binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
                                         }
                                         else {
@@ -163,6 +163,9 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                         newIntent.putExtra("bookName" , bookName);
                         newIntent.putExtra("startTime" , homeworkDetail.getExamStartTime());
                         startActivity(newIntent);
+                        break;
+                    case "未\n提\n交":
+                        ToastUtil.showToast(getApplicationContext() , "本次问答您未提交");
                         break;
                 }
             }
