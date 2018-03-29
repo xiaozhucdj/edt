@@ -1,9 +1,6 @@
 package com.yougy.common.manager;
 
-import android.widget.Toast;
-
 import com.yougy.common.global.Commons;
-import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.AliyunDataDownloadReq;
 import com.yougy.common.protocol.request.AliyunDataUploadReq;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
@@ -33,15 +30,10 @@ import com.yougy.common.protocol.request.NewUpdateUserReq;
 import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.StringUtils;
-import com.yougy.common.utils.UIUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.PostStringBuilder;
 import com.zhy.http.okhttp.callback.Callback;
 import com.zhy.http.okhttp.request.RequestCall;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -79,7 +71,6 @@ public class NewProtocolManager {
         // 执行请求，
         call.execute(callbac);
     }
-
     private static Response setCommon(String url, String json, int id ) {
 
         LogUtils.i("请求地址.......url..." + url);
@@ -109,8 +100,6 @@ public class NewProtocolManager {
             return  null ;
         }
     }
-
-
     private static Response setCommon(String json, int id){
         LogUtils.e("NewProtocolManager","requst json : " + json);
         String url = Commons.SHOP_URL;
@@ -140,36 +129,6 @@ public class NewProtocolManager {
     }
 
 
-    /***
-     * 解析 仅有公共头的JSON
-     *
-     * @param json    str
-     * @param success 成功提示
-     * @param error   失败提示
-     */
-    public static boolean pareOnlyHeadJson(String json, String success, String error) {
-        boolean result = false;
-        if (!StringUtils.isEmpty(json)) {
-            //解析JSON
-            try {
-                JSONObject obj = new JSONObject(json);
-                int ret = obj.isNull("ret") ? -1 : obj.getInt("ret");
-                if (ret == ProtocolId.RET_SUCCESS) {
-                    UIUtils.showToastSafe(success, Toast.LENGTH_SHORT);
-                    result = true;
-                } else {
-                    UIUtils.showToastSafe(error, Toast.LENGTH_SHORT);
-                    result = false;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            UIUtils.showToastSafe(error, Toast.LENGTH_SHORT);
-            result = false;
-        }
-        return result;
-    }
 
     /////////////////////////////////版本接口,web/version ////////////////////////////////////////
 
@@ -437,21 +396,6 @@ public class NewProtocolManager {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE, callbac);
     }
 
-    /**
-     * 添加笔记 --数组
-     * @param req
-     */
-    public static Response inserAllNote(NewInserAllNoteReq req) {
-        return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_INSER_NOTE);
-    }
-
-
-    /**20 更新笔记  main
-     * @param req
-     */
-    public static Response updateNote(NewUpdateNoteReq req) {
-        return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UPDATE_NOTE);
-    }
 
 
     /***协议请求 id*/

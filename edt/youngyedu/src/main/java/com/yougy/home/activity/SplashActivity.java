@@ -188,7 +188,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     private void login() {
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
-        NewProtocolManager.login(loginReq, new LoginCallBack(this) {
+        NewProtocolManager.login(loginReq, new LoginCallBack(this,loginReq) {
             @Override
             public void onBefore(Request request, int id) {
             }

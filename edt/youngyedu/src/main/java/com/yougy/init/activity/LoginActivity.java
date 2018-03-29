@@ -203,7 +203,7 @@ public class LoginActivity extends BaseActivity {
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setUserName(binding.accountEdittext.getText().toString());
         loginReq.setUserPassword(binding.pwdEdittext.getText().toString());
-        NewProtocolManager.login(loginReq,new LoginCallBack(this));
+        NewProtocolManager.login(loginReq,new LoginCallBack(this ,loginReq));
     }
 
     public void forgetPwd(View view){

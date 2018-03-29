@@ -42,7 +42,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <service android:name="com.yougy.home.UploadService" />
 
         <activity
             android:name="com.yougy.home.activity.SplashActivity"
@@ -81,59 +80,6 @@
             android:name="com.yougy.init.activity.LocalLockActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <!-- 墨水屏 -->
-        <activity
-            android:name="com.inkscreen.TopicActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name="com.inkscreen.WorkReportActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name="com.inkscreen.LeaveActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name="com.inkscreen.MainActivityScreen"
-            android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
-
-        <activity
-            android:name="com.inkscreen.AnswerActivity"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name="com.inkscreen.MySortActivity"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name="com.inkscreen.LoginActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-
-        <activity
-            android:name="com.inkscreen.MyWrongActivity"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-        <activity
-            android:name="com.inkscreen.MyTobeIsudActivity"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-        <activity
-            android:name="com.inkscreen.MyHaslsudActivity"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.inkscreen.MainActivityScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.yougy.shop.activity.SearchActivityDb"
             android:windowSoftInputMode="stateHidden|adjustPan" />

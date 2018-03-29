@@ -10,9 +10,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-
-import com.inkscreen.LeController;
-import com.inkscreen.utils.NetworkManager;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.utils.NetworkUtil;
 import com.yolanda.nohttp.Logger;
@@ -92,11 +89,9 @@ public class YougyApplicationManager extends LitePalApplication {
         //其他的正常初始化需要区分进程,只在主进程里初始化
         if (inMainProcess(this)){
             //       watcher = LeakCanary.install(this);
-            LeController.init(this);
             mContext = this;
             instance = this;
             mInstance = this;
-            NetworkManager.getInstance().shutdownHttpClient();
             mMainThreadHandler = new Handler();
 
             mMainThreadId = android.os.Process.myTid();

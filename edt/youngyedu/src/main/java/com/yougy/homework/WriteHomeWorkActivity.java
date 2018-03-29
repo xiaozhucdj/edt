@@ -838,6 +838,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        fullScreenHintDialog.dismiss();
                         // 去提交
                         getUpLoadInfo();
 
@@ -1208,12 +1209,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void call(Object o) {
                         timedTask.stop();
 
+                        ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
 
                         NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
                             @Override
                             public void call(Object o) {
 
-                                ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
 //                                YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
                                 onBackPressed();
                             }
@@ -1221,31 +1222,30 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             @Override
                             public void call(Throwable throwable) {
                                 throwable.printStackTrace();
-
-                                if (throwable instanceof ApiException) {
-                                    String errorCode = ((ApiException) throwable).getCode();
-                                    if (errorCode.equals("400")) {
-
-                                        new HintDialog(getBaseContext(), "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
-                                            @Override
-                                            public void onDismiss(DialogInterface dialog) {
-                                                onBackPressed();
-                                            }
-                                        }).show();
-                                    }
-                                } else {
-                                    ToastUtil.showToast(getBaseContext(), "提交失败，请重试");
-                                }
-
+                                onBackPressed();
                             }
                         });
-
 
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        if (throwable instanceof ApiException) {
+                            String errorCode = ((ApiException) throwable).getCode();
+                            if (errorCode.equals("400")) {
+
+                                HintDialog hintDialog = new HintDialog(getBaseContext(), "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        onBackPressed();
+                                    }
+                                });
+                                hintDialog.show();
+                            }
+                        } else {
+                            ToastUtil.showToast(getBaseContext(), "提交失败，请重试");
+                        }
                     }
                 });
     }
