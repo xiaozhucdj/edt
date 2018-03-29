@@ -224,8 +224,8 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             public void onError(Call call, Exception e, int id) {
                 Log.v("FH", "自动登录失败原因:其他错误:" + e.getMessage());
                 if (-1 == SpUtils.getAccountId()) {
-                    Log.v("FH", "自动登录失败,没有之前的登录信息,跳转到wifi设置");
-                    jumpWifiActivity();
+                    Log.v("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
+                    jumpActivity(LoginActivity.class);
                 } else {
                     Log.v("FH", "自动登录失败,有之前的登录信息");
                     checkLocalLockAndJump();
