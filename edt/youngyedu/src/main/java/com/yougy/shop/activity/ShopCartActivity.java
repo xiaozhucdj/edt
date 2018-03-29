@@ -42,6 +42,8 @@ import java.util.List;
 
 import rx.functions.Action1;
 
+import static com.yougy.shop.activity.ShopPromotionActivity.COUPON_ID;
+
 /**
  * Created by FH on 2017/2/13.
  */
@@ -438,7 +440,7 @@ public class ShopCartActivity extends ShopBaseActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext() , ShopPromotionActivity.class);
-                        intent.putExtra("couponInfo" , findManjianCoupon(cartItem));
+                        intent.putExtra(COUPON_ID , findManjianCoupon(cartItem).getCouponId());
                         startActivity(intent);
                     }
                 });

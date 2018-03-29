@@ -1,60 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="540dp"
-    android:layout_height="wrap_content"
+    android:layout_width="600px"
+    android:layout_height="250px"
     android:layout_gravity="center"
     android:background="@drawable/img_delete_bg"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_marginTop="42dp"
-        android:textSize="24dp"
-        android:textStyle="bold"
-        android:textColor="@color/background_black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68px"
         android:gravity="center"
         android:text="确认删除笔记吗？"
+        android:textColor="@color/background_black"
+        android:textSize="30px"
+        android:textStyle="bold" />
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-    <LinearLayout
-        android:layout_marginTop="55dp"
-        android:layout_marginRight="42dp"
-        android:layout_marginLeft="42dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/btn_sure"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginRight="28dp"
-            android:layout_weight="1"
-            android:background="@drawable/edu_img_marksupdata_select"
-            android:gravity="center"
-            android:text="确认"
-            android:textColor="@drawable/edu_color_marksaupdata_selector"
-            android:textStyle="bold"
-            android:textSize="24dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68px">
 
         <Button
             android:id="@+id/btn_cancel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="28dp"
-            android:layout_weight="1"
-            android:background="@drawable/edu_img_marksdelete_select"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="40px"
+            android:background="@drawable/bind_cancel_btn_bg"
             android:gravity="center"
             android:text="取消"
-            android:textColor="@drawable/edu_color_marksadelete_selector"
-            android:textStyle="bold"
-            android:textSize="24dp" />
-    </LinearLayout>
+            android:textColor="@color/black"
+            android:textSize="24px"
+            android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/btn_sure"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_alignParentRight="true"
+            android:layout_gravity=""
+            android:layout_marginRight="40px"
+            android:background="@drawable/bind_confirm_btn_bg"
+            android:gravity="center"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="24px"
+            android:textStyle="bold" />
 
-
+    </RelativeLayout>
 
 </LinearLayout>

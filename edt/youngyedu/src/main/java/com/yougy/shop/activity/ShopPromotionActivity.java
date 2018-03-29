@@ -52,7 +52,6 @@ public class ShopPromotionActivity extends ShopBaseActivity{
     protected void setContentView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_promotion_layout);
         binding.setActivity(this);
-
     }
 
     @Override

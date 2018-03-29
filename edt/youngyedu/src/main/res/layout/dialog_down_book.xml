@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="600px"
-    android:layout_height="wrap_content"
+    android:layout_height="250px"
     android:layout_gravity="center"
     android:background="@drawable/shape_rounded_rectangle_black_border"
-    android:padding="30px"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="68px"
         android:gravity="center"
         android:textColor="@color/text_color_black"
-        android:textSize="26dp"
+        android:textSize="30px"
         android:textStyle="bold" />
 
     <RelativeLayout
         android:id="@+id/rl_cancelAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="65dp">
+        android:layout_marginTop="68px">
 
 
         <Button
+            android:background="@drawable/bind_cancel_btn_bg"
             android:id="@+id/btn_cancel"
             android:layout_width="200px"
             android:layout_height="48px"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/btn_selector_rectangle_white_green_gray"
+            android:layout_marginLeft="40px"
             android:gravity="center"
-            android:layout_marginLeft="40dp"
             android:text="取消"
-            android:textColor="@drawable/btn_text_color_selector"
-            android:textSize="24dp"
+            android:textColor="@color/black"
+            android:textSize="24px"
             android:textStyle="bold" />
 
         <Button
@@ -43,12 +41,12 @@
             android:layout_width="200px"
             android:layout_height="48px"
             android:layout_alignParentRight="true"
-            android:background="@drawable/btn_selector_rectangle_white_green_gray"
             android:layout_marginRight="40px"
+            android:background="@drawable/bind_confirm_btn_bg"
             android:gravity="center"
             android:text="确定"
-            android:textColor="@color/text_color_black"
-            android:textSize="24dp"
+            android:textColor="@color/white"
+            android:textSize="24px"
             android:textStyle="bold" />
 
     </RelativeLayout>
@@ -61,8 +59,7 @@
         android:layout_marginLeft="42dp"
         android:layout_marginRight="42dp"
         android:layout_marginTop="40dp"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <Button
             android:id="@+id/btn_centerConfirm"

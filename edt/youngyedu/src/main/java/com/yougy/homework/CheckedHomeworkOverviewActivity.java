@@ -14,6 +14,7 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.message.SizeUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityCheckedHomeworkDetailBinding;
 import com.yougy.ui.activity.databinding.ItemQuestionGridviewBinding;
@@ -124,8 +125,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity{
             }
         }
         f = f*100/replyList.size();
-        binding.circleProgressBar.setProgress((int) f);
-        binding.circleProgressBar.setText((int)f + "%");
+        binding.circleProgressBar.setProgress(Integer.valueOf(SizeUtil.doScale(f , 0)));
+        binding.circleProgressBar.setText(SizeUtil.doScale(f , 0) + "%");
     }
     @Override
     protected void refreshView() {}

@@ -96,20 +96,22 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2px"
-            android:layout_below="@+id/note_opt_layout"
+            android:layout_below="@id/note_opt_layout"
             android:background="@color/black" />
 
         <com.yougy.view.NoteBookView
+            android:layout_marginTop="2px"
             android:id="@+id/booknote"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/note_opt_layout" />
+            android:layout_below="@id/note_opt_layout" />
 
         <EditText
+            android:layout_marginTop="2px"
             android:id="@+id/edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/note_opt_layout"
+            android:layout_below="@id/note_opt_layout"
             android:background="@color/background_white"
             android:gravity="start|top"
             android:visibility="gone" />

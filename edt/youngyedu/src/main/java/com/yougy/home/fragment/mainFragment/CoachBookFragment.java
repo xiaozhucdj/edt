@@ -123,8 +123,8 @@ public class CoachBookFragment extends BFragment implements View.OnClickListener
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (NetUtils.isNetConnected()) {
-            } else {
                 downBookTask(info.getBookId());
+            } else {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
         }

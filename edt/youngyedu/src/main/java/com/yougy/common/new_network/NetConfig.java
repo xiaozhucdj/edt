@@ -5,6 +5,4 @@ package com.yougy.common.new_network;
  */
 
 public class NetConfig {
-
-    public static final String SERVER_HOST = "http://api.learningpad.cn:10002";
 }

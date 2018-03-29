@@ -125,6 +125,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20px"
                 android:includeFontPadding="false"
+                android:layout_marginLeft="10px"
                 android:textColor="@color/black"
                 android:text="作者:洛夫斯基"
                 android:layout_marginTop="20px" />
@@ -134,6 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20px"
+                android:layout_marginLeft="10px"
                 android:includeFontPadding="false"
                 android:textColor="@color/black"
                 android:text="价格:￥8888.88"
