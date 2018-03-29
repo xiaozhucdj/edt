@@ -2,6 +2,8 @@ package com.yougy.shop.activity;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -9,6 +11,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.yolanda.nohttp.Headers;
@@ -54,6 +58,7 @@ import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityShopBookDetailBinding;
+import com.yougy.ui.activity.databinding.ItemShopBookDetailPromotionListBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
 import com.yougy.view.dialog.DownBookDialog;
@@ -66,6 +71,8 @@ import java.util.List;
 
 import rx.functions.Action1;
 
+import static com.yougy.shop.activity.ShopPromotionActivity.COUPON_ID;
+
 /**
  * Created by FH on 2017/6/9.
  * 图书详情页
@@ -73,6 +80,7 @@ import rx.functions.Action1;
 
 public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBookDialog.DownBookListener {
     ActivityShopBookDetailBinding binding;
+    boolean showAllPromotion = false;
     ////////////////////////global Files//////////////////////////////////////////////////
     /**
      * 图书
@@ -144,6 +152,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     protected void initLayout() {
         //初始化推荐列表
         initRecommandRecyclerView();
+        initCouponListview();
     }
 
     /***
@@ -181,29 +190,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     binding.bookSalePriceTv.setText(getString(R.string.sale_price, mBookInfo.getBookSpotPrice() + ""));
                     //购买按钮价格
                     binding.buyBtn.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
-                    List<BookInfo.BookCouponBean> bookCouponBeanList = mBookInfo.getBookCoupon();
-                    if (null != bookCouponBeanList && bookCouponBeanList.size() != 0) {
-                        List<BookInfo.BookCouponBean.CouponContentBean> contentBeanList = bookCouponBeanList.get(0).getCouponContent();
-                        if (contentBeanList != null && contentBeanList.size() != 0){
-                            BookInfo.BookCouponBean.CouponContentBean couponContentBean = contentBeanList.get(0);
-                            if (!TextUtils.isEmpty(couponContentBean.getFree())){
-                                binding.promotionLayout.setVisibility(View.VISIBLE);
-                                binding.promotionName.setText("限免");
-                                binding.promotionContent.setText("限时免费");
-                            }
-                            else if (!TextUtils.isEmpty(couponContentBean.getOff())){
-                                binding.promotionLayout.setVisibility(View.VISIBLE);
-                                binding.promotionName.setText("折扣");
-                                binding.promotionContent.setText("限时折扣");
-                            }
-                            else if (!TextUtils.isEmpty(couponContentBean.getOver()) && !TextUtils.isEmpty(couponContentBean.getCut())){
-                                binding.promotionLayout.setVisibility(View.VISIBLE);
-                                binding.promotionName.setText("满减");
-                                binding.promotionContent.setText("限时满减 满" + couponContentBean.getOver()
-                                        + "元减" + couponContentBean.getCut() + "元");
-                            }
-                        }
-                    }
                     //图书详情
                     if (TextUtils.isEmpty(mBookInfo.getBookSummary())) {
                         binding.bookDetailTv.setText("");
@@ -284,6 +270,124 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 view);
     }
 
+    private void initCouponListview(){
+        binding.allPromotionListview.setDivider(new ColorDrawable(Color.WHITE));
+        binding.allPromotionListview.setDividerHeight(10);
+
+        binding.allPromotionListview.setAdapter(new BaseAdapter() {
+            @Override
+            public int getCount() {
+                if (mBookInfo == null){
+                    return 0;
+                }
+                List<BookInfo.BookCouponBean> couponList = mBookInfo.getBookCoupon();
+                int couponCount = 0;
+                if (couponList != null){
+                    for (BookInfo.BookCouponBean bookCouponBean : couponList) {
+                        couponCount = couponCount + bookCouponBean.getCouponContent().size();
+                    }
+                }
+                if (couponCount == 0){
+                    return couponCount;
+                }
+                else if(showAllPromotion){
+                    return couponCount;
+                }
+                else {
+                    return 1;
+                }
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return null;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return 0;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                ItemShopBookDetailPromotionListBinding itemBinding;
+                if (convertView == null){
+                    itemBinding = DataBindingUtil.inflate(LayoutInflater.from(ShopBookDetailsActivity.this)
+                            , R.layout.item_shop_book_detail_promotion_list , null , false);
+                    convertView = itemBinding.getRoot();
+                    convertView.setTag(itemBinding);
+                    itemBinding.showAllPromotionBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showAllPromotion = true;
+                            notifyDataSetChanged();
+                        }
+                    });
+                    itemBinding.lookMorePromotionBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            lookMorePromotion(itemBinding.getCouponId());
+                        }
+                    });
+                }
+                else {
+                    itemBinding = (ItemShopBookDetailPromotionListBinding) convertView.getTag();
+                }
+                int couponCount = 0;
+                int couponId = -1;
+                BookInfo.BookCouponBean.CouponContentBean targetCouponContentBean = null;
+                for (BookInfo.BookCouponBean bookCouponBean : mBookInfo.getBookCoupon()){
+                    for (BookInfo.BookCouponBean.CouponContentBean couponContentBean : bookCouponBean.getCouponContent()) {
+                        if (couponCount == position){
+                            targetCouponContentBean = couponContentBean;
+                            couponId = bookCouponBean.getCouponId();
+                        }
+                        couponCount++;
+                    }
+                }
+                itemBinding.setCouponId(couponId);
+                if (!TextUtils.isEmpty(targetCouponContentBean.getOver())){
+                    itemBinding.promotionName.setText("满减");
+                    itemBinding.promotionContent.setText("限时满减  满" + targetCouponContentBean.getOver()
+                            + "元减" + targetCouponContentBean.getCut() + "元");
+                }
+                else if (!TextUtils.isEmpty(targetCouponContentBean.getFree())){
+                    itemBinding.promotionName.setText("限免");
+                    itemBinding.promotionContent.setText("显示免费");
+                }
+                else if (!TextUtils.isEmpty(targetCouponContentBean.getOff())){
+                    itemBinding.promotionName.setText("折扣");
+                    String tempText = "限时折扣    ";
+                    if (targetCouponContentBean.getOff().length() == 2 && targetCouponContentBean.getOff().charAt(1) == '0'){
+                        tempText = tempText + targetCouponContentBean.getOff().charAt(0) + "折";
+                    }
+                    else {
+                        tempText = tempText + targetCouponContentBean.getOff() + "折";
+                    }
+                    itemBinding.promotionContent.setText(tempText);
+                }
+                else {
+                    itemBinding.promotionName.setText("未知");
+                    itemBinding.promotionContent.setText("未知活动");
+                }
+                if (!showAllPromotion){
+                    if (couponCount > 1){
+                        itemBinding.showAllPromotionBtn.setVisibility(View.VISIBLE);
+                        itemBinding.lookMorePromotionBtn.setVisibility(View.GONE);
+                    }
+                    else {
+                        itemBinding.showAllPromotionBtn.setVisibility(View.GONE);
+                        itemBinding.lookMorePromotionBtn.setVisibility(View.VISIBLE);
+                    }
+                }
+                else {
+                    itemBinding.showAllPromotionBtn.setVisibility(View.GONE);
+                    itemBinding.lookMorePromotionBtn.setVisibility(View.VISIBLE);
+                }
+                return convertView;
+            }
+        });
+    }
     /***
      * 初始化 推荐列表
      */
@@ -671,8 +775,10 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         }
     }
 
-    public void lookMorePromotion(View view){
-        startActivity(new Intent(this,ShopPromotionActivity.class));
+    public void lookMorePromotion(int couponId){
+        Intent intent = new Intent(this , ShopPromotionActivity.class);
+        intent.putExtra(COUPON_ID , couponId);
+        startActivity(intent);
     }
 
 
