@@ -31,6 +31,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.ListUtil;
+import com.yougy.message.MyEdittext;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
@@ -177,6 +178,25 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
                 return true;
             }
         });
+        binding.messageEdittext.setSoftInputListener(new MyEdittext.SoftInputListener() {
+
+            @Override
+            public void onBack() {
+                binding.messageEdittext.clearFocus();
+            }
+
+            @Override
+            public void onFocusChanged(boolean focused) {
+                if (focused){
+                    binding.bottomBarLayout.setPadding(0 , 0 , 0, 320);
+                    scrollToBottom(100);
+                }
+                else {
+                    binding.bottomBarLayout.setPadding(0 , 0 , 0, 0);
+                }
+            }
+        });
+
     }
 
     public void onClick(View view){
@@ -191,6 +211,8 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
     }
 
     private void send(){
+        binding.bottomBarLayout.setPadding(0 , 0 , 0, 0);
+        binding.messageEdittext.clearFocus();
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
