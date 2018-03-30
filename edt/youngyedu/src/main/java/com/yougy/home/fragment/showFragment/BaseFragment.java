@@ -375,6 +375,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //切换Fragment 作业
         mExerciseBookIv = (ImageView) mRoot.findViewById(R.id.exercise_book);
 
+
+
         //修改笔记
         mImgupdataNote = (ImageView) mRoot.findViewById(R.id.img_updataNote);
 
@@ -403,6 +405,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             mNotebookIv.setVisibility(View.GONE);
             mTextbookIv.setVisibility(View.GONE);
             mExerciseBookIv.setVisibility(View.GONE);
+            mRoot.findViewById(R.id.to_homewrok_line).setVisibility(View.INVISIBLE);
+
             mImgDeleteNote.setVisibility(View.VISIBLE);
             mImgupdataNote.setVisibility(View.VISIBLE);
         }
@@ -470,7 +474,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                         mCutterEraserSize = mSeekPenOrEraserSize;
                         mNoteBookView.outSetEraserSize(mCutterEraserSize);
                     }
-                  setThum(mSeekPenOrEraserSize);
+                    setThum(mSeekPenOrEraserSize);
                 }
             }
         });
@@ -654,7 +658,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         isNeedCutScreen = false;
         isNeedHide = true;
         view = null;
-        if (v.getId()!=R.id.eraser && v.getId()!=R.id.paint_draw){
+        if (v.getId() != R.id.eraser && v.getId() != R.id.paint_draw) {
             mPaintChoose.setVisibility(View.GONE);
         }
 
@@ -1997,12 +2001,12 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     };
 
     private void setThum(float progress) {
-        int index = ((int) progress) - 2 ;
+        int index = ((int) progress) - 2;
         Drawable thumD = getActivity().getResources().getDrawable(thums[index]);
         mSeekPenOrEraser.setThumb(thumD);//设置新的图片
-        if (index<3){
+        if (index < 3) {
             mSeekPenOrEraser.setThumbOffset(0);
-        }else{
+        } else {
             mSeekPenOrEraser.setThumbOffset(30);
         }
 

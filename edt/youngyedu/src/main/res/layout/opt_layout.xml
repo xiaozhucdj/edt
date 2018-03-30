@@ -160,11 +160,17 @@
             android:text="作业" />
 
         <View
+            android:id="@+id/to_homewrok_line"
             android:layout_width="2px"
             android:layout_height="50px"
             android:layout_marginLeft="30px"
             android:background="@color/black" />
     </LinearLayout>
+
+
+
+
+
 
     <View
         android:layout_width="match_parent"
