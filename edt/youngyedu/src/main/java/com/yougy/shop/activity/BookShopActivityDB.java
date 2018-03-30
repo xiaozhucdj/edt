@@ -118,7 +118,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     @Override
     protected void loadData() {
-        mHistoryRecords = SpUtils.getHistoryRecord();
         Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), (categoryInfos, bookInfos) -> {
             LogUtils.e(tag, "call.........................");
             handleCategoryInfo(categoryInfos);
@@ -420,6 +419,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 生成历史搜索记录
      */
     private void generateHistoryRecord() {
+        mHistoryRecords = SpUtils.getHistoryRecord();
         binding.historyRecordLayout.removeAllViews();
         for (final String record : mHistoryRecords) {
             TextView recordTv = new TextView(this);
