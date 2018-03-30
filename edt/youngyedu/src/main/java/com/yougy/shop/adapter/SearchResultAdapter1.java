@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.BR;
@@ -57,6 +58,13 @@ public class SearchResultAdapter1 extends RecyclerView.Adapter<SearchResultAdapt
         }else{
             bookInfo.setBookAuthor("作者："+bookInfo.getBookAuthor());
         }
+        ImageLoaderManager.getInstance().loadImageContext(holder.binding.bookImg.getContext(),
+                bookInfo.getBookCoverS(),
+                R.drawable.img_book_cover,
+                R.drawable.img_book_cover,
+                128,
+                168,
+                holder.binding.bookImg);
         LogUtils.e(getClass().getName(),"book info : " + bookInfo);
         holder.getBinding().setVariable(BR.bookInfo, bookInfo);
         holder.getBinding().setVariable(BR.bookSummary,bookSummary);
@@ -69,17 +77,17 @@ public class SearchResultAdapter1 extends RecyclerView.Adapter<SearchResultAdapt
     }
 
     class SearchResultHolder extends RecyclerView.ViewHolder {
-        private ViewDataBinding binding;
+        private SearchResult binding;
 
         public SearchResultHolder(View itemView) {
             super(itemView);
         }
 
-        public void setBinding(ViewDataBinding binding) {
+        public void setBinding(SearchResult binding) {
             this.binding = binding;
         }
 
-        public ViewDataBinding getBinding() {
+        public SearchResult getBinding() {
             return this.binding;
         }
     }
