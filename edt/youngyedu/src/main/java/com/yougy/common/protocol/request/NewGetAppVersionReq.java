@@ -12,7 +12,7 @@ public class NewGetAppVersionReq extends NewBaseReq {
     private final String id = "student";
 
     public NewGetAppVersionReq() {
-        m = "setAppVersion";
+        m = "getAppVersion";
         address = "version";
     }
 }

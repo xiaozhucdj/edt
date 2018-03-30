@@ -234,6 +234,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         });
     }
 
+    //升级接口 m=getAppVersion&id=student   用id来判断学生端、教师端 http://ocghxr9lf.bkt.clouddn.com/sample-debug.apk
     private void getServerVersion() {
         NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(SplashActivity.this) {
             @Override
