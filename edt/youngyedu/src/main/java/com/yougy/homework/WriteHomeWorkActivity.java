@@ -310,9 +310,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     //更新最新的页面数据
                     questionPageSize = newPageCount;
                     questionPageNumAdapter.notifyDataSetChanged();
-                    if (selectPageIndex == 0) {
-                        isFirstComeInQuestion = true;
-                    }
+
 
                 }
             }
