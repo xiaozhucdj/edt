@@ -184,13 +184,16 @@
                         android:textColor="@color/text_color_black"
                         android:textSize="24px" />
 
-                    <Spinner
-                        android:id="@+id/stage_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <Button
+                        android:id="@+id/stage_button"
+                        android:layout_width="@dimen/stage_button_width"
+                        android:layout_height="@dimen/stage_button_height"
+                        android:background="@drawable/img_bg_xuankuang"
+                        android:gravity="center_vertical"
+                        android:onClick="@{activity.stageClick}"
+                        android:paddingLeft="10px"
                         android:layout_marginTop="20px"
-                        android:background="@drawable/img_xiala"
-                        android:spinnerMode="dropdown" />
+                        android:textSize="@dimen/stage_text_size" />
                 </LinearLayout>
 
 
@@ -276,5 +279,22 @@
                     android:background="@color/text_color_black" />
             </RelativeLayout>
         </LinearLayout>
+        <FrameLayout
+            android:id="@+id/stage_recycler_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:onClick="@{activity.hideStageRecyclerLayout}"
+            android:clickable="true">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/stage_recycler"
+                android:layout_width="170px"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="290px"
+                android:layout_marginTop="246px"
+                android:background="@drawable/identity_list_bg"
+                />
+        </FrameLayout>
     </RelativeLayout>
 </layout>

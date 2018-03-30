@@ -791,6 +791,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
                 } else {
                     //如果已经是最后一题，那么不在跳转。直接打开暂存成功弹窗
+                    saveLastHomeWorkData(showHomeWorkPosition);
                 }
                 // 这里需要跳转到暂存成功的弹窗界面
                 FullScreenHintDialog fullScreenHintDialog = new FullScreenHintDialog(this, "");
