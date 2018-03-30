@@ -17,7 +17,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:src="@drawable/img_back_ui" />
+            android:src="@drawable/edu_img_back_select" />
 
         <TextView
             android:id="@+id/search_tv"

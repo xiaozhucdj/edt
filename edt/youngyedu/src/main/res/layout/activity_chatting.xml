@@ -24,7 +24,7 @@
                 android:layout_marginTop="10px"
                 android:layout_marginBottom="10px"
                 >
-                <EditText
+                <com.yougy.message.MyEdittext
                     android:id="@+id/message_edittext"
                     android:layout_width="0px"
                     android:layout_height="40px"
