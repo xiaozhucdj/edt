@@ -75,8 +75,8 @@
             android:layout_toLeftOf="@id/img_pageNext"
             android:layout_toRightOf="@id/img_pageBack"
             android:indeterminate="false"
-            android:maxHeight="26px"
-            android:minHeight="26px"
+            android:maxHeight="8dp"
+            android:minHeight="8dp"
             android:progressDrawable="@drawable/seekbar_pen_bg_selector"
             android:thumb="@drawable/seekbar_thumb_selector"
             android:visibility="gone" />
