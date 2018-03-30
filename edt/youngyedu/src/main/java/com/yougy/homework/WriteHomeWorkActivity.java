@@ -525,9 +525,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
 
                         tvCaogaoText.setText("草稿纸");
-                        mCaogaoNoteBoard.clear();
                         llCaogaoControl.setVisibility(View.GONE);
                     }
+                    mCaogaoNoteBoard.clearAll();
 
                     //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                     if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
@@ -932,9 +932,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (llCaogaoControl.getVisibility() == View.VISIBLE) {
             tvCaogaoText.setText("草稿纸");
             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
-            mCaogaoNoteBoard.clear();
             llCaogaoControl.setVisibility(View.GONE);
         }
+        mCaogaoNoteBoard.clearAll();
 
 
         //刷新最后没有保存的数据
