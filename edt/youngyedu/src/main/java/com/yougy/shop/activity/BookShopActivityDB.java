@@ -372,18 +372,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     public void stageClick(View view) {
         LogUtils.e(tag, "stage click.............");
+        hideFiltrateLayout();
         binding.stageRecyclerLayout.setVisibility(binding.stageRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        if (binding.classifyRecyclerLayout.getVisibility() == View.VISIBLE) {
-            binding.classifyRecyclerLayout.setVisibility(View.GONE);
-        }
     }
 
     public void classifyClick(View view) {
         LogUtils.e(tag, "classify click......");
         binding.classifyRecyclerLayout.setVisibility(binding.classifyRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE) {
-            binding.stageRecyclerLayout.setVisibility(View.GONE);
-        }
     }
 
     private void generateBtn(final List<BookInfo> mBookInfos) {

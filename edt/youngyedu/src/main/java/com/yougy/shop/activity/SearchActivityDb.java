@@ -303,6 +303,7 @@ public class SearchActivityDb extends ShopBaseActivity {
                 mPageInfos.addAll(mBookInfos);
             }
             generateBtn();
+            binding.noResult.setVisibility(View.GONE);
             mAdapter = new SearchResultAdapter1(mPageInfos);
             binding.resultRecycler.setAdapter(mAdapter);
             binding.resultRecycler.setVisibility(View.VISIBLE);
