@@ -1,5 +1,6 @@
 package com.yougy.view.dialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -17,10 +18,12 @@ public class LoadingProgressDialog extends BaseDialog {
 
     public LoadingProgressDialog(Context context) {
         super(context);
+        setOwnerActivity((Activity) context);
     }
 
     public LoadingProgressDialog(Context context, int themeResId) {
         super(context, themeResId);
+        setOwnerActivity((Activity) context);
     }
 
     @Override
