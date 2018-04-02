@@ -19,6 +19,7 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.StringUtils;
@@ -173,6 +174,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 
     @Override
     protected void onPause() {
+        LogUtils.e(getClass().getName(),"activity on pause...............");
         mForegroundActivity = null;
 //        if (mWakeLock != null) {
 //            mWakeLock.release();
