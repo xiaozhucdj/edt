@@ -1,5 +1,6 @@
 package com.yougy.shop.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,6 +25,8 @@ import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.ResultUtils;
+import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.rx_subscriber.ShopSubscriber;
 import com.yougy.shop.adapter.RecyclerAdapter;
@@ -57,13 +61,13 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private SearchBinding binding;
     private RecyclerAdapter mStageAdapter;
-    private boolean mSearchFlag;
     private List<BookInfo> mBookInfos;
     private List<BookInfo> mPageInfos = new ArrayList<>();
 
     private SearchResultAdapter1 mAdapter;
 
     private List<Button> btns = new ArrayList<>();
+    private List<String> mHistoryRecords;
 
     private static final int COUNT_PER_PAGE = 5;
 
@@ -84,6 +88,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         Intent intent = getIntent();
         bookTitle = intent.getStringExtra("search_key");
         categoryId = intent.getIntExtra("categoryId", -1);
+        mHistoryRecords = SpUtils.getHistoryRecord();
     }
 
     private void generateBtn() {
@@ -141,8 +146,7 @@ public class SearchActivityDb extends ShopBaseActivity {
                 generateSubjectLayout(mStageAdapter.getItem(vh.getAdapterPosition()));
             }
         });
-
-        binding.searchKey.addTextChangedListener(new TextWatcher() {
+        binding.searchEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -150,16 +154,20 @@ public class SearchActivityDb extends ShopBaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                binding.searchOrCancelTv.setText(R.string.search);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                mSearchFlag = true;
+                binding.searchOrCancelTv.setText(s.length() == 0 ? R.string.cancel : R.string.search);
             }
         });
-        binding.searchKey.setOnEditorActionListener((v, actionId, event) -> {
-            search();
+        binding.searchEt.setOnEditorActionListener((v, actionId, event) -> {
+            hideSearchLayout();
+            bookTitle = binding.searchEt.getText().toString();
+            if (!TextUtils.isEmpty(bookTitle)) {
+                search();
+            }
             return false;
         });
     }
@@ -292,9 +300,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.noResult.setVisibility(View.VISIBLE);
             binding.pageNumberLayout.removeAllViews();
             binding.resultRecycler.setVisibility(View.GONE);
-            mSearchFlag = true;
         } else {
-            mSearchFlag = false;
             mBookInfos = bookInfos;
             mPageInfos.clear();
             if (mBookInfos.size() >= COUNT_PER_PAGE) {
@@ -303,6 +309,7 @@ public class SearchActivityDb extends ShopBaseActivity {
                 mPageInfos.addAll(mBookInfos);
             }
             generateBtn();
+            binding.noResult.setVisibility(View.GONE);
             mAdapter = new SearchResultAdapter1(mPageInfos);
             binding.resultRecycler.setAdapter(mAdapter);
             binding.resultRecycler.setVisibility(View.VISIBLE);
@@ -325,8 +332,15 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     private void search() {
-        bookTitle = binding.searchKey.getText().toString();
+        if (!mHistoryRecords.contains(bookTitle)) {
+            if (mHistoryRecords.contains(UIUtils.getContext().getResources().getString(R.string.no_history_record))) {
+                mHistoryRecords.clear();
+            }
+            mHistoryRecords.add(bookTitle);
+            SpUtils.putHistoryRecord(mHistoryRecords);
+        }
         if (!TextUtils.isEmpty(bookTitle)) {
+            binding.searchKey.setText(bookTitle);
             NewBookStoreBookReq req = new NewBookStoreBookReq();
             req.setBookTitleMatch(bookTitle);
             queryBook(req);
@@ -334,9 +348,56 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     public void search(View view) {
-        search();
+        generateHistoryRecord();
+        binding.searchLayout.setVisibility(View.VISIBLE);
+        binding.searchOrCancelTv.setText(R.string.cancel);
+        binding.searchEt.setText("");
+        binding.searchEt.setFocusable(true);
+        binding.searchEt.setFocusableInTouchMode(true);
+        binding.searchEt.requestFocus();
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(binding.searchEt, 0);
     }
 
+    public void clickSearchOrCancelTv(View view) {
+        hideSearchLayout();
+        bookTitle = binding.searchEt.getText().toString();
+        if (!TextUtils.isEmpty(bookTitle)) {
+            search();
+        }
+    }
+    /**
+     * 生成历史搜索记录
+     */
+    private void generateHistoryRecord() {
+        binding.historyRecordLayout.removeAllViews();
+        for (final String record : mHistoryRecords) {
+            TextView recordTv = new TextView(this);
+            recordTv.setText(record);
+            recordTv.setIncludeFontPadding(false);
+            recordTv.setTextSize(UIUtils.px2dip(24));
+            recordTv.setTextColor(getResources().getColor(R.color.text_color_black));
+            recordTv.setOnClickListener(v -> {
+                bookTitle = record;
+                hideSearchLayout();
+                search();
+            });
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.bottomMargin = UIUtils.px2dip(20);
+            binding.historyRecordLayout.addView(recordTv, params);
+        }
+    }
+    private void hideSearchLayout() {
+        InputMethodManager inputManager1 = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager1.hideSoftInputFromWindow(binding.searchEt.getWindowToken(), 0);
+        binding.searchLayout.setVisibility(View.GONE);
+        binding.searchEt.clearFocus();
+    }
+    public void clearHistoryRecord(View view) {
+        SpUtils.clearHistoryRecord();
+        mHistoryRecords.clear();
+        generateHistoryRecord();
+    }
     public void filtrate(View view) {
         showFiltrateLayout();
     }

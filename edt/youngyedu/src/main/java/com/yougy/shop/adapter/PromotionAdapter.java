@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.BR;
@@ -56,6 +57,14 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
         }else{
             bookInfo.setBookAuthor("作者："+bookInfo.getBookAuthor());
         }
+
+        ImageLoaderManager.getInstance().loadImageContext(holder.binding.bookImg.getContext(),
+                bookInfo.getBookCoverS(),
+                R.drawable.img_book_cover,
+                R.drawable.img_book_cover,
+                128,
+                168,
+                holder.binding.bookImg);
         holder.getBinding().setVariable(BR.bookInfo, bookInfo);
         holder.getBinding().setVariable(BR.bookSummary,bookSummary);
         holder.getBinding().executePendingBindings();
@@ -69,17 +78,17 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
         return infos.get(position);
     }
     class BookHolder extends RecyclerView.ViewHolder {
-        private ViewDataBinding binding;
+        private PromotionResult binding;
 
         public BookHolder(View itemView) {
             super(itemView);
         }
 
-        public void setBinding(ViewDataBinding binding) {
+        public void setBinding(PromotionResult binding) {
             this.binding = binding;
         }
 
-        public ViewDataBinding getBinding() {
+        public PromotionResult getBinding() {
             return this.binding;
         }
     }

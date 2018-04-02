@@ -56,9 +56,8 @@
 
             <TextView
                 android:id="@+id/promotion_name"
-                android:layout_width="60px"
+                android:layout_width="wrap_content"
                 android:layout_height="32px"
-                android:layout_marginLeft="10px"
                 android:layout_marginRight="10px"
                 android:background="@drawable/img_bg_manjian"
                 android:gravity="center"
@@ -70,13 +69,15 @@
             <TextView
                 android:id="@+id/promotion_content"
                 style="@style/bookPromotionStyle"
-                android:layout_gravity="center_vertical"
+                android:layout_height="32px"
+                android:gravity="center"
                 />
 
             <TextView
                 android:id="@+id/activity_time"
                 style="@style/bookPromotionStyle"
-                android:layout_gravity="center_vertical"
+                android:layout_height="32px"
+                android:gravity="center"
                 android:layout_marginLeft="90px"
                 />
         </LinearLayout>

@@ -118,7 +118,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     @Override
     protected void loadData() {
-        mHistoryRecords = SpUtils.getHistoryRecord();
         Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), (categoryInfos, bookInfos) -> {
             LogUtils.e(tag, "call.........................");
             handleCategoryInfo(categoryInfos);
@@ -372,18 +371,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     public void stageClick(View view) {
         LogUtils.e(tag, "stage click.............");
+        hideFiltrateLayout();
         binding.stageRecyclerLayout.setVisibility(binding.stageRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        if (binding.classifyRecyclerLayout.getVisibility() == View.VISIBLE) {
-            binding.classifyRecyclerLayout.setVisibility(View.GONE);
-        }
     }
 
     public void classifyClick(View view) {
         LogUtils.e(tag, "classify click......");
         binding.classifyRecyclerLayout.setVisibility(binding.classifyRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE) {
-            binding.stageRecyclerLayout.setVisibility(View.GONE);
-        }
     }
 
     private void generateBtn(final List<BookInfo> mBookInfos) {
@@ -425,6 +419,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 生成历史搜索记录
      */
     private void generateHistoryRecord() {
+        mHistoryRecords = SpUtils.getHistoryRecord();
         binding.historyRecordLayout.removeAllViews();
         for (final String record : mHistoryRecords) {
             TextView recordTv = new TextView(this);
@@ -560,9 +555,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         loadIntentWithExtras(SearchActivityDb.class, extras);
     }
 
-    private int mClassifyPosition;
+    private int mClassifyPosition = -1;
 
     private void extrabookSelected() {
+        if (mClassifyPosition == 2) {
+            return;
+        }
         mClassifyPosition = 2;
         hideFiltrateLayout();
         binding.tvAll.setSelected(false);
@@ -577,11 +575,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         refreshSearchResultView();
         resetComposite();
         setCompositeText();
-        if (extrabooks == null) {
+//        if (extrabooks == null) {
             getSingleBookInfo();
-        } else {
-            refreshSingleClassifyRecycler(extrabooks);
-        }
+//        } else {
+//            refreshSingleClassifyRecycler(extrabooks);
+//        }
     }
 
     private void stageItemClick(int position) {
@@ -592,6 +590,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         CategoryInfo info = mStageAdapter.getItem(position);
         mStage = info.getCategoryDisplay();
         mClassifyId = info.getCategoryId();
+        if (mClassifyPosition == 0) {
+            textClassifyId = mClassifyId;
+        }
+        if (mClassifyPosition == 1) {
+            guideId = mClassifyId;
+        }
+        gradeDisplay = mStage;
         LogUtils.e("Spinner", "stage is : " + mStage);
         binding.stageButton.setText(info.getCategoryDisplay());
         setCompositeText();
@@ -611,13 +616,27 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.classifyRecyclerLayout.setVisibility(View.GONE);
     }
 
+    private int guideId = -1;
+    private String gradeDisplay = "";
+
     private void guidebookSelected() {
+        if (mClassifyPosition == 1) {
+            return;
+        }
         mClassifyPosition = 1;
-        LogUtils.e(tag,"stage's size : " + gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).size());
+        if (guideId != -1) {
+            mClassifyId = guideId;
+            mStage = gradeDisplay;
+        } else {
+            confirmClassifyId();
+            guideId = mClassifyId;
+            gradeDisplay = mStage;
+        }
+        LogUtils.e(tag, "stage's size : " + gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).size());
         mStageAdapter = new RecyclerAdapter(gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)));
         binding.stageRecycler.setAdapter(mStageAdapter);
 
-        showSpinnerLayout();
+        showStageLayout();
         binding.tvAll.setSelected(false);
         binding.textbook.setSelected(false);
         binding.extrabook.setSelected(false);
@@ -633,18 +652,31 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         refreshSearchResultView();
         resetComposite();
         setCompositeText();
-        if (guidbooks == null) {
+//        if (guidbooks == null) {
             getSingleBookInfo();
-        } else {
-            refreshSingleClassifyRecycler(guidbooks);
-        }
+//        } else {
+//            refreshSingleClassifyRecycler(guidbooks);
+//        }
     }
 
+    private int textClassifyId = -1;
     private void textbookSelected() {
+        if (mClassifyPosition == 0) {
+            return;
+        }
         mClassifyPosition = 0;
+        if (textClassifyId != -1) {
+            mClassifyId = textClassifyId;
+            mStage = gradeDisplay;
+        } else {
+            confirmClassifyId();
+            textClassifyId = mClassifyId;
+            gradeDisplay = mStage;
+        }
+
         mStageAdapter = new RecyclerAdapter(gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)));
         binding.stageRecycler.setAdapter(mStageAdapter);
-        showSpinnerLayout();
+        showStageLayout();
         hideFiltrateLayout();
         binding.tvAll.setSelected(false);
         binding.guidebook.setSelected(false);
@@ -660,11 +692,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         refreshSearchResultView();
         resetComposite();
         setCompositeText();
-        if (textbooks == null) {
+//        if (textbooks == null) {
             getSingleBookInfo();
-        } else {
-            refreshSingleClassifyRecycler(textbooks);
-        }
+//        } else {
+//            refreshSingleClassifyRecycler(textbooks);
+//        }
     }
 
     private void refreshSingleClassifyRecycler(List<BookInfo> infos) {
@@ -731,39 +763,45 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     /**
      * 显示Spinner布局
      */
-    private void showSpinnerLayout() {
+    private void showStageLayout() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
-            String grade = SpUtils.getStudent().getGradeDisplay();
-            if (TextUtils.isEmpty(grade)) {
-                mStage = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
-                mClassifyId = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryId();
-            } else {
-                mStage = grade;
-                for (CategoryInfo info : gradeSparseArray.get(mClassifyIds.get(mClassifyPosition))) {
-                    if (mStage.equals(info.getCategoryDisplay())) {
-                        mClassifyId = info.getCategoryId();
-                        LogUtils.e(tag,"show spinner layout classify id : " + mClassifyId +", stage : " + mStage);
-                        break;
-                    }
-                }
-            }
-            binding.stageButton.setText(mStage);
-            setCompositeText();
         }
+
+        binding.stageButton.setText(mStage);
+        setCompositeText();
         if (binding.stageButton.getVisibility() == View.GONE) {
             binding.stageButton.setVisibility(View.VISIBLE);
         }
     }
 
-    public void hideStageRecyclerLayout(View view){
-        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE){
+    private void confirmClassifyId() {
+        String grade = SpUtils.getStudent().getGradeDisplay();
+        if (!TextUtils.isEmpty(gradeDisplay)) {
+            grade = gradeDisplay;
+        }
+        if (TextUtils.isEmpty(grade)) {
+            mStage = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
+            mClassifyId = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryId();
+        } else {
+            mStage = grade;
+            for (CategoryInfo info : gradeSparseArray.get(mClassifyIds.get(mClassifyPosition))) {
+                if (mStage.equals(info.getCategoryDisplay())) {
+                    mClassifyId = info.getCategoryId();
+                    LogUtils.e(tag, "show spinner layout classify id : " + mClassifyId + ", stage : " + mStage);
+                    break;
+                }
+            }
+        }
+    }
+    public void hideStageRecyclerLayout(View view) {
+        if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE) {
             binding.stageRecyclerLayout.setVisibility(View.GONE);
         }
     }
 
-    public void hideClassifyRecyclerLayout(View view){
-        if (binding.classifyRecyclerLayout.getVisibility() == View.VISIBLE){
+    public void hideClassifyRecyclerLayout(View view) {
+        if (binding.classifyRecyclerLayout.getVisibility() == View.VISIBLE) {
             binding.classifyRecyclerLayout.setVisibility(View.GONE);
         }
     }
@@ -850,7 +888,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.subjectWrap.removeAllViews();
         for (int i = 0; i < subjectInfos.size(); i++) {
             final CategoryInfo info = subjectInfos.get(i);
-            View layout = View.inflate(this,R.layout.text_view,null);
+            View layout = View.inflate(this, R.layout.text_view, null);
             final TextView subjectTv = (TextView) layout.findViewById(R.id.text_tv);
             subjectTv.setText(info.getCategoryDisplay());
             subjectTv.setOnClickListener(v -> {
@@ -873,14 +911,14 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void generateVersionLayout(CategoryInfo info) {
         binding.versionWrap.removeAllViews();
         List<CategoryInfo> versionInfos = versionSparseArray.get(info.getCategoryId());
-        if (versionInfos == null || versionInfos.size() == 0){
-            ToastUtil.showToast(this,"没有对应版本。。。");
+        if (versionInfos == null || versionInfos.size() == 0) {
+            ToastUtil.showToast(this, "没有对应版本。。。");
             return;
         }
         LogUtils.e(tag, "version's size : " + versionInfos.size());
         for (int j = 0; j < versionInfos.size(); j++) {
             final CategoryInfo versionInfo = versionInfos.get(j);
-            View layout = View.inflate(this,R.layout.text_view,null);
+            View layout = View.inflate(this, R.layout.text_view, null);
             final TextView versionTv = (TextView) layout.findViewById(R.id.text_tv);
             String display = versionInfo.getCategoryDisplay();
             if (display.length() > 4) {
@@ -963,7 +1001,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 显示课外书分类下拉列表
      */
     private void showClassifySpinner() {
-        if (binding.spinnerLayout.getVisibility() == View.GONE){
+        if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
         }
         if (binding.stageButton.getVisibility() == View.VISIBLE) {
@@ -999,25 +1037,19 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private void refreshCartCount() {
         NetWorkManager.queryCart(String.valueOf(SpUtils.getUserId()))
-                .subscribe(new Action1<List<CartItem>>() {
-                    @Override
-                    public void call(List<CartItem> cartItems) {
-                        if (cartItems == null) {
-                            binding.cartCountTv.setText("0");
+                .subscribe(cartItems -> {
+                    if (cartItems == null) {
+                        binding.cartCountTv.setText("0");
+                    } else {
+                        if (cartItems.size() > 99) {
+                            binding.cartCountTv.setText("…");
                         } else {
-                            if (cartItems.size() > 99) {
-                                binding.cartCountTv.setText("…");
-                            } else {
-                                binding.cartCountTv.setText("" + cartItems.size());
-                            }
+                            binding.cartCountTv.setText("" + cartItems.size());
                         }
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.v("FH", "获取购物车失败");
-                        throwable.printStackTrace();
-                    }
+                }, throwable -> {
+                    Log.v("FH", "获取购物车失败");
+                    throwable.printStackTrace();
                 });
     }
 

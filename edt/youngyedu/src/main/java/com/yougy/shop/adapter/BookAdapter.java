@@ -1,6 +1,7 @@
 package com.yougy.shop.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +25,13 @@ import butterknife.ButterKnife;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
 
-    private   static Context mContext;
+    private static Context mContext;
     private List<BookInfo> infos;
 
 
-    public BookAdapter(List<BookInfo> infos , Context context ) {
+    public BookAdapter(List<BookInfo> infos, Context context) {
         this.infos = infos;
-        mContext = context ;
+        mContext = context;
     }
 
     @Override
@@ -48,7 +49,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
         return infos.size();
     }
 
-    public BookInfo getItemBook(int position){
+    public BookInfo getItemBook(int position) {
         return infos.get(position);
     }
 
@@ -60,6 +61,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
         TextView searchResultName;
         @BindView(R.id.search_result_price)
         TextView searchResultPrice;
+        @BindView(R.id.search_result_pre_price)
+        TextView searchResultPrePrice;
 
         public BookHolder(View itemView) {
             super(itemView);
@@ -69,9 +72,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
         public void bindView(BookInfo info) {
             searchResultImg.setImageResource(R.drawable.cart_book);
             searchResultName.setText(info.getBookTitle());
-            searchResultPrice.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price),info.getBookSalePrice()));
+            searchResultPrice.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSalePrice()));
+            if (info.getBookSalePrice() < info.getBookOriginalPrice()) {
+                searchResultPrePrice.setVisibility(View.VISIBLE);
+                searchResultPrePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                searchResultPrePrice.setText(String.format(searchResultPrice.getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookOriginalPrice())));
+            }
             ImageLoaderManager.getInstance().loadImageContext(mContext,
-                   info.getBookCoverS(),
+                    info.getBookCoverS(),
                     R.drawable.img_book_cover,
                     R.drawable.img_book_cover,
                     128,

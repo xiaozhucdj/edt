@@ -126,7 +126,7 @@
         <!--聊天界面-->
         <activity
             android:name="com.yougy.message.ui.ChattingActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustResize" />
         <!--群发聊天界面-->
         <activity

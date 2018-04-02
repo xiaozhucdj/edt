@@ -1,6 +1,10 @@
 package com.yougy.view.dialog;
 
+import android.app.Activity;
 import android.content.Context;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
@@ -14,10 +18,12 @@ public class LoadingProgressDialog extends BaseDialog {
 
     public LoadingProgressDialog(Context context) {
         super(context);
+        setOwnerActivity((Activity) context);
     }
 
     public LoadingProgressDialog(Context context, int themeResId) {
         super(context, themeResId);
+        setOwnerActivity((Activity) context);
     }
 
     @Override
@@ -42,4 +48,16 @@ public class LoadingProgressDialog extends BaseDialog {
     }
 
 
+    @Override
+    public void show() {
+        super.show();
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        layoutParams.gravity = Gravity.TOP;
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+        getWindow().getDecorView().setPadding(0, 0, 0, 0);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setAttributes(layoutParams);
+    }
 }

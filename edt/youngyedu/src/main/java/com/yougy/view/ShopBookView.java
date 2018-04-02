@@ -2,6 +2,7 @@ package com.yougy.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,6 +25,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
     private ImageView mBookIv;
     private TextView mBookNameTv;
     private TextView mBookPriceTv;
+    private TextView mBookPrePriceTv;
     private BookInfo mInfo;
     private Context mContext;
 
@@ -38,31 +40,37 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
     }
 
 
-    private void init(Context context){
-         mContext= context ;
-        View.inflate(context, R.layout.recommend_item,this);
+    private void init(Context context) {
+        mContext = context;
+        View.inflate(context, R.layout.recommend_item, this);
         mBookIv = (ImageView) findViewById(R.id.search_result_img);
         mBookNameTv = (TextView) findViewById(R.id.search_result_name);
         mBookPriceTv = (TextView) findViewById(R.id.search_result_price);
+        mBookPrePriceTv = (TextView) findViewById(R.id.search_result_pre_price);
         setOnClickListener(this);
     }
 
-    public void updateView(BookInfo info){
-        LogUtils.e("ShopBookView","updateView.................");
+    public void updateView(BookInfo info) {
+        LogUtils.e("ShopBookView", "updateView.................");
         mInfo = info;
         mBookIv.setImageResource(R.drawable.cart_book);
         mBookNameTv.setText(info.getBookTitle());
         mBookPriceTv.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSalePrice() + ""));
-        refreshImg(mBookIv ,info.getBookCoverS());
+        if (info.getBookSalePrice() < info.getBookOriginalPrice()) {
+            mBookPrePriceTv.setVisibility(View.VISIBLE);
+            mBookPrePriceTv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            mBookPrePriceTv.setText(String.format(getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookOriginalPrice())));
+        }
+        refreshImg(mBookIv, info.getBookCoverS());
     }
 
 
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(getContext(), ShopBookDetailsActivity.class);
-        intent.putExtra(ShopGloble.BOOK_ID , Integer.parseInt(mInfo.getBookId() + ""));
+        intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(mInfo.getBookId() + ""));
         getContext().startActivity(intent);
-        LogUtils.e("ShopBookView","onClick................." + mInfo.getBookTitle());
+        LogUtils.e("ShopBookView", "onClick................." + mInfo.getBookTitle());
     }
 
     private void refreshImg(ImageView view, String url) {
