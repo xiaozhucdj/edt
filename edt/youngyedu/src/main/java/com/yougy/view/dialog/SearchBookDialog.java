@@ -1,13 +1,10 @@
 package com.yougy.view.dialog;
 
 import android.content.Context;
-import android.view.Display;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.ui.activity.R;
@@ -52,14 +49,14 @@ public class SearchBookDialog extends BaseDialog implements View.OnClickListener
     }
 
 
-    @Override
+/*    @Override
     public void show() {
         super.show();
         Window window = getWindow();
         Display display = window.getWindowManager().getDefaultDisplay();
         int width = (int) (display.getWidth() * getWidthScale());
         window.setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-    }
+    }*/
 
     @Override
     public void onClick(View v) {

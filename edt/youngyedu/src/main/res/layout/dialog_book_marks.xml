@@ -1,111 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="600px"
-    android:layout_height="289px"
-    android:layout_gravity="center"
-    android:background="@drawable/img_marks_bg"
-    android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50px">
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="添加书签"
-            android:textColor="@color/black"
-            android:textSize="26px"
-            android:textStyle="bold" />
-
-        <ImageButton
-            android:id="@+id/imgBtn_close"
-            android:layout_width="32px"
-            android:layout_height="32px"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20px"
-            android:background="@null"
-            android:src="@drawable/img_marks_close" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="2px"
-        android:background="@color/black" />
-
-    <EditText
-        android:id="@+id/et_marks"
-        android:layout_width="560px"
-        android:layout_height="100px"
-        android:layout_marginLeft="20px"
-        android:layout_marginRight="20px"
-        android:layout_marginTop="30px"
-        android:background="@drawable/img_marks_et"
-        android:gravity="center|left"
-        android:maxLength="20"
-        android:paddingLeft="5px"
-        android:singleLine="true"
-        android:text="书签"
-        android:textColor="@color/black"
-        android:textSize="24px" />
-
-
-    <FrameLayout
-        android:id="@+id/fm_ConfirmOrCancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30px"
-        android:layout_marginLeft="20px"
-        android:layout_marginRight="20px"
-        android:layout_marginTop="30px">
-
-        <Button
-            android:id="@+id/btn_add_marks"
-            android:layout_width="560px"
-            android:layout_height="48px"
-            android:layout_gravity="center"
-            android:background="@drawable/edu_img_marksadd_select"
-            android:gravity="center"
-            android:text="添加书签"
-            android:textColor="@color/white"
-            android:textSize="24px"
-            android:textStyle="bold"
-            android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="600px"
+        android:layout_height="289px"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_rounded_rectangle_all_white"
+        android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/ll_ChangeOrDelete"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="50px">
 
-            <Button
-                android:id="@+id/btn_delete"
-                android:layout_width="200px"
-                android:layout_height="48px"
-                android:layout_alignParentLeft="true"
-                android:background="@drawable/bind_cancel_btn_bg"
-                android:gravity="center"
-                android:text="删除书签"
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="添加书签"
                 android:textColor="@color/black"
-                android:textSize="24px"
+                android:textSize="26px"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btn_change"
-                android:layout_width="200px"
-                android:layout_height="48px"
+            <ImageButton
+                android:id="@+id/imgBtn_close"
+                android:layout_width="32px"
+                android:layout_height="32px"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20px"
+                android:background="@null"
+                android:src="@drawable/img_marks_close" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="2px"
+            android:background="@color/black" />
+
+        <EditText
+            android:id="@+id/et_marks"
+            android:layout_width="560px"
+            android:layout_height="100px"
+            android:layout_marginLeft="20px"
+            android:layout_marginRight="20px"
+            android:layout_marginTop="30px"
+            android:background="@drawable/img_marks_et"
+            android:gravity="center|left"
+            android:maxLength="20"
+            android:paddingLeft="5px"
+            android:singleLine="true"
+            android:text="书签"
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
+
+        <FrameLayout
+            android:id="@+id/fm_ConfirmOrCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30px"
+            android:layout_marginLeft="20px"
+            android:layout_marginRight="20px"
+            android:layout_marginTop="30px">
+
+            <Button
+                android:id="@+id/btn_add_marks"
+                android:layout_width="560px"
+                android:layout_height="48px"
                 android:layout_gravity="center"
-                android:background="@drawable/bind_confirm_btn_bg"
+                android:background="@drawable/edu_img_marksadd_select"
                 android:gravity="center"
-                android:text="修改书签"
+                android:text="添加书签"
                 android:textColor="@color/white"
                 android:textSize="24px"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/ll_ChangeOrDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/btn_delete"
+                    android:layout_width="200px"
+                    android:layout_height="48px"
+                    android:layout_alignParentLeft="true"
+                    android:background="@drawable/bind_cancel_btn_bg"
+                    android:gravity="center"
+                    android:text="删除书签"
+                    android:textColor="@color/black"
+                    android:textSize="24px"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_change"
+                    android:layout_width="200px"
+                    android:layout_height="48px"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bind_confirm_btn_bg"
+                    android:gravity="center"
+                    android:text="修改书签"
+                    android:textColor="@color/white"
+                    android:textSize="24px"
+                    android:textStyle="bold" />
 
 
-        </RelativeLayout>
-    </FrameLayout>
-</LinearLayout>
+            </RelativeLayout>
+        </FrameLayout>
+    </LinearLayout>
+</RelativeLayout>

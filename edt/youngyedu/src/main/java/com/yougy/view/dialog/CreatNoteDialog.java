@@ -2,9 +2,7 @@ package com.yougy.view.dialog;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -150,15 +148,6 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
         mAdaptet.notifyDataSetChanged();
     }
 
-    @Override
-    public void show() {
-        super.show();
-        Window window = getWindow();
-        Display display = window.getWindowManager().getDefaultDisplay();
-        int width = (int) (display.getWidth() * getWidthScale());
-        window.setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-        // window.setGravity(Gravity.CENTER_VERTICAL);
-    }
 
     @Override
     public void onClick(View view) {

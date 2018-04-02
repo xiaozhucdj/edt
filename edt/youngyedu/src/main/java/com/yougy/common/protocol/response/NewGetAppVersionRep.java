@@ -15,23 +15,23 @@ public class NewGetAppVersionRep extends NewBaseRep {
 
     public static class Data{
         /**应用程序版本*/
-        private String ver ;
+        private String appVersion ;
         /**应用程序下载地址*/
-        private String url ;
+        private String appUrl ;
 
         public String getVer() {
-            return ver;
+            return appVersion;
         }
 
         public String getUrl() {
-            return url;
+            return appUrl;
         }
 
         @Override
         public String toString() {
             return "Data{" +
-                    "ver='" + ver + '\'' +
-                    ", url='" + url + '\'' +
+                    "ver='" + appVersion + '\'' +
+                    ", url='" + appUrl + '\'' +
                     '}';
         }
     }

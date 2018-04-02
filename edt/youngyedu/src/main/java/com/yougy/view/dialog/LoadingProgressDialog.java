@@ -2,9 +2,6 @@ package com.yougy.view.dialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
@@ -49,7 +46,7 @@ public class LoadingProgressDialog extends BaseDialog {
     }
 
 
-    @Override
+/*    @Override
     public void show() {
         super.show();
         LogUtils.e(getClass().getName(),"show loading progress dialog............");
@@ -61,5 +58,5 @@ public class LoadingProgressDialog extends BaseDialog {
         getWindow().getDecorView().setPadding(0, 0, 0, 0);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setAttributes(layoutParams);
-    }
+    }*/
 }

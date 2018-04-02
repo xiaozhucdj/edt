@@ -9,10 +9,10 @@ public class NewGetAppVersionReq extends NewBaseReq {
     /**
      * 移动操作系统,是否必须,是
      */
-    private final String os = "android";
+    private final String id = "student";
 
     public NewGetAppVersionReq() {
-        m = "setAppVersion";
+        m = "getAppVersion";
         address = "version";
     }
 }

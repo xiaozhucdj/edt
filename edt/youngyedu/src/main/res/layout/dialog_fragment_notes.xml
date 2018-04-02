@@ -1,135 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="600px"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="@drawable/img_creat_note_bg"
-    android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="60px">
-
-        <ImageView
-            android:id="@+id/img_close"
-            android:layout_width="20px"
-            android:layout_height="20px"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20px"
-            android:background="@null"
-            android:src="@drawable/img_serachbook_cancel" />
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="添加笔记"
-            android:textColor="@color/black"
-            android:textSize="30px" />
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/black" />
-
-
-    <EditText
-        android:id="@+id/et_note_name"
-        android:layout_width="560px"
-        android:layout_height="48px"
-        android:layout_marginLeft="20px"
-        android:layout_marginRight="20px"
-        android:layout_marginTop="30px"
-        android:background="@drawable/img_creat_edit"
-        android:hint="请输入笔记本的名称"
-        android:maxLength="12"
-        android:paddingLeft="12px"
-        android:singleLine="true"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black"
-        android:textSize="24px" />
-
-
-    <TextView
-        android:id="@+id/tv_subject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginTop="20px"
-        android:text="选择笔记本科目"
-        android:textColor="@color/black"
-        android:textSize="24px"
-        android:textStyle="bold" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_subject"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginRight="20px" />
-
-    <TextView
-        android:id="@+id/tv_noteType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginTop="20px"
-        android:text="请选择笔记本样式"
-        android:textColor="@color/black"
-        android:textSize="24px"
-        android:textStyle="bold" />
-
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent">
 
     <LinearLayout
-        android:id="@+id/ll_noteType"
-        android:layout_width="match_parent"
+        android:layout_width="600px"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginRight="20px"
-        android:layout_marginTop="20px"
-        android:orientation="horizontal">
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_rounded_rectangle_all_white"
+        android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/img_btn_style_white"
-            android:layout_width="132px"
-            android:layout_height="172px"
-            android:layout_marginRight="82px"
-            android:background="@null"
-            android:src="@drawable/img_btn_note_type_blank_select" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60px">
 
-        <ImageButton
-            android:id="@+id/img_btn_style_biji"
-            android:layout_width="132px"
-            android:layout_height="172px"
-            android:layout_marginRight="82px"
-            android:background="@null"
-            android:src="@drawable/img_btn_note_type_line_select" />
+            <ImageView
+                android:id="@+id/img_close"
+                android:layout_width="20px"
+                android:layout_height="20px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20px"
+                android:background="@null"
+                android:src="@drawable/img_serachbook_cancel" />
 
-        <ImageButton
-            android:id="@+id/img_btn_style_tianzi"
-            android:layout_width="132px"
-            android:layout_height="172px"
-            android:background="@null"
-            android:src="@drawable/img_btn_note_type_gird_select" />
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="添加笔记"
+                android:textColor="@color/black"
+                android:textSize="30px" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/black" />
+
+
+        <EditText
+            android:id="@+id/et_note_name"
+            android:layout_width="560px"
+            android:layout_height="48px"
+            android:layout_marginLeft="20px"
+            android:layout_marginRight="20px"
+            android:layout_marginTop="30px"
+            android:background="@drawable/img_creat_edit"
+            android:hint="请输入笔记本的名称"
+            android:maxLength="12"
+            android:paddingLeft="12px"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="24px" />
+
+
+        <TextView
+            android:id="@+id/tv_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:layout_marginTop="20px"
+            android:text="选择笔记本科目"
+            android:textColor="@color/black"
+            android:textSize="24px"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:layout_marginRight="20px" />
+
+        <TextView
+            android:id="@+id/tv_noteType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:layout_marginTop="20px"
+            android:text="请选择笔记本样式"
+            android:textColor="@color/black"
+            android:textSize="24px"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:id="@+id/ll_noteType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:layout_marginRight="20px"
+            android:layout_marginTop="20px"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/img_btn_style_white"
+                android:layout_width="132px"
+                android:layout_height="172px"
+                android:layout_marginRight="82px"
+                android:background="@null"
+                android:src="@drawable/img_btn_note_type_blank_select" />
+
+            <ImageButton
+                android:id="@+id/img_btn_style_biji"
+                android:layout_width="132px"
+                android:layout_height="172px"
+                android:layout_marginRight="82px"
+                android:background="@null"
+                android:src="@drawable/img_btn_note_type_line_select" />
+
+            <ImageButton
+                android:id="@+id/img_btn_style_tianzi"
+                android:layout_width="132px"
+                android:layout_height="172px"
+                android:background="@null"
+                android:src="@drawable/img_btn_note_type_gird_select" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/btn_creat"
+            android:layout_width="560px"
+            android:layout_height="48px"
+            android:layout_marginBottom="30px"
+            android:layout_marginLeft="20px"
+            android:layout_marginRight="20px"
+            android:layout_marginTop="30px"
+            android:background="@drawable/search_btn_bg_selector"
+            android:gravity="center"
+            android:text="添加笔记本"
+            android:textColor="@color/white"
+            android:textSize="24px" />
+
     </LinearLayout>
-
-
-    <Button
-        android:id="@+id/btn_creat"
-        android:layout_width="560px"
-        android:layout_height="48px"
-        android:layout_marginBottom="30px"
-        android:layout_marginLeft="20px"
-        android:layout_marginRight="20px"
-        android:layout_marginTop="30px"
-        android:background="@drawable/search_btn_bg_selector"
-        android:gravity="center"
-        android:text="添加笔记本"
-        android:textColor="@color/white"
-        android:textSize="24px" />
-
-</LinearLayout>
+</RelativeLayout>
