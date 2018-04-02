@@ -46,7 +46,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
         mBookIv = (ImageView) findViewById(R.id.search_result_img);
         mBookNameTv = (TextView) findViewById(R.id.search_result_name);
         mBookPriceTv = (TextView) findViewById(R.id.search_result_price);
-        mBookPrePriceTv = findViewById(R.id.search_result_pre_price);
+        mBookPrePriceTv = (TextView) findViewById(R.id.search_result_pre_price);
         setOnClickListener(this);
     }
 

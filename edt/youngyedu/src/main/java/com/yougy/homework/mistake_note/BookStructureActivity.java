@@ -28,6 +28,7 @@ import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeNoteBookStructureBinding;
 import com.yougy.ui.activity.databinding.ItemBookChapterBinding;
+import com.yougy.ui.activity.databinding.ItemBookTopChapterBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,12 +101,8 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                 listView.setLayoutParams(params);
                 listView.setDividerHeight(2);
                 listView.setBackgroundResource(R.drawable.shape_rounded_rectangle_black_border);
-                TextView headView = new TextView(getApplicationContext());
-                ListView.LayoutParams headviewParam = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.WRAP_CONTENT);
-                headView.setTextSize(TypedValue.COMPLEX_UNIT_SP , 25);
-                headView.setPadding(20 , 20 , 20 , 20);
-                headView.setLayoutParams(headviewParam);
-                listView.addHeaderView(headView);
+                ItemBookTopChapterBinding headViewBinding = DataBindingUtil.inflate(LayoutInflater.from(BookStructureActivity.this) , R.layout.item_book_top_chapter , null , false);
+                listView.addHeaderView(headViewBinding.getRoot());
                 listView.setAdapter(new MyAdapter());
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -134,12 +131,23 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                         startActivity(intent);
                     }
                 });
-                return new MyHolder(listView , headView);
+                return new MyHolder(listView , headViewBinding);
             }
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
-                holder.headView.setText(bookStructureNodeList.get(position).getName());
+                holder.headViewBinding.textview.setText(bookStructureNodeList.get(position).getName());
+                if (ListUtil.conditionalContains(mistakeList, new ListUtil.ConditionJudger<MistakeSummary>() {
+                    @Override
+                    public boolean isMatchCondition(MistakeSummary nodeInList) {
+                        return nodeInList.getExtra().getCursor() == bookStructureNodeList.get(position).getId();
+                    }
+                })){
+                    holder.headViewBinding.redDot.setVisibility(View.VISIBLE);
+                }
+                else {
+                    holder.headViewBinding.redDot.setVisibility(View.GONE);
+                }
                 ((MyAdapter) ((HeaderViewListAdapter) holder.listview.getAdapter()).getWrappedAdapter()).setFatherNode(bookStructureNodeList.get(position));
             }
 
@@ -220,11 +228,11 @@ public class BookStructureActivity extends HomeworkBaseActivity {
 
     private class MyHolder extends RecyclerView.ViewHolder{
         ListView listview;
-        TextView headView;
-        public MyHolder(ListView listview , TextView headView) {
+        ItemBookTopChapterBinding headViewBinding;
+        public MyHolder(ListView listview , ItemBookTopChapterBinding headViewBinding) {
             super(listview);
             this.listview = listview;
-            this.headView = headView;
+            this.headViewBinding = headViewBinding;
         }
     }
 
