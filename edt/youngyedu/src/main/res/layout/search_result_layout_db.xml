@@ -23,7 +23,7 @@
                 style="@style/shopImgStyle"
                 android:layout_marginLeft="@dimen/shop_img_padding"
                 android:onClick="@{activity.back}"
-                android:src="@drawable/img_back_ui" />
+                android:src="@drawable/edu_img_back_select" />
 
             <ImageView
                 android:id="@+id/search_tv"

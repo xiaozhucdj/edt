@@ -451,6 +451,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     public void clickTvAll(View view) {
         hideRecycler();
         mClassifyId = -1;
+        mClassifyPosition = -1;
         hideSpinnerLayout();
         binding.tvAll.setSelected(true);
         binding.guidebook.setSelected(false);
@@ -574,9 +575,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         showClassifySpinner();
         refreshSearchResultView();
         resetComposite();
-        setCompositeText();
 //        if (extrabooks == null) {
-            getSingleBookInfo();
+        getSingleBookInfo();
 //        } else {
 //            refreshSingleClassifyRecycler(extrabooks);
 //        }
@@ -590,12 +590,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         CategoryInfo info = mStageAdapter.getItem(position);
         mStage = info.getCategoryDisplay();
         mClassifyId = info.getCategoryId();
-        if (mClassifyPosition == 0) {
-            textClassifyId = mClassifyId;
-        }
-        if (mClassifyPosition == 1) {
-            guideId = mClassifyId;
-        }
         gradeDisplay = mStage;
         LogUtils.e("Spinner", "stage is : " + mStage);
         binding.stageButton.setText(info.getCategoryDisplay());
@@ -608,6 +602,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         CategoryInfo info = mExtraClassifyAdapter.getItem(position);
         mSubject = info.getCategoryDisplay();
         mClassifyId = info.getCategoryId();
+        extraDisplay = mSubject;
+        extraId = mClassifyId;
         LogUtils.e("Spinner", "subject is : " + mSubject);
         binding.classifyButton.setText(info.getCategoryDisplay());
         binding.compositeInfo.setText(mSubject);
@@ -616,7 +612,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.classifyRecyclerLayout.setVisibility(View.GONE);
     }
 
-    private int guideId = -1;
     private String gradeDisplay = "";
 
     private void guidebookSelected() {
@@ -624,14 +619,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             return;
         }
         mClassifyPosition = 1;
-        if (guideId != -1) {
-            mClassifyId = guideId;
-            mStage = gradeDisplay;
-        } else {
-            confirmClassifyId();
-            guideId = mClassifyId;
-            gradeDisplay = mStage;
-        }
+        confirmClassifyId();
+        gradeDisplay = mStage;
         LogUtils.e(tag, "stage's size : " + gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).size());
         mStageAdapter = new RecyclerAdapter(gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)));
         binding.stageRecycler.setAdapter(mStageAdapter);
@@ -653,27 +642,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         resetComposite();
         setCompositeText();
 //        if (guidbooks == null) {
-            getSingleBookInfo();
+        getSingleBookInfo();
 //        } else {
 //            refreshSingleClassifyRecycler(guidbooks);
 //        }
     }
 
-    private int textClassifyId = -1;
+
     private void textbookSelected() {
         if (mClassifyPosition == 0) {
             return;
         }
         mClassifyPosition = 0;
-        if (textClassifyId != -1) {
-            mClassifyId = textClassifyId;
-            mStage = gradeDisplay;
-        } else {
-            confirmClassifyId();
-            textClassifyId = mClassifyId;
-            gradeDisplay = mStage;
-        }
-
+        confirmClassifyId();
+        gradeDisplay = mStage;
         mStageAdapter = new RecyclerAdapter(gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)));
         binding.stageRecycler.setAdapter(mStageAdapter);
         showStageLayout();
@@ -693,7 +675,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         resetComposite();
         setCompositeText();
 //        if (textbooks == null) {
-            getSingleBookInfo();
+        getSingleBookInfo();
 //        } else {
 //            refreshSingleClassifyRecycler(textbooks);
 //        }
@@ -794,6 +776,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             }
         }
     }
+
     public void hideStageRecyclerLayout(View view) {
         if (binding.stageRecyclerLayout.getVisibility() == View.VISIBLE) {
             binding.stageRecyclerLayout.setVisibility(View.GONE);
@@ -1000,6 +983,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     /**
      * 显示课外书分类下拉列表
      */
+    private int extraId = -1;
+    private String extraDisplay = "";
     private void showClassifySpinner() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
@@ -1011,6 +996,17 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             binding.classifyButton.setVisibility(View.VISIBLE);
             String classify = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
             mClassifyId = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryId();
+            if (extraId != -1) {
+                mClassifyId = extraId;
+            } else {
+                extraId = mClassifyId;
+            }
+
+            if (!TextUtils.isEmpty(extraDisplay)) {
+                classify = extraDisplay;
+            } else {
+                extraDisplay = classify;
+            }
             binding.classifyButton.setText(classify);
             binding.compositeInfo.setText(classify);
         }

@@ -124,7 +124,6 @@ public final class NetWorkManager {
 
         if (BaseActivity.getForegroundActivity() != null) {
             loadingProgressDialog = new LoadingProgressDialog(BaseActivity.getForegroundActivity());
-//            loadingProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             loadingProgressDialog.show();
         }
         return mInstance;
