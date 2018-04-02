@@ -1,12 +1,16 @@
 package com.yougy.home.activity;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -17,14 +21,20 @@ import android.widget.TextView;
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.thin.downloadmanager.DownloadRequest;
+import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NetManager;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.protocol.callback.NewUpdateCallBack;
+import com.yougy.common.protocol.request.NewGetAppVersionReq;
+import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
@@ -48,11 +58,16 @@ import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.R;
+import com.yougy.update.DownloadManager;
+import com.yougy.update.VersionUtils;
+import com.yougy.view.dialog.DownProgressDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import okhttp3.Call;
 
 
 /**
@@ -272,6 +287,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_upload).setOnClickListener(this);
         findViewById(R.id.btn_download).setOnClickListener(this);
         findViewById(R.id.btn_test_img).setOnClickListener(this);
+        findViewById(R.id.btn_check_update).setOnClickListener(this);
 
         imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
     }
@@ -310,6 +326,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.btn_download:
                 startService(new Intent(this, DownloadService.class));
+                break;
+            case R.id.btn_check_update:
+                getServerVersion();
                 break;
             case R.id.btn_test_img:
                 startActivity(new Intent(this, TestImgActivity.class));
@@ -1077,5 +1096,116 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onBackPressed() {
 //        super.onBackPressed();
     }
+
+
+
+    private int lastProgress;
+    //升级接口 m=getAppVersion&id=student   用id来判断学生端、教师端 http://ocghxr9lf.bkt.clouddn.com/sample-debug.apk
+    private void getServerVersion() {
+        NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(MainActivity.this) {
+            @Override
+            public void onResponse(NewGetAppVersionRep response, int id) {
+                super.onResponse(response, id);
+                if (response != null && response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && response.getData() != null) {
+                    try {
+                        LogUtils.i(SplashActivity.class.getName() + ":" + response.getData().toString());
+                        NewGetAppVersionRep.Data data = response.getData();
+                        int serverVersion = Integer.parseInt(data.getVer());
+                        int localVersion = VersionUtils.getVersionCode(MainActivity.this);
+                        LogUtils.i("袁野 localVersion ==" + localVersion);
+                        final String url = data.getUrl();
+                        if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    doDownLoad(MainActivity.this, url);
+                                }
+                            });
+                        } else {
+                            Log.v("FH", "检测版本成功,没有更新的版本");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Log.v("FH", "检测版本失败:" + e.getMessage());
+                    }
+                } else {
+                    Log.v("FH", "检测版本失败.");
+                }
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+            }
+        });
+    }
+
+    /**
+     * 开始执行下载动作
+     */
+    private void doDownLoad(final Context mContext, final String downloadUrl) {
+        final DownProgressDialog downProgressDialog = new DownProgressDialog(mContext);
+
+//        downProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        downProgressDialog.show();
+        downProgressDialog.setDownProgress("0%");
+
+
+        // 删除下载的apk文件
+        doDeleteDownApk();
+        DownloadManager.getInstance().cancelAll();
+        DownloadManager.downloadId = DownloadManager.getInstance().add(DownloadManager.getDownLoadRequest(mContext, downloadUrl, new DownloadStatusListenerV1() {
+            @Override
+            public void onDownloadComplete(DownloadRequest downloadRequest) {
+
+                // 更新进度条显示
+                downProgressDialog.setDownProgress("100%");
+                downProgressDialog.dismiss();
+
+                // 下载完成，执行安装逻辑
+                doInstallApk(mContext);
+                // 退出App
+                finishAll();
+            }
+
+            @Override
+            public void onDownloadFailed(DownloadRequest downloadRequest, int errorCode, String errorMessage) {
+                downProgressDialog.setDownProgress("更新失败，重新更新下载");
+                // TODO: 2017/4/25
+                downProgressDialog.dismiss();
+                doDownLoad(mContext, downloadUrl);
+            }
+
+            @Override
+            public void onProgress(DownloadRequest downloadRequest, long totalBytes, long downloadedBytes, int progress) {
+                if (lastProgress != progress) {
+                    lastProgress = progress;
+                    String content = downloadedBytes * 100 / totalBytes + "%";
+                    downProgressDialog.setDownProgress(content);
+                }
+            }
+        }));
+    }
+
+    /**
+     * 删除下载的apk文件
+     */
+    private static void doDeleteDownApk() {
+        File file = new File(DownloadManager.getApkPath());
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+    /**
+     * 执行安装apk文件
+     */
+    private static void doInstallApk(Context mContext) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.fromFile(new File(DownloadManager.getApkPath())),
+                "application/vnd.android.package-archive");
+        mContext.startActivity(intent);
+    }
+
+
 }
 
