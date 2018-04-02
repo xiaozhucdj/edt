@@ -575,7 +575,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         showClassifySpinner();
         refreshSearchResultView();
         resetComposite();
-        setCompositeText();
 //        if (extrabooks == null) {
         getSingleBookInfo();
 //        } else {
@@ -603,6 +602,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         CategoryInfo info = mExtraClassifyAdapter.getItem(position);
         mSubject = info.getCategoryDisplay();
         mClassifyId = info.getCategoryId();
+        extraDisplay = mSubject;
+        extraId = mClassifyId;
         LogUtils.e("Spinner", "subject is : " + mSubject);
         binding.classifyButton.setText(info.getCategoryDisplay());
         binding.compositeInfo.setText(mSubject);
@@ -982,6 +983,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     /**
      * 显示课外书分类下拉列表
      */
+    private int extraId = -1;
+    private String extraDisplay = "";
     private void showClassifySpinner() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
@@ -993,6 +996,17 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             binding.classifyButton.setVisibility(View.VISIBLE);
             String classify = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryDisplay();
             mClassifyId = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryId();
+            if (extraId != -1) {
+                mClassifyId = extraId;
+            } else {
+                extraId = mClassifyId;
+            }
+
+            if (!TextUtils.isEmpty(extraDisplay)) {
+                classify = extraDisplay;
+            } else {
+                extraDisplay = classify;
+            }
             binding.classifyButton.setText(classify);
             binding.compositeInfo.setText(classify);
         }
