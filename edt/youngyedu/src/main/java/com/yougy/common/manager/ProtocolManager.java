@@ -96,7 +96,7 @@ public class ProtocolManager {
         return response;
     }
 
-    public static Response queryBookProtocol(int userId, String queryReg, int categoryId, int pageCur, int pageSize) {
+    public static Response queryBookProtocol(int userId, String queryReg, int bookCategoryMatch, int pageCur, int pageSize) {
         LogUtils.i("Protocol.............  书城图书查询");
 
         JSONObject obj = new JSONObject();
@@ -104,7 +104,7 @@ public class ProtocolManager {
             obj.put("m", "queryBook");
             obj.put("userId", userId);
             obj.put("queryReg", queryReg);
-            obj.put("categoryId", categoryId);
+            obj.put("bookCategoryMatch", bookCategoryMatch);
             obj.put("pageCur", pageCur);
             obj.put("pageSize", pageSize);
         } catch (JSONException e) {
