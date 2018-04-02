@@ -2,12 +2,10 @@ package com.yougy.view.dialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.ui.activity.R;
 
 /**
@@ -28,8 +26,8 @@ public class LoadingProgressDialog extends BaseDialog {
 
     @Override
     protected void init() {
-//        setCancelable(false);
-//        setCanceledOnTouchOutside(false);
+        setCancelable(false);
+        setCanceledOnTouchOutside(false);
     }
 
     @Override
@@ -48,9 +46,10 @@ public class LoadingProgressDialog extends BaseDialog {
     }
 
 
-    @Override
+/*    @Override
     public void show() {
         super.show();
+        LogUtils.e(getClass().getName(),"show loading progress dialog............");
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         layoutParams.gravity = Gravity.TOP;
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -59,5 +58,5 @@ public class LoadingProgressDialog extends BaseDialog {
         getWindow().getDecorView().setPadding(0, 0, 0, 0);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setAttributes(layoutParams);
-    }
+    }*/
 }

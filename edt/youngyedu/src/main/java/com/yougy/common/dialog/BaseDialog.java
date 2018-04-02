@@ -9,7 +9,7 @@ import android.view.WindowManager;
 
 /**
  * Created by Administrator on 2016/7/11.
- *
+ * <p>
  * 对话框
  */
 public abstract class BaseDialog extends Dialog {
@@ -19,7 +19,7 @@ public abstract class BaseDialog extends Dialog {
 //    private OnDismissListener mInnerListener = new InnerDismissListener();
 
     public BaseDialog(Context context) {
-        super(context);
+        super(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         init();
         Window window = getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);

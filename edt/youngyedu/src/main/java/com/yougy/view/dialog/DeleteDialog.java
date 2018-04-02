@@ -1,11 +1,8 @@
 package com.yougy.view.dialog;
 
 import android.content.Context;
-import android.view.Display;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
@@ -49,7 +46,7 @@ public class DeleteDialog extends BaseDialog implements View.OnClickListener {
     }
 
 
-    @Override
+/*    @Override
     public void show() {
         super.show();
         Window window = getWindow();
@@ -57,7 +54,7 @@ public class DeleteDialog extends BaseDialog implements View.OnClickListener {
         int width = (int) (display.getWidth() * getWidthScale());
         window.setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         // window.setGravity(Gravity.CENTER_VERTICAL);
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
