@@ -55,11 +55,11 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
         mInfo = info;
         mBookIv.setImageResource(R.drawable.cart_book);
         mBookNameTv.setText(info.getBookTitle());
-        mBookPriceTv.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSalePrice() + ""));
-        if (info.getBookSalePrice() < info.getBookOriginalPrice()) {
+        mBookPriceTv.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSpotPrice() + ""));
+        if (info.getBookSpotPrice() < info.getBookSalePrice()) {
             mBookPrePriceTv.setVisibility(View.VISIBLE);
             mBookPrePriceTv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            mBookPrePriceTv.setText(String.format(getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookOriginalPrice())));
+            mBookPrePriceTv.setText(String.format(getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookSalePrice())));
         }
         refreshImg(mBookIv, info.getBookCoverS());
     }

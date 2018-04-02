@@ -168,6 +168,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 @Override
                 public void call(List<com.yougy.shop.bean.BookInfo> bookInfos) {
                     mBookInfo = bookInfos.get(0);
+                    LogUtils.e(tag,"book info : " + mBookInfo);
                     if (mBooks == null || mBooks.size() == 0) {
                         requestPromoteBook();
                     }

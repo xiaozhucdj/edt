@@ -438,6 +438,15 @@ public class BookInfo implements Parcelable{
         this.bookAtch = bookAtch;
     }
 
+    @Override
+    public String toString() {
+        return "BookInfo{" +
+                "bookSalePrice=" + bookSalePrice +
+                ", bookOriginalPrice=" + bookOriginalPrice +
+                ", bookSpotPrice=" + bookSpotPrice +
+                '}';
+    }
+
     public static class BookContentsBean implements Parcelable {
 
         /**
