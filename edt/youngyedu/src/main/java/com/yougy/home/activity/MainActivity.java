@@ -10,7 +10,6 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -41,6 +40,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
 import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
@@ -316,7 +316,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         if (v.getId() == R.id.imgBtn_showRight) {
             mFlRight.setVisibility(mFlRight.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        }else{
+        } else {
             mFlRight.setVisibility(View.GONE);
         }
 
@@ -1099,7 +1099,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
 
+    //=================================升级相关代码 开始=============================================================
     private int lastProgress;
+
     //升级接口 m=getAppVersion&id=student   用id来判断学生端、教师端 http://ocghxr9lf.bkt.clouddn.com/sample-debug.apk
     private void getServerVersion() {
         NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(MainActivity.this) {
@@ -1122,19 +1124,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 }
                             });
                         } else {
-                            Log.v("FH", "检测版本成功,没有更新的版本");
+                            ToastUtil.showToast(MainActivity.this, "检测版本成功,没有更新的版本");
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
-                        Log.v("FH", "检测版本失败:" + e.getMessage());
+                        ToastUtil.showToast(MainActivity.this, "服务器返回数据错误:" + e.getMessage());
                     }
                 } else {
-                    Log.v("FH", "检测版本失败.");
+                    ToastUtil.showToast(MainActivity.this, "检测版本失败，请稍后重试");
                 }
             }
 
             @Override
             public void onError(Call call, Exception e, int id) {
+                ToastUtil.showToast(MainActivity.this, "检测版本失败，请稍后重试");
             }
         });
     }
@@ -1195,6 +1198,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             file.delete();
         }
     }
+
     /**
      * 执行安装apk文件
      */
@@ -1206,6 +1210,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mContext.startActivity(intent);
     }
 
+    //=================================升级相关代码 结束=============================================================
 
 }
 
