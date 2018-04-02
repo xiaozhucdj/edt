@@ -1,12 +1,9 @@
 package com.yougy.view.dialog;
 
 import android.content.Context;
-import android.view.Display;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -63,14 +60,6 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
 
     }
 
-    @Override
-    public void show() {
-        super.show();
-        Window window = getWindow();
-        Display display = window.getWindowManager().getDefaultDisplay();
-        int width = (int) (display.getWidth() * getWidthScale());
-        window.setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-    }
 
 
     @Override

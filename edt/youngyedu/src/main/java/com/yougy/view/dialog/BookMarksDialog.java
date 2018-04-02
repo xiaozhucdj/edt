@@ -1,15 +1,12 @@
 package com.yougy.view.dialog;
 
 import android.content.Context;
-import android.view.Display;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -174,7 +171,7 @@ public class BookMarksDialog extends BaseDialog {
     }
 
 
-    @Override
+/*    @Override
     public void show() {
         super.show();
         Window window = getWindow();
@@ -182,5 +179,5 @@ public class BookMarksDialog extends BaseDialog {
         int width = (int) (display.getWidth() * getWidthScale());
         window.setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         // window.setGravity(Gravity.CENTER_VERTICAL);
-    }
+    }*/
 }

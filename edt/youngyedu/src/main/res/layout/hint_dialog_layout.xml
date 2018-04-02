@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="600px"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="@drawable/shop_btn_bg_unchecked">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent">
 
-    <TextView
-        android:layout_marginTop="40px"
-        android:layout_marginLeft="50px"
-        android:layout_marginRight="50px"
-        android:id="@+id/hint_dialog_tv"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="600px"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-        android:textSize="30px" />
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_rounded_rectangle_all_white">
 
-    <Button
-        android:layout_marginBottom="40px"
-        android:layout_marginRight="50px"
-        android:layout_marginLeft="50px"
-        android:layout_marginTop="40px"
-        android:id="@+id/hint_dialog_confirm_btn"
-        android:layout_width="500px"
-        android:layout_height="48px"
-        android:layout_below="@id/hint_dialog_tv"
-        android:background="@drawable/bind_btn_doing_bg_normal"
-        android:text="@string/confirm"
-        android:textColor="@color/white"
-        android:textSize="24px" />
+        <TextView
+            android:id="@+id/hint_dialog_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50px"
+            android:layout_marginRight="50px"
+            android:layout_marginTop="40px"
+            android:gravity="center"
+            android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            android:textSize="30px" />
+
+        <Button
+            android:id="@+id/hint_dialog_confirm_btn"
+            android:layout_width="500px"
+            android:layout_height="48px"
+            android:layout_below="@id/hint_dialog_tv"
+            android:layout_marginBottom="40px"
+            android:layout_marginLeft="50px"
+            android:layout_marginRight="50px"
+            android:layout_marginTop="40px"
+            android:background="@drawable/bind_btn_doing_bg_normal"
+            android:text="@string/confirm"
+            android:textColor="@color/white"
+            android:textSize="24px" />
+    </RelativeLayout>
 </RelativeLayout>
