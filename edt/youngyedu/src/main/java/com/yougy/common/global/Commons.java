@@ -7,7 +7,7 @@ package com.yougy.common.global;
 
 public class Commons {
 
-    public static boolean isRelase = false;
+    public static boolean isRelase = true;
 
     //全部接口
     public static String NEW_URL;
