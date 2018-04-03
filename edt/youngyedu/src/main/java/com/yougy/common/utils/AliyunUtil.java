@@ -16,6 +16,7 @@ import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.yougy.common.bean.AliyunData;
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 
 import org.litepal.LitePal;
@@ -36,13 +37,13 @@ import static org.litepal.LitePal.deleteDatabase;
 public class AliyunUtil {
     private OSS oss;
     // 运行sample前需要配置以下字段为有效的值
-    private static final String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
-    public static final String ANSWER_PIC_HOST = ".oss-cn-shanghai.aliyuncs.com/";
+    private static final String endpoint = Commons.ENDPOINT ;
+    public static final String ANSWER_PIC_HOST = Commons.ANSWER_PIC_HOST ;
     public static String DATABASE_NAME;
     public static String JOURNAL_NAME;
     private static String filePath;
 
-    private final String bucketName = "b00k";
+    private final String bucketName = Commons.BUCKET_NAME ;
     private static String objectKey;
 
     public AliyunUtil(AliyunData data) {

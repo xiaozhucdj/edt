@@ -1,5 +1,7 @@
 package com.yougy.common.down;
 
+import com.yougy.common.global.Commons;
+
 /**
  * Created by Administrator on 2017/8/16.
  */
@@ -15,7 +17,7 @@ public class NewDownBookInfo {
     /**expiration*/
     private String expiration ;
     /***/
-    private String endpoint = "http://oss-cn-shanghai.aliyuncs.com" ;
+    private String endpoint = Commons.ENDPOINT ;
 
     private String bucketName ;
     private String objectKey ;
