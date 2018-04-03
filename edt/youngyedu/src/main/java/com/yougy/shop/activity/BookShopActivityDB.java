@@ -240,6 +240,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     /**
      * 根据类别获取图书信息
      */
+    private List<BookInfo> bookInfos;
+
     private void getSingleBookInfo() {
         Observable<List<BookInfo>> observable = Observable.create((Observable.OnSubscribe<List<BookInfo>>) subscriber -> {
             LogUtils.e(tag, "classify id : " + mClassifyId);
@@ -249,7 +251,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                     String resultJson = response.body().string();
                     LogUtils.e(tag, "result json : " + resultJson);
                     Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-                    List<BookInfo> bookInfos = result.getData();
+                    bookInfos = result.getData();
                     subscriber.onNext(bookInfos);
                     subscriber.onCompleted();
                 } catch (IOException e) {
@@ -297,6 +299,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.singleClassifyRecycler.addItemDecoration(new GridSpacingItemDecoration(SPAN_COUNT, UIUtils.px2dip(32), false));
         binding.singleClassifyRecycler.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
         binding.correspondSchool.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            showAllVersion = !isChecked;
             hideRecycler();
             if (isChecked) {
                 hideFiltrateTv();
@@ -307,6 +310,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 mVersion = mAllVersion;
             }
             setCompositeText();
+            refreshSingleClassifyRecycler(bookInfos);
         });
         binding.subjectWrap.setHorizontalMargin(22);
         binding.subjectWrap.setVerticalMargin(20);
@@ -681,8 +685,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 //        }
     }
 
-    private void refreshSingleClassifyRecycler(List<BookInfo> infos) {
+    private boolean showAllVersion;
+
+    private void refreshSingleClassifyRecycler(List<BookInfo> infoList) {
         LogUtils.e(tag, "refreshSingleClassifyRecycler..............");
+        List<BookInfo> infos = new ArrayList<>();
+        if (showAllVersion) {
+            infos.addAll(infoList);
+        } else {
+            for (BookInfo info : infoList) {
+                if (info.getBookVersion() == 101) {
+                    infos.add(info);
+                }
+            }
+        }
         generateBtn(infos);
         if (mPageInfos.size() > 0) {
             mPageInfos.clear();
@@ -985,6 +1001,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      */
     private int extraId = -1;
     private String extraDisplay = "";
+
     private void showClassifySpinner() {
         if (binding.spinnerLayout.getVisibility() == View.GONE) {
             binding.spinnerLayout.setVisibility(View.VISIBLE);
