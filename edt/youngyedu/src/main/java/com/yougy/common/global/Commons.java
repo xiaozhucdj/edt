@@ -20,6 +20,8 @@ public class Commons {
     public static String ANSWER_PIC_HOST;
     public static String BUCKET_NAME;
 
+    //云信app_key
+    public static String YUNXING_APP_KEY;
 
 
 
@@ -31,13 +33,14 @@ public class Commons {
             ENDPOINT ="http://oss-cn-beijing.aliyuncs.com" ;
             ANSWER_PIC_HOST =".oss-cn-beijing.aliyuncs.com/";
             BUCKET_NAME ="bj-b00k";
-
+            YUNXING_APP_KEY = "6ba4e97ff40a1720bb4c193bfd6580ba";
         } else {
             NEW_URL = "http://api.learningpad.cn:10002/";
 
             ENDPOINT ="http://oss-cn-shanghai.aliyuncs.com";
             ANSWER_PIC_HOST =".oss-cn-shanghai.aliyuncs.com/";
             BUCKET_NAME ="b00k" ;
+            YUNXING_APP_KEY = "88d269fbc1d49219764c826de8e54d91";
         }
         SHOP_URL = NEW_URL + "bookStore";
         ALIYUNDATE_URL = NEW_URL + "device";

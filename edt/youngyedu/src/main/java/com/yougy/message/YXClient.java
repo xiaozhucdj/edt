@@ -19,6 +19,7 @@ import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
+import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
@@ -47,6 +48,7 @@ import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.yougy.common.global.Commons;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -541,7 +543,9 @@ public class YXClient {
      * @param application
      */
     public static void initNimClient(Application application) {
-        NIMClient.init(application , null , null);
+        SDKOptions sdkOptions = new SDKOptions();
+        sdkOptions.appKey = Commons.YUNXING_APP_KEY;
+        NIMClient.init(application , null , sdkOptions);
     }
 
     /**

@@ -30,6 +30,7 @@ import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
@@ -676,7 +677,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     public void upLoadPic(STSbean stSbean) {
 
 
-        String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
+        String endpoint = Commons.ENDPOINT;
 
 
         OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {
