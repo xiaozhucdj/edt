@@ -42,6 +42,8 @@ public class SpUtils {
      */
     private static final String GRADE_NAME = "gradeName";
 
+    private static final String USER_GENDER = "user_gender";
+
     private static final String CLASS_NAME = "class_name";
     private static final String CLASS_ID = "class_Id";
     private static final String REAL_NAME = "real_name";
@@ -109,6 +111,7 @@ public class SpUtils {
         editor.putString(GRADE_DISPLAY , student.getGradeDisplay());
         editor.putString(SUBJECT_NAMES , student.getSubjectNames());
         editor.putString(CLASS_ID , student.getClassId());
+        editor.putString(USER_GENDER , student.getUserGender());
         editor.apply();
     }
 
@@ -125,6 +128,7 @@ public class SpUtils {
         student.setGradeName(sp.getString(GRADE_NAME,""));
         student.setSubjectNames(sp.getString(SUBJECT_NAMES , ""));
         student.setClassId(sp.getString(CLASS_ID , ""));
+        student.setUserGender(sp.getString(USER_GENDER , ""));
         return student;
     }
 
@@ -381,6 +385,6 @@ public class SpUtils {
     }
 
     public static String getSex() {
-        return sp.getString(GRADE_NAME, "");
+        return sp.getString(USER_GENDER, "");
     }
 }
