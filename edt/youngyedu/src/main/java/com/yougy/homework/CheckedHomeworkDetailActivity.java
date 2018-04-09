@@ -106,6 +106,8 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                                 }));
                         binding.contentDisplayer.getmContentAdaper().updateDataList("analysis"
                                 , data.getParsedQuestionItem().analysisContentList);
+                        binding.contentDisplayer.getmContentAdaper().updateDataList("question"
+                                , data.getParsedQuestionItem().questionContentList);
                         if (questionType.equals("选择")){
                             binding.contentDisplayer.getmContentAdaper()
                                     .setSubText("答案 : " + RxResultHelper.parseAnswerList(data.getParsedQuestionItem().answerContentList));
@@ -150,7 +152,12 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
     @Override
     protected void refreshView() {
         if (binding.questionBodyBtn.isSelected()) {
-            binding.contentDisplayer.getmContentAdaper().toPage("reply" , currentShowQuestionPageIndex , false);
+            if (binding.contentDisplayer.getmContentAdaper().getPageCount("reply") != 0){
+                binding.contentDisplayer.getmContentAdaper().toPage("reply" , currentShowQuestionPageIndex , false);
+            }
+            else {
+                binding.contentDisplayer.getmContentAdaper().toPage("question" , currentShowQuestionPageIndex , false);
+            }
         }
         else if (binding.answerAnalysisBtn.isSelected()) {
             binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
@@ -193,7 +200,12 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         if (lastPageIndex >= 0){
             if (binding.questionBodyBtn.isSelected()) {
                 currentShowQuestionPageIndex = lastPageIndex;
-                binding.contentDisplayer.getmContentAdaper().toPage("reply" , lastPageIndex , false);
+                if (binding.contentDisplayer.getmContentAdaper().getPageCount("reply") != 0){
+                    binding.contentDisplayer.getmContentAdaper().toPage("reply" , lastPageIndex , false);
+                }
+                else {
+                    binding.contentDisplayer.getmContentAdaper().toPage("question" , lastPageIndex , false);
+                }
             }
             else if (binding.answerAnalysisBtn.isSelected()) {
                 currentShowAnalysisPageIndex = lastPageIndex;
@@ -206,7 +218,12 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         if (binding.questionBodyBtn.isSelected()) {
             if (nextPageIndex < binding.contentDisplayer.getmContentAdaper().getPageCount("reply")){
                 currentShowQuestionPageIndex = nextPageIndex;
-                binding.contentDisplayer.getmContentAdaper().toPage("reply" , nextPageIndex, false);
+                if (binding.contentDisplayer.getmContentAdaper().getPageCount("reply") != 0){
+                    binding.contentDisplayer.getmContentAdaper().toPage("reply" , nextPageIndex, false);
+                }
+                else {
+                    binding.contentDisplayer.getmContentAdaper().toPage("question" , nextPageIndex, false);
+                }
             }
         }
         else if (binding.answerAnalysisBtn.isSelected()) {
