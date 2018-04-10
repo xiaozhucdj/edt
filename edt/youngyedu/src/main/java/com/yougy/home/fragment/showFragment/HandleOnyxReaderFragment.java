@@ -640,6 +640,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      * 点击目录
      */
     public void showDirectory() {
+        if (mRlDirectory.getVisibility() ==View.VISIBLE){
+            return;
+        }
+
         mRlDirectory.setVisibility(View.VISIBLE);
         if (mBookMarkBtn.isSelected() && mBookMarkAdapter != null) {
             mInfos.clear();
