@@ -39,6 +39,7 @@ import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
 import com.yougy.anwser.TimedTask;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
@@ -1037,7 +1038,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     public void upLoadPic(STSbean stSbean) {
 
 
-        String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
+        String endpoint = Commons.ENDPOINT;
 
 
         OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {

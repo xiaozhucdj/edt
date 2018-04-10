@@ -177,10 +177,11 @@
 
         <!--===================云信相关start===================-->
         <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。
-            如果 SDKOptions 中提供了，取 SDKOptions 中的值。 -->
-        <meta-data
-            android:name="com.netease.nim.appKey"
-            android:value="6ba4e97ff40a1720bb4c193bfd6580ba" />
+            如果 SDKOptions 中提供了，取 SDKOptions 中的值。
+            本处采用在SDKOPtions中设置,具体写在NetConfig中 -->
+        <!--<meta-data-->
+            <!--android:name="com.netease.nim.appKey"-->
+            <!--android:value="6ba4e97ff40a1720bb4c193bfd6580ba" />-->
 
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service

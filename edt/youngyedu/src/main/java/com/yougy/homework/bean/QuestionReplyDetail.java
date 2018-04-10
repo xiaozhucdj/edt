@@ -6,6 +6,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.common.global.Commons;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,7 +209,7 @@ public class QuestionReplyDetail {
             if (format.startsWith("ATCH/")){
                 if (linkedTreeMap.get("remote") != null
                         && !TextUtils.isEmpty((String)linkedTreeMap.get("remote"))){
-                    String url = "http://" + linkedTreeMap.get("bucket") + ".oss-cn-shanghai.aliyuncs.com/" + linkedTreeMap.get("remote");
+                    String url = "http://" + linkedTreeMap.get("bucket") + Commons.ANSWER_PIC_HOST + linkedTreeMap.get("remote");
                     if (url.endsWith(".gif")
                             || url.endsWith(".jpg")
                             || url.endsWith(".png")
