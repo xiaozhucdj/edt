@@ -5,7 +5,17 @@ package com.yougy.common.protocol.request;
  */
 
 public class NewBookStoreHomeReq extends NewBaseReq {
+    private int ps;
     public NewBookStoreHomeReq() {
         m = "requireBookMain";
+        ps = 15;
+    }
+
+    public int getPs() {
+        return ps;
+    }
+
+    public void setPs(int ps) {
+        this.ps = ps;
     }
 }

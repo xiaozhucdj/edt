@@ -77,11 +77,11 @@ public final class NetWorkManager {
                 newBuilder.header("Content-Type", "application/json");
                 newBuilder.header("Accept", "application/json");
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
-                if (Commons.isRelase){
-                    newBuilder.addHeader("X-Auth-Options" ,"1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo") ;
+                if (Commons.isRelase) {
+                    newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
                 }
 
-                Request request =  newBuilder.build() ;
+                Request request = newBuilder.build();
                 return chain.proceed(request);
             }
         };
@@ -113,7 +113,7 @@ public final class NetWorkManager {
      *
      * @return 单例对象
      */
-    public static NetWorkManager getInstance() {
+    public static NetWorkManager getInstance(boolean flag) {
         if (mInstance == null) {
             synchronized (NetWorkManager.class) {
                 if (mInstance == null) {
@@ -122,11 +122,15 @@ public final class NetWorkManager {
             }
         }
 
-        if (BaseActivity.getForegroundActivity() != null) {
+        if (flag && BaseActivity.getForegroundActivity() != null) {
             loadingProgressDialog = new LoadingProgressDialog(BaseActivity.getForegroundActivity());
             loadingProgressDialog.show();
         }
         return mInstance;
+    }
+
+    public static NetWorkManager getInstance() {
+        return getInstance(true);
     }
 
 
@@ -285,7 +289,7 @@ public final class NetWorkManager {
 
     public static Observable<List<CartItem>> queryCart(String userId) {
         Log.v("FH", "!!!!!调用ServerApi查询用户购物车:queryCart");
-        return getInstance().getServerApi().queryCart(userId)
+        return getInstance(false).getServerApi().queryCart(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

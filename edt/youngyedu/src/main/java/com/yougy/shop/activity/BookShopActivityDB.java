@@ -47,6 +47,8 @@ import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.decoration.GridSpacingItemDecoration;
 import com.yougy.view.decoration.SpaceItemDecoration;
 
+import org.litepal.util.LogUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,10 +121,10 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     @Override
     protected void loadData() {
         Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), (categoryInfos, bookInfos) -> {
-            LogUtils.e(tag, "call.........................");
+            long start = System.currentTimeMillis();
             handleCategoryInfo(categoryInfos);
-            LogUtils.e(tag, "categoryInfos' size is : " + categoryInfos.size() + ",bookinfos' size is : " + bookInfos.size());
-            LogUtils.e(tag, "bookinfos : " + bookInfos);
+            long end = System.currentTimeMillis();
+            LogUtils.e(tag, "call........................." + (end - start));
             return bookInfos;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -156,16 +158,21 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             CategoryInfo level1 = categories.get(i);
             mClassifies.add(level1.getCategoryDisplay());
             mClassifyIds.put(i, level1.getCategoryId());
-            gradeSparseArray.put(level1.getCategoryId(), level1.getChilds());
+            List<CategoryInfo> childs1 = level1.getChilds();
+//            LogUtils.e(tag,"childs1 : " + childs1);
+            gradeSparseArray.put(level1.getCategoryId(), childs1);
             grades.add(level1);
-            for (int j = 0; j < level1.getChilds().size(); j++) {
-                CategoryInfo level2 = level1.getChilds().get(j);
-                subjectSparseArray.put(level2.getCategoryId(), level2.getChilds());
-                List<CategoryInfo> childs = level2.getChilds();
-                if (null != childs && childs.size() > 0) {
-                    for (int n = 0; n < level2.getChilds().size(); n++) {
-                        CategoryInfo level3 = level2.getChilds().get(n);
-                        versionSparseArray.put(level3.getCategoryId(), level3.getChilds());
+            if (null != childs1 && childs1.size() > 0) {
+                for (int j = 0; j < childs1.size(); j++) {
+                    CategoryInfo level2 = level1.getChilds().get(j);
+                    List<CategoryInfo> childs2 = level2.getChilds();
+                    subjectSparseArray.put(level2.getCategoryId(), childs2);
+//                    LogUtils.e(tag, "childs2 : " + childs2);
+                    if (null != childs2 && childs2.size() > 0) {
+                        for (int n = 0; n < childs2.size(); n++) {
+                            CategoryInfo level3 = childs2.get(n);
+                            versionSparseArray.put(level3.getCategoryId(), level3.getChilds());
+                        }
                     }
                 }
             }
@@ -178,13 +185,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private Observable<List<CategoryInfo>> getCategoryInfo() {
         return create(subscriber -> {
             try {
+                long start = System.currentTimeMillis();
                 Response response = NewProtocolManager.queryBookCategory(new NewBookStoreCategoryReq());
+                long end = System.currentTimeMillis();
+                LogUtils.e(tag,"getCategoryInfo takes time : " + (end - start));
                 if (response.isSuccessful()) {
                     String resultJson = response.body().string();
                     LogUtils.e(tag, "category info : " + resultJson);
+                    start = System.currentTimeMillis();
                     Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
+                    end = System.currentTimeMillis();
+                    LogUtils.e(tag,"getCategoryInfo jiexi shuju takes time : " + (end - start));
                     List<CategoryInfo> categories = result.getData();
                     LogUtils.e(tag, "categories' size : " + categories.size());
+
                     subscriber.onNext(categories);
                 }
             } catch (IOException e) {
@@ -223,12 +237,19 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      */
     private Observable<List<BookInfo>> getHomeInfo() {
         return create(subscriber -> {
+            long start = System.currentTimeMillis();
             Response response = NewProtocolManager.queryBookShopHome(new NewBookStoreHomeReq());
+            long end = System.currentTimeMillis();
+            LogUtils.e(tag,"getHomeInfo takes time : " + (end - start));
             if (response.isSuccessful()) {
                 try {
                     String resultJson = response.body().string();
                     LogUtils.e(tag, "home info : " + resultJson);
+                    start = System.currentTimeMillis();
                     Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
+                    LogUtils.e(tag, "bookinfos : " + result.getData().size());
+                    end = System.currentTimeMillis();
+                    LogUtils.e(tag,"getHomeInfo jiexi shuju takes time : " + (end - start));
                     subscriber.onNext(result.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
