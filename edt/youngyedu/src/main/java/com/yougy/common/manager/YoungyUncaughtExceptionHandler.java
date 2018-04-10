@@ -1,14 +1,13 @@
 package com.yougy.common.manager;
 
 import android.content.Context;
-import android.content.Intent;
 
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.PackageUtils;
 import com.yougy.common.utils.SystemUtils;
-import com.yougy.home.activity.SplashActivity;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -105,9 +104,10 @@ public class YoungyUncaughtExceptionHandler implements Thread.UncaughtExceptionH
                 } catch (Exception e) {
                     LogUtils.e(e);
                 } finally {
-                    Intent intent = new Intent(YougyApplicationManager.getContext(),SplashActivity.class);
+                 /*   Intent intent = new Intent(YougyApplicationManager.getContext(),SplashActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    YougyApplicationManager.getContext().startActivity(intent);
+                    YougyApplicationManager.getContext().startActivity(intent);*/
+                    BaseActivity.finishAll();
                     android.os.Process.killProcess(android.os.Process.myPid());  //结束进程之前可以把你程序的注销或者退出代码放在这
                 }
             }
