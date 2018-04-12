@@ -47,22 +47,22 @@
         <ImageView
             android:layout_centerVertical="true"
             android:id="@+id/img_pageBack"
-            android:layout_width="22px"
-            android:layout_height="38px"
+            android:layout_width="50px"
+            android:layout_height="50px"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="30px"
-            android:layout_marginRight="30px"
+            android:layout_marginLeft="14px"
+            android:layout_marginRight="14px"
             android:background="@null"
             android:src="@drawable/edu_img_pageprev_select" />
 
         <ImageView
             android:layout_centerVertical="true"
             android:id="@+id/img_pageNext"
-            android:layout_width="22px"
-            android:layout_height="38px"
+            android:layout_width="50px"
+            android:layout_height="50px"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="30px"
-            android:layout_marginRight="30px"
+            android:layout_marginLeft="14px"
+            android:layout_marginRight="14px"
             android:background="@null"
             android:src="@drawable/edu_img_pagenext_select" />
 
