@@ -32,11 +32,6 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
         String json = response.body().string();
         LogUtils.e(getClass().getName(), "unbind json is : " + json);
         if (response.isSuccessful()) {
-//            String path = mWeakReference.get().getDatabasePath(DATABASE_NAME).getAbsolutePath();
-//            boolean uploadDb = FtpUtil.uploadFile(path, DATABASE_NAME);
-//            if (uploadDb) {
-//                SpUtils.changeContent(false);
-//            }
             Intent intent = new Intent(mWeakReference.get(), UploadService.class);
             mWeakReference.get().startService(intent);
         }

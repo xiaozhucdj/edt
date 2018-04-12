@@ -145,11 +145,10 @@ public class SettingMainActivity extends BaseActivity {
             public void call(Object o) {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
-
                         FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET);
                         Intent intent = new Intent(getApplicationContext(), UploadService.class);
                         startService(intent);
-                        SpUtils.clearSP();
+//                        SpUtils.clearSP();
                         showCenterDetermineDialog(R.string.unbind_success);
                         YXClient.getInstance().logout();
                     } else {

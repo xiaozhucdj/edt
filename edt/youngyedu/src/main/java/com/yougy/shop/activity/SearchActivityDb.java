@@ -8,12 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -37,7 +34,6 @@ import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.SearchBinding;
 import com.yougy.view.CustomLinearLayoutManager;
-import com.yougy.view.decoration.SpaceItemDecoration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -174,7 +170,7 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void generateSubjectLayout(CategoryInfo info) {
         bookCategoryMatch = info.getCategoryId();
-        List<CategoryInfo> childs = info.getChilds();
+        List<CategoryInfo> childs = info.getCategoryList();
         if (binding.subjectWrap.getChildCount() != 0) {
             binding.subjectWrap.removeAllViews();
         }
@@ -184,7 +180,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         }else{
             showSubjectLayout();
         }
-        for (final CategoryInfo item : info.getChilds()) {
+        for (final CategoryInfo item : info.getCategoryList()) {
             View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
             String display = item.getCategoryDisplay();
@@ -207,7 +203,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         if (binding.versionWrap.getChildCount() != 0) {
             binding.versionWrap.removeAllViews();
         }
-        for (final CategoryInfo item : info.getChilds()) {
+        for (final CategoryInfo item : info.getCategoryList()) {
             View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
             tv.setText(item.getCategoryDisplay());
@@ -486,7 +482,7 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     private void showGradeLayout() {
-        List<CategoryInfo> infos = BookShopActivityDB.grades.get(currentItem).getChilds();
+        List<CategoryInfo> infos = BookShopActivityDB.grades.get(currentItem).getCategoryList();
         mStageAdapter = new RecyclerAdapter(infos);
         binding.stageRecycler.setAdapter(mStageAdapter);
         binding.stageButton.setText(mStageAdapter.getItem(0).getCategoryDisplay());

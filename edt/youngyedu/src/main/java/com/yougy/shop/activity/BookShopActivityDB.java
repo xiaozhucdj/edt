@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
@@ -38,7 +39,6 @@ import com.yougy.shop.adapter.BookAdapter;
 import com.yougy.shop.adapter.BookShopAdapter;
 import com.yougy.shop.adapter.RecyclerAdapter;
 import com.yougy.shop.bean.BookInfo;
-import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.CategoryInfo;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
@@ -47,18 +47,16 @@ import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.decoration.GridSpacingItemDecoration;
 import com.yougy.view.decoration.SpaceItemDecoration;
 
-import org.litepal.util.LogUtil;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindArray;
 import butterknife.BindString;
 import okhttp3.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static rx.Observable.create;
@@ -158,20 +156,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             CategoryInfo level1 = categories.get(i);
             mClassifies.add(level1.getCategoryDisplay());
             mClassifyIds.put(i, level1.getCategoryId());
-            List<CategoryInfo> childs1 = level1.getChilds();
+            List<CategoryInfo> childs1 = level1.getCategoryList();
 //            LogUtils.e(tag,"childs1 : " + childs1);
             gradeSparseArray.put(level1.getCategoryId(), childs1);
             grades.add(level1);
             if (null != childs1 && childs1.size() > 0) {
                 for (int j = 0; j < childs1.size(); j++) {
-                    CategoryInfo level2 = level1.getChilds().get(j);
-                    List<CategoryInfo> childs2 = level2.getChilds();
+                    CategoryInfo level2 = level1.getCategoryList().get(j);
+                    List<CategoryInfo> childs2 = level2.getCategoryList();
                     subjectSparseArray.put(level2.getCategoryId(), childs2);
 //                    LogUtils.e(tag, "childs2 : " + childs2);
                     if (null != childs2 && childs2.size() > 0) {
                         for (int n = 0; n < childs2.size(); n++) {
                             CategoryInfo level3 = childs2.get(n);
-                            versionSparseArray.put(level3.getCategoryId(), level3.getChilds());
+                            versionSparseArray.put(level3.getCategoryId(), level3.getCategoryList());
                         }
                     }
                 }
@@ -190,10 +188,14 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 long end = System.currentTimeMillis();
                 LogUtils.e(tag,"getCategoryInfo takes time : " + (end - start));
                 if (response.isSuccessful()) {
+                    start = System.currentTimeMillis();
                     String resultJson = response.body().string();
-                    LogUtils.e(tag, "category info : " + resultJson);
+                    end = System.currentTimeMillis();
+                    LogUtils.e(tag, "category info size : " + resultJson.length() + ",take time : " + (end - start));
                     start = System.currentTimeMillis();
                     Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
+
+//                    List<CategoryInfo> categories = json2list(resultJson);
                     end = System.currentTimeMillis();
                     LogUtils.e(tag,"getCategoryInfo jiexi shuju takes time : " + (end - start));
                     List<CategoryInfo> categories = result.getData();

@@ -99,8 +99,10 @@ public class SpUtils {
     }
 
     public static void saveStudent(Student student){
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt(STUDENT_ID,student.getUserId());
+        LogUtils.e("SpUtils","saveStudent user id : " + student.getUserId());
         editor.putString(STUDENT_NAME,student.getUserName());
         editor.putString(STUDENT_CODE,student.getUserNum());
         editor.putString(STUDENT_SCHOOL,student.getSchoolName());
@@ -117,7 +119,9 @@ public class SpUtils {
 
     public static Student getStudent(){
         Student student = new Student();
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE,Context.MODE_PRIVATE);
         student.setUserId(sp.getInt(STUDENT_ID,-1));
+        LogUtils.e("SpUtils","getStudent user id : " + sp.getInt(STUDENT_ID,-1));
         student.setUserName(sp.getString(STUDENT_NAME,""));
         student.setUserNum(sp.getString(STUDENT_CODE,"-1"));
         student.setSchoolName(sp.getString(STUDENT_SCHOOL,""));

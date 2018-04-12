@@ -14,8 +14,7 @@ public class CategoryInfo{
     private int categoryLevel;
     private int categoryParent;
     private String categoryDisplay;
-    @SerializedName("categoryList")
-    private List<CategoryInfo> childs;
+    private List<CategoryInfo> categoryList;
 
     public int getCategoryId() {
         return categoryId;
@@ -57,12 +56,12 @@ public class CategoryInfo{
         this.categoryDisplay = categoryDisplay;
     }
 
-    public List<CategoryInfo> getChilds() {
-        return childs;
+    public List<CategoryInfo> getCategoryList() {
+        return categoryList;
     }
 
-    public void setChilds(List<CategoryInfo> childs) {
-        this.childs = childs;
+    public void setCategoryList(List<CategoryInfo> categoryList) {
+        this.categoryList = categoryList;
     }
 
     @Override
