@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -216,8 +217,18 @@ public class AnsweringActivity extends AnswerBaseActivity {
         binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(startTimeMill , "yyyy-MM-dd HH:mm"));
 
         //新建写字板，并添加到界面上
-        mNbvAnswerBoard = new NoteBookView2(this);
-        mCaogaoNoteBoard = new NoteBookView2(this);
+
+
+        binding.rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                binding.rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+               mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this ,  binding.rlAnswer.getMeasuredWidth() ,  binding.rlAnswer.getMeasuredHeight());
+
+            }
+        });
+
+        mCaogaoNoteBoard = new NoteBookView2(this ,960 ,420);
 
         binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper() {
             @Override
@@ -286,7 +297,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                 break;
             case R.id.tv_clear_write:
-                mNbvAnswerBoard.clearAll();
+
+                mNbvAnswerBoard.clearAll( binding.rlAnswer.getMeasuredWidth() ,  binding.rlAnswer.getMeasuredHeight());
+
                 break;
             case R.id.tv_add_page:
                 if (questionPageSize - binding.contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
@@ -308,7 +321,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     binding.tvCaogaoText.setText("草稿纸");
 
                     cgBytes.set(saveQuestionPage, null);
-                    mCaogaoNoteBoard.clearAll();
+                    mCaogaoNoteBoard.clearAll(960 ,420);
                     binding.llCaogaoControl.setVisibility(View.GONE);
 
                     if (binding.rlCaogaoBox.getChildCount() > 0) {
@@ -920,5 +933,58 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mNbvAnswerBoard!=null){
+            mNbvAnswerBoard.recycle();
+        }
 
+        if (mCaogaoNoteBoard!=null){
+            mCaogaoNoteBoard.recycle();
+        }
+
+        if (timedTask!=null){
+            timedTask .stop() ;
+            timedTask=null ;
+        }
+
+        if (pathList!=null){
+            pathList.clear();
+        }
+        pathList = null ;
+
+        if (bytesList!=null){
+            bytesList.clear();
+        }
+        bytesList= null ;
+
+        if (stsResultbeanArrayList!=null){
+            stsResultbeanArrayList.clear();
+        }
+        stsResultbeanArrayList = null ;
+
+        if (questionList!=null){
+            questionList.clear();
+        }
+        questionList = null ;
+
+        if (chooeseAnswerList!=null){
+            chooeseAnswerList.clear();
+        }
+        chooeseAnswerList = null ;
+
+
+        if (cgBytes!=null){
+            cgBytes.clear();
+        }
+        cgBytes = null ;
+
+        if (checkedAnswerList!=null){
+            checkedAnswerList.clear();
+        }
+        checkedAnswerList = null ;
+
+        System.gc();
+    }
 }

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -144,12 +145,21 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void initLayout() {
-        if (!TextUtils.isEmpty(bookTitle)){
+        if (!TextUtils.isEmpty(bookTitle)) {
             subTitleTv.setText(" - " + bookTitle);
         }
+
         //新建写字板，并添加到界面上
-        mNbvAnswerBoard = new NoteBookView2(this);
-        mCaogaoNoteBoard = new NoteBookView2(this);
+        rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                mNbvAnswerBoard = new NoteBookView2(WriteErrorHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+
+            }
+        });
+
+        mCaogaoNoteBoard = new NoteBookView2(this ,960 ,420);
         switch (lastScore) {
             case 0:
                 tvZpResult.setText("上次自评结果 : ");
@@ -288,8 +298,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                         pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
                     }
 
-
-                    mNbvAnswerBoard.clearAll();
+                    mNbvAnswerBoard.clearAll(rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
 
                     //将本页设置为选中页
                     saveQuestionPage = position;
@@ -481,7 +490,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     tvCaogaoText.setText("草稿纸");
 
                     cgBytes.set(saveQuestionPage, null);
-                    mCaogaoNoteBoard.clearAll();
+                    mCaogaoNoteBoard.clearAll(960 ,420);
                     llCaogaoControl.setVisibility(View.GONE);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
@@ -700,4 +709,51 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mNbvAnswerBoard!=null){
+            mNbvAnswerBoard.recycle();
+        }
+        mNbvAnswerBoard = null ;
+
+        if (mCaogaoNoteBoard!=null){
+            mCaogaoNoteBoard.recycle();
+        }
+        mCaogaoNoteBoard = null ;
+
+        if (questionList!=null){
+            questionList.clear();
+        }
+        questionList = null ;
+
+        if (chooeseAnswerList!=null){
+            chooeseAnswerList.clear();
+        }
+        chooeseAnswerList = null ;
+
+        if (checkedAnswerList!=null){
+            checkedAnswerList.clear();
+        }
+        checkedAnswerList = null ;
+
+        if (bytesList!=null){
+            bytesList.clear();
+        }
+        bytesList = null ;
+
+
+
+        if (pathList!=null){
+            pathList.clear();
+        }
+        pathList = null ;
+
+        if (cgBytes!=null){
+            cgBytes.clear();
+        }
+        cgBytes = null ;
+
+        System.gc();
+    }
 }

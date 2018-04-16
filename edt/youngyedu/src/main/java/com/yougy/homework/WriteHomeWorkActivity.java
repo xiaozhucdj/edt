@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -209,8 +210,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void initLayout() {
         //新建写字板，并添加到界面上
-        mNbvAnswerBoard = new NoteBookView2(this);
-        mCaogaoNoteBoard = new NoteBookView2(this);
+        rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                mNbvAnswerBoard = new NoteBookView2(WriteHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+            }
+        });
+
+        mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
         findViewById(R.id.img_btn_right).setVisibility(View.GONE);
         DisplayMetrics dm = getResources().getDisplayMetrics();
         screenWidth = dm.widthPixels;
@@ -526,7 +534,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         tvCaogaoText.setText("草稿纸");
                         llCaogaoControl.setVisibility(View.GONE);
                     }
-                    mCaogaoNoteBoard.clearAll();
+                    mCaogaoNoteBoard.clearAll(960, 420);
 
                     //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                     if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
@@ -538,7 +546,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
                 }
 
-                mNbvAnswerBoard.clearAll();
+                mNbvAnswerBoard.clearAll(rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
 
 
                 chooesePoint = position;
@@ -849,7 +857,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_clear_write:
-                mNbvAnswerBoard.clearAll();
+                mNbvAnswerBoard.clearAll(rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
                 break;
             case R.id.tv_add_page:
 
@@ -882,7 +890,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     tvCaogaoText.setText("草稿纸");
 
                     cgBytes.set(saveQuestionPage, null);
-                    mCaogaoNoteBoard.clearAll();
+                    mCaogaoNoteBoard.clearAll(960, 420);
                     llCaogaoControl.setVisibility(View.GONE);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
@@ -933,7 +941,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
             llCaogaoControl.setVisibility(View.GONE);
         }
-        mCaogaoNoteBoard.clearAll();
+        mCaogaoNoteBoard.clearAll(960, 420);
 
 
         //刷新最后没有保存的数据
@@ -1540,7 +1548,66 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
             itemBinding.checkbox.setBackgroundResource(rid);
         }
-
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (examPaperContentList != null) {
+            examPaperContentList.clear();
+        }
+        examPaperContentList = null;
+
+        if (questionList != null) {
+            questionList.clear();
+        }
+        questionList = null;
+
+        if (chooeseAnswerList != null) {
+            chooeseAnswerList.clear();
+        }
+        chooeseAnswerList = null;
+
+        if (checkedAnswerList != null) {
+            checkedAnswerList.clear();
+        }
+        checkedAnswerList = null;
+
+        if (timedTask != null) {
+            timedTask.stop();
+        }
+        timedTask = null;
+
+        if (bytesList != null) {
+            pathList.clear();
+        }
+        pathList = null;
+
+
+        if (cgBytes != null) {
+            cgBytes.clear();
+        }
+        cgBytes = null;
+
+        if (homeWorkResultbeanList != null) {
+            homeWorkResultbeanList.clear();
+        }
+        homeWorkResultbeanList = null;
+
+
+        if (mNbvAnswerBoard != null) {
+            mNbvAnswerBoard.recycle();
+        }
+        mNbvAnswerBoard = null;
+
+
+        if (mCaogaoNoteBoard != null) {
+            mCaogaoNoteBoard.recycle();
+        }
+        mCaogaoNoteBoard = null;
+
+        System.gc();
+
+    }
 }
