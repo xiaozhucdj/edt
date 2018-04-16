@@ -228,10 +228,12 @@ public class ContentDisplayer extends RelativeLayout {
         mainTextView.setVisibility(GONE);
         picImageView.setVisibility(VISIBLE);
         pdfImageView.setVisibility(GONE);
+
+        if (picImageView!=null){
+            Glide.clear(picImageView);
+        }
         if (useCache){
-            if (picImageView!=null){
-                Glide.clear(picImageView);
-            }
+
             Glide.with(BaseActivity.getCurrentActivity())
                     .load(url)
                     .listener(new RequestListener<String, GlideDrawable>() {
@@ -253,10 +255,8 @@ public class ContentDisplayer extends RelativeLayout {
                     }).into(picImageView);
         }
         else {
-            if (picImageView!=null){
-                Glide.clear(picImageView);
-            }
-            Glide.with(getContext())
+
+            Glide.with(BaseActivity.getCurrentActivity())
                     .load(url)
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
