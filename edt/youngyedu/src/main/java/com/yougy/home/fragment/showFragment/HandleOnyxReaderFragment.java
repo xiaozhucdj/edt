@@ -684,7 +684,12 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             mSubDb.unsubscribe();
         }
         mSubDb = null;
+        if (mNoteBookView!=null){
+            mNoteBookView.recycle();
+            mNoteBookView = null ;
+        }
         getReaderPresenter().close();
+        System.gc();
     }
 
 

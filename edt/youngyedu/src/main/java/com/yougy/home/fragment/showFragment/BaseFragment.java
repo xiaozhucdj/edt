@@ -532,6 +532,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     public void initNoteView() {
 //        updatePaintColor(Color.BLACK);
+        if (mNoteBookView!=null){
+            mNoteBookView.recycle();
+            mNoteBookView = null ;
+        }
+
         mNoteBookView = new NoteBookView(mContext);
         if (mIsUserPen) {
             mNoteBookView.outSetPenSize(mCutterPenSize);
