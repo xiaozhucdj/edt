@@ -1,6 +1,7 @@
 package com.yougy.anwser;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -22,6 +23,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.UIUtils;
@@ -229,6 +232,11 @@ public class ContentDisplayer extends RelativeLayout {
         picImageView.setVisibility(VISIBLE);
         pdfImageView.setVisibility(GONE);
 
+        if (mOldBitmap!=null && !mOldBitmap.isRecycled()){
+            mOldBitmap.recycle();
+        }
+        mOldBitmap = null ;
+
         if (picImageView!=null){
             Glide.clear(picImageView);
         }
@@ -238,8 +246,7 @@ public class ContentDisplayer extends RelativeLayout {
                     .load(url)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                            e.printStackTrace();
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {                            e.printStackTrace();
                             Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
                             setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
                             callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
@@ -249,10 +256,11 @@ public class ContentDisplayer extends RelativeLayout {
 
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
                             callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                             return false;
                         }
-                    }).into(picImageView);
+                    }).into(target);
         }
         else {
 
@@ -276,7 +284,7 @@ public class ContentDisplayer extends RelativeLayout {
                             callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                             return false;
                         }
-                    }).into(picImageView);
+                    }).into(target);
         }
         needRefresh = false;
         setHintText(null);
@@ -639,4 +647,16 @@ public class ContentDisplayer extends RelativeLayout {
         public void onLoadingStatusChanged(LOADING_STATUS loadingStatus);
     }
 
+
+
+    private  Bitmap  mOldBitmap ;
+
+    private SimpleTarget target = new SimpleTarget<Bitmap>() {
+        @Override
+        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+            //这里我们拿到回掉回来的bitmap，可以加载到我们想使用到的地方
+            mOldBitmap = bitmap ;
+            picImageView.setImageBitmap(bitmap);
+        }
+    };
 }
