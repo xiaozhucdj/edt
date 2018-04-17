@@ -65,6 +65,7 @@ public class NoteBookView2 extends View {
      * 历史保存在sd卡上的 位图 ，主要解决 前进后退 情况画板 不会还原问题 2016 09 23
      */
     private Bitmap mSrcBitmp;
+    private int mSystenPenType;
 
     public void setContentChanged(boolean contentChanged) {
         this.contentChanged = contentChanged;
@@ -85,11 +86,19 @@ public class NoteBookView2 extends View {
         init();
     }
 
-    public NoteBookView2(Context context, AttributeSet attrs) {
+    public NoteBookView2(Context context, AttributeSet attrs ) {
         super(context, attrs);
         mContext = context;
         init();
     }
+
+
+    public NoteBookView2(Context context ,int screenWidth ,int screenHeight) {
+        super(context);
+        mContext = context;
+        init(screenWidth,screenHeight);
+    }
+
 
     public interface OnUndoOptListener {
         void disenableUndoView();
@@ -147,6 +156,42 @@ public class NoteBookView2 extends View {
             screenWidth = 960;
             screenHeight = 1280;
         }
+        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
+        // 保存一次一次绘制出来的图形
+        mCanvas = new Canvas(mBitmap);
+
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);// 设置外边缘
+        mPaint.setStrokeCap(Paint.Cap.SQUARE);// 形状
+        mPaint.setStrokeWidth(2.0f);// 画笔宽度
+        mPaint.setColor(Color.BLACK);
+        savePath = new ArrayList<>();
+
+        mBitmapPaint = new Paint(mPaint);
+
+        matrix = new Matrix();
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            LogUtils.e(getClass().getName(), "PL107");
+            matrix.postRotate(90);
+            matrix.postTranslate(UIUtils.getScreenHeight(), 0);
+        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+            LogUtils.e(getClass().getName(), "N96，EDU");
+            matrix.postRotate(270);
+            matrix.postTranslate(0, UIUtils.getScreenWidth());
+        }
+        //适用于设备N96
+
+        //适用于设备PL107
+
+        EpdController.setStrokeColor(0xff000000);
+//        EpdController.setStrokeStyle(1);
+//        EpdController.setStrokeWidth(2.0f);
+    }
+
+    private void init(int screenWidth  ,int screenHeight) {
         mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
         // 保存一次一次绘制出来的图形
         mCanvas = new Canvas(mBitmap);
@@ -307,7 +352,7 @@ public class NoteBookView2 extends View {
             parentFile.mkdirs();
         }
         FileOutputStream fos = new FileOutputStream(file);
-        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        mBitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
         fos.flush();
         fos.close();
     }
@@ -377,6 +422,18 @@ public class NoteBookView2 extends View {
         invalidate();
     }
 
+    //清理整个画板，不保存之前数据
+    public void clearAll(int screenWidth ,int screenHeight) {
+        index = -1;
+        savePath.clear();
+        disenableRedoView();
+        disenableUndoView();
+        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
+        mCanvas.setBitmap(mBitmap);
+
+        invalidate();
+    }
+
     /**
      * 保存图片
      */
@@ -407,7 +464,7 @@ public class NoteBookView2 extends View {
 
     public byte[] bitmap2Bytes() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        mBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
         return bos.toByteArray();
     }
 
@@ -426,8 +483,14 @@ public class NoteBookView2 extends View {
             return false;
         }
 
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN ;
+        }else{
+            mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS ;
+        }
+
         if (!flagOfErase) {
-            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
+            if (event.getToolType(0) == mSystenPenType) {
                 setPen();
             }
         }
@@ -438,6 +501,10 @@ public class NoteBookView2 extends View {
         contentChanged = true;
         float x = event.getX();
         float y = event.getY();
+        if (x < 0 && x > getWidth() && y < 0 && y > getHeight()) {
+            return false ;
+        }
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //如果flag为true，则说明进行了undo、redo操作，这时再进行按下操作时应将索引后面的path清除掉
@@ -585,11 +652,25 @@ public class NoteBookView2 extends View {
 
     private void setScreenPaint() {
         EpdController.setStrokeColor(0xff000000);
-        EpdController.setStrokeWidth(1.80f);
+        EpdController.setStrokeWidth(2.0f);
     }
 
     private void setScreenEraser() {
         EpdController.setStrokeColor(0xffffffff);
         EpdController.setStrokeWidth(20.0f);
+    }
+
+    public void recycle(){
+        if (mBitmap!=null){
+            mBitmap.recycle();
+            mBitmap= null ;
+        }
+
+        if (mSrcBitmp!=null){
+            mSrcBitmp.recycle();
+            mSrcBitmp = null ;
+        }
+
+        Runtime.getRuntime().gc();
     }
 }

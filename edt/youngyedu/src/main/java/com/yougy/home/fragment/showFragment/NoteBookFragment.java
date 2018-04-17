@@ -828,6 +828,10 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         if (mUpdateSub != null) {
             initScription.unsubscribe();
         }
+        if (mNoteBookView!=null){
+            mNoteBookView.recycle();
+        }
+        Runtime.getRuntime().gc() ;
     }
 
     @Override

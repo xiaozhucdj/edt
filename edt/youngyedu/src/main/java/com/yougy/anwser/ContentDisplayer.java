@@ -23,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.plide.LoadController;
 import com.yougy.plide.LoadListener;
@@ -222,18 +223,20 @@ public class ContentDisplayer extends RelativeLayout {
         setHintText(null);
         callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
     }
+
     private void setImgUrl(String url , boolean useCache){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);
         picImageView.setVisibility(VISIBLE);
         pdfImageView.setVisibility(GONE);
+
         if (useCache){
-            Glide.with(getContext())
+            Glide.with(BaseActivity.getCurrentActivity())
                     .load(url)
+                    .skipMemoryCache(true)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                            e.printStackTrace();
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {                            e.printStackTrace();
                             Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
                             setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
                             callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
@@ -243,13 +246,14 @@ public class ContentDisplayer extends RelativeLayout {
 
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
                             callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                             return false;
                         }
                     }).into(picImageView);
         }
         else {
-            Glide.with(getContext())
+            Glide.with(BaseActivity.getCurrentActivity())
                     .load(url)
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -275,6 +279,11 @@ public class ContentDisplayer extends RelativeLayout {
         setHintText(null);
     }
 
+    public void clearPdfCache(){
+        if (pdfImageView != null){
+            Plide.clearCache(pdfImageView);
+        }
+    }
     private void setPdf(Content_new content , int contentIndex , int subPageIndex , String typeKey){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);
@@ -631,5 +640,4 @@ public class ContentDisplayer extends RelativeLayout {
     public interface OnLoadingStatusChangedListener{
         public void onLoadingStatusChanged(LOADING_STATUS loadingStatus);
     }
-
 }

@@ -433,14 +433,14 @@ public class TextBookFragment extends BaseFragment implements AdapterView.OnItem
 
     private void judgeFlipPage(int position) {
         if (position >= mPageCounts) {
-            UIUtils.showToastSafe("当前是最后一页", Toast.LENGTH_SHORT);
+            UIUtils.showToastSafe("当前是最后一页");
             mBackPageBack.setEnabled(true);
             mBackPageNext.setEnabled(true);
             mSeekbarPage.setClickable(true);
             return;
         }
         if (position < 0) {
-            UIUtils.showToastSafe("当前是第一页", Toast.LENGTH_SHORT);
+            UIUtils.showToastSafe("当前是第一页");
             mBackPageBack.setEnabled(true);
             mBackPageNext.setEnabled(true);
             mSeekbarPage.setClickable(true);

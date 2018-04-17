@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.common.activity.BaseActivity;
@@ -286,4 +287,19 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         binding.commentDialog.setVisibility(View.GONE);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        allReplyList.clear();
+        allReplyList = null;
+        Glide.get(this).clearMemory();
+        binding.contentDisplayer.clearPdfCache();
+        Runtime.getRuntime().gc();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
 }

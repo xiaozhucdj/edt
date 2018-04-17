@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.ParsedQuestionItem;
@@ -264,5 +265,13 @@ public class MistakeListActivity extends HomeworkBaseActivity{
     protected void onResume() {
         super.onResume();
         refreshUI();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(this).clearMemory();
+        binding.contentDisplayer.clearPdfCache();
+        Runtime.getRuntime().gc();
     }
 }

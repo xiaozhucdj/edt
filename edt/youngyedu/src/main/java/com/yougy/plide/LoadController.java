@@ -2,12 +2,10 @@ package com.yougy.plide;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
@@ -16,10 +14,6 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.plide.pipe.Pipe;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 
 import rx.Observable;
@@ -49,6 +43,11 @@ public class LoadController implements ReaderContract.ReaderView{
         return toReturnControlloer;
     }
 
+    protected static LoadController popLoadController(ImageView imageView){
+        LoadController loadController = loadControllerTempStorage.remove(getHashString(imageView));
+        return loadController;
+    }
+
     private PDF_STATUS currentStatus = PDF_STATUS.EMPTY;
     private Pipe downloadPipe;
     private Pipe loadPdfPipe;
@@ -63,7 +62,7 @@ public class LoadController implements ReaderContract.ReaderView{
     private final Object currentStatusLock = new Object();
     private final Object mReaderPresentLock = new Object();
 
-    private ReaderPresenter getReaderPresenter() {
+    protected ReaderPresenter getReaderPresenter() {
         synchronized (mReaderPresentLock){
             //TODO 不可靠的单例模式,今后改正
             if (mReaderPresenter == null) {
@@ -73,7 +72,14 @@ public class LoadController implements ReaderContract.ReaderView{
         }
     }
 
-    private void abandonReaderPresenter(){
+    protected boolean isReaderPresenterAbandoned(){
+        if (mReaderPresenter == null){
+            return true;
+        }
+        return false;
+    }
+
+    protected void abandonReaderPresenter(){
         synchronized (mReaderPresentLock){
             mReaderPresenter = null;
         }
@@ -180,6 +186,7 @@ public class LoadController implements ReaderContract.ReaderView{
                         setCurrentStatus(PDF_STATUS.LOADING , null);
                         callLoadListener(100);
                         getReaderPresenter().close();
+                        Runtime.getRuntime().gc();
                         abandonReaderPresenter();
                         getReaderPresenter().openDocument(savePath , null);
                         Log.v("FHHHH" , "load命令完成,等待回调中断 savePath " + savePath

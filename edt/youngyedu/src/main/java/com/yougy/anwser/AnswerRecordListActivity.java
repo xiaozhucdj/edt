@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
@@ -209,5 +210,13 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
 
     public void onBack(View view){
         onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(this).clearMemory();
+        binding.contentDisplayer.clearPdfCache();
+        Runtime.getRuntime().gc();
     }
 }
