@@ -2,12 +2,10 @@ package com.yougy.plide;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
@@ -16,10 +14,6 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.plide.pipe.Pipe;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 
 import rx.Observable;

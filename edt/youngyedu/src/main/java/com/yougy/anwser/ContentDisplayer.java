@@ -23,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.plide.LoadController;
 import com.yougy.plide.LoadListener;
@@ -227,8 +228,13 @@ public class ContentDisplayer extends RelativeLayout {
         mainTextView.setVisibility(GONE);
         picImageView.setVisibility(VISIBLE);
         pdfImageView.setVisibility(GONE);
+
+        if (picImageView!=null){
+            Glide.clear(picImageView);
+        }
         if (useCache){
-            Glide.with(getContext())
+
+            Glide.with(BaseActivity.getCurrentActivity())
                     .load(url)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
@@ -249,7 +255,8 @@ public class ContentDisplayer extends RelativeLayout {
                     }).into(picImageView);
         }
         else {
-            Glide.with(getContext())
+
+            Glide.with(BaseActivity.getCurrentActivity())
                     .load(url)
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
