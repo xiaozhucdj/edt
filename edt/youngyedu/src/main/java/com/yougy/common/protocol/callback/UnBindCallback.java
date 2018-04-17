@@ -32,8 +32,12 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
         String json = response.body().string();
         LogUtils.e(getClass().getName(), "unbind json is : " + json);
         if (response.isSuccessful()) {
-            Intent intent = new Intent(mWeakReference.get(), UploadService.class);
-            mWeakReference.get().startService(intent);
+            if (SpUtils.isContentChanged()) {
+                Intent intent = new Intent(mWeakReference.get(), UploadService.class);
+                mWeakReference.get().startService(intent);
+            }else{
+                SpUtils.clearSP();
+            }
         }
         return GsonUtil.fromJson(json, NewUnBindDeviceRep.class);
     }

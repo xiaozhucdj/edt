@@ -42,16 +42,18 @@ public class AliyunUtil {
     public static String DATABASE_NAME;
     public static String JOURNAL_NAME;
     private static String filePath;
-
+    private String tag = "AliyunUtil";
     private final String bucketName = Commons.BUCKET_NAME ;
     private static String objectKey;
 
     public AliyunUtil(AliyunData data) {
         DATABASE_NAME = SpUtils.getUserId() + ".db";
         JOURNAL_NAME = SpUtils.getUserId() + ".db-journal";
+        LogUtils.e(tag,"accessKeyId : " + data.getAccessKeyId() + ",accessKeySecret : " + data.getAccessKeySecret() + ",securityToken : " + data.getSecurityToken());
         OSSCredentialProvider credentialProvider = new OSSStsTokenCredentialProvider(data.getAccessKeyId(), data.getAccessKeySecret(),data.getSecurityToken());
         filePath = YougyApplicationManager.getContext().getDatabasePath(DATABASE_NAME).getAbsolutePath();
         objectKey = "leke" + File.separator + "appDB" + File.separator + DATABASE_NAME;
+
         ClientConfiguration conf = new ClientConfiguration();
         conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
@@ -63,32 +65,33 @@ public class AliyunUtil {
 
 
     public void upload() {
-        LogUtils.e("AliyunUtil", "upload ................");
         PutObjectRequest put = new PutObjectRequest(bucketName, objectKey, filePath);
+        LogUtils.e(tag,"upload ................" + "file path : " + filePath + ",object key : " + objectKey + ",bucket name : " + bucketName);
         oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
             @Override
             public void onSuccess(PutObjectRequest putObjectRequest, PutObjectResult putObjectResult) {
-                LogUtils.e("AliyunUtil", "onSuccess put object result................");
+                LogUtils.e(tag, "onSuccess put object result................");
                 SpUtils.changeContent(false);
                 SpUtils.changeInitFlag(false);
                 Connector.resetHelper();
                 deleteDatabase(DATABASE_NAME);
                 deleteDatabase(JOURNAL_NAME);
+                SpUtils.clearSP();
             }
 
             @Override
             public void onFailure(PutObjectRequest putObjectRequest, ClientException e, ServiceException e1) {
-                LogUtils.e("AliyunUtil", "onFailure ClientException : " + e.getMessage());
-                LogUtils.e("AliyunUtil", "onFailure ServiceException : " + e.getMessage());
+                LogUtils.e(tag, "onFailure ClientException : " + e.getMessage());
+                LogUtils.e(tag, "onFailure ServiceException : " + e1.getMessage());
             }
         });
-        SpUtils.clearSP();
+//        SpUtils.clearSP();
     }
 
 
     public void download() {
-        LogUtils.e("AliyunUtil", "download...................");
         GetObjectRequest get = new GetObjectRequest(bucketName, objectKey);
+        LogUtils.e(tag, "download..................."+",object key : " + objectKey + ",bucket name : " + bucketName);
         oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
             @Override
             public void onSuccess(GetObjectRequest request, GetObjectResult result) {
@@ -102,14 +105,14 @@ public class AliyunUtil {
                     fos = new FileOutputStream(filePath);
                     while ((len = inputStream.read(buffer)) != -1) {
                         // 处理下载的数据
-                        Log.e("asyncGetObjectSample", "read length: " + len);
+                        Log.e(tag, "read length: " + len);
                         fos.write(buffer, 0, len);
                     }
-                    Log.e("asyncGetObjectSample", "download success.");
+                    Log.e(tag, "download success.");
                     downloadDb = true;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e("asyncGetObjectSample", "Exception : " + e.getMessage());
+                    Log.e(tag, "Exception : " + e.getMessage());
                 } finally {
                     if (fos != null) {
                         try {
@@ -134,13 +137,14 @@ public class AliyunUtil {
                 if (clientExcepion != null) {
                     // 本地异常如网络异常等
                     clientExcepion.printStackTrace();
+                    Log.e(tag,"client excepion : " + clientExcepion.getMessage());
                 }
                 if (serviceException != null) {
                     // 服务异常
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
+                    Log.e(tag,"ErrorCode : " + serviceException.getErrorCode());
+                    Log.e(tag,"RequestId : " + serviceException.getRequestId());
+                    Log.e(tag,"HostId : " + serviceException.getHostId());
+                    Log.e(tag,"RawMessage : " + serviceException.getRawMessage());
                 }
             }
         });
