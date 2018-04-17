@@ -627,4 +627,18 @@ public class NoteBookView extends View {
         EpdController.setStrokeColor(0xffffffff);
         EpdController.setStrokeWidth(20.0f);
     }
+
+    public void recycle(){
+        if (mBitmap!=null){
+            mBitmap.recycle();
+            mBitmap= null ;
+        }
+
+        if (mSrcBitmp!=null){
+            mSrcBitmp.recycle();
+            mSrcBitmp = null ;
+        }
+
+        System.gc();
+    }
 }

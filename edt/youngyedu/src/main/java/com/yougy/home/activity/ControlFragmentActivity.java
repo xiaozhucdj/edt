@@ -385,6 +385,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         mTextBookFragment = null;
         mHandleOnyxReader = null;
         mExerciseBookFragment = null ;
+        System.gc();
     }
 
     @Override
