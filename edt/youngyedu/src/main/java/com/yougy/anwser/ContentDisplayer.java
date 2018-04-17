@@ -226,6 +226,13 @@ public class ContentDisplayer extends RelativeLayout {
         setHintText(null);
         callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
     }
+
+    public void clearGlide(){
+        if (picImageView!=null){
+            Log.v("FH" , "clear!!!!!");
+            Glide.clear(picImageView);
+        }
+    }
     private void setImgUrl(String url , boolean useCache){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);
@@ -290,6 +297,11 @@ public class ContentDisplayer extends RelativeLayout {
         setHintText(null);
     }
 
+    public void clearPdfCache(){
+        if (pdfImageView != null){
+            Plide.clearCache(pdfImageView);
+        }
+    }
     private void setPdf(Content_new content , int contentIndex , int subPageIndex , String typeKey){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);

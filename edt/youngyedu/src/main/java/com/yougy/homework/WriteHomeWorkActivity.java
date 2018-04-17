@@ -1607,7 +1607,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         mCaogaoNoteBoard = null;
 
-        System.gc();
+        Runtime.getRuntime().gc();
 
     }
 }

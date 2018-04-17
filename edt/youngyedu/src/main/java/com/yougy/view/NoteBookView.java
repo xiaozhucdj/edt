@@ -639,6 +639,6 @@ public class NoteBookView extends View {
             mSrcBitmp = null ;
         }
 
-        System.gc();
+        Runtime.getRuntime().gc();
     }
 }
