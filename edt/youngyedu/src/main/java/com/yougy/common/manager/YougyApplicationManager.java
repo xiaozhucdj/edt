@@ -10,6 +10,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.github.anrwatchdog.ANRError;
+import com.github.anrwatchdog.ANRWatchDog;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.utils.NetworkUtil;
 import com.yolanda.nohttp.Logger;
@@ -34,8 +37,10 @@ import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -77,6 +82,7 @@ public class YougyApplicationManager extends LitePalApplication {
 
     private static YougyApplicationManager mContext;
 
+    ANRWatchDog anrWatchDog = new ANRWatchDog(2000);
     @Override
     public void onCreate() {
         super.onCreate();
@@ -192,6 +198,29 @@ public class YougyApplicationManager extends LitePalApplication {
                 }
             });
         }
+        checkAnr();
+    }
+
+    private void checkAnr(){
+        anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
+            @Override
+            public void onAppNotResponding(ANRError error) {
+                Log.e("ANR-Watchdog", "Detected Application Not Responding!");
+
+                // Some tools like ACRA are serializing the exception, so we must make sure the exception serializes correctly
+                try {
+                    new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(error);
+                }
+                catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                Log.i("ANR-Watchdog", "Error was successfully serialized");
+
+                throw error;
+            }
+        });
+        anrWatchDog.start();
     }
 
     /**
