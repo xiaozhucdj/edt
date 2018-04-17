@@ -27,6 +27,7 @@ import com.alibaba.sdk.android.oss.common.auth.OSSFederationCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.api.device.epd.EpdController;
@@ -984,6 +985,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         checkedAnswerList = null ;
 
+        Glide.get(this).clearMemory();
+        binding.contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
     }
 }

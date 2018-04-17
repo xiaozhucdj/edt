@@ -207,9 +207,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mAllNotesFragment = null;
         mAllHomeworkFragment = null;
 
-        if (YougyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
-            startService(new Intent(this, UploadService.class));
-        }
         super.onDestroy();
     }
 
@@ -1003,6 +1000,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_3));
             } else if (level < -80 && level >= -100) {
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_2));
+            }
+            if (YougyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
+                startService(new Intent(this, UploadService.class));
             }
         } else {
             mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_1));

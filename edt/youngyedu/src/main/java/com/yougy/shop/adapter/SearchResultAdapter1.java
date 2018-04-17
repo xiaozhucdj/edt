@@ -2,6 +2,7 @@ package com.yougy.shop.adapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +45,12 @@ public class SearchResultAdapter1 extends RecyclerView.Adapter<SearchResultAdapt
     @Override
     public void onBindViewHolder(SearchResultHolder holder, int position) {
         BookInfo bookInfo = mBookInfos.get(position);
-        String infoSummary = bookInfo.getBookSummary();
+        String infoSummary;
+        if (TextUtils.isEmpty(bookInfo.getBookSummary())) {
+            infoSummary = "";
+        } else {
+            infoSummary = Html.fromHtml(bookInfo.getBookSummary()).toString();
+        }
         if (!TextUtils.isEmpty(infoSummary) && infoSummary.length() > 65) {
             bookSummary = "简介："+infoSummary.substring(0, 65) + "......";
         } else {

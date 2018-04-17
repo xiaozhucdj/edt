@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.SpUtils;
@@ -203,4 +204,11 @@ public class AnswerRecordDetailActivity extends BaseActivity{
         onBackPressed();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(this).clearMemory();
+        binding.contentDisplayer.clearPdfCache();
+        Runtime.getRuntime().gc();
+    }
 }

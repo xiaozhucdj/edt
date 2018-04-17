@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
@@ -754,6 +755,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         }
         cgBytes = null ;
 
+        Glide.get(this).clearMemory();
+        contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
     }
 }

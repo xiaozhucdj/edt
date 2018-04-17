@@ -30,6 +30,7 @@ import com.alibaba.sdk.android.oss.common.auth.OSSFederationCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.anwser.ContentDisplayer;
@@ -1607,7 +1608,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         mCaogaoNoteBoard = null;
 
+        Glide.get(this).clearMemory();
+        contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
-
     }
 }

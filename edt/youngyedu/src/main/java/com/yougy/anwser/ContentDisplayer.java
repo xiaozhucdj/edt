@@ -224,12 +224,6 @@ public class ContentDisplayer extends RelativeLayout {
         callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
     }
 
-    public void clearGlide() {
-        if (picImageView != null) {
-            Log.v("FH", "clear!!!!!");
-            Glide.clear(picImageView);
-        }
-    }
     private void setImgUrl(String url , boolean useCache){
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);
