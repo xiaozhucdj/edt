@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.ToastUtil;
@@ -128,6 +129,14 @@ public class AnswerResultActivity extends BaseActivity{
     }
     public void back(View view){
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(this).clearMemory();
+        binding.contentDisplayer.clearPdfCache();
+        Runtime.getRuntime().gc();
     }
 
 }
