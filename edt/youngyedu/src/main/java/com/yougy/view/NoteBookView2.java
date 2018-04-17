@@ -86,17 +86,17 @@ public class NoteBookView2 extends View {
         init();
     }
 
-    public NoteBookView2(Context context, AttributeSet attrs ) {
+    public NoteBookView2(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         init();
     }
 
 
-    public NoteBookView2(Context context ,int screenWidth ,int screenHeight) {
+    public NoteBookView2(Context context, int screenWidth, int screenHeight) {
         super(context);
         mContext = context;
-        init(screenWidth,screenHeight);
+        init(screenWidth, screenHeight);
     }
 
 
@@ -191,7 +191,7 @@ public class NoteBookView2 extends View {
 //        EpdController.setStrokeWidth(2.0f);
     }
 
-    private void init(int screenWidth  ,int screenHeight) {
+    private void init(int screenWidth, int screenHeight) {
         mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
         // 保存一次一次绘制出来的图形
         mCanvas = new Canvas(mBitmap);
@@ -423,7 +423,7 @@ public class NoteBookView2 extends View {
     }
 
     //清理整个画板，不保存之前数据
-    public void clearAll(int screenWidth ,int screenHeight) {
+    public void clearAll(int screenWidth, int screenHeight) {
         index = -1;
         savePath.clear();
         disenableRedoView();
@@ -484,16 +484,16 @@ public class NoteBookView2 extends View {
         }
 
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
-            mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN ;
-        }else{
-            mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS ;
+            mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN;
+        } else {
+            mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS;
         }
 
-        if (!flagOfErase) {
-            if (event.getToolType(0) == mSystenPenType) {
-                setPen();
-            }
+
+        if (event.getToolType(0) == mSystenPenType) {
+            setPen();
         }
+
         if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
             useEraser();
         }
@@ -502,7 +502,7 @@ public class NoteBookView2 extends View {
         float x = event.getX();
         float y = event.getY();
         if (x < 0 && x > getWidth() && y < 0 && y > getHeight()) {
-            return false ;
+            return false;
         }
 
         switch (event.getAction()) {
@@ -558,7 +558,7 @@ public class NoteBookView2 extends View {
                 if (line != null) {
                     line.setEnd(new Point(x, y));
                     lines.add(line);
-                    if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER | flagOfErase | undoNeedUpdate() | redoNeedUpdate()) {
+                    if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER  ) {
                         EpdController.leaveScribbleMode(this);
                         invalidate();
                     }
@@ -588,87 +588,34 @@ public class NoteBookView2 extends View {
         return dst;
     }
 
-    public void setPaintSize(float width) {
-        mPaint.setStrokeWidth(width);
-    }
-
-    public void setPaintAlpha(int value) {
-        mPaint.setAlpha(value);
-    }
-
-    public void setPaintColor(int color) {
-        mPaint.setColor(color);
-        setColorPenAlpha();
-    }
 
     public void setPen() {
         mPaint.setXfermode(null);
-        isColorPen = false;
         mPaint.setStrokeWidth(2.0f);
         mPaint.setColor(Color.BLACK);
-        setScreenPaint();
+        EpdController.setStrokeColor(0xff000000);
+        EpdController.setStrokeWidth(2.0f);
     }
 
-    public void setOilBlackPen() {
-        mPaint.setXfermode(null);
-        isColorPen = false;
-        mPaint.setStrokeWidth(5.0f);
-        mPaint.setColor(Color.BLACK);
-        setScreenPaint();
-    }
-
-    private void setColorPenAlpha() {
-        mPaint.setXfermode(null);
-        if (isColorPen) {
-            mPaint.setAlpha(100);
-        }
-    }
-
-    private boolean isColorPen;
-
-    public void setMakerPen() {
-        isColorPen = true;
-        flagOfErase = false;
-        mPaint.setXfermode(null);
-        mPaint.setStrokeWidth(15.0f);
-        mPaint.setColor(Color.GREEN);
-        mPaint.setAlpha(100);
-        setScreenPaint();
-    }
-
-    private boolean flagOfErase;
 
     public void useEraser() {
         mPaint.setAntiAlias(true);
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(20);
-        setScreenEraser();
-    }
-
-    public void setEraserFlag(boolean flag) {
-        flagOfErase = flag;
-    }
-
-    private void setScreenPaint() {
-        EpdController.setStrokeColor(0xff000000);
-        EpdController.setStrokeWidth(2.0f);
-    }
-
-    private void setScreenEraser() {
         EpdController.setStrokeColor(0xffffffff);
         EpdController.setStrokeWidth(20.0f);
     }
 
-    public void recycle(){
-        if (mBitmap!=null){
+    public void recycle() {
+        if (mBitmap != null) {
             mBitmap.recycle();
-            mBitmap= null ;
+            mBitmap = null;
         }
 
-        if (mSrcBitmp!=null){
+        if (mSrcBitmp != null) {
             mSrcBitmp.recycle();
-            mSrcBitmp = null ;
+            mSrcBitmp = null;
         }
 
         Runtime.getRuntime().gc();

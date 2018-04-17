@@ -82,7 +82,7 @@ public class YougyApplicationManager extends LitePalApplication {
 
     private static YougyApplicationManager mContext;
 
-    ANRWatchDog anrWatchDog = new ANRWatchDog(2000);
+    ANRWatchDog anrWatchDog = new ANRWatchDog(9000);
     @Override
     public void onCreate() {
         super.onCreate();
