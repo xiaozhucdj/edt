@@ -9,7 +9,6 @@ import android.os.PowerManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.badoo.mobile.util.WeakHandler;
 import com.onyx.android.sdk.utils.NetworkUtil;
@@ -29,6 +28,7 @@ import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -36,7 +36,6 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
-import com.yougy.view.Toaster;
 import com.yougy.view.dialog.DownProgressDialog;
 import com.yougy.view.dialog.HintDialog;
 
@@ -278,7 +277,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     }
 
     private void jumpWifiActivity() {
-        Toaster.showDefaultToast(getApplication(), "当前没有网络，请设置网络", Toast.LENGTH_LONG);
+        UIUtils.showToastSafe("当前没有网络，请设置网络");
         Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
         startActivity(intent);
     }

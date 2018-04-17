@@ -449,14 +449,14 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
     private void judgeFlipPage(int position) {
         if (position >= mPageCounts) {
-            UIUtils.showToastSafe("当前是最后一页", Toast.LENGTH_SHORT);
+            UIUtils.showToastSafe("当前是最后一页");
             mImgPageNext.setEnabled(true);
             mImgPageBack.setEnabled(true);
             mSeekbarPage.setClickable(true);
             return;
         }
         if (position < 0) {
-            UIUtils.showToastSafe("当前是第一页", Toast.LENGTH_SHORT);
+            UIUtils.showToastSafe("当前是第一页");
             mImgPageNext.setEnabled(true);
             mImgPageBack.setEnabled(true);
             mSeekbarPage.setClickable(true);
