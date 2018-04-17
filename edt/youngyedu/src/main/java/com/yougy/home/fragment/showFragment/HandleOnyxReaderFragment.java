@@ -685,6 +685,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         }
         mSubDb = null;
         getReaderPresenter().close();
+        System.gc();
     }
 
 

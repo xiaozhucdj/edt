@@ -286,4 +286,11 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         binding.commentDialog.setVisibility(View.GONE);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        allReplyList.clear();
+        allReplyList = null;
+        System.gc();
+    }
 }
