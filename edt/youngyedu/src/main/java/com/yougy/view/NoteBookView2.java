@@ -65,6 +65,7 @@ public class NoteBookView2 extends View {
      * 历史保存在sd卡上的 位图 ，主要解决 前进后退 情况画板 不会还原问题 2016 09 23
      */
     private Bitmap mSrcBitmp;
+    private int mSystenPenType;
 
     public void setContentChanged(boolean contentChanged) {
         this.contentChanged = contentChanged;
@@ -482,8 +483,14 @@ public class NoteBookView2 extends View {
             return false;
         }
 
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN ;
+        }else{
+            mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS ;
+        }
+
         if (!flagOfErase) {
-            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
+            if (event.getToolType(0) == mSystenPenType) {
                 setPen();
             }
         }
@@ -494,6 +501,10 @@ public class NoteBookView2 extends View {
         contentChanged = true;
         float x = event.getX();
         float y = event.getY();
+        if (x < 0 && x > getWidth() && y < 0 && y > getHeight()) {
+            return false ;
+        }
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //如果flag为true，则说明进行了undo、redo操作，这时再进行按下操作时应将索引后面的path清除掉
@@ -641,7 +652,7 @@ public class NoteBookView2 extends View {
 
     private void setScreenPaint() {
         EpdController.setStrokeColor(0xff000000);
-        EpdController.setStrokeWidth(1.80f);
+        EpdController.setStrokeWidth(2.0f);
     }
 
     private void setScreenEraser() {

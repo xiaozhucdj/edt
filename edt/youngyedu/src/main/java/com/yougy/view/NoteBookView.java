@@ -403,7 +403,7 @@ public class NoteBookView extends View {
     private float currentX;
     private float currentY;
     private Line line;
-
+    private int mSystenPenType = 0 ;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getDeviceId() != 1) {
@@ -413,10 +413,15 @@ public class NoteBookView extends View {
             return false;
         }
 
-        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
+        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {  //4
            useInEraser();
         } else {
-            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
+            if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+                mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN ;
+            }else{
+                mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS ;
+            }
+            if (event.getToolType(0) == mSystenPenType) {
                 if (!flagOfErase) {
                   userOutPen();
                 }else {
