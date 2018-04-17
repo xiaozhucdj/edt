@@ -2,7 +2,10 @@ package com.yougy.plide;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.ImageView;
 
+import com.onyx.reader.ReaderPresenter;
 import com.yougy.common.utils.FileUtils;
 
 /**
@@ -40,4 +43,14 @@ public class Plide{
         return new LoadRequest(url , mContext);
     }
 
+    public static void clearCache(ImageView imageView){
+        LoadController mLoadController = LoadController.popLoadController(imageView);
+        if (mLoadController != null){
+            if (!mLoadController.isReaderPresenterAbandoned()){
+                Log.v("FH" , "clearPdfCache!!!!");
+                mLoadController.getReaderPresenter().close();
+                mLoadController.abandonReaderPresenter();
+            }
+        }
+    }
 }
