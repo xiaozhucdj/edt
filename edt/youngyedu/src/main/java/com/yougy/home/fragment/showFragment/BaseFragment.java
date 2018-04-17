@@ -534,7 +534,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 //        updatePaintColor(Color.BLACK);
         if (mNoteBookView!=null){
             mNoteBookView.recycle();
-            mNoteBookView = null ;
+
         }
 
         mNoteBookView = new NoteBookView(mContext);
