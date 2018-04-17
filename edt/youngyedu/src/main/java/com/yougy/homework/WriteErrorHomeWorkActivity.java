@@ -754,6 +754,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         }
         cgBytes = null ;
 
-        System.gc();
+        Runtime.getRuntime().gc();
     }
 }

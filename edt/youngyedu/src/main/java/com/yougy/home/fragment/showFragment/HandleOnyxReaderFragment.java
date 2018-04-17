@@ -689,7 +689,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             mNoteBookView = null ;
         }
         getReaderPresenter().close();
-        System.gc();
+        Runtime.getRuntime().gc();
     }
 
 

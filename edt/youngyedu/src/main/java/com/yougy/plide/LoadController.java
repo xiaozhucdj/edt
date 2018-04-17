@@ -186,7 +186,7 @@ public class LoadController implements ReaderContract.ReaderView{
                         setCurrentStatus(PDF_STATUS.LOADING , null);
                         callLoadListener(100);
                         getReaderPresenter().close();
-                        System.gc();
+                        Runtime.getRuntime().gc();
                         abandonReaderPresenter();
                         getReaderPresenter().openDocument(savePath , null);
                         Log.v("FHHHH" , "load命令完成,等待回调中断 savePath " + savePath

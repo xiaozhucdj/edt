@@ -294,7 +294,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         allReplyList = null;
         Glide.get(this).clearMemory();
         binding.contentDisplayer.clearPdfCache();
-        System.gc();
+        Runtime.getRuntime().gc();
     }
 
     @Override

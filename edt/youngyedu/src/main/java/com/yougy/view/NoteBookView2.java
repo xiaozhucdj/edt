@@ -660,6 +660,6 @@ public class NoteBookView2 extends View {
             mSrcBitmp = null ;
         }
 
-        System.gc();
+        Runtime.getRuntime().gc();
     }
 }

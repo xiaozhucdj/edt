@@ -985,6 +985,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         checkedAnswerList = null ;
 
-        System.gc();
+        Runtime.getRuntime().gc();
     }
 }
