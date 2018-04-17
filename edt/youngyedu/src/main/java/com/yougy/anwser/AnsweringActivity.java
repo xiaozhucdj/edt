@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
 import com.alibaba.sdk.android.oss.ClientException;
@@ -610,9 +609,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (tBitmap != null) {
 //            ivResult.setImageBitmap(tBitmap);
             saveBitmapToFile(tBitmap);
-            Toast.makeText(this, "获取成功", Toast.LENGTH_SHORT).show();
+            UIUtils.showToastSafe("获取成功");
         } else {
-            Toast.makeText(this, "获取失败", Toast.LENGTH_SHORT).show();
+            UIUtils.showToastSafe("获取失败");
         }
     }
 

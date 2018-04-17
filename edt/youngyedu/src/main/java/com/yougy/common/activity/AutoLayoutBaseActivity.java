@@ -10,10 +10,10 @@ import android.os.PowerManager;
 import android.os.Process;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.UiPromptDialog;
@@ -514,7 +514,7 @@ public abstract class AutoLayoutBaseActivity extends AutoLayoutActivity implemen
 
         long currTime = System.currentTimeMillis();
         if (currTime - mLastBackPressedTime > PRESS_TWICE_TO_EXIT_SPACE_TIME) {
-            showToastSafe("两秒内再次按下退出", Toast.LENGTH_SHORT);
+            UIUtils.showToastSafe("两秒内再次按下退出");
             mLastBackPressedTime = currTime;
         } else {
             super.onBackPressed();

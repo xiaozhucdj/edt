@@ -142,7 +142,7 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
             mSelectInfo.setSelect(false);
         }
         mSelectInfo = mInfos.get(position);
-        UIUtils.showToastSafe(mSelectInfo.getSubject(), Toast.LENGTH_SHORT);
+        UIUtils.showToastSafe(mSelectInfo.getSubject());
         mStrSubject = mSelectInfo.getSubject();
         mSelectInfo.setSelect(true);
         mAdaptet.notifyDataSetChanged();
