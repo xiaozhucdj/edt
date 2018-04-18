@@ -27,9 +27,6 @@ import com.yougy.home.bean.Point;
 import org.litepal.crud.DataSupport;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,30 +47,17 @@ public class NoteBookView2 extends View {
     private List<DrawPath> savePath;
     // 记录Path路径的对象
     private DrawPath dp;
-    private int screenWidth = 1000, screenHeight = 1000;// 屏幕長寬
-    private OnUndoOptListener undoOptListener;
-    private OnDoOptListener redoOptListener;
+    private int screenWidth;
+    private int screenHeight;// 屏幕長寬
     //该标志用于判断是否需要移除索引后面的操作
     private boolean flag;
-    private Context mContext;
-    private boolean contentChanged;
     private Matrix matrix;
 
     private List<Line> lines = new ArrayList<>();
-    private List<Line> undoLines = new ArrayList<>();
     /**
      * 历史保存在sd卡上的 位图 ，主要解决 前进后退 情况画板 不会还原问题 2016 09 23
      */
-    private Bitmap mSrcBitmp;
     private int mSystenPenType;
-
-    public void setContentChanged(boolean contentChanged) {
-        this.contentChanged = contentChanged;
-    }
-
-    public boolean isContentChanged() {
-        return this.contentChanged;
-    }
 
     private class DrawPath {
         public Path path;// 路径
@@ -82,81 +66,32 @@ public class NoteBookView2 extends View {
 
     public NoteBookView2(Context context) {
         super(context);
-        mContext = context;
+        init();
+    }
+
+    public NoteBookView2(Context context, int w, int h) {
+        super(context);
+        screenWidth = w;
+        screenHeight = h;
         init();
     }
 
     public NoteBookView2(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
         init();
     }
 
-
-    public NoteBookView2(Context context, int screenWidth, int screenHeight) {
-        super(context);
-        mContext = context;
-        init(screenWidth, screenHeight);
-    }
-
-
-    public interface OnUndoOptListener {
-        void disenableUndoView();
-
-        void enableUndoView();
-
-        boolean isEnableUndo();
-    }
-
-    public interface OnDoOptListener {
-        void disenableReDoView();
-
-        void enableReDoView();
-
-        boolean isEnableRedo();
-    }
-
-    public void setUndoOptListener(OnUndoOptListener listener) {
-        undoOptListener = listener;
-    }
-
-    public void setReDoOptListener(OnDoOptListener listener) {
-        redoOptListener = listener;
-    }
-
-    private void disenableUndoView() {
-        if (null != undoOptListener) {
-            undoOptListener.disenableUndoView();
-        }
-    }
-
-    private void enableUndoView() {
-        if (null != undoOptListener) {
-            undoOptListener.enableUndoView();
-        }
-    }
-
-    private void disenableRedoView() {
-        if (null != redoOptListener) {
-            redoOptListener.disenableReDoView();
-        }
-    }
-
-    private void enableReDoView() {
-        if (null != redoOptListener) {
-            redoOptListener.enableReDoView();
-        }
-    }
-
     private void init() {
-        screenWidth = UIUtils.getScreenWidth();
-        screenHeight = UIUtils.getScreenHeight();
-        //这里会测试 LOG screenWidth screenHeight ==0 。理论上不可能为0 除非程序发生了崩溃 继续运行导致的
-        if (screenWidth < 0 || screenHeight < 0) {
+        if (screenHeight <= 0 || screenWidth <= 0) {
+            screenWidth = UIUtils.getScreenWidth();
+            screenHeight = UIUtils.getScreenHeight();
+        }
+
+        if (screenWidth <= 0 || screenHeight <= 0) {
             screenWidth = 960;
             screenHeight = 1280;
         }
-        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
+        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_4444);
         // 保存一次一次绘制出来的图形
         mCanvas = new Canvas(mBitmap);
 
@@ -178,43 +113,7 @@ public class NoteBookView2 extends View {
             matrix.postRotate(90);
             matrix.postTranslate(UIUtils.getScreenHeight(), 0);
         } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
-            LogUtils.e(getClass().getName(), "N96，EDU");
-            matrix.postRotate(270);
-            matrix.postTranslate(0, UIUtils.getScreenWidth());
-        }
-        //适用于设备N96
-
-        //适用于设备PL107
-
-        EpdController.setStrokeColor(0xff000000);
-//        EpdController.setStrokeStyle(1);
-//        EpdController.setStrokeWidth(2.0f);
-    }
-
-    private void init(int screenWidth, int screenHeight) {
-        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
-        // 保存一次一次绘制出来的图形
-        mCanvas = new Canvas(mBitmap);
-
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);// 设置外边缘
-        mPaint.setStrokeCap(Paint.Cap.SQUARE);// 形状
-        mPaint.setStrokeWidth(2.0f);// 画笔宽度
-        mPaint.setColor(Color.BLACK);
-        savePath = new ArrayList<>();
-
-        mBitmapPaint = new Paint(mPaint);
-
-        matrix = new Matrix();
-
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
-            LogUtils.e(getClass().getName(), "PL107");
-            matrix.postRotate(90);
-            matrix.postTranslate(UIUtils.getScreenHeight(), 0);
-        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
-            LogUtils.e(getClass().getName(), "N96，EDU");
+            LogUtils.e(getClass().getName(), "N96");
             matrix.postRotate(270);
             matrix.postTranslate(0, UIUtils.getScreenWidth());
         }
@@ -239,50 +138,13 @@ public class NoteBookView2 extends View {
     }
 
     public void drawBitmap(Bitmap bitmap) {
-        mSrcBitmp = bitmap;
+//        recycle();
         mCanvas.drawBitmap(bitmap, 0, 0, mPaint);
         invalidate();
     }
 
-    private List<Line> historyLines = new ArrayList<>();
-
-    public void drawLines(List<Line> lines, boolean flag) {
-        float preX = 0;
-        float preY = 0;
-        historyLines = lines;
-        resetCanvas();
-        Paint paint = new Paint(mPaint);
-        for (Line line : lines) {
-            Path path = new Path();
-            Point start = line.getStart();
-            Point end = line.getEnd();
-            path.moveTo(start.getX(), start.getY());
-            preX = start.getX();
-            preY = start.getY();
-            for (Point point : line.getPoints()) {
-                path.quadTo(preX, preY, (preX + point.getX()) / 2, (preY + point.getY()) / 2);
-                preX = point.getX();
-                preY = point.getY();
-            }
-            path.lineTo(end.getX(), end.getY());
-            paint.setStrokeWidth(line.getWidth());
-            paint.setAntiAlias(true);
-            paint.setColor(line.getColor());
-            paint.setXfermode(line.getType() == 0 ? null : new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            mCanvas.drawPath(path, paint);
-        }
-        if (flag) {
-            invalidate();
-        }
-    }
-
 
     private int mCanvasColor = 0x00000000;
-
-    public void setCanvasColor(int mCanvasColor) {
-        this.mCanvasColor = mCanvasColor;
-    }
-
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -318,8 +180,6 @@ public class NoteBookView2 extends View {
         if (mPath != null) {
             mPath.lineTo(mX, mY);
             mCanvas.drawPath(mPath, mPaint);
-            enableUndoView();
-            disenableRedoView();
             //保存路径
             savePath.add(dp);
             mPath = null;// 重新置空
@@ -329,108 +189,13 @@ public class NoteBookView2 extends View {
 
     private int index = -1;
 
-    /**
-     * 重新设置画布，相当于清空画布
-     */
-
-    private void resetCanvas() {
-        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
-        mCanvas.setBitmap(mBitmap);
-        if (mSrcBitmp != null) {
-            mCanvas.drawBitmap(mSrcBitmp, 0, 0, mPaint);
-        }
-    }
-
-
-    /**
-     * 将图片以文件形式保存到SD卡中
-     */
-    private void saveBitmap2Local(String fileUrl) throws IOException {
-        File file = new File(fileUrl);
-        if (!file.exists()) {
-            File parentFile = new File(file.getParent());
-            parentFile.mkdirs();
-        }
-        FileOutputStream fos = new FileOutputStream(file);
-        mBitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
-        fos.flush();
-        fos.close();
-    }
-
-    /**
-     * undo的核心思想就是将画布清空，将索引在保存下来的Path路径中进行递减，重新将索引之前的所有路径画在画布上面。
-     */
-    public void undo() {
-        undoLines.add(lines.remove(lines.size() - 1));
-        contentChanged = true;
-        flag = true;
-        resetCanvas();
-        drawLines(historyLines, false);
-        if (savePath != null && savePath.size() > 0) {
-            //如果没有做过undo操作，则将索引置为集合末位
-            if (index == -1) {
-                index = savePath.size() - 1;
-            }
-            index--;
-            if (index == -1) {
-                disenableUndoView();
-            }
-            enableReDoView();
-            for (int i = 0; i <= index; i++) {
-                DrawPath drawPath = savePath.get(i);
-                mCanvas.drawPath(drawPath.path, drawPath.paint);
-            }
-            invalidate();
-        }
-    }
-
-    /**
-     * redo的核心思想就是索引递增，得到该位置的路径和画笔，画到画布上即可。
-     */
-    public void redo() {
-        lines.add(undoLines.remove(undoLines.size() - 1));
-        contentChanged = true;
-        flag = true;
-        index++;
-        if (index == savePath.size() - 1) {
-            disenableRedoView();
-        }
-        enableUndoView();
-        DrawPath drawPath = savePath.get(index);
-        mCanvas.drawPath(drawPath.path, drawPath.paint);
-        invalidate();
-    }
-
-    public void clear() {
-        index = -1;
-        savePath.clear();
-        disenableRedoView();
-        disenableUndoView();
-        resetCanvas();
-        invalidate();
-    }
-
     //清理整个画板，不保存之前数据
     public void clearAll() {
         index = -1;
         savePath.clear();
-        disenableRedoView();
-        disenableUndoView();
-        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
+        recycle();
+        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_4444);
         mCanvas.setBitmap(mBitmap);
-
-        invalidate();
-    }
-
-    //清理整个画板，不保存之前数据
-    public void clearAll(int screenWidth, int screenHeight) {
-        index = -1;
-        savePath.clear();
-        disenableRedoView();
-        disenableUndoView();
-        mBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
-        mCanvas.setBitmap(mBitmap);
-
         invalidate();
     }
 
@@ -468,14 +233,13 @@ public class NoteBookView2 extends View {
         return bos.toByteArray();
     }
 
-    private float preX;
-    private float preY;
-    private float currentX;
-    private float currentY;
+
     private Line line;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+
         if (event.getDeviceId() != 1) {
             return true;
         }
@@ -488,19 +252,16 @@ public class NoteBookView2 extends View {
         } else {
             mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS;
         }
-
-
         if (event.getToolType(0) == mSystenPenType) {
             setPen();
         }
-
         if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
             useEraser();
         }
 
-        contentChanged = true;
         float x = event.getX();
         float y = event.getY();
+
         if (x < 0 && x > getWidth() && y < 0 && y > getHeight()) {
             return false;
         }
@@ -523,8 +284,6 @@ public class NoteBookView2 extends View {
                 dp = new DrawPath();
                 dp.path = mPath;
                 dp.paint = new Paint(mPaint);
-                preX = x;
-                preY = y;
                 line = new Line();
                 line.setWidth(dp.paint.getStrokeWidth());
                 line.setColor(dp.paint.getColor());
@@ -538,10 +297,6 @@ public class NoteBookView2 extends View {
                 if (x >= 0 && x <= getWidth() && y >= 0 && y <= getHeight()) {
                     touch_move(x, y);
                     LogUtils.e(TAG, "action move......(x,y) : " + x + "," + y);
-                    currentX = x;
-                    currentY = y;
-                    preX = currentX;
-                    preY = currentY;
                     long start = System.currentTimeMillis();
                     int n = event.getHistorySize();
                     for (int i = 0; i < n; i++) {
@@ -558,7 +313,7 @@ public class NoteBookView2 extends View {
                 if (line != null) {
                     line.setEnd(new Point(x, y));
                     lines.add(line);
-                    if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER  ) {
+                    if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
                         EpdController.leaveScribbleMode(this);
                         invalidate();
                     }
@@ -569,15 +324,6 @@ public class NoteBookView2 extends View {
         return true;
     }
 
-    private boolean redoNeedUpdate() {
-        return redoOptListener != null && redoOptListener.isEnableRedo();
-    }
-
-    private boolean undoNeedUpdate() {
-        boolean result = undoOptListener != null && !undoOptListener.isEnableUndo();
-        LogUtils.e(TAG, "undo need update result is : " + result);
-        return result;
-    }
 
     float[] mapPoint(float x, float y) {
         int viewLocation[] = {0, 0};
@@ -593,16 +339,23 @@ public class NoteBookView2 extends View {
         mPaint.setXfermode(null);
         mPaint.setStrokeWidth(2.0f);
         mPaint.setColor(Color.BLACK);
-        EpdController.setStrokeColor(0xff000000);
-        EpdController.setStrokeWidth(2.0f);
+        setScreenPaint();
     }
-
 
     public void useEraser() {
         mPaint.setAntiAlias(true);
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(20);
+        setScreenEraser();
+    }
+
+    private void setScreenPaint() {
+        EpdController.setStrokeColor(0xff000000);
+        EpdController.setStrokeWidth(2.0f);
+    }
+
+    private void setScreenEraser() {
         EpdController.setStrokeColor(0xffffffff);
         EpdController.setStrokeWidth(20.0f);
     }
@@ -612,12 +365,6 @@ public class NoteBookView2 extends View {
             mBitmap.recycle();
             mBitmap = null;
         }
-
-        if (mSrcBitmp != null) {
-            mSrcBitmp.recycle();
-            mSrcBitmp = null;
-        }
-
         Runtime.getRuntime().gc();
     }
 }

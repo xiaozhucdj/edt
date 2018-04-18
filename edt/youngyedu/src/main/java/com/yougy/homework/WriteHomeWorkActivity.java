@@ -535,7 +535,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         tvCaogaoText.setText("草稿纸");
                         llCaogaoControl.setVisibility(View.GONE);
                     }
-                    mCaogaoNoteBoard.clearAll(960, 420);
+                    mCaogaoNoteBoard.clearAll();
 
                     //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                     if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
@@ -547,7 +547,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
                 }
 
-                mNbvAnswerBoard.clearAll(rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+                mNbvAnswerBoard.clearAll();
 
 
                 chooesePoint = position;
@@ -858,7 +858,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_clear_write:
-                mNbvAnswerBoard.clearAll(rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+                mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
 
@@ -891,7 +891,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     tvCaogaoText.setText("草稿纸");
 
                     cgBytes.set(saveQuestionPage, null);
-                    mCaogaoNoteBoard.clearAll(960, 420);
+                    mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
@@ -942,7 +942,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
             llCaogaoControl.setVisibility(View.GONE);
         }
-        mCaogaoNoteBoard.clearAll(960, 420);
+        mCaogaoNoteBoard.clearAll();
 
 
         //刷新最后没有保存的数据
