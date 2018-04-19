@@ -1,6 +1,7 @@
 package com.yougy.common.service;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
@@ -43,7 +44,7 @@ public class UploadService extends IntentService {
                 AliyunData data = result.getData();
                 LogUtils.e("UploadService","data : " + data);
                 AliyunUtil aliyunUtil = new AliyunUtil(data);
-                aliyunUtil.upload();
+                aliyunUtil.asyncUpload();
             }
         }catch (Exception e){
             e.printStackTrace();

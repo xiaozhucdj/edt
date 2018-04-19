@@ -15,7 +15,13 @@ import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 
+import org.litepal.tablemanager.Connector;
+
 import okhttp3.Response;
+
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
+import static org.litepal.LitePal.deleteDatabase;
 
 /**
  * Created by jiangliang on 2016/12/29.
@@ -32,12 +38,11 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
         String json = response.body().string();
         LogUtils.e(getClass().getName(), "unbind json is : " + json);
         if (response.isSuccessful()) {
-            if (SpUtils.isContentChanged()) {
-                Intent intent = new Intent(mWeakReference.get(), UploadService.class);
-                mWeakReference.get().startService(intent);
-            }else{
-                SpUtils.clearSP();
-            }
+            SpUtils.clearSP();
+            SpUtils.changeInitFlag(false);
+            Connector.resetHelper();
+            deleteDatabase(DATABASE_NAME);
+            deleteDatabase(JOURNAL_NAME);
         }
         return GsonUtil.fromJson(json, NewUnBindDeviceRep.class);
     }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -22,6 +23,7 @@ import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.response.NewUnBindDeviceRep;
 import com.yougy.common.service.UploadService;
+import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -34,6 +36,7 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivitySettingBinding;
 import com.yougy.view.dialog.ConfirmDialog;
+import com.yougy.view.dialog.LoadingProgressDialog;
 
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
@@ -146,8 +149,8 @@ public class SettingMainActivity extends BaseActivity {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
                         FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET);
-                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
-                        startService(intent);
+//                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
+//                        startService(intent);
 //                        SpUtils.clearSP();
                         showCenterDetermineDialog(R.string.unbind_success);
                         YXClient.getInstance().logout();
@@ -218,15 +221,49 @@ public class SettingMainActivity extends BaseActivity {
         }).show();
     }
 
+    private LoadingProgressDialog loadingProgressDialog;
+    private static final int UNBIND_SUCCESS = 10000;
+    private static final int UNBIND_FAILED = 10001;
+
     private void unBindRequest() {
         if (!NetUtils.isNetConnected()) {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
             return;
         }
 
-        NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
-        unBindDeviceReq.setDeviceId(Commons.UUID);
-        NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
+        if (SpUtils.isContentChanged()) {
+            if (null == loadingProgressDialog) {
+                loadingProgressDialog = new LoadingProgressDialog(this);
+                loadingProgressDialog.show();
+            }
+            new Thread(() -> {
+                try {
+                    AliyunUtil.upload();
+                    sendMessage(UNBIND_SUCCESS);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sendMessage(UNBIND_FAILED);
+                }
+            }).start();
+        } else {
+            NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
+            unBindDeviceReq.setDeviceId(Commons.UUID);
+            NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
+        }
+    }
+
+    @Override
+    protected void onHandleMessage(Message msg) {
+        super.onHandleMessage(msg);
+        loadingProgressDialog.dismiss();
+        switch (msg.what) {
+            case UNBIND_SUCCESS:
+                showCenterDetermineDialog(R.string.unbind_success);
+                break;
+            case UNBIND_FAILED:
+                showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
+                break;
+        }
     }
 
     public void changePwd(View view) {

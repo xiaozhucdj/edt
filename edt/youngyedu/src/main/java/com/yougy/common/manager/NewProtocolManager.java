@@ -185,7 +185,9 @@ public class NewProtocolManager {
     public static void unbindDevice(NewUnBindDeviceReq req, Callback callbac) {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_UN_BIND_DEVICE, callbac);
     }
-
+    public static Response unbindDevice(NewUnBindDeviceReq req){
+        return setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req),NewProtocolId.ID_UN_BIND_DEVICE);
+    }
     /////////////////////////////////用户接口web/users////////////////////////////////////////
 
     /**

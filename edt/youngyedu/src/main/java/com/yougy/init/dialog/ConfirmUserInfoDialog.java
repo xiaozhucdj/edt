@@ -120,7 +120,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                                     binding.startUseBtn.setVisibility(View.VISIBLE);
                                     binding.titleTv.setText("恭喜,用户与设备绑定成功");
                                     SpUtils.setLocalLockPwd("123456");
-                                    SpUtils.saveStudent(student);
+//                                    SpUtils.saveStudent(student);
                                     File file = new File(getContext().getDatabasePath(student.getUserId()+".db").getAbsolutePath());
                                     if (!file.exists()){
                                         getContext().startService(new Intent(getContext(), DownloadService.class));

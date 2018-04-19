@@ -21,6 +21,7 @@ import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.Student;
 import com.yougy.init.dialog.ConfirmUserInfoDialog;
@@ -178,7 +179,8 @@ public class LoginActivity extends BaseActivity {
                         }
                         else {
                             Log.v("FH", "登录成功,弹出信息确认dialog");
-                            confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this , response.getData().get(0));
+                            SpUtils.saveStudent(student);
+                            confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this , student);
                             confirmUserInfoDialog.show();
                         }
                     }

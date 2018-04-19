@@ -1002,6 +1002,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_2));
             }
             if (YougyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
+                LogUtils.e(tag,"setSysWifi upload................");
                 startService(new Intent(this, UploadService.class));
             }
         } else {
