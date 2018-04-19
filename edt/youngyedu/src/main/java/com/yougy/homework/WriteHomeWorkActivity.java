@@ -178,6 +178,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     //某一题的分页中选中页码用来设置选择背景色。
     private int chooesePoint = 0;
 
+    private Boolean btnLocked = false;
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_homework);
@@ -480,7 +482,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                     }
                     isFirstComeInQuestion = true;
-                    questionPageNumAdapter.onItemClickListener.onItemClick1(0);
+                    if (btnLocked == false){
+                        btnLocked = true;
+                        clickPageBtn(0);
+                        btnLocked = false;
+                    }
                 }
 
                 String useTime = SharedPreferencesUtil.getSpUtil().getString(examId + "_" + showHomeWorkPosition + "_use_time", "");
@@ -508,123 +514,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
         questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick1(int position) {
-
-                //离开手绘模式，并刷新界面ui
-                EpdController.leaveScribbleMode(mNbvAnswerBoard);
-                mNbvAnswerBoard.invalidate();
-               /* llCaogaoControl.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        llCaogaoControl.layout(left, top, right, bottom);
-                    }
-                }, 30);
-*/
-                if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-                    EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-                    mCaogaoNoteBoard.invalidate();
+                if (btnLocked == false) {
+                    btnLocked = true;
+                    clickPageBtn(position);
+                    btnLocked = false;
                 }
-
-                if (isFirstComeInQuestion) {
-                    isFirstComeInQuestion = false;
-                } else {
-
-                    //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
-                    if (llCaogaoControl.getVisibility() == View.VISIBLE) {
-                        cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
-
-                        tvCaogaoText.setText("草稿纸");
-                        llCaogaoControl.setVisibility(View.GONE);
-                    }
-                    mCaogaoNoteBoard.clearAll();
-
-                    //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
-                    if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
-                        //保存上一个题目多页数据中的某一页手写笔记。
-                        byte[] tmpBytes1 = mNbvAnswerBoard.bitmap2Bytes();
-                        bytesList.set(saveQuestionPage, tmpBytes1);
-                    }
-                    //是否是选择题。都需要截屏保存图片
-                    pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
-                }
-
-                mNbvAnswerBoard.clearAll();
-
-
-                chooesePoint = position;
-
-
-                //将本页设置为选中页
-                saveQuestionPage = position;
-
-                if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
-                    //切换当前题目的分页
-                    contentDisplayer.getmContentAdaper().toPage("question", position, false);
-                    contentDisplayer.setVisibility(View.VISIBLE);
-                } else {
-                    //加白纸
-                    contentDisplayer.setVisibility(View.GONE);
-
-                }
-                if (questionList.get(0) != null) {
-                    if ("选择".equals(questionList.get(0).getExtraData())) {
-                        if (isAddAnswerBoard) {
-                            rlAnswer.removeView(mNbvAnswerBoard);
-                            isAddAnswerBoard = false;
-                        }
-                        rcvChooese.setVisibility(View.VISIBLE);
-                        chooeseAnswerList = parsedQuestionItem.answerList;
-                        //选择题不能加页
-                        tvAddPage.setVisibility(View.GONE);
-                        tvClearWrite.setVisibility(View.GONE);
-
-                        setChooeseResult();
-
-                        //刷新当前选择结果的reciv
-                        if (rcvChooese.getAdapter() != null) {
-                            rcvChooese.getAdapter().notifyDataSetChanged();
-                        }
-
-                    } else {
-                        if (!isAddAnswerBoard) {
-                            rlAnswer.addView(mNbvAnswerBoard);
-                            isAddAnswerBoard = true;
-                        }
-                        rcvChooese.setVisibility(View.GONE);
-                        tvAddPage.setVisibility(View.VISIBLE);
-                        tvClearWrite.setVisibility(View.VISIBLE);
-
-                        //从之前bytesList中回显之前保存的手写笔记，如果有的话
-                        if (bytesList.size() > position) {
-                            byte[] tmpBytes = bytesList.get(position);
-                            if (tmpBytes != null) {
-                                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-                            }
-                        }
-                       /* //从之前cgBytes中回显之前保存的草稿手写笔记，如果有的话
-                        if (cgBytes.size() > position) {
-                            byte[] tmpBytes = cgBytes.get(position);
-                            if (tmpBytes != null) {
-                                mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
-                            }
-                        }*/
-                    }
-                }
-                questionPageNumAdapter.notifyDataSetChanged();
-
-
-                //以下逻辑为调整列表中角标位置。
-                if (questionPageSize <= PAGE_SHOW_SIZE) {
-                    return;
-                }
-
-                if (position <= 2) {
-                    pageDeviationNum = 0;
-                } else {
-                    pageDeviationNum = (position - 2);
-                }
-                moveToPosition(linearLayoutManager, pageDeviationNum);
-
-
             }
         });
 
@@ -641,6 +535,124 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         //触发一下点击事件。默认隐藏所有题目
         onClick(findViewById(R.id.ll_chooese_homework));
+    }
+
+    public void clickPageBtn(int position){
+
+        //离开手绘模式，并刷新界面ui
+        EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        mNbvAnswerBoard.invalidate();
+               /* llCaogaoControl.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        llCaogaoControl.layout(left, top, right, bottom);
+                    }
+                }, 30);
+*/
+        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+            mCaogaoNoteBoard.invalidate();
+        }
+
+        if (isFirstComeInQuestion) {
+            isFirstComeInQuestion = false;
+        } else {
+
+            //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
+            if (llCaogaoControl.getVisibility() == View.VISIBLE) {
+                cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
+
+                tvCaogaoText.setText("草稿纸");
+                llCaogaoControl.setVisibility(View.GONE);
+            }
+            mCaogaoNoteBoard.clearAll();
+
+            //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
+            if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
+                //保存上一个题目多页数据中的某一页手写笔记。
+                byte[] tmpBytes1 = mNbvAnswerBoard.bitmap2Bytes();
+                bytesList.set(saveQuestionPage, tmpBytes1);
+            }
+            //是否是选择题。都需要截屏保存图片
+            pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
+        }
+
+        mNbvAnswerBoard.clearAll();
+
+
+        chooesePoint = position;
+
+
+        //将本页设置为选中页
+        saveQuestionPage = position;
+
+        if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
+            //切换当前题目的分页
+            contentDisplayer.getmContentAdaper().toPage("question", position, false);
+            contentDisplayer.setVisibility(View.VISIBLE);
+        } else {
+            //加白纸
+            contentDisplayer.setVisibility(View.GONE);
+
+        }
+        if (questionList.get(0) != null) {
+            if ("选择".equals(questionList.get(0).getExtraData())) {
+                if (isAddAnswerBoard) {
+                    rlAnswer.removeView(mNbvAnswerBoard);
+                    isAddAnswerBoard = false;
+                }
+                rcvChooese.setVisibility(View.VISIBLE);
+                chooeseAnswerList = parsedQuestionItem.answerList;
+                //选择题不能加页
+                tvAddPage.setVisibility(View.GONE);
+                tvClearWrite.setVisibility(View.GONE);
+
+                setChooeseResult();
+
+                //刷新当前选择结果的reciv
+                if (rcvChooese.getAdapter() != null) {
+                    rcvChooese.getAdapter().notifyDataSetChanged();
+                }
+
+            } else {
+                if (!isAddAnswerBoard) {
+                    rlAnswer.addView(mNbvAnswerBoard);
+                    isAddAnswerBoard = true;
+                }
+                rcvChooese.setVisibility(View.GONE);
+                tvAddPage.setVisibility(View.VISIBLE);
+                tvClearWrite.setVisibility(View.VISIBLE);
+
+                //从之前bytesList中回显之前保存的手写笔记，如果有的话
+                if (bytesList.size() > position) {
+                    byte[] tmpBytes = bytesList.get(position);
+                    if (tmpBytes != null) {
+                        mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    }
+                }
+                       /* //从之前cgBytes中回显之前保存的草稿手写笔记，如果有的话
+                        if (cgBytes.size() > position) {
+                            byte[] tmpBytes = cgBytes.get(position);
+                            if (tmpBytes != null) {
+                                mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                            }
+                        }*/
+            }
+        }
+        questionPageNumAdapter.notifyDataSetChanged();
+
+
+        //以下逻辑为调整列表中角标位置。
+        if (questionPageSize <= PAGE_SHOW_SIZE) {
+            return;
+        }
+
+        if (position <= 2) {
+            pageDeviationNum = 0;
+        } else {
+            pageDeviationNum = (position - 2);
+        }
+        moveToPosition((LinearLayoutManager) allQuestionPage.getLayoutManager(), pageDeviationNum);
     }
 
 
@@ -861,19 +873,21 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
-
-                if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
-                    ToastUtil.showToast(this, "最多只能加5张纸");
-                    return;
+                if (btnLocked == false){
+                    btnLocked = true;
+                    if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                        ToastUtil.showToast(this, "最多只能加5张纸");
+                        btnLocked = false;
+                        return;
+                    }
+                    questionPageSize++;
+                    bytesList.add(null);
+                    pathList.add(null);
+                    cgBytes.add(null);
+                    questionPageNumAdapter.notifyDataSetChanged();
+                    clickPageBtn(questionPageSize - 1);
+                    btnLocked = false;
                 }
-
-                questionPageSize++;
-                bytesList.add(null);
-                pathList.add(null);
-                cgBytes.add(null);
-                questionPageNumAdapter.notifyDataSetChanged();
-                questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize - 1);
-
                 break;
             case R.id.ll_chooese_homework:
                 if (allHomeWorkPage.getVisibility() == View.GONE) {
