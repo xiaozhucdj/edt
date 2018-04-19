@@ -50,6 +50,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
@@ -657,6 +658,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
 
     private void startClock() {
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            return;
+        }
+
         timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
                 .start(new Action1<Integer>() {
                     @Override
@@ -669,7 +675,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
 
-        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
+//      tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
 
@@ -1230,8 +1236,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        timedTask.stop();
-
+                        if (timedTask != null) {
+                            timedTask.stop();
+                        }
                         ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
 
                         NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
