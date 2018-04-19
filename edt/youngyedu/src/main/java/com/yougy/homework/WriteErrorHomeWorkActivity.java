@@ -287,7 +287,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
 
                             tvCaogaoText.setText("草稿纸");
-                            mCaogaoNoteBoard.clear();
+                            mCaogaoNoteBoard.clearAll();
                             llCaogaoControl.setVisibility(View.GONE);
                         }
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
@@ -299,7 +299,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                         pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
                     }
 
-                    mNbvAnswerBoard.clearAll(rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+                    mNbvAnswerBoard.clearAll();
 
                     //将本页设置为选中页
                     saveQuestionPage = position;
@@ -491,7 +491,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     tvCaogaoText.setText("草稿纸");
 
                     cgBytes.set(saveQuestionPage, null);
-                    mCaogaoNoteBoard.clearAll(960 ,420);
+                    mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
 
                     if (rlCaogaoBox.getChildCount() > 0) {

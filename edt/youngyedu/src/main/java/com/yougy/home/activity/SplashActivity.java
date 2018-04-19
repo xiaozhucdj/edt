@@ -65,7 +65,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     private int lastProgress;
 
     private WeakHandler mHandler = new WeakHandler();
-    private PowerManager.WakeLock mWakeLock;
+//    private PowerManager.WakeLock mWakeLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -368,17 +368,17 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     @Override
     protected void onPause() {
         super.onPause();
-        if (mWakeLock != null) {
-            mWakeLock.release();
-        }
+//        if (mWakeLock != null) {
+//            mWakeLock.release();
+//        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
-                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-                        | PowerManager.ON_AFTER_RELEASE, this.getClass().getName());
-        mWakeLock.acquire();
+//        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
+//                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+//                        | PowerManager.ON_AFTER_RELEASE, this.getClass().getName());
+//        mWakeLock.acquire();
     }
 }

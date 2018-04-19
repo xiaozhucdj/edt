@@ -37,6 +37,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
@@ -155,8 +156,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
             Log.v("FH", "examId 为空,开始问答失败");
             finish();
         }
-        startTimeMill = getIntent().getLongExtra("startTimeMill" , -1);
-        if (startTimeMill == -1){
+        startTimeMill = getIntent().getLongExtra("startTimeMill", -1);
+        if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
     }
@@ -174,7 +175,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
-                                            timedTask.stop();
+                                            if (timedTask!=null){
+                                                timedTask.stop();
+                                            }
                                             dialog.dismiss();
                                             finish();
                                         }
@@ -214,7 +217,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     protected void initLayout() {
-        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(startTimeMill , "yyyy-MM-dd HH:mm"));
+        binding.startTimeTv.setText("开始时间 : " + DateUtils.convertTimeMillisToStr(startTimeMill, "yyyy-MM-dd HH:mm"));
 
         //新建写字板，并添加到界面上
 
@@ -223,12 +226,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
             @Override
             public void onGlobalLayout() {
                 binding.rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-               mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this ,  binding.rlAnswer.getMeasuredWidth() ,  binding.rlAnswer.getMeasuredHeight());
+                mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this, binding.rlAnswer.getMeasuredWidth(), binding.rlAnswer.getMeasuredHeight());
 
             }
         });
 
-        mCaogaoNoteBoard = new NoteBookView2(this ,960 ,420);
+        mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
 
         binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper() {
             @Override
@@ -298,7 +301,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_clear_write:
 
-                mNbvAnswerBoard.clearAll( binding.rlAnswer.getMeasuredWidth() ,  binding.rlAnswer.getMeasuredHeight());
+                mNbvAnswerBoard.clearAll();
 
                 break;
             case R.id.tv_add_page:
@@ -321,7 +324,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     binding.tvCaogaoText.setText("草稿纸");
 
                     cgBytes.set(saveQuestionPage, null);
-                    mCaogaoNoteBoard.clearAll(960 ,420);
+                    mCaogaoNoteBoard.clearAll();
                     binding.llCaogaoControl.setVisibility(View.GONE);
 
                     if (binding.rlCaogaoBox.getChildCount() > 0) {
@@ -416,7 +419,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
 
                             binding.tvCaogaoText.setText("草稿纸");
-                            mCaogaoNoteBoard.clear();
+                            mCaogaoNoteBoard.clearAll();
                             binding.llCaogaoControl.setVisibility(View.GONE);
                         }
 
@@ -576,6 +579,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     private void startClock() {
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            return;
+        }
         timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
                 .start(new Action1<Integer>() {
                     @Override
@@ -811,7 +818,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        timedTask.stop();
+                        if (timedTask!=null){
+                            timedTask.stop();
+                        }
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", questionItem);
                         startActivity(intent);
@@ -936,54 +945,54 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.recycle();
         }
 
-        if (mCaogaoNoteBoard!=null){
+        if (mCaogaoNoteBoard != null) {
             mCaogaoNoteBoard.recycle();
         }
 
-        if (timedTask!=null){
-            timedTask .stop() ;
-            timedTask=null ;
+        if (timedTask != null) {
+            timedTask.stop();
+            timedTask = null;
         }
 
-        if (pathList!=null){
+        if (pathList != null) {
             pathList.clear();
         }
-        pathList = null ;
+        pathList = null;
 
-        if (bytesList!=null){
+        if (bytesList != null) {
             bytesList.clear();
         }
-        bytesList= null ;
+        bytesList = null;
 
-        if (stsResultbeanArrayList!=null){
+        if (stsResultbeanArrayList != null) {
             stsResultbeanArrayList.clear();
         }
-        stsResultbeanArrayList = null ;
+        stsResultbeanArrayList = null;
 
-        if (questionList!=null){
+        if (questionList != null) {
             questionList.clear();
         }
-        questionList = null ;
+        questionList = null;
 
-        if (chooeseAnswerList!=null){
+        if (chooeseAnswerList != null) {
             chooeseAnswerList.clear();
         }
-        chooeseAnswerList = null ;
+        chooeseAnswerList = null;
 
 
-        if (cgBytes!=null){
+        if (cgBytes != null) {
             cgBytes.clear();
         }
-        cgBytes = null ;
+        cgBytes = null;
 
-        if (checkedAnswerList!=null){
+        if (checkedAnswerList != null) {
             checkedAnswerList.clear();
         }
-        checkedAnswerList = null ;
+        checkedAnswerList = null;
 
         Glide.get(this).clearMemory();
         binding.contentDisplayer.clearPdfCache();
