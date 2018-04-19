@@ -674,8 +674,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
-
-//      tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
+        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
 
@@ -982,6 +981,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
 
+        refreshTime();
         String textInfo = tvSubmitHomeWork.getText().toString();
         if (textInfo.contains("(") && textInfo.contains(")")) {
             getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
