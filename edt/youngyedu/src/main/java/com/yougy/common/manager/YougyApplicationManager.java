@@ -6,8 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.*;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -94,6 +93,11 @@ public class YougyApplicationManager extends LitePalApplication {
 
         //其他的正常初始化需要区分进程,只在主进程里初始化
         if (inMainProcess(this)){
+            //申请wakeLock,保证不进入睡眠
+            android.os.PowerManager powerManager = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
+            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK , "leke");
+            wakeLock.acquire();
+
             //       watcher = LeakCanary.install(this);
             mContext = this;
             instance = this;

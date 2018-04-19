@@ -44,7 +44,7 @@ public abstract class AutoLayoutBaseActivity extends AutoLayoutActivity implemen
         }
     };
 
-    private PowerManager.WakeLock mWakeLock;
+//    private PowerManager.WakeLock mWakeLock;
 
     /**
      * 记录处于前台的Activity
@@ -123,11 +123,11 @@ public abstract class AutoLayoutBaseActivity extends AutoLayoutActivity implemen
     protected void onResume() {
         mForegroundActivity = this;
         weakReference = new WeakReference<>(mForegroundActivity);
-        //onResume  中启用
-        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
-                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-                        | PowerManager.ON_AFTER_RELEASE, AutoLayoutBaseActivity.this.getClass().getName());
-        mWakeLock.acquire();
+//        //onResume  中启用
+//        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
+//                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+//                        | PowerManager.ON_AFTER_RELEASE, AutoLayoutBaseActivity.this.getClass().getName());
+//        mWakeLock.acquire();
 
         super.onResume();
     }
@@ -135,9 +135,9 @@ public abstract class AutoLayoutBaseActivity extends AutoLayoutActivity implemen
     @Override
     protected void onPause() {
         mForegroundActivity = null;
-        if (mWakeLock != null) {
-            mWakeLock.release();
-        }
+//        if (mWakeLock != null) {
+//            mWakeLock.release();
+//        }
         super.onPause();
     }
 
