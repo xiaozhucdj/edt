@@ -37,6 +37,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
@@ -174,7 +175,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
-                                            timedTask.stop();
+                                            if (timedTask!=null){
+                                                timedTask.stop();
+                                            }
                                             dialog.dismiss();
                                             finish();
                                         }
@@ -576,6 +579,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     private void startClock() {
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            return;
+        }
         timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
                 .start(new Action1<Integer>() {
                     @Override
@@ -811,7 +818,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        timedTask.stop();
+                        if (timedTask!=null){
+                            timedTask.stop();
+                        }
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", questionItem);
                         startActivity(intent);
