@@ -56,17 +56,13 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
         Log.v("FH" , "注意这儿:DATABASE_NAME=" + DATABASE_NAME);
         final File dbfile = mWeakReference.get().getDatabasePath(DATABASE_NAME);
         if (YougyApplicationManager.isWifiAvailable() && !SpUtils.isInit()) {
-            Observable.create(new Observable.OnSubscribe<Boolean>() {
-
-                @Override
-                public void call(Subscriber<? super Boolean> subscriber) {
-                    File parent = dbfile.getParentFile();
-                    if (!parent.exists()){
-                        parent.mkdir();
-                    }
-                    Intent intent = new Intent(mWeakReference.get(), DownloadService.class);
-                    mWeakReference.get().startService(intent);
+            Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
+                File parent = dbfile.getParentFile();
+                if (!parent.exists()){
+                    parent.mkdir();
                 }
+                Intent intent = new Intent(mWeakReference.get(), DownloadService.class);
+                mWeakReference.get().startService(intent);
             }).subscribeOn(Schedulers.io()).subscribe();
         }
     }
