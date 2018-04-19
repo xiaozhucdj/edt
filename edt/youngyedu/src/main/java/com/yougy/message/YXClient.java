@@ -631,7 +631,8 @@ public class YXClient {
                     catch (Exception e){
                         e.printStackTrace();
                         if (callback != null){
-                            callback.onException(e);
+                            Log.v("FH" , "获取token失败,解析错误");
+                            callback.onFailed(-997);
                         }
                     }
                 }
@@ -639,32 +640,12 @@ public class YXClient {
                 @Override
                 public void call(Throwable throwable) {
                     throwable.printStackTrace();
-                    Log.v("FH" , "获取token失败 : " + throwable.getMessage());
+                    Log.v("FH" , "获取token失败,可能是网络错误");
                     if (callback != null){
-                        callback.onException(throwable);
+                        callback.onFailed(-998);
                     }
                 }
             });
-//        else {
-//            Observable
-//                    .create(new Observable.OnSubscribe<String>() {
-//                        @Override
-//                        public void call(Subscriber<? super String> subscriber) {
-//                            //TODO 从我方服务器上拉取最新的account对应的token,接口暂时未实现,使用假数据
-//                            subscriber.onNext(SpUtils.getUserId() + "");
-//                        }
-//                    })
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(new Action1<String>() {
-//                        @Override
-//                        public void call(String token) {
-//                            if (!TextUtils.isEmpty(token)){
-//                                login(account , token , callback);
-//                            }
-//                        }
-//                    });
-//        }
     }
 
     /**
@@ -997,14 +978,15 @@ public class YXClient {
      *                           如果为null,则会按默认逻辑,使用{@link CheckNetDefaultKPController}
      *                           检查成功时调用顺序:keyPointController.before-->keyPointController.onSuccess-->onRefreshSuccessRunnable.run
      */
-    public static void checkNetAndRefreshLogin(Activity activity , final Runnable onRefreshSuccessRunnable , KeyPointController<Object , Object , Integer> keyPointController) {
+    public static void checkNetAndRefreshLogin(Activity activity , final Runnable onRefreshSuccessRunnable
+            , KeyPointController keyPointController) {
         final KeyPointController mKeyPointController;
         if (keyPointController == null) {
             mKeyPointController = new CheckNetDefaultKPController(activity , false);
         } else {
             mKeyPointController = keyPointController;
         }
-        mKeyPointController.before(null);
+        mKeyPointController.before();
         if (!NetUtils.isNetConnected()) {
             mKeyPointController.onFail(-999);
             return;
@@ -1014,12 +996,22 @@ public class YXClient {
             public void onResult(int code, Object result, Throwable exception) {
                 if (code == ResponseCode.RES_SUCCESS) {
                     Log.v("FH", "刷新式登录成功");
-                    mKeyPointController.onSuccess(null);
+                    mKeyPointController.onSuccess();
                     if (onRefreshSuccessRunnable != null){
                         onRefreshSuccessRunnable.run();
                     }
                 } else {
-                    Log.v("FH", "刷新式登录失败 code :　" + code);
+                    String reason;
+                    if (code == -998){
+                        reason = "获取token失败!可能是网络原因";
+                    }
+                    else if(code == -997){
+                        reason = "获取token失败!解析失败";
+                    }
+                    else {
+                        reason = "Code " + code;
+                    }
+                    Log.v("FH", "刷新式登录失败 :" + reason);
                     mKeyPointController.onFail(code);
                 }
             }
@@ -1678,10 +1670,16 @@ public class YXClient {
         void onNewMessage(IMMessage message);
     }
 
-    public interface KeyPointController<A , B , C>{
-        void before(A data);
-        void onSuccess(B data);
-        void onFail(C data);
+    public interface KeyPointController{
+        void before();
+        void onSuccess();
+        /**
+         *
+         * @param code -999 wifi没有连接
+         *             -998 获取token失败,网络原因
+         *             -997 获取token失败,解析原因
+         */
+        void onFail(int code);
     }
 
     /**
@@ -1697,7 +1695,7 @@ public class YXClient {
      * 检查前使用HintDialog提示(showLoadingDialog为true的情况下),成功后无动作,失败后用ConfirmDialog提示用户
      *
      */
-    public static class CheckNetDefaultKPController implements KeyPointController<Object, Object, Integer>  {
+    public static class CheckNetDefaultKPController implements KeyPointController  {
         Activity activity;
         boolean showLoadingDialog;
         public CheckNetDefaultKPController(Activity activity , boolean showLoadingDialog) {
@@ -1708,25 +1706,25 @@ public class YXClient {
 
         HintDialog hintDialog ;
         @Override
-        public void before(Object data) {
+        public void before() {
             if (showLoadingDialog){
                 hintDialog.show();
             }
         }
 
         @Override
-        public void onSuccess(Object data) {
+        public void onSuccess() {
             if (hintDialog.isShowing()){
                 hintDialog.dismiss();
             }
         }
 
         @Override
-        public void onFail(Integer data) {
+        public void onFail(int code) {
             if (hintDialog.isShowing()){
                 hintDialog.dismiss();
             }
-            if (data == -999) {
+            if (code == -999) {
                 hintDialog.dismiss();
                 new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
                     @Override
@@ -1737,7 +1735,7 @@ public class YXClient {
                     }
                 }, "打开").show();
             } else {
-                new ConfirmDialog(activity, "已经与消息服务器断开连接(" + data + "),是否重连?", new DialogInterface.OnClickListener() {
+                new ConfirmDialog(activity, "已经与消息服务器断开连接(" + code + "),是否重连?", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         checkNetAndRefreshLogin(activity , null , CheckNetDefaultKPController.this);
