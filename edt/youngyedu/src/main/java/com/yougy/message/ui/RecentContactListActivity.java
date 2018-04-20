@@ -63,7 +63,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        YXClient.checkNetAndRefreshLogin(this , null , null);
+        YXClient.checkNetAndRefreshLogin(this , null);
     }
 
     public void initListView(){

@@ -86,7 +86,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     @Override
     protected void onStart() {
         super.onStart();
-        YXClient.checkNetAndRefreshLogin(this , null , null);
+        YXClient.checkNetAndRefreshLogin(this , null);
     }
 
     @Override
@@ -239,7 +239,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     scrollToBottom(200);
                 }
             }
-        }, null);
+        });
     }
 
 
