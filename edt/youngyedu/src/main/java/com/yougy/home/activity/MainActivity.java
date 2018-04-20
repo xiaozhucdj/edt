@@ -984,7 +984,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }.execute((Object[]) null);
             }
-        }, null);
+        });
     }
 
     private void setSysWifi() {

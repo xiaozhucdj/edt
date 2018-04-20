@@ -54,6 +54,7 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
+import com.yougy.view.dialog.LoadingProgressDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,6 +95,9 @@ public class YXClient {
     private StatusCode currentOnlineStatus = null;
     private boolean recentContactInitFinish = false;
     private boolean teamDataInitFinish = false;
+
+    private static LoadingProgressDialog loadingDialog;
+
 
 
     //全局所有的用户信息更新监听器列表
@@ -620,7 +624,7 @@ public class YXClient {
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
     public void getTokenAndLogin(final String account , final RequestCallbackWrapper callback){
-            NetWorkManager.queryToken(account).subscribe(new Action1<Object>() {
+            NetWorkManager.getInstance(false).queryToken(account).subscribe(new Action1<Object>() {
                 @Override
                 public void call(Object o) {
                     try {
@@ -974,45 +978,85 @@ public class YXClient {
      * 检查WiFi是否打开,并且尝试刷新式登录
      * @param activity 上下文环境,必须是activity,用于获取window在出现错误的时候弹出dialog提示.
      * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
-     * @param keyPointController 关键节点控制器,可以自己定义在检查前,成功时,失败时的动作.
-     *                           如果为null,则会按默认逻辑,使用{@link CheckNetDefaultKPController}
-     *                           检查成功时调用顺序:keyPointController.before-->keyPointController.onSuccess-->onRefreshSuccessRunnable.run
      */
-    public static void checkNetAndRefreshLogin(Activity activity , final Runnable onRefreshSuccessRunnable
-            , KeyPointController keyPointController) {
-        final KeyPointController mKeyPointController;
-        if (keyPointController == null) {
-            mKeyPointController = new CheckNetDefaultKPController(activity , false);
-        } else {
-            mKeyPointController = keyPointController;
+    public static void checkNetAndRefreshLogin(Activity activity , Runnable onRefreshSuccessRunnable) {
+        if (loadingDialog == null || !loadingDialog.isShowing()){
+            loadingDialog  = new LoadingProgressDialog(activity);
+            loadingDialog.show();
+            loadingDialog.setTitle("正在连接服务器...");
         }
-        mKeyPointController.before();
-        if (!NetUtils.isNetConnected()) {
-            mKeyPointController.onFail(-999);
-            return;
-        }
-        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), new RequestCallbackWrapper() {
+        final int MAX_RETRY_TIMES = 3;
+        //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
+        RecursiveLooper.recursiveRun(MAX_RETRY_TIMES , new RecursiveLooper.RecursiveLoopRunnable(){
             @Override
-            public void onResult(int code, Object result, Throwable exception) {
-                if (code == ResponseCode.RES_SUCCESS) {
-                    Log.v("FH", "刷新式登录成功");
-                    mKeyPointController.onSuccess();
-                    if (onRefreshSuccessRunnable != null){
-                        onRefreshSuccessRunnable.run();
+            public void run(int currentLooopTimes) {
+                Log.v("FH!!!" , "recursiveRun : " + currentLooopTimes);
+                if (!NetUtils.isNetConnected()) {
+                    //无网络,直接失败,不重试.
+                    if (loadingDialog != null && loadingDialog.isShowing()){
+                        loadingDialog.dismiss();
                     }
-                } else {
-                    String reason;
-                    if (code == -998){
-                        reason = "获取token失败!可能是网络原因";
+                    Log.v("FH" , "wifi未连接");
+                    new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
+                            activity.startActivity(intent);
+                            dialog.dismiss();
+                        }
+                    }, "打开").show();
+                    return;
+                }
+                YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", new RequestCallbackWrapper() {
+                    @Override
+                    public void onResult(int code, Object result, Throwable exception) {
+                        if (code == ResponseCode.RES_SUCCESS) {
+                            Log.v("FH", "刷新式登录成功");
+                            if (loadingDialog != null && loadingDialog.isShowing()){
+                                loadingDialog.dismiss();
+                            }
+                            //成功一次,则跳转到成功逻辑
+                            doBreak();
+                        } else {
+                            String reason;
+                            if (code == -998){
+                                reason = "获取token失败!可能是网络原因";
+                            }
+                            else if(code == -997){
+                                reason = "获取token失败!解析失败";
+                            }
+                            else {
+                                reason = "Code " + code;
+                            }
+                            Log.v("FH", "刷新式登录失败 :" + reason);
+                            if (currentLooopTimes < MAX_RETRY_TIMES){
+                                //失败次数未达上限,自动重试.
+                                doContinue();
+                            }
+                            else {
+                                //失败次数达到上限,进入失败逻辑
+                                if (loadingDialog != null && loadingDialog.isShowing()){
+                                    loadingDialog.dismiss();
+                                }
+                                new ConfirmDialog(activity, "连接到消息服务器失败 : "
+                                        + reason + " , 是否重连?", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        checkNetAndRefreshLogin(activity , onRefreshSuccessRunnable);
+                                    }
+                                }, "重新连接").show();
+                            }
+                        }
                     }
-                    else if(code == -997){
-                        reason = "获取token失败!解析失败";
-                    }
-                    else {
-                        reason = "Code " + code;
-                    }
-                    Log.v("FH", "刷新式登录失败 :" + reason);
-                    mKeyPointController.onFail(code);
+                });
+            }
+
+            @Override
+            public void onAfterLoop(boolean beenBreak) {
+                //成功逻辑
+                if (onRefreshSuccessRunnable != null) {
+                    onRefreshSuccessRunnable.run();
                 }
             }
         });
@@ -1690,60 +1734,47 @@ public class YXClient {
         void onError(int code , D data);
     }
 
-    /**
-     * 检查网络时默认的处理逻辑
-     * 检查前使用HintDialog提示(showLoadingDialog为true的情况下),成功后无动作,失败后用ConfirmDialog提示用户
-     *
-     */
-    public static class CheckNetDefaultKPController implements KeyPointController  {
-        Activity activity;
-        boolean showLoadingDialog;
-        public CheckNetDefaultKPController(Activity activity , boolean showLoadingDialog) {
-            this.activity = activity;
-            this.showLoadingDialog = showLoadingDialog;
-            hintDialog = new HintDialog(activity, "请稍候,检测网络状态中...");
+    public static class RecursiveLooper{
+
+        public abstract static class RecursiveLoopRunnable{
+            private boolean isRunning = false;
+            private int needLoopTimes;
+            private int currentLoopTimes = 1;
+
+            public void doContinue(){
+                currentLoopTimes++;
+                if (currentLoopTimes > needLoopTimes){
+                    onAfterLoop(false);
+                    isRunning = false;
+                }
+                else {
+                    run(currentLoopTimes);
+                }
+            }
+
+            public void doBreak(){
+                onAfterLoop(true);
+                isRunning = false;
+            }
+
+            public void onAfterLoop(boolean beenBreak){}
+
+            public abstract void run(int currentLooopTimes);
         }
 
-        HintDialog hintDialog ;
-        @Override
-        public void before() {
-            if (showLoadingDialog){
-                hintDialog.show();
+        public static boolean recursiveRun(int loopTimes , RecursiveLoopRunnable runnable){
+            if (loopTimes > 0){
+                if (runnable.isRunning){
+                    return false;
+                }
+                runnable.needLoopTimes = loopTimes;
+                runnable.currentLoopTimes = 1;
+                runnable.isRunning = true;
+                runnable.run(runnable.currentLoopTimes);
+                return true;
             }
+            return false;
         }
 
-        @Override
-        public void onSuccess() {
-            if (hintDialog.isShowing()){
-                hintDialog.dismiss();
-            }
-        }
-
-        @Override
-        public void onFail(int code) {
-            if (hintDialog.isShowing()){
-                hintDialog.dismiss();
-            }
-            if (code == -999) {
-                hintDialog.dismiss();
-                new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-                        activity.startActivity(intent);
-                        dialog.dismiss();
-                    }
-                }, "打开").show();
-            } else {
-                new ConfirmDialog(activity, "已经与消息服务器断开连接(" + code + "),是否重连?", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        checkNetAndRefreshLogin(activity , null , CheckNetDefaultKPController.this);
-                        dialog.dismiss();
-                    }
-                }, "重新连接").show();
-            }
-        }
-    };
-
+    }
 }

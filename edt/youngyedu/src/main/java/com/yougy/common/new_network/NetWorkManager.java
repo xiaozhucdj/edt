@@ -123,8 +123,10 @@ public final class NetWorkManager {
         }
 
         if (flag && BaseActivity.getForegroundActivity() != null) {
-            loadingProgressDialog = new LoadingProgressDialog(BaseActivity.getForegroundActivity());
-            loadingProgressDialog.show();
+            if (loadingProgressDialog == null || !loadingProgressDialog.isShowing()){
+                loadingProgressDialog = new LoadingProgressDialog(BaseActivity.getForegroundActivity());
+                loadingProgressDialog.show();
+            }
         }
         return mInstance;
     }
@@ -162,9 +164,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> queryToken(String userId) {
+    public Observable<Object> queryToken(String userId) {
         Log.v("FH", "!!!!!调用ServerApi查询云信对应token:queryToken");
-        return getInstance().getServerApi().queryToken(userId)
+        return getServerApi().queryToken(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
