@@ -30,7 +30,7 @@ public class Toaster {
 
         mText.setText(text);
         mToast.setDuration(duration);
-        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.setGravity(Gravity.TOP, 0, 0);
         mToast.show();
     }
 
@@ -44,7 +44,7 @@ public class Toaster {
 
         mText.setText(text);
         mToast.setDuration(duration);
-        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.setGravity(Gravity.TOP, 0, 0);
         mToast.show();
     }
 
@@ -58,7 +58,7 @@ public class Toaster {
         }
         mText.setText(text);
         mToast.setDuration(duration);
-        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.setGravity(Gravity.TOP, 0, 0);
         mToast.show();
     }
 
@@ -72,7 +72,7 @@ public class Toaster {
         }
         mText.setText(text);
         mToast.setDuration(duration);
-        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.setGravity(Gravity.TOP, 0, 0);
         mToast.show();
     }
 }
