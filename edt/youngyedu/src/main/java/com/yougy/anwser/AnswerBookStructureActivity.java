@@ -99,7 +99,7 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
                 RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(430 , 1020);
                 params.leftMargin = 25;
                 params.rightMargin = 25;
-                params.topMargin = 30;
+                params.topMargin = 31;
                 listView.setLayoutParams(params);
                 listView.setDividerHeight(2);
                 listView.setBackgroundResource(R.drawable.shape_rounded_rectangle_black_border);
@@ -278,18 +278,20 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
                 bookChapterBinding.redDot.setVisibility(View.VISIBLE);
             }
             else {
-                bookChapterBinding.redDot.setVisibility(View.GONE);
+                bookChapterBinding.redDot.setVisibility(View.VISIBLE);//TODO
             }
             if (node.getLevel() == 2){
                 convertView.setPadding(20 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 24);
+                bookChapterBinding.textview.setMaxWidth(340);
                 bookChapterBinding.getRoot().getLayoutParams().height = 60;
                 bookChapterBinding.arrowImg.setVisibility(View.VISIBLE);
             }
             else if (node.getLevel() == 3){
-                convertView.setPadding(75 , 0 , 0 , 0);
+                convertView.setPadding(55 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 20);
-                bookChapterBinding.getRoot().getLayoutParams().height = 45;
+                bookChapterBinding.textview.setMaxWidth(320);
+                bookChapterBinding.getRoot().getLayoutParams().height = 44;
                 bookChapterBinding.arrowImg.setVisibility(View.GONE);
             }
             return convertView;

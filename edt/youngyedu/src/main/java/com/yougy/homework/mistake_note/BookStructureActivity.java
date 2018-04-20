@@ -299,13 +299,15 @@ public class BookStructureActivity extends HomeworkBaseActivity {
             if (node.getLevel() == 2){
                 convertView.setPadding(20 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 24);
+                bookChapterBinding.textview.setMaxWidth(340);
                 bookChapterBinding.getRoot().getLayoutParams().height = 60;
                 bookChapterBinding.arrowImg.setVisibility(View.VISIBLE);
             }
             else if (node.getLevel() == 3){
-                convertView.setPadding(75 , 0 , 0 , 0);
+                convertView.setPadding(55 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 20);
-                bookChapterBinding.getRoot().getLayoutParams().height = 45;
+                bookChapterBinding.textview.setMaxWidth(320);
+                bookChapterBinding.getRoot().getLayoutParams().height = 44;
                 bookChapterBinding.arrowImg.setVisibility(View.GONE);
             }
             return convertView;

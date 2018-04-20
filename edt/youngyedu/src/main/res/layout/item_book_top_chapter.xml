@@ -7,8 +7,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="20px"
+        android:paddingLeft="20px"
+        android:paddingBottom="20px"
         >
         <TextView
             android:id="@+id/textview"
@@ -17,14 +17,15 @@
             android:textSize="24px"
             android:text="第XXX章 XXXXX"
             android:textColor="@color/black"
+            android:layout_marginTop="20px"
             />
         <TextView
             android:id="@+id/red_dot"
-            android:layout_width="5px"
-            android:layout_height="5px"
-            android:background="@color/black"
-            android:layout_marginBottom="8px"
-            android:layout_marginLeft="5px"
+            android:layout_width="14px"
+            android:layout_height="14px"
+            android:background="@drawable/img_red_dot"
+            android:layout_marginLeft="6px"
+            android:layout_marginTop="11px"
             />
     </LinearLayout>
 </layout>
