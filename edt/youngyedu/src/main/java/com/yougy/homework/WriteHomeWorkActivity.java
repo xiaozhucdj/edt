@@ -983,6 +983,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         refreshTime();
         String textInfo = tvSubmitHomeWork.getText().toString();
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            tvSubmitHomeWork.setText("提交答案");
+        }
         if (textInfo.contains("(") && textInfo.contains(")")) {
             getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
         }
