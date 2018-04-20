@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -115,6 +116,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
     LinearLayout llCaogaoControl;
     @BindView(R.id.rl_caogao_box)
     RelativeLayout rlCaogaoBox;
+    @BindView(R.id.next_homework_icon)
+    ImageView nextQuestionIcon;
+    @BindView(R.id.next_homework_text)
+    TextView nextQuestionText;
+    @BindView(R.id.last_homework_icon)
+    ImageView lastQuestionIcon;
+    @BindView(R.id.last_homework_text)
+    TextView lastQuestionText;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -501,6 +510,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 startClock();
 
                 homeWorkPageNumAdapter.notifyDataSetChanged();
+                refreshLastAndNextQuestionBtns();
             }
         });
 
@@ -944,6 +954,29 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
     }
 
+
+    /**
+     * add by FH
+     * 刷新上一题下一题按钮的UI,如果已经是第一题或者最后一题了,就置灰按钮
+     */
+    public void refreshLastAndNextQuestionBtns(){
+        if (showHomeWorkPosition > 0) {
+            lastQuestionText.setTextColor(Color.BLACK);
+            lastQuestionIcon.setImageResource(R.drawable.img_normal_shangyiti);
+        }
+        else {
+            lastQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
+            lastQuestionIcon.setImageResource(R.drawable.img_press_shangyiti);
+        }
+        if (showHomeWorkPosition < homeWorkPageSize - 1) {
+            nextQuestionText.setTextColor(Color.BLACK);
+            nextQuestionIcon.setImageResource(R.drawable.img_normal_xiayiti);
+        }
+        else {
+            nextQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
+            nextQuestionIcon.setImageResource(R.drawable.img_press_xiayiti);
+        }
+    }
     /**
      * 保存之前操作题目结果数据
      */

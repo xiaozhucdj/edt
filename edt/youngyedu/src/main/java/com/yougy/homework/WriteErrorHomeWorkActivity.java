@@ -269,7 +269,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick1(int position) {
-                    ToastUtil.showCustomToast(WriteErrorHomeWorkActivity.this, position + 1 + "页");
+//                    ToastUtil.showCustomToast(WriteErrorHomeWorkActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
                     EpdController.leaveScribbleMode(mNbvAnswerBoard);

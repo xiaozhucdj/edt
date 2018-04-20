@@ -278,7 +278,7 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
                 bookChapterBinding.redDot.setVisibility(View.VISIBLE);
             }
             else {
-                bookChapterBinding.redDot.setVisibility(View.VISIBLE);//TODO
+                bookChapterBinding.redDot.setVisibility(View.GONE);
             }
             if (node.getLevel() == 2){
                 convertView.setPadding(20 , 0 , 0 , 0);
