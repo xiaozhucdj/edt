@@ -28,7 +28,7 @@ public class ToastUtil {
 
         mText.setText(message);
         mToast.setDuration(Toast.LENGTH_SHORT);
-        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.setGravity(Gravity.TOP, 0, 0);
         mToast.show();
     }
 
@@ -43,7 +43,7 @@ public class ToastUtil {
 
         mText.setText( UIUtils.getResources().getText(resId));
         mToast.setDuration(Toast.LENGTH_SHORT);
-        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.setGravity(Gravity.TOP, 0, 0);
         mToast.show();
     }
 }
