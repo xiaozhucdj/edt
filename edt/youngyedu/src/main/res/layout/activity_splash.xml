@@ -13,6 +13,7 @@
         android:background="@drawable/icon_logo" />
 
     <TextView
+        android:visibility="invisible"
         android:layout_centerInParent="true"
         android:text="请稍候..."
         android:textSize="30px"
