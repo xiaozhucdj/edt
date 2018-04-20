@@ -208,7 +208,7 @@ public class FullScreenHintDialog extends Dialog {
                 nextStepOnclickListener.onClick(this  , 0);
             }
             else {
-                ToastUtil.showToast(getContext() , "本Dialog被设定成不再提示,但是没有设置下一步的操作");
+                ToastUtil.showCustomToast(getContext() , "本Dialog被设定成不再提示,但是没有设置下一步的操作");
             }
         }
         else {

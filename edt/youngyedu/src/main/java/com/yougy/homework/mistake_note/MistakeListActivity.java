@@ -193,7 +193,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     private void refreshUI(){
         if (homeworkId == -1){
-            ToastUtil.showToast(getApplicationContext() , "homeworkId 为空");
+            ToastUtil.showCustomToast(getApplicationContext() , "homeworkId 为空");
             finish();
             return;
         }

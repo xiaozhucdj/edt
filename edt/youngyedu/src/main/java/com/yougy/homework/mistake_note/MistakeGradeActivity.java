@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
-import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.ToastUtil;
@@ -178,13 +177,13 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        ToastUtil.showToast(getApplicationContext() , "自评完成");
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评完成");
                         finish();
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        ToastUtil.showToast(getApplicationContext() , "自评失败" + throwable.getMessage());
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败" + throwable.getMessage());
                     }
                 });
 //        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 100);
@@ -200,7 +199,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        ToastUtil.showToast(getApplicationContext() , "自评失败" + throwable.getMessage());
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败" + throwable.getMessage());
                     }
                 });
 //        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 0);
@@ -216,7 +215,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                         NetWorkManager.deleteMistake(homeworkId , questionItem.itemId).subscribe(new Action1<Object>() {
                             @Override
                             public void call(Object o) {
-                                ToastUtil.showToast(getApplicationContext() , "已学会");
+                                ToastUtil.showCustomToast(getApplicationContext() , "已学会");
                                 finish();
 //                                YougyApplicationManager.getRxBus(getApplicationContext()).send("removeMistakeItem:" + questionItem.itemId);
                             }
@@ -224,7 +223,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                             @Override
                             public void call(Throwable throwable) {
                                 throwable.printStackTrace();
-                                ToastUtil.showToast(getApplicationContext() , "删除错题失败" + throwable.getMessage());
+                                ToastUtil.showCustomToast(getApplicationContext() , "删除错题失败" + throwable.getMessage());
                             }
                         });
                     }

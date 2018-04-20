@@ -136,7 +136,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //        itemId = "73";//填空
 //        itemId = "189";//选择
         if (TextUtils.isEmpty(itemId)) {
-            ToastUtil.showToast(this, "item 为空,开始问答失败");
+            ToastUtil.showCustomToast(this, "item 为空,开始问答失败");
             Log.v("FH", "item 为空,开始问答失败");
             finish();
         }
@@ -144,7 +144,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //        fromUserId = "10000200";//填空
 //        fromUserId = "10000239";//选择
         if (TextUtils.isEmpty(fromUserId)) {
-            ToastUtil.showToast(this, "from userId 为空,开始问答失败");
+            ToastUtil.showCustomToast(this, "from userId 为空,开始问答失败");
             Log.v("FH", "from userId 为空,开始问答失败");
             finish();
         }
@@ -152,7 +152,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //        examId = 148;//填空
 //        examId = 772;//选择
         if (examId == -1) {
-            ToastUtil.showToast(this, "examId 为空,开始问答失败");
+            ToastUtil.showCustomToast(this, "examId 为空,开始问答失败");
             Log.v("FH", "examId 为空,开始问答失败");
             finish();
         }
@@ -201,7 +201,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                             fillData();
                         } else {
-                            ToastUtil.showToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
                             Log.v("FH", "获取到的题目为空,开始问答失败");
                             finish();
                         }
@@ -306,7 +306,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_add_page:
                 if (questionPageSize - binding.contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
-                    ToastUtil.showToast(this, "最多只能加5张纸");
+                    ToastUtil.showCustomToast(this, "最多只能加5张纸");
                     return;
                 }
 
@@ -378,7 +378,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     //填充数据
     private void fillData() {
         if (questionItem == null) {
-            ToastUtil.showToast(getBaseContext(), "该题可能已经被删除");
+            ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
             return;
         }
         questionList = questionItem.questionContentList;
@@ -398,7 +398,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick1(int position) {
-                    ToastUtil.showToast(AnsweringActivity.this, position + 1 + "页");
+                    ToastUtil.showCustomToast(AnsweringActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
                     EpdController.leaveScribbleMode(mNbvAnswerBoard);
@@ -515,7 +515,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             isFirstComeInQuestion = true;
             questionPageNumAdapter.onItemClickListener.onItemClick1(0);
         } else {
-            ToastUtil.showToast(getBaseContext(), "该题可能已经被删除");
+            ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
         }
     }
 
@@ -602,7 +602,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             EpdController.leaveScribbleMode(mCaogaoNoteBoard);
         }
-        ToastUtil.showToast(this, "请完成作答");
+        ToastUtil.showCustomToast(this, "请完成作答");
         // TODO: 2017/9/13 这里先保留关闭页面，做测试使用
         finish();
     }
@@ -676,7 +676,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         if (stSbean != null) {
                             upLoadPic(stSbean);
                         } else {
-                            ToastUtil.showToast(getApplicationContext(), "获取上传信息失败");
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取上传信息失败");
                         }
                     }
                 }, new Action1<Throwable>() {

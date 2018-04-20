@@ -106,6 +106,8 @@
             android:src="@drawable/img_login_student" />
 
         <TextView
+
+            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

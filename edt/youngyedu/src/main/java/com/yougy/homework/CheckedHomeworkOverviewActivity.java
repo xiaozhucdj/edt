@@ -48,7 +48,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     protected void init() {
         examId = getIntent().getIntExtra("examId", -1);
         if (examId == -1) {
-            ToastUtil.showToast(getApplicationContext(), "examId 为空");
+            ToastUtil.showCustomToast(getApplicationContext(), "examId 为空");
             finish();
         }
         examName = getIntent().getStringExtra("examName");

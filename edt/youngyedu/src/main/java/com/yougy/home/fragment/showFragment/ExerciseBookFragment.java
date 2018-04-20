@@ -123,7 +123,7 @@ public class ExerciseBookFragment extends BFragment {
                     case CHECKED:
                         MyHolder holder = (MyHolder) vh;
                         if (holder.getData().getExtra().getStatusCode().equals("IH51")){
-                            ToastUtil.showToast(getActivity() , "本次作业您未提交,无法查看");
+                            ToastUtil.showCustomToast(getActivity() , "本次作业您未提交,无法查看");
                         }
                         else if (holder.getData().getExtra().getStatusCode().equals("IH05")){
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
@@ -195,7 +195,7 @@ public class ExerciseBookFragment extends BFragment {
             public void onClick(View v) {
                 //TODO 切换到课本逻辑
                 if (mControlActivity.mBookId <= 0){
-                    ToastUtil.showToast(getActivity() , "没有图书");
+                    ToastUtil.showCustomToast(getActivity() , "没有图书");
                 }
                 else if ( !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId , FileUtils.bookDir))) {
                         mControlActivity.switch2TextBookFragment();
@@ -217,7 +217,7 @@ public class ExerciseBookFragment extends BFragment {
                     mControlActivity.switch2NoteBookFragment();
                 }
                 else {
-                    ToastUtil.showToast(getActivity() , "没有笔记");
+                    ToastUtil.showCustomToast(getActivity() , "没有笔记");
                 }
             }
         });
@@ -288,7 +288,7 @@ public class ExerciseBookFragment extends BFragment {
                                                 + " startTime : " + homeworkSummary.getExtra().getStartTime()
                                                 + " endTime : " + homeworkSummary.getExtra().getEndTime()
                                                 + "currentTime" + System.currentTimeMillis());
-                                        ToastUtil.showToast(getActivity() , "发现有考试状态不对,刷新考试列表");
+                                        ToastUtil.showCustomToast(getActivity() , "发现有考试状态不对,刷新考试列表");
                                         NetWorkManager.refreshHomeworkBook(mControlActivity.mHomewrokId)
                                                 .subscribe(new Action1<Object>() {
                                                     @Override

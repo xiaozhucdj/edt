@@ -1125,20 +1125,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 }
                             });
                         } else {
-                            ToastUtil.showToast(MainActivity.this, "检测版本成功,没有更新的版本");
+                            ToastUtil.showCustomToast(MainActivity.this, "检测版本成功,没有更新的版本");
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
-                        ToastUtil.showToast(MainActivity.this, "服务器返回数据错误:" + e.getMessage());
+                        ToastUtil.showCustomToast(MainActivity.this, "服务器返回数据错误:" + e.getMessage());
                     }
                 } else {
-                    ToastUtil.showToast(MainActivity.this, "检测版本失败，请稍后重试");
+                    ToastUtil.showCustomToast(MainActivity.this, "检测版本失败，请稍后重试");
                 }
             }
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                ToastUtil.showToast(MainActivity.this, "检测版本失败，请稍后重试");
+                ToastUtil.showCustomToast(MainActivity.this, "检测版本失败，请稍后重试");
             }
         });
     }

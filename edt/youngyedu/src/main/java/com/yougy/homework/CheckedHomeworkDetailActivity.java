@@ -54,7 +54,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         currentShow = getIntent().getParcelableExtra("toShow");
         allReplyList = getIntent().getParcelableArrayListExtra("all");
         if (currentShow == null || allReplyList == null || allReplyList.size() == 0 || examId == -1){
-            ToastUtil.showToast(getApplicationContext() , "必要数据为空");
+            ToastUtil.showCustomToast(getApplicationContext() , "必要数据为空");
             finish();
         }
     }
@@ -93,7 +93,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                     @Override
                     public void call(List<QuestionReplyDetail> questionReplyDetails) {
                         if (questionReplyDetails.size() == 0){
-                            ToastUtil.showToast(getApplicationContext() , "获取不到数据");
+                            ToastUtil.showCustomToast(getApplicationContext() , "获取不到数据");
                             return;
                         }
                         data = questionReplyDetails.get(0);
@@ -249,7 +249,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             loadData();
         }
         else {
-            ToastUtil.showToast(getApplicationContext() , "已经是第一题了");
+            ToastUtil.showCustomToast(getApplicationContext() , "已经是第一题了");
         }
     }
     public void nextQuestion(View view){
@@ -267,7 +267,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             loadData();
         }
         else {
-            ToastUtil.showToast(getApplicationContext() , "已经是最后一题了");
+            ToastUtil.showCustomToast(getApplicationContext() , "已经是最后一题了");
         }
     }
     public void showComment(View view){
