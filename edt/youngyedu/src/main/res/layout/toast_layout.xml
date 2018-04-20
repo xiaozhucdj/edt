@@ -5,17 +5,17 @@
 
     <FrameLayout
         android:id="@+id/customToast_innerLayout"
-        android:layout_width="300px"
-        android:layout_height="100px"
-        android:background="@color/white">
+        android:layout_width="400px"
+        android:layout_height="200px"
+        android:background="@color/background">
 
         <TextView
             android:id="@+id/customToast_innerLayout_txtMessage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="24px" />
+            android:textColor="@android:color/white"
+            android:textSize="30px" />
     </FrameLayout>
 
 </FrameLayout>

@@ -192,7 +192,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         examId = getIntent().getStringExtra("examId");
 
         if (TextUtils.isEmpty(examId)) {
-            ToastUtil.showToast(getBaseContext(), "作业id为空");
+            ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
             finish();
         }
 
@@ -439,7 +439,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 com.yougy.homework.bean.HomeworkDetail.ExamPaper.ExamPaperContent examPaperContent = examPaperContentList.get(position);
                 List<ParsedQuestionItem> parsedQuestionItemList = examPaperContent.getParsedQuestionItemList();
                 if (parsedQuestionItemList == null || parsedQuestionItemList.size() == 0) {
-                    ToastUtil.showToast(getBaseContext(), "该题题目可能已经删除");
+                    ToastUtil.showCustomToast(getBaseContext(), "该题题目可能已经删除");
                     return;
                 }
 
@@ -674,8 +674,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
-
-//      tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
+        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
 
@@ -796,7 +795,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     chooesePoint = 0;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
                 } else {
-                    ToastUtil.showToast(this, "已经是第一题了");
+                    ToastUtil.showCustomToast(this, "已经是第一题了");
                 }
                 break;
             case R.id.tv_next_homework:
@@ -806,7 +805,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     chooesePoint = 0;
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
                 } else {
-                    ToastUtil.showToast(this, "已经是最后一题了");
+                    ToastUtil.showCustomToast(this, "已经是最后一题了");
                 }
                 break;
             case R.id.tv_save_homework:
@@ -882,7 +881,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (btnLocked == false){
                     btnLocked = true;
                     if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
-                        ToastUtil.showToast(this, "最多只能加5张纸");
+                        ToastUtil.showCustomToast(this, "最多只能加5张纸");
                         btnLocked = false;
                         return;
                     }
@@ -982,7 +981,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
 
+        refreshTime();
         String textInfo = tvSubmitHomeWork.getText().toString();
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            tvSubmitHomeWork.setText("提交答案");
+        }
         if (textInfo.contains("(") && textInfo.contains(")")) {
             getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
         }
@@ -1047,7 +1051,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (stSbean != null) {
                             upLoadPic(stSbean);
                         } else {
-                            ToastUtil.showToast(getApplicationContext(), "获取上传信息失败");
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取上传信息失败");
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -1239,7 +1243,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (timedTask != null) {
                             timedTask.stop();
                         }
-                        ToastUtil.showToast(getBaseContext(), "上传信息提交给服务器完毕");
+                        ToastUtil.showCustomToast(getBaseContext(), "上传信息提交给服务器完毕");
 
                         NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
                             @Override
@@ -1274,7 +1278,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                 hintDialog.show();
                             }
                         } else {
-                            ToastUtil.showToast(getBaseContext(), "提交失败，请重试");
+                            ToastUtil.showCustomToast(getBaseContext(), "提交失败，请重试");
                         }
                     }
                 });

@@ -17,12 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.bean.HomeworkBookDetail;
-import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
@@ -62,11 +60,11 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
         bookName = getIntent().getStringExtra("bookName");
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
         if (bookId == -1){
-            ToastUtil.showToast(getApplicationContext() , "bookId为空,无法进入!");
+            ToastUtil.showCustomToast(getApplicationContext() , "bookId为空,无法进入!");
             finish();
         }
         else if (homeworkId == -1){
-            ToastUtil.showToast(getApplicationContext() , "homeworkId为空,无法进入!");
+            ToastUtil.showCustomToast(getApplicationContext() , "homeworkId为空,无法进入!");
             finish();
         }
     }
@@ -151,7 +149,7 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
     @Override
     protected void loadData() {
         if (bookId == -1){
-            ToastUtil.showToast(getApplicationContext() , "bookId 为空");
+            ToastUtil.showCustomToast(getApplicationContext() , "bookId 为空");
             finish();
             return;
         }

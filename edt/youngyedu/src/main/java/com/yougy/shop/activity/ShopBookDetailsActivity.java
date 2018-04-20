@@ -210,7 +210,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             }, new Action1<Throwable>() {
                 @Override
                 public void call(Throwable throwable) {
-                    ToastUtil.showToast(getApplicationContext() , "获取图书详情失败!");
+                    ToastUtil.showCustomToast(getApplicationContext() , "获取图书详情失败!");
                     throwable.printStackTrace();
                 }
             });
@@ -463,7 +463,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         mBooks.addAll(rep.getData());
                         mPromoteBookAdapter.notifyDataSetChanged();
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), "");
+                        ToastUtil.showCustomToast(getApplicationContext(), "");
                         showCenterDetermineDialog(R.string.books_request_recommended_fail);
                     }
                 } else if (o instanceof QueryBookOrderListRep) {

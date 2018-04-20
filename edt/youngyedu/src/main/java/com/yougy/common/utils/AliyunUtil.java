@@ -1,5 +1,6 @@
 package com.yougy.common.utils;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
@@ -16,8 +17,15 @@ import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.yougy.common.bean.AliyunData;
+import com.yougy.common.bean.Result;
 import com.yougy.common.global.Commons;
+import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.protocol.callback.UnBindCallback;
+import com.yougy.common.protocol.request.AliyunDataUploadReq;
+import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.setting.ui.SettingMainActivity;
+import com.yougy.view.dialog.LoadingProgressDialog;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalDB;
@@ -28,6 +36,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import okhttp3.Response;
+
 import static org.litepal.LitePal.deleteDatabase;
 
 /**
@@ -37,20 +47,20 @@ import static org.litepal.LitePal.deleteDatabase;
 public class AliyunUtil {
     private OSS oss;
     // 运行sample前需要配置以下字段为有效的值
-    private static final String endpoint = Commons.ENDPOINT ;
-    public static final String ANSWER_PIC_HOST = Commons.ANSWER_PIC_HOST ;
+    private static final String endpoint = Commons.ENDPOINT;
+    public static final String ANSWER_PIC_HOST = Commons.ANSWER_PIC_HOST;
     public static String DATABASE_NAME;
     public static String JOURNAL_NAME;
     private static String filePath;
     private String tag = "AliyunUtil";
-    private final String bucketName = Commons.BUCKET_NAME ;
+    private static final String bucketName = Commons.BUCKET_NAME;
     private static String objectKey;
 
     public AliyunUtil(AliyunData data) {
         DATABASE_NAME = SpUtils.getUserId() + ".db";
         JOURNAL_NAME = SpUtils.getUserId() + ".db-journal";
-        LogUtils.e(tag,"accessKeyId : " + data.getAccessKeyId() + ",accessKeySecret : " + data.getAccessKeySecret() + ",securityToken : " + data.getSecurityToken());
-        OSSCredentialProvider credentialProvider = new OSSStsTokenCredentialProvider(data.getAccessKeyId(), data.getAccessKeySecret(),data.getSecurityToken());
+        LogUtils.e(tag, "accessKeyId : " + data.getAccessKeyId() + ",accessKeySecret : " + data.getAccessKeySecret() + ",securityToken : " + data.getSecurityToken());
+        OSSCredentialProvider credentialProvider = new OSSStsTokenCredentialProvider(data.getAccessKeyId(), data.getAccessKeySecret(), data.getSecurityToken());
         filePath = YougyApplicationManager.getContext().getDatabasePath(DATABASE_NAME).getAbsolutePath();
         objectKey = "leke" + File.separator + "appDB" + File.separator + DATABASE_NAME;
 
@@ -63,20 +73,46 @@ public class AliyunUtil {
         oss = new OSSClient(YougyApplicationManager.getContext(), endpoint, credentialProvider, conf);
     }
 
+    public static void upload() throws Exception{
+        Response response = NewProtocolManager.queryAliyunData(new AliyunDataUploadReq());
+        if (response.isSuccessful()) {
+            String resultJson = response.body().string();
+            Result<AliyunData> result = ResultUtils.fromJsonObject(resultJson, AliyunData.class);
+            AliyunData data = result.getData();
+            AliyunUtil util = new AliyunUtil(data);
+            util.method();
+        }
+//            1000010054
+    }
 
-    public void upload() {
+    private void method() throws Exception {
         PutObjectRequest put = new PutObjectRequest(bucketName, objectKey, filePath);
-        LogUtils.e(tag,"upload ................" + "file path : " + filePath + ",object key : " + objectKey + ",bucket name : " + bucketName);
+        PutObjectResult putObjectResult = oss.putObject(put);
+        LogUtils.e(tag, "upload status code : " + putObjectResult.getStatusCode());
+        if (putObjectResult.getStatusCode() == 200) {
+            NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
+            unBindDeviceReq.setDeviceId(Commons.UUID);
+            unBindDeviceReq.setUserId(SpUtils.getUserId());
+            Response response = NewProtocolManager.unbindDevice(unBindDeviceReq);
+            if (response.isSuccessful()) {
+                SpUtils.clearSP();
+            }
+        }
+
+    }
+
+    public void asyncUpload() {
+        PutObjectRequest put = new PutObjectRequest(bucketName, objectKey, filePath);
+        LogUtils.e(tag, "upload ................" + "file path : " + filePath + ",object key : " + objectKey + ",bucket name : " + bucketName);
         oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
             @Override
             public void onSuccess(PutObjectRequest putObjectRequest, PutObjectResult putObjectResult) {
                 LogUtils.e(tag, "onSuccess put object result................");
                 SpUtils.changeContent(false);
-                SpUtils.changeInitFlag(false);
-                Connector.resetHelper();
-                deleteDatabase(DATABASE_NAME);
-                deleteDatabase(JOURNAL_NAME);
-                SpUtils.clearSP();
+//                SpUtils.changeInitFlag(false);
+//                Connector.resetHelper();
+//                deleteDatabase(DATABASE_NAME);
+//                deleteDatabase(JOURNAL_NAME);
             }
 
             @Override
@@ -85,13 +121,12 @@ public class AliyunUtil {
                 LogUtils.e(tag, "onFailure ServiceException : " + e1.getMessage());
             }
         });
-//        SpUtils.clearSP();
     }
 
 
     public void download() {
         GetObjectRequest get = new GetObjectRequest(bucketName, objectKey);
-        LogUtils.e(tag, "download..................."+",object key : " + objectKey + ",bucket name : " + bucketName);
+        LogUtils.e(tag, "download..................." + ",object key : " + objectKey + ",bucket name : " + bucketName);
         oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
             @Override
             public void onSuccess(GetObjectRequest request, GetObjectResult result) {
@@ -137,14 +172,14 @@ public class AliyunUtil {
                 if (clientExcepion != null) {
                     // 本地异常如网络异常等
                     clientExcepion.printStackTrace();
-                    Log.e(tag,"client excepion : " + clientExcepion.getMessage());
+                    Log.e(tag, "client excepion : " + clientExcepion.getMessage());
                 }
                 if (serviceException != null) {
                     // 服务异常
-                    Log.e(tag,"ErrorCode : " + serviceException.getErrorCode());
-                    Log.e(tag,"RequestId : " + serviceException.getRequestId());
-                    Log.e(tag,"HostId : " + serviceException.getHostId());
-                    Log.e(tag,"RawMessage : " + serviceException.getRawMessage());
+                    Log.e(tag, "ErrorCode : " + serviceException.getErrorCode());
+                    Log.e(tag, "RequestId : " + serviceException.getRequestId());
+                    Log.e(tag, "HostId : " + serviceException.getHostId());
+                    Log.e(tag, "RawMessage : " + serviceException.getRawMessage());
                 }
             }
         });

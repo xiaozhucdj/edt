@@ -35,7 +35,7 @@ public class AnswerResultActivity extends BaseActivity{
     protected void init() {
         Parcelable question = getIntent().getParcelableExtra("question");
         if (question == null){
-            ToastUtil.showToast(this , "题目内容获取失败");
+            ToastUtil.showCustomToast(this , "题目内容获取失败");
             finish();
         }
         else {
