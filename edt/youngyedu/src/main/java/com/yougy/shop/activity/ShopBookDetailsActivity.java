@@ -206,6 +206,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     //修改按钮状态
                     setBtnCarState();
                     setBtnFavorState();
+                    ((BaseAdapter) binding.allPromotionListview.getAdapter()).notifyDataSetChanged();
                 }
             }, new Action1<Throwable>() {
                 @Override
