@@ -1022,12 +1022,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
 
-        refreshTime();
-        String textInfo = tvSubmitHomeWork.getText().toString();
+
 
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
-            tvSubmitHomeWork.setText("提交答案");
+            refreshTime();
         }
+
+        String textInfo = tvSubmitHomeWork.getText().toString();
         if (textInfo.contains("(") && textInfo.contains(")")) {
             getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
         }
@@ -1046,6 +1047,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
         cgBytes.clear();
         pathList.clear();
         checkedAnswerList.clear();
+
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            tvSubmitHomeWork.setText("提交答案");
+        }
 
     }
 
@@ -1677,5 +1683,32 @@ public class WriteHomeWorkActivity extends BaseActivity {
         Glide.get(this).clearMemory();
         contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (timedTask != null) {
+            timedTask.stop();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (timedTask != null) {
+
+            if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+                return;
+            }
+
+            timedTask .start(new Action1<Integer>() {
+                @Override
+                public void call(Integer times) {
+                    refreshTime();
+                }
+            });
+
+        }
     }
 }
