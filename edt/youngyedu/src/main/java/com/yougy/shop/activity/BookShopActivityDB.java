@@ -713,7 +713,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private void refreshSingleClassifyRecycler(List<BookInfo> infoList) {
         LogUtils.e(tag, "refreshSingleClassifyRecycler..............");
         List<BookInfo> infos = new ArrayList<>();
-        if (showAllVersion) {
+        if (mClassifyPosition == 2 || showAllVersion) {
             infos.addAll(infoList);
         } else {
             for (BookInfo info : infoList) {
