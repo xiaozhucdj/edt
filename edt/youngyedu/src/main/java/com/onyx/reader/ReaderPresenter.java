@@ -55,7 +55,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
                 try {
                     JSONObject object = new JSONObject(keys);
                     String key = object.getString(bookId) ;
-                    System.out.println("object.getString(bookId) ...."+bookId+"...."+key.substring(key.length()-50 ,key.length()));
+//                    System.out.println("object.getString(bookId) ...."+bookId+"...."+key.substring(key.length()-50 ,key.length()));
                     factory.setKey(key);
                 } catch (JSONException e) {
                     e.printStackTrace();

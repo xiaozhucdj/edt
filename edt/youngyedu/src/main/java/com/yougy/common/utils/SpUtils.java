@@ -156,7 +156,7 @@ public class SpUtils {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
         if (info != null) {
             info.setPanSize(sp.getFloat(info.getPAN_SIZE(), -1));
-            System.out.println("sp.getInt(info.getPAN_COLOR() ==" + sp.getInt(info.getPAN_COLOR(), -1));
+//            System.out.println("sp.getInt(info.getPAN_COLOR() ==" + sp.getInt(info.getPAN_COLOR(), -1));
             info.setPanColor(sp.getInt(info.getPAN_COLOR(), -1));
             info.setPanAlphProgress(sp.getInt(info.getPAN_ALPH_PROGRESS(), -1));
             info.setPanSizeProgress(sp.getInt(info.getPAN_SIZE_PROGRESS(), -1));
