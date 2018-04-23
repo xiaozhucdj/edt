@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -282,7 +282,7 @@ public class ExerciseBookFragment extends BFragment {
                                     long endTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getEndTime() , "yyyy-MM-dd HH:mm:ss");
                                     long currentTime = System.currentTimeMillis();
                                     if (startTime < currentTime){
-                                        Log.v("FH" , "发现有作业状态不对,刷新作业列表" +
+                                        LogUtils.e("FH", "发现有作业状态不对,刷新作业列表" +
                                                 " 作业id: " + homeworkSummary.getExam()
                                                 + " 作业状态 : " + statusCode
                                                 + " startTime : " + homeworkSummary.getExtra().getStartTime()

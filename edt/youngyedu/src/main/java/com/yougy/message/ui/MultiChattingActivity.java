@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +27,7 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.ListUtil;
@@ -108,7 +108,7 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
         YXClient.getInstance().with(this).addOnMsgStatusChangedListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(final IMMessage message) {
-                Log.v("FH" , "MultiChattingActivity 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
+                LogUtils.e("FH" , "MultiChattingActivity 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
                 IMMessage fakeMessage = findFakeMessageBaseRealMessage(message);
                 if (fakeMessage == null){
                     return;

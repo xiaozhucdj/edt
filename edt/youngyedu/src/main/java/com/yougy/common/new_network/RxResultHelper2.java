@@ -1,10 +1,9 @@
 package com.yougy.common.new_network;
 
-import android.util.Log;
-
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class RxResultHelper2 {
                             @Override
                             public Observable<BaseResult<T>> call(BaseResult<T> entity) {
                                 if (loadingProgressDialog != null && loadingProgressDialog.isShowing()) {
-                                    Log.v("FH", "!!!!! success call  " + loadingProgressDialog.toString());
+                                    LogUtils.e("FH", "!!!!! success call  " + loadingProgressDialog.toString());
                                     loadingProgressDialog.dismiss();
                                 }
                                 if (entity.getCode() == 200) {
@@ -46,7 +45,7 @@ public class RxResultHelper2 {
                             @Override
                             public Observable<BaseResult<T>> call(Throwable throwable) {
                                 if (loadingProgressDialog != null && loadingProgressDialog.isShowing()) {
-                                    Log.v("FH", "!!!!! error call  " + loadingProgressDialog.toString());
+                                    LogUtils.e("FH", "!!!!! error call  " + loadingProgressDialog.toString());
                                     loadingProgressDialog.dismiss();
                                 }
                                 return Observable.error(throwable);

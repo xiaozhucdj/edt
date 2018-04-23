@@ -1,7 +1,6 @@
 package com.yougy.shop.activity;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -10,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
@@ -146,7 +146,7 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
                         deleteBtn.setVisibility(View.VISIBLE);
                     }
                 }, throwable -> {
-                    Log.v("FH", "请求收藏夹失败");
+                    LogUtils.e("FH", "请求收藏夹失败");
                     showTagCancelAndDetermineDialog(R.string.load_error_tost, R.string.cancel, R.string.retry, mTagForGetFaverFail);
                     throwable.printStackTrace();
                 });
@@ -456,7 +456,7 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
                     @Override
                     public void call(Throwable throwable) {
                         showCenterDetermineDialog(R.string.cancle_collection_fail);
-                        Log.v("FH", "删除失败");
+                        LogUtils.e("FH", "删除失败");
                         throwable.printStackTrace();
                     }
                 });
@@ -473,7 +473,7 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.v("FH", "删除失败");
+                        LogUtils.e("FH", "删除失败");
                         showCenterDetermineDialog(R.string.cancle_collection_fail);
                         throwable.printStackTrace();
                     }

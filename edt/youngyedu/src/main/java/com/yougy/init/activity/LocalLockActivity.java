@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -17,6 +16,7 @@ import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
@@ -145,7 +145,7 @@ public class LocalLockActivity extends BaseActivity {
             new HintDialog(getThisActivity(), "密码不能为空").show();
             return;
         }
-        Log.v("FH", "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtils.getLocalLockPwd());
+        LogUtils.e("FH", "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtils.getLocalLockPwd());
         if (binding.localLockEdittext.getText().toString().equals(SpUtils.getLocalLockPwd())) {
             finish();
             if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)) {

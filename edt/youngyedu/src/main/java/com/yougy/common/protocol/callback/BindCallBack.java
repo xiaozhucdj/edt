@@ -2,7 +2,6 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
@@ -20,7 +19,6 @@ import java.io.File;
 
 import okhttp3.Response;
 import rx.Observable;
-import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
@@ -53,7 +51,7 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     }
 
     private void downloadDb(){
-        Log.v("FH" , "注意这儿:DATABASE_NAME=" + DATABASE_NAME);
+        LogUtils.e("FH" , "注意这儿:DATABASE_NAME=" + DATABASE_NAME);
         final File dbfile = mWeakReference.get().getDatabasePath(DATABASE_NAME);
         if (YougyApplicationManager.isWifiAvailable() && !SpUtils.isInit()) {
             Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {

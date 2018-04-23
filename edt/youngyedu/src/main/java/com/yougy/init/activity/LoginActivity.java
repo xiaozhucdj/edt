@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -21,6 +20,7 @@ import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.Student;
@@ -178,7 +178,7 @@ public class LoginActivity extends BaseActivity {
                             new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用学生账号登录").show();
                         }
                         else {
-                            Log.v("FH", "登录成功,弹出信息确认dialog");
+                            LogUtils.e("FH", "登录成功,弹出信息确认dialog");
                             SpUtils.saveStudent(student);
                             confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this , student);
                             confirmUserInfoDialog.show();

@@ -1,13 +1,13 @@
 package com.yougy.anwser;
 
 import android.databinding.DataBindingUtil;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -164,7 +164,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
                         , new Action1<Throwable>() {
                             @Override
                             public void call(Throwable throwable) {
-                                Log.v("FH", "刷新答题情况失败" + throwable.getMessage());
+                                LogUtils.e("FH", "刷新答题情况失败" + throwable.getMessage());
                                 throwable.printStackTrace();
                             }
                         });

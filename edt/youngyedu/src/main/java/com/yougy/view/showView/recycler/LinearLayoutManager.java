@@ -267,10 +267,10 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
             mPendingSavedState = (SavedState) state;
             requestLayout();
             if (DEBUG) {
-                Log.d(TAG, "loaded saved state");
+                LogUtils.e(TAG, "loaded saved state");
             }
         } else if (DEBUG) {
-            Log.d(TAG, "invalid saved state class");
+           LogUtils.e(TAG, "invalid saved state class");
         }
     }
 
@@ -465,7 +465,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
         // create layout state
         LogUtils.e(TAG, "onLayoutChildren..................");
         if (DEBUG) {
-            Log.d(TAG, "is pre layout:" + state.isPreLayout());
+           LogUtils.e(TAG, "is pre layout:" + state.isPreLayout());
         }
         if (mPendingSavedState != null || mPendingScrollPosition != NO_POSITION) {
             if (state.getItemCount() == 0) {
@@ -491,7 +491,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
             mAnchorInfo.mValid = true;
         }
         if (DEBUG) {
-            Log.d(TAG, "Anchor info:" + mAnchorInfo);
+           LogUtils.e(TAG, "Anchor info:" + mAnchorInfo);
         }
 
         // LLM may decide to layout items for "extra" pixels to account for scrolling target,
@@ -695,7 +695,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
         }
 
         if (DEBUG) {
-            Log.d(TAG, "for unused scrap, decided to add " + scrapExtraStart
+           LogUtils.e(TAG, "for unused scrap, decided to add " + scrapExtraStart
                     + " towards start and " + scrapExtraEnd + " towards end");
         }
         mLayoutState.mScrapList = scrapList;
@@ -723,19 +723,19 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
                                            AnchorInfo anchorInfo) {
         if (updateAnchorFromPendingData(state, anchorInfo)) {
             if (DEBUG) {
-                Log.d(TAG, "updated anchor info from pending information");
+               LogUtils.e(TAG, "updated anchor info from pending information");
             }
             return;
         }
 
         if (updateAnchorFromChildren(recycler, state, anchorInfo)) {
             if (DEBUG) {
-                Log.d(TAG, "updated anchor info from existing children");
+               LogUtils.e(TAG, "updated anchor info from existing children");
             }
             return;
         }
         if (DEBUG) {
-            Log.d(TAG, "deciding anchor info for fresh state");
+           LogUtils.e(TAG, "deciding anchor info for fresh state");
         }
         anchorInfo.assignCoordinateFromPadding();
         anchorInfo.mPosition = mStackFromEnd ? state.getItemCount() - 1 : 0;
@@ -1200,14 +1200,14 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
                 + fill(recycler, mLayoutState, state, false);
         if (consumed < 0) {
             if (DEBUG) {
-                Log.d(TAG, "Don't have any more elements to scroll");
+               LogUtils.e(TAG, "Don't have any more elements to scroll");
             }
             return 0;
         }
         final int scrolled = absDy > consumed ? layoutDirection * consumed : dy;
         mOrientationHelper.offsetChildren(-scrolled);
         if (DEBUG) {
-            Log.d(TAG, "scroll req: " + dy + " scrolled: " + scrolled);
+           LogUtils.e(TAG, "scroll req: " + dy + " scrolled: " + scrolled);
         }
         mLayoutState.mLastScrollDelta = scrolled;
         return scrolled;
@@ -1231,7 +1231,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
             return;
         }
         if (DEBUG) {
-            Log.d(TAG, "Recycling " + Math.abs(startIndex - endIndex) + " items");
+           LogUtils.e(TAG, "Recycling " + Math.abs(startIndex - endIndex) + " items");
         }
         if (endIndex > startIndex) {
             for (int i = endIndex - 1; i >= startIndex; i--) {
@@ -1257,7 +1257,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
     private void recycleViewsFromStart(RecyclerView.Recycler recycler, int dt) {
         if (dt < 0) {
             if (DEBUG) {
-                Log.d(TAG, "Called recycle from start with a negative value. This might happen"
+               LogUtils.e(TAG, "Called recycle from start with a negative value. This might happen"
                         + " during layout changes but may be sign of a bug");
             }
             return;
@@ -1303,7 +1303,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
         final int childCount = getChildCount();
         if (dt < 0) {
             if (DEBUG) {
-                Log.d(TAG, "Called recycle from end with a negative value. This might happen"
+               LogUtils.e(TAG, "Called recycle from end with a negative value. This might happen"
                         + " during layout changes but may be sign of a bug");
             }
             return;
@@ -1480,7 +1480,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
         // To calculate correct layout position, we subtract margins.
         layoutDecoratedWithMargins(view, left, top, right, bottom);
         if (DEBUG) {
-            Log.d(TAG, "laid out child at position " + getPosition(view) + ", with l:"
+           LogUtils.e(TAG, "laid out child at position " + getPosition(view) + ", with l:"
                     + (left + params.leftMargin) + ", t:" + (top + params.topMargin) + ", r:"
                     + (right - params.rightMargin) + ", b:" + (bottom - params.bottomMargin));
         }
@@ -1540,7 +1540,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
                         : LayoutState.INVALID_LAYOUT;
             default:
                 if (DEBUG) {
-                    Log.d(TAG, "Unknown focus request:" + focusDirection);
+                   LogUtils.e(TAG, "Unknown focus request:" + focusDirection);
                 }
                 return LayoutState.INVALID_LAYOUT;
         }
@@ -1804,7 +1804,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
         }
         if (referenceChild == null) {
             if (DEBUG) {
-                Log.d(TAG,
+               LogUtils.e(TAG,
                         "Cannot find a child with a valid position to be used for focus search.");
             }
             return null;
@@ -1832,13 +1832,13 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
      * Logs the internal representation of children to default logger.
      */
     private void logChildren() {
-        Log.d(TAG, "internal representation of views on the screen");
+       LogUtils.e(TAG, "internal representation of views on the screen");
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            Log.d(TAG, "item " + getPosition(child) + ", coord:"
+           LogUtils.e(TAG, "item " + getPosition(child) + ", coord:"
                     + mOrientationHelper.getDecoratedStart(child));
         }
-        Log.d(TAG, "==============");
+       LogUtils.e(TAG, "==============");
     }
 
     /**
@@ -1852,7 +1852,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
      * be closest to position WIDTH  or HEIGHT
      */
     void validateChildOrder() {
-        Log.d(TAG, "validating child count " + getChildCount());
+       LogUtils.e(TAG, "validating child count " + getChildCount());
         if (getChildCount() < 1) {
             return;
         }
@@ -2110,7 +2110,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
         }
 
         void log() {
-            Log.d(TAG, "avail:" + mAvailable + ", ind:" + mCurrentPosition + ", dir:" +
+           LogUtils.e(TAG, "avail:" + mAvailable + ", ind:" + mCurrentPosition + ", dir:" +
                     mItemDirection + ", offset:" + mOffset + ", layoutDir:" + mLayoutDirection);
         }
     }

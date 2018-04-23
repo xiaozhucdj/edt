@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.message.ListUtil;
 import com.yougy.message.Pair;
@@ -100,7 +100,7 @@ public class ContactListActivity extends MessageBaseActivity{
         YXClient.getInstance().with(this).addOnMyTeamListChangeListener(new YXClient.OnThingsChangedListener<List<Team>>() {
             @Override
             public void onThingChanged(List<Team> thing, int type) {
-                Log.v("FH" , "ContactListActivity 收到我的群列表变更size : " + thing.size() + " type : " + type);
+                LogUtils.e("FH" , "ContactListActivity 收到我的群列表变更size : " + thing.size() + " type : " + type);
                 switch (type){
                     case YXClient.ALL:
                         allTeamMemberMap.clear();
@@ -130,14 +130,14 @@ public class ContactListActivity extends MessageBaseActivity{
         YXClient.getInstance().with(this).addOnUserInfoChangeListener(new YXClient.OnThingsChangedListener<Bundle>() {
             @Override
             public void onThingChanged(Bundle thing , int type) {
-                Log.v("FH" , "ContactListActivity 收到用户资料变更 type : " + type);
+               LogUtils.e("FH" , "ContactListActivity 收到用户资料变更 type : " + type);
                 mainAdapter.notifyDataSetChanged();
             }
         });
         YXClient.getInstance().with(this).addOnTeamMemberChangeListener(new YXClient.OnThingsChangedListener<Pair<String, List<TeamMember>>>() {
             @Override
             public void onThingChanged(Pair<String, List<TeamMember>> thing , int type) {
-                Log.v("FH" , "ContactListActivity 收到群成员变更size : " + thing.sencond.size() + " type : " + type + " 群ID :　" + thing.first);
+               LogUtils.e("FH" , "ContactListActivity 收到群成员变更size : " + thing.sencond.size() + " type : " + type + " 群ID :　" + thing.first);
                 switch (type){
                     case YXClient.ALL:
                         allTeamMemberMap.put(thing.first , thing.sencond);

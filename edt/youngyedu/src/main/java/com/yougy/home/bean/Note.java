@@ -1,7 +1,5 @@
 package com.yougy.home.bean;
 
-import android.util.Log;
-
 import com.yougy.common.utils.LogUtils;
 
 import org.litepal.crud.DataSupport;
@@ -79,7 +77,7 @@ public class Note extends DataSupport {
             long start = System.currentTimeMillis();
             lines = bytes2Obj(bytes);
             long end = System.currentTimeMillis();
-            Log.e("Note", "bytes to obj take time is : " + (end - start));
+            LogUtils.e("Note", "bytes to obj take time is : " + (end - start));
         }
         if (lines == null) {
             lines = new ArrayList<>();
