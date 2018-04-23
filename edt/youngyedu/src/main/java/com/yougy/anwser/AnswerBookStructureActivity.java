@@ -59,8 +59,8 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
         bookId = getIntent().getIntExtra("bookId" , -1);
         bookName = getIntent().getStringExtra("bookName");
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
-        if (bookId == -1){
-            ToastUtil.showCustomToast(getApplicationContext() , "bookId为空,无法进入!");
+        if (TextUtils.isEmpty(bookName) || bookId == -1 || bookId == 0){
+            ToastUtil.showCustomToast(getApplicationContext() , "该学科还没有教材");
             finish();
         }
         else if (homeworkId == -1){
