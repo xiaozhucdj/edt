@@ -173,7 +173,20 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     public void call(Object o) {
                         if (o instanceof IMMessage) {
                             if (((IMMessage) o).getAttachment() instanceof EndQuestionAttachment) {
+
+
+
                                 if (((EndQuestionAttachment) ((IMMessage) o).getAttachment()).examID == examId) {
+
+                                    if (mNbvAnswerBoard!=null){
+                                        mNbvAnswerBoard.leaveScribbleMode() ;
+                                    }
+
+                                    if (mCaogaoNoteBoard!=null){
+                                        mCaogaoNoteBoard.leaveScribbleMode() ;
+                                    }
+
+
                                     new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
