@@ -280,16 +280,20 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             }
         });
         if (questionIndex != 0){
+            binding.lastQuestionBtn.setText("上一题");
             binding.lastQuestionBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
         }
         else {
+            binding.lastQuestionBtn.setText("");
             binding.lastQuestionBtn.setBackgroundColor(getResources().getColor(R.color.gray_666666));
         }
 
         if (questionIndex+1 < allReplyList.size()){
+            binding.nextQuestionBtn.setText("下一题");
             binding.nextQuestionBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
         }
         else {
+            binding.nextQuestionBtn.setText("");
             binding.nextQuestionBtn.setBackgroundColor(getResources().getColor(R.color.gray_666666));
         }
     }

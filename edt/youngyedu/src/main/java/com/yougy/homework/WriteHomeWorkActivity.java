@@ -124,6 +124,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
     ImageView lastQuestionIcon;
     @BindView(R.id.last_homework_text)
     TextView lastQuestionText;
+    @BindView(R.id.tv_last_homework)
+    LinearLayout lastQuestionBtn;
+    @BindView(R.id.tv_next_homework)
+    LinearLayout nextQuestionBtn;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -961,18 +965,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
      */
     public void refreshLastAndNextQuestionBtns(){
         if (showHomeWorkPosition > 0) {
+            lastQuestionBtn.setVisibility(View.VISIBLE);
             lastQuestionText.setTextColor(Color.BLACK);
             lastQuestionIcon.setImageResource(R.drawable.img_normal_shangyiti);
         }
         else {
+            lastQuestionBtn.setVisibility(View.GONE);
             lastQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
             lastQuestionIcon.setImageResource(R.drawable.img_press_shangyiti);
         }
         if (showHomeWorkPosition < homeWorkPageSize - 1) {
+            nextQuestionBtn.setVisibility(View.VISIBLE);
             nextQuestionText.setTextColor(Color.BLACK);
             nextQuestionIcon.setImageResource(R.drawable.img_normal_xiayiti);
         }
         else {
+            nextQuestionBtn.setVisibility(View.GONE);
             nextQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
             nextQuestionIcon.setImageResource(R.drawable.img_press_xiayiti);
         }
