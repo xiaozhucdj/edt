@@ -188,7 +188,7 @@ public class LocalLockActivity extends BaseActivity {
     @Override
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
-        System.out.println("onEventMainThread  lockac");
+//        System.out.println("onEventMainThread  lockac");
         if (event == null)
             return;
         setSysTime();

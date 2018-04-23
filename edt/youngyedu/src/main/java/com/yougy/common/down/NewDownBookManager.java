@@ -108,7 +108,7 @@ public class NewDownBookManager {
                 int total = 0;
                 int len;
                 try {
-                    System.out.println("yuanye ... save path "+info.getSaveFilePath());
+//                    System.out.println("yuanye ... save path "+info.getSaveFilePath());
 
                     fos = new FileOutputStream(info.getSaveFilePath());
                     while ((len = inputStream.read(buffer)) != -1) {
@@ -125,7 +125,7 @@ public class NewDownBookManager {
                     mListener.onFailure(request, null, null);
                     e.printStackTrace();
                 } finally {
-                    System.out.println(".........finally");
+//                    System.out.println(".........finally");
                     if (fos != null) {
                         try {
                             inputStream.close();

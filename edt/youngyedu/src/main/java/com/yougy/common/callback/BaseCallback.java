@@ -18,7 +18,7 @@ import okhttp3.Response;
 public abstract class BaseCallback extends Callback {
     @Override
     public String parseNetworkResponse(Response response, int id) throws Exception {
-        System.out.println("parseNetworkResponse ..............id ..." + id);
+//        System.out.println("parseNetworkResponse ..............id ..." + id);
         onNetworkResponse(response, id);
         String res = "";
         if (response.isSuccessful()) {
@@ -30,18 +30,18 @@ public abstract class BaseCallback extends Callback {
 
     @Override
     public void onError(Call call, Exception e, int id) {
-        System.out.println("onError ----start ");
-        System.out.println("onError ----id ");
+//        System.out.println("onError ----start ");
+//        System.out.println("onError ----id ");
         e.printStackTrace();
-        System.out.println("onError ----end ");
+//        System.out.println("onError ----end ");
         pareError(call, e, id);
     }
 
     @Override
     public void onResponse(Object response, int id) {
-        System.out.println("onResponse ..............id ..." + id);
+//        System.out.println("onResponse ..............id ..." + id);
         String json = response.toString();
-        System.out.println("onResponse 后台JSON ............"+json);
+//        System.out.println("onResponse 后台JSON ............"+json);
         if (!StringUtils.isEmpty(json)) {
             //解析JSON
             try {

@@ -26,7 +26,7 @@ public class NewDelteNoteCallBack   extends BaseCallBack<NewDeleteNoteRep>{
     @Override
     public NewDeleteNoteRep parseNetworkResponse(Response response, int id) throws Exception {
         String str = response.body().string();
-        System.out.println("response json ...." + str);
+//        System.out.println("response json ...." + str);
         return GsonUtil.fromJson(str, NewDeleteNoteRep.class);
     }
 

@@ -179,7 +179,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     @Override
     public boolean onDown(MotionEvent motionEvent) {
 
-        System.out.println("onDown");
+//        System.out.println("onDown");
         // 设置 滚动事件 完成 ，并且消费了down事件
         mScroller.forceFinished(true);
         return true;
@@ -188,20 +188,20 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     //ACTION_DOWN了过一会还没有滑动时触发，onDown->onShowPress->onLongPress
     @Override
     public void onShowPress(MotionEvent motionEvent) {
-        System.out.println("onShowPress");
+//        System.out.println("onShowPress");
     }
 
     //ACTION_DOWN后没有滑动（onScroll）且没有长按（onLongPress）接着ACTION_UP时触发
     @Override
     public boolean onSingleTapUp(MotionEvent motionEvent) {
-        System.out.println("onSingleTapUp");
+//        System.out.println("onSingleTapUp");
         return false;
     }
 
     //滑动时实时触发
     @Override
     public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float distanceX, float distanceY) {
-        System.out.println("onScroll");
+//        System.out.println("onScroll");
    /*     if (true)
         return  true;*/
        if (!mScrollDisabled) {
@@ -215,14 +215,14 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     //ACTION_DOWN长按时触发
     @Override
     public void onLongPress(MotionEvent motionEvent) {
-        System.out.println("onLongPress");
+//        System.out.println("onLongPress");
     }
 
     //触摸滑动一定距离后松手ACTION_UP时触发，后参数为速率
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         //根据速率去判断 用户的滑动方向 ，并且会自动 切换item
-        System.out.println("onFling");
+//        System.out.println("onFling");
   /*    if (true)
         return  true;*/
 
@@ -292,7 +292,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
 //        System.out.println(" detector.getFocusX() =="+ detector.getFocusX());
-        System.out.println("mScale =="+mScale);
+//        System.out.println("mScale =="+mScale);
         float previousScale = mScale;
         float scale_factor = mReflow ? REFLOW_SCALE_FACTOR : 1.0f;
         float min_scale = MIN_SCALE *scale_factor;
@@ -327,7 +327,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     // return 才会调用onScale
     @Override
     public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
-        System.out.println("onScaleBegin");
+//        System.out.println("onScaleBegin");
         mScaling = true;
         // Ignore any scroll amounts yet to be accounted for: the
         // screen is not showing the effect of them, so they can
@@ -341,7 +341,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     //缩放结束
     @Override
     public void onScaleEnd(ScaleGestureDetector scaleGestureDetector) {
-        System.out.println("onScaleEnd");
+//        System.out.println("onScaleEnd");
         mScaling = false;
     }
 
@@ -1137,7 +1137,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
 
         if (mChildViews != null && mChildViews.size() > 0) {
             ViewGroup v = mChildViews.get(mCurrent);
-            System.out.println("v.getChildCount() == " + v.getChildCount());
+//            System.out.println("v.getChildCount() == " + v.getChildCount());
 
             if (v.getChildCount() == 2) {
                 return (ViewGroup) v.getChildAt(v.getChildCount()-1);
