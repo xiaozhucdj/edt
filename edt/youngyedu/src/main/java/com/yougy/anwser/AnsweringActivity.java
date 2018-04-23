@@ -37,6 +37,7 @@ import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -287,7 +288,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }
             }
         });
-
     }
 
     @Override
@@ -687,17 +687,70 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
-                        Log.v("FH", "call ");
                         if (stSbean != null) {
                             upLoadPic(stSbean);
                         } else {
-                            ToastUtil.showCustomToast(getApplicationContext(), "获取上传信息失败");
+                            new ConfirmDialog(AnsweringActivity.this, "获取上传信息失败!",
+                                    "退出",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            finish();
+                                        }
+                                    },
+                                    "重试",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            getUpLoadInfo();
+                                        }
+                                    }).show();
                         }
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        if (!NetUtils.isNetConnected()){
+                            new ConfirmDialog(AnsweringActivity.this, "获取上传信息失败!没有网络",
+                                    "退出",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            finish();
+                                        }
+                                    },
+                                    "连接",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            jumpTonet();
+                                        }
+                                    }).show();
+                        }
+                        else {
+                            new ConfirmDialog(AnsweringActivity.this, "获取上传信息失败!",
+                                    "退出",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            finish();
+                                        }
+                                    },
+                                    "重试",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            getUpLoadInfo();
+                                        }
+                                    }).show();
+                        }
                     }
                 });
 
@@ -811,13 +864,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
+                        //TODO 加重试退出dialog
                     }
 
                     @Override
                     public void onNext(Object o) {
                     }
                 });
-
     }
 
 
@@ -854,6 +907,44 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     }
                                 }).show();
                             }
+                        }
+                        else if (!NetUtils.isNetConnected()){
+                            new ConfirmDialog(AnsweringActivity.this, "答案绑定到考试失败!没有网络",
+                                    "退出",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            finish();
+                                        }
+                                    },
+                                    "连接",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            jumpTonet();
+                                        }
+                                    }).show();
+                        }
+                        else {
+                            new ConfirmDialog(AnsweringActivity.this, "答案绑定到考试失败!",
+                                    "退出",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            finish();
+                                        }
+                                    },
+                                    "重试",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            writeInfoToS();
+                                        }
+                                    }).show();
                         }
                         throwable.printStackTrace();
                     }

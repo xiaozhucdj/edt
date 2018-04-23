@@ -23,10 +23,10 @@ public class ConfirmDialog extends BaseDialog {
     String confirmBtnText;
     Context mContext;
     Dialog.OnClickListener confirmBtnListener;
-
+    Dialog.OnClickListener cancleBtnListener;
 
     public ConfirmDialog(Context context, String titleText , String contentText , String confirmBtnText
-            , String cancleBtnText , Dialog.OnClickListener confirmBtnListener) {
+            , String cancleBtnText , Dialog.OnClickListener confirmBtnListener , Dialog.OnClickListener cancleBtnListener) {
         super(context);
         mContext = context;
         this.titleText = titleText;
@@ -34,17 +34,28 @@ public class ConfirmDialog extends BaseDialog {
         this.confirmBtnText = confirmBtnText;
         this.cancleBtnText = cancleBtnText;
         this.confirmBtnListener = confirmBtnListener;
+        this.cancleBtnListener = cancleBtnListener;
     }
+    public ConfirmDialog(Context context, String titleText , String contentText , String confirmBtnText
+            , String cancleBtnText , Dialog.OnClickListener confirmBtnListener) {
+        this(context, titleText, contentText, confirmBtnText, cancleBtnText , confirmBtnListener , null);
+    }
+
     public ConfirmDialog(Context context, String contentText , Dialog.OnClickListener confirmBtnListener) {
-        this(context , null , contentText , null , null , confirmBtnListener);
+        this(context , null , contentText , null , null , confirmBtnListener , null);
     }
 
     public ConfirmDialog(Context context, String titleText , String contentText , Dialog.OnClickListener confirmBtnListener) {
-        this(context , titleText , contentText , null , null , confirmBtnListener);
+        this(context , titleText , contentText , null , null , confirmBtnListener , null);
     }
 
     public ConfirmDialog(Context context, String contentText , Dialog.OnClickListener confirmBtnListener , String confirmBtnText) {
         this(context , null , contentText , confirmBtnText , null , confirmBtnListener);
+    }
+
+    public ConfirmDialog(Context context, String contentText , String confirmBtnText
+            , Dialog.OnClickListener confirmBtnListener , String cancleBtnText , OnClickListener cancleBtnListener) {
+        this(context , null , contentText , confirmBtnText , cancleBtnText , confirmBtnListener , cancleBtnListener);
     }
 
     @Override
@@ -84,7 +95,12 @@ public class ConfirmDialog extends BaseDialog {
         binding.cancleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                if (cancleBtnListener != null){
+                    cancleBtnListener.onClick(ConfirmDialog.this , 0);
+                }
+                else {
+                    dismiss();
+                }
             }
         });
         binding.confirmBtn.setOnClickListener(new View.OnClickListener() {
