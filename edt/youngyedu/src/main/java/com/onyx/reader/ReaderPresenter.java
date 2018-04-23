@@ -50,11 +50,13 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
         path = documentPath;
         DrmCertificateFactory factory = new DrmCertificateFactory(readerView.getViewContext());
         if (!StringUtils.isEmpty(bookId)) {
-            String keys = DataCacheUtils.getString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
+            String keys = DataCacheUtils.getBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
             if (!StringUtils.isEmpty(keys) && keys.contains(bookId)) {
                 try {
                     JSONObject object = new JSONObject(keys);
-                    factory.setKey(object.getString(bookId));
+                    String key = object.getString(bookId) ;
+                    System.out.println("object.getString(bookId) ...."+bookId+"...."+key.substring(key.length()-50 ,key.length()));
+                    factory.setKey(key);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -27,10 +27,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
-
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <!--背光-->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+
 
     <application
         android:name="com.yougy.common.manager.YougyApplicationManager"
@@ -241,5 +242,6 @@
         <meta-data
             android:name="design_height"
             android:value="1232" />
+
     </application>
 </manifest>

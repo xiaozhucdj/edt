@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
-import android.os.*;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.utils.NetworkUtil;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.anwser.AnsweringActivity;
@@ -82,6 +84,7 @@ public class YougyApplicationManager extends LitePalApplication {
     private static YougyApplicationManager mContext;
 
     ANRWatchDog anrWatchDog = new ANRWatchDog(9000);
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -92,10 +95,10 @@ public class YougyApplicationManager extends LitePalApplication {
         YXClient.initNimClient(this);
 
         //其他的正常初始化需要区分进程,只在主进程里初始化
-        if (inMainProcess(this)){
+        if (inMainProcess(this)) {
             //申请wakeLock,保证不进入睡眠
             android.os.PowerManager powerManager = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
-            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK , "leke");
+            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK, "leke");
             wakeLock.acquire();
 
             //       watcher = LeakCanary.install(this);
@@ -140,27 +143,29 @@ public class YougyApplicationManager extends LitePalApplication {
 //        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
 
             Commons.UUID = SpUtils.getUUID();
-            if (TextUtils.isEmpty(Commons.UUID)){
-                Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "") ;
+            if (TextUtils.isEmpty(Commons.UUID)) {
+                Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":", "");
             }
-            LogUtils.i("mac_application__"+Commons.UUID );
+            LogUtils.i("mac_application__" + Commons.UUID);
             Context context = getApplicationContext();
             // 获取当前包名
             String packageName = context.getPackageName();
             // 获取当前进程名
             String processName = getProcessName(android.os.Process.myPid());
             // 设置是否为上报进程
-//        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
-//        strategy.setUploadProcess(processName == null || processName.equals(packageName));
-//        // 初始化Bugly
-//        CrashReport.initCrashReport(context, "68d9d03b4a", BuildConfig.DEBUG, strategy);
+            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
+            strategy.setUploadProcess(processName == null || processName.equals(packageName));
+            // 初始化Bugly
+            CrashReport.initCrashReport(context, "9629dd7708", false, strategy);
+
+
 
             //AutoLayout初始化
             AutoLayoutConifg.getInstance().init(this);
             int[] screenSize = ScreenUtils.getScreenSize(context, false);
             int mScreenWidth = screenSize[0];
             int mScreenHeight = screenSize[1];
-            Log.v("FH" , " screenWidth =" + mScreenWidth + " ,screenHeight = " + mScreenHeight);
+            Log.v("FH", " screenWidth =" + mScreenWidth + " ,screenHeight = " + mScreenHeight);
 
             //注册屏幕开锁广播接收器,每次开锁的时候回跳到本地锁.
             //本广播只会在应用程序启动后注册,未启动应用时,不能检测到开屏广播
@@ -171,14 +176,14 @@ public class YougyApplicationManager extends LitePalApplication {
                 public void onReceive(Context context, Intent intent) {
                     if (BaseActivity.getForegroundActivity() != null
                             && !(BaseActivity.getForegroundActivity() instanceof LocalLockActivity)
-                            && !TextUtils.isEmpty(SpUtils.getLocalLockPwd())){
-                        Intent newIntent = new Intent(context , LocalLockActivity.class);
+                            && !TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
+                        Intent newIntent = new Intent(context, LocalLockActivity.class);
                         newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         newIntent.putExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, true);
                         context.startActivity(newIntent);
                     }
                 }
-            } , filter);
+            }, filter);
 
             //初始化云信配置,注册全局性的处理器和解析器等
             YXClient.getInstance().initOption(this);
@@ -186,17 +191,16 @@ public class YougyApplicationManager extends LitePalApplication {
             YXClient.getInstance().setOnCommandCustomMsgListener(new YXClient.OnMessageListener() {
                 @Override
                 public void onNewMessage(IMMessage message) {
-                    if (message.getAttachment() instanceof AskQuestionAttachment){
+                    if (message.getAttachment() instanceof AskQuestionAttachment) {
 
-                        Intent newIntent = new Intent(getApplicationContext() , AnsweringActivity.class);
+                        Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                         newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        newIntent.putExtra("itemId" , ((AskQuestionAttachment) message.getAttachment()).itemId + "");
-                        newIntent.putExtra("from" , ((AskQuestionAttachment) message.getAttachment()).from);
-                        newIntent.putExtra("examId" , ((AskQuestionAttachment) message.getAttachment()).examID);
+                        newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                        newIntent.putExtra("from", ((AskQuestionAttachment) message.getAttachment()).from);
+                        newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
                         startActivity(newIntent);
 
-                    }
-                    else if (message.getAttachment() instanceof EndQuestionAttachment){
+                    } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         rxBus.send(message);
                     }
                 }
@@ -205,7 +209,7 @@ public class YougyApplicationManager extends LitePalApplication {
         checkAnr();
     }
 
-    private void checkAnr(){
+    private void checkAnr() {
         anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
             @Override
             public void onAppNotResponding(ANRError error) {
@@ -214,8 +218,7 @@ public class YougyApplicationManager extends LitePalApplication {
                 // Some tools like ACRA are serializing the exception, so we must make sure the exception serializes correctly
                 try {
                     new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(error);
-                }
-                catch (IOException ex) {
+                } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -229,6 +232,7 @@ public class YougyApplicationManager extends LitePalApplication {
 
     /**
      * 判断App是否是在主进程中(云信的sdk会开其他的进程,例如保活进程,会使Application.create()多次调用,需要用这个方法判断是否是在主进程中)
+     *
      * @param context
      * @return
      */
@@ -240,6 +244,7 @@ public class YougyApplicationManager extends LitePalApplication {
 
     /**
      * 获取当前进程名
+     *
      * @param context
      * @return 进程名
      */
@@ -271,9 +276,10 @@ public class YougyApplicationManager extends LitePalApplication {
         }
     }
 
-    public static void closeDb(){
+    public static void closeDb() {
         LitePal.getDatabase().close();
     }
+
     /**
      * 获取进程号对应的进程名
      *
