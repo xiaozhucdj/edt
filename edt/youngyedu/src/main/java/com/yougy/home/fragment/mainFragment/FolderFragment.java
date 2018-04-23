@@ -23,6 +23,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.home.adapter.CoursekAdapter;
 import com.yougy.home.adapter.HomeworkAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -150,6 +151,7 @@ public class FolderFragment extends BFragment implements View.OnClickListener {
                     }, new Action1<Throwable>() {
                         @Override
                         public void call(Throwable throwable) {
+                            ToastUtil.showCustomToast(getContext() , "获取作业本数据失败,请点击刷新重新获取");
                             throwable.printStackTrace();
                         }
                     });
