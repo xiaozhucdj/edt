@@ -19,6 +19,7 @@
                 android:onClick="onBack"
                 android:layout_marginLeft="30px"
                 android:layout_centerVertical="true"
+                android:clickable="true"
                 />
             <ImageButton
                 android:id="@+id/to_cart_btn"

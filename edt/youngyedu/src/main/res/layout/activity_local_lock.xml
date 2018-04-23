@@ -59,7 +59,7 @@
             android:layout_width="160px"
             android:layout_height="160px"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="200px"
+            android:layout_marginTop="150px"
             android:src="@drawable/icon_student_large" />
 
         <LinearLayout
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="180px"
             android:layout_marginRight="180px"
-            android:layout_marginTop="220px"
+            android:layout_marginTop="150px"
             android:background="@drawable/shape_rounded_rectangle_black_border_login"
             android:hint="请输入您的开机密码"
             android:inputType="textPassword"

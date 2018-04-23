@@ -33,6 +33,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
@@ -50,6 +51,7 @@ import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -398,7 +400,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick1(int position) {
-                    ToastUtil.showCustomToast(AnsweringActivity.this, position + 1 + "页");
+//                    ToastUtil.showCustomToast(AnsweringActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
                     EpdController.leaveScribbleMode(mNbvAnswerBoard);
@@ -829,10 +831,20 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        if (throwable instanceof ApiException){
+                            if (((ApiException) throwable).getCode().equals("400")){
+                                new HintDialog(getApplicationContext(), "问答已结束!无法提交", "退出", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        dialog.dismiss();
+                                        finish();
+                                    }
+                                }).show();
+                            }
+                        }
                         throwable.printStackTrace();
                     }
                 });
-
     }
 
 

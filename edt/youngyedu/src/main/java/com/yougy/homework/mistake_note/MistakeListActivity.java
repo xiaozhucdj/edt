@@ -144,11 +144,10 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                 refreshItem(item);
             }
         });
-        binding.contentDisplayer.setOnClickListener(new View.OnClickListener() {
+        binding.startPracticeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParsedQuestionItem clickItem = questionList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
-
                 Intent intent = new Intent(getApplicationContext() , WriteErrorHomeWorkActivity.class);
                 intent.putExtra("QUESTION_ITEMID" , clickItem.itemId);
                 intent.putExtra("HOMEWORKID" , homeworkId);
@@ -217,11 +216,11 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                         if (mistakeSummaryList == null || mistakeSummaryList.size() == 0){
                             binding.noResultTextview.setVisibility(View.VISIBLE);
                             binding.pageBtnBar.setVisibility(View.GONE);
-                            binding.contentDisplayer.setVisibility(View.GONE);
+                            binding.questionLayout.setVisibility(View.GONE);
                             return;
                         }
                         binding.noResultTextview.setVisibility(View.GONE);
-                        binding.contentDisplayer.setVisibility(View.VISIBLE);
+                        binding.questionLayout.setVisibility(View.VISIBLE);
                         binding.pageBtnBar.setVisibility(View.VISIBLE);
                         //根据传进来的错题的id的list拼接请求查询错题详情的list
                         String itemIdStr = "";
