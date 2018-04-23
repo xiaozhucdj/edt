@@ -288,7 +288,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                     QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
                     if (rep.getData() != null && rep.getData().size() > 0) {
                         mBookInfo = rep.getData().get(0);
-                        mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
+                        mBtnBuy.setText("￥" + mBookInfo.getBookSpotPrice() + "购买");
                     } else {
                         showTagCancelAndDetermineDialog(R.string.books_request_details_fail, R.string.cancel, R.string.retry, mTagForRequestDetailsFail);
                         LogUtils.e("FH", "获取图书详情失败");
