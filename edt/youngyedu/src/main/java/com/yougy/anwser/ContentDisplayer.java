@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -24,6 +23,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.plide.LoadController;
 import com.yougy.plide.LoadListener;
@@ -237,7 +237,7 @@ public class ContentDisplayer extends RelativeLayout {
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {                            e.printStackTrace();
-                            Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
+                            LogUtils.e("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
                             setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
                             callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                             needRefresh = true;
@@ -261,7 +261,7 @@ public class ContentDisplayer extends RelativeLayout {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                             e.printStackTrace();
-                            Log.v("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
+                            LogUtils.e("FH" , "getImg exception : " + e.getMessage() + "url : " + url);
                             setHintText("题目图片加载失败:" + e.getMessage() + ",点击重新加载...");
                             callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                             needRefresh = true;
@@ -297,7 +297,7 @@ public class ContentDisplayer extends RelativeLayout {
             Plide.with(getContext()).load(url).setLoadListener(new LoadListener() {
                 @Override
                 public void onLoadStatusChanged(LoadController.PDF_STATUS newStatus, float downloadProgress , int totalPage) {
-                    Log.v("FH" , "onLoadStatusChanged newStatus = " + newStatus + " downloadProgress = " + downloadProgress
+                    LogUtils.e("FH" , "onLoadStatusChanged newStatus = " + newStatus + " downloadProgress = " + downloadProgress
                             + " totalPage = " + totalPage
                             + " threadId = " + Thread.currentThread().getId());
                     if (newStatus == LoadController.PDF_STATUS.ERROR){

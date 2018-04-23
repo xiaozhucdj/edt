@@ -1,7 +1,5 @@
 package com.yougy.common.down;
 
-import android.util.Log;
-
 import com.alibaba.sdk.android.oss.ClientConfiguration;
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.OSSClient;
@@ -16,6 +14,7 @@ import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 
 import java.io.FileOutputStream;
@@ -113,7 +112,7 @@ public class NewDownBookManager {
                     fos = new FileOutputStream(info.getSaveFilePath());
                     while ((len = inputStream.read(buffer)) != -1) {
                         // 处理下载的数据
-                        Log.e("asyncGetObjectSample", "read length: " + len);
+                       LogUtils.e("asyncGetObjectSample", "read length: " + len);
                         fos.write(buffer, 0, len);
                         total += len;
 
@@ -145,10 +144,10 @@ public class NewDownBookManager {
                 }
                 if (serviceException != null) {
                     // 服务异常
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
+                   LogUtils.e("ErrorCode", serviceException.getErrorCode());
+                   LogUtils.e("RequestId", serviceException.getRequestId());
+                   LogUtils.e("HostId", serviceException.getHostId());
+                   LogUtils.e("RawMessage", serviceException.getRawMessage());
                 }
 
                 FileUtils.deleteFile(info.getSaveFilePath()) ;

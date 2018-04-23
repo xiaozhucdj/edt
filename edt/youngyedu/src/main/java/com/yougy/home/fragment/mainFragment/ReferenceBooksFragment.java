@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -221,7 +220,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
         } else {
-            Log.e(TAG, "query book from database...");
+            LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
 //            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
@@ -472,7 +471,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
             @Override
             public void onCompleted() {
-                Log.e(TAG, "onCompleted...");
+                LogUtils.e(TAG, "onCompleted...");
                 dialog.dismiss();
             }
 

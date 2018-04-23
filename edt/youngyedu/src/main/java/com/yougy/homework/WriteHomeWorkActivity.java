@@ -49,6 +49,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
@@ -1094,7 +1095,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
-                        Log.v("FH", "call ");
+                        LogUtils.e("FH", "call ");
                         if (stSbean != null) {
                             upLoadPic(stSbean);
                         } else {
@@ -1168,18 +1169,18 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
                             try {
                                 PutObjectResult putResult = oss.putObject(put);
-                                Log.d("PutObject", "UploadSuccess");
-                                Log.d("ETag", putResult.getETag());
-                                Log.d("RequestId", putResult.getRequestId());
+                                LogUtils.e("PutObject", "UploadSuccess");
+                                LogUtils.e("ETag", putResult.getETag());
+                                LogUtils.e("RequestId", putResult.getRequestId());
                             } catch (ClientException e) {
                                 // 本地异常如网络异常等
                                 e.printStackTrace();
                             } catch (ServiceException e) {
                                 // 服务异常
-                                Log.e("RequestId", e.getRequestId());
-                                Log.e("ErrorCode", e.getErrorCode());
-                                Log.e("HostId", e.getHostId());
-                                Log.e("RawMessage", e.getRawMessage());
+                                LogUtils.e("RequestId", e.getRequestId());
+                                LogUtils.e("ErrorCode", e.getErrorCode());
+                                LogUtils.e("HostId", e.getHostId());
+                                LogUtils.e("RawMessage", e.getRawMessage());
                             }
 
                             STSResultbean stsResultbean = new STSResultbean();

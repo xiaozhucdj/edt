@@ -11,7 +11,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +21,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
@@ -33,10 +31,10 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.BookRecommandAttachment;
-import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.MyEdittext;
 import com.yougy.message.SizeUtil;
 import com.yougy.message.YXClient;
@@ -68,10 +66,10 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
 
     private boolean isMyMessage(IMMessage message){
         if ((message.getSessionType() == type) && message.getSessionId().equals(id)) {
-            Log.v("FH", message.toString() + "是我的消息");
+            LogUtils.e("FH", message.toString() + "是我的消息");
             return true;
         }
-        Log.v("FH", message.toString() + "不是我的消息");
+       LogUtils.e("FH", message.toString() + "不是我的消息");
         return false;
     }
 
@@ -112,7 +110,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 if (code == ResponseCode.RES_SUCCESS) {
                     UIUtils.showToastSafe("获取历史消息成功 " + result.size());
                     for (IMMessage message : result) {
-                        Log.v("FH" , "查询到消息为 " +  message.getMsgType() + " " + message.getContent());
+                       LogUtils.e("FH" , "查询到消息为 " +  message.getMsgType() + " " + message.getContent());
                         if (message.getMsgType() == MsgTypeEnum.text || message.getMsgType() == MsgTypeEnum.file
                                 || message.getMsgType() == MsgTypeEnum.custom) {
                             messageList.add(message);
@@ -121,7 +119,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     scrollToBottom(300);
                     adapter.notifyDataSetChanged();
                 } else {
-                    Log.v("FH", "获取历史消息失败 : " + code + "  " + exception);
+                   LogUtils.e("FH", "获取历史消息失败 : " + code + "  " + exception);
                     UIUtils.showToastSafe("获取历史消息失败 : " + code + "  " + exception);
                 }
             }
@@ -129,7 +127,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage newMessage) {
-                Log.v("FH", "ChattingActivity接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType());
+               LogUtils.e("FH", "ChattingActivity接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType());
                 if (isMyMessage(newMessage)
                         && (newMessage.getMsgType() == MsgTypeEnum.text || newMessage.getMsgType() == MsgTypeEnum.file
                         || newMessage.getMsgType() == MsgTypeEnum.custom)) {
@@ -153,7 +151,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.getInstance().with(this).addOnMsgStatusChangedListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage message) {
-                Log.v("FH" , "ChattingActivity message 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
+               LogUtils.e("FH" , "ChattingActivity message 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
                 if (isMyMessage(message)){
                     adapter.notifyDataSetChanged();
                 }

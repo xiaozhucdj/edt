@@ -322,7 +322,7 @@ public class SpUtils {
     }
 
     public static int getUnreadMsgCount (String ssid){
-        Log.v("FH" , "getUnreadMsgCount ssid=" + ssid);
+        LogUtils.e("FH" , "getUnreadMsgCount ssid=" + ssid);
         if (!TextUtils.isEmpty(ssid)){
             return unReadMsgSp.getInt(ssid , 0);
         }
@@ -330,18 +330,18 @@ public class SpUtils {
     }
 
     public static void clearUnreadMsgCount (String ssid){
-        Log.v("FH" , "clearUnreadMsgCount ssid=" + ssid);
+        LogUtils.e("FH" , "clearUnreadMsgCount ssid=" + ssid);
         unReadMsgSp.edit().remove(ssid).apply();
     }
 
     public static void addUnreadMsgCount (String ssid){
-        Log.v("FH" , "addUnreadMsgCount ssid=" + ssid);
+        LogUtils.e("FH" , "addUnreadMsgCount ssid=" + ssid);
         int current = getUnreadMsgCount(ssid);
         unReadMsgSp.edit().putInt(ssid , ++current).apply();
     }
 
     public static void clearAllUnreadMsgCount (){
-        Log.v("FH" , "clearAllUnreadMsgCount");
+        LogUtils.e("FH" , "clearAllUnreadMsgCount");
         unReadMsgSp.edit().clear().apply();
     }
 

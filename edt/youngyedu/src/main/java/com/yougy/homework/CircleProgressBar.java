@@ -7,8 +7,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+
+import com.yougy.common.utils.LogUtils;
 
 /**
  * Created by FH on 2017/9/3.
@@ -91,7 +92,7 @@ public class CircleProgressBar extends View{
         } else {
             measuredHeight = 15;
         }
-        Log.v("FH" , "onMeasure measuredWidth = " + measuredWidth + "  measuredHeight " + measuredHeight);
+        LogUtils.e("FH" , "onMeasure measuredWidth = " + measuredWidth + "  measuredHeight " + measuredHeight);
         setMeasuredDimension(measuredWidth , measuredHeight);
     }
 
@@ -100,12 +101,12 @@ public class CircleProgressBar extends View{
         super.onLayout(changed, left, top, right, bottom);
         mWidth = getWidth();
         mHeight = getHeight();
-        Log.v("FH" , "onLayout mWidth " + mWidth + " mHeight " + mHeight);
+        LogUtils.e("FH" , "onLayout mWidth " + mWidth + " mHeight " + mHeight);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.v("FH" , "onDraw");
+        LogUtils.e("FH" , "onDraw");
         //进度条半径
         float radius = (mWidth > mHeight ? mHeight : mWidth) / 2;
         //这个缩放值是调试调出来的

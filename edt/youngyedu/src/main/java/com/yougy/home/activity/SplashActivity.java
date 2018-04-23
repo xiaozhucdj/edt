@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.badoo.mobile.util.WeakHandler;
@@ -145,18 +144,18 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     }
 
     private void onCheckLogIn() {
-        Log.v("FH", "开始检测版本更新...");
+      LogUtils.e("FH", "开始检测版本更新...");
         if (NetUtils.isNetConnected()) {
-            Log.v("FH", "有网络,更新UUID");
+          LogUtils.e("FH", "有网络,更新UUID");
             Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "") ;
             SpUtils.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
             if (-1 == SpUtils.getAccountId()) {
-                Log.v("FH", "没有网络,没有之前的登录信息,跳转到wifi设置");
+              LogUtils.e("FH", "没有网络,没有之前的登录信息,跳转到wifi设置");
                 jumpWifiActivity();
             } else {
-                Log.v("FH", "没有网络,有之前的登录信息");
+              LogUtils.e("FH", "没有网络,有之前的登录信息");
                 checkLocalLockAndJump();
             }
         }
@@ -165,7 +164,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
     private void checkLocalLockAndJump() {
         if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
-            Log.v("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
+          LogUtils.e("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
             new HintDialog(SplashActivity.this
                     , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
                     , "确定"
@@ -178,7 +177,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                 }
             }).show();
         } else {
-            Log.v("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
+          LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
             jumpActivity(LocalLockActivity.class);
         }
     }
@@ -207,25 +206,25 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                             }
                         }).show();
                     } else {
-                        Log.v("FH", "自动登录成功");
+                      LogUtils.e("FH", "自动登录成功");
                         SpUtils.saveStudent(response.getData().get(0));
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
                 } else {
-                    Log.v("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
+                  LogUtils.e("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
                     jumpActivity(LoginActivity.class);
                 }
             }
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                Log.v("FH", "自动登录失败原因:其他错误:" + e.getMessage());
+              LogUtils.e("FH", "自动登录失败原因:其他错误:" + e.getMessage());
                 if (-1 == SpUtils.getAccountId()) {
-                    Log.v("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
+                  LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
                     jumpActivity(LoginActivity.class);
                 } else {
-                    Log.v("FH", "自动登录失败,有之前的登录信息");
+                  LogUtils.e("FH", "自动登录失败,有之前的登录信息");
                     checkLocalLockAndJump();
                 }
             }
@@ -254,16 +253,16 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                                 }
                             });
                         } else {
-                            Log.v("FH", "检测版本成功,没有更新的版本,开始登录...");
+                          LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
                             login();
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
-                        Log.v("FH", "检测版本失败:" + e.getMessage());
+                      LogUtils.e("FH", "检测版本失败:" + e.getMessage());
                         login();
                     }
                 } else {
-                    Log.v("FH", "检测版本失败.");
+                  LogUtils.e("FH", "检测版本失败.");
                     login();
                 }
             }

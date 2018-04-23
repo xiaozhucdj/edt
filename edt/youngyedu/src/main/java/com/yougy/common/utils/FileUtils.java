@@ -2,7 +2,6 @@ package com.yougy.common.utils;
 
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -233,7 +232,7 @@ public class FileUtils {
             while ((len = inputStream.read(temp)) > 0){
                 sb.append(new String(temp, 0, len));
             }
-            Log.d("msg", "readSaveFile: \n" + sb.toString());
+            LogUtils.e("msg", "readSaveFile: \n" + sb.toString());
             inputStream.close();
         } catch (IOException e) {
 //            LogUtils.e(e);

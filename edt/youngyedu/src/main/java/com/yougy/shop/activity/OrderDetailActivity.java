@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -300,7 +300,7 @@ public class OrderDetailActivity extends ShopBaseActivity{
                     }, new Action1<Throwable>() {
                         @Override
                         public void call(Throwable throwable) {
-                            Log.v("FH", "请求二维码失败");
+                            LogUtils.e("FH", "请求二维码失败");
                             showTagCancelAndDetermineDialog(R.string.get_zxing_fail, mTagForZxingfail);
                             throwable.printStackTrace();
                         }
@@ -326,7 +326,7 @@ public class OrderDetailActivity extends ShopBaseActivity{
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.v("FH", "获取订单状态失败");
+                        LogUtils.e("FH", "获取订单状态失败");
                         throwable.printStackTrace();
                         qrCodeDialog.showHintAndRetry("支付未成功", "重试");
                     }
@@ -353,7 +353,7 @@ public class OrderDetailActivity extends ShopBaseActivity{
                         .subscribe(new Action1<Object>() {
                             @Override
                             public void call(Object o) {
-                                Log.v("FH" , "订单" + orderId + "取消成功");
+                                LogUtils.e("FH" , "订单" + orderId + "取消成功");
                                 finish();
                             }
                         }, new Action1<Throwable>() {
@@ -365,7 +365,7 @@ public class OrderDetailActivity extends ShopBaseActivity{
                                         cancleOrder(null);
                                     }
                                 }).show();
-                                Log.v("FH" , "订单" + orderId + "取消失败" + throwable.getMessage());
+                                LogUtils.e("FH" , "订单" + orderId + "取消失败" + throwable.getMessage());
                                 throwable.printStackTrace();
                             }
                         });

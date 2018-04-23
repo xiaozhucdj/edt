@@ -9,7 +9,6 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
@@ -165,7 +164,7 @@ public class YougyApplicationManager extends LitePalApplication {
             int[] screenSize = ScreenUtils.getScreenSize(context, false);
             int mScreenWidth = screenSize[0];
             int mScreenHeight = screenSize[1];
-            Log.v("FH", " screenWidth =" + mScreenWidth + " ,screenHeight = " + mScreenHeight);
+            LogUtils.e("FH", " screenWidth =" + mScreenWidth + " ,screenHeight = " + mScreenHeight);
 
             //注册屏幕开锁广播接收器,每次开锁的时候回跳到本地锁.
             //本广播只会在应用程序启动后注册,未启动应用时,不能检测到开屏广播
@@ -207,13 +206,14 @@ public class YougyApplicationManager extends LitePalApplication {
             });
         }
         checkAnr();
+        LogUtils.setOpenLog(!Commons.isRelase);
     }
 
     private void checkAnr() {
         anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
             @Override
             public void onAppNotResponding(ANRError error) {
-                Log.e("ANR-Watchdog", "Detected Application Not Responding!");
+                LogUtils.e("ANR-Watchdog", "Detected Application Not Responding!");
 
                 // Some tools like ACRA are serializing the exception, so we must make sure the exception serializes correctly
                 try {
@@ -222,7 +222,7 @@ public class YougyApplicationManager extends LitePalApplication {
                     throw new RuntimeException(ex);
                 }
 
-                Log.i("ANR-Watchdog", "Error was successfully serialized");
+                LogUtils.e("ANR-Watchdog", "Error was successfully serialized");
 
                 throw error;
             }

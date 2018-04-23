@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.KeyEvent;
@@ -1082,7 +1081,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                         }
                     }
                 }, throwable -> {
-                    Log.v("FH", "获取购物车失败");
+                    LogUtils.e("FH", "获取购物车失败");
                     throwable.printStackTrace();
                 });
     }

@@ -3,7 +3,6 @@ package com.yougy.plide;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -11,6 +10,7 @@ import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
 import com.onyx.reader.ReaderPresenter;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.plide.pipe.Pipe;
 
@@ -126,8 +126,8 @@ public class LoadController implements ReaderContract.ReaderView{
     }
 
     protected LoadController doLoadMainLogic(String url , LoadListener loadListener , Context context){
-        Log.v("FHHHH" , "doLoadMainLogic url = " + url + " loadListener " + loadListener + " context " + context + " threadId " + Thread.currentThread().getId());
-        Log.v("FHHHH" , "-----------------------------!!!!!!!!!!!!!!---------------setImgview Null!!!!!!!");
+        LogUtils.e("FHHHH" , "doLoadMainLogic url = " + url + " loadListener " + loadListener + " context " + context + " threadId " + Thread.currentThread().getId());
+        LogUtils.e("FHHHH" , "-----------------------------!!!!!!!!!!!!!!---------------setImgview Null!!!!!!!");
         mImgView.setImageBitmap(null);
         this.mContext = context;
         mUrl = url;
@@ -137,21 +137,21 @@ public class LoadController implements ReaderContract.ReaderView{
         download(url , new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String savePath) {
-                Log.v("FHHHH" , "onDownloadStart url = " + url + " savePath " + savePath + " threadId " + Thread.currentThread().getId());
+                LogUtils.e ("FHHHH" , "onDownloadStart url = " + url + " savePath " + savePath + " threadId " + Thread.currentThread().getId());
                 setCurrentStatus(PDF_STATUS.DOWNLOADING , null);
                 callLoadListener(0);
             }
 
             @Override
             public void onDownloadProgressChanged(String url, String savePath, float progress) {
-                Log.v("FHHHH" , "onDownloadProgressChanged url = " + url + " savePath " + savePath + " progress "  + progress
+                LogUtils.e ("FHHHH" , "onDownloadProgressChanged url = " + url + " savePath " + savePath + " progress "  + progress
                         + " threadId " + Thread.currentThread().getId());
                 callLoadListener(progress);
             }
 
             @Override
             public void onDownloadStop(String url, String savePath, int errorCode, String reason) {
-                Log.v("FHHHH" , "onDownloadStop url = " + url + " savePath " + savePath + " errorCode " + errorCode + " reason " + reason
+                LogUtils.e ("FHHHH" , "onDownloadStop url = " + url + " savePath " + savePath + " errorCode " + errorCode + " reason " + reason
                         + " threadId " + Thread.currentThread().getId());
                 if (errorCode == -1){
                     setCurrentStatus(PDF_STATUS.EMPTY , null);
@@ -165,11 +165,11 @@ public class LoadController implements ReaderContract.ReaderView{
 
             @Override
             public void onDownloadFinished(String url, String savePath , boolean noNeedToDownload) {
-                Log.v("FHHHH" , "onDownloadFinished url = " + url + " savePath " + savePath + " noNeedToDownload " + noNeedToDownload
+                LogUtils.e ("FHHHH" , "onDownloadFinished url = " + url + " savePath " + savePath + " noNeedToDownload " + noNeedToDownload
                         + " threadId " + Thread.currentThread().getId());
                 synchronized (currentStatusLock){
                     if (mSavePath != null && mSavePath.equals(savePath) && noNeedToDownload){
-                        Log.v("FHHHH" , "onDownloadFinished 需要下载的文件内容没有变化,并且已经加载了该pdf,不再发起load请求..."
+                        LogUtils.e ("FHHHH" , "onDownloadFinished 需要下载的文件内容没有变化,并且已经加载了该pdf,不再发起load请求..."
                                 + "url = " + url + " savePath " + savePath + " noNeedToDownload " + noNeedToDownload
                                 + " threadId " + Thread.currentThread().getId());
                         setCurrentStatus(PDF_STATUS.LOADED , getReaderPresenter().getReader().getDocumentPath());
@@ -181,7 +181,7 @@ public class LoadController implements ReaderContract.ReaderView{
                 loadPdfPipe.push(new Ball(false){
                     @Override
                     public void run() throws InterruptedException {
-                        Log.v("FHHHH" , "run--load pdf savePath " + savePath
+                        LogUtils.e ("FHHHH" , "run--load pdf savePath " + savePath
                                 + " threadId" + Thread.currentThread().getId());
                         setCurrentStatus(PDF_STATUS.LOADING , null);
                         callLoadListener(100);
@@ -189,7 +189,7 @@ public class LoadController implements ReaderContract.ReaderView{
                         Runtime.getRuntime().gc();
                         abandonReaderPresenter();
                         getReaderPresenter().openDocument(savePath , null);
-                        Log.v("FHHHH" , "load命令完成,等待回调中断 savePath " + savePath
+                        LogUtils.e ("FHHHH" , "load命令完成,等待回调中断 savePath " + savePath
                                 + " threadId" + Thread.currentThread().getId());
                         while (true){
                             Thread.sleep(1000*999);
@@ -207,25 +207,25 @@ public class LoadController implements ReaderContract.ReaderView{
             @Override
             public void run() throws InterruptedException {
                 synchronized (currentStatusLock){
-                    Log.v("FHHHHH" , "topage run--- pageIndex " + pageIndex
+                    LogUtils.e ("FHHHHH" , "topage run--- pageIndex " + pageIndex
                             + " currentStatus " + currentStatus + " mSavePath " + mSavePath
                             + " currentUrl " + currentUrl
                             + " threadId " + Thread.currentThread().getId());
                     while (currentStatus != PDF_STATUS.LOADED
                             || TextUtils.isEmpty(mSavePath)
                             || !mSavePath.equals(getSavePath(currentUrl))){
-                        Log.v("FHHHH" , "toPage run---wait pageIndex " + pageIndex
+                        LogUtils.e ("FHHHH" , "toPage run---wait pageIndex " + pageIndex
                                 + " threadId : " + Thread.currentThread().getId());
                         currentStatusLock.wait();
-                        Log.v("FHHHH" , "toPage run---wait end pageIndex " + pageIndex
+                        LogUtils.e ("FHHHH" , "toPage run---wait end pageIndex " + pageIndex
                                 + " threadId " + Thread.currentThread().getId());
                     }
-                    Log.v("FHHHH" , "toPage run---正式开始 pageIndex " + pageIndex
+                    LogUtils.e ("FHHHH" , "toPage run---正式开始 pageIndex " + pageIndex
                             + " threadId " + Thread.currentThread().getId());
                     setCurrentStatus(PDF_STATUS.LOADING , null);
                     callLoadListener(100);
                     getReaderPresenter().gotoPage(pageIndex);
-                    Log.v("FHHHH" , "topage run---gotoPage命令完成 , 等待完成中断... pageIndex " + pageIndex
+                    LogUtils.e ("FHHHH" , "topage run---gotoPage命令完成 , 等待完成中断... pageIndex " + pageIndex
                             + " threadId " + Thread.currentThread().getId());
                     while (true){
                         Thread.sleep(1000*999);

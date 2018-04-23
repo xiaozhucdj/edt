@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +36,7 @@ import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
@@ -134,13 +134,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     public void init() {
-        Log.v("FH", "AnsweringActivity init " + this.toString());
+        LogUtils.e("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
 //        itemId = "73";//填空
 //        itemId = "189";//选择
         if (TextUtils.isEmpty(itemId)) {
             ToastUtil.showCustomToast(this, "item 为空,开始问答失败");
-            Log.v("FH", "item 为空,开始问答失败");
+            LogUtils.e("FH", "item 为空,开始问答失败");
             finish();
         }
         fromUserId = getIntent().getStringExtra("from");
@@ -148,7 +148,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //        fromUserId = "10000239";//选择
         if (TextUtils.isEmpty(fromUserId)) {
             ToastUtil.showCustomToast(this, "from userId 为空,开始问答失败");
-            Log.v("FH", "from userId 为空,开始问答失败");
+            LogUtils.e("FH", "from userId 为空,开始问答失败");
             finish();
         }
         examId = getIntent().getIntExtra("examId", -1);
@@ -156,7 +156,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //        examId = 772;//选择
         if (examId == -1) {
             ToastUtil.showCustomToast(this, "examId 为空,开始问答失败");
-            Log.v("FH", "examId 为空,开始问答失败");
+            LogUtils.e("FH", "examId 为空,开始问答失败");
             finish();
         }
         startTimeMill = getIntent().getLongExtra("startTimeMill", -1);
@@ -218,7 +218,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             fillData();
                         } else {
                             ToastUtil.showCustomToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
-                            Log.v("FH", "获取到的题目为空,开始问答失败");
+                            LogUtils.e("FH", "获取到的题目为空,开始问答失败");
                             finish();
                         }
                     }
@@ -800,18 +800,18 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
                     try {
                         PutObjectResult putResult = oss.putObject(put);
-                        Log.d("PutObject", "UploadSuccess");
-                        Log.d("ETag", putResult.getETag());
-                        Log.d("RequestId", putResult.getRequestId());
+                        LogUtils.e("PutObject", "UploadSuccess");
+                        LogUtils.e("ETag", putResult.getETag());
+                        LogUtils.e("RequestId", putResult.getRequestId());
                     } catch (ClientException e) {
                         // 本地异常如网络异常等
                         e.printStackTrace();
                     } catch (ServiceException e) {
                         // 服务异常
-                        Log.e("RequestId", e.getRequestId());
-                        Log.e("ErrorCode", e.getErrorCode());
-                        Log.e("HostId", e.getHostId());
-                        Log.e("RawMessage", e.getRawMessage());
+                        LogUtils.e("RequestId", e.getRequestId());
+                        LogUtils.e("ErrorCode", e.getErrorCode());
+                        LogUtils.e("HostId", e.getHostId());
+                        LogUtils.e("RawMessage", e.getRawMessage());
                     }
 
                     STSResultbean stsResultbean = new STSResultbean();

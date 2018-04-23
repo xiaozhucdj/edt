@@ -1,8 +1,5 @@
 package com.yougy.common.utils;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.alibaba.sdk.android.oss.ClientConfiguration;
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.OSS;
@@ -21,15 +18,11 @@ import com.yougy.common.bean.Result;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.protocol.request.AliyunDataUploadReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
-import com.yougy.setting.ui.SettingMainActivity;
-import com.yougy.view.dialog.LoadingProgressDialog;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalDB;
-import org.litepal.tablemanager.Connector;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,8 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import okhttp3.Response;
-
-import static org.litepal.LitePal.deleteDatabase;
 
 /**
  * Created by jiangliang on 2017/4/14.
@@ -140,14 +131,14 @@ public class AliyunUtil {
                     fos = new FileOutputStream(filePath);
                     while ((len = inputStream.read(buffer)) != -1) {
                         // 处理下载的数据
-                        Log.e(tag, "read length: " + len);
+                        LogUtils.e(tag, "read length: " + len);
                         fos.write(buffer, 0, len);
                     }
-                    Log.e(tag, "download success.");
+                    LogUtils.e(tag, "download success.");
                     downloadDb = true;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e(tag, "Exception : " + e.getMessage());
+                    LogUtils.e(tag, "Exception : " + e.getMessage());
                 } finally {
                     if (fos != null) {
                         try {
@@ -172,14 +163,14 @@ public class AliyunUtil {
                 if (clientExcepion != null) {
                     // 本地异常如网络异常等
                     clientExcepion.printStackTrace();
-                    Log.e(tag, "client excepion : " + clientExcepion.getMessage());
+                    LogUtils.e(tag, "client excepion : " + clientExcepion.getMessage());
                 }
                 if (serviceException != null) {
                     // 服务异常
-                    Log.e(tag, "ErrorCode : " + serviceException.getErrorCode());
-                    Log.e(tag, "RequestId : " + serviceException.getRequestId());
-                    Log.e(tag, "HostId : " + serviceException.getHostId());
-                    Log.e(tag, "RawMessage : " + serviceException.getRawMessage());
+                    LogUtils.e(tag, "ErrorCode : " + serviceException.getErrorCode());
+                    LogUtils.e(tag, "RequestId : " + serviceException.getRequestId());
+                    LogUtils.e(tag, "HostId : " + serviceException.getHostId());
+                    LogUtils.e(tag, "RawMessage : " + serviceException.getRawMessage());
                 }
             }
         });

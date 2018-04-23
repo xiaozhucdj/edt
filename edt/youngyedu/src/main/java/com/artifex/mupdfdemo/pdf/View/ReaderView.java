@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -14,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Scroller;
+
+import com.yougy.common.utils.LogUtils;
 
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -578,7 +579,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     public int getDisplayedViewIndex() {
         String msg = "索引值 ==" + mCurrent;
         if (mDeBug) {
-            Log.d(TAG, msg);
+            LogUtils.e(TAG, msg);
         }
         return mCurrent;
     }
@@ -657,7 +658,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
      */
     public void resetupChildren() {
         if (mDeBug) {
-            Log.d(TAG, "mChildViews.size() == +" + mChildViews.size());
+            LogUtils.e(TAG, "mChildViews.size() == +" + mChildViews.size());
         }
         for (int i = 0; i < mChildViews.size(); i++)
             onChildSetup(mChildViews.keyAt(i), mChildViews.valueAt(i));
