@@ -460,7 +460,7 @@ public class ShopCartActivity extends ShopBaseActivity {
             for (Coupon bookCouponBean : cartItem.bookCoupon){
                 switch (bookCouponBean.getCouponTypeCode()){
                     case "BO01":
-                        String text = "价格:￥" + cartItem.bookSpotPrice
+                        String text = "价格:￥" + cartItem.getBookSpotPrice()
                                 + "        ￥" + cartItem.bookSalePrice + "\n\n限时折扣";
                         StringBuilder sb = new StringBuilder(text);
                         SpannableString ss = new SpannableString(sb);
@@ -526,7 +526,7 @@ public class ShopCartActivity extends ShopBaseActivity {
         double totalPrice = 0;
         for (CartItem cartItem : sortedCartItemList) {
             if (checkedCartItemList.contains(cartItem)){
-                totalPrice = totalPrice + cartItem.bookSpotPrice;
+                totalPrice = totalPrice + cartItem.getBookSpotPrice();
             }
         }
         result[0] = totalPrice;
@@ -554,9 +554,9 @@ public class ShopCartActivity extends ShopBaseActivity {
             result[1] = -1;
             result[2] = totalPrice;
         }
-        result[0] = formatDouble(result[0] , 1);
-        result[1] = formatDouble(result[1] , 1);
-        result[2] = formatDouble(result[2] , 1);
+        result[0] = formatDouble(result[0] , 2);
+        result[1] = formatDouble(result[1] , 2);
+        result[2] = formatDouble(result[2] , 2);
         return result;
     }
 
@@ -577,9 +577,9 @@ public class ShopCartActivity extends ShopBaseActivity {
             }
             finalTotalPrice = finalTotalPrice + result[2];
         }
-        finalTotalPrice = formatDouble(finalTotalPrice , 1);
-        totalPrice = formatDouble(totalPrice , 1);
-        totalCut = formatDouble(totalCut , 1);
+        finalTotalPrice = formatDouble(finalTotalPrice , 2);
+        totalPrice = formatDouble(totalPrice , 2);
+        totalCut = formatDouble(totalCut , 2);
 
         binding.totalPriceTv.setText("总计:￥" + finalTotalPrice);
         binding.discountTv.setText("总额:￥" + totalPrice + "    已享满减:￥" + totalCut);
