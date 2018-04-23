@@ -55,6 +55,10 @@ public class BookStructureActivity extends HomeworkBaseActivity {
     protected void init() {
         setNeedRecieveEventAfterOnStop(true);
         bookId = getIntent().getIntExtra("bookId" , -1);
+        if (bookId == -1 || bookId == 0){
+            ToastUtil.showCustomToast(getApplicationContext() , "该学科还没有教材");
+            finish();
+        }
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
     }
 
