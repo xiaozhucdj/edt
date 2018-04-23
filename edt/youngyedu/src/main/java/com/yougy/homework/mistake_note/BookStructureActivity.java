@@ -8,14 +8,11 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.gson.internal.LinkedTreeMap;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -161,7 +158,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
     @Override
     protected void loadData() {
         if (bookId == -1){
-            ToastUtil.showToast(getApplicationContext() , "bookId 为空");
+            ToastUtil.showCustomToast(getApplicationContext() , "bookId 为空");
             finish();
             return;
         }
@@ -187,7 +184,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
 
     private void getMistakes(){
         if (homeworkId == -1){
-            ToastUtil.showToast(getApplicationContext() , "homeworkId 为空");
+            ToastUtil.showCustomToast(getApplicationContext() , "homeworkId 为空");
             finish();
             return;
         }
@@ -302,13 +299,15 @@ public class BookStructureActivity extends HomeworkBaseActivity {
             if (node.getLevel() == 2){
                 convertView.setPadding(20 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 24);
+                bookChapterBinding.textview.setMaxWidth(340);
                 bookChapterBinding.getRoot().getLayoutParams().height = 60;
                 bookChapterBinding.arrowImg.setVisibility(View.VISIBLE);
             }
             else if (node.getLevel() == 3){
-                convertView.setPadding(75 , 0 , 0 , 0);
+                convertView.setPadding(55 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 20);
-                bookChapterBinding.getRoot().getLayoutParams().height = 45;
+                bookChapterBinding.textview.setMaxWidth(320);
+                bookChapterBinding.getRoot().getLayoutParams().height = 44;
                 bookChapterBinding.arrowImg.setVisibility(View.GONE);
             }
             return convertView;

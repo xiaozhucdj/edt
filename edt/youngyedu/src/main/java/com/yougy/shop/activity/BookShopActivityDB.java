@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.ProtocolManager;
@@ -50,7 +49,6 @@ import com.yougy.view.decoration.SpaceItemDecoration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindArray;
 import butterknife.BindString;
@@ -934,7 +932,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.versionWrap.removeAllViews();
         List<CategoryInfo> versionInfos = versionSparseArray.get(info.getCategoryId());
         if (versionInfos == null || versionInfos.size() == 0) {
-            ToastUtil.showToast(this, "没有对应版本。。。");
+            ToastUtil.showCustomToast(this, "没有对应版本。。。");
             return;
         }
         LogUtils.e(tag, "version's size : " + versionInfos.size());

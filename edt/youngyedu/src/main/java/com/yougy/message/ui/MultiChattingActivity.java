@@ -86,7 +86,7 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
     @Override
     protected void onStart() {
         super.onStart();
-        YXClient.checkNetAndRefreshLogin(this , null , null);
+        YXClient.checkNetAndRefreshLogin(this , null);
     }
 
     @Override
@@ -241,7 +241,7 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
                     scrollToBottom(200);
                 }
             }
-        } , null);
+        });
     }
 
     public void scrollToBottom(long delay){

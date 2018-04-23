@@ -1313,7 +1313,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 //                    showScreenCutOptWindow();
                         showScreenCutOptLayout();
                     } else {
-                        ToastUtil.showToast(mContext, "请正确截图。。。");
+                        ToastUtil.showCustomToast(mContext, "请正确截图。。。");
                         resetScreenView();
                     }
                     break;

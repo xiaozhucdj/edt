@@ -1,6 +1,7 @@
 package com.yougy.homework;
 
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/9/6.
- * 已批改作业详情列表
+ * 已批改作业详情
  */
 
 public class CheckedHomeworkDetailActivity extends BaseActivity {
@@ -54,7 +55,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         currentShow = getIntent().getParcelableExtra("toShow");
         allReplyList = getIntent().getParcelableArrayListExtra("all");
         if (currentShow == null || allReplyList == null || allReplyList.size() == 0 || examId == -1){
-            ToastUtil.showToast(getApplicationContext() , "必要数据为空");
+            ToastUtil.showCustomToast(getApplicationContext() , "必要数据为空");
             finish();
         }
     }
@@ -93,7 +94,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                     @Override
                     public void call(List<QuestionReplyDetail> questionReplyDetails) {
                         if (questionReplyDetails.size() == 0){
-                            ToastUtil.showToast(getApplicationContext() , "获取不到数据");
+                            ToastUtil.showCustomToast(getApplicationContext() , "获取不到数据");
                             return;
                         }
                         data = questionReplyDetails.get(0);
@@ -163,6 +164,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         else if (binding.answerAnalysisBtn.isSelected()) {
             binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
         }
+        refreshQuestionChangeBtns();
     }
 
     public void refreshPageChangeBtns(){
@@ -249,7 +251,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             loadData();
         }
         else {
-            ToastUtil.showToast(getApplicationContext() , "已经是第一题了");
+            ToastUtil.showCustomToast(getApplicationContext() , "已经是第一题了");
         }
     }
     public void nextQuestion(View view){
@@ -267,7 +269,28 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             loadData();
         }
         else {
-            ToastUtil.showToast(getApplicationContext() , "已经是最后一题了");
+            ToastUtil.showCustomToast(getApplicationContext() , "已经是最后一题了");
+        }
+    }
+    public void refreshQuestionChangeBtns(){
+        int questionIndex = ListUtil.conditionalIndexOf(allReplyList, new ListUtil.ConditionJudger<QuestionReplySummary>() {
+            @Override
+            public boolean isMatchCondition(QuestionReplySummary nodeInList) {
+                return nodeInList.getReplyId() == currentShow.getReplyId();
+            }
+        });
+        if (questionIndex != 0){
+            binding.lastQuestionBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
+        }
+        else {
+            binding.lastQuestionBtn.setBackgroundColor(getResources().getColor(R.color.gray_666666));
+        }
+
+        if (questionIndex+1 < allReplyList.size()){
+            binding.nextQuestionBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
+        }
+        else {
+            binding.nextQuestionBtn.setBackgroundColor(getResources().getColor(R.color.gray_666666));
         }
     }
     public void showComment(View view){

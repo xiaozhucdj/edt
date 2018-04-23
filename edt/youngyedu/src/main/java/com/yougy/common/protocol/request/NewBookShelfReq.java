@@ -1,5 +1,7 @@
 package com.yougy.common.protocol.request;
 
+import com.yougy.common.utils.DateUtils;
+
 /**
  * Created by Administrator on 2017/5/16.
  * 书架查询
@@ -17,9 +19,12 @@ public class NewBookShelfReq extends NewBaseReq{
     /**缓存图书的ID*/
     private int cacheId ;
 
+    private String bookFitCourseTime ;
+
     public NewBookShelfReq() {
         m = "bookShelf" ;
         address = "classRoom" ;
+        bookFitCourseTime = DateUtils.getCalendarString() ;
     }
 
     public void setUserId(int userId) {

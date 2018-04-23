@@ -46,7 +46,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
     protected void init() {
         examId = getIntent().getIntExtra("examId", -1);
         if (examId == -1 ) {
-            ToastUtil.showToast(getApplicationContext(), "exam获取失败!");
+            ToastUtil.showCustomToast(getApplicationContext(), "exam获取失败!");
             return;
         }
         parsedQuestionItem = getIntent().getParcelableExtra("question");

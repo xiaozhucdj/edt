@@ -45,7 +45,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
     protected void init() {
         ArrayList<Integer> list = (ArrayList<Integer>) getIntent().getSerializableExtra("itemIdList");
         if (list == null || list.size() == 0){
-            ToastUtil.showToast(getApplicationContext() , "没有问答");
+            ToastUtil.showCustomToast(getApplicationContext() , "没有问答");
             finish();
         }
         else {
@@ -166,7 +166,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                         startActivity(newIntent);
                         break;
                     case "未\n提\n交":
-                        ToastUtil.showToast(getApplicationContext() , "本次问答您未提交");
+                        ToastUtil.showCustomToast(getApplicationContext() , "本次问答您未提交");
                         break;
                 }
             }

@@ -138,7 +138,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         lastScore = getIntent().getIntExtra("LASTSCORE", -1);
         bookTitle = getIntent().getStringExtra("BOOKTITLE");
         if (TextUtils.isEmpty(itemId)) {
-            ToastUtil.showToast(getApplicationContext(), "itemId 为空");
+            ToastUtil.showCustomToast(getApplicationContext(), "itemId 为空");
             return;
         }
     }
@@ -250,7 +250,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     //填充数据
     private void fillData() {
         if (questionItem == null) {
-            ToastUtil.showToast(getBaseContext(), "该题可能已经被删除");
+            ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
             return;
         }
         questionList = questionItem.questionContentList;
@@ -269,7 +269,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             questionPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick1(int position) {
-                    ToastUtil.showToast(WriteErrorHomeWorkActivity.this, position + 1 + "页");
+//                    ToastUtil.showCustomToast(WriteErrorHomeWorkActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
                     EpdController.leaveScribbleMode(mNbvAnswerBoard);
@@ -382,7 +382,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             isFirstComeInQuestion = true;
             questionPageNumAdapter.onItemClickListener.onItemClick1(0);
         } else {
-            ToastUtil.showToast(getBaseContext(), "该题可能已经被删除");
+            ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
         }
     }
 
@@ -472,7 +472,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 break;
             case R.id.tv_add_page:
                 if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
-                    ToastUtil.showToast(this, "最多只能加5张纸");
+                    ToastUtil.showCustomToast(this, "最多只能加5张纸");
                     return;
                 }
 

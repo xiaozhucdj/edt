@@ -148,7 +148,7 @@ public class OrderDetailActivity extends ShopBaseActivity{
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        ToastUtil.showToast(getApplicationContext() , "获取订单信息失败!");
+                        ToastUtil.showCustomToast(getApplicationContext() , "获取订单信息失败!");
                         throwable.printStackTrace();
                     }
                 });

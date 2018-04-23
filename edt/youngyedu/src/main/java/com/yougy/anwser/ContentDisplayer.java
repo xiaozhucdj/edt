@@ -301,7 +301,7 @@ public class ContentDisplayer extends RelativeLayout {
                             + " totalPage = " + totalPage
                             + " threadId = " + Thread.currentThread().getId());
                     if (newStatus == LoadController.PDF_STATUS.ERROR){
-                        setHintText("题目pdf加载失败"  + ",点击重新加载...");
+                        setHintText("题目加载失败"  + ",点击重新加载...");
                         needRefresh = true;
                         callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                     }
@@ -335,19 +335,19 @@ public class ContentDisplayer extends RelativeLayout {
                         callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                     }
                     else if (newStatus == LoadController.PDF_STATUS.DOWNLOADING){
-                        setHintText("正在下载pdf....");
+                        setHintText("正在下载....");
                     }
                     else if (newStatus == LoadController.PDF_STATUS.LOADING){
-                        setHintText("正在加载pdf....");
+                        setHintText("正在加载....");
                     }
                     else if (newStatus == LoadController.PDF_STATUS.EMPTY){
-                        setHintText("无pdf加载请求...");
+                        setHintText("无加载请求...");
                     }
                 }
             }).into(pdfImageView).toPage(subPageIndex);
         } catch (PlideException e) {
             e.printStackTrace();
-            setHintText("题目pdf加载失败:" + e.getMessage() + ",点击重新加载...");
+            setHintText("题目加载失败:" + e.getMessage() + ",点击重新加载...");
             needRefresh = true;
         }
         needRefresh = false;

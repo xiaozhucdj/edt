@@ -50,8 +50,8 @@
                 />
         </LinearLayout>
         <View android:layout_width="match_parent" android:layout_height="2px" android:background="@color/black"/>
-        <com.yougy.anwser.ContentDisplayer
-            android:id="@+id/content_displayer"
+        <RelativeLayout
+            android:id="@+id/question_layout"
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"
@@ -59,12 +59,32 @@
             android:layout_marginBottom="30px"
             android:layout_marginLeft="30px"
             android:layout_marginRight="30px"
-            android:paddingTop="15px"
-            android:paddingLeft="5px"
-            android:paddingRight="5px"
-            android:paddingBottom="5px"
             android:background="@drawable/shape_rounded_rectangle_black_border"
-            />
+            android:visibility="gone"
+            >
+            <com.yougy.anwser.ContentDisplayer
+                android:id="@+id/content_displayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="15px"
+                android:paddingLeft="5px"
+                android:paddingRight="5px"
+                android:paddingBottom="5px"
+                />
+            <TextView
+                android:id="@+id/start_practice_btn"
+                android:layout_width="200px"
+                android:layout_height="48px"
+                android:background="@drawable/img_press_button"
+                android:text="开始练习"
+                android:textColor="@color/white"
+                android:textSize="24px"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20px"
+                />
+        </RelativeLayout>
         <com.frank.etude.pageBtnBar.PageBtnBar
             android:id="@+id/page_btn_bar"
             android:layout_width="match_parent"

@@ -17,12 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.bean.HomeworkBookDetail;
-import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
@@ -62,11 +60,11 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
         bookName = getIntent().getStringExtra("bookName");
         homeworkId = getIntent().getIntExtra("homeworkId" , -1);
         if (bookId == -1){
-            ToastUtil.showToast(getApplicationContext() , "bookId为空,无法进入!");
+            ToastUtil.showCustomToast(getApplicationContext() , "bookId为空,无法进入!");
             finish();
         }
         else if (homeworkId == -1){
-            ToastUtil.showToast(getApplicationContext() , "homeworkId为空,无法进入!");
+            ToastUtil.showCustomToast(getApplicationContext() , "homeworkId为空,无法进入!");
             finish();
         }
     }
@@ -101,7 +99,7 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
                 RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(430 , 1020);
                 params.leftMargin = 25;
                 params.rightMargin = 25;
-                params.topMargin = 30;
+                params.topMargin = 31;
                 listView.setLayoutParams(params);
                 listView.setDividerHeight(2);
                 listView.setBackgroundResource(R.drawable.shape_rounded_rectangle_black_border);
@@ -151,7 +149,7 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
     @Override
     protected void loadData() {
         if (bookId == -1){
-            ToastUtil.showToast(getApplicationContext() , "bookId 为空");
+            ToastUtil.showCustomToast(getApplicationContext() , "bookId 为空");
             finish();
             return;
         }
@@ -285,13 +283,15 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
             if (node.getLevel() == 2){
                 convertView.setPadding(20 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 24);
+                bookChapterBinding.textview.setMaxWidth(340);
                 bookChapterBinding.getRoot().getLayoutParams().height = 60;
                 bookChapterBinding.arrowImg.setVisibility(View.VISIBLE);
             }
             else if (node.getLevel() == 3){
-                convertView.setPadding(75 , 0 , 0 , 0);
+                convertView.setPadding(55 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 20);
-                bookChapterBinding.getRoot().getLayoutParams().height = 45;
+                bookChapterBinding.textview.setMaxWidth(320);
+                bookChapterBinding.getRoot().getLayoutParams().height = 44;
                 bookChapterBinding.arrowImg.setVisibility(View.GONE);
             }
             return convertView;
