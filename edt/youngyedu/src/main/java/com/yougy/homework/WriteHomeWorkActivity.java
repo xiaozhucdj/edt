@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -132,6 +131,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @BindView(R.id.tv_save_homework)
     TextView tvSaveHomework;
 
+    @BindView(R.id.tv_save_homework)
+    TextView tvSaveHomework;
+
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -209,6 +211,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         if (TextUtils.isEmpty(examId)) {
             ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
+            mIsFinish = true ;
             finish();
         }
 
@@ -774,6 +777,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     }
 
+    private boolean  mIsFinish  ;
     @Override
     public void onBackPressed() {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
@@ -802,6 +806,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         switch (view.getId()) {
 
             case R.id.btn_left:
+                mIsFinish = true ;
                 finish();
                 break;
 
@@ -850,6 +855,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         fullScreenHintDialog.dismiss();
 
 //                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+                        mIsFinish = true ;
                         onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
@@ -1690,6 +1696,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
         Runtime.getRuntime().gc();
     }
 
-
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!mIsFinish)
+            tvSaveHomework.callOnClick() ;
+    }
 }
