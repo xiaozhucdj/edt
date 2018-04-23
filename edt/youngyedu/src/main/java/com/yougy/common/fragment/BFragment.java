@@ -337,7 +337,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
     private void savebookDownloadKey(int bookId, String key) {
         // 缓存key
-        String keys = DataCacheUtils.getString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
+        String keys = DataCacheUtils.getBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
         try {
             JSONObject object;
             if (!StringUtils.isEmpty(keys)) {
@@ -346,7 +346,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
                 object = new JSONObject();
             }
             object.put(bookId + "", key);
-            DataCacheUtils.putString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY, object.toString());
+            DataCacheUtils.putBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY, object.toString());
         } catch (Exception e) {
             e.printStackTrace();
             LogUtils.i("缓存密码出差");
