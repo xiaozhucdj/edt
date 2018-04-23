@@ -182,7 +182,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     //作者
                     binding.bookAuthorTv.setText(getString(R.string.author_text, mBookInfo.getBookAuthor()));
                     //出版时间
-                    binding.bookPublishTimeTv.setText(getString(R.string.publish_time, mBookInfo.getBookPublishTime()));
+                    if (TextUtils.isEmpty(mBookInfo.getBookPublishTime())){
+                        binding.bookPublishTimeTv.setText(getString(R.string.publish_time, "暂无"));
+                    }
+                    else {
+                        binding.bookPublishTimeTv.setText(getString(R.string.publish_time, mBookInfo.getBookPublishTime()));
+                    }
                     //文件大小
                     binding.bookDownloadSizeTv.setText(getString(R.string.file_size_text, SizeUtil.convertSizeLong2String(mBookInfo.getBookDownloadSize())));
                     //价格

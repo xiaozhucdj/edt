@@ -74,7 +74,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
             LogUtils.e("BookAdapter","book info : " + info);
             searchResultImg.setImageResource(R.drawable.cart_book);
             searchResultName.setText(info.getBookTitle());
-            searchResultPrice.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSpotPrice()));
+            searchResultPrice.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), String.valueOf(info.getBookSpotPrice())));
             if (info.getBookSpotPrice() < info.getBookSalePrice()) {
                 searchResultPrePrice.setVisibility(View.VISIBLE);
                 searchResultPrePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);

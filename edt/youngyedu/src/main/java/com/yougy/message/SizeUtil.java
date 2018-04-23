@@ -66,4 +66,27 @@ public class SizeUtil {
         return bd.toString();
     }
 
+    /**
+     * 对小数进行小数点后的位数的裁剪,采用四舍五入的模式.
+     * @param origin 要裁剪double类型的小数
+     * @param scaleDigit 小数点后保留的位数
+     * @return 进行裁剪后的小数的double
+     */
+    public static double doScale_double(double origin , int scaleDigit){
+        return doScale_double(origin , scaleDigit , BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
+     * 对小数进行小数点后的位数的裁剪
+     * @param origin 要裁剪double类型的小数
+     * @param scaleDigit 小数点后保留的位数
+     * @param scaleType 保留小数时采用的模式,如四舍五入(BigDecimal.ROUND_HALF_UP),具体见 {@link BigDecimal}
+     * @return 进行裁剪后的小数的double
+     */
+    public static double doScale_double(double origin , int scaleDigit , int scaleType){
+        BigDecimal bd = new BigDecimal(origin);
+        bd = bd.setScale(scaleDigit , scaleType);
+        return bd.doubleValue();
+    }
+
 }

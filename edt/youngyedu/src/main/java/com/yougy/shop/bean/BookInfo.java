@@ -3,6 +3,9 @@ package com.yougy.shop.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.yougy.message.SizeUtil;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +66,7 @@ public class BookInfo implements Parcelable{
 
 
     public double getBookSpotPrice() {
-        return bookSpotPrice;
+        return SizeUtil.doScale_double(bookSpotPrice , 2 , BigDecimal.ROUND_UP);
     }
 
     public void setBookSpotPrice(double bookSpotPrice) {
