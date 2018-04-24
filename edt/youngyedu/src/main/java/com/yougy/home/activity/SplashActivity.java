@@ -236,6 +236,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(SplashActivity.this) {
             @Override
             public void onResponse(NewGetAppVersionRep response, int id) {
+                LogUtils.e("FH" , "getVersion : " + response.toString());
                 super.onResponse(response, id);
                 if (response != null && response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && response.getData() != null) {
                     try {
@@ -269,6 +270,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
             @Override
             public void onError(Call call, Exception e, int id) {
+                e.printStackTrace();
                 login();
             }
         });

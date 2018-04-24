@@ -870,7 +870,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     //如果已经是最后一题，直接提交
                     //前提是先保存最后一题结果到本地存储
-                    saveLastHomeWorkData(showHomeWorkPosition);
+                    saveLastHomeWorkData(showHomeWorkPosition , false);
 //                    getUpLoadInfo();
                 }
 
@@ -991,16 +991,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             nextQuestionIcon.setImageResource(R.drawable.img_press_xiayiti);
         }
     }
-    /**
-     * 保存之前操作题目结果数据
-     */
-    private void saveLastHomeWorkData(int position) {
+
+    private void saveLastHomeWorkData(int position , boolean clear) {
         if (bytesList.size() == 0) {
             return;
         }
-//        if (pathList.size() == 0) {
-//            return;
-//        }
 
         //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
         if (llCaogaoControl.getVisibility() == View.VISIBLE) {
@@ -1039,26 +1034,33 @@ public class WriteHomeWorkActivity extends BaseActivity {
             getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
         }
 
-        //本题所有数据保存完毕
-        saveQuestionPage = 0;
+        if (clear){
+            //本题所有数据保存完毕
+            saveQuestionPage = 0;
 
-        //以上存储了3中数据，1：保存手写笔记集合，2：保存每页图片集合，3：如果是选择题，保存选择题结果字符串。
-        //存储成功之后，将内存中的数据全部清空。
+            //以上存储了3中数据，1：保存手写笔记集合，2：保存每页图片集合，3：如果是选择题，保存选择题结果字符串。
+            //存储成功之后，将内存中的数据全部清空。
 
-        for (int i = 0; i < bytesList.size(); i++) {
-            byte[] tmp = bytesList.get(i);
-            tmp = null;
+            for (int i = 0; i < bytesList.size(); i++) {
+                byte[] tmp = bytesList.get(i);
+                tmp = null;
+            }
+
+            bytesList.clear();
+            cgBytes.clear();
+            pathList.clear();
+            checkedAnswerList.clear();
         }
-        bytesList.clear();
-        cgBytes.clear();
-        pathList.clear();
-        checkedAnswerList.clear();
-
 
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
             tvSubmitHomeWork.setText("提交答案");
         }
-
+    }
+    /**
+     * 保存之前操作题目结果数据
+     */
+    private void saveLastHomeWorkData(int position) {
+        saveLastHomeWorkData(position , true);
     }
 
 
@@ -1296,7 +1298,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (timedTask != null) {
                             timedTask.stop();
                         }
-                        ToastUtil.showCustomToast(getBaseContext(), "上传信息提交给服务器完毕");
+                        ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
 
                         NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
                             @Override
