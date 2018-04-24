@@ -79,6 +79,7 @@
     <string name="no_history_record">无最近搜索记录</string>
     <string name="grade_text">年级</string>
     <string name="classify_text">分类</string>
+    <string name="book_classify">图书分类</string>
     <string name="reset">重置</string>
     <string name="all_grade">全部年级</string>
     <string name="more">更多...</string>
