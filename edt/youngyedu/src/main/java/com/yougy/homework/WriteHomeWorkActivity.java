@@ -131,9 +131,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @BindView(R.id.tv_save_homework)
     TextView tvSaveHomework;
 
-    @BindView(R.id.tv_save_homework)
-    TextView tvSaveHomework;
-
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -831,8 +828,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_save_homework:
-
-                Log.v("FH" , "!!!!!!");
                 //暂存，默认触发调转到下一题（如果有），然后打开暂存成功弹窗
                 if (showHomeWorkPosition < homeWorkPageSize - 1) {
                     showHomeWorkPosition++;
