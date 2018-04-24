@@ -94,7 +94,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/promotion_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_above="@+id/shop_favorite_page_btn_container"
             android:layout_below="@+id/promotion_layout"
             android:paddingLeft="30px"

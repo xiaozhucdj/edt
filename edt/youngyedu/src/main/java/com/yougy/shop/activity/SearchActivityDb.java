@@ -177,7 +177,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         if (null == childs || childs.size() == 0) {
             binding.subjectLayout.setVisibility(View.GONE);
             return;
-        }else{
+        } else {
             showSubjectLayout();
         }
         for (final CategoryInfo item : info.getCategoryList()) {
@@ -362,6 +362,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             search();
         }
     }
+
     /**
      * 生成历史搜索记录
      */
@@ -383,17 +384,20 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.historyRecordLayout.addView(recordTv, params);
         }
     }
+
     private void hideSearchLayout() {
         InputMethodManager inputManager1 = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager1.hideSoftInputFromWindow(binding.searchEt.getWindowToken(), 0);
         binding.searchLayout.setVisibility(View.GONE);
         binding.searchEt.clearFocus();
     }
+
     public void clearHistoryRecord(View view) {
         SpUtils.clearHistoryRecord();
         mHistoryRecords.clear();
         generateHistoryRecord();
     }
+
     public void filtrate(View view) {
         showFiltrateLayout();
     }
@@ -483,14 +487,16 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void showGradeLayout() {
         List<CategoryInfo> infos = BookShopActivityDB.grades.get(currentItem).getCategoryList();
+        binding.nameText.setText(getString(currentItem == 2 ? R.string.book_classify : R.string.grade_text));
         mStageAdapter = new RecyclerAdapter(infos);
         binding.stageRecycler.setAdapter(mStageAdapter);
         binding.stageButton.setText(mStageAdapter.getItem(0).getCategoryDisplay());
         binding.gradeLayout.setVisibility(View.VISIBLE);
         binding.subjectLayout.setVisibility(View.GONE);
     }
+
     public void stageClick(View view) {
-        LogUtils.e(tag, "stage click............." + binding.stageRecyclerLayout.getVisibility()+"");
+        LogUtils.e(tag, "stage click............." + binding.stageRecyclerLayout.getVisibility() + "");
         binding.stageRecyclerLayout.setVisibility(binding.stageRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
     }
 
@@ -499,6 +505,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             binding.stageRecyclerLayout.setVisibility(View.GONE);
         }
     }
+
     private void hideGradeLayout() {
         binding.gradeLayout.setVisibility(View.GONE);
     }
