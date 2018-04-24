@@ -1298,7 +1298,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (timedTask != null) {
                             timedTask.stop();
                         }
-                        ToastUtil.showCustomToast(getBaseContext(), "上传信息提交给服务器完毕");
+                        ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
 
                         NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
                             @Override
