@@ -2,9 +2,9 @@ package com.yougy.view.showView.recycler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
+import com.yougy.common.utils.LogUtils;
 import com.yougy.view.showView.recycler.RecyclerView.Adapter;
 import com.yougy.view.showView.recycler.RecyclerView.ViewHolder;
 
@@ -83,12 +83,12 @@ abstract public class SimpleItemAnimator extends RecyclerView.ItemAnimator {
                     newLeft + disappearingItemView.getWidth(),
                     newTop + disappearingItemView.getHeight());
             if (DEBUG) {
-                Log.d(TAG, "DISAPPEARING: " + viewHolder + " with view " + disappearingItemView);
+                LogUtils.e(TAG, "DISAPPEARING: " + viewHolder + " with view " + disappearingItemView);
             }
             return animateMove(viewHolder, oldLeft, oldTop, newLeft, newTop);
         } else {
             if (DEBUG) {
-                Log.d(TAG, "REMOVED: " + viewHolder + " with view " + disappearingItemView);
+                LogUtils.e(TAG, "REMOVED: " + viewHolder + " with view " + disappearingItemView);
             }
             return animateRemove(viewHolder);
         }
@@ -101,13 +101,13 @@ abstract public class SimpleItemAnimator extends RecyclerView.ItemAnimator {
                 || preLayoutInfo.top != postLayoutInfo.top)) {
             // slide items in if before/after locations differ
             if (DEBUG) {
-                Log.d(TAG, "APPEARING: " + viewHolder + " with view " + viewHolder);
+                LogUtils.e(TAG, "APPEARING: " + viewHolder + " with view " + viewHolder);
             }
             return animateMove(viewHolder, preLayoutInfo.left, preLayoutInfo.top,
                     postLayoutInfo.left, postLayoutInfo.top);
         } else {
             if (DEBUG) {
-                Log.d(TAG, "ADDED: " + viewHolder + " with view " + viewHolder);
+                LogUtils.e(TAG, "ADDED: " + viewHolder + " with view " + viewHolder);
             }
             return animateAdd(viewHolder);
         }
@@ -118,7 +118,7 @@ abstract public class SimpleItemAnimator extends RecyclerView.ItemAnimator {
                                       @NonNull ItemHolderInfo preInfo, @NonNull ItemHolderInfo postInfo) {
         if (preInfo.left != postInfo.left || preInfo.top != postInfo.top) {
             if (DEBUG) {
-                Log.d(TAG, "PERSISTENT: " + viewHolder +
+                LogUtils.e(TAG, "PERSISTENT: " + viewHolder +
                         " with view " + viewHolder.itemView);
             }
             return animateMove(viewHolder,
@@ -132,7 +132,7 @@ abstract public class SimpleItemAnimator extends RecyclerView.ItemAnimator {
     public boolean animateChange(@NonNull ViewHolder oldHolder, @NonNull ViewHolder newHolder,
                                  @NonNull ItemHolderInfo preInfo, @NonNull ItemHolderInfo postInfo) {
         if (DEBUG) {
-            Log.d(TAG, "CHANGED: " + oldHolder + " with view " + oldHolder.itemView);
+            LogUtils.e(TAG, "CHANGED: " + oldHolder + " with view " + oldHolder.itemView);
         }
         final int fromLeft = preInfo.left;
         final int fromTop = preInfo.top;

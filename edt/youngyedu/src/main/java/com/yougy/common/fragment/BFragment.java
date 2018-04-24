@@ -337,7 +337,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
     private void savebookDownloadKey(int bookId, String key) {
         // 缓存key
-        String keys = DataCacheUtils.getString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
+        String keys = DataCacheUtils.getBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
         try {
             JSONObject object;
             if (!StringUtils.isEmpty(keys)) {
@@ -346,7 +346,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
                 object = new JSONObject();
             }
             object.put(bookId + "", key);
-            DataCacheUtils.putString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY, object.toString());
+            DataCacheUtils.putBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY, object.toString());
         } catch (Exception e) {
             e.printStackTrace();
             LogUtils.i("缓存密码出差");
@@ -424,7 +424,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
                     info.setObjectKey(downloadInfos.get(0).getAtchRemotePath());
                     info.setBucketName(downloadInfos.get(0).getAtchBucket());
                     info.setSaveFilePath(FileUtils.getTextBookFilesDir() +bookId + ".pdf");
-                    System.out.println("to............"+info.toString());
+//                    System.out.println("to............"+info.toString());
                     downBook(info);
                 }else{
                     mDownDialog.setTitle(UIUtils.getContext().getResources().getString(R.string.down_book_error));
@@ -454,7 +454,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         NewDownBookManager.getInstance().downBookAsy(info, new DownloadBookListener() {
             @Override
             public void onSuccess(int progress) {
-                System.out.println(".........onSuccess...." + progress);
+//                System.out.println(".........onSuccess...." + progress);
                 UIUtils.getMainThreadHandler().post(new Runnable() {
                     @Override
                     public void run() {
@@ -465,7 +465,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
             @Override
             public void onFinish() {
-                System.out.println(".........onFinish");
+//                System.out.println(".........onFinish");
                 UIUtils.getMainThreadHandler().post(new Runnable() {
                     @Override
                     public void run() {
@@ -478,7 +478,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
             @Override
             public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
-                System.out.println(".........onFailure");
+//                System.out.println(".........onFailure");
                 UIUtils.getMainThreadHandler().post(new Runnable() {
                     @Override
                     public void run() {

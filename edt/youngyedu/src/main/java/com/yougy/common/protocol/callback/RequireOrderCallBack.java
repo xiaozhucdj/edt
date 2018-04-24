@@ -1,7 +1,6 @@
 package com.yougy.common.protocol.callback;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -37,7 +36,7 @@ public class RequireOrderCallBack extends BaseCallBack<RequirePayOrderRep> {
 
     @Override
     public void onResponse(RequirePayOrderRep response, int id) {
-        Log.e("RequireOrderCallBack", "send RequirePayOrderRep event");
+        LogUtils.e("RequireOrderCallBack", "send RequirePayOrderRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

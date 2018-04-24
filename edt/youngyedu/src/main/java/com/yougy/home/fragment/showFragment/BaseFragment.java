@@ -29,7 +29,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -293,7 +292,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             public void call(Object o) {
                 if (o instanceof BaseData) {
                     //TODO:更新数据库的笔记
-                    Log.e(TAG, "笔记上传成功。。。");
+                    LogUtils.e(TAG, "笔记上传成功。。。");
                 }
             }
         }));

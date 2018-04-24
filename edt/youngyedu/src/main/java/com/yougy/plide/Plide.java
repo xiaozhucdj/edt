@@ -2,11 +2,10 @@ package com.yougy.plide;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
 
-import com.onyx.reader.ReaderPresenter;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 
 /**
  * Created by FH on 2018/1/9.
@@ -47,7 +46,7 @@ public class Plide{
         LoadController mLoadController = LoadController.popLoadController(imageView);
         if (mLoadController != null){
             if (!mLoadController.isReaderPresenterAbandoned()){
-                Log.v("FH" , "clearPdfCache!!!!");
+                LogUtils.e("FH" , "clearPdfCache!!!!");
                 mLoadController.getReaderPresenter().close();
                 mLoadController.abandonReaderPresenter();
             }

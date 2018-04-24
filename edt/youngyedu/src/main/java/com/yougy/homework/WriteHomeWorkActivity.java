@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,6 +48,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
@@ -124,6 +124,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
     ImageView lastQuestionIcon;
     @BindView(R.id.last_homework_text)
     TextView lastQuestionText;
+    @BindView(R.id.tv_last_homework)
+    LinearLayout lastQuestionBtn;
+    @BindView(R.id.tv_next_homework)
+    LinearLayout nextQuestionBtn;
+    @BindView(R.id.tv_save_homework)
+    TextView tvSaveHomework;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -202,6 +208,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         if (TextUtils.isEmpty(examId)) {
             ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
+            mIsFinish = true ;
             finish();
         }
 
@@ -767,6 +774,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     }
 
+    private boolean  mIsFinish  ;
     @Override
     public void onBackPressed() {
         EpdController.leaveScribbleMode(mNbvAnswerBoard);
@@ -795,6 +803,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         switch (view.getId()) {
 
             case R.id.btn_left:
+                mIsFinish = true ;
                 finish();
                 break;
 
@@ -841,6 +850,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         fullScreenHintDialog.dismiss();
 
 //                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
+                        mIsFinish = true ;
                         onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
@@ -961,18 +971,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
      */
     public void refreshLastAndNextQuestionBtns(){
         if (showHomeWorkPosition > 0) {
+            lastQuestionBtn.setVisibility(View.VISIBLE);
             lastQuestionText.setTextColor(Color.BLACK);
             lastQuestionIcon.setImageResource(R.drawable.img_normal_shangyiti);
         }
         else {
+            lastQuestionBtn.setVisibility(View.GONE);
             lastQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
             lastQuestionIcon.setImageResource(R.drawable.img_press_shangyiti);
         }
         if (showHomeWorkPosition < homeWorkPageSize - 1) {
+            nextQuestionBtn.setVisibility(View.VISIBLE);
             nextQuestionText.setTextColor(Color.BLACK);
             nextQuestionIcon.setImageResource(R.drawable.img_normal_xiayiti);
         }
         else {
+            nextQuestionBtn.setVisibility(View.GONE);
             nextQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
             nextQuestionIcon.setImageResource(R.drawable.img_press_xiayiti);
         }
@@ -1014,12 +1028,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
 
-        refreshTime();
-        String textInfo = tvSubmitHomeWork.getText().toString();
+
 
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
-            tvSubmitHomeWork.setText("提交答案");
+            refreshTime();
         }
+
+        String textInfo = tvSubmitHomeWork.getText().toString();
         if (textInfo.contains("(") && textInfo.contains(")")) {
             getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
         }
@@ -1038,6 +1053,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
         cgBytes.clear();
         pathList.clear();
         checkedAnswerList.clear();
+
+
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            tvSubmitHomeWork.setText("提交答案");
+        }
 
     }
 
@@ -1080,7 +1100,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
-                        Log.v("FH", "call ");
+                        LogUtils.e("FH", "call ");
                         if (stSbean != null) {
                             upLoadPic(stSbean);
                         } else {
@@ -1154,18 +1174,18 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
                             try {
                                 PutObjectResult putResult = oss.putObject(put);
-                                Log.d("PutObject", "UploadSuccess");
-                                Log.d("ETag", putResult.getETag());
-                                Log.d("RequestId", putResult.getRequestId());
+                                LogUtils.e("PutObject", "UploadSuccess");
+                                LogUtils.e("ETag", putResult.getETag());
+                                LogUtils.e("RequestId", putResult.getRequestId());
                             } catch (ClientException e) {
                                 // 本地异常如网络异常等
                                 e.printStackTrace();
                             } catch (ServiceException e) {
                                 // 服务异常
-                                Log.e("RequestId", e.getRequestId());
-                                Log.e("ErrorCode", e.getErrorCode());
-                                Log.e("HostId", e.getHostId());
-                                Log.e("RawMessage", e.getRawMessage());
+                                LogUtils.e("RequestId", e.getRequestId());
+                                LogUtils.e("ErrorCode", e.getErrorCode());
+                                LogUtils.e("HostId", e.getHostId());
+                                LogUtils.e("RawMessage", e.getRawMessage());
                             }
 
                             STSResultbean stsResultbean = new STSResultbean();
@@ -1669,5 +1689,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
         Glide.get(this).clearMemory();
         contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!mIsFinish)
+            tvSaveHomework.callOnClick() ;
     }
 }

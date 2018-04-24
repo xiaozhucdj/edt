@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.PageableRecyclerView;
@@ -149,7 +149,7 @@ public class OrderListActivity extends ShopBaseActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.v("FH", "获取我的订单列表失败 : " + throwable.getMessage());
+                        LogUtils.e("FH", "获取我的订单列表失败 : " + throwable.getMessage());
                         throwable.printStackTrace();
                         new ConfirmDialog(OrderListActivity.this, "获取订单列表失败,是否重试?", new DialogInterface.OnClickListener() {
                             @Override
@@ -174,13 +174,13 @@ public class OrderListActivity extends ShopBaseActivity {
                             @Override
                             public void call(Object o) {
                                 new HintDialog(getThisActivity(), "取消订单成功").show();
-                                Log.v("FH", "取消订单成功");
+                                LogUtils.e("FH", "取消订单成功");
                                 refreshData();
                             }
                         }, new Action1<Throwable>() {
                             @Override
                             public void call(Throwable throwable) {
-                                Log.v("FH", "取消失败 " + throwable.getMessage());
+                                LogUtils.e("FH", "取消失败 " + throwable.getMessage());
                                 throwable.printStackTrace();
                                 new ConfirmDialog(OrderListActivity.this, "取消订单失败,是否重试?", new DialogInterface.OnClickListener() {
                                     @Override

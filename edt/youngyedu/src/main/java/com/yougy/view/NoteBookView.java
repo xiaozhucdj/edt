@@ -140,6 +140,7 @@ public class NoteBookView extends View {
     }
 
     private void init() {
+        setIntercept(true);
         screenWidth = UIUtils.getScreenWidth();
         screenHeight = UIUtils.getScreenHeight();
         //这里会测试 LOG screenWidth screenHeight ==0 。理论上不可能为0 除非程序发生了崩溃 继续运行导致的
@@ -404,8 +405,18 @@ public class NoteBookView extends View {
     private float currentY;
     private Line line;
     private int mSystenPenType = 0 ;
+
+    private boolean mIntercept;
+
+    public void setIntercept(boolean intercept) {
+        mIntercept = intercept;
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        if (mIntercept) {
+            return false;
+        }
         if (event.getDeviceId() != 1) {
             return true;
         }

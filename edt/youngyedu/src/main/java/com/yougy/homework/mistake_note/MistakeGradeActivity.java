@@ -3,7 +3,6 @@ package com.yougy.homework.mistake_note;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -13,6 +12,7 @@ import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.RxResultHelper;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.homework.FullScreenHintDialog;
 import com.yougy.homework.HomeworkBaseActivity;
@@ -60,7 +60,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
         binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
-                Log.v("FH" , "===================onPageInfoChanged");
+                LogUtils.e("FH" , "===================onPageInfoChanged");
                 refreshPageChangeBtns();
             }
         });

@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.onyx.android.sdk.api.device.epd.EpdController;
@@ -230,7 +229,24 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         EpdController.invalidate(mRoot, UpdateMode.GC);
         mOnyxImgView.setImageBitmap(bitmap);
         restViewState();
+        if (mRunThread == null){
+            mRunThread = new NoteBookDelayedRun() ;
+        }
+
+        UIUtils.getMainThreadHandler().postDelayed(mRunThread,500) ;
     }
+
+    private  NoteBookDelayedRun mRunThread ;
+    private  class NoteBookDelayedRun  implements Runnable{
+
+        @Override
+        public void run() {
+            if (mNoteBookView!=null){
+                mNoteBookView.setIntercept(false);
+            }
+        }
+    }
+
 
     @Override
     public View getContentView() {
@@ -688,6 +704,11 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             mNoteBookView.recycle();
         }
         getReaderPresenter().close();
+
+        if (mRunThread!=null){
+            UIUtils.getMainThreadHandler().removeCallbacks(mRunThread) ;
+        }
+        mRunThread = null ;
         Runtime.getRuntime().gc();
     }
 

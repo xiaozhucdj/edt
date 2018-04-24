@@ -4,7 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.yougy.common.model.*;
+import com.yougy.message.SizeUtil;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -13,7 +15,15 @@ import java.util.List;
 
 public class CartItem extends com.yougy.common.model.BookInfo implements Parcelable{
     public List<Coupon> bookCoupon;
-    public double bookSpotPrice;
+    private double bookSpotPrice;
+
+    public double getBookSpotPrice() {
+        return SizeUtil.doScale_double(bookSpotPrice , 2 , BigDecimal.ROUND_UP);
+    }
+
+    public void setBookSpotPrice(double bookSpotPrice) {
+        this.bookSpotPrice = bookSpotPrice;
+    }
 
     public CartItem() {
     }

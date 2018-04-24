@@ -66,7 +66,7 @@ public class ControlView extends FrameLayout implements GestureDetector.OnGestur
     public boolean onSingleTapUp(MotionEvent e) {
 
         if (mPagerListener== null){
-            System.out.println("11----- mPagerListener == null");
+//            System.out.println("11----- mPagerListener == null");
             return  false;
         }
 

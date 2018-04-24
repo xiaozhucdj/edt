@@ -20,6 +20,7 @@
                 android:background="@drawable/icon_fanhui"
                 android:layout_marginLeft="30px"
                 android:onClick="onBack"
+                android:clickable="true"
                 android:layout_centerVertical="true"
                 />
             <TextView

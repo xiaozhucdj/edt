@@ -1,9 +1,8 @@
 package com.yougy.message;
 
-import android.util.Log;
-
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachmentParser;
+import com.yougy.common.utils.LogUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +26,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
     // 根据解析到的消息类型，确定附件对象类型
     @Override
     public MsgAttachment parse(String json) {
-        Log.v("FH" , "解析自定义消息 : " + json);
+        LogUtils.e("FH", "解析自定义消息 : " + json);
         CustomAttachment attachment = null;
         try {
             JSONObject object = new JSONObject(json).getJSONObject(KEY_CONTENT);

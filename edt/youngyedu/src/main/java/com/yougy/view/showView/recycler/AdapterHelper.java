@@ -17,7 +17,8 @@ package com.yougy.view.showView.recycler;
  */
 
 import android.support.v4.util.Pools;
-import android.util.Log;
+
+import com.yougy.common.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -231,19 +232,19 @@ class AdapterHelper implements OpReorderer.Callback {
             throw new IllegalArgumentException("should not dispatch add or move for pre layout");
         }
         if (DEBUG) {
-            Log.d(TAG, "dispatch (pre)" + op);
-            Log.d(TAG, "postponed state before:");
+           LogUtils.e(TAG, "dispatch (pre)" + op);
+           LogUtils.e(TAG, "postponed state before:");
             for (UpdateOp updateOp : mPostponedList) {
-                Log.d(TAG, updateOp.toString());
+                LogUtils.e(TAG, updateOp.toString());
             }
-            Log.d(TAG, "----");
+           LogUtils.e(TAG, "----");
         }
 
         // handle each pos 1 by 1 to ensure continuity. If it breaks, dispatch partial
         // TODO Since move ops are pushed to end, we should not need this anymore
         int tmpStart = updatePositionWithPostponed(op.positionStart, op.cmd);
         if (DEBUG) {
-            Log.d(TAG, "pos:" + op.positionStart + ",updatedPos:" + tmpStart);
+           LogUtils.e(TAG, "pos:" + op.positionStart + ",updatedPos:" + tmpStart);
         }
         int tmpCnt = 1;
         int offsetPositionForPartial = op.positionStart;
@@ -262,7 +263,7 @@ class AdapterHelper implements OpReorderer.Callback {
             final int pos = op.positionStart + (positionMultiplier * p);
             int updatedPos = updatePositionWithPostponed(pos, op.cmd);
             if (DEBUG) {
-                Log.d(TAG, "pos:" + pos + ",updatedPos:" + updatedPos);
+               LogUtils.e(TAG, "pos:" + pos + ",updatedPos:" + updatedPos);
             }
             boolean continuous = false;
             switch (op.cmd) {
@@ -279,7 +280,7 @@ class AdapterHelper implements OpReorderer.Callback {
                 // need to dispatch this separately
                 UpdateOp tmp = obtainUpdateOp(op.cmd, tmpStart, tmpCnt, op.payload);
                 if (DEBUG) {
-                    Log.d(TAG, "need to dispatch separately " + tmp);
+                   LogUtils.e(TAG, "need to dispatch separately " + tmp);
                 }
                 dispatchFirstPassAndUpdateViewHolders(tmp, offsetPositionForPartial);
                 recycleUpdateOp(tmp);
@@ -295,18 +296,18 @@ class AdapterHelper implements OpReorderer.Callback {
         if (tmpCnt > 0) {
             UpdateOp tmp = obtainUpdateOp(op.cmd, tmpStart, tmpCnt, payload);
             if (DEBUG) {
-                Log.d(TAG, "dispatching:" + tmp);
+               LogUtils.e(TAG, "dispatching:" + tmp);
             }
             dispatchFirstPassAndUpdateViewHolders(tmp, offsetPositionForPartial);
             recycleUpdateOp(tmp);
         }
         if (DEBUG) {
-            Log.d(TAG, "post dispatch");
-            Log.d(TAG, "postponed state after:");
+           LogUtils.e(TAG, "post dispatch");
+           LogUtils.e(TAG, "postponed state after:");
             for (UpdateOp updateOp : mPostponedList) {
-                Log.d(TAG, updateOp.toString());
+               LogUtils.e(TAG, updateOp.toString());
             }
-            Log.d(TAG, "----");
+           LogUtils.e(TAG, "----");
         }
     }
 
@@ -383,12 +384,12 @@ class AdapterHelper implements OpReorderer.Callback {
                 }
             }
             if (DEBUG) {
-                Log.d(TAG, "dispath (step" + i + ")");
-                Log.d(TAG, "postponed state:" + i + ", pos:" + pos);
+               LogUtils.e(TAG, "dispath (step" + i + ")");
+               LogUtils.e(TAG, "postponed state:" + i + ", pos:" + pos);
                 for (UpdateOp updateOp : mPostponedList) {
-                    Log.d(TAG, updateOp.toString());
+                   LogUtils.e(TAG, updateOp.toString());
                 }
-                Log.d(TAG, "----");
+               LogUtils.e(TAG, "----");
             }
         }
         for (int i = mPostponedList.size() - 1; i >= 0; i--) {
@@ -433,7 +434,7 @@ class AdapterHelper implements OpReorderer.Callback {
 
     private void postponeAndUpdateViewHolders(UpdateOp op) {
         if (DEBUG) {
-            Log.d(TAG, "postponing " + op);
+           LogUtils.e(TAG, "postponing " + op);
         }
         mPostponedList.add(op);
         switch (op.cmd) {

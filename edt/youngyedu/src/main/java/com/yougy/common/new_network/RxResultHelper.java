@@ -1,11 +1,10 @@
 package com.yougy.common.new_network;
 
-import android.util.Log;
-
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -27,7 +26,7 @@ import rx.functions.Func1;
  */
 public class RxResultHelper {
     public static <T> Observable.Transformer<BaseResult<T>, T> handleResult(final LoadingProgressDialog loadingProgressDialog) {
-        Log.v("FH" , "!!!!! handleResult " + loadingProgressDialog);
+        LogUtils.e("FH" , "!!!!! handleResult " + loadingProgressDialog);
         return new Observable.Transformer<BaseResult<T>, T>() {
             @Override
             public Observable<T> call(Observable<BaseResult<T>> tObservable) {
@@ -35,7 +34,7 @@ public class RxResultHelper {
                         new Func1<BaseResult<T>, Observable<? extends T>>() {
                             @Override
                             public Observable<? extends T> call(BaseResult<T> entity) {
-                                Log.v("FH", "!!!!! success call  " + loadingProgressDialog);
+                                LogUtils.e("FH", "!!!!! success call  " + loadingProgressDialog);
                                 if (loadingProgressDialog != null){
                                     loadingProgressDialog.dismiss();
                                 }
@@ -49,7 +48,7 @@ public class RxResultHelper {
                         new Func1<Throwable, Observable<? extends T>>() {
                             @Override
                             public Observable<? extends T> call(Throwable throwable) {
-                                Log.v("FH", "!!!!! error call  " + loadingProgressDialog);
+                                LogUtils.e("FH", "!!!!! error call  " + loadingProgressDialog);
                                 if (loadingProgressDialog != null){
                                     loadingProgressDialog.dismiss();
                                 }

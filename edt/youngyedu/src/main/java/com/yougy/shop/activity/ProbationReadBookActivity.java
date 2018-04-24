@@ -4,7 +4,6 @@ package com.yougy.shop.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.onyx.android.sdk.api.device.epd.EpdController;
@@ -290,10 +288,10 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                     QueryShopBookDetailRep rep = (QueryShopBookDetailRep) o;
                     if (rep.getData() != null && rep.getData().size() > 0) {
                         mBookInfo = rep.getData().get(0);
-                        mBtnBuy.setText("￥" + mBookInfo.getBookSalePrice() + "购买");
+                        mBtnBuy.setText("￥" + mBookInfo.getBookSpotPrice() + "购买");
                     } else {
                         showTagCancelAndDetermineDialog(R.string.books_request_details_fail, R.string.cancel, R.string.retry, mTagForRequestDetailsFail);
-                        Log.v("FH", "获取图书详情失败");
+                        LogUtils.e("FH", "获取图书详情失败");
                     }
                 } else if (o instanceof QueryBookCartRep) {
                     QueryBookCartRep rep = (QueryBookCartRep) o;
@@ -316,7 +314,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                     }
                 } else if (o instanceof QueryBookOrderListRep) {
                     if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS) {
-                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                        LogUtils.e("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
                         if (((QueryBookOrderListRep) o).getData().size() > 0) {
                             new HintDialog(ProbationReadBookActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
                             return;
@@ -328,7 +326,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                                 , new RequireOrderCallBack(ProbationReadBookActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
                     } else {
                         new HintDialog(ProbationReadBookActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
-                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
+                        LogUtils.e("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
                     }
                 }
             }

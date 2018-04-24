@@ -16,9 +16,10 @@ package com.yougy.view.showView.recycler;
  * limitations under the License.
  */
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.yougy.common.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,7 @@ class ChildHelper {
         }
         mCallback.addView(child, offset);
         if (DEBUG) {
-            Log.d(TAG, "addViewAt " + index + ",h:" + hidden + ", " + this);
+          LogUtils.e(TAG, "addViewAt " + index + ",h:" + hidden + ", " + this);
         }
     }
 
@@ -146,7 +147,7 @@ class ChildHelper {
         }
         mCallback.removeViewAt(index);
         if (DEBUG) {
-            Log.d(TAG, "remove View off:" + index + "," + this);
+          LogUtils.e(TAG, "remove View off:" + index + "," + this);
         }
     }
 
@@ -167,7 +168,7 @@ class ChildHelper {
         }
         mCallback.removeViewAt(offset);
         if (DEBUG) {
-            Log.d(TAG, "removeViewAt " + index + ", off:" + offset + ", " + this);
+          LogUtils.e(TAG, "removeViewAt " + index + ", off:" + offset + ", " + this);
         }
     }
 
@@ -192,7 +193,7 @@ class ChildHelper {
         }
         mCallback.removeAllViews();
         if (DEBUG) {
-            Log.d(TAG, "removeAllViewsUnfiltered");
+          LogUtils.e(TAG, "removeAllViewsUnfiltered");
         }
     }
 
@@ -238,7 +239,7 @@ class ChildHelper {
         }
         mCallback.attachViewToParent(child, offset, layoutParams);
         if (DEBUG) {
-            Log.d(TAG, "attach view to parent index:" + index + ",off:" + offset + "," +
+          LogUtils.e(TAG, "attach view to parent index:" + index + ",off:" + offset + "," +
                     "h:" + hidden + ", " + this);
         }
     }
@@ -283,7 +284,7 @@ class ChildHelper {
         mBucket.remove(offset);
         mCallback.detachViewFromParent(offset);
         if (DEBUG) {
-            Log.d(TAG, "detach view from parent " + index + ", off:" + offset);
+          LogUtils.e(TAG, "detach view from parent " + index + ", off:" + offset);
         }
     }
 
@@ -335,7 +336,7 @@ class ChildHelper {
         mBucket.set(offset);
         hideViewInternal(view);
         if (DEBUG) {
-            Log.d(TAG, "hiding child " + view + " at offset " + offset+ ", " + this);
+          LogUtils.e(TAG, "hiding child " + view + " at offset " + offset+ ", " + this);
         }
     }
 

@@ -35,7 +35,7 @@ public class LogUtils {
      */
     public static final int LEVEL_ERROR = 5;
 
-    private static final boolean DEBUG = true;
+    private static  boolean DEBUG = true;
     //==========================================================================
     // 全局变量
     //==========================================================================
@@ -61,6 +61,11 @@ public class LogUtils {
     //==========================================================================
     // 方法
     //==========================================================================
+
+
+    public static void setOpenLog(boolean openLog){
+        DEBUG = openLog ;
+    }
 
     /**
      * 以级别为 d 的形式输出LOG

@@ -202,6 +202,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                 }
             });
             mNoteDialog.show();
+            mNoteDialog.setNoteName("");
         } else {
             LogUtils.i("noteinfo ....." + info.toString());
             Bundle extras = new Bundle();
@@ -387,7 +388,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
             @Override
             public NewUpdateNoteRep parseNetworkResponse(Response response, int id) throws Exception {
                 String str = response.body().string();
-                System.out.println("response json ...." + str);
+//                System.out.println("response json ...." + str);
                 return GsonUtil.fromJson(str, NewUpdateNoteRep.class);
             }
 

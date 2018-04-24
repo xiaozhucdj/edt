@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.netease.nimlib.sdk.AbortableFuture;
@@ -50,10 +49,10 @@ import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.yougy.common.global.Commons;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.view.dialog.ConfirmDialog;
-import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import org.json.JSONException;
@@ -133,7 +132,7 @@ public class YXClient {
             //并且把新建的p2p消息插入云信SDK的本地数据库,这样就方便以后查询p2p历史记录时,可以直接一次性的把群消息和p2p消息都查出来.
             //插入数据库后SDK的最近联系人列表也会自动更新,不需要手动通知.
             for (IMMessage newMessage : imMessages) {
-                Log.v("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType() + " attach : " + newMessage.getAttachment());
+               LogUtils.e("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType() + " attach : " + newMessage.getAttachment());
                 if ((newMessage.getMsgType()) == MsgTypeEnum.custom){
                     if (newMessage.getAttachment() == null){
                         // 解析有问题的自定义消息attachment为空,滤掉这类消息
@@ -151,7 +150,7 @@ public class YXClient {
                     }
                 }
                 if (newMessage.getSessionType() == SessionTypeEnum.Team) {
-                    Log.v("FH" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
+                   LogUtils.e("FH" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
                     IMMessage localMessage = null;
                     switch (newMessage.getMsgType()){
                         case file:
@@ -167,10 +166,10 @@ public class YXClient {
                             localMessage = MessageBuilder.createTextMessage(newMessage.getFromAccount(), SessionTypeEnum.P2P , newMessage.getContent());
                             break;
                         default:
-                            Log.v("FH" , "未知类型 " + newMessage.getMsgType() + "新建消息失败");
+                           LogUtils.e("FH" , "未知类型 " + newMessage.getMsgType() + "新建消息失败");
                     }
                     if (localMessage != null){
-                        Log.v("FH" , "开始插入数据库");
+                       LogUtils.e("FH" , "开始插入数据库");
                         localMessage.setFromAccount(newMessage.getFromAccount());
                         localMessage.setDirect(MsgDirectionEnum.In);
                         localMessage.setStatus(MsgStatusEnum.success);
@@ -179,15 +178,15 @@ public class YXClient {
                         .setCallback(new RequestCallback<Void>() {
                             @Override
                             public void onSuccess(Void param) {
-                                Log.v("FH" , "插入数据库成功");
+                               LogUtils.e("FH" , "插入数据库成功");
                             }
                             @Override
                             public void onFailed(int code) {
-                                Log.v("FH" , "插入数据库失败 : " + code);
+                               LogUtils.e("FH" , "插入数据库失败 : " + code);
                             }
                             @Override
                             public void onException(Throwable exception) {
-                                Log.v("FH" , "插入数据库失败 : " + exception.getMessage());
+                               LogUtils.e("FH" , "插入数据库失败 : " + exception.getMessage());
                                 exception.printStackTrace();
                             }
                         });
@@ -243,7 +242,7 @@ public class YXClient {
         @Override
         public void onEvent(StatusCode statusCode) {
             currentOnlineStatus = statusCode;
-            Log.v("FH" , "onlineStatus 变更: " + statusCode);
+           LogUtils.e("FH" , "onlineStatus 变更: " + statusCode);
             if (statusCode == StatusCode.PWD_ERROR){
 //                if (!TextUtils.isEmpty(currentAccount)){
 //                    getTokenAndLogin(currentAccount , null);
@@ -582,7 +581,7 @@ public class YXClient {
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
     public void login(String account , String token , final RequestCallbackWrapper callback){
-        Log.v("FH" , "yx login " + account + "  " + token);
+       LogUtils.e("FH" , "yx login " + account + "  " + token);
         currentAccount = account;
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , true);
         LoginInfo loginInfo = new LoginInfo(account , token);
@@ -635,7 +634,7 @@ public class YXClient {
                     catch (Exception e){
                         e.printStackTrace();
                         if (callback != null){
-                            Log.v("FH" , "获取token失败,解析错误");
+                           LogUtils.e("FH" , "获取token失败,解析错误");
                             callback.onFailed(-997);
                         }
                     }
@@ -644,7 +643,7 @@ public class YXClient {
                 @Override
                 public void call(Throwable throwable) {
                     throwable.printStackTrace();
-                    Log.v("FH" , "获取token失败,可能是网络错误");
+                   LogUtils.e("FH" , "获取token失败,可能是网络错误");
                     if (callback != null){
                         callback.onFailed(-998);
                     }
@@ -990,13 +989,13 @@ public class YXClient {
         RecursiveLooper.recursiveRun(MAX_RETRY_TIMES , new RecursiveLooper.RecursiveLoopRunnable(){
             @Override
             public void run(int currentLooopTimes) {
-                Log.v("FH!!!" , "recursiveRun : " + currentLooopTimes);
+               LogUtils.e("FH!!!" , "recursiveRun : " + currentLooopTimes);
                 if (!NetUtils.isNetConnected()) {
                     //无网络,直接失败,不重试.
                     if (loadingDialog != null && loadingDialog.isShowing()){
                         loadingDialog.dismiss();
                     }
-                    Log.v("FH" , "wifi未连接");
+                   LogUtils.e("FH" , "wifi未连接");
                     new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -1011,7 +1010,7 @@ public class YXClient {
                     @Override
                     public void onResult(int code, Object result, Throwable exception) {
                         if (code == ResponseCode.RES_SUCCESS) {
-                            Log.v("FH", "刷新式登录成功");
+                           LogUtils.e("FH", "刷新式登录成功");
                             if (loadingDialog != null && loadingDialog.isShowing()){
                                 loadingDialog.dismiss();
                             }
@@ -1028,7 +1027,7 @@ public class YXClient {
                             else {
                                 reason = "Code " + code;
                             }
-                            Log.v("FH", "刷新式登录失败 :" + reason);
+                           LogUtils.e("FH", "刷新式登录失败 :" + reason);
                             if (currentLooopTimes < MAX_RETRY_TIMES){
                                 //失败次数未达上限,自动重试.
                                 doContinue();
@@ -1422,7 +1421,7 @@ public class YXClient {
     }
 
     private static void lv(String msg) {
-        Log.v("FHH", msg);
+       LogUtils.e("FHH", msg);
     }
 
 

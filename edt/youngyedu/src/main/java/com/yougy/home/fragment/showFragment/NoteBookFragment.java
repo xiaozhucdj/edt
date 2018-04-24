@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -80,7 +79,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
 
     public void setNoteInfo(NoteInfo noteInfo) {
         this.noteInfo = noteInfo;
-        Log.e(TAG, "note info is : " + this.noteInfo);
+        LogUtils.e(TAG, "note info is : " + this.noteInfo);
     }
 
 
@@ -362,7 +361,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
 
             @Override
             public void onCompleted() {
-                Log.e(TAG, "onCompleted...");
+                LogUtils.e(TAG, "onCompleted...");
                 dialog.dismiss();
 
             }
@@ -370,12 +369,12 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
             @Override
             public void onError(Throwable e) {
                 dialog.dismiss();
-                Log.e(TAG, "onError...");
+                LogUtils.e(TAG, "onError...");
             }
 
             @Override
             public void onNext(Void aVoid) {
-                Log.e(TAG, "onNext...");
+                LogUtils.e(TAG, "onNext...");
                 initNoteItem(mNote);
             }
         };
@@ -482,6 +481,11 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
             LogUtils.i("leke_type=="+mNote.getNoteStyle());
             setNoteStyle(mNote.getNoteStyle());
         }
+
+        if (mRunThread == null) {
+            mRunThread = new NoteBookDelayedRun();
+        }
+        UIUtils.getMainThreadHandler().postDelayed(mRunThread, 500);
     }
 
     private void setNoteStyle(int type) {
@@ -508,11 +512,11 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         return rx.Observable.create(new rx.Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
-                Log.e(TAG, "pre position is : " + position);
+                LogUtils.e(TAG, "pre position is : " + position);
                 getLines(position - 1);
-                Log.e(TAG, "after position is : " + position);
+                LogUtils.e(TAG, "after position is : " + position);
                 getLines(position + 1);
-                Log.e(TAG, "third position is : " + position);
+                LogUtils.e(TAG, "third position is : " + position);
             }
         });
     }
@@ -822,6 +826,18 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         EventBus.getDefault().post(baseEvent);
     }
 
+
+    private NoteBookDelayedRun mRunThread;
+
+    private class NoteBookDelayedRun implements Runnable {
+        @Override
+        public void run() {
+            if (mNoteBookView != null) {
+                mNoteBookView.setIntercept(false);
+            }
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -831,6 +847,12 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         if (mNoteBookView!=null){
             mNoteBookView.recycle();
         }
+
+        if (mRunThread == null) {
+            mRunThread = new NoteBookDelayedRun();
+        }
+
+        mRunThread = null;
         Runtime.getRuntime().gc() ;
     }
 

@@ -35,6 +35,7 @@ public class DataCacheUtils {
     }
 
 
+
     public static void reomve(Context context, String key){
         init(context).remove(studentId +"-"+key);
     }
@@ -49,4 +50,11 @@ public class DataCacheUtils {
     }
 
 
+    public static void putBookString(Context context, String key, String value) {
+        init(context).put(key, value);
+    }
+
+    public static String getBookString(Context context, String key) {
+        return init(context).getAsString(key);
+    }
 }

@@ -1,7 +1,6 @@
 package com.yougy.common.protocol.callback;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -38,7 +37,7 @@ public class AppendBookCartCallBack extends BaseCallBack<AppendBookCartRep> {
 
     @Override
     public void onResponse(AppendBookCartRep response, int id) {
-        Log.e("AppendBookCartCallBack", "send AppendBookCartRep event");
+        LogUtils.e("AppendBookCartCallBack", "send AppendBookCartRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

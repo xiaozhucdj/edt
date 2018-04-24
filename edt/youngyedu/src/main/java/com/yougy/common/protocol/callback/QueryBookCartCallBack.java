@@ -1,7 +1,6 @@
 package com.yougy.common.protocol.callback;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
@@ -37,7 +36,7 @@ public class QueryBookCartCallBack   extends BaseCallBack<QueryBookCartRep> {
 
     @Override
     public void onResponse(QueryBookCartRep response, int id) {
-        Log.e("QueryBookCartCallBack", "send QueryBookCartRep event");
+        LogUtils.e("QueryBookCartCallBack", "send QueryBookCartRep event");
         RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }

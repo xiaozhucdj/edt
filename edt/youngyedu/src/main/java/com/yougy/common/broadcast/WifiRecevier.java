@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
-import android.util.Log;
+
+import com.yougy.common.utils.LogUtils;
 
 /**
  * Created by jiangliang on 2017/4/17.
@@ -14,9 +15,9 @@ public class WifiRecevier extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        Log.v("FH" , "wifi状态改变 " + manager.getWifiState());
+        LogUtils.e("FH" , "wifi状态改变 " + manager.getWifiState());
         if (manager.getWifiState() == 1){
-            Log.v("FH" , "检测到wifi关闭,重连!");
+            LogUtils.e("FH" , "检测到wifi关闭,重连!");
             manager.setWifiEnabled(true);
         }
     }

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -183,7 +182,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     //作者
                     binding.bookAuthorTv.setText(getString(R.string.author_text, mBookInfo.getBookAuthor()));
                     //出版时间
-                    binding.bookPublishTimeTv.setText(getString(R.string.publish_time, mBookInfo.getBookPublishTime()));
+                    if (TextUtils.isEmpty(mBookInfo.getBookPublishTime())){
+                        binding.bookPublishTimeTv.setText(getString(R.string.publish_time, "暂无"));
+                    }
+                    else {
+                        binding.bookPublishTimeTv.setText(getString(R.string.publish_time, mBookInfo.getBookPublishTime()));
+                    }
                     //文件大小
                     binding.bookDownloadSizeTv.setText(getString(R.string.file_size_text, SizeUtil.convertSizeLong2String(mBookInfo.getBookDownloadSize())));
                     //价格
@@ -469,7 +473,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     }
                 } else if (o instanceof QueryBookOrderListRep) {
                     if (((QueryBookOrderListRep) o).getCode() == ProtocolId.RET_SUCCESS) {
-                        Log.v("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
+                        LogUtils.e("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + ((QueryBookOrderListRep) o).getData().size());
                         if (((QueryBookOrderListRep) o).getData().size() > 0) {
                             new HintDialog(ShopBookDetailsActivity.this, "您还有未完成的订单,请支付或取消后再生成新的订单").show();
                             return;
@@ -481,7 +485,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                                 , new RequireOrderCallBack(ShopBookDetailsActivity.this, ProtocolId.PROTOCOL_ID_REQUIRE_PAY_ORDER, request));
                     } else {
                         new HintDialog(ShopBookDetailsActivity.this, "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg()).show();
-                        Log.v("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
+                        LogUtils.e("FH", "查询已支付待支付订单失败 : " + ((QueryBookOrderListRep) o).getMsg());
                     }
                 }
             }
@@ -802,7 +806,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.v("FH", "获取购物车失败");
+                        LogUtils.e("FH", "获取购物车失败");
                         throwable.printStackTrace();
                     }
                 });

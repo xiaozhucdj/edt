@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
@@ -27,6 +28,7 @@ import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
@@ -300,6 +302,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         mTvTextBook.callOnClick();
         setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
+
+        CrashReport.setUserId(SpUtils.getUserId()+":"+ Commons.UUID);
     }
 
     @Override

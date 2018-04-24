@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -25,6 +24,7 @@ import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
@@ -102,18 +102,18 @@ public class ConfirmUserInfoDialog extends BaseDialog {
             public void call(Object o) {
                 if (o instanceof NewBindDeviceRep) {
                     if (((NewBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                        Log.v("FH" , "绑定成功,开始登录云信SDK");
+                       LogUtils.e("FH" , "绑定成功,开始登录云信SDK");
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(student.getUserId()), new RequestCallbackWrapper() {
                             @Override
                             public void onResult(int code, Object result, Throwable exception) {
                                 if (code != ResponseCode.RES_SUCCESS){
-                                    Log.v("FH" , "云信SDK登录失败 : code : " + code);
+                                   LogUtils.e("FH" , "云信SDK登录失败 : code : " + code);
                                     new HintDialog(mActivity , "云信SDK登录失败 : code : " + code).show();
                                 }
                                 else {
 
                                     FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" ,FileContonst.LOAD_APP_STUDENT);
-                                    Log.v("FH" , "云信SDK登录成功 , 重置本机锁密码并提示");
+                                   LogUtils.e("FH" , "云信SDK登录成功 , 重置本机锁密码并提示");
                                     binding.confirmBtn.setVisibility(View.GONE);
                                     binding.cancleBtn.setVisibility(View.GONE);
                                     binding.localPwdHintTv.setVisibility(View.VISIBLE);
@@ -130,7 +130,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                         });
                     }
                     else {
-                        Log.v("FH" , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg());
+                       LogUtils.e("FH" , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg());
                         new HintDialog(mActivity , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg()).show();
                     }
                 }
@@ -138,7 +138,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         },new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-                Log.v("FH", "绑定失败 : " + throwable.getMessage());
+               LogUtils.e("FH", "绑定失败 : " + throwable.getMessage());
                 throwable.printStackTrace();
                 dismiss();
                 new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过" + throwable.getMessage()).show();
