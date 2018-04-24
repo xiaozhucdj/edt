@@ -481,6 +481,11 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
             LogUtils.i("leke_type=="+mNote.getNoteStyle());
             setNoteStyle(mNote.getNoteStyle());
         }
+
+        if (mRunThread == null) {
+            mRunThread = new NoteBookDelayedRun();
+        }
+        UIUtils.getMainThreadHandler().postDelayed(mRunThread, 500);
     }
 
     private void setNoteStyle(int type) {
@@ -821,6 +826,18 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         EventBus.getDefault().post(baseEvent);
     }
 
+
+    private NoteBookDelayedRun mRunThread;
+
+    private class NoteBookDelayedRun implements Runnable {
+        @Override
+        public void run() {
+            if (mNoteBookView != null) {
+                mNoteBookView.setIntercept(false);
+            }
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -830,6 +847,12 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         if (mNoteBookView!=null){
             mNoteBookView.recycle();
         }
+
+        if (mRunThread == null) {
+            mRunThread = new NoteBookDelayedRun();
+        }
+
+        mRunThread = null;
         Runtime.getRuntime().gc() ;
     }
 
