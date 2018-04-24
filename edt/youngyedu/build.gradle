@@ -12,8 +12,8 @@ android {
             storePassword 'leke54321'
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.0'
     useLibrary 'org.apache.http.legacy'
 
     sourceSets {
@@ -92,7 +92,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.yolanda.nohttp:nohttp:1.0.7'
     compile 'com.android.support:support-v4:25.0.0'
-    compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.squareup.leakcanary:leakcanary-android:1.5'
     compile 'io.reactivex:rxjava:1.2.3'
     compile 'io.reactivex:rxandroid:1.2.1'
@@ -115,8 +114,8 @@ dependencies {
     compile "com.jakewharton:disklrucache:2.0.2"
 
     //bugly
-    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
-    compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+//    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+//    compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
     //文件下载框架
     compile 'com.mani:ThinDownloadManager:1.2.5'
     compile 'com.badoo.mobile:android-weak-handler:1.1'
