@@ -202,6 +202,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                 }
             });
             mNoteDialog.show();
+            mNoteDialog.setNoteName("");
         } else {
             LogUtils.i("noteinfo ....." + info.toString());
             Bundle extras = new Bundle();
