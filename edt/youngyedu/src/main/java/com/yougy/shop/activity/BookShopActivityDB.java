@@ -707,18 +707,18 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private boolean showAllVersion;
 
-    private void refreshSingleClassifyRecycler(List<BookInfo> infoList) {
+    private void refreshSingleClassifyRecycler(List<BookInfo> infos) {
         LogUtils.e(tag, "refreshSingleClassifyRecycler..............");
-        List<BookInfo> infos = new ArrayList<>();
-        if (mClassifyPosition == 2 || showAllVersion) {
-            infos.addAll(infoList);
-        } else {
-            for (BookInfo info : infoList) {
-                if (info.getBookVersion() == 101) {
-                    infos.add(info);
-                }
-            }
-        }
+//        List<BookInfo> infos = new ArrayList<>();
+//        if (mClassifyPosition == 2 || showAllVersion) {
+//            infos.addAll(infoList);
+//        } else {
+//            for (BookInfo info : infoList) {
+//                if (info.getBookVersion() == 101) {
+//                    infos.add(info);
+//                }
+//            }
+//        }
         generateBtn(infos);
         if (mPageInfos.size() > 0) {
             mPageInfos.clear();
@@ -803,9 +803,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             mClassifyId = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(0).getCategoryId();
         } else {
             mStage = grade;
-            for (CategoryInfo info : gradeSparseArray.get(mClassifyIds.get(mClassifyPosition))) {
+            for (int position = 0; position < gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).size(); position++) {
+//            for (CategoryInfo info : gradeSparseArray.get(mClassifyIds.get(mClassifyPosition))) {
+                CategoryInfo info = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(position);
                 if (mStage.equals(info.getCategoryDisplay())) {
                     mClassifyId = info.getCategoryId();
+                    stagePosition = position;
                     LogUtils.e(tag, "show spinner layout classify id : " + mClassifyId + ", stage : " + mStage);
                     break;
                 }
@@ -871,6 +874,9 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     /**
      * 隐藏筛选布局
      */
+    public void hideFiltrateLayout(View view){
+        hideFiltrateLayout();
+    }
     private void hideFiltrateLayout() {
         for (int i = 0; i < binding.subjectWrap.getChildCount(); i++) {
             View child = binding.subjectWrap.getChildAt(i);
@@ -912,7 +918,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             final CategoryInfo info = subjectInfos.get(i);
             View layout = View.inflate(this, R.layout.text_view, null);
             final TextView subjectTv = (TextView) layout.findViewById(R.id.text_tv);
-            subjectTv.setText(info.getCategoryDisplay());
+            String display = info.getCategoryDisplay();
+            if (display.length() > 4) {
+                display = display.substring(0, 4);
+            }
+            subjectTv.setText(display);
             subjectTv.setOnClickListener(v -> {
                 for (int i1 = 0; i1 < binding.subjectWrap.getChildCount(); i1++) {
                     View child = binding.subjectWrap.getChildAt(i1);
