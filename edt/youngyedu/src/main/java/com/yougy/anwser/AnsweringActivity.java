@@ -356,12 +356,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     if (binding.rlCaogaoBox.getChildCount() == 0) {
                         binding.rlCaogaoBox.addView(mCaogaoNoteBoard);
                     }
-
-                    byte[] tmpBytes = cgBytes.get(saveQuestionPage);
-                    if (tmpBytes != null) {
-                        mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    //TODO:yuanye 草稿纸在隐藏的时候，暂存时候没有保存，然后再次作答 打开草稿纸 角标越界
+                    if (cgBytes!=null && cgBytes.size()>0 && saveQuestionPage <= cgBytes.size()) {
+                        byte[] tmpBytes = cgBytes.get(saveQuestionPage);
+                        if (tmpBytes != null) {
+                            mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                        }
                     }
-
                 }
 
 

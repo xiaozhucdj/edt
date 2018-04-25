@@ -160,7 +160,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             }
         });
 
-        mCaogaoNoteBoard = new NoteBookView2(this ,960 ,420);
+        mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
         switch (lastScore) {
             case 0:
                 tvZpResult.setText("上次自评结果 : ");
@@ -505,12 +505,13 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     if (rlCaogaoBox.getChildCount() == 0) {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
                     }
-
-                    byte[] tmpBytes = cgBytes.get(saveQuestionPage);
-                    if (tmpBytes != null) {
-                        mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    //TODO:yuanye 草稿纸在隐藏的时候，暂存时候没有保存，然后再次作答 打开草稿纸 角标越界
+                    if (cgBytes!=null && cgBytes.size()>0 && saveQuestionPage <= cgBytes.size()) {
+                        byte[] tmpBytes = cgBytes.get(saveQuestionPage);
+                        if (tmpBytes != null) {
+                            mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                        }
                     }
-
                 }
 
 
@@ -713,47 +714,46 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.recycle();
         }
-        mNbvAnswerBoard = null ;
+        mNbvAnswerBoard = null;
 
-        if (mCaogaoNoteBoard!=null){
+        if (mCaogaoNoteBoard != null) {
             mCaogaoNoteBoard.recycle();
         }
-        mCaogaoNoteBoard = null ;
+        mCaogaoNoteBoard = null;
 
-        if (questionList!=null){
+        if (questionList != null) {
             questionList.clear();
         }
-        questionList = null ;
+        questionList = null;
 
-        if (chooeseAnswerList!=null){
+        if (chooeseAnswerList != null) {
             chooeseAnswerList.clear();
         }
-        chooeseAnswerList = null ;
+        chooeseAnswerList = null;
 
-        if (checkedAnswerList!=null){
+        if (checkedAnswerList != null) {
             checkedAnswerList.clear();
         }
-        checkedAnswerList = null ;
+        checkedAnswerList = null;
 
-        if (bytesList!=null){
+        if (bytesList != null) {
             bytesList.clear();
         }
-        bytesList = null ;
+        bytesList = null;
 
 
-
-        if (pathList!=null){
+        if (pathList != null) {
             pathList.clear();
         }
-        pathList = null ;
+        pathList = null;
 
-        if (cgBytes!=null){
+        if (cgBytes != null) {
             cgBytes.clear();
         }
-        cgBytes = null ;
+        cgBytes = null;
 
         Glide.get(this).clearMemory();
         contentDisplayer.clearPdfCache();
