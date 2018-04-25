@@ -918,10 +918,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.ll_chooese_homework:
                 if (allHomeWorkPage.getVisibility() == View.GONE) {
                     allHomeWorkPage.setVisibility(View.VISIBLE);
-                    ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+                    ivChooeseTag.setImageResource(R.drawable.img_timu_up);
                 } else {
                     allHomeWorkPage.setVisibility(View.GONE);
-                    ivChooeseTag.setImageResource(R.drawable.img_timu_up);
+                    ivChooeseTag.setImageResource(R.drawable.img_timu_down);
                 }
 
                 break;

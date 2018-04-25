@@ -141,7 +141,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                LogUtils.e("FH", "绑定失败 : " + throwable.getMessage());
                 throwable.printStackTrace();
                 dismiss();
-                new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过" + throwable.getMessage()).show();
+                new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
             }
         }));
         subscription.add(tapEventEmitter.connect());

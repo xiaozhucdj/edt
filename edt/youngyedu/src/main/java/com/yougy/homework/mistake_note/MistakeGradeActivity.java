@@ -183,7 +183,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败" + throwable.getMessage());
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败");
                     }
                 });
 //        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 100);
@@ -199,7 +199,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败" + throwable.getMessage());
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败");
                     }
                 });
 //        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 0);
@@ -223,7 +223,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                             @Override
                             public void call(Throwable throwable) {
                                 throwable.printStackTrace();
-                                ToastUtil.showCustomToast(getApplicationContext() , "删除错题失败" + throwable.getMessage());
+                                ToastUtil.showCustomToast(getApplicationContext() , "删除错题失败");
                             }
                         });
                     }
