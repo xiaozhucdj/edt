@@ -139,15 +139,18 @@ public class AnswerRecordDetailActivity extends BaseActivity{
                                    QuestionReplySummary studentReply = studentReplies.get(studentReplies.size() - 1);
                                    studentReply.parsedContent();
                                    if (studentReply.getReplyScore() == 100){
-                                       binding.buttomText.setText("正确");
+//                                       binding.buttomText.setText("正确");
+                                       binding.buttomText.setText("");
                                        binding.buttomIcon.setImageResource(R.drawable.img_zhengque);
                                    }
                                    else if (studentReply.getReplyScore() == 0){
-                                       binding.buttomText.setText("错误");
+//                                       binding.buttomText.setText("错误");
+                                       binding.buttomText.setText("");
                                        binding.buttomIcon.setImageResource(R.drawable.img_cuowu);
                                    }
                                    else {
-                                       binding.buttomText.setText("50%");
+//                                       binding.buttomText.setText("50%");
+                                       binding.buttomText.setText("");
                                        binding.buttomIcon.setImageResource(R.drawable.img_bandui);
                                    }
                                    binding.contentDisplayer.getmContentAdaper().updateDataList("reply"
