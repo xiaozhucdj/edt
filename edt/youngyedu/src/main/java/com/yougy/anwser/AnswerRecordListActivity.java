@@ -194,7 +194,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
         }
         itemIdStr = itemIdStr + "]";
         if (!itemIdStr.equals("[]")){
-            NetWorkManager.queryHomeworkDetailList(itemIdStr).subscribe(new Action1<List<HomeworkDetail>>() {
+            NetWorkManager.queryExam(itemIdStr , "{\"order\":\"DESC\"}").subscribe(new Action1<List<HomeworkDetail>>() {
                 @Override
                 public void call(List<HomeworkDetail> homeworkDetails) {
                     homeworkDetailList.clear();

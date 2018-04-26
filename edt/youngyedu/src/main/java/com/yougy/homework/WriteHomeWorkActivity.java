@@ -368,7 +368,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         showNetDialog();
 
-        NetWorkManager.queryHomeworkDetail(Integer.parseInt(examId)).subscribe(new Action1<List<HomeworkDetail>>() {
+        NetWorkManager.queryExam(examId , null).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
                 com.yougy.homework.bean.HomeworkDetail.ExamPaper examPaper = homeworkDetails.get(0).getExamPaper();
