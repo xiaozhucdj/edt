@@ -242,8 +242,6 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                                 questionList.clear();
                                 questionList.addAll(parsedQuestionItems);
                                 binding.pageBtnBar.refreshPageBar();
-                                ParsedQuestionItem item = questionList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
-                                refreshItem(item);
                             }
                         }, new Action1<Throwable>() {
                             @Override

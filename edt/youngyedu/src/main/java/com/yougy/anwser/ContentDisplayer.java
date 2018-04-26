@@ -246,8 +246,8 @@ public class ContentDisplayer extends RelativeLayout {
 
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-
                             callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
+                            needRefresh = false;
                             return false;
                         }
                     }).into(picImageView);
@@ -271,6 +271,7 @@ public class ContentDisplayer extends RelativeLayout {
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                             callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
+                            needRefresh = false;
                             return false;
                         }
                     }).into(picImageView);
@@ -333,15 +334,19 @@ public class ContentDisplayer extends RelativeLayout {
                         }
                         setHintText(null);
                         callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
+                        needRefresh = false;
                     }
                     else if (newStatus == LoadController.PDF_STATUS.DOWNLOADING){
                         setHintText("正在下载....");
+                        needRefresh = false;
                     }
                     else if (newStatus == LoadController.PDF_STATUS.LOADING){
                         setHintText("正在加载....");
+                        needRefresh = false;
                     }
                     else if (newStatus == LoadController.PDF_STATUS.EMPTY){
                         setHintText("无加载请求...");
+                        needRefresh = false;
                     }
                 }
             }).into(pdfImageView).toPage(subPageIndex);
