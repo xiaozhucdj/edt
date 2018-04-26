@@ -322,8 +322,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                 break;
             case R.id.tv_add_page:
+                binding.tvAddPage.setEnabled(false);
                 if (questionPageSize - binding.contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
                     ToastUtil.showCustomToast(this, "最多只能加5张纸");
+                    binding.tvAddPage.setEnabled(true);
                     return;
                 }
 
@@ -333,7 +335,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 cgBytes.add(null);
                 questionPageNumAdapter.notifyDataSetChanged();
                 questionPageNumAdapter.onItemClickListener.onItemClick1(questionPageSize - 1);
-
+                binding.tvAddPage.setEnabled(true);
                 break;
             case R.id.tv_caogao_text:
 
@@ -518,8 +520,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         pageDeviationNum = (position - 2);
                     }
                     moveToPosition(linearLayoutManager, pageDeviationNum);
-
-
                 }
             });
 
