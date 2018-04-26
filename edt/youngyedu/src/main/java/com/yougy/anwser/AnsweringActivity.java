@@ -29,7 +29,6 @@ import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.ApiException;
@@ -37,7 +36,6 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -180,11 +178,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                 if (((EndQuestionAttachment) ((IMMessage) o).getAttachment()).examID == examId) {
 
                                     if (mNbvAnswerBoard!=null){
-                                        mNbvAnswerBoard.leaveScribbleMode() ;
+                                        mNbvAnswerBoard.leaveScribbleMode(true) ;
                                     }
 
                                     if (mCaogaoNoteBoard!=null){
-                                        mCaogaoNoteBoard.leaveScribbleMode() ;
+                                        mCaogaoNoteBoard.leaveScribbleMode(true) ;
                                     }
 
 
@@ -296,12 +294,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     public void onClick(View view) {
-        EpdController.leaveScribbleMode(mNbvAnswerBoard);
-        mNbvAnswerBoard.invalidate();
+        if (mNbvAnswerBoard!=null){
+            mNbvAnswerBoard.leaveScribbleMode(true);
+        }
 
-        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-            mCaogaoNoteBoard.invalidate();
+
+        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
         switch (view.getId()) {
@@ -420,12 +419,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //                    ToastUtil.showCustomToast(AnsweringActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
-                    EpdController.leaveScribbleMode(mNbvAnswerBoard);
-                    mNbvAnswerBoard.invalidate();
+                    if (mNbvAnswerBoard!=null){
+                        mNbvAnswerBoard.leaveScribbleMode(true);
+                    }
 
-                    if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-                        EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-                        mCaogaoNoteBoard.invalidate();
+                    if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                        mCaogaoNoteBoard.leaveScribbleMode(true);
                     }
 
 
@@ -617,9 +616,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     public void back(View view) {
-        EpdController.leaveScribbleMode(mNbvAnswerBoard);
-        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+        if (mNbvAnswerBoard!=null){
+            mNbvAnswerBoard.leaveScribbleMode(true);
+        }
+        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            mCaogaoNoteBoard.leaveScribbleMode(true);
         }
         ToastUtil.showCustomToast(this, "请完成作答");
         // TODO: 2017/9/13 这里先保留关闭页面，做测试使用

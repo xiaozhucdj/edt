@@ -272,11 +272,12 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 //                    ToastUtil.showCustomToast(WriteErrorHomeWorkActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
-                    EpdController.leaveScribbleMode(mNbvAnswerBoard);
-                    mNbvAnswerBoard.invalidate();
-                    if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-                        EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-                        mCaogaoNoteBoard.invalidate();
+                    if (mNbvAnswerBoard!=null){
+                        mNbvAnswerBoard.leaveScribbleMode(true);
+                    }
+
+                    if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                        mCaogaoNoteBoard.leaveScribbleMode(true);
                     }
 
                     if (isFirstComeInQuestion) {
@@ -450,12 +451,12 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left, R.id.tv_caogao_text, R.id.tv_dismiss_caogao})
     public void onClick(View view) {
-        EpdController.leaveScribbleMode(mNbvAnswerBoard);
-        mNbvAnswerBoard.invalidate();
+        if (mNbvAnswerBoard!=null){
+            mNbvAnswerBoard.leaveScribbleMode(true);
+        }
 
-        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-            mCaogaoNoteBoard.invalidate();
+        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
         switch (view.getId()) {
