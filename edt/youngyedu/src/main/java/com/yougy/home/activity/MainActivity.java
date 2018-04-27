@@ -30,6 +30,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
@@ -40,6 +41,7 @@ import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -1132,6 +1134,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             //现在升级
+                                            SpUtils.setVersion(""+serverVersion);
+                                            FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" , FileContonst.LOAD_APP_STUDENT+","+SpUtils.getVersion());
                                             dialog.dismiss();
                                             doDownLoad(MainActivity.this, url);
                                         }

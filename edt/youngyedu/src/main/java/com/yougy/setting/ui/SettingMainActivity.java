@@ -1,7 +1,6 @@
 package com.yougy.setting.ui;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.response.NewUnBindDeviceRep;
-import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
@@ -148,7 +146,7 @@ public class SettingMainActivity extends BaseActivity {
             public void call(Object o) {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
-                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET);
+                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET+","+SpUtils.getVersion());
 //                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
 //                        startService(intent);
 //                        SpUtils.clearSP();

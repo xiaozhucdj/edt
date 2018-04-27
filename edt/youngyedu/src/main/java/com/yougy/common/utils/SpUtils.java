@@ -3,7 +3,6 @@ package com.yougy.common.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.yougy.home.bean.PaintDrawStateInfo;
 import com.yougy.init.bean.Student;
@@ -390,5 +389,17 @@ public class SpUtils {
 
     public static String getSex() {
         return sp.getString(USER_GENDER, "");
+    }
+
+    public static void setVersion(String version) {
+         sp.edit().putString("version", version).apply();
+    }
+
+    public static String getVersion() {
+        String v = sp.getString("version", "");
+        if (StringUtils.isEmpty(v)){
+            v= "1";
+        }
+        return v ;
     }
 }

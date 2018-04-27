@@ -102,7 +102,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
             public void call(Object o) {
                 if (o instanceof NewBindDeviceRep) {
                     if (((NewBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" , FileContonst.LOAD_APP_STUDENT);
+                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" , FileContonst.LOAD_APP_STUDENT+","+SpUtils.getVersion());
                         File file = new File(getContext().getDatabasePath(student.getUserId()+".db").getAbsolutePath());
                         if (!file.exists()){
                             getContext().startService(new Intent(getContext(), DownloadService.class));
