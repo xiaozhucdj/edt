@@ -14,6 +14,7 @@ import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -23,6 +24,7 @@ import com.yougy.common.protocol.request.NewGetAppVersionReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.protocol.response.NewLoginRep;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -213,6 +215,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                     }
                 } else {
                   LogUtils.e("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
+                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET);
                     jumpActivity(LoginActivity.class);
                 }
             }

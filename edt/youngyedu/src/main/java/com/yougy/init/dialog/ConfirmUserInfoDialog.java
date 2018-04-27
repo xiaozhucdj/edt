@@ -102,6 +102,12 @@ public class ConfirmUserInfoDialog extends BaseDialog {
             public void call(Object o) {
                 if (o instanceof NewBindDeviceRep) {
                     if (((NewBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS){
+                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" , FileContonst.LOAD_APP_STUDENT);
+                        File file = new File(getContext().getDatabasePath(student.getUserId()+".db").getAbsolutePath());
+                        if (!file.exists()){
+                            getContext().startService(new Intent(getContext(), DownloadService.class));
+                        }
+
                        LogUtils.e("FH" , "绑定成功,开始登录云信SDK");
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(student.getUserId()), new RequestCallbackWrapper() {
                             @Override
@@ -111,8 +117,6 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                                     new HintDialog(mActivity , "云信SDK登录失败 : code : " + code).show();
                                 }
                                 else {
-
-                                    FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" ,FileContonst.LOAD_APP_STUDENT);
                                    LogUtils.e("FH" , "云信SDK登录成功 , 重置本机锁密码并提示");
                                     binding.confirmBtn.setVisibility(View.GONE);
                                     binding.cancleBtn.setVisibility(View.GONE);
@@ -120,11 +124,8 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                                     binding.startUseBtn.setVisibility(View.VISIBLE);
                                     binding.titleTv.setText("恭喜,用户与设备绑定成功");
                                     SpUtils.setLocalLockPwd("123456");
-//                                    SpUtils.saveStudent(student);
-                                    File file = new File(getContext().getDatabasePath(student.getUserId()+".db").getAbsolutePath());
-                                    if (!file.exists()){
-                                        getContext().startService(new Intent(getContext(), DownloadService.class));
-                                    }
+//                                  SpUtils.saveStudent(student);
+
                                 }
                             }
                         });
