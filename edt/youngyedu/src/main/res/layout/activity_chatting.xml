@@ -27,7 +27,7 @@
                 <com.yougy.message.MyEdittext
                     android:id="@+id/message_edittext"
                     android:layout_width="0px"
-                    android:layout_height="40px"
+                    android:layout_height="48px"
                     android:layout_weight="1"
                     android:hint="输入文字"
                     android:textSize="20px"

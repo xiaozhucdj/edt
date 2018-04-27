@@ -2,6 +2,7 @@ package com.yougy.home.activity;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.BatteryManager;
@@ -62,6 +63,7 @@ import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownProgressDialog;
 
 import java.io.File;
@@ -1125,11 +1127,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    doDownLoad(MainActivity.this, url);
+                                    new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
+                                            , "现在升级", "暂缓升级", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //现在升级
+                                            dialog.dismiss();
+                                            doDownLoad(MainActivity.this, url);
+                                        }
+                                    }, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //暂缓升级
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
                                 }
                             });
                         } else {
-                            ToastUtil.showCustomToast(MainActivity.this, "检测版本成功,没有更新的版本");
+                            ToastUtil.showCustomToast(MainActivity.this, "当前版本 : " + VersionUtils.getVersionName() + " ,已经是最新版本了");
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
@@ -1164,7 +1180,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         DownloadManager.downloadId = DownloadManager.getInstance().add(DownloadManager.getDownLoadRequest(mContext, downloadUrl, new DownloadStatusListenerV1() {
             @Override
             public void onDownloadComplete(DownloadRequest downloadRequest) {
-
+                LogUtils.e("FH" , "下载完成,开始安装");
                 // 更新进度条显示
                 downProgressDialog.setDownProgress("100%");
                 downProgressDialog.dismiss();
@@ -1178,6 +1194,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onDownloadFailed(DownloadRequest downloadRequest, int errorCode, String errorMessage) {
                 downProgressDialog.setDownProgress("更新失败，重新更新下载");
+                LogUtils.e("FH" , "更新失败: errorCode=" + errorCode + " errorMsg=" + errorMessage);
                 // TODO: 2017/4/25
                 downProgressDialog.dismiss();
                 doDownLoad(mContext, downloadUrl);
@@ -1186,6 +1203,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onProgress(DownloadRequest downloadRequest, long totalBytes, long downloadedBytes, int progress) {
                 if (lastProgress != progress) {
+                    LogUtils.e("FH" , "下载进度变化------" + progress + "%");
                     lastProgress = progress;
                     String content = downloadedBytes * 100 / totalBytes + "%";
                     downProgressDialog.setDownProgress(content);

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.badoo.mobile.util.WeakHandler;
@@ -34,6 +35,7 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownProgressDialog;
 import com.yougy.view.dialog.HintDialog;
 
@@ -247,10 +249,28 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         LogUtils.i("袁野 localVersion ==" + localVersion);
                         final String url = data.getUrl();
                         if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                            LogUtils.e("FH" , "检测到有更新的版本,当前版本vCode=" + localVersion + " 服务器版本vCode=" + serverVersion + "弹出升级提示框");
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    doDownLoad(SplashActivity.this, url);
+                                    new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
+                                            , "现在升级", "暂缓升级", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //现在升级
+                                            LogUtils.e("FH" , "用户点击现在升级");
+                                            dialog.dismiss();
+                                            doDownLoad(SplashActivity.this, url);
+                                        }
+                                    }, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //暂缓升级
+                                            LogUtils.e("FH" , "用户点击暂缓升级,直接登录");
+                                            dialog.dismiss();
+                                            login();
+                                        }
+                                    }).show();
                                 }
                             });
                         } else {
@@ -314,7 +334,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         DownloadManager.downloadId = DownloadManager.getInstance().add(DownloadManager.getDownLoadRequest(mContext, downloadUrl, new DownloadStatusListenerV1() {
             @Override
             public void onDownloadComplete(DownloadRequest downloadRequest) {
-
+                LogUtils.e("FH" , "下载完成,开始安装");
                 // 更新进度条显示
                 downProgressDialog.setDownProgress("100%");
                 downProgressDialog.dismiss();
@@ -328,6 +348,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             @Override
             public void onDownloadFailed(DownloadRequest downloadRequest, int errorCode, String errorMessage) {
                 downProgressDialog.setDownProgress("更新失败，重新更新下载");
+                LogUtils.e("FH" , "更新失败: errorCode=" + errorCode + " errorMsg=" + errorMessage);
                 // TODO: 2017/4/25
                 downProgressDialog.dismiss();
                 doDownLoad(mContext, downloadUrl);
@@ -336,6 +357,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             @Override
             public void onProgress(DownloadRequest downloadRequest, long totalBytes, long downloadedBytes, int progress) {
                 if (lastProgress != progress) {
+                    LogUtils.e("FH" , "下载进度变化------" + progress + "%");
                     lastProgress = progress;
                     String content = downloadedBytes * 100 / totalBytes + "%";
                     downProgressDialog.setDownProgress(content);
