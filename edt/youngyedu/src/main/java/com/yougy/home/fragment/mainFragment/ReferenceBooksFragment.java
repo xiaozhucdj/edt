@@ -209,13 +209,14 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
+            mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
             req.setUserId(SpUtils.getAccountId());
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
             //设置年级
-            req.setBookFitGradeName("");
+//            req.setBookFitGradeName("");
             req.setBookCategoryMatch(30000);
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
@@ -264,6 +265,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private void freshUI(List<BookInfo> bookInfos) {
         mNewTextBookCallBack = null;
         mIsRefresh = false;
+        mLoadingNull.setVisibility(View.GONE);
         LogUtils.i("freshUI.....freshUI");
         if (bookInfos != null && bookInfos.size() > 0) {
             mServerBooks.clear();
