@@ -355,7 +355,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
             //设置年级
-            req.setBookFitGradeName("");
+//            req.setBookFitGradeName("");
             req.setBookCategoryMatch(10000);
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);

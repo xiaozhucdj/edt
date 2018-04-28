@@ -24,7 +24,6 @@ public class NewBookShelfReq extends NewBaseReq{
     public NewBookShelfReq() {
         m = "bookShelf" ;
         address = "classRoom" ;
-        bookFitCourseTime = DateUtils.getCalendarString() ;
     }
 
     public void setUserId(int userId) {
@@ -37,6 +36,7 @@ public class NewBookShelfReq extends NewBaseReq{
 
     public void setBookFitGradeName(String bookFitGradeName) {
         this.bookFitGradeName = bookFitGradeName;
+        bookFitCourseTime = DateUtils.getCalendarString() ;
     }
 
     public void setBookCategoryMatch(int bookCategoryMatch) {

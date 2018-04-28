@@ -335,7 +335,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
             //设置年级
-            req.setBookFitGradeName("");
+//            req.setBookFitGradeName("");
             req.setBookCategoryMatch(20000);
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
