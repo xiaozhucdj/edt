@@ -348,6 +348,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     private void loadData() {
         mIsRefresh =false ;
         if (YougyApplicationManager.isWifiAvailable()) {
+            mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
             req.setUserId(SpUtils.getAccountId());

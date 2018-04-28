@@ -198,6 +198,7 @@ public class TextBookFragment extends BFragment implements View.OnClickListener 
     private void loadData() {
         LogUtils.i("yuanye////////load");
         if (NetUtils.isNetConnected()) {
+            mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
             req.setUserId(SpUtils.getAccountId());

@@ -341,6 +341,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     }
     private void loadData() {
         if (NetUtils.isNetConnected()){
+            mLoadingNull.setVisibility(View.GONE);
             mAddStr = DataCacheUtils.getString(UIUtils.getContext(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
             mUpdataStr = DataCacheUtils.getString(UIUtils.getContext(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA);
             if (!StringUtils.isEmpty(mAddStr)) {

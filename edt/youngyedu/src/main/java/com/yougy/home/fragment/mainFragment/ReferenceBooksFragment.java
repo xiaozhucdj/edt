@@ -209,6 +209,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
+            mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
             req.setUserId(SpUtils.getAccountId());
@@ -264,6 +265,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private void freshUI(List<BookInfo> bookInfos) {
         mNewTextBookCallBack = null;
         mIsRefresh = false;
+        mLoadingNull.setVisibility(View.GONE);
         LogUtils.i("freshUI.....freshUI");
         if (bookInfos != null && bookInfos.size() > 0) {
             mServerBooks.clear();

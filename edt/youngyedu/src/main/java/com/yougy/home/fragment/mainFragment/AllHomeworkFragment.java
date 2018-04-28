@@ -325,6 +325,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
 
     private void loadData() {
         if (NetUtils.isNetConnected()) {
+            mLoadingNull.setVisibility(View.GONE);
             NetWorkManager.queryHomeworkBookList(SpUtils.getUserId()+"",null)
                     .subscribe(new Action1<List<HomeworkBookSummary>>() {
                         @Override
