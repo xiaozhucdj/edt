@@ -237,7 +237,8 @@
             android:layout_marginLeft="30px"
             android:layout_marginRight="30px"
             android:layout_marginTop="50px"
-            android:background="#dbdbdb" />
+            android:background="#dbdbdb"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -245,6 +246,7 @@
             android:orientation="horizontal"
             android:paddingLeft="30px"
             android:layout_marginTop="19px"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="6px"
@@ -268,7 +270,7 @@
             android:layout_marginLeft="30px"
             android:layout_marginRight="30px"
             android:layout_marginTop="20px"
-            android:visibility="invisible"
+            android:visibility="gone"
             />
     </LinearLayout>
 </layout>
