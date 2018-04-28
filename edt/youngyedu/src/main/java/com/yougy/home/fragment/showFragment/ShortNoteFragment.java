@@ -88,6 +88,7 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
         mEditText = (EditText) mRoot.findViewById(R.id.edit_text);
         mEditText.addTextChangedListener(this);
         mShortNoteBookView = (NoteBookView) mRoot.findViewById(R.id.booknote);
+        mShortNoteBookView.setIntercept(false);
         byte[] bytes = label.getBytes();
         if (label != null && bytes != null) {
             LogUtils.e(TAG, "label bytes' size is : " + bytes.length);
