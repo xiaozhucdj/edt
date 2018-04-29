@@ -861,4 +861,24 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
         startActivity(intent);
     }
+
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_SHOW);
+            if (mNoteBookView!=null){
+                mNoteBookView.leaveScribbleMode();
+                mNoteBookView.setIntercept(true) ;
+            }
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
+        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
+            if (mNoteBookView != null) {
+                mNoteBookView.setIntercept(false);
+            }
+        }
+    }
 }

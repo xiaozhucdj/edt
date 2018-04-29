@@ -44,4 +44,10 @@ public class EventBusConstant {
     public static final String  need_refresh = "need_refresh";
     public static final String  answer_event = "answer_event";
 
+    /**正在显示 问答*/
+    public static final String EVENT_ANSWERING_SHOW = "event_answering_show";
+    /**退出手绘模式要通知 asweractivity*/
+    public static final String EVENT_ANSWERING_RESULT = "event_answering_result";
+
+    public static final String EVENT_ANSWERING_PUASE = "event_answering_puase";
 }
