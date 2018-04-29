@@ -194,6 +194,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评完成");
                         finish();
                     }
                 }, new Action1<Throwable>() {
