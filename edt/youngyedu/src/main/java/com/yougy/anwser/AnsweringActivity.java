@@ -29,6 +29,8 @@ import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.ApiException;
@@ -36,6 +38,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -63,11 +66,14 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+
+import static com.yougy.common.eventbus.EventBusConstant.EVENT_ANSWERING_RESULT;
 
 /**
  * Created by FH on 2017/3/22.
@@ -174,22 +180,21 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             if (((IMMessage) o).getAttachment() instanceof EndQuestionAttachment) {
 
 
-
                                 if (((EndQuestionAttachment) ((IMMessage) o).getAttachment()).examID == examId) {
 
-                                    if (mNbvAnswerBoard!=null){
-                                        mNbvAnswerBoard.leaveScribbleMode(true) ;
+                                    if (mNbvAnswerBoard != null) {
+                                        mNbvAnswerBoard.leaveScribbleMode(true);
                                     }
 
-                                    if (mCaogaoNoteBoard!=null){
-                                        mCaogaoNoteBoard.leaveScribbleMode(true) ;
+                                    if (mCaogaoNoteBoard != null) {
+                                        mCaogaoNoteBoard.leaveScribbleMode(true);
                                     }
 
 
                                     new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
-                                            if (timedTask!=null){
+                                            if (timedTask != null) {
                                                 timedTask.stop();
                                             }
                                             dialog.dismiss();
@@ -294,12 +299,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     public void onClick(View view) {
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
 
 
-        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
@@ -358,7 +363,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         binding.rlCaogaoBox.addView(mCaogaoNoteBoard);
                     }
                     //TODO:yuanye 草稿纸在隐藏的时候，暂存时候没有保存，然后再次作答 打开草稿纸 角标越界
-                    if (cgBytes!=null && cgBytes.size()>0 && saveQuestionPage <= cgBytes.size()) {
+                    if (cgBytes != null && cgBytes.size() > 0 && saveQuestionPage <= cgBytes.size()) {
                         byte[] tmpBytes = cgBytes.get(saveQuestionPage);
                         if (tmpBytes != null) {
                             mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
@@ -421,11 +426,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //                    ToastUtil.showCustomToast(AnsweringActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
-                    if (mNbvAnswerBoard!=null){
+                    if (mNbvAnswerBoard != null) {
                         mNbvAnswerBoard.leaveScribbleMode(true);
                     }
 
-                    if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                    if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                         mCaogaoNoteBoard.leaveScribbleMode(true);
                     }
 
@@ -616,10 +621,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     public void back(View view) {
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
-        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             mCaogaoNoteBoard.leaveScribbleMode(true);
         }
         ToastUtil.showCustomToast(this, "请完成作答");
@@ -751,7 +756,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * @param stSbean
      */
     public void upLoadPic(STSbean stSbean) {
-        if (showNetDialog()){
+        if (showNetDialog()) {
             binding.commitAnswerBtn.setClickable(true);
             return;
         }
@@ -883,7 +888,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * 将上传信息提交给服务器
      */
     private void writeInfoToS() {
-        if (showNetDialog()){
+        if (showNetDialog()) {
             binding.commitAnswerBtn.setClickable(true);
             return;
         }
@@ -895,20 +900,20 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        if (timedTask!=null){
+                        if (timedTask != null) {
                             timedTask.stop();
                         }
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", questionItem);
                         startActivity(intent);
                         finish();
-                        ToastUtil.showCustomToast(getApplicationContext() , "提交成功");
+                        ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        if (throwable instanceof ApiException){
-                            if (((ApiException) throwable).getCode().equals("400")){
+                        if (throwable instanceof ApiException) {
+                            if (((ApiException) throwable).getCode().equals("400")) {
                                 new HintDialog(getApplicationContext(), "问答提交被拒绝,可能是问答已经结束或者之前已经提交过该问答", "退出", new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
@@ -917,8 +922,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     }
                                 }).show();
                             }
-                        }
-                        else {
+                        } else {
                             new ConfirmDialog(AnsweringActivity.this, "答案绑定到考试失败!",
                                     "退出",
                                     new DialogInterface.OnClickListener() {
@@ -1105,5 +1109,45 @@ public class AnsweringActivity extends AnswerBaseActivity {
         Glide.get(this).clearMemory();
         binding.contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_SHOW, "");
+        EventBus.getDefault().post(baseEvent);
+    }
+
+    private boolean mEventResult =false ;
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT )&& !mEventResult) {
+            LogUtils.i("type .." + EVENT_ANSWERING_RESULT);
+            mEventResult = true ;
+            UIUtils.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mCaogaoNoteBoard!=null){
+                        mCaogaoNoteBoard.leaveScribbleMode();
+                        mCaogaoNoteBoard.setIntercept(false);
+                    }
+
+                    if (mNbvAnswerBoard!=null){
+                        mNbvAnswerBoard.leaveScribbleMode();
+                        mNbvAnswerBoard.setIntercept(false);
+                    }
+                    LogUtils.i("type .." + "111111111111111111111");
+                    RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
+                }
+            },3000) ;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_PUASE, "");
+        EventBus.getDefault().post(baseEvent);
     }
 }
