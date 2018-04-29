@@ -187,6 +187,13 @@ public class SettingMainActivity extends BaseActivity {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
         }
         initSysIcon();
+        binding.avatarImv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                LogUtils.setOpenLog(true);
+                return true;
+            }
+        });
     }
 
     @Override

@@ -32,7 +32,6 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -41,6 +40,8 @@ import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
 import com.yougy.anwser.TimedTask;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.ApiException;
@@ -76,6 +77,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -263,11 +265,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 int action = event.getAction();
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        if (mNbvAnswerBoard!=null){
+                        if (mNbvAnswerBoard != null) {
                             mNbvAnswerBoard.leaveScribbleMode(true);
                         }
 
-                        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                             mCaogaoNoteBoard.leaveScribbleMode(true);
                         }
 
@@ -368,7 +370,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         showNetDialog();
 
-        NetWorkManager.queryExam(examId , null).subscribe(new Action1<List<HomeworkDetail>>() {
+        NetWorkManager.queryExam(examId, null).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
                 com.yougy.homework.bean.HomeworkDetail.ExamPaper examPaper = homeworkDetails.get(0).getExamPaper();
@@ -411,11 +413,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     }
                 }, 30);*/
 
-                if (mNbvAnswerBoard!=null){
+                if (mNbvAnswerBoard != null) {
                     mNbvAnswerBoard.leaveScribbleMode(true);
                 }
 
-                if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                     mCaogaoNoteBoard.leaveScribbleMode(true);
                 }
 
@@ -569,11 +571,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }, 30);
 */
 
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
 
-        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
@@ -742,11 +744,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 //离开手绘模式，并刷新界面ui
-                if (mNbvAnswerBoard!=null){
+                if (mNbvAnswerBoard != null) {
                     mNbvAnswerBoard.leaveScribbleMode(true);
                 }
 
-                if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                     mCaogaoNoteBoard.leaveScribbleMode(true);
                 }
                 /*llCaogaoControl.postDelayed(new Runnable() {
@@ -755,7 +757,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         llCaogaoControl.layout(left, top, right, bottom);
                     }
                 }, 30);*/
-
 
 
                 ((AnswerItemHolder) vh).reverseCheckbox();
@@ -785,11 +786,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
 
-        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             mCaogaoNoteBoard.leaveScribbleMode(true);
         }
         super.onBackPressed();
@@ -804,12 +805,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         }, 30);*/
 
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
 
 
-        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
@@ -959,7 +960,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     }
 
                     //TODO:yuanye 草稿纸在隐藏的时候，暂存时候没有保存，然后再次作答 打开草稿纸 角标越界
-                    if (cgBytes!=null && cgBytes.size()>0 && saveQuestionPage <= cgBytes.size()) {
+                    if (cgBytes != null && cgBytes.size() > 0 && saveQuestionPage <= cgBytes.size()) {
                         byte[] tmpBytes = cgBytes.get(saveQuestionPage);
                         if (tmpBytes != null) {
                             mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
@@ -1712,5 +1713,35 @@ public class WriteHomeWorkActivity extends BaseActivity {
         super.onPause();
         if (!mIsFinish)
             tvSaveHomework.callOnClick();
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_SHOW);
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.leaveScribbleMode();
+                mNbvAnswerBoard.setIntercept(true);
+            }
+
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.leaveScribbleMode();
+                mCaogaoNoteBoard.setIntercept(true);
+            }
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.leaveScribbleMode();
+                mNbvAnswerBoard.setIntercept(false);
+            }
+
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.leaveScribbleMode();
+                mCaogaoNoteBoard.setIntercept(false);
+            }
+        }
     }
 }

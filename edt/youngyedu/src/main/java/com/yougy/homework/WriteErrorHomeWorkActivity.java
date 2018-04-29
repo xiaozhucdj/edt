@@ -17,13 +17,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
@@ -46,6 +48,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -272,11 +275,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 //                    ToastUtil.showCustomToast(WriteErrorHomeWorkActivity.this, position + 1 + "页");
 
                     //离开手绘模式，并刷新界面ui
-                    if (mNbvAnswerBoard!=null){
+                    if (mNbvAnswerBoard != null) {
                         mNbvAnswerBoard.leaveScribbleMode(true);
                     }
 
-                    if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                    if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
                         mCaogaoNoteBoard.leaveScribbleMode(true);
                     }
 
@@ -451,11 +454,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left, R.id.tv_caogao_text, R.id.tv_dismiss_caogao})
     public void onClick(View view) {
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
 
-        if (mCaogaoNoteBoard!=null&&mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
@@ -507,7 +510,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
                     }
                     //TODO:yuanye 草稿纸在隐藏的时候，暂存时候没有保存，然后再次作答 打开草稿纸 角标越界
-                    if (cgBytes!=null && cgBytes.size()>0 && saveQuestionPage <= cgBytes.size()) {
+                    if (cgBytes != null && cgBytes.size() > 0 && saveQuestionPage <= cgBytes.size()) {
                         byte[] tmpBytes = cgBytes.get(saveQuestionPage);
                         if (tmpBytes != null) {
                             mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
@@ -759,5 +762,33 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         Glide.get(this).clearMemory();
         contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_SHOW);
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.leaveScribbleMode();
+                mNbvAnswerBoard.setIntercept(true);
+            }
+
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.leaveScribbleMode();
+                mCaogaoNoteBoard.setIntercept(true);
+            }
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.setIntercept(false);
+            }
+
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.setIntercept(false);
+            }
+        }
     }
 }
