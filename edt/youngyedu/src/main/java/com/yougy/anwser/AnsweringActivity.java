@@ -184,10 +184,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                                     if (mNbvAnswerBoard != null) {
                                         mNbvAnswerBoard.leaveScribbleMode(true);
+                                        mNbvAnswerBoard.setIntercept(true);
                                     }
 
                                     if (mCaogaoNoteBoard != null) {
                                         mCaogaoNoteBoard.leaveScribbleMode(true);
+                                        mCaogaoNoteBoard.setIntercept(true);
                                     }
 
 
@@ -1147,6 +1149,15 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (mCaogaoNoteBoard!=null){
+            mCaogaoNoteBoard.leaveScribbleMode();
+            mCaogaoNoteBoard.setIntercept(true);
+        }
+
+        if (mNbvAnswerBoard!=null){
+            mNbvAnswerBoard.leaveScribbleMode();
+            mNbvAnswerBoard.setIntercept(true);
+        }
         BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_PUASE, "");
         EventBus.getDefault().post(baseEvent);
     }
