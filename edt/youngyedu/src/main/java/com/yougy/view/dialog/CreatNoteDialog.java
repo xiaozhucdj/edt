@@ -90,7 +90,7 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP){//进行自己操作
-
+                    popupInputMethodWindow();
                     return true;
                 }
                 return false;
