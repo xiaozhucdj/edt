@@ -1,16 +1,18 @@
 package com.yougy.view.dialog;
 
+import android.app.Service;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.utils.SpUtils;
@@ -84,6 +86,17 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
         mBtnCreat.setOnClickListener(this);
 
         mEditName = (EditText) this.findViewById(R.id.et_note_name);
+        mEditName.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP){//进行自己操作
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
 
         mImgBtnWhite = (ImageButton) this.findViewById(R.id.img_btn_style_white);
         mImgBtnWhite.setOnClickListener(this);
@@ -248,5 +261,17 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
         mRecyclerView.setVisibility(View.GONE);
         mTvSubject.setVisibility(View.GONE);
 
+    }
+
+    private InputMethodManager imm;
+
+    private void popupInputMethodWindow() {
+        UIUtils.getMainThreadHandler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imm = (InputMethodManager) mContex.getSystemService(Service.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }, 0);
     }
 }
