@@ -18,6 +18,7 @@
             android:text="第XXX章 XXXXX"
             android:textColor="@color/black"
             android:layout_marginTop="20px"
+            android:maxWidth="380px"
             />
         <TextView
             android:id="@+id/red_dot"
