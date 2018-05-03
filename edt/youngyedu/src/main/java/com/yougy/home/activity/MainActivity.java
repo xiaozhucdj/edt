@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.tencent.bugly.crashreport.CrashReport;
+//import com.tencent.bugly.crashreport.CrashReport;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
@@ -307,7 +307,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mTvTextBook.callOnClick();
         setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
 
-        CrashReport.setUserId(SpUtils.getUserId()+":"+ Commons.UUID);
+//        CrashReport.setUserId(SpUtils.getUserId()+":"+ Commons.UUID);
     }
 
     @Override

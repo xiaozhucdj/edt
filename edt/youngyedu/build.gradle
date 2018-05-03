@@ -29,7 +29,6 @@ android {
         applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 6
         versionName "1.6"
         multiDexEnabled true
 

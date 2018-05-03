@@ -64,10 +64,10 @@ import static rx.Observable.create;
  */
 public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdapter.OnMoreClickListener {
 
-    @BindString(R.string.all_version)
-    String mAllVersion;
-    @BindString(R.string.school_version)
-    String mSchoolVersion;
+//    @BindString(R.string.all_version)
+//    String mAllVersion;
+//    @BindString(R.string.school_version)
+//    String mSchoolVersion;
     @BindArray(R.array.classifies)
     String[] mExtraClassifies;
     @BindArray(R.array.stages)
@@ -312,7 +312,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     @Override
     protected void initLayout() {
-        mVersion = mSchoolVersion;
+//        mVersion = mSchoolVersion;
         binding.tvAll.setSelected(true);
         binding.allClassifyRecycler.addItemDecoration(new SpaceItemDecoration(UIUtils.px2dip(15)));
         binding.allClassifyRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -324,10 +324,10 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             if (isChecked) {
                 hideFiltrateTv();
                 hideFiltrateLayout();
-                mVersion = mSchoolVersion;
+//                mVersion = mSchoolVersion;
             } else {
                 showFiltrateTv();
-                mVersion = mAllVersion;
+//                mVersion = mAllVersion;
             }
             setCompositeText();
             refreshSingleClassifyRecycler(bookInfos);
@@ -742,10 +742,10 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private void resetComposite() {
         mSubject = "";
-        mVersion = binding.correspondSchool.isChecked() ? mSchoolVersion : mAllVersion;
-        if (binding.classifyButton.getVisibility() == View.VISIBLE) {
+//        mVersion = binding.correspondSchool.isChecked() ? mSchoolVersion : mAllVersion;
+//        if (binding.classifyButton.getVisibility() == View.VISIBLE) {
             mVersion = "";
-        }
+//        }
     }
 
     private void setCompositeText() {
