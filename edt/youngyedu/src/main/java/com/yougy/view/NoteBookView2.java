@@ -239,7 +239,9 @@ public class NoteBookView2 extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-
+            if (mIntercept){
+                return false ;
+            }
         if (event.getDeviceId() != 1) {
             return true;
         }
@@ -368,8 +370,22 @@ public class NoteBookView2 extends View {
         Runtime.getRuntime().gc();
     }
 
-    public void leaveScribbleMode(){
+    public void leaveScribbleMode(boolean isPen) {
+        if (isPen) {
+            setPen();
+            EpdController.leaveScribbleMode(this);
+            invalidate();
+        }
+    }
+
+    public void leaveScribbleMode() {
         EpdController.leaveScribbleMode(this);
         invalidate();
+    }
+
+    private boolean mIntercept =false;
+
+    public void setIntercept(boolean intercept) {
+        mIntercept = intercept;
     }
 }

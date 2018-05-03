@@ -33,6 +33,7 @@ import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.BookRecommandAttachment;
 import com.yougy.message.MyEdittext;
@@ -79,6 +80,18 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_chatting));
         initChattingListview();
         initInputEdittext();
+        binding.messageEdittext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollToBottom(250);
+            }
+        });
+        binding.sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                send();
+            }
+        });
     }
 
     @Override
@@ -199,7 +212,12 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
             @Override
             public void onFocusChanged(boolean focused) {
                 if (focused){
-                    binding.bottomBarLayout.setPadding(0 , 0 , 0, 320);
+                    if ("PL107".equalsIgnoreCase(SystemUtils.getDeviceModel())){
+                        binding.bottomBarLayout.setPadding(0 , 0 , 0, 500);
+                    }
+                    else {
+                        binding.bottomBarLayout.setPadding(0 , 0 , 0, 320);
+                    }
                     scrollToBottom(100);
                 }
                 else {
@@ -207,20 +225,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 }
             }
         });
-
     }
-
-    public void onClick(View view){
-        switch (view.getId()){
-            case R.id.send_btn:
-                send();
-                break;
-            case R.id.message_edittext:
-                scrollToBottom(250);
-                break;
-        }
-    }
-
 
     private void send(){
         binding.bottomBarLayout.setPadding(0 , 0 , 0, 0);

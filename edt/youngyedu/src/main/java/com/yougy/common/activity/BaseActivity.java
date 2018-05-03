@@ -904,10 +904,12 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 
     /***
      * 网络请求 提示的对话框
+     * 如果网络已经连接,则返回false,并且不弹出提示框.
+     * 如果网络没有连接,则返回true,并且弹出提示框
      */
-    public final void showNetDialog() {
+    public final boolean showNetDialog() {
         if (NetUtils.isNetConnected()) {
-            return;
+            return false;
         }
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
@@ -933,5 +935,6 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         mUiPromptDialog.setTag(0);
         mUiPromptDialog.setTitle(R.string.jump_to_net);
         mUiPromptDialog.setDialogStyle(false);
+        return true;
     }
 }

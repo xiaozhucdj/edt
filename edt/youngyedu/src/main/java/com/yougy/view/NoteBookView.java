@@ -657,4 +657,9 @@ public class NoteBookView extends View {
 
         Runtime.getRuntime().gc();
     }
+
+    public void leaveScribbleMode(){
+        EpdController.leaveScribbleMode(this);
+        invalidate();
+    }
 }

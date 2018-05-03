@@ -127,7 +127,14 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
         binding.contentDisplayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HomeworkDetail homeworkDetail = homeworkDetailList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
+                // 用户点击题太快导致按钮还没有初始化 导致binding.pageBtnBar.getCurrentSelectPageIndex() =-1
+                HomeworkDetail homeworkDetail ;
+                try {
+                    homeworkDetail  = homeworkDetailList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
+                }catch (Exception e){
+                    return;
+                }
+
                 Intent newIntent;
                 switch (binding.statusTv.getText().toString()){
                     case "作\n答\n中":
@@ -187,7 +194,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
         }
         itemIdStr = itemIdStr + "]";
         if (!itemIdStr.equals("[]")){
-            NetWorkManager.queryHomeworkDetailList(itemIdStr).subscribe(new Action1<List<HomeworkDetail>>() {
+            NetWorkManager.queryExam(itemIdStr , "{\"order\":\"DESC\"}").subscribe(new Action1<List<HomeworkDetail>>() {
                 @Override
                 public void call(List<HomeworkDetail> homeworkDetails) {
                     homeworkDetailList.clear();

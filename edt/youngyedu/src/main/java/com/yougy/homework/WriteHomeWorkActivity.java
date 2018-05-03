@@ -32,7 +32,6 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -41,6 +40,8 @@ import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
 import com.yougy.anwser.TimedTask;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.ApiException;
@@ -76,6 +77,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -208,7 +210,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         if (TextUtils.isEmpty(examId)) {
             ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
-            mIsFinish = true ;
+            mIsFinish = true;
             finish();
         }
 
@@ -263,12 +265,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 int action = event.getAction();
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        EpdController.leaveScribbleMode(mNbvAnswerBoard);
-                        mNbvAnswerBoard.invalidate();
+                        if (mNbvAnswerBoard != null) {
+                            mNbvAnswerBoard.leaveScribbleMode(true);
+                        }
 
-                        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-                            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-                            mCaogaoNoteBoard.invalidate();
+                        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                            mCaogaoNoteBoard.leaveScribbleMode(true);
                         }
 
                         lastX = (int) event.getRawX();
@@ -368,7 +370,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         showNetDialog();
 
-        NetWorkManager.queryHomeworkDetail(Integer.parseInt(examId)).subscribe(new Action1<List<HomeworkDetail>>() {
+        NetWorkManager.queryExam(examId, null).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
             public void call(List<HomeworkDetail> homeworkDetails) {
                 com.yougy.homework.bean.HomeworkDetail.ExamPaper examPaper = homeworkDetails.get(0).getExamPaper();
@@ -403,8 +405,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             @Override
             public void onItemClick1(int position) {
 
-                EpdController.leaveScribbleMode(mNbvAnswerBoard);
-                mNbvAnswerBoard.invalidate();
+
                 /*llCaogaoControl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -412,9 +413,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     }
                 }, 30);*/
 
-                if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-                    EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-                    mCaogaoNoteBoard.invalidate();
+                if (mNbvAnswerBoard != null) {
+                    mNbvAnswerBoard.leaveScribbleMode(true);
+                }
+
+                if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                    mCaogaoNoteBoard.leaveScribbleMode(true);
                 }
 
                 //存储之前一题的结果
@@ -499,7 +503,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                     }
                     isFirstComeInQuestion = true;
-                    if (btnLocked == false){
+                    if (btnLocked == false) {
                         btnLocked = true;
                         clickPageBtn(0);
                         btnLocked = false;
@@ -555,11 +559,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
         onClick(findViewById(R.id.ll_chooese_homework));
     }
 
-    public void clickPageBtn(int position){
+    public void clickPageBtn(int position) {
 
         //离开手绘模式，并刷新界面ui
-        EpdController.leaveScribbleMode(mNbvAnswerBoard);
-        mNbvAnswerBoard.invalidate();
+
                /* llCaogaoControl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -567,9 +570,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     }
                 }, 30);
 */
-        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-            mCaogaoNoteBoard.invalidate();
+
+        if (mNbvAnswerBoard != null) {
+            mNbvAnswerBoard.leaveScribbleMode(true);
+        }
+
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
         if (isFirstComeInQuestion) {
@@ -737,8 +744,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 //离开手绘模式，并刷新界面ui
-                EpdController.leaveScribbleMode(mNbvAnswerBoard);
-                mNbvAnswerBoard.invalidate();
+                if (mNbvAnswerBoard != null) {
+                    mNbvAnswerBoard.leaveScribbleMode(true);
+                }
+
+                if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+                    mCaogaoNoteBoard.leaveScribbleMode(true);
+                }
                 /*llCaogaoControl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -746,10 +758,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     }
                 }, 30);*/
 
-                if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-                    EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-                    mCaogaoNoteBoard.invalidate();
-                }
 
                 ((AnswerItemHolder) vh).reverseCheckbox();
             }
@@ -774,20 +782,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     }
 
-    private boolean  mIsFinish  ;
+    private boolean mIsFinish;
+
     @Override
     public void onBackPressed() {
-        EpdController.leaveScribbleMode(mNbvAnswerBoard);
-        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+        if (mNbvAnswerBoard != null) {
+            mNbvAnswerBoard.leaveScribbleMode(true);
+        }
+
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            mCaogaoNoteBoard.leaveScribbleMode(true);
         }
         super.onBackPressed();
     }
 
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework, R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework})
     public void onClick(View view) {
-        EpdController.leaveScribbleMode(mNbvAnswerBoard);
-        mNbvAnswerBoard.invalidate();
         /*llCaogaoControl.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -795,15 +805,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         }, 30);*/
 
-        if (mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
-            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
-            mCaogaoNoteBoard.invalidate();
+        if (mNbvAnswerBoard != null) {
+            mNbvAnswerBoard.leaveScribbleMode(true);
+        }
+
+
+        if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
+            mCaogaoNoteBoard.leaveScribbleMode(true);
         }
 
         switch (view.getId()) {
 
             case R.id.btn_left:
-                mIsFinish = true ;
+                mIsFinish = true;
                 finish();
                 break;
 
@@ -850,7 +864,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         fullScreenHintDialog.dismiss();
 
 //                        YougyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
-                        mIsFinish = true ;
+                        mIsFinish = true;
                         onBackPressed();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
@@ -870,7 +884,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     //如果已经是最后一题，直接提交
                     //前提是先保存最后一题结果到本地存储
-                    saveLastHomeWorkData(showHomeWorkPosition , false);
+                    saveLastHomeWorkData(showHomeWorkPosition, false);
 //                    getUpLoadInfo();
                 }
 
@@ -898,7 +912,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
-                if (btnLocked == false){
+                if (btnLocked == false) {
                     btnLocked = true;
                     if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
                         ToastUtil.showCustomToast(this, "最多只能加5张纸");
@@ -917,10 +931,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.ll_chooese_homework:
                 if (allHomeWorkPage.getVisibility() == View.GONE) {
                     allHomeWorkPage.setVisibility(View.VISIBLE);
-                    ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+                    ivChooeseTag.setImageResource(R.drawable.img_timu_up);
                 } else {
                     allHomeWorkPage.setVisibility(View.GONE);
-                    ivChooeseTag.setImageResource(R.drawable.img_timu_up);
+                    ivChooeseTag.setImageResource(R.drawable.img_timu_down);
                 }
 
                 break;
@@ -945,11 +959,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
                     }
 
-                    byte[] tmpBytes = cgBytes.get(saveQuestionPage);
-                    if (tmpBytes != null) {
-                        mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                    //TODO:yuanye 草稿纸在隐藏的时候，暂存时候没有保存，然后再次作答 打开草稿纸 角标越界
+                    if (cgBytes != null && cgBytes.size() > 0 && saveQuestionPage <= cgBytes.size()) {
+                        byte[] tmpBytes = cgBytes.get(saveQuestionPage);
+                        if (tmpBytes != null) {
+                            mCaogaoNoteBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                        }
                     }
-
                 }
 
                 break;
@@ -957,6 +973,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 if (llCaogaoControl.getVisibility() == View.VISIBLE) {
                     tvCaogaoText.setText("草稿纸");
+                    //TDO
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
                 }
@@ -969,13 +986,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * add by FH
      * 刷新上一题下一题按钮的UI,如果已经是第一题或者最后一题了,就置灰按钮
      */
-    public void refreshLastAndNextQuestionBtns(){
+    public void refreshLastAndNextQuestionBtns() {
         if (showHomeWorkPosition > 0) {
             lastQuestionBtn.setVisibility(View.VISIBLE);
             lastQuestionText.setTextColor(Color.BLACK);
             lastQuestionIcon.setImageResource(R.drawable.img_normal_shangyiti);
-        }
-        else {
+        } else {
             lastQuestionBtn.setVisibility(View.GONE);
             lastQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
             lastQuestionIcon.setImageResource(R.drawable.img_press_shangyiti);
@@ -984,15 +1000,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
             nextQuestionBtn.setVisibility(View.VISIBLE);
             nextQuestionText.setTextColor(Color.BLACK);
             nextQuestionIcon.setImageResource(R.drawable.img_normal_xiayiti);
-        }
-        else {
+        } else {
             nextQuestionBtn.setVisibility(View.GONE);
             nextQuestionText.setTextColor(getResources().getColor(R.color.gray_737373));
             nextQuestionIcon.setImageResource(R.drawable.img_press_xiayiti);
         }
     }
 
-    private void saveLastHomeWorkData(int position , boolean clear) {
+    private void saveLastHomeWorkData(int position, boolean clear) {
         if (bytesList.size() == 0) {
             return;
         }
@@ -1024,7 +1039,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
 
 
-
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
             refreshTime();
         }
@@ -1034,7 +1048,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
         }
 
-        if (clear){
+        if (clear) {
             //本题所有数据保存完毕
             saveQuestionPage = 0;
 
@@ -1047,7 +1061,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
 
             bytesList.clear();
-            cgBytes.clear();
+//            cgBytes.clear();
             pathList.clear();
             checkedAnswerList.clear();
         }
@@ -1056,11 +1070,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
             tvSubmitHomeWork.setText("提交答案");
         }
     }
+
     /**
      * 保存之前操作题目结果数据
      */
     private void saveLastHomeWorkData(int position) {
-        saveLastHomeWorkData(position , true);
+        saveLastHomeWorkData(position, true);
     }
 
 
@@ -1697,6 +1712,36 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         if (!mIsFinish)
-            tvSaveHomework.callOnClick() ;
+            tvSaveHomework.callOnClick();
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_SHOW);
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.leaveScribbleMode();
+                mNbvAnswerBoard.setIntercept(true);
+            }
+
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.leaveScribbleMode();
+                mCaogaoNoteBoard.setIntercept(true);
+            }
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.leaveScribbleMode();
+                mNbvAnswerBoard.setIntercept(false);
+            }
+
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.leaveScribbleMode();
+                mCaogaoNoteBoard.setIntercept(false);
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
@@ -23,6 +24,7 @@ import com.yougy.common.protocol.request.NewGetAppVersionReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.protocol.response.NewLoginRep;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -34,6 +36,7 @@ import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownProgressDialog;
 import com.yougy.view.dialog.HintDialog;
 
@@ -144,18 +147,18 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     }
 
     private void onCheckLogIn() {
-      LogUtils.e("FH", "开始检测版本更新...");
+        LogUtils.e("FH", "开始检测版本更新...");
         if (NetUtils.isNetConnected()) {
-          LogUtils.e("FH", "有网络,更新UUID");
-            Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":" , "") ;
+            LogUtils.e("FH", "有网络,更新UUID");
+            Commons.UUID = NetworkUtil.getMacAddress(this).replaceAll(":", "");
             SpUtils.saveUUID(Commons.UUID);
             getServerVersion();
         } else {
             if (-1 == SpUtils.getAccountId()) {
-              LogUtils.e("FH", "没有网络,没有之前的登录信息,跳转到wifi设置");
+                LogUtils.e("FH", "没有网络,没有之前的登录信息,跳转到wifi设置");
                 jumpWifiActivity();
             } else {
-              LogUtils.e("FH", "没有网络,有之前的登录信息");
+                LogUtils.e("FH", "没有网络,有之前的登录信息");
                 checkLocalLockAndJump();
             }
         }
@@ -164,7 +167,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
     private void checkLocalLockAndJump() {
         if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
-          LogUtils.e("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
+            LogUtils.e("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
             new HintDialog(SplashActivity.this
                     , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
                     , "确定"
@@ -177,7 +180,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                 }
             }).show();
         } else {
-          LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
+            LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
             jumpActivity(LocalLockActivity.class);
         }
     }
@@ -185,7 +188,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     private void login() {
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
-        NewProtocolManager.login(loginReq, new LoginCallBack(this,loginReq) {
+        NewProtocolManager.login(loginReq, new LoginCallBack(this, loginReq) {
             @Override
             public void onBefore(Request request, int id) {
             }
@@ -206,25 +209,26 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                             }
                         }).show();
                     } else {
-                      LogUtils.e("FH", "自动登录成功");
+                        LogUtils.e("FH", "自动登录成功");
                         SpUtils.saveStudent(response.getData().get(0));
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
                 } else {
-                  LogUtils.e("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
+                    LogUtils.e("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
+                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
                     jumpActivity(LoginActivity.class);
                 }
             }
 
             @Override
             public void onError(Call call, Exception e, int id) {
-              LogUtils.e("FH", "自动登录失败原因:其他错误:" + e.getMessage());
+                LogUtils.e("FH", "自动登录失败原因:其他错误:" + e.getMessage());
                 if (-1 == SpUtils.getAccountId()) {
-                  LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
+                    LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
                     jumpActivity(LoginActivity.class);
                 } else {
-                  LogUtils.e("FH", "自动登录失败,有之前的登录信息");
+                    LogUtils.e("FH", "自动登录失败,有之前的登录信息");
                     checkLocalLockAndJump();
                 }
             }
@@ -236,7 +240,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(SplashActivity.this) {
             @Override
             public void onResponse(NewGetAppVersionRep response, int id) {
-                LogUtils.e("FH" , "getVersion : " + response.toString());
+                LogUtils.e("FH", "getVersion : " + response.toString());
                 super.onResponse(response, id);
                 if (response != null && response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && response.getData() != null) {
                     try {
@@ -246,24 +250,49 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
                         LogUtils.i("袁野 localVersion ==" + localVersion);
                         final String url = data.getUrl();
+
                         if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                            LogUtils.e("FH", "检测到有更新的版本,当前版本vCode=" + localVersion + " 服务器版本vCode=" + serverVersion + "弹出升级提示框");
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    doDownLoad(SplashActivity.this, url);
+                                    new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
+                                            , "现在升级", "暂缓升级", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //现在升级
+                                            LogUtils.e("FH", "用户点击现在升级");
+                                            SpUtils.setVersion("" + serverVersion);
+                                            if (SpUtils.getStudent().getUserId() == -1) {
+                                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                                            } else {
+                                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                                            }
+                                            dialog.dismiss();
+                                            doDownLoad(SplashActivity.this, url);
+                                        }
+                                    }, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //暂缓升级
+                                            LogUtils.e("FH", "用户点击暂缓升级,直接登录");
+                                            dialog.dismiss();
+                                            login();
+                                        }
+                                    }).show();
                                 }
                             });
                         } else {
-                          LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
+                            LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
                             login();
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
-                      LogUtils.e("FH", "检测版本失败:" + e.getMessage());
+                        LogUtils.e("FH", "检测版本失败:" + e.getMessage());
                         login();
                     }
                 } else {
-                  LogUtils.e("FH", "检测版本失败.");
+                    LogUtils.e("FH", "检测版本失败.");
                     login();
                 }
             }
@@ -314,7 +343,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         DownloadManager.downloadId = DownloadManager.getInstance().add(DownloadManager.getDownLoadRequest(mContext, downloadUrl, new DownloadStatusListenerV1() {
             @Override
             public void onDownloadComplete(DownloadRequest downloadRequest) {
-
+                LogUtils.e("FH", "下载完成,开始安装");
                 // 更新进度条显示
                 downProgressDialog.setDownProgress("100%");
                 downProgressDialog.dismiss();
@@ -328,6 +357,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             @Override
             public void onDownloadFailed(DownloadRequest downloadRequest, int errorCode, String errorMessage) {
                 downProgressDialog.setDownProgress("更新失败，重新更新下载");
+                LogUtils.e("FH", "更新失败: errorCode=" + errorCode + " errorMsg=" + errorMessage);
                 // TODO: 2017/4/25
                 downProgressDialog.dismiss();
                 doDownLoad(mContext, downloadUrl);
@@ -336,6 +366,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             @Override
             public void onProgress(DownloadRequest downloadRequest, long totalBytes, long downloadedBytes, int progress) {
                 if (lastProgress != progress) {
+                    LogUtils.e("FH", "下载进度变化------" + progress + "%");
                     lastProgress = progress;
                     String content = downloadedBytes * 100 / totalBytes + "%";
                     downProgressDialog.setDownProgress(content);

@@ -27,11 +27,10 @@
                 <com.yougy.message.MyEdittext
                     android:id="@+id/message_edittext"
                     android:layout_width="0px"
-                    android:layout_height="40px"
+                    android:layout_height="48px"
                     android:layout_weight="1"
                     android:hint="输入文字"
                     android:textSize="20px"
-                    android:onClick="onClick"
                     android:background="@drawable/img_chatting_input_bg"
                     android:layout_marginLeft="20px"
                     android:paddingLeft="20px"
@@ -48,7 +47,6 @@
                     android:minWidth="0dp"
                     android:text="发送"
                     android:textSize="20px"
-                    android:onClick="onClick"
                     android:background="@android:color/transparent"/>
             </LinearLayout>
         </LinearLayout>

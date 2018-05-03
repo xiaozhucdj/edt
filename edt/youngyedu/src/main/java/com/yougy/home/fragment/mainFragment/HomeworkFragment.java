@@ -99,6 +99,10 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
      */
     private void itemClick(int position) {
         HomeworkBookSummary info = mHomewroks.get(position);
+        if (info.getCourseBookId() == 0 || info.getCourseBookId() == -1){
+            ToastUtil.showCustomToast(getActivity() , "该学科还没有教材");
+            return;
+        }
         Bundle extras = new Bundle();
         //图书ID
         extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
@@ -114,6 +118,7 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
         //课本进入
         extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_HOMEWROK);
         loadIntentWithExtras(ControlFragmentActivity.class, extras);
+
     }
 
     @Override

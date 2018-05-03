@@ -183,7 +183,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败" + throwable.getMessage());
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败");
                     }
                 });
 //        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 100);
@@ -194,40 +194,49 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评完成");
                         finish();
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败" + throwable.getMessage());
+                        ToastUtil.showCustomToast(getApplicationContext() , "自评失败");
                     }
                 });
 //        YougyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 0);
     }
     //我已学会
     public void onHasLearnedBtnCLick(View view){
-        new FullScreenHintDialog(this , "hasLearned")
-                .setIconResId(R.drawable.icon_caution_big)
-                .setContentText("是否从我的错题本中移除该题?")
-                .setBtn1("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        NetWorkManager.deleteMistake(homeworkId , questionItem.itemId).subscribe(new Action1<Object>() {
-                            @Override
-                            public void call(Object o) {
-                                ToastUtil.showCustomToast(getApplicationContext() , "已学会");
-                                finish();
+        if (!showNetDialog()){
+            new FullScreenHintDialog(this , "hasLearned")
+                    .setIconResId(R.drawable.icon_caution_big)
+                    .setContentText("是否从我的错题本中移除该题?")
+                    .setBtn1("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            NetWorkManager.deleteMistake(homeworkId , questionItem.itemId).subscribe(new Action1<Object>() {
+                                @Override
+                                public void call(Object o) {
+                                    ToastUtil.showCustomToast(getApplicationContext() , "已学会");
+                                    finish();
 //                                YougyApplicationManager.getRxBus(getApplicationContext()).send("removeMistakeItem:" + questionItem.itemId);
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                throwable.printStackTrace();
-                                ToastUtil.showCustomToast(getApplicationContext() , "删除错题失败" + throwable.getMessage());
-                            }
-                        });
-                    }
-                } , true).show();
+                                }
+                            }, new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+                                    throwable.printStackTrace();
+                                    ToastUtil.showCustomToast(getApplicationContext() , "删除错题失败");
+                                }
+                            });
+                        }
+                    } , true)
+                    .setBtn2("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    } , false).show();
+        }
     }
 
     @Override

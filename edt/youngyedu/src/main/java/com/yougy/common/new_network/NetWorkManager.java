@@ -220,17 +220,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.parseReplyDetail());
     }
 
-    public static Observable<List<HomeworkDetail>> queryHomeworkDetail(Integer examId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询作业详情:queryHomeworkDetail");
-        return getInstance().getServerApi().queryHomeworkDetail(examId)
-                .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog))
-                .compose(RxResultHelper.parseHomeworkQuestion());
-    }
-
-    public static Observable<List<HomeworkDetail>> queryHomeworkDetailList(String examIds) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询多个作业详情:queryHomeworkDetailList");
-        return getInstance().getServerApi().queryHomeworkDetailList(examIds)
+    public static Observable<List<HomeworkDetail>> queryExam(String examId , String examStartTime) {
+         LogUtils.e("FH", "!!!!!调用ServerApi查询考试:queryExam");
+        return getInstance().getServerApi().queryExam(examId , examStartTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());

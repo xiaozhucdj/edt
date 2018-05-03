@@ -27,6 +27,8 @@ import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContentEntry;
 import com.onyx.reader.ReaderContract;
 import com.onyx.reader.ReaderPresenter;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -55,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -219,7 +222,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     @Override
     public void updatePage(int page, Bitmap bitmap) {
-        if (mloadingDialog!=null && mloadingDialog.isShowing()){
+        if (mloadingDialog != null && mloadingDialog.isShowing()) {
             mloadingDialog.dismiss();
         }
 
@@ -229,19 +232,20 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         EpdController.invalidate(mRoot, UpdateMode.GC);
         mOnyxImgView.setImageBitmap(bitmap);
         restViewState();
-        if (mRunThread == null){
-            mRunThread = new NoteBookDelayedRun() ;
+        if (mRunThread == null) {
+            mRunThread = new NoteBookDelayedRun();
         }
 
-        UIUtils.getMainThreadHandler().postDelayed(mRunThread,500) ;
+        UIUtils.getMainThreadHandler().postDelayed(mRunThread, 500);
     }
 
-    private  NoteBookDelayedRun mRunThread ;
-    private  class NoteBookDelayedRun  implements Runnable{
+    private NoteBookDelayedRun mRunThread;
+
+    private class NoteBookDelayedRun implements Runnable {
 
         @Override
         public void run() {
-            if (mNoteBookView!=null){
+            if (mNoteBookView != null) {
                 mNoteBookView.setIntercept(false);
             }
         }
@@ -656,7 +660,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      * 点击目录
      */
     public void showDirectory() {
-        if (mRlDirectory.getVisibility() ==View.VISIBLE){
+        if (mRlDirectory.getVisibility() == View.VISIBLE) {
             return;
         }
 
@@ -700,15 +704,15 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             mSubDb.unsubscribe();
         }
         mSubDb = null;
-        if (mNoteBookView!=null){
+        if (mNoteBookView != null) {
             mNoteBookView.recycle();
         }
         getReaderPresenter().close();
 
-        if (mRunThread!=null){
-            UIUtils.getMainThreadHandler().removeCallbacks(mRunThread) ;
+        if (mRunThread != null) {
+            UIUtils.getMainThreadHandler().removeCallbacks(mRunThread);
         }
-        mRunThread = null ;
+        mRunThread = null;
         Runtime.getRuntime().gc();
     }
 
@@ -858,5 +862,24 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private void initSeekbarAndTextNumber() {
         final int index = mCurrentMarksPage;
         mSeekbarPage.setProgress(index * mPageSliderRes);
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_SHOW);
+            if (mNoteBookView != null) {
+                mNoteBookView.leaveScribbleMode();
+                mNoteBookView.setIntercept(true) ;
+            }
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
+            if (mNoteBookView != null) {
+                mNoteBookView.setIntercept(false);
+            }
+        }
     }
 }

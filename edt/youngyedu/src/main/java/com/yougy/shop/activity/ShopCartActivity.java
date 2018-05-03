@@ -237,7 +237,7 @@ public class ShopCartActivity extends ShopBaseActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        new HintDialog(getThisActivity(), "查询已支付待支付订单失败 : " + throwable.getMessage()).show();
+                        new HintDialog(getThisActivity(), "查询已支付待支付订单失败" ).show();
                         LogUtils.e("FH", "查询已支付待支付订单失败 : " + throwable.getMessage());
                         throwable.printStackTrace();
                     }

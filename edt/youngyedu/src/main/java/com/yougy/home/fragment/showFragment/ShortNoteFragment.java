@@ -19,7 +19,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;
@@ -29,6 +30,8 @@ import com.yougy.view.NoteBookView;
 import com.yougy.view.dialog.CancelAndConfirmDialog;
 
 import java.util.concurrent.Executors;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by jiangliang on 2016/7/11.
@@ -88,6 +91,7 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
         mEditText = (EditText) mRoot.findViewById(R.id.edit_text);
         mEditText.addTextChangedListener(this);
         mShortNoteBookView = (NoteBookView) mRoot.findViewById(R.id.booknote);
+        mShortNoteBookView.setIntercept(false);
         byte[] bytes = label.getBytes();
         if (label != null && bytes != null) {
             LogUtils.e(TAG, "label bytes' size is : " + bytes.length);
@@ -112,7 +116,7 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        EpdController.leaveScribbleMode(mShortNoteBookView);
+        mShortNoteBookView.leaveScribbleMode();
         switch (v.getId()) {
             case R.id.cancel_label:
                 showDialog();
@@ -347,5 +351,25 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
 
     public void setDeleteLabelListener(DeleteLabelListener deleteLabelListener) {
         this.deleteLabelListener = deleteLabelListener;
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_SHOW);
+            if (mShortNoteBookView!=null){
+                mShortNoteBookView.leaveScribbleMode();
+                mShortNoteBookView.setIntercept(true) ;
+            }
+
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
+        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
+            if (mShortNoteBookView != null) {
+                mShortNoteBookView.setIntercept(false);
+            }
+        }
     }
 }

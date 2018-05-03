@@ -141,7 +141,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
 
     @Override
     protected void loadData() {
-
+        jump();
     }
 
     @Override
@@ -336,9 +336,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void jump(){
         LogUtils.i("yuanye ..mJump==" + mJump);
         switch (mJump) {
             case FileContonst.JUMP_TEXT_BOOK:
@@ -371,11 +369,18 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
         LogUtils.i("yuanye ..onNewIntent");
         init();
+        jump();
     }
 
     @Override

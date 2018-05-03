@@ -287,6 +287,10 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
 
     private void itemClick(int position) {
         HomeworkBookSummary info = mBooks.get(position);
+        if (info.getCourseBookId() == 0 || info.getCourseBookId() == -1){
+            ToastUtil.showCustomToast(getActivity() , "该学科还没有教材");
+            return;
+        }
         Bundle extras = new Bundle();
         //图书ID
         extras.putInt(FileContonst.BOOK_ID, info.getCourseBookId());
@@ -325,6 +329,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
 
     private void loadData() {
         if (NetUtils.isNetConnected()) {
+            mLoadingNull.setVisibility(View.GONE);
             NetWorkManager.queryHomeworkBookList(SpUtils.getUserId()+"",null)
                     .subscribe(new Action1<List<HomeworkBookSummary>>() {
                         @Override

@@ -105,6 +105,7 @@
             android:layout_marginTop="290px"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/shape_rectangle_black_border"
+            android:visibility="gone"
             />
     </LinearLayout>
 </layout>
