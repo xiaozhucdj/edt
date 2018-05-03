@@ -1028,7 +1028,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         //是否是选择题。都需要截屏保存图片
         pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + position + "_" + saveQuestionPage));
-        mNbvAnswerBoard.clearAll();
+        if (clear) {
+            mNbvAnswerBoard.clearAll();
+        }
 
 
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）
