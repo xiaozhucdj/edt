@@ -59,7 +59,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
             bookSummary = "暂无简介";
         }
         if (TextUtils.isEmpty(bookInfo.getBookAuthor())){
-            bookInfo.setBookAuthor("作者：无名氏。。。");
+            bookInfo.setBookAuthor("作者：");
         }else{
             bookInfo.setBookAuthor("作者："+bookInfo.getBookAuthor());
         }
