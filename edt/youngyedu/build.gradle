@@ -29,6 +29,7 @@ android {
         applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
+        versionCode 6
         versionName "1.6"
         multiDexEnabled true
 
@@ -81,6 +82,11 @@ android {
     }
 }
 
+ext {
+    okhttp_need_version = '3.4.1'
+    rxlifecycle_need_version = '1.0'
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile(name: 'mretrofit2', ext: 'aar')
@@ -93,6 +99,8 @@ dependencies {
     compile 'com.android.support:support-v4:25.0.0'
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    compile "com.trello:rxlifecycle:${rxlifecycle_need_version}"
+    compile "com.trello:rxlifecycle-components:${rxlifecycle_need_version}"
     compile 'io.reactivex:rxjava:1.2.3'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
