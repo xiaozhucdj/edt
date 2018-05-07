@@ -849,7 +849,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
                 } else {
                     //如果已经是最后一题，那么不在跳转。直接打开暂存成功弹窗
-                    saveLastHomeWorkData(showHomeWorkPosition);
+                    saveLastHomeWorkData(showHomeWorkPosition, false);
                 }
                 // 这里需要跳转到暂存成功的弹窗界面
                 FullScreenHintDialog fullScreenHintDialog = new FullScreenHintDialog(this, "");
@@ -1028,7 +1028,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         //是否是选择题。都需要截屏保存图片
         pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + position + "_" + saveQuestionPage));
-        mNbvAnswerBoard.clearAll();
+        if (clear) {
+            mNbvAnswerBoard.clearAll();
+        }
 
 
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）

@@ -14,7 +14,7 @@ import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.utils.NetworkUtil;
-//import com.tencent.bugly.crashreport.CrashReport;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.anwser.AnsweringActivity;
@@ -152,10 +152,10 @@ public class YougyApplicationManager extends LitePalApplication {
             // 获取当前进程名
             String processName = getProcessName(android.os.Process.myPid());
             // 设置是否为上报进程
-//            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
-//            strategy.setUploadProcess(processName == null || processName.equals(packageName));
+            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
+            strategy.setUploadProcess(processName == null || processName.equals(packageName));
             // 初始化Bugly
-//            CrashReport.initCrashReport(context, "9629dd7708", false, strategy);
+            CrashReport.initCrashReport(context, "9629dd7708", false, strategy);
 
 
 
