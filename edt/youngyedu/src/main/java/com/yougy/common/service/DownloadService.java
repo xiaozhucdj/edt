@@ -9,6 +9,7 @@ import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.protocol.request.AliyunDataDownloadReq;
 import com.yougy.common.utils.AliyunUtil;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.ResultUtils;
 
 import okhttp3.Response;
@@ -27,23 +28,25 @@ public class DownloadService extends IntentService {
         super(name);
     }
 
-    public DownloadService(){
+    public DownloadService() {
         super("DownloadService");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Response response = NewProtocolManager.queryAliyunData(new AliyunDataDownloadReq());
-        try {
-            if (response.isSuccessful()) {
-                String resultJson = response.body().string();
-                Result<AliyunData> result = ResultUtils.fromJsonObject(resultJson, AliyunData.class);
-                AliyunData data = result.getData();
-                AliyunUtil aliyunUtil = new AliyunUtil(data);
-                aliyunUtil.download();
+        if (NetUtils.isNetConnected()) {
+            Response response = NewProtocolManager.queryAliyunData(new AliyunDataDownloadReq());
+            try {
+                if (response.isSuccessful()) {
+                    String resultJson = response.body().string();
+                    Result<AliyunData> result = ResultUtils.fromJsonObject(resultJson, AliyunData.class);
+                    AliyunData data = result.getData();
+                    AliyunUtil aliyunUtil = new AliyunUtil(data);
+                    aliyunUtil.download();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
     }
 }
