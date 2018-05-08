@@ -768,7 +768,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
-            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_SHOW);
+            LogUtils.i("type .." + event.getType());
             if (mNbvAnswerBoard != null) {
                 mNbvAnswerBoard.leaveScribbleMode();
                 mNbvAnswerBoard.setIntercept(true);
@@ -780,8 +780,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             }
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
             EventBus.getDefault().post(baseEvent);
-        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
-            LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
+        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) ||(event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE) )){
+            LogUtils.i("type .." + event.getType());
             if (mNbvAnswerBoard != null) {
                 mNbvAnswerBoard.setIntercept(false);
             }
@@ -789,6 +789,19 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             if (mCaogaoNoteBoard != null) {
                 mCaogaoNoteBoard.setIntercept(false);
             }
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
+            LogUtils.i("type .." + event.getType());
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.leaveScribbleMode();
+                mNbvAnswerBoard.setIntercept(true);
+            }
+
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.leaveScribbleMode();
+                mCaogaoNoteBoard.setIntercept(true);
+            }
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
         }
     }
 }

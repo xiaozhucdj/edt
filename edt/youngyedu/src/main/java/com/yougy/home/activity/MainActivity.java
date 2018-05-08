@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-//import com.tencent.bugly.crashreport.CrashReport;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
@@ -29,7 +28,6 @@ import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
-import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
@@ -59,6 +57,7 @@ import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
 import com.yougy.message.YXClient;
 import com.yougy.message.ui.RecentContactListActivity;
+import com.yougy.order.LockerActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
@@ -74,6 +73,9 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.Call;
+
+//import com.tencent.bugly.crashreport.CrashReport;
+import static android.R.id.message;
 
 
 /**
@@ -993,6 +995,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }.execute((Object[]) null);
             }
         });
+
+        //TODO:测试 锁屏
+        if (SpUtils.getOrder().equals("order1")){
+            Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
+            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(newIntent);
+        }
     }
 
     private void setSysWifi() {

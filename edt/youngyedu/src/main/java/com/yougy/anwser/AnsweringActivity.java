@@ -74,6 +74,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static com.yougy.common.eventbus.EventBusConstant.EVENT_ANSWERING_RESULT;
+import static com.yougy.common.eventbus.EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE;
 
 /**
  * Created by FH on 2017/3/22.
@@ -1125,7 +1126,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT )&& !mEventResult) {
-            LogUtils.i("type .." + EVENT_ANSWERING_RESULT);
+            LogUtils.i("type .." + event.getType());
             mEventResult = true ;
             UIUtils.postDelayed(new Runnable() {
                 @Override
@@ -1143,6 +1144,14 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
                 }
             },3000) ;
+        } if (event.getType().equalsIgnoreCase(EVENT_LOCKER_ACTIVITY_PUSE )) {
+            if (mCaogaoNoteBoard!=null){
+                mCaogaoNoteBoard.setIntercept(false);
+            }
+
+            if (mNbvAnswerBoard!=null){
+                mNbvAnswerBoard.setIntercept(false);
+            }
         }
     }
 

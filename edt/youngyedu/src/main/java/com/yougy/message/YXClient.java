@@ -451,6 +451,9 @@ public class YXClient {
     //自定义消息解析器
     private CustomAttachParser customAttachParser = new CustomAttachParser();
 
+    public ListenerManager with(final Application application){
+        return new ListenerManager();
+    }
     /**
      * 获得一个与给定activity绑定的{@link YXClient.ListenerManager}
      * 用于添加和移除listener,绑定activity后,add的listener会自动在activity的onDestroy生命周期中注销,防止内存泄漏.

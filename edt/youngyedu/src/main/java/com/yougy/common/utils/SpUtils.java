@@ -402,4 +402,14 @@ public class SpUtils {
         }
         return v ;
     }
+
+
+    public static void setOrder(String order) {
+        sp.edit().putString("order", order).apply();
+    }
+
+    public static String getOrder() {
+        String v = sp.getString("order", "order0");
+        return v ;
+    }
 }

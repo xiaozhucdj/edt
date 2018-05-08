@@ -365,11 +365,19 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
 
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
             EventBus.getDefault().post(baseEvent);
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE)) {
+        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) ||(event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE) )){
             LogUtils.i("type .." + EventBusConstant.EVENT_ANSWERING_PUASE);
             if (mShortNoteBookView != null) {
                 mShortNoteBookView.setIntercept(false);
             }
+        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
+            LogUtils.i("type .." + EventBusConstant.EVENT_START_ACTIIVTY_ORDER);
+            if (mShortNoteBookView!=null){
+                mShortNoteBookView.leaveScribbleMode();
+                mShortNoteBookView.setIntercept(true) ;
+            }
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
+            EventBus.getDefault().post(baseEvent);
         }
     }
 }

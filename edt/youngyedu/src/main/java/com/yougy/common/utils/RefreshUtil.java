@@ -16,7 +16,12 @@ public class RefreshUtil {
     /**全局刷新*/
     public static void invalidate(View view) {
         if (flag) {
-            EpdController.invalidate(view, UpdateMode.GC);
+            try {
+                EpdController.invalidate(view, UpdateMode.GC);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
     }
 }

@@ -19,6 +19,8 @@ import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
@@ -29,6 +31,7 @@ import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.AskQuestionAttachment;
 import com.yougy.message.EndQuestionAttachment;
 import com.yougy.message.YXClient;
+import com.yougy.order.LockerActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -43,6 +46,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.OkHttpClient;
 
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
@@ -204,9 +208,36 @@ public class YougyApplicationManager extends LitePalApplication {
                     }
                 }
             });
+
+            YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
+                @Override
+                public void onNewMessage(IMMessage message) {
+                    LogUtils.e("onNewMessage : " + message.getContent());
+
+                    //TODO:测试 锁屏
+                    if (message.getContent().equals("order0")){
+                        //解锁
+                        SpUtils.setOrder("order0");
+                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
+                        EventBus.getDefault().post(baseEvent);
+
+                    }else if (message.getContent().equals("order1")){
+                        //上锁
+                        SpUtils.setOrder("order1");
+                        Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
+                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(newIntent);
+                    }else if (message.getContent().equals("order3")){
+                        //解锁学科
+
+                    }else if (message.getContent().equals("order4")){
+                        //上锁学科
+                    }
+                }
+            });
         }
         checkAnr();
-        LogUtils.setOpenLog(!Commons.isRelase);
+//        LogUtils.setOpenLog(!Commons.isRelase);
     }
 
     private void checkAnr() {

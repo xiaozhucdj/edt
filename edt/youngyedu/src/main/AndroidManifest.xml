@@ -243,5 +243,10 @@
             android:name="design_height"
             android:value="1232" />
 
+        <activity
+            android:name="com.yougy.order.LockerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
     </application>
 </manifest>
