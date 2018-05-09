@@ -174,7 +174,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 
     @Override
     protected void onPause() {
-        LogUtils.e(getClass().getName(),"activity on pause...............");
+        LogUtils.e(getClass().getName(), "activity on pause...............");
         mForegroundActivity = null;
 //        if (mWakeLock != null) {
 //            mWakeLock.release();
@@ -393,6 +393,21 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         }
         copy.clear();
 
+    }
+
+    /**
+     * 关闭所有Activity 除了参数传递的className
+     */
+    public static void finishAll(String className) {
+        List<BaseActivity> copy;
+        synchronized (mActivities) {
+            copy = new ArrayList<BaseActivity>(mActivities);
+        }
+        for (BaseActivity activity : copy) {
+            if (!activity.getClass().getName().equalsIgnoreCase(className))
+                activity.finish();
+        }
+        copy.clear();
     }
 
     /**

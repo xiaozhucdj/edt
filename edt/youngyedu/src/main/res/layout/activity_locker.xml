@@ -4,12 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <Button
+        android:id="@+id/btn_check"
+        android:layout_width="match_parent"
+        android:layout_height="150px"
+        android:text="当老师关闭锁屏无法收到，尝试点击该按钮"
         android:textColor="@color/black"
+        android:textSize="26px" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="锁屏中........."
+        android:textColor="@color/black"
         android:textSize="30px" />
 
 </LinearLayout>
