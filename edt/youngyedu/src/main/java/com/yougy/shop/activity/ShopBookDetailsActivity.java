@@ -359,7 +359,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }
                 else if (!TextUtils.isEmpty(targetCouponContentBean.getFree())){
                     itemBinding.promotionName.setText("限免");
-                    itemBinding.promotionContent.setText("显示免费");
+                    itemBinding.promotionContent.setText("限时免费");
                 }
                 else if (!TextUtils.isEmpty(targetCouponContentBean.getOff())){
                     itemBinding.promotionName.setText("折扣");
