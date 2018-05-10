@@ -169,7 +169,11 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             FragmentTransaction ft = fm.beginTransaction();
             if (FileContonst.OPEN_ONYX_READER){
                 if (null == mHandleOnyxReader) {
-                    mHandleOnyxReader = new HandleOnyxReaderFragment(mIsReferenceBook);
+                    mHandleOnyxReader = new HandleOnyxReaderFragment();
+                    Bundle args = new Bundle();
+                    args.putBoolean("MISREFERENCEBOOK", mIsReferenceBook);
+                    mHandleOnyxReader.setArguments(args);
+
                     if (params.size() > 0) {
                         mHandleOnyxReader.setParams(params);
                     }

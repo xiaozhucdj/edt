@@ -5,9 +5,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -114,12 +117,16 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private ReaderPresenter mReaderPresenter;
     private HandlerDirAdapter mHandlerDirAdapter;
     private LoadingProgressDialog mloadingDialog;
-    private boolean mIsReferenceBook ;
+    private boolean mIsReferenceBook;
 
 
-    public HandleOnyxReaderFragment(boolean isReferenceBook) {
-        super();
-        mIsReferenceBook = isReferenceBook;
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            mIsReferenceBook = getArguments().getBoolean("MISREFERENCEBOOK");
+        }
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     private void printTakeTimes(String job) {
@@ -209,7 +216,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         mOnyxImgView = new ImageView(getContext());
         //设置显示PDF 大小
         if (mIsReferenceBook) {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(UIUtils.getScreenWidth(),  UIUtils.getScreenHeight() - 76 - 78);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight() - 76 - 78);
             params.setMargins(0, 76, 0, 78);
             mOnyxImgView.setLayoutParams(params);
         } else {
@@ -223,7 +230,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     private ReaderContract.ReaderPresenter getReaderPresenter() {
         if (mReaderPresenter == null) {
-            mReaderPresenter = new ReaderPresenter(this) ;
+            mReaderPresenter = new ReaderPresenter(this);
             if (mIsReferenceBook) {
                 mReaderPresenter.setCropPage(true);
             }

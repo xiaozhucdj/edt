@@ -237,7 +237,7 @@ public class YougyApplicationManager extends LitePalApplication {
             });
         }
         checkAnr();
-//        LogUtils.setOpenLog(!Commons.isRelase);
+       LogUtils.setOpenLog(!Commons.isRelase);
     }
 
     private void checkAnr() {
