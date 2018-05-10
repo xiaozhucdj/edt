@@ -64,6 +64,8 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static javassist.compiler.TokenId.IF;
+
 
 /**
  * Created by Administrator on 2016/12/23.
@@ -112,7 +114,13 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private ReaderPresenter mReaderPresenter;
     private HandlerDirAdapter mHandlerDirAdapter;
     private LoadingProgressDialog mloadingDialog;
+    private boolean mIsReferenceBook ;
 
+
+    public HandleOnyxReaderFragment(boolean isReferenceBook) {
+        super();
+        mIsReferenceBook = isReferenceBook;
+    }
 
     private void printTakeTimes(String job) {
         LogUtils.e(TAG, job + " takes " + (end - start));
@@ -200,7 +208,13 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         mControlView = (ControlView) mRoot.findViewById(R.id.rl_pdf);
         mOnyxImgView = new ImageView(getContext());
         //设置显示PDF 大小
-        mOnyxImgView.setLayoutParams(new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
+        if (mIsReferenceBook) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(UIUtils.getScreenWidth(),  UIUtils.getScreenHeight() - 76 - 78);
+            params.setMargins(0, 76, 0, 78);
+            mOnyxImgView.setLayoutParams(params);
+        } else {
+            mOnyxImgView.setLayoutParams(new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
+        }
         mControlView.addView(mOnyxImgView, 0);
         getReaderPresenter().openDocument(mPdfFile, mControlActivity.mBookId + "");
     }
@@ -209,7 +223,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     private ReaderContract.ReaderPresenter getReaderPresenter() {
         if (mReaderPresenter == null) {
-            mReaderPresenter = new ReaderPresenter(this);
+            mReaderPresenter = new ReaderPresenter(this) ;
+            if (mIsReferenceBook) {
+                mReaderPresenter.setCropPage(true);
+            }
         }
         return mReaderPresenter;
     }
@@ -871,23 +888,24 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             LogUtils.i("type .." + event.getType());
             if (mNoteBookView != null) {
                 mNoteBookView.leaveScribbleMode();
-                mNoteBookView.setIntercept(true) ;
+                mNoteBookView.setIntercept(true);
             }
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
             EventBus.getDefault().post(baseEvent);
-        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) ||(event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE) )) {
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) || (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE))) {
             LogUtils.i("type .." + event.getType());
             if (mNoteBookView != null) {
                 mNoteBookView.setIntercept(false);
             }
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
             LogUtils.i("type .." + event.getType());
             if (mNoteBookView != null) {
                 mNoteBookView.leaveScribbleMode();
-                mNoteBookView.setIntercept(true) ;
+                mNoteBookView.setIntercept(true);
             }
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
         }
     }
+
 }

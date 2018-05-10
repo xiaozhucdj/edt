@@ -270,10 +270,14 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
     }
 
     private void hideView() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.remove(this);
-        ft.commit();
+        try {
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.remove(this);
+            ft.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

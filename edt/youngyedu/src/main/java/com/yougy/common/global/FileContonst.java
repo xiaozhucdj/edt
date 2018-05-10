@@ -110,4 +110,5 @@ public class FileContonst {
 
     public final static String LOAD_APP_RESET = "0" ;
 
+    public final static String IS_REFERENCE_BOOK = "is_reference_book";
 }
