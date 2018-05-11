@@ -10,9 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.frank.etude.pageBtnBar.PageBtnBar;
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
@@ -38,7 +39,7 @@ import rx.functions.Action1;
  * Created by Administrator on 2016/7/12.
  * 课本
  */
-public class HomeworkFragment extends BFragment implements View.OnClickListener {
+public class HomeworkFragment extends BFragment {
     /**
      * 适配器 数据
      */
@@ -48,17 +49,14 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
      * 一页数据个数
      */
     private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
-    /***
-     * 当前翻页的角标
-     */
-    private int mPagerIndex;
+
     private ViewGroup mRootView;
     private RecyclerView mRecyclerView;
     private HomeworkAdapter mHomeworkAdapter;
     private boolean mIsFist;
-    private LinearLayout mLlPager;
     private ViewGroup mLoadingNull;
     private TextView tvErrMsg;
+    private PageBtnBar mPageBtnBar;
 
     @Override
 
@@ -66,8 +64,8 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
 //        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
 
 
@@ -86,11 +84,10 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
             }
         });
         mHomeworkAdapter.notifyDataSetChanged();
-        mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
 
         tvErrMsg = (TextView) mRootView.findViewById(R.id.tv_errMsg);
-
+        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
@@ -99,8 +96,8 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
      */
     private void itemClick(int position) {
         HomeworkBookSummary info = mHomewroks.get(position);
-        if (info.getCourseBookId() == 0 || info.getCourseBookId() == -1){
-            ToastUtil.showCustomToast(getActivity() , "该学科还没有教材");
+        if (info.getCourseBookId() == 0 || info.getCourseBookId() == -1) {
+            ToastUtil.showCustomToast(getActivity(), "该学科还没有教材");
             return;
         }
         Bundle extras = new Bundle();
@@ -163,7 +160,7 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
                     }, new Action1<Throwable>() {
                         @Override
                         public void call(Throwable throwable) {
-                            ToastUtil.showCustomToast(getContext() , "获取作业本数据失败,请点击刷新重新获取");
+                            ToastUtil.showCustomToast(getContext(), "获取作业本数据失败,请点击刷新重新获取");
                             throwable.printStackTrace();
                         }
                     });
@@ -178,35 +175,20 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
         startActivity(intent);
     }
 
-    @Override
-    public void onClick(View v) {
-        refreshAdapterData(v);
-    }
 
     /***
      * 刷新适配器数据
      */
-    private void refreshAdapterData(View v) {
+    private void refreshAdapterData(int pagerIndex) {
+        //设置page页数数据
+        mHomewroks.clear();
 
-                if ((int) v.getTag() == mPagerIndex) {
-                    return;
-                }
-
-                //还原上个按钮状态
-                mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
-                mPagerIndex = (int) v.getTag();
-                //设置当前按钮状态
-                mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
-
-                //设置page页数数据
-                mHomewroks.clear();
-
-                if ((mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
-                    mHomewroks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
-                } else {
-                    mHomewroks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
-                }
-                mHomeworkAdapter.notifyDataSetChanged();
+        if ((pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
+            mHomewroks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
+        } else {
+            mHomewroks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, (pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
+        }
+        mHomeworkAdapter.notifyDataSetChanged();
     }
 
 
@@ -236,7 +218,6 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
             }
         }
         //删除之前的按钮
-        mLlPager.removeAllViews();
         //设置显示按钮
         addBtnCounts(counts);
         mHomewroks.clear();
@@ -255,22 +236,23 @@ public class HomeworkFragment extends BFragment implements View.OnClickListener 
      * @param counts
      */
     private void addBtnCounts(int counts) {
-        for (int index = 1; index <= counts; index++) {
-//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            params.leftMargin = 20;
-//            LogUtils.e(TAG, "getActivity is null ? " + (getActivity() == null));
-//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
-            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
-            if (index == 1) {
-                mPagerIndex = 1;
-                pageBtn.setSelected(true);
+
+        mPageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getContext()) {
+            @Override
+            public int getPageBtnCount() {
+                return counts;
             }
-            pageBtn.setTag(index);
-            pageBtn.setText(Integer.toString(index));
-            pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn);
-        }
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
+                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
+
+                refreshAdapterData(btnIndex+1);
+            }
+        });
+        mPageBtnBar.setCurrentSelectPageIndex(0);
+        mPageBtnBar.refreshPageBar();
     }
 
     @Override

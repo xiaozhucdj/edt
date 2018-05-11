@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.frank.etude.pageBtnBar.PageBtnBar;
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
@@ -92,10 +94,6 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
      */
     private static final int COUNT_PER_PAGE = FileContonst.SMALL_PAGE_COUNTS;
 
-    /***
-     * 当前翻页的角标
-     */
-    private int mPagerIndex;
     //////////////////////////////////////View/////////////////////////////////////////////////////
 
     /***
@@ -111,7 +109,6 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     private RecyclerView mBookView;
     private SubjectAdapter mSubjectAdapter;
     private FitGradeAdapter mFitGradeAdapter;
-    private LinearLayout mLlPager;
     private TextView mSubMore;
     private TextView mGradeMore;
 
@@ -122,6 +119,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     private boolean mIsPackUp;
     private LinearLayout llTerm;
     private AllHomeworkAdapter mHomeworkAdapter;
+    private PageBtnBar mPageBtnBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -130,7 +128,6 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
         initFitGradeAdapter();
         initSubjectAdapter();
         initBookAdapter();
-        mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
 
         mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
 
@@ -142,7 +139,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
         mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
-
+        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
@@ -388,29 +385,6 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_page_item:
-                if ((int) v.getTag() == mPagerIndex) {
-                    return;
-                }
-
-                //还原上个按钮状态
-                mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
-                mPagerIndex = (int) v.getTag();
-                //设置当前按钮状态
-                mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
-
-                //设置page页数数据
-                mBooks.clear();
-
-                if ((mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
-                    mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
-                } else {
-                    mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * COUNT_PER_PAGE, (mPagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
-                }
-                mHomeworkAdapter.notifyDataSetChanged();
-                break;
-
-
             case R.id.tv_gradeMore:
                 mIsPackUp = !mIsPackUp;
                 setLlTermSize();
@@ -536,8 +510,6 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
                 counts = quotient + 1; // 不足16个 +1
             }
         }
-        //删除之前的按钮
-        mLlPager.removeAllViews();
         //设置显示按钮
         addBtnCounts(counts);
         mBooks.clear();
@@ -556,21 +528,36 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
      * @param counts
      */
     private void addBtnCounts(int counts) {
-        for (int index = 1; index <= counts; index++) {
-//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            params.leftMargin = 20;
-//            View pageLayout = inflate(getActivity(), R.layout.page_item, null);
-//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
-            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
-            if (index == 1) {
-                mPagerIndex = 1;
-                pageBtn.setSelected(true);
+
+
+        mPageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getContext()) {
+            @Override
+            public int getPageBtnCount() {
+                return counts;
             }
-            pageBtn.setTag(index);
-            pageBtn.setText(Integer.toString(index));
-            pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn);
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
+                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
+
+                refreshAdapterData(btnIndex+1);
+            }
+        });
+        mPageBtnBar.setCurrentSelectPageIndex(0);
+        mPageBtnBar.refreshPageBar();
+    }
+
+    private void refreshAdapterData(int pagerIndex) {
+        //设置page页数数据
+        mBooks.clear();
+
+        if ((pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
+            mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
+        } else {
+            mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, (pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
         }
+        mHomeworkAdapter.notifyDataSetChanged();
     }
 
     private void freshUI(List<HomeworkBookSummary> homeworkBookInfos) {

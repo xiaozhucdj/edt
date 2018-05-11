@@ -12,15 +12,14 @@
 
 
 
-    <LinearLayout
-        android:id="@+id/ll_page"
+
+    <com.frank.etude.pageBtnBar.PageBtnBar
+        android:id="@+id/btn_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="26px"
-        android:layout_marginTop="26px"
-        android:gravity="center"
-        android:orientation="horizontal" />
+        android:layout_marginTop="26px" />
 
     <LinearLayout
         android:id="@+id/loading_null"

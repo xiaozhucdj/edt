@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.frank.etude.pageBtnBar.PageBtnBar;
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.eventbus.BaseEvent;
@@ -87,7 +89,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     /***
      * 当前翻页的角标
      */
-    private int mPagerIndex;
 
     /***
      * 搜索的 key
@@ -97,7 +98,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
     private boolean mIsFist;
-    private LinearLayout mLlPager;
     /***
      * 搜索顶部显示
      */
@@ -124,6 +124,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
     private DividerItemDecoration divider ;
+    private PageBtnBar mPageBtnBar;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
@@ -147,7 +149,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             }
         });
 
-        mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
         mLlSearchKeyTitle = (LinearLayout) mRootView.findViewById(R.id.ll_referenceKey);
         mLlSearchKeyResut = (LinearLayout) mRootView.findViewById(R.id.ll_referenceResult);
         mTvAllBooks = (TextView) mRootView.findViewById(R.id.tv_referenceBooks);
@@ -158,6 +159,9 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         mTvSerachKeyContext = (TextView) mRootView.findViewById(R.id.tv_referenceKeyContext);
         mTvSerachErrorTitle = (TextView) mRootView.findViewById(R.id.tv_referenceResultTitle);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+
+        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+
         return mRootView;
     }
 
@@ -257,9 +261,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             mRecyclerView.setLayoutManager(layout);
             mBookAdapter.setPicL(true);
             initPages(mServerBooks, COUNT_PER_PAGE);
-
-        } else if (v.getId() == R.id.tv_page_item) {
-            refreshAdapterData(v);
         }
     }
 
@@ -280,21 +281,12 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     /***
      * 刷新适配器数据
      */
-    private void refreshAdapterData(View v) {
-        if ((int) v.getTag() == mPagerIndex) {
-            return;
-        }
-        //还原上个按钮状态
-        mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
-        mPagerIndex = (int) v.getTag();
-        //设置当前按钮状态
-        mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
-        //设置page页数数据
+    private void refreshAdapterData(int pagerIndex) {
         mBooks.clear();
-        if ((mPagerIndex - 1) * mCountsPage + mCountsPage > mCountBooks.size()) { // 不是 正数被
-            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * mCountsPage, mCountBooks.size()));
+        if ((pagerIndex - 1) * mCountsPage + mCountsPage > mCountBooks.size()) { // 不是 正数被
+            mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * mCountsPage, mCountBooks.size()));
         } else {
-            mBooks.addAll(mCountBooks.subList((mPagerIndex - 1) * mCountsPage, (mPagerIndex - 1) * mCountsPage + mCountsPage)); //正数被
+            mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * mCountsPage, (pagerIndex - 1) * mCountsPage + mCountsPage)); //正数被
         }
         notifyDataSetChanged();
     }
@@ -347,23 +339,23 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      * @param counts
      */
     private void addBtnCounts(int counts) {
-        //删除之前的按钮
-        mLlPager.removeAllViews();
-        for (int index = 1; index <= counts; index++) {
-//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            params.leftMargin = 20;
-//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
-            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
-            if (index == 1) {
-                mPagerIndex = 1;
-                pageBtn.setSelected(true);
+
+        mPageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getContext()) {
+            @Override
+            public int getPageBtnCount() {
+                return counts;
             }
-            pageBtn.setTag(index);
-            pageBtn.setText(Integer.toString(index));
-            pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn);
-        }
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
+                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
+
+                refreshAdapterData(btnIndex+1);
+            }
+        });
+        mPageBtnBar.setCurrentSelectPageIndex(0);
+        mPageBtnBar.refreshPageBar();
     }
 
     /***
@@ -373,7 +365,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      */
     private void setSearchView(String key) {
         //删除之前的按钮
-        mLlPager.removeAllViews();
         //清空上次搜索结果数据
         mSerachBooks.clear();
         //查询搜索数据

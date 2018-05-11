@@ -10,9 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import com.frank.etude.pageBtnBar.PageBtnBar;
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.eventbus.BaseEvent;
@@ -57,7 +57,7 @@ import rx.functions.Action1;
  * Created by Administrator on 2016/7/12.
  * 笔记
  */
-public class NotesFragment extends BFragment implements View.OnClickListener {//, BookMarksDialog.DialogClickFinsihListener {
+public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFinsihListener {
 
     private static final String TAG = "NotesFragment";
     ////////////////////////////data///////////////////////////////////////
@@ -102,20 +102,20 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
     private NotesAdapter mNotesAdapter;
     private CreatNoteDialog mNoteDialog;
     private boolean mIsFist;
-    private LinearLayout mLlPager;
     //    private Subscription mSub;
     private NewNoteBookCallBack mNewNoteBookCallBack;
     private ViewGroup mLoadingNull;
     private String mAddStr;
     private String mUpdataStr;
+    private PageBtnBar mPageBtnBar;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_notes, null);
         initNotes();
-        mLlPager = (LinearLayout) mRootView.findViewById(R.id.ll_page);
         mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
@@ -125,8 +125,8 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
     private void initNotes() {
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_view);
 //        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
 
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
@@ -270,13 +270,16 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
         mCreatInfo.setNoteId(noteId);
         mServerInfos.add(mCreatInfo);
         // 添加+号到集合尾部
-        mServerInfos.add(0,addCreatNoteItem());
+        mServerInfos.add(0, addCreatNoteItem());
         //刷新数据 计算分页 以及设置集合数据
         refresh();
         //当前分页大于1 ，需要收到设置到分页尾部。
         if (mCounts != 1) {
             page(mCounts);
+            mPageBtnBar.setCurrentSelectPageIndex(mCounts-1);
+            mPageBtnBar.refreshPageBar();
         }
+
         //设置添加了笔记
         BaseEvent baseEvent = new BaseEvent(EventBusConstant.add_note, mCreatInfo);
         EventBus.getDefault().post(baseEvent);
@@ -317,7 +320,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                         }
                         //添加addItem
                         if (!mServerInfos.contains(addCreatNoteItem())) {
-                            mServerInfos.add(0,addCreatNoteItem());
+                            mServerInfos.add(0, addCreatNoteItem());
                         }
                         refresh();
                     }
@@ -329,7 +332,7 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
                     if (infos != null) {
                         mServerInfos.addAll(infos);
                     }
-                    mServerInfos.add(0,addCreatNoteItem());
+                    mServerInfos.add(0, addCreatNoteItem());
 
                 }
             }
@@ -473,30 +476,17 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
             if (infos != null) {
                 mServerInfos.addAll(infos);
             }
-            mServerInfos.add(0,addCreatNoteItem());
+            mServerInfos.add(0, addCreatNoteItem());
             refresh();
         }
     }
 
 
-    @Override
-    public void onClick(View v) {
-        mDelteIndex = (int) v.getTag();
-        page((int) v.getTag());
-
-    }
-
     private void page(int index) {
-        if (index == mPagerIndex) {
-            return;
-        }
 
         //还原上个按钮状态
-        mLlPager.getChildAt(mPagerIndex - 1).setSelected(false);
         mPagerIndex = index;
         //设置当前按钮状态
-        mLlPager.getChildAt(mPagerIndex - 1).setSelected(true);
-
         //设置page页数数据
         mNotes.clear();
 
@@ -566,24 +556,24 @@ public class NotesFragment extends BFragment implements View.OnClickListener {//
      * @param counts
      */
     private void addBtnCounts(int counts) {
-        //删除之前的按钮
-        mLlPager.removeAllViews();
-        for (int index = 1; index <= counts; index++) {
-//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            params.leftMargin = 20;
-//            LogUtils.e(TAG, "getActivity is null ? " + (getActivity() == null));
-//            View pageLayout = View.inflate(getActivity(), R.layout.page_item, null);
-//            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
-            TextView pageBtn = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.new_page_item, mLlPager, false);
-            if (index == 1) {
-                mPagerIndex = 1;
-                pageBtn.setSelected(true);
+
+        mPageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getContext()) {
+            @Override
+            public int getPageBtnCount() {
+                return counts;
             }
-            pageBtn.setTag(index);
-            pageBtn.setText(Integer.toString(index));
-            pageBtn.setOnClickListener(this);
-            mLlPager.addView(pageBtn);
-        }
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
+                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
+                mDelteIndex = btnIndex + 1;
+                page(btnIndex + 1);
+
+            }
+        });
+        mPageBtnBar.setCurrentSelectPageIndex(0);
+        mPageBtnBar.refreshPageBar();
     }
 
 

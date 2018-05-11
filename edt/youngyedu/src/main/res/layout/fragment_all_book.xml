@@ -6,25 +6,25 @@
 
     <TextView
 
-        android:drawablePadding="20px"
-        android:drawableLeft="@drawable/all_iv_book_name_line"
         android:id="@+id/tv_bookItemTile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30px"
         android:layout_marginTop="234px"
+        android:drawableLeft="@drawable/all_iv_book_name_line"
+        android:drawablePadding="20px"
 
         android:textColor="@color/black"
         android:textSize="26px" />
 
 
-   <!-- <ImageView
-        android:layout_marginLeft="30px"
-        android:layout_marginTop="236px"
-        android:src="@drawable/all_iv_book_name_line"
-        android:background="@null"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />-->
+    <!-- <ImageView
+         android:layout_marginLeft="30px"
+         android:layout_marginTop="236px"
+         android:src="@drawable/all_iv_book_name_line"
+         android:background="@null"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content" />-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_books"
@@ -132,14 +132,12 @@
         android:layout_below="@+id/ll_term"
         android:background="@color/black" />
 
-    <LinearLayout
-        android:id="@+id/ll_page"
+    <com.frank.etude.pageBtnBar.PageBtnBar
+        android:id="@+id/btn_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25px"
-        android:gravity="center"
-        android:orientation="horizontal" />
+        android:layout_marginBottom="25px" />
 
     <LinearLayout
         android:id="@+id/loading_null"
