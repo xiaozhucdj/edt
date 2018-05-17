@@ -14,19 +14,36 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.yougy.common.dialog.BaseDialog;
+import com.yougy.common.down.DownloadBookListener;
+import com.yougy.common.down.NewDownBookInfo;
+import com.yougy.common.down.NewDownBookManager;
 import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.new_network.ApiException;
+import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DataCacheUtils;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.UIUtils;
+import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;
+import com.yougy.view.dialog.DownBookDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.UiPromptDialog;
+
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -35,6 +52,8 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * Created by Administrator on 2016/8/24.
@@ -951,5 +970,168 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         mUiPromptDialog.setTitle(R.string.jump_to_net);
         mUiPromptDialog.setDialogStyle(false);
         return true;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * 下载图书的dialog
+     */
+    protected DownBookDialog mDownDialog;
+
+
+
+    private void savebookDownloadKey(int bookId, String key) {
+        // 缓存key
+        String keys = DataCacheUtils.getBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
+        try {
+            JSONObject object;
+            if (!StringUtils.isEmpty(keys)) {
+                object = new JSONObject(keys);
+            } else {
+                object = new JSONObject();
+            }
+            object.put(bookId + "", key);
+            DataCacheUtils.putBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY, object.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtils.i("缓存密码出差");
+        }
+    }
+
+    /**
+     * 下载 图书的 任务
+     */
+
+    public void downBookTask(int bookId) {
+        if (mDownDialog == null) {
+            mDownDialog = new DownBookDialog(this);
+        }
+        mDownDialog.setListener(new DownBookDialog.DownBookListener() {
+            @Override
+            public void onCancelListener() {
+                cancelDownBook(bookId);
+            }
+
+            @Override
+            public void onConfirmListener() {
+                confirmDownBook(bookId);
+            }
+        });
+        mDownDialog.show();
+        mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
+        mDownDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+    }
+
+    /**
+     * 取消下载图书
+     */
+    protected void cancelDownBook(int  bookid) {
+        mDownDialog.dismiss();
+        NewDownBookManager.getInstance().cancel(bookid);
+    }
+
+    /**
+     * 查询下载图书 信息
+     */
+    private void queryBookDownLoadSyn(int bookId) {
+        NetWorkManager.downloadBook(SpUtils.getUserId()+"" ,bookId+"") .filter(new Func1<List<DownloadInfo>, Boolean>() {
+            @Override
+            public Boolean call(List<DownloadInfo> downloadInfos) {
+                return downloadInfos != null;
+            }
+        }).subscribe(new Action1<List<DownloadInfo>>() {
+            @Override
+            public void call(List<DownloadInfo> downloadInfos) {
+
+                if (downloadInfos!=null && downloadInfos.size()>0){
+                    //下载图书
+                    savebookDownloadKey(bookId,downloadInfos.get(0).getAtchEncryptKey());
+                    NewDownBookInfo info = new NewDownBookInfo();
+                    info.setBookId(bookId);
+                    info.setAccessKeyId(downloadInfos.get(0).getAccessKeyId());
+                    info.setAccessKeySecret(downloadInfos.get(0).getAccessKeySecret());
+                    info.setSecurityToken(downloadInfos.get(0).getSecurityToken());
+                    info.setExpiration(downloadInfos.get(0).getExpiration());
+                    info.setObjectKey(downloadInfos.get(0).getAtchRemotePath());
+                    info.setBucketName(downloadInfos.get(0).getAtchBucket());
+                    info.setSaveFilePath(FileUtils.getTextBookFilesDir() +bookId + ".pdf");
+//                    System.out.println("to............"+info.toString());
+                    downBook(info);
+                }else{
+                    mDownDialog.setTitle(UIUtils.getContext().getResources().getString(R.string.down_book_error));
+                    mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
+                }
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                String msg  = UIUtils.getContext().getResources().getString(R.string.down_book_error) ;
+                if (throwable instanceof ApiException) {
+                    String errorCode = ((ApiException) throwable).getCode();
+                    LogUtils.i("resultCode" + errorCode);
+                    if (errorCode.equals("404")){
+                        msg = "没有找到该图书";
+                    }
+                } else {
+                }
+                mDownDialog.setTitle(msg);
+                mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
+            }
+        }) ;
+    }
+
+    private void downBook(NewDownBookInfo info) {
+
+        NewDownBookManager.getInstance().downBookAsy(info, new DownloadBookListener() {
+            @Override
+            public void onSuccess(int progress) {
+//                System.out.println(".........onSuccess...." + progress);
+                UIUtils.getMainThreadHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDownDialog.setTitle(String.format(getString(R.string.down_book_loading), progress + "%"));
+                    }
+                });
+            }
+
+            @Override
+            public void onFinish() {
+//                System.out.println(".........onFinish");
+                UIUtils.getMainThreadHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDownDialog.dismiss();
+                        //直接进入下载的图书
+                        onDownBookFinish();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+//                System.out.println(".........onFailure");
+                UIUtils.getMainThreadHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDownDialog.setTitle(UIUtils.getContext().getResources().getString(R.string.down_book_error));
+                        mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
+    }
+
+    /**图书下载完成后的回调*/
+    protected void  onDownBookFinish(){
+
+    }
+
+    /**
+     * 确认下载图书
+     */
+    protected void confirmDownBook(int bookId) {
+        mDownDialog.getBtnConfirm().setVisibility(View.GONE);
+        mDownDialog.setTitle(String.format(getString(R.string.down_book_loading), 0 + "%"));
+        queryBookDownLoadSyn(bookId);
     }
 }

@@ -340,6 +340,7 @@ public class CoachBookFragment extends BFragment {
     @Override
     protected void onDownBookFinish() {
         super.onDownBookFinish();
+        mBookAdapter .notifyItemChanged(mDownPosition);
         itemClick(mDownPosition);
     }
 }

@@ -678,6 +678,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     @Override
     protected void onDownBookFinish() {
         super.onDownBookFinish();
+        mAdaptetFragmentAllTextBook.notifyItemChanged(mDownPosition);
         itemClick(mDownPosition);
     }
 }

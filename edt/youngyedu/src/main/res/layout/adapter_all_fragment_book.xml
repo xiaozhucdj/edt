@@ -18,6 +18,23 @@
             android:paddingBottom="11px"
             android:paddingRight="11px"
             android:src="@drawable/book_adaper_item_icon_test_normal" />
+
+
+
+        <ImageView
+            android:id="@+id/img_book_save"
+            android:background="@null"
+            android:layout_width="36px"
+            android:layout_height="90px" />
+
+        <TextView
+            android:id="@+id/tv_book_save"
+            android:textSize="18px"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:layout_width="36px"
+            android:layout_height="90px" />
+
     </RelativeLayout>
 </FrameLayout>
 

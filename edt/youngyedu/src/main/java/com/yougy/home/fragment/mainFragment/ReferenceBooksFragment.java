@@ -1,6 +1,7 @@
 package com.yougy.home.fragment.mainFragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,9 +36,9 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
-import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -123,8 +124,17 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
-    private DividerItemDecoration divider ;
+    private DividerItemDecoration divider;
     private PageBtnBar mPageBtnBar;
+    private BookInfo mAddBook ;
+
+    private synchronized BookInfo getAddBook (){
+        if (mAddBook == null ){
+            mAddBook = new BookInfo() ;
+            mAddBook.setBookId(-1);
+        }
+        return mAddBook ;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -141,13 +151,42 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         layout.setScrollEnabled(false);
         mRecyclerView.setLayoutManager(layout);
         mBookAdapter = new BookAdapter(getActivity(), mBooks, this);
-        mRecyclerView.setAdapter(mBookAdapter);
-        mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
+        mBookAdapter.setReference(true);
+        mBookAdapter.setOnItemClickListener(new BookAdapter.OnItemDeteteListener() {
             @Override
-            public void onItemClick(RecyclerView.ViewHolder vh) {
-                itemClick(vh.getAdapterPosition());
+            public void onItemDeteteClickL(int position) {
+                LogUtils.i("onItemDeteteClickL") ;
+                //请求服务器后 ，删除当前的集合重新刷新下内存 计算角标
+            }
+
+            @Override
+            public void onItemDeteteClickS(int position) {
+                LogUtils.i("onItemDeteteClickS");
+                //请求服务器后 ，删除当前的集合重新刷新下内存 计算角标
+            }
+
+            @Override
+            public void onItemDownClickL(int position) {
+                LogUtils.i("onItemDownClickL") ;
+                if (position == 0 ){
+                    if (NetUtils.isNetConnected()) {
+                        loadIntent(BookShopActivityDB.class);
+                    } else {
+                        showCancelAndDetermineDialog(R.string.jump_to_net);
+                    }
+                }else{
+                    itemClick(position);
+                }
+            }
+
+            @Override
+            public void onItemDownClickS(int position) {
+                LogUtils.i("onItemDownClickS") ;
+                itemClick(position);
             }
         });
+
+        mRecyclerView.setAdapter(mBookAdapter);
 
         mLlSearchKeyTitle = (LinearLayout) mRootView.findViewById(R.id.ll_referenceKey);
         mLlSearchKeyResut = (LinearLayout) mRootView.findViewById(R.id.ll_referenceResult);
@@ -183,7 +222,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             //分类码
             extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
-            extras.putBoolean(FileContonst.IS_REFERENCE_BOOK,true);
+            extras.putBoolean(FileContonst.IS_REFERENCE_BOOK, true);
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (NetUtils.isNetConnected()) {
@@ -272,9 +311,13 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         if (bookInfos != null && bookInfos.size() > 0) {
             mServerBooks.clear();
             mServerBooks.addAll(bookInfos);
+            mServerBooks.add(0 ,getAddBook());
             initPages(mServerBooks, COUNT_PER_PAGE);
         } else {
-            mLoadingNull.setVisibility(View.VISIBLE);
+            mServerBooks.clear();
+            mServerBooks.add(getAddBook()) ;
+            initPages(mServerBooks, COUNT_PER_PAGE);
+//            mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
 
@@ -291,13 +334,13 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         notifyDataSetChanged();
     }
 
-    private int  mCountsPage ;
+    private int mCountsPage;
 
     /**
      * 初始化翻页角标
      */
     private void initPages(List infos, int count_page) {
-        mCountsPage = count_page ;
+        mCountsPage = count_page;
         mCountBooks.clear();
         mCountBooks.addAll(infos);
         int counts = 0;
@@ -333,29 +376,46 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         notifyDataSetChanged();
     }
 
+
+    private MyPageBtnBarAdapter mPageBtnBarAdapter;
+
+    private class MyPageBtnBarAdapter extends PageBtnBarAdapter {
+        public int count = 0;
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        public MyPageBtnBarAdapter(Context mContext) {
+            super(mContext);
+        }
+
+        @Override
+        public int getPageBtnCount() {
+            return count;
+        }
+
+        @Override
+        public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+            refreshAdapterData(btnIndex + 1);
+        }
+    }
+
     /***
      * 添加按钮
      *
      * @param counts
      */
     private void addBtnCounts(int counts) {
-
-        mPageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getContext()) {
-            @Override
-            public int getPageBtnCount() {
-                return counts;
-            }
-
-            @Override
-            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
-/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
-                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
-
-                refreshAdapterData(btnIndex+1);
-            }
-        });
+        LogUtils.i("counts=="+counts);
+        if (mPageBtnBarAdapter == null) {
+            mPageBtnBarAdapter = new MyPageBtnBarAdapter(getContext());
+            mPageBtnBar.setPageBarAdapter(mPageBtnBarAdapter);
+        }
+        mPageBtnBarAdapter.setCount(counts);
         mPageBtnBar.setCurrentSelectPageIndex(0);
         mPageBtnBar.refreshPageBar();
+
     }
 
     /***
@@ -369,7 +429,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         mSerachBooks.clear();
         //查询搜索数据
         for (BookInfo info : mServerBooks) {
-            if (info.getBookTitle().contains(key)) {
+            if ( !StringUtils.isEmpty(info.getBookTitle())&& info.getBookTitle().contains(key)) {
                 mSerachBooks.add(info);
             }
         }
@@ -514,7 +574,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 //            layout.setScrollEnabled(false);
 //            mRecyclerView.setLayoutManager(layout);
 //            mBookAdapter.setPicL(true);
-            if (mLlSearchKeyTitle.getVisibility() == View.GONE){
+            if (mLlSearchKeyTitle.getVisibility() == View.GONE) {
                 loadData();
             }
         } else if (event.getType().equalsIgnoreCase(EventBusConstant.serch_reference)) {
@@ -562,6 +622,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     protected void onDownBookFinish() {
         super.onDownBookFinish();
+        // TODO: 2018/5/16   更新下载完成 图片
+        mBookAdapter.notifyItemChanged(mDownPosition);
         itemClick(mDownPosition);
     }
 }

@@ -657,6 +657,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     protected void onDownBookFinish() {
         super.onDownBookFinish();
+        mAdaptetFragmentAllTextBook.notifyItemChanged(mDownPosition);
         bookItemClick(mDownPosition);
     }
 }
