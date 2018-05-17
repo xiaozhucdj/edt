@@ -729,6 +729,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             extras.putInt(FileContonst.BOOK_ID, mBookInfo.getBookId());
             extras.putString(FileContonst.NOTE_TITLE, mBookInfo.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
+            this.finish();
         } else {
 //        downBookDialog();
             //跳转到书包
