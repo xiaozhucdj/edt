@@ -169,6 +169,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                     mTvBookSaveL.setVisibility(View.GONE);
                     mImgBookDeleteL.setVisibility(View.GONE);
                     mImgAdd.setVisibility(View.VISIBLE);
+                    mImgBookIconL.setImageDrawable(null);
                     return;
                 }
 
