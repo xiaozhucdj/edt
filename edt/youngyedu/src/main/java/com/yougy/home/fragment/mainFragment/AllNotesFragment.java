@@ -667,6 +667,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                 refreshAdapterData(btnIndex+1);
             }
         });
+        mPageBtnBar.removeAllViews();
         mPageBtnBar.setCurrentSelectPageIndex(0);
         mPageBtnBar.refreshPageBar();
     }
