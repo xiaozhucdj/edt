@@ -3,7 +3,7 @@
     <data>
         <variable
             name="activity"
-            type="com.yougy.shop.activity.SearchActivityDb"/>
+            type="com.yougy.shop.activity.SearchActivity"/>
     </data>
     <RelativeLayout
         android:layout_width="match_parent"

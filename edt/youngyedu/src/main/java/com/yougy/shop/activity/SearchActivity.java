@@ -11,7 +11,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,8 +33,10 @@ import com.yougy.ui.activity.SearchBinding;
 import com.yougy.view.CustomLinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import butterknife.BindArray;
 import butterknife.BindString;
 import rx.functions.Action1;
 
@@ -44,21 +45,30 @@ import rx.functions.Action1;
  * Created by jiangliang on 2017/3/2.
  */
 
-public class SearchActivityDb extends ShopBaseActivity {
+public class SearchActivity extends ShopBaseActivity {
     @BindString(R.string.all_grade)
     String mAllGrade;
+    @BindArray(R.array.stages)
+    String[] mStages;
+    @BindArray(R.array.subjects)
+    String[] mSubjects;
+    @BindArray(R.array.versions)
+    String[] mVersions;
+
 
     private SearchBinding binding;
+    private List<String> mStageList;
     private RecyclerAdapter mStageAdapter;
+    private String mSubject;
+    private String mVersion;
     private List<BookInfo> mBookInfos = new ArrayList<BookInfo>();
 
     private SearchResultAdapter mAdapter;
-
-    private List<Button> btns = new ArrayList<>();
-    private List<String> mHistoryRecords;
     private int totalCount = 0;
 
     private static final int COUNT_PER_PAGE = 5;
+
+    private List<String> mHistoryRecords;
 
     private String bookTitle;
     private int categoryId;
@@ -71,27 +81,32 @@ public class SearchActivityDb extends ShopBaseActivity {
     private int preChoosedBookCategory = -1;
     private int preChoosedBookCategoryMatch = -1;
 
+    private void itemClick(int position) {
+        Intent intent = new Intent(this, ShopBookDetailsActivity.class);
+        intent.putExtra(ShopGloble.BOOK_ID, mBookInfos.get(position).getBookId());
+        startActivity(intent);
+
+    }
+
     @Override
     protected void setContentView() {
-//        binding = DataBindingUtil.setContentView(this, R.layout.search_result_layout_db);
-//        binding.setActivity(this);
-    }
-
-    private void itemClick(int position) {
-        BookInfo info = mBookInfos.get(position);
-        LogUtils.e(tag, "onItemClick......" + info.getBookTitle());
-        loadIntentWithExtra(ShopBookDetailsActivity.class, ShopGloble.BOOK_ID, Integer.parseInt(info.getBookId() + ""));
+        binding = DataBindingUtil.setContentView(this, R.layout.search_result_layout);
+        binding.setActivity(this);
+        setContentView(binding.getRoot());
     }
 
     @Override
-    protected void init() {
+    public void init() {
         Intent intent = getIntent();
         bookTitle = intent.getStringExtra("search_key");
         categoryId = intent.getIntExtra("categoryId", -1);
+        mStageList = new ArrayList<>();
+        mStageList.add(mAllGrade);
+        mStageList.addAll(Arrays.asList(mStages));
         mHistoryRecords = SpUtils.getHistoryRecord();
+        initLayout();
     }
 
-    @Override
     protected void initLayout() {
         binding.searchKey.setText(bookTitle);
         binding.resultRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -100,6 +115,7 @@ public class SearchActivityDb extends ShopBaseActivity {
         binding.subjectWrap.setVerticalMargin(25);
         binding.versionWrap.setHorizontalMargin(40);
         binding.versionWrap.setVerticalMargin(25);
+
         CustomLinearLayoutManager stageManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         stageManager.setScrollEnabled(false);
         binding.stageRecycler.setLayoutManager(stageManager);
@@ -157,8 +173,11 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     private void generateSubjectLayout(CategoryInfo info) {
+        LogUtils.e(tag, "subject is : " + mSubjects.length);
         preChoosedBookCategoryMatch = info.getCategoryId();
+        binding.stageButton.setText(info.getCategoryDisplay());
         List<CategoryInfo> childs = info.getCategoryList();
+        LogUtils.e(tag, "childs : " + childs);
         if (binding.subjectWrap.getChildCount() != 0) {
             binding.subjectWrap.removeAllViews();
         }
@@ -169,6 +188,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             showSubjectLayout();
         }
         for (final CategoryInfo item : childs) {
+
             View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
             String display = item.getCategoryDisplay();
@@ -179,18 +199,21 @@ public class SearchActivityDb extends ShopBaseActivity {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearchActivityDb.this.resetSubjectTv();
-                    SearchActivityDb.this.generateVersionLayout(item);
+                    SearchActivity.this.resetSubjectTv();
+                    SearchActivity.this.generateVersionLayout(item);
                     binding.versionLayout.setVisibility(View.VISIBLE);
-                    preChoosedBookCategory= item.getCategoryId();
+                    mSubject = item.getCategoryDisplay();
+                    preChoosedBookCategory = item.getCategoryId();
                     tv.setSelected(true);
                 }
             });
             binding.subjectWrap.addView(layout);
         }
+
     }
 
     private void generateVersionLayout(CategoryInfo info) {
+        LogUtils.e(tag, "version is : " + mVersions.length);
         List<CategoryInfo> childs = info.getCategoryList();
         if (binding.versionWrap.getChildCount() != 0) {
             binding.versionWrap.removeAllViews();
@@ -204,11 +227,16 @@ public class SearchActivityDb extends ShopBaseActivity {
         for (final CategoryInfo item : childs) {
             View layout = View.inflate(this, R.layout.text_view, null);
             final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
-            tv.setText(item.getCategoryDisplay());
+            String display = item.getCategoryDisplay();
+            if (display.length() > 4) {
+                display = display.substring(0, 4);
+            }
+            tv.setText(display);
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearchActivityDb.this.resetVersionTv();
+                    SearchActivity.this.resetVersionTv();
+                    mVersion = item.getCategoryDisplay();
                     tv.setSelected(true);
                     preChoosedBookVersion = item.getCategoryId();
                 }
@@ -234,10 +262,15 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     @Override
-    protected void loadData() {
-        binding.pageBtnBar.setCurrentSelectPageIndex(0);
+    public void loadData() {
         queryBookBaseOnFiltration(1);
     }
+
+    @Override
+    protected void refreshView() {
+
+    }
+
 
     private void refreshResultView(List<BookInfo> bookInfos) {
         if (bookInfos == null || bookInfos.size() == 0) {
@@ -251,11 +284,6 @@ public class SearchActivityDb extends ShopBaseActivity {
             mAdapter.notifyDataSetChanged();
             binding.pageBtnBar.refreshPageBar();
         }
-    }
-
-    @Override
-    protected void refreshView() {
-
     }
 
     public void back(View view) {
@@ -279,7 +307,7 @@ public class SearchActivityDb extends ShopBaseActivity {
             preChoosedBookVersion = -1;
             preChoosedBookCategory = -1;
             preChoosedBookCategoryMatch = -1;
-            binding.pageBtnBar.setCurrentSelectPageIndex(0);
+            binding.pageBtnBar.setCurrentSelectPageIndex(-1);
             queryBookBaseOnFiltration(1);
         }
     }
@@ -354,13 +382,14 @@ public class SearchActivityDb extends ShopBaseActivity {
     }
 
     public void confirm(View view) {
+        LogUtils.e(tag, "subject : " + mSubject + ", version : " + mVersion);
         LogUtils.e(tag, "book title : " + bookTitle + ", bookVersion : " + bookVersion + ", bookCategory : " + bookCategory + ",bookCategoryMatch : " + bookCategoryMatch);
         hideFiltrateLayout();
         //TODO:集合数据中，根据条件进行筛选
         bookVersion = preChoosedBookVersion;
         bookCategory = preChoosedBookCategory;
         bookCategoryMatch = preChoosedBookCategoryMatch;
-        binding.pageBtnBar.setCurrentSelectPageIndex(0);
+        binding.pageBtnBar.setCurrentSelectPageIndex(-1);
         queryBookBaseOnFiltration(1);
     }
 
@@ -377,9 +406,13 @@ public class SearchActivityDb extends ShopBaseActivity {
             public void call(BaseResult<List<BookInfo>> result) {
                 LogUtils.e(tag, "bookInfos' size : " + result.getData().size());
                 totalCount = result.getCount();
-                SearchActivityDb.this.refreshResultView(result.getData());
+                SearchActivity.this.refreshResultView(result.getData());
             }
         });
+    }
+
+    public void cancel(View view) {
+        hideFiltrateLayout();
     }
 
     private int currentItem = -1;
@@ -423,10 +456,6 @@ public class SearchActivityDb extends ShopBaseActivity {
         showGradeLayout();
     }
 
-    public void cancel(View view) {
-        hideFiltrateLayout();
-    }
-
     private void resetFiltration() {
         binding.subjectLayout.setVisibility(View.GONE);
         binding.versionLayout.setVisibility(View.GONE);
@@ -462,11 +491,12 @@ public class SearchActivityDb extends ShopBaseActivity {
 
     private void showGradeLayout() {
         List<CategoryInfo> infos = BookShopActivityDB.grades.get(currentItem).getCategoryList();
-        binding.nameText.setText(getString(currentItem == 2 ? R.string.book_classify : R.string.grade_text));
         mStageAdapter = new RecyclerAdapter(infos);
         binding.stageRecycler.setAdapter(mStageAdapter);
         generateSubjectLayout(mStageAdapter.getItem(0));
+
         binding.gradeLayout.setVisibility(View.VISIBLE);
+        binding.nameText.setText(getString(currentItem == 2 ? R.string.book_classify : R.string.grade_text));
     }
 
     public void stageClick(View view) {
@@ -483,4 +513,6 @@ public class SearchActivityDb extends ShopBaseActivity {
     private void hideGradeLayout() {
         binding.gradeLayout.setVisibility(View.GONE);
     }
+
 }
+

@@ -1,5 +1,6 @@
 package com.yougy.common.new_network;
 
+import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
@@ -364,5 +365,14 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    /**
+     * 根据类别获取图书信息
+     */
+    public static Observable<BaseResult<List<BookInfo>>> queryBookInfo(BookStoreQueryBookInfoReq req) {
+        return getInstance().getServerApi().queryBookInfo(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.dismissDialog(loadingProgressDialog))
+                ;
+    }
 
 }

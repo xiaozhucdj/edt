@@ -291,4 +291,7 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"queryFavor"})
     Observable<BaseResult<List<Favor>>> queryFavor(@Field("userId") Integer userId);
+
+    @POST("bookStore")
+    Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Body BookStoreQueryBookInfoReq req);
 }

@@ -15,15 +15,15 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.yougy.anwser.BaseResult;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.ProtocolManager;
+import com.yougy.common.new_network.BookStoreQueryBookInfoReq;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
 import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.utils.LogUtils;
@@ -50,10 +50,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindArray;
-import butterknife.BindString;
 import okhttp3.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static rx.Observable.create;
@@ -107,11 +107,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private static final int COUNT_PER_PAGE = 15;
     private static final int SPAN_COUNT = 5;
 
-    private List<Button> btns = new ArrayList<>();
-    private List<BookInfo> mPageInfos = new ArrayList<>();
     private SparseArray<List<CategoryInfo>> gradeSparseArray = new SparseArray<>();
     private SparseArray<List<CategoryInfo>> subjectSparseArray = new SparseArray<>();
     private SparseArray<List<CategoryInfo>> versionSparseArray = new SparseArray<>();
+
+    private int totalCount = 0;
+
+    private List<BookInfo> bookInfos = new ArrayList<BookInfo>();
 
     @Override
     protected void loadData() {
@@ -260,53 +262,28 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     /**
      * 根据类别获取图书信息
      */
-    private List<BookInfo> bookInfos;
-
-    private void getSingleBookInfo() {
-        Observable<List<BookInfo>> observable = Observable.create((Observable.OnSubscribe<List<BookInfo>>) subscriber -> {
-            LogUtils.e(tag, "classify id : " + mClassifyId);
-            Response response = ProtocolManager.queryBookProtocol(SpUtils.getUserId(), "", mClassifyId, -1, -1);
-            if (response.isSuccessful()) {
-                try {
-                    String resultJson = response.body().string();
-                    LogUtils.e(tag, "result json : " + resultJson);
-                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-                    bookInfos = result.getData();
-                    subscriber.onNext(bookInfos);
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
+    private void getSingleBookInfo(int pageNo) {
+        BookStoreQueryBookInfoReq req = new BookStoreQueryBookInfoReq();
+        req.setBookCategoryMatch(mClassifyId);
+        LogUtils.e(tag, "get single book info classify id : " + mClassifyId);
+        req.setPs(COUNT_PER_PAGE);
+        req.setPn(pageNo);
+        req.setUserId(SpUtils.getUserId());
+        NetWorkManager.queryBookInfo(req).subscribe(new Action1<BaseResult<List<BookInfo>>>() {
             @Override
-            public void require() {
-                getSingleBookInfo();
+            public void call(BaseResult<List<BookInfo>> result) {
+                totalCount = result.getCount();
+                binding.pageBtnBar.refreshPageBar();
+                bookInfos.clear();
+                bookInfos.addAll(result.getData());
+                BookShopActivityDB.this.refreshSingleClassifyRecycler(result.getData());
             }
-
+        }, new Action1<Throwable>() {
             @Override
-            public void onNext(List<BookInfo> bookInfos) {
-                LogUtils.e(tag, "book infos' size : " + bookInfos.size());
-                refreshSingleClassifyRecycler(bookInfos);
-                switch (mClassifyPosition) {
-                    case 0:
-                        textbooks = bookInfos;
-                        break;
-                    case 1:
-                        guidbooks = bookInfos;
-                        break;
-                    case 2:
-                        extrabooks = bookInfos;
-                        break;
-                    default:
-                        break;
-                }
+            public void call(Throwable throwable) {
+                LogUtils.e(tag, "error is : " + throwable.getMessage());
             }
-        };
-        observable.subscribe(subscriber);
+        });
     }
 
 
@@ -390,7 +367,26 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 stageItemClick(vh.getAdapterPosition());
             }
         });
+        binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getThisActivity()) {
+            @Override
+            public int getPageBtnCount() {
+                return (totalCount + COUNT_PER_PAGE - 1)/ COUNT_PER_PAGE;
+            }
 
+            @Override
+            public void onPageBtnClick(View view, int i, String s) {
+                hideRecycler();
+                getSingleBookInfo(i + 1);
+            }
+        });
+        mBookAdapter = new BookAdapter(bookInfos, this);
+        binding.singleClassifyRecycler.setAdapter(mBookAdapter);
+        binding.singleClassifyRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.singleClassifyRecycler) {
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder vh) {
+                itemClick(mBookAdapter.getItemBook(vh.getAdapterPosition()));
+            }
+        });
     }
 
     public void stageClick(View view) {
@@ -402,41 +398,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     public void classifyClick(View view) {
         LogUtils.e(tag, "classify click......");
         binding.classifyRecyclerLayout.setVisibility(binding.classifyRecyclerLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-    }
-
-    private void generateBtn(final List<BookInfo> mBookInfos) {
-        if (binding.pageNumberLayout.getChildCount() != 0) {
-            binding.pageNumberLayout.removeAllViews();
-        }
-        int count = mBookInfos.size() % COUNT_PER_PAGE == 0 ? mBookInfos.size() / COUNT_PER_PAGE : mBookInfos.size() / COUNT_PER_PAGE + 1;
-        for (int index = 1; index <= count; index++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = UIUtils.px2dip(25);
-            View pageLayout = View.inflate(this, R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
-            if (index == 1) {
-                pageBtn.setSelected(true);
-            }
-            pageBtn.setText(Integer.toString(index));
-            btns.add(pageBtn);
-            final int page = index - 1;
-            pageBtn.setOnClickListener(v -> {
-                hideRecycler();
-                for (Button btn : btns) {
-                    btn.setSelected(false);
-                }
-                pageBtn.setSelected(true);
-                mPageInfos.clear();
-                int start = page * COUNT_PER_PAGE;
-                int end = (page + 1) * COUNT_PER_PAGE;
-                if (end > mBookInfos.size()) {
-                    end = mBookInfos.size();
-                }
-                mPageInfos.addAll(mBookInfos.subList(start, end));
-                mBookAdapter.notifyDataSetChanged();
-            });
-            binding.pageNumberLayout.addView(pageLayout, params);
-        }
     }
 
     /**
@@ -577,7 +538,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         Bundle extras = new Bundle();
         extras.putString("search_key", mSearchKey);
         extras.putInt("categoryId", mClassifyId);
-        loadIntentWithExtras(SearchActivityDb.class, extras);
+        loadIntentWithExtras(SearchActivity.class, extras);
     }
 
     private int mClassifyPosition = -1;
@@ -600,7 +561,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         refreshSearchResultView();
         resetComposite();
 //        if (extrabooks == null) {
-        getSingleBookInfo();
+        binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        getSingleBookInfo(1);
 //        } else {
 //            refreshSingleClassifyRecycler(extrabooks);
 //        }
@@ -618,7 +580,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         LogUtils.e("Spinner", "stage is : " + mStage);
         binding.stageButton.setText(info.getCategoryDisplay());
         setCompositeText();
-        getSingleBookInfo();
+        binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        getSingleBookInfo(1);
         binding.stageRecyclerLayout.setVisibility(View.GONE);
     }
 
@@ -632,7 +595,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.classifyButton.setText(info.getCategoryDisplay());
         binding.compositeInfo.setText(mSubject);
         mVersion = "";
-        getSingleBookInfo();
+        binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        getSingleBookInfo(1);
         binding.classifyRecyclerLayout.setVisibility(View.GONE);
     }
 
@@ -666,7 +630,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         resetComposite();
         setCompositeText();
 //        if (guidbooks == null) {
-        getSingleBookInfo();
+        binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        getSingleBookInfo(1);
 //        } else {
 //            refreshSingleClassifyRecycler(guidbooks);
 //        }
@@ -699,7 +664,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         resetComposite();
         setCompositeText();
 //        if (textbooks == null) {
-        getSingleBookInfo();
+        binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        getSingleBookInfo(1);
 //        } else {
 //            refreshSingleClassifyRecycler(textbooks);
 //        }
@@ -709,30 +675,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private void refreshSingleClassifyRecycler(List<BookInfo> infos) {
         LogUtils.e(tag, "refreshSingleClassifyRecycler..............");
-//        List<BookInfo> infos = new ArrayList<>();
-//        if (mClassifyPosition == 2 || showAllVersion) {
-//            infos.addAll(infoList);
-//        } else {
-//            for (BookInfo info : infoList) {
-//                if (info.getBookVersion() == 101) {
-//                    infos.add(info);
-//                }
-//            }
-//        }
-        generateBtn(infos);
-        if (mPageInfos.size() > 0) {
-            mPageInfos.clear();
-        }
-        int end = infos.size() > COUNT_PER_PAGE ? COUNT_PER_PAGE : infos.size();
-        mPageInfos.addAll(infos.subList(0, end));
-        mBookAdapter = new BookAdapter(mPageInfos, this);
-        binding.singleClassifyRecycler.setAdapter(mBookAdapter);
-        binding.singleClassifyRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.singleClassifyRecycler) {
-            @Override
-            public void onItemClick(RecyclerView.ViewHolder vh) {
-                itemClick(mBookAdapter.getItemBook(vh.getAdapterPosition()));
-            }
-        });
+        mBookAdapter.notifyDataSetChanged();
         binding.emptyTv.setVisibility(infos.size() == 0 ? View.VISIBLE : View.GONE);
     }
 
@@ -970,53 +913,25 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 versionTv.setSelected(true);
                 int bookVersion = versionInfo.getCategoryId();
                 //TODO:图书查询接口
-                NewBookStoreBookReq req = new NewBookStoreBookReq();
-                req.setBookCategory(bookCategory);
+                BookStoreQueryBookInfoReq req = new BookStoreQueryBookInfoReq();
+                req.setBookCategoryMatch(bookCategory);
                 req.setBookVersion(bookVersion);
                 queryBookByVersion(req);
-
             });
             binding.versionWrap.addView(layout);
         }
         binding.versionLayout.setVisibility(View.VISIBLE);
     }
 
-    private void queryBookByVersion(final NewBookStoreBookReq req) {
-        Observable<List<BookInfo>> observable = create((Observable.OnSubscribe<List<BookInfo>>) subscriber -> {
-            Response response = NewProtocolManager.queryBook(req);
-            try {
-                String resultJson = response.body().string();
-                LogUtils.e(tag, "result Json : " + resultJson);
-                Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-                if (result.getCode() == 200) {
-                    if (!subscriber.isUnsubscribed()) {
-                        subscriber.onNext(result.getData());
-                        subscriber.onCompleted();
-                    }
-                } else {
-                    subscriber.onError(new Throwable());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
+    private void queryBookByVersion(final BookStoreQueryBookInfoReq req) {
+        NetWorkManager.queryBookInfo(req).subscribe(new Action1<BaseResult<List<BookInfo>>>() {
             @Override
-            public void require() {
-                queryBookByVersion(req);
+            public void call(BaseResult<List<BookInfo>> result) {
+                BookShopActivityDB.this.setCompositeText();
+                BookShopActivityDB.this.hideFiltrateLayout();
+                BookShopActivityDB.this.refreshSingleClassifyRecycler(result.getData());
             }
-
-            @Override
-            public void onNext(List<BookInfo> bookInfos) {
-                setCompositeText();
-                hideFiltrateLayout();
-                refreshSingleClassifyRecycler(bookInfos);
-            }
-        };
-        observable.subscribe(subscriber);
-
+        });
     }
 
 

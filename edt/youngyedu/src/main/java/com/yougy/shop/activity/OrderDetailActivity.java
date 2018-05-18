@@ -160,7 +160,7 @@ public class OrderDetailActivity extends ShopBaseActivity {
 
 
                         if (mTopOrderDetail.orderInfo.size() == 1 && !(orderStatus.equals("待支付"))) {
-                            showPaySuccessDialog();
+//                            showPaySuccessDialog();//TODO
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -336,7 +336,7 @@ public class OrderDetailActivity extends ShopBaseActivity {
                         qrCodeDialog.dismiss();
 
                         if (mTopOrderDetail.orderInfo.size() == 1 ){
-                            showPaySuccessDialog();
+//                            showPaySuccessDialog();//TODO
                         }else{
                             Intent intent = new Intent(OrderDetailActivity.this, PaySuccessActivity.class);
                             intent.putExtra("price", orderPrice);
@@ -555,11 +555,11 @@ public class OrderDetailActivity extends ShopBaseActivity {
         mPaySuccessDialog.setOrderNumber("订单编号 : " + mTopOrderDetail.orderId);
         mPaySuccessDialog.setOrderTime("下单时间 : " + mTopOrderDetail.orderCreateTime);
         //TODO: 满减 ，图书详情
-        mPaySuccessDialog.setSalesDetail();
-        mPaySuccessDialog.setBookName();
-        mPaySuccessDialog.setBookAuther();
-        mPaySuccessDialog.setFactoryPrice();
-        mPaySuccessDialog.setMarketPrice();
+//        mPaySuccessDialog.setSalesDetail();
+//        mPaySuccessDialog.setBookName();
+//        mPaySuccessDialog.setBookAuther();
+//        mPaySuccessDialog.setFactoryPrice();
+//        mPaySuccessDialog.setMarketPrice();
 
     }
 

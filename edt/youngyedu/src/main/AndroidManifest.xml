@@ -82,7 +82,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.yougy.shop.activity.SearchActivityDb"
+            android:name="com.yougy.shop.activity.SearchActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <!--商城收藏页-->
         <activity
