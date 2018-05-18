@@ -546,6 +546,11 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                     info.setCategoryName(noteInfo.getNoteFitSubjectName());
                     info.setCategoryId(noteInfo.getNoteFitSubjectId());
                     mTreeSubject.add(info);
+                }else{
+                    BookCategory info = new BookCategory();
+                    info.setCategoryName("无");
+                    info.setCategoryId(-1);
+                    mTreeSubject.add(info);
                 }
             }
 
@@ -662,6 +667,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                 refreshAdapterData(btnIndex+1);
             }
         });
+        mPageBtnBar.removeAllViews();
         mPageBtnBar.setCurrentSelectPageIndex(0);
         mPageBtnBar.refreshPageBar();
     }
@@ -766,6 +772,8 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             for (NoteInfo noteInfo : mServerInfos) {
                 //设置当前年级锁需要的书 ，并且做分页显示
                 if (StringUtils.isEquals(key, noteInfo.getNoteFitSubjectName())) {
+                    mCountInfos.add(noteInfo);
+                }else if ("无".equalsIgnoreCase(key)){
                     mCountInfos.add(noteInfo);
                 }
             }

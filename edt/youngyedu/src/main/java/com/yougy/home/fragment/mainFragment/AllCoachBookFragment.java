@@ -553,7 +553,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                 refreshAdapterData(btnIndex+1);
             }
         });
-
+        mPageBtnBar.removeAllViews();
         mPageBtnBar.setCurrentSelectPageIndex(0);
         mPageBtnBar.refreshPageBar();
     }

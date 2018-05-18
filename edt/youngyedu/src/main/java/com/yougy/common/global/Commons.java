@@ -35,7 +35,7 @@ public class Commons {
             BUCKET_NAME ="bj-b00k";
             YUNXING_APP_KEY = "6ba4e97ff40a1720bb4c193bfd6580ba";
         } else {
-            NEW_URL = "http://api.learningpad.cn:10002/";
+            NEW_URL = "http://api.learningpad.cn/";
 
             ENDPOINT ="http://oss-cn-shanghai.aliyuncs.com";
             ANSWER_PIC_HOST =".oss-cn-shanghai.aliyuncs.com/";

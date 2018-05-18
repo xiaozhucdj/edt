@@ -168,7 +168,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             @Override
             public void onItemDownClickL(int position) {
                 LogUtils.i("onItemDownClickL") ;
-                if (position == 0 ){
+                if (mBooks.get(position).getBookId() == -1 ){
                     if (NetUtils.isNetConnected()) {
                         loadIntent(BookShopActivityDB.class);
                     } else {
@@ -413,6 +413,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             mPageBtnBar.setPageBarAdapter(mPageBtnBarAdapter);
         }
         mPageBtnBarAdapter.setCount(counts);
+        mPageBtnBar.removeAllViews();
         mPageBtnBar.setCurrentSelectPageIndex(0);
         mPageBtnBar.refreshPageBar();
 
