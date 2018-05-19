@@ -493,7 +493,6 @@ public class OrderDetailActivity extends ShopBaseActivity {
 
     private void jumpToControlFragmentActivity(BookInfo info) {
         mPaySuccessDialog.dismiss();
-//        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
 
             Bundle extras = new Bundle();
@@ -562,7 +561,6 @@ public class OrderDetailActivity extends ShopBaseActivity {
         mPaySuccessDialog.show();
         mPaySuccessDialog.setOrderNumber("订单编号 : " + mTopOrderDetail.orderId);
         mPaySuccessDialog.setOrderTime("下单时间 : " + mTopOrderDetail.orderCreateTime);
-        //TODO: 满减 ，图书详情
         if (orderInfo.bookFinalPrice == 0){
             mPaySuccessDialog.setSalesDetail("限免");
             mPaySuccessDialog.setMarketPrice("销售价 : ￥" + orderInfo.bookFinalPrice);
@@ -589,6 +587,6 @@ public class OrderDetailActivity extends ShopBaseActivity {
     protected void onDownBookFinish() {
         super.onDownBookFinish();
         mPaySuccessDialog.dismiss();
-        jumpToControlFragmentActivity(null);
+        jumpToControlFragmentActivity(dataList.get(0).second.get(0).bookInfo.get(0));
     }
 }
