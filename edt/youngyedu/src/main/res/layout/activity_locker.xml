@@ -2,22 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/img_order_bg"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_check"
-        android:layout_width="match_parent"
-        android:layout_height="150px"
-        android:text="当老师关闭锁屏无法收到，尝试点击该按钮"
-        android:textColor="@color/black"
-        android:textSize="26px" />
+    <LinearLayout
+        android:id="@+id/ll_check_msg"
+        android:layout_marginTop="20px"
+        android:gravity="center_vertical"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="锁屏中........."
-        android:textColor="@color/black"
-        android:textSize="30px" />
+        <ImageView
+            android:layout_marginRight="5px"
+            android:src="@drawable/img_order_error"
+            android:background="@null"
+            android:layout_width="26px"
+            android:layout_height="26px" />
+        
+        <TextView
+            android:layout_marginRight="5px"
+            android:text="解锁有问题?"
+            android:textColor="@color/black"
+            android:textSize="26px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_line_text"
+            android:layout_marginRight="10px"
+            android:text="点击这里"
+            android:textColor="@color/black"
+            android:textSize="26px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
 
 </LinearLayout>
