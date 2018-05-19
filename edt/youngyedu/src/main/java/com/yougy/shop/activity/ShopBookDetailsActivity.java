@@ -255,6 +255,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
                 @Override
                 public void onCancelListener() {
+                    mBookDetailsDialog.dismiss();
                     ShopBookDetailsActivity.this.finish();
                 }
 
