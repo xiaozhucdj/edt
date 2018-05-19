@@ -333,19 +333,20 @@ public class OrderDetailActivity extends ShopBaseActivity {
                     @Override
                     public void call(Object o) {
                         qrCodeDialog.dismiss();
+                        binding.cancleBtn.setVisibility(View.GONE);
+                        binding.payBtn.setVisibility(View.GONE);
+                        binding.orderStatusTv.setVisibility(View.VISIBLE);
+                        binding.orderStatusTv.setText("交易成功");
+                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                        EventBus.getDefault().post(baseEvent);
                         if (mTopOrderDetail.orderInfo.size() == 1){
                             showPaySuccessDialog();
                         }else{
                             Intent intent = new Intent(OrderDetailActivity.this, PaySuccessActivity.class);
                             intent.putExtra("price", orderPrice);
                             startActivity(intent);
+                            finish();
                         }
-
-
-
-                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
-                        EventBus.getDefault().post(baseEvent);
-                        finish();
                     }
                 }, new Action1<Throwable>() {
                     @Override
