@@ -121,6 +121,12 @@ public class PaySuccessDialog extends BaseDialog implements View.OnClickListener
 
     public void setSalesDetail(String str) {
         mTvSalesDetail.setText(str);
+        if ("限免".equals(str) || "折扣".equals(str) || "满减".equals(str)){
+            mTvSalesDetail.setBackgroundResource(R.drawable.img_bg_manjian);
+        }
+        else if ("不参加任何满减".equals(str)){
+            mTvSalesDetail.setBackgroundResource(R.drawable.img_bucanjiamanjian);
+        }
     }
 
     public void setSmallIcon(String url, Activity activity) {

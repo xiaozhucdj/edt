@@ -25,7 +25,6 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.home.bean.Book;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
@@ -58,6 +57,7 @@ public class OrderDetailActivity extends ShopBaseActivity {
     QRCodeDialog qrCodeDialog;
     private int mTagForNoNet = 1;
     private int mTagForZxingfail = 2;
+    private boolean showSuccessDialog = true;
 
     ArrayList<Pair<CouponInfo, ArrayList<OrderDetailBean.OrderInfo>>> dataList
             = new ArrayList<Pair<CouponInfo, ArrayList<OrderDetailBean.OrderInfo>>>();
@@ -70,6 +70,7 @@ public class OrderDetailActivity extends ShopBaseActivity {
     @Override
     public void init() {
         orderId = getIntent().getStringExtra("orderId");
+        showSuccessDialog = getIntent().getBooleanExtra("showSuccessDialog" , true);
     }
 
     @Override
@@ -146,8 +147,6 @@ public class OrderDetailActivity extends ShopBaseActivity {
                             binding.payBtn.setVisibility(View.GONE);
                             binding.orderStatusTv.setVisibility(View.VISIBLE);
                             binding.orderStatusTv.setText(orderStatus);
-
-
                         }
                         parseData(mTopOrderDetail);
                         binding.mainRecyclerview.setCurrentPage(1);
@@ -159,8 +158,8 @@ public class OrderDetailActivity extends ShopBaseActivity {
                         orderPrice = mTopOrderDetail.orderAmount;
 
 
-                        if (mTopOrderDetail.orderInfo.size() == 1 && !(orderStatus.equals("待支付"))) {
-//                            showPaySuccessDialog();//TODO
+                        if (mTopOrderDetail.orderInfo.size() == 1 && orderStatus.equals("交易成功") && showSuccessDialog) {
+                            showPaySuccessDialog();
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -334,9 +333,8 @@ public class OrderDetailActivity extends ShopBaseActivity {
                     @Override
                     public void call(Object o) {
                         qrCodeDialog.dismiss();
-
-                        if (mTopOrderDetail.orderInfo.size() == 1 ){
-//                            showPaySuccessDialog();//TODO
+                        if (mTopOrderDetail.orderInfo.size() == 1){
+                            showPaySuccessDialog();
                         }else{
                             Intent intent = new Intent(OrderDetailActivity.this, PaySuccessActivity.class);
                             intent.putExtra("price", orderPrice);
@@ -467,7 +465,7 @@ public class OrderDetailActivity extends ShopBaseActivity {
                     binding.promotionNameTv.setVisibility(View.VISIBLE);
                     binding.promotionPriceSumTv.setVisibility(View.VISIBLE);
                     binding.promotionContentTv.setText("满" + couponInfo.over + "元减" + couponInfo.cut + "元");
-                    binding.promotionPriceSumTv.setText("共计 : ￥" + couponInfo.orderOriginPrice + "元，已优惠￥" +
+                    binding.promotionPriceSumTv.setText("共计 : ￥" + couponInfo.orderFinalPrice + "元，已优惠￥" +
                             couponInfo.orderDeduction + "元");
                 } else {
                     binding.noPromotionTv.setVisibility(View.VISIBLE);
@@ -482,12 +480,12 @@ public class OrderDetailActivity extends ShopBaseActivity {
     }
 
     private class CouponInfo {
-        double over, cut, orderOriginPrice, orderDeduction;
+        double over, cut, orderFinalPrice, orderDeduction;
 
-        public CouponInfo(double over, double cut, double orderOriginPrice, double orderDeduction) {
+        public CouponInfo(double over, double cut, double orderFinalPrice, double orderDeduction) {
             this.over = over;
             this.cut = cut;
-            this.orderOriginPrice = orderOriginPrice;
+            this.orderFinalPrice = orderFinalPrice;
             this.orderDeduction = orderDeduction;
         }
     }
@@ -521,12 +519,23 @@ public class OrderDetailActivity extends ShopBaseActivity {
         }
     }
 
-    private BookInfo mBookInfo;
 
-    private void showPaySuccessDialog(BookInfo bookInfo) {
-        mBookInfo = bookInfo;
+    private void showPaySuccessDialog() {
+        BookInfo bookInfo;
+        CouponInfo couponInfo;
+        OrderDetailBean.OrderInfo orderInfo;
+        try {
+            orderInfo = dataList.get(0).second.get(0);
+            bookInfo = dataList.get(0).second.get(0).bookInfo.get(0);
+            couponInfo = dataList.get(0).first;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            ToastUtil.showCustomToast(getApplication() , "支付成功提示信息弹出失败");
+            return;
+        }
         //跳转到图书
-        if (mPaySuccessDialog != null){
+        if (mPaySuccessDialog == null){
             mPaySuccessDialog = new PaySuccessDialog(OrderDetailActivity.this);
             mPaySuccessDialog.setBookDetailsListener(new PaySuccessDialog.PaySuccessListener() {
                 @Override
@@ -538,16 +547,15 @@ public class OrderDetailActivity extends ShopBaseActivity {
                 @Override
                 public void onConfirmListener() {
                     mPaySuccessDialog.dismiss();
-                    if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
-                        jumpToControlFragmentActivity(mBookInfo);
+                    if (!StringUtils.isEmpty(FileUtils.getBookFileName(bookInfo.getBookId(), FileUtils.bookDir))) {
+                        jumpToControlFragmentActivity(bookInfo);
                     } else {
                         if (NetUtils.isNetConnected()) {
-                            downBookTask(mBookInfo.getBookId());
+                            downBookTask(bookInfo.getBookId());
                         } else {
                             showCancelAndDetermineDialog(R.string.jump_to_net);
                         }
                     }
-
                 }
             });
         }
@@ -555,18 +563,32 @@ public class OrderDetailActivity extends ShopBaseActivity {
         mPaySuccessDialog.setOrderNumber("订单编号 : " + mTopOrderDetail.orderId);
         mPaySuccessDialog.setOrderTime("下单时间 : " + mTopOrderDetail.orderCreateTime);
         //TODO: 满减 ，图书详情
-//        mPaySuccessDialog.setSalesDetail();
-//        mPaySuccessDialog.setBookName();
-//        mPaySuccessDialog.setBookAuther();
-//        mPaySuccessDialog.setFactoryPrice();
-//        mPaySuccessDialog.setMarketPrice();
-
+        if (orderInfo.bookFinalPrice == 0){
+            mPaySuccessDialog.setSalesDetail("限免");
+            mPaySuccessDialog.setMarketPrice("销售价 : ￥" + orderInfo.bookFinalPrice);
+        }
+        else if (couponInfo != null){
+            mPaySuccessDialog.setSalesDetail("满减");
+            mPaySuccessDialog.setMarketPrice("销售价 : ￥" + couponInfo.orderFinalPrice);
+        }
+        else if (orderInfo.bookFinalPrice != orderInfo.bookSalePrice){
+            mPaySuccessDialog.setSalesDetail("折扣");
+            mPaySuccessDialog.setMarketPrice("销售价 : ￥" + orderInfo.bookFinalPrice);
+        }
+        else {
+            mPaySuccessDialog.setSalesDetail("不参加任何满减");
+            mPaySuccessDialog.setMarketPrice("销售价 : ￥" + orderInfo.bookFinalPrice);
+        }
+        mPaySuccessDialog.setSmallIcon(bookInfo.getBookCoverS() , this);
+        mPaySuccessDialog.setBookName(bookInfo.getBookTitle());
+        mPaySuccessDialog.setBookAuther(bookInfo.getBookAuthor());
+        mPaySuccessDialog.setFactoryPrice("定价 : ￥" + orderInfo.bookSalePrice);
     }
 
     @Override
     protected void onDownBookFinish() {
         super.onDownBookFinish();
         mPaySuccessDialog.dismiss();
-        jumpToControlFragmentActivity(mBookInfo);
+        jumpToControlFragmentActivity(null);
     }
 }

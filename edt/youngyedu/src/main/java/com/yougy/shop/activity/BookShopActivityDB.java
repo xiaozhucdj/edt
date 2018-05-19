@@ -255,6 +255,9 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
     }
