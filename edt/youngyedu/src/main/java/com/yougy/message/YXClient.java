@@ -55,6 +55,8 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.CustomAttachParser;
 import com.yougy.message.attachment.EndQuestionAttachment;
+import com.yougy.message.attachment.OverallLockAttachment;
+import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.WendaQuestionAddAttachment;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -144,7 +146,10 @@ public class YXClient {
                     }
                     else if (newMessage.getAttachment() instanceof AskQuestionAttachment
                             || newMessage.getAttachment() instanceof EndQuestionAttachment
-                            || newMessage.getAttachment() instanceof WendaQuestionAddAttachment){
+                            || newMessage.getAttachment() instanceof WendaQuestionAddAttachment
+                            || newMessage.getAttachment() instanceof OverallLockAttachment
+                            || newMessage.getAttachment() instanceof OverallUnlockAttachment
+                            ){
                         //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
                             listener.onNewMessage(newMessage);

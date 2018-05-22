@@ -210,14 +210,24 @@ public class YougyApplicationManager extends LitePalApplication {
                     }
                     else if(message.getAttachment() instanceof OverallLockAttachment){
                         //TODO 全局锁屏
+                        LogUtils.i("全局锁屏");
+
+                        SpUtils.setOrder("order1");
+                        Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
+                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(newIntent);
                     }
                     else if (message.getAttachment() instanceof OverallUnlockAttachment){
+                        LogUtils.i("全局解锁");
                         //TODO 全局解锁
+                        SpUtils.setOrder("order0");
+                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
+                        EventBus.getDefault().post(baseEvent);
                     }
                 }
             });
 
-            YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
+          /*  YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     LogUtils.e("onNewMessage : " + message.getContent());
@@ -242,7 +252,7 @@ public class YougyApplicationManager extends LitePalApplication {
                         //上锁学科
                     }
                 }
-            });
+            });*/
         }
         checkAnr();
        LogUtils.setOpenLog(!Commons.isRelase);
