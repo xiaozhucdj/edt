@@ -31,6 +31,8 @@ import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.YXClient;
+import com.yougy.message.attachment.OverallLockAttachment;
+import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.order.LockerActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
@@ -205,6 +207,12 @@ public class YougyApplicationManager extends LitePalApplication {
 
                     } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         rxBus.send(message);
+                    }
+                    else if(message.getAttachment() instanceof OverallLockAttachment){
+                        //TODO 全局锁屏
+                    }
+                    else if (message.getAttachment() instanceof OverallUnlockAttachment){
+                        //TODO 全局解锁
                     }
                 }
             });

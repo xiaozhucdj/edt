@@ -27,6 +27,8 @@ public class CustomAttachParser implements MsgAttachmentParser {
     final static String CLUE_ASK_QUESTION = "askQuestion";
     final static String CLUE_END_QUESTION = "endQuestion";
     final static String CLUE_WENDA_ADD = "wendaAdd";
+    final static String CLUE_OVERALLLOCK = "overallLock";
+    final static String CLUE_OVERALLUNLOCK = "overallUnlock";
 
     // 根据解析到的消息类型，确定附件对象类型
     @Override
@@ -37,26 +39,28 @@ public class CustomAttachParser implements MsgAttachmentParser {
             JSONObject object = new JSONObject(json).getJSONObject(KEY_CONTENT);
             String clue = object.getString(KEY_CLUE);
             double version = object.getDouble(KEY_VERSION);
-            JSONObject data = null;
             switch (clue){
                 case CLUE_PROMOTE_BOOK:
                     attachment = new BookRecommandAttachment(clue , version);
-                    data =  object;
                     break;
                 case CLUE_ASK_QUESTION:
                     attachment = new AskQuestionAttachment(clue , version);
-                    data = object;
                     break;
                 case CLUE_END_QUESTION:
                     attachment = new EndQuestionAttachment(clue , version);
-                    data = object;
+                    break;
                 case CLUE_WENDA_ADD:
                     attachment = new WendaQuestionAddAttachment(clue , version);
-                    data = object;
+                    break;
+                case CLUE_OVERALLLOCK:
+                    attachment = new OverallLockAttachment(clue , version);
+                    break;
+                case CLUE_OVERALLUNLOCK:
+                    attachment = new OverallUnlockAttachment(clue , version);
                     break;
             }
             if (attachment != null) {
-                attachment.fromJson(data);
+                attachment.fromJson(object);
             }
         } catch (JSONException e) {
             e.printStackTrace();
