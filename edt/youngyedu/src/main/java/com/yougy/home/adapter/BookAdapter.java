@@ -163,7 +163,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             }
             if (mIsL) {
                 mRlL.setVisibility(View.VISIBLE);
-
+                mRlS.setVisibility(View.GONE);
                 if (mInfos.get(position).getBookId() == -1) {
                     mImgBookSaveL.setVisibility(View.GONE);
                     mTvBookSaveL.setVisibility(View.GONE);
@@ -173,7 +173,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                     return;
                 }
 
-                mRlS.setVisibility(View.GONE);
+
                 loadImage(mInfos.get(position).getBookCoverL(), 201, 267, mImgBookIconL);
                 if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
                     mImgBookSaveL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book));
