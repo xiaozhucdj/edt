@@ -146,7 +146,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (TextUtils.isEmpty(itemId)) {
             ToastUtil.showCustomToast(this, "item 为空,开始问答失败");
             LogUtils.e("FH", "item 为空,开始问答失败");
-            finish();
+            myFinish();
         }
         fromUserId = getIntent().getStringExtra("from");
 //        fromUserId = "10000200";//填空
@@ -154,7 +154,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (TextUtils.isEmpty(fromUserId)) {
             ToastUtil.showCustomToast(this, "from userId 为空,开始问答失败");
             LogUtils.e("FH", "from userId 为空,开始问答失败");
-            finish();
+            myFinish();
         }
         examId = getIntent().getIntExtra("examId", -1);
 //        examId = 148;//填空
@@ -162,7 +162,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (examId == -1) {
             ToastUtil.showCustomToast(this, "examId 为空,开始问答失败");
             LogUtils.e("FH", "examId 为空,开始问答失败");
-            finish();
+            myFinish();
         }
         startTimeMill = getIntent().getLongExtra("startTimeMill", -1);
         if (startTimeMill == -1) {
@@ -201,7 +201,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                                 timedTask.stop();
                                             }
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                         }
                                     }).show();
                                 }
@@ -225,7 +225,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         } else {
                             ToastUtil.showCustomToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
                             LogUtils.e("FH", "获取到的题目为空,开始问答失败");
-                            finish();
+                            myFinish();
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -314,7 +314,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         switch (view.getId()) {
 
             case R.id.btn_left:
-                finish();
+                myFinish();
                 break;
             case R.id.commit_answer_btn:
                 //防止快速多次点击
@@ -632,7 +632,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         ToastUtil.showCustomToast(this, "请完成作答");
         // TODO: 2017/9/13 这里先保留关闭页面，做测试使用
-        finish();
+        myFinish();
     }
 
     private void saveResultBitmap(String fileName) {
@@ -712,7 +712,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                             binding.commitAnswerBtn.setClickable(true);
                                         }
                                     },
@@ -736,7 +736,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                         binding.commitAnswerBtn.setClickable(true);
                                     }
                                 },
@@ -866,7 +866,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                         binding.commitAnswerBtn.setClickable(true);
                                     }
                                 },
@@ -909,7 +909,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", questionItem);
                         startActivity(intent);
-                        finish();
+                        myFinish();
                         ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
                     }
                 }, new Action1<Throwable>() {
@@ -921,7 +921,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                     }
                                 }).show();
                             }
@@ -932,7 +932,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                             binding.commitAnswerBtn.setClickable(true);
                                         }
                                     },
@@ -1152,12 +1152,24 @@ public class AnsweringActivity extends AnswerBaseActivity {
             if (mNbvAnswerBoard!=null){
                 mNbvAnswerBoard.setIntercept(false);
             }
+        } if ( event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)){
+            if (mCaogaoNoteBoard!=null){
+                mCaogaoNoteBoard.setIntercept(true);
+            }
+
+            if (mNbvAnswerBoard!=null){
+                mNbvAnswerBoard.setIntercept(true);
+            }
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    private void myFinish(){
+        finish() ;
         if (mCaogaoNoteBoard!=null){
             mCaogaoNoteBoard.leaveScribbleMode();
             mCaogaoNoteBoard.setIntercept(true);
