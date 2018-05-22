@@ -249,33 +249,49 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         } else {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.play_package, mTagBookReader);
         }*/
-
-        if (mBookDetailsDialog == null){
-            mBookDetailsDialog = new BookDetailsDialog(this) ;
-            mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
-                @Override
-                public void onCancelListener() {
-                    mBookDetailsDialog.dismiss();
-                    ShopBookDetailsActivity.this.finish();
-                }
-
-                @Override
-                public void onConfirmListener() {
-                    mBookDetailsDialog.dismiss();
-                    if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
-                        jumpToControlFragmentActivity();
-
-                    }else{
-                        if (NetUtils.isNetConnected()) {
-                            downBookTask(mBookInfo.getBookId());
-                        } else {
-                            showCancelAndDetermineDialog(R.string.jump_to_net);
-                        }
-                    }
-                }
-            });
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+            return;
         }
-        mBookDetailsDialog.show();
+
+        NetWorkManager.addBookToBookcase(mBookInfo.getBookId() ,SpUtils.getUserId()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                UIUtils.showToastSafe("添加图书成功");
+                if (mBookDetailsDialog == null){
+                    mBookDetailsDialog = new BookDetailsDialog(ShopBookDetailsActivity.this) ;
+                    mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
+                        @Override
+                        public void onCancelListener() {
+                            mBookDetailsDialog.dismiss();
+                            ShopBookDetailsActivity.this.finish();
+                        }
+
+                        @Override
+                        public void onConfirmListener() {
+                            mBookDetailsDialog.dismiss();
+                            if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
+                                jumpToControlFragmentActivity();
+
+                            }else{
+                                if (NetUtils.isNetConnected()) {
+                                    downBookTask(mBookInfo.getBookId());
+                                } else {
+                                    showCancelAndDetermineDialog(R.string.jump_to_net);
+                                }
+                            }
+                        }
+                    });
+                }
+                mBookDetailsDialog.show();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
+                UIUtils.showToastSafe("添加图书失败,请稍候再试");
+            }
+        });
     }
 
     private void downBookDialog() {

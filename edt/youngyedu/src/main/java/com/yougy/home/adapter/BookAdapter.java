@@ -72,12 +72,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             holder.mImgBookDeleteL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    mDeletePs = position ;
                     mOnItemDeleteListener.onItemDeteteClickL(position);
                 }
             });
             holder.mImgBookDeleteS.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    mDeletePs = position ;
                     mOnItemDeleteListener.onItemDeteteClickS(position);
                 }
             });
@@ -151,7 +153,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             mImgBookDeleteS = (ImageView) itemView.findViewById(R.id.img_delete_book_s);
 
 
-            mImgAdd= (ImageView) itemView.findViewById(R.id.img_add_icon) ;
+            mImgAdd = (ImageView) itemView.findViewById(R.id.img_add_icon);
 
         }
 
@@ -218,5 +220,15 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
         void onItemDownClickL(int position);
 
         void onItemDownClickS(int position);
+    }
+
+    public int mDeletePs;
+
+    public int getDeletePs() {
+        return mDeletePs;
+    }
+
+    public boolean isPicL() {
+        return mIsL;
     }
 }
