@@ -375,4 +375,22 @@ public final class NetWorkManager {
                 ;
     }
 
+    /**
+     * 移除架上图书
+     */
+    public static Observable<Object> removeBookInBookcase(Integer bookId , Integer userId) {
+        return getInstance().getServerApi().removeBookInBookcase(bookId, userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    /**
+     * 添加架上图书
+     */
+    public static Observable<Object> addBookToBookcase(Integer bookId , Integer userId) {
+        return getInstance().getServerApi().addBookToBookcase(bookId, userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 }
