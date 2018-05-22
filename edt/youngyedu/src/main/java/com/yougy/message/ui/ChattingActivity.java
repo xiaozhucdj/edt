@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
@@ -35,7 +36,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.message.BookRecommandAttachment;
+import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.MyEdittext;
 import com.yougy.message.SizeUtil;
 import com.yougy.message.YXClient;
@@ -233,6 +234,28 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
+                if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")){
+                    String testStr = binding.messageEdittext.getText().toString();
+                    String[] strings = testStr.split(" ");
+                    YXClient.getInstance().sendTestMessage(id, type, strings[1], strings[2], strings[3], new RequestCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void param) {
+                            LogUtils.v("发送测试消息成功");
+                        }
+
+                        @Override
+                        public void onFailed(int code) {
+                            LogUtils.v("发送测试消息失败" + code);
+                        }
+
+                        @Override
+                        public void onException(Throwable exception) {
+                            LogUtils.v("发送测试消息失败" + exception.getMessage());
+                            exception.printStackTrace();
+                        }
+                    });
+                    return;
+                }
                 IMMessage message = YXClient.getInstance().sendTextMessage(id ,
                         type , binding.messageEdittext.getText().toString() , ChattingActivity.this);
                 if (message != null) {

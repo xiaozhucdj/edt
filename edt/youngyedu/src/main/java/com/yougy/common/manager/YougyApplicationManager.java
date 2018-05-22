@@ -28,8 +28,8 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LocalLockActivity;
-import com.yougy.message.AskQuestionAttachment;
-import com.yougy.message.EndQuestionAttachment;
+import com.yougy.message.attachment.AskQuestionAttachment;
+import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.YXClient;
 import com.yougy.order.LockerActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
@@ -191,7 +191,7 @@ public class YougyApplicationManager extends LitePalApplication {
             //初始化云信配置,注册全局性的处理器和解析器等
             YXClient.getInstance().initOption(this);
             //初始化命令消息监听器,在此处处理
-            YXClient.getInstance().setOnCommandCustomMsgListener(new YXClient.OnMessageListener() {
+            YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment) {

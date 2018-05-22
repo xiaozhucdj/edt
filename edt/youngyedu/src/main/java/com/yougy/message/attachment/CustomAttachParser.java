@@ -1,4 +1,4 @@
-package com.yougy.message;
+package com.yougy.message.attachment;
 
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachmentParser;
@@ -23,6 +23,11 @@ public class CustomAttachParser implements MsgAttachmentParser {
     static String KEY_CLUE = "clue";
     static String KEY_CONTENT = "content";
 
+    final static String CLUE_PROMOTE_BOOK = "promoteBook";
+    final static String CLUE_ASK_QUESTION = "askQuestion";
+    final static String CLUE_END_QUESTION = "endQuestion";
+    final static String CLUE_WENDA_ADD = "wendaAdd";
+
     // 根据解析到的消息类型，确定附件对象类型
     @Override
     public MsgAttachment parse(String json) {
@@ -34,17 +39,21 @@ public class CustomAttachParser implements MsgAttachmentParser {
             double version = object.getDouble(KEY_VERSION);
             JSONObject data = null;
             switch (clue){
-                case "promoteBook" :
+                case CLUE_PROMOTE_BOOK:
                     attachment = new BookRecommandAttachment(clue , version);
                     data =  object;
                     break;
-                case "askQuestion" :
+                case CLUE_ASK_QUESTION:
                     attachment = new AskQuestionAttachment(clue , version);
                     data = object;
                     break;
-                case "endQuestion" :
+                case CLUE_END_QUESTION:
                     attachment = new EndQuestionAttachment(clue , version);
                     data = object;
+                case CLUE_WENDA_ADD:
+                    attachment = new WendaQuestionAddAttachment(clue , version);
+                    data = object;
+                    break;
             }
             if (attachment != null) {
                 attachment.fromJson(data);

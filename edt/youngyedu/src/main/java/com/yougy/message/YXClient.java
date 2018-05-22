@@ -52,6 +52,10 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.message.attachment.AskQuestionAttachment;
+import com.yougy.message.attachment.CustomAttachParser;
+import com.yougy.message.attachment.EndQuestionAttachment;
+import com.yougy.message.attachment.WendaQuestionAddAttachment;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -120,7 +124,7 @@ public class YXClient {
     private ArrayList<OnMessageListener> onMsgStatusChangedListenerList = new ArrayList<OnMessageListener>();
 
     //命令型消息监听器,用来通知命令型(不需要在消息列表中显示)的消息,例如开始问答,结束问答等
-    private OnMessageListener onCommandCustomMsgListener;
+    private ArrayList<OnMessageListener> onNewCommandCustomMsgListenerList = new ArrayList<OnMessageListener>();
 
     //新到消息监听器
     Observer<List<IMMessage>> incommingMessageObserver = new Observer<List<IMMessage>>() {
@@ -139,9 +143,11 @@ public class YXClient {
                         continue;
                     }
                     else if (newMessage.getAttachment() instanceof AskQuestionAttachment
-                            || newMessage.getAttachment() instanceof EndQuestionAttachment){
-                        if (onCommandCustomMsgListener != null){
-                            onCommandCustomMsgListener.onNewMessage(newMessage);
+                            || newMessage.getAttachment() instanceof EndQuestionAttachment
+                            || newMessage.getAttachment() instanceof WendaQuestionAddAttachment){
+                        //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
+                        for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
+                            listener.onNewMessage(newMessage);
                         }
                         continue;
                     }
@@ -502,6 +508,9 @@ public class YXClient {
                 while(getManager().myOnNewMessageListenerList.size() > 0){
                     getManager().removeOnNewMessageListener(getManager().myOnNewMessageListenerList.get(0));
                 }
+                while(getManager().myOnNewCommandCustomMsgListenerList.size() > 0){
+                    getManager().removeOnNewMessageListener(getManager().myOnNewMessageListenerList.get(0));
+                }
                 emptyFragmentMap.remove(activity.toString());
             }
         }.setManager(manager);
@@ -531,16 +540,6 @@ public class YXClient {
             }
         }
         return instance;
-    }
-
-    /**
-     * 设置命令型消息监听器,用于接收命令型(不需要在消息列表中显示)消息的消息,例如开始问答,结束问答等
-     * @param onCommandCustomMsgListener
-     * @return
-     */
-    public YXClient setOnCommandCustomMsgListener(OnMessageListener onCommandCustomMsgListener) {
-        this.onCommandCustomMsgListener = onCommandCustomMsgListener;
-        return this;
     }
 
     /**
@@ -872,6 +871,34 @@ public class YXClient {
                 return returnList;
             }
         }
+    }
+
+
+    public IMMessage sendTestMessage(String id , SessionTypeEnum typeEnum
+            , String bookId , String cursorId , String itemId , RequestCallback<Void> requestCallback){
+        lv("发送测试消息,对方id=" + id + " type=" + typeEnum + " bookId=" + bookId + " cursorId=" + cursorId + " itemId=" + itemId);
+        final IMMessage message;
+        switch (typeEnum){
+            case P2P:
+                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[测试消息]" , new WendaQuestionAddAttachment(bookId , cursorId , itemId));
+                break;
+            case Team:
+                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[图书推荐]" , new WendaQuestionAddAttachment(bookId , cursorId , itemId));
+                break;
+            default:
+                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
+                return null;
+        }
+        CustomMessageConfig config = new CustomMessageConfig();
+        config.enableRoaming = true;
+        message.setConfig(config);
+        if (requestCallback != null){
+            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(requestCallback);
+        }
+        else {
+            NIMClient.getService(MsgService.class).sendMessage(message , true);
+        }
+        return message;
     }
 
 
@@ -1498,6 +1525,8 @@ public class YXClient {
         public ArrayList<OnMessageListener> myOnNewMessageListenerList = new ArrayList<OnMessageListener>();
         //本Manage管理的自定义的消息发送状态监听器列表
         public ArrayList<OnMessageListener> myOnMsgStatusChangedListenerList = new ArrayList<OnMessageListener>();
+        //本Manage管理的命令型消息监听器列表
+        public ArrayList<OnMessageListener> myOnNewCommandCustomMsgListenerList = new ArrayList<OnMessageListener>();
         /**
          * 添加最近联系人列表变化监听器
          * @param listener 监听器通知UI的内容类型为UNKNOWN,即为发生变动的最近联系人的集合,
@@ -1628,6 +1657,23 @@ public class YXClient {
         public void removeOnMsgStatusChangedListener(OnMessageListener listener){
             onMsgStatusChangedListenerList.remove(listener);
             myOnMsgStatusChangedListenerList.remove(listener);
+        }
+        /**
+         * 添加命令型消息监听器,用于接收命令型(不需要在消息列表中显示)消息的消息,例如开始问答,结束问答等
+         * @param listener 注意在本消息监听器中收到的消息不会在onNewMessageListener中被接收到
+         */
+        public void addOnNewCommandCustomMsgListener(OnMessageListener listener){
+            onNewCommandCustomMsgListenerList.add(listener);
+            myOnNewCommandCustomMsgListenerList.add(listener);
+        }
+
+        /**
+         * 移除新到消息监听器
+         * @param listener
+         */
+        public void removeOnNewCommandCustomMsgListener(OnMessageListener listener){
+            onNewCommandCustomMsgListenerList.remove(listener);
+            myOnNewCommandCustomMsgListenerList.remove(listener);
         }
     }
 
