@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.ImageLoaderManager;
@@ -69,6 +71,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 import static com.yougy.shop.activity.ShopPromotionActivity.COUPON_ID;
@@ -258,6 +261,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             @Override
             public void call(Object o) {
                 UIUtils.showToastSafe("添加图书成功");
+                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                EventBus.getDefault().post(baseEvent);
                 if (mBookDetailsDialog == null){
                     mBookDetailsDialog = new BookDetailsDialog(ShopBookDetailsActivity.this) ;
                     mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
