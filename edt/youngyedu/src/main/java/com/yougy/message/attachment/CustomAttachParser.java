@@ -29,6 +29,8 @@ public class CustomAttachParser implements MsgAttachmentParser {
     final static String CLUE_WENDA_ADD = "wendaAdd";
     final static String CLUE_OVERALLLOCK = "overallLock";
     final static String CLUE_OVERALLUNLOCK = "overallUnlock";
+    final static String CLUE_RETRY_ASK_QUESTION = "retryAskQuestion";
+    final static String CLUE_SEND_REPLY = "sendReply";
 
     // 根据解析到的消息类型，确定附件对象类型
     @Override
@@ -57,6 +59,9 @@ public class CustomAttachParser implements MsgAttachmentParser {
                     break;
                 case CLUE_OVERALLUNLOCK:
                     attachment = new OverallUnlockAttachment(clue , version);
+                    break;
+                case CLUE_RETRY_ASK_QUESTION:
+                    attachment = new RetryAskQuestionAttachment(clue , version);
                     break;
             }
             if (attachment != null) {

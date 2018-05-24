@@ -28,6 +28,9 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -45,6 +48,7 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.message.YXClient;
 import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
@@ -101,7 +105,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     String itemId;
     String fromUserId;
-    int examId;
+    public int examId;
 
 
     private ParsedQuestionItem questionItem;
@@ -903,6 +907,25 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
+
+                        double d = (double) ((LinkedTreeMap) ((ArrayList) o).get(0)).get("replyId");
+                        YXClient.getInstance().sendReply(fromUserId , SessionTypeEnum.P2P, String.valueOf((int) d), examId + "", new RequestCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void param) {
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
+                            }
+
+                            @Override
+                            public void onFailed(int code) {
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功,通知教师失败 : " + code);
+                            }
+
+                            @Override
+                            public void onException(Throwable exception) {
+                                exception.printStackTrace();
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功,通知教师失败 : " + exception.getMessage());
+                            }
+                        });
                         if (timedTask != null) {
                             timedTask.stop();
                         }
@@ -910,7 +933,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         intent.putExtra("question", questionItem);
                         startActivity(intent);
                         myFinish();
-                        ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
                     }
                 }, new Action1<Throwable>() {
                     @Override

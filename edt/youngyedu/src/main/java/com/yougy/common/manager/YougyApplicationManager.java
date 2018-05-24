@@ -33,6 +33,7 @@ import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
+import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.order.LockerActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
@@ -51,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import okhttp3.OkHttpClient;
 
+import static com.yougy.common.activity.BaseActivity.getCurrentActivity;
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
 
 //import com.tencent.bugly.crashreport.CrashReport;
@@ -197,7 +199,6 @@ public class YougyApplicationManager extends LitePalApplication {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment) {
-
                         Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                         newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
@@ -223,6 +224,19 @@ public class YougyApplicationManager extends LitePalApplication {
                         SpUtils.setOrder("order0");
                         BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
                         EventBus.getDefault().post(baseEvent);
+                    }
+                    else if (message.getAttachment() instanceof RetryAskQuestionAttachment){
+                        if (!(getCurrentActivity() instanceof AnsweringActivity)
+                                || (getCurrentActivity() instanceof AnsweringActivity
+                                && ((AnsweringActivity) getCurrentActivity()).examId
+                                != ((RetryAskQuestionAttachment) message.getAttachment()).examId)){
+                            Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
+                            newIntent.putExtra("from", ((RetryAskQuestionAttachment) message.getAttachment()).userId + "");
+                            newIntent.putExtra("examId", ((RetryAskQuestionAttachment) message.getAttachment()).examId);
+                            startActivity(newIntent);
+                        }
                     }
                 }
             });
