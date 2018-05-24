@@ -324,6 +324,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 //防止快速多次点击
                 binding.commitAnswerBtn.setClickable(false);
 
+                if ("选择".equals(questionList.get(0).getExtraData())) {
+                    if (checkedAnswerList.size() == 0) {
+                        ToastUtil.showCustomToast(this, "请先选择结果后再提交");
+                        return;
+                    }
+                }
+
                 saveHomeWorkData();
                 getUpLoadInfo();
 
@@ -909,7 +916,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     public void call(Object o) {
 
                         double d = (double) ((LinkedTreeMap) ((ArrayList) o).get(0)).get("replyId");
-                        YXClient.getInstance().sendReply(fromUserId , SessionTypeEnum.P2P, String.valueOf((int) d), examId + "", new RequestCallback<Void>() {
+                        YXClient.getInstance().sendReply(fromUserId, SessionTypeEnum.P2P, String.valueOf((int) d), examId + "", new RequestCallback<Void>() {
                             @Override
                             public void onSuccess(Void param) {
                                 ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
@@ -1143,43 +1150,46 @@ public class AnsweringActivity extends AnswerBaseActivity {
         EventBus.getDefault().post(baseEvent);
     }
 
-    private boolean mEventResult =false ;
+    private boolean mEventResult = false;
+
     @Override
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
-        if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT )&& !mEventResult) {
+        if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT) && !mEventResult) {
             LogUtils.i("type .." + event.getType());
-            mEventResult = true ;
+            mEventResult = true;
             UIUtils.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (mCaogaoNoteBoard!=null){
+                    if (mCaogaoNoteBoard != null) {
                         mCaogaoNoteBoard.leaveScribbleMode();
                         mCaogaoNoteBoard.setIntercept(false);
                     }
 
-                    if (mNbvAnswerBoard!=null){
+                    if (mNbvAnswerBoard != null) {
                         mNbvAnswerBoard.leaveScribbleMode();
                         mNbvAnswerBoard.setIntercept(false);
                     }
                     LogUtils.i("type .." + "111111111111111111111");
                     RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
                 }
-            },3000) ;
-        } if (event.getType().equalsIgnoreCase(EVENT_LOCKER_ACTIVITY_PUSE )) {
-            if (mCaogaoNoteBoard!=null){
+            }, 3000);
+        }
+        if (event.getType().equalsIgnoreCase(EVENT_LOCKER_ACTIVITY_PUSE)) {
+            if (mCaogaoNoteBoard != null) {
                 mCaogaoNoteBoard.setIntercept(false);
             }
 
-            if (mNbvAnswerBoard!=null){
+            if (mNbvAnswerBoard != null) {
                 mNbvAnswerBoard.setIntercept(false);
             }
-        } if ( event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)){
-            if (mCaogaoNoteBoard!=null){
+        }
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
+            if (mCaogaoNoteBoard != null) {
                 mCaogaoNoteBoard.setIntercept(true);
             }
 
-            if (mNbvAnswerBoard!=null){
+            if (mNbvAnswerBoard != null) {
                 mNbvAnswerBoard.setIntercept(true);
             }
         }
@@ -1190,14 +1200,14 @@ public class AnsweringActivity extends AnswerBaseActivity {
         super.onPause();
     }
 
-    private void myFinish(){
-        finish() ;
-        if (mCaogaoNoteBoard!=null){
+    private void myFinish() {
+        finish();
+        if (mCaogaoNoteBoard != null) {
             mCaogaoNoteBoard.leaveScribbleMode();
             mCaogaoNoteBoard.setIntercept(true);
         }
 
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode();
             mNbvAnswerBoard.setIntercept(true);
         }
