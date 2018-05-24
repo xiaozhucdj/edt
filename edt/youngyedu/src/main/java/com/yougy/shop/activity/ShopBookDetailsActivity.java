@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.ImageLoaderManager;
@@ -69,6 +71,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 import static com.yougy.shop.activity.ShopPromotionActivity.COUPON_ID;
@@ -249,33 +252,51 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         } else {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.play_package, mTagBookReader);
         }*/
-
-        if (mBookDetailsDialog == null){
-            mBookDetailsDialog = new BookDetailsDialog(this) ;
-            mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
-                @Override
-                public void onCancelListener() {
-                    mBookDetailsDialog.dismiss();
-                    ShopBookDetailsActivity.this.finish();
-                }
-
-                @Override
-                public void onConfirmListener() {
-                    mBookDetailsDialog.dismiss();
-                    if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
-                        jumpToControlFragmentActivity();
-
-                    }else{
-                        if (NetUtils.isNetConnected()) {
-                            downBookTask(mBookInfo.getBookId());
-                        } else {
-                            showCancelAndDetermineDialog(R.string.jump_to_net);
-                        }
-                    }
-                }
-            });
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+            return;
         }
-        mBookDetailsDialog.show();
+
+        NetWorkManager.addBookToBookcase(mBookInfo.getBookId() ,SpUtils.getUserId()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                UIUtils.showToastSafe("添加图书成功");
+                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                EventBus.getDefault().post(baseEvent);
+                if (mBookDetailsDialog == null){
+                    mBookDetailsDialog = new BookDetailsDialog(ShopBookDetailsActivity.this) ;
+                    mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
+                        @Override
+                        public void onCancelListener() {
+                            mBookDetailsDialog.dismiss();
+                            ShopBookDetailsActivity.this.finish();
+                        }
+
+                        @Override
+                        public void onConfirmListener() {
+                            mBookDetailsDialog.dismiss();
+                            if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
+                                jumpToControlFragmentActivity();
+
+                            }else{
+                                if (NetUtils.isNetConnected()) {
+                                    downBookTask(mBookInfo.getBookId());
+                                } else {
+                                    showCancelAndDetermineDialog(R.string.jump_to_net);
+                                }
+                            }
+                        }
+                    });
+                }
+                mBookDetailsDialog.show();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
+                UIUtils.showToastSafe("添加图书失败,请稍候再试");
+            }
+        });
     }
 
     private void downBookDialog() {
