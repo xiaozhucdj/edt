@@ -317,6 +317,9 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            if (mCountBooks.size() > 0) {
+                mAdaptetFragmentAllTextBook.notifyDataSetChanged();
+            }
             if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
                 loadData();
             }

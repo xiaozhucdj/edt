@@ -70,26 +70,22 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
     public class HolerAllFragmentBook extends RecyclerView.ViewHolder {
 
         private final ImageView mImgBookIcon;
-        private final ImageView mImgBooSave;
-        private final TextView mTvBooksave;
+        private final ImageView mImgBookDownS;
 
 
         public HolerAllFragmentBook(View itemView) {
             super(itemView);
             mImgBookIcon = (ImageView) itemView.findViewById(R.id.img_book_icon);
-            mImgBooSave = (ImageView) itemView.findViewById(R.id.img_book_save);
-            mTvBooksave = (TextView) itemView.findViewById(R.id.tv_book_save);
+            mImgBookDownS = (ImageView) itemView.findViewById(R.id.img_down_book_s);
         }
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
                 refreshImg(mImgBookIcon, mInfos.get(position).getBookCoverS());
                 if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
-                    mImgBooSave.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book));
-                    mTvBooksave.setText("已\n下\n载");
+                    mImgBookDownS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book_s));
                 } else {
-                    mImgBooSave.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book));
-                    mTvBooksave.setText("未\n下\n载");
+                    mImgBookDownS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book_s));
                 }
 
             }

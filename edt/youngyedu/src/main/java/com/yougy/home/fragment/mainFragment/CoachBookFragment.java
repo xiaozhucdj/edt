@@ -33,6 +33,7 @@ import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.init.bean.BookInfo;
+import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 
@@ -66,11 +67,18 @@ public class CoachBookFragment extends BFragment {
     private boolean mIsFist;
 
     //    private Subscription mSub;
-    private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
     private PageBtnBar mPageBtnBar;
+    private BookInfo mAddBook;
 
+    private synchronized BookInfo getAddBook() {
+        if (mAddBook == null) {
+            mAddBook = new BookInfo();
+            mAddBook.setBookId(-1);
+        }
+        return mAddBook;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
@@ -93,7 +101,6 @@ public class CoachBookFragment extends BFragment {
             }
         });
 //        mBookAdapter.notifyDataSetChanged();
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
         mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
@@ -101,6 +108,17 @@ public class CoachBookFragment extends BFragment {
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
+
+        if (info.getBookId() == -1){
+            if (NetUtils.isNetConnected()) {
+                loadIntent(BookShopActivityDB.class);
+            } else {
+                showCancelAndDetermineDialog(R.string.jump_to_net);
+            }
+            return;
+        }
+
+
 //        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
@@ -137,6 +155,9 @@ public class CoachBookFragment extends BFragment {
         super.onHiddenChanged(hidden);
         LogUtils.i("yuanye ....coach");
         if (!hidden) {
+            if (mCountBooks.size() > 0) {
+                mBookAdapter.notifyDataSetChanged();
+            }
             if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
                 loadData();
             }
@@ -145,7 +166,6 @@ public class CoachBookFragment extends BFragment {
 
     private void loadData() {
         if (YougyApplicationManager.isWifiAvailable()) {
-            mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
             req.setUserId(SpUtils.getAccountId());
@@ -289,15 +309,12 @@ public class CoachBookFragment extends BFragment {
     private void freshUI(List<BookInfo> bookInfos) {
         mIsRefresh = false;
         mNewTextBookCallBack = null;
+        mCountBooks.clear();
+        mCountBooks.add(0,getAddBook());
         if (bookInfos != null && bookInfos.size() > 0) {
-            mLoadingNull.setVisibility(View.GONE);
-            mCountBooks.clear();
             mCountBooks.addAll(bookInfos);
-            initPages();
-        } else {
-            mLoadingNull.setVisibility(View.VISIBLE);
         }
-
+        initPages();
     }
 
     @Override

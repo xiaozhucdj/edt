@@ -19,21 +19,17 @@
             android:paddingRight="11px"
             android:src="@drawable/book_adaper_item_icon_test_normal" />
 
-
-
         <ImageView
-            android:id="@+id/img_book_save"
-            android:background="@null"
-            android:layout_width="36px"
-            android:layout_height="90px" />
+            android:id="@+id/img_down_book_s"
+            android:layout_width="46px"
+            android:layout_height="46px"
+            android:layout_alignRight="@id/img_book_icon"
+            android:layout_alignBottom="@id/img_book_icon"
+            android:layout_marginBottom="11px"
+            android:layout_marginRight="11px"
+            android:background="@null" />
 
-        <TextView
-            android:id="@+id/tv_book_save"
-            android:textSize="18px"
-            android:gravity="center_horizontal"
-            android:textColor="@color/white"
-            android:layout_width="36px"
-            android:layout_height="90px" />
+
 
     </RelativeLayout>
 </FrameLayout>

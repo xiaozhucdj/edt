@@ -511,4 +511,5 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
 
+
 }

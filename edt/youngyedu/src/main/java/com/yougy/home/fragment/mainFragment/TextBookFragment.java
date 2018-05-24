@@ -79,8 +79,8 @@ public class TextBookFragment extends BFragment {
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
 //        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
 
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
 
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), PAGE_LINES);
@@ -107,9 +107,9 @@ public class TextBookFragment extends BFragment {
         BookInfo info = mBooks.get(position);
 //        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
 
-        LogUtils.i("yuanye ..."+info.getBookId());
-        LogUtils.i("yuanye ..."+FileUtils.getTextBookFilesDir());
-        LogUtils.i("yuanye ..."+StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir)));
+        LogUtils.i("yuanye ..." + info.getBookId());
+        LogUtils.i("yuanye ..." + FileUtils.getTextBookFilesDir());
+        LogUtils.i("yuanye ..." + StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir)));
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
@@ -189,6 +189,9 @@ public class TextBookFragment extends BFragment {
         LogUtils.e(TAG, "onHiddenChanged......");
         LogUtils.i("yuanye ...text");
         if (!hidden) {
+            if (mCountBooks.size() > 0) {
+                mBookAdapter.notifyDataSetChanged();
+            }
             if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
                 loadData();
             }
@@ -228,15 +231,15 @@ public class TextBookFragment extends BFragment {
      */
     private void refreshAdapterData(int pagerIndex) {
 
-                //设置page页数数据
-                mBooks.clear();
+        //设置page页数数据
+        mBooks.clear();
 
-                if ((pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
-                    mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
-                } else {
-                    mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, (pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
-                }
-                notifyDataSetChanged();
+        if ((pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountBooks.size()) { // 不是 正数被
+            mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, mCountBooks.size()));
+        } else {
+            mBooks.addAll(mCountBooks.subList((pagerIndex - 1) * COUNT_PER_PAGE, (pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE)); //正数被
+        }
+        notifyDataSetChanged();
     }
 
     private void notifyDataSetChanged() {
@@ -300,7 +303,7 @@ public class TextBookFragment extends BFragment {
 /*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
                 contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
 
-                refreshAdapterData(btnIndex+1);
+                refreshAdapterData(btnIndex + 1);
             }
         });
         mPageBtnBar.setCurrentSelectPageIndex(0);
