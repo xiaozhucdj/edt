@@ -57,6 +57,8 @@ import com.yougy.message.attachment.CustomAttachParser;
 import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
+import com.yougy.message.attachment.ReplyAttachment;
+import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.WendaQuestionAddAttachment;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -149,6 +151,7 @@ public class YXClient {
                             || newMessage.getAttachment() instanceof WendaQuestionAddAttachment
                             || newMessage.getAttachment() instanceof OverallLockAttachment
                             || newMessage.getAttachment() instanceof OverallUnlockAttachment
+                            || newMessage.getAttachment() instanceof RetryAskQuestionAttachment
                             ){
                         //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
@@ -514,7 +517,7 @@ public class YXClient {
                     getManager().removeOnNewMessageListener(getManager().myOnNewMessageListenerList.get(0));
                 }
                 while(getManager().myOnNewCommandCustomMsgListenerList.size() > 0){
-                    getManager().removeOnNewMessageListener(getManager().myOnNewMessageListenerList.get(0));
+                    getManager().removeOnNewCommandCustomMsgListener(getManager().myOnNewCommandCustomMsgListenerList.get(0));
                 }
                 emptyFragmentMap.remove(activity.toString());
             }
@@ -888,7 +891,7 @@ public class YXClient {
                 message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[测试消息]" , new WendaQuestionAddAttachment(bookId , cursorId , itemId));
                 break;
             case Team:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[图书推荐]" , new WendaQuestionAddAttachment(bookId , cursorId , itemId));
+                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[测试消息]" , new WendaQuestionAddAttachment(bookId , cursorId , itemId));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);
@@ -906,7 +909,32 @@ public class YXClient {
         return message;
     }
 
-
+    public IMMessage sendReply(String id , SessionTypeEnum typeEnum
+            , String replyId , String examId , RequestCallback<Void> requestCallback){
+        lv("发送测试消息,对方id=" + id + " type=" + typeEnum + " replyId=" + replyId + " examId=" + examId);
+        final IMMessage message;
+        switch (typeEnum){
+            case P2P:
+                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[自定义消息]" , new ReplyAttachment(replyId , examId));
+                break;
+            case Team:
+                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[自定义消息]" , new ReplyAttachment(replyId , examId));
+                break;
+            default:
+                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
+                return null;
+        }
+        CustomMessageConfig config = new CustomMessageConfig();
+        config.enableRoaming = true;
+        message.setConfig(config);
+        if (requestCallback != null){
+            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(requestCallback);
+        }
+        else {
+            NIMClient.getService(MsgService.class).sendMessage(message , true);
+        }
+        return message;
+    }
 
 
 
