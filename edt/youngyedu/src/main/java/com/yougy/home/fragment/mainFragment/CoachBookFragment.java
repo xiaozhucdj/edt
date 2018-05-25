@@ -165,6 +165,7 @@ public class CoachBookFragment extends BFragment {
     }
 
     private void loadData() {
+        LogUtils.e("loadData ..."+tag);
         if (YougyApplicationManager.isWifiAvailable()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID

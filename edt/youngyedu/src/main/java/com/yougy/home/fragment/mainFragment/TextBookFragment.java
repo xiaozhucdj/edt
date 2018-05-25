@@ -186,8 +186,6 @@ public class TextBookFragment extends BFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        LogUtils.e(TAG, "onHiddenChanged......");
-        LogUtils.i("yuanye ...text");
         if (!hidden) {
             if (mCountBooks.size() > 0) {
                 mBookAdapter.notifyDataSetChanged();
@@ -199,7 +197,7 @@ public class TextBookFragment extends BFragment {
     }
 
     private void loadData() {
-        LogUtils.i("yuanye////////load");
+        LogUtils.e("loadData ..."+tag);
         if (NetUtils.isNetConnected()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();

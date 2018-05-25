@@ -328,6 +328,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
 
     private void loadData() {
+        LogUtils.e("loadData ..."+tag);
         if (YougyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();

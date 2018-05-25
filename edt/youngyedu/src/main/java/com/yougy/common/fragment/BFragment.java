@@ -54,7 +54,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     protected CompositeSubscription subscription;
     protected ConnectableObservable<Object> tapEventEmitter;
     protected Context context;
-    private String tag;
+    public String tag;
 
     protected boolean mIsRefresh;
 
