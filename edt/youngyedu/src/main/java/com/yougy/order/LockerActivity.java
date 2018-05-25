@@ -1,6 +1,7 @@
 package com.yougy.order;
 
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,11 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.activity.MainActivity;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 
 import de.greenrobot.event.EventBus;
-
-import static com.yougy.ui.activity.R.id.textview;
 
 
 /**
@@ -74,6 +74,12 @@ public class LockerActivity extends BaseActivity {
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER)) {
             mIsBack = true;
+
+            if (!BaseActivity.isContainsActivity(MainActivity.class.getName())){
+                Intent newIntent = new Intent(getApplicationContext(), MainActivity.class);
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(newIntent);
+            }
             this.finish();
         } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT) && !mEventResult) {
             mEventResult = true;
