@@ -87,6 +87,7 @@ import static com.yougy.common.eventbus.EventBusConstant.EVENT_LOCKER_ACTIVITY_P
  */
 
 public class AnsweringActivity extends AnswerBaseActivity {
+    public static int lastExamId;
     ActivityAnsweringBinding binding;
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -151,6 +152,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             ToastUtil.showCustomToast(this, "item 为空,开始问答失败");
             LogUtils.e("FH", "item 为空,开始问答失败");
             myFinish();
+            return;
         }
         fromUserId = getIntent().getStringExtra("from");
 //        fromUserId = "10000200";//填空
@@ -159,6 +161,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             ToastUtil.showCustomToast(this, "from userId 为空,开始问答失败");
             LogUtils.e("FH", "from userId 为空,开始问答失败");
             myFinish();
+            return;
         }
         examId = getIntent().getIntExtra("examId", -1);
 //        examId = 148;//填空
@@ -167,11 +170,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
             ToastUtil.showCustomToast(this, "examId 为空,开始问答失败");
             LogUtils.e("FH", "examId 为空,开始问答失败");
             myFinish();
+            return;
         }
         startTimeMill = getIntent().getLongExtra("startTimeMill", -1);
         if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
+        lastExamId = examId;
     }
 
     @Override

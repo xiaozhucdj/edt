@@ -226,10 +226,7 @@ public class YougyApplicationManager extends LitePalApplication {
                         EventBus.getDefault().post(baseEvent);
                     }
                     else if (message.getAttachment() instanceof RetryAskQuestionAttachment){
-                        if (!(getCurrentActivity() instanceof AnsweringActivity)
-                                || (getCurrentActivity() instanceof AnsweringActivity
-                                && ((AnsweringActivity) getCurrentActivity()).examId
-                                != ((RetryAskQuestionAttachment) message.getAttachment()).examId)){
+                        if (AnsweringActivity.lastExamId != ((RetryAskQuestionAttachment) message.getAttachment()).examId){
                             Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
