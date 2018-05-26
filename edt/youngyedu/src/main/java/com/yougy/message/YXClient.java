@@ -53,6 +53,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.message.attachment.AskQuestionAttachment;
+import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.attachment.CustomAttachParser;
 import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
@@ -715,13 +716,13 @@ public class YXClient {
                 .setCallback(new RequestCallback<List<IMMessage>>() {
                     @Override
                     public void onSuccess(List<IMMessage> param) {
-                        // 解析有问题的自定义消息attachment为空,滤掉这类消息
+                        // 解析有问题的自定义消息attachment为空,滤掉这类消息,attachment除图书推荐以外的不用展示,也滤掉
                         // FIXME 在此处过滤消息会导致查询到的消息数目与给定的limit消息数目不符,暂时找不到更好的解决办法,期待以后修复
                         ListUtil.conditionalRemove(param, new ListUtil.ConditionJudger<IMMessage>() {
                             @Override
                             public boolean isMatchCondition(IMMessage nodeInList) {
                                 return nodeInList.getMsgType() == MsgTypeEnum.custom
-                                        && nodeInList.getAttachment() == null;
+                                        && (nodeInList.getAttachment() == null || !(nodeInList.getAttachment() instanceof BookRecommandAttachment));
                             }
                         });
                         callback.onSuccess(param);
@@ -883,15 +884,17 @@ public class YXClient {
 
 
     public IMMessage sendTestMessage(String id , SessionTypeEnum typeEnum
-            , String bookId , String cursorId , String itemId , RequestCallback<Void> requestCallback){
-        lv("发送测试消息,对方id=" + id + " type=" + typeEnum + " bookId=" + bookId + " cursorId=" + cursorId + " itemId=" + itemId);
+            , String bookId , String cursorId , ArrayList<String> itemIdList, RequestCallback<Void> requestCallback){
+        lv("发送测试消息,对方id=" + id + " type=" + typeEnum + " bookId=" + bookId + " cursorId=" + cursorId + " itemId=" + itemIdList.toString());
         final IMMessage message;
         switch (typeEnum){
             case P2P:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[测试消息]" , new WendaQuestionAddAttachment(bookId , cursorId , itemId));
+                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[测试消息]"
+                        , new WendaQuestionAddAttachment(bookId , cursorId , itemIdList));
                 break;
             case Team:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[测试消息]" , new WendaQuestionAddAttachment(bookId , cursorId , itemId));
+                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[测试消息]"
+                        , new WendaQuestionAddAttachment(bookId , cursorId , itemIdList));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);

@@ -235,9 +235,10 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
             @Override
             public void run() {
                 if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")){
-                    String testStr = binding.messageEdittext.getText().toString();
-                    String[] strings = testStr.split(" ");
-                    YXClient.getInstance().sendTestMessage(id, type, strings[1], strings[2], strings[3], new RequestCallback<Void>() {
+                    YXClient.getInstance().sendTestMessage(id, type, "109010001", "2", new ArrayList<String>(){{
+                        add("1420");
+                        add("1421");
+                    }}, new RequestCallback<Void>() {
                         @Override
                         public void onSuccess(Void param) {
                             LogUtils.v("发送测试消息成功");
@@ -386,7 +387,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                             BigDecimal.ROUND_HALF_UP
                     ));
                 }
-                else if (imMessage.getMsgType() == MsgTypeEnum.custom){
+                else if (imMessage.getMsgType() == MsgTypeEnum.custom
+                        && imMessage.getAttachment() instanceof BookRecommandAttachment){
                     chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
                     final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();

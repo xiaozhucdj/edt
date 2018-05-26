@@ -26,7 +26,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
     final static String CLUE_PROMOTE_BOOK = "promoteBook";
     final static String CLUE_ASK_QUESTION = "askQuestion";
     final static String CLUE_END_QUESTION = "endQuestion";
-    final static String CLUE_WENDA_ADD = "wendaAdd";
+    final static String CLUE_NOTIFY_PAD_FOR_INTERLOCUTION = "notifyPadForInterlocution";
     final static String CLUE_OVERALLLOCK = "overallLock";
     final static String CLUE_OVERALLUNLOCK = "overallUnlock";
     final static String CLUE_RETRY_ASK_QUESTION = "retryAskQuestion";
@@ -51,7 +51,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
                 case CLUE_END_QUESTION:
                     attachment = new EndQuestionAttachment(clue , version);
                     break;
-                case CLUE_WENDA_ADD:
+                case CLUE_NOTIFY_PAD_FOR_INTERLOCUTION:
                     attachment = new WendaQuestionAddAttachment(clue , version);
                     break;
                 case CLUE_OVERALLLOCK:
