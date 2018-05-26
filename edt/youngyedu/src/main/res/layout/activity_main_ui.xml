@@ -285,6 +285,7 @@
                     android:background="@color/black" />>
 
                 <Button
+                    android:visibility="gone"
                     android:id="@+id/btn_bookStore"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
@@ -296,6 +297,7 @@
                     android:textSize="24px" />
 
                 <View
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />

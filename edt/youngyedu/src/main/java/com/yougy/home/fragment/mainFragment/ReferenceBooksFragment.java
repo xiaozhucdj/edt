@@ -246,7 +246,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        LogUtils.i("yuanye ...ke");
         if (!hidden) {
             if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
                 loadData();
@@ -256,6 +255,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void loadData() {
+        LogUtils.e("loadData ..."+tag);
         if (YougyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();

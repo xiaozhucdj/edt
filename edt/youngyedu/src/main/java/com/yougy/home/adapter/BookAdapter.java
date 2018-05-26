@@ -128,13 +128,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
         private final ImageView mImgBookIconS;
         private final RelativeLayout mRlL;
         private final RelativeLayout mRlS;
-        private final ImageView mImgBookSaveL;
-        private final ImageView mImgBookSaveS;
-        private final TextView mTvBookSaveL;
-        private final TextView mTvBookSaveS;
         private final ImageView mImgBookDeleteL;
         private final ImageView mImgBookDeleteS;
         private final ImageView mImgAdd;
+        private final ImageView mImgBookDownL;
+        private final ImageView mImgBookDownS;
+
 
         public HolerFragmentBook(View itemView) {
             super(itemView);
@@ -143,11 +142,10 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             mRlL = (RelativeLayout) itemView.findViewById(R.id.rl_book_itemL);
             mRlS = (RelativeLayout) itemView.findViewById(R.id.rl_book_itemS);
 
-            mImgBookSaveL = (ImageView) itemView.findViewById(R.id.img_book_save_l);
-            mImgBookSaveS = (ImageView) itemView.findViewById(R.id.img_book_save_s);
+            mImgBookDownL = (ImageView) itemView.findViewById(R.id.img_down_book_l);
+            mImgBookDownS = (ImageView) itemView.findViewById(R.id.img_down_book_s);
 
-            mTvBookSaveL = (TextView) itemView.findViewById(R.id.tv_book_save_l);
-            mTvBookSaveS = (TextView) itemView.findViewById(R.id.tv_book_save_s);
+
 
             mImgBookDeleteL = (ImageView) itemView.findViewById(R.id.img_delete_book_l);
             mImgBookDeleteS = (ImageView) itemView.findViewById(R.id.img_delete_book_s);
@@ -167,8 +165,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                 mRlL.setVisibility(View.VISIBLE);
                 mRlS.setVisibility(View.GONE);
                 if (mInfos.get(position).getBookId() == -1) {
-                    mImgBookSaveL.setVisibility(View.GONE);
-                    mTvBookSaveL.setVisibility(View.GONE);
+                    mImgBookDownL.setVisibility(View.GONE);
+                    mImgBookDownS.setVisibility(View.GONE);
                     mImgBookDeleteL.setVisibility(View.GONE);
                     mImgAdd.setVisibility(View.VISIBLE);
                     mImgBookIconL.setImageDrawable(null);
@@ -178,11 +176,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
 
                 loadImage(mInfos.get(position).getBookCoverL(), 201, 267, mImgBookIconL);
                 if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
-                    mImgBookSaveL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book));
-                    mTvBookSaveL.setText("已\n下\n载");
+                    mImgBookDownL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book_l));
                 } else {
-                    mImgBookSaveL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book));
-                    mTvBookSaveL.setText("未\n下\n载");
+                    mImgBookDownL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book_l));
                 }
 
             } else {
@@ -190,11 +186,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                 mRlS.setVisibility(View.VISIBLE);
                 loadImage(mInfos.get(position).getBookCoverS(), 151, 201, mImgBookIconS);
                 if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
-                    mImgBookSaveS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book));
-                    mTvBookSaveS.setText("已\n下\n载");
+                    mImgBookDownS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book_s));
                 } else {
-                    mImgBookSaveS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book));
-                    mTvBookSaveS.setText("未\n下\n载");
+                    mImgBookDownS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book_s));
                 }
             }
         }

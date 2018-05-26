@@ -338,6 +338,10 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            if (mCountBooks.size() > 0) {
+                mAdaptetFragmentAllTextBook.notifyDataSetChanged();
+            }
+
             if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
                 loadData();
             }
@@ -345,7 +349,8 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     }
 
     private void loadData() {
-        mIsRefresh =false ;
+
+        LogUtils.e("loadData ..."+tag);
         if (YougyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
@@ -587,6 +592,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
 
     }
     private void freshUI(List<BookInfo> bookInfos) {
+        mIsRefresh =false ;
         mNewTextBookCallBack = null ;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);

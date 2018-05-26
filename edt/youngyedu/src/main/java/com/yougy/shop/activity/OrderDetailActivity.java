@@ -159,6 +159,8 @@ public class OrderDetailActivity extends ShopBaseActivity {
 
 
                         if (mTopOrderDetail.orderInfo.size() == 1 && orderStatus.equals("交易成功") && showSuccessDialog) {
+                            BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                            EventBus.getDefault().post(baseEvent);
                             showPaySuccessDialog();
                         }
                     }

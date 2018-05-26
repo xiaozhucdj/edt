@@ -430,6 +430,19 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
     /**
+     * 关闭所有Activity 除了参数传递的className
+     */
+    public static boolean isContainsActivity(String className) {
+        boolean result = false;
+        for (BaseActivity activity : mActivities) {
+            if (activity.getClass().getName().equalsIgnoreCase(className))
+                result = true;
+              break;
+        }
+        return result;
+    }
+
+    /**
      * 关闭所有Activity，除了参数传递的Activity
      */
     public static void finishAll(BaseActivity except) {
@@ -979,7 +992,6 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     protected DownBookDialog mDownDialog;
 
 
-
     private void savebookDownloadKey(int bookId, String key) {
         // 缓存key
         String keys = DataCacheUtils.getBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
@@ -1025,7 +1037,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     /**
      * 取消下载图书
      */
-    protected void cancelDownBook(int  bookid) {
+    protected void cancelDownBook(int bookid) {
         mDownDialog.dismiss();
         NewDownBookManager.getInstance().cancel(bookid);
     }
@@ -1034,7 +1046,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
      * 查询下载图书 信息
      */
     private void queryBookDownLoadSyn(int bookId) {
-        NetWorkManager.downloadBook(SpUtils.getUserId()+"" ,bookId+"") .filter(new Func1<List<DownloadInfo>, Boolean>() {
+        NetWorkManager.downloadBook(SpUtils.getUserId() + "", bookId + "").filter(new Func1<List<DownloadInfo>, Boolean>() {
             @Override
             public Boolean call(List<DownloadInfo> downloadInfos) {
                 return downloadInfos != null;
@@ -1043,9 +1055,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
             @Override
             public void call(List<DownloadInfo> downloadInfos) {
 
-                if (downloadInfos!=null && downloadInfos.size()>0){
+                if (downloadInfos != null && downloadInfos.size() > 0) {
                     //下载图书
-                    savebookDownloadKey(bookId,downloadInfos.get(0).getAtchEncryptKey());
+                    savebookDownloadKey(bookId, downloadInfos.get(0).getAtchEncryptKey());
                     NewDownBookInfo info = new NewDownBookInfo();
                     info.setBookId(bookId);
                     info.setAccessKeyId(downloadInfos.get(0).getAccessKeyId());
@@ -1054,10 +1066,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
                     info.setExpiration(downloadInfos.get(0).getExpiration());
                     info.setObjectKey(downloadInfos.get(0).getAtchRemotePath());
                     info.setBucketName(downloadInfos.get(0).getAtchBucket());
-                    info.setSaveFilePath(FileUtils.getTextBookFilesDir() +bookId + ".pdf");
+                    info.setSaveFilePath(FileUtils.getTextBookFilesDir() + bookId + ".pdf");
 //                    System.out.println("to............"+info.toString());
                     downBook(info);
-                }else{
+                } else {
                     mDownDialog.setTitle(UIUtils.getContext().getResources().getString(R.string.down_book_error));
                     mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
                 }
@@ -1065,11 +1077,11 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-                String msg  = UIUtils.getContext().getResources().getString(R.string.down_book_error) ;
+                String msg = UIUtils.getContext().getResources().getString(R.string.down_book_error);
                 if (throwable instanceof ApiException) {
                     String errorCode = ((ApiException) throwable).getCode();
                     LogUtils.i("resultCode" + errorCode);
-                    if (errorCode.equals("404")){
+                    if (errorCode.equals("404")) {
                         msg = "没有找到该图书";
                     }
                 } else {
@@ -1077,7 +1089,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
                 mDownDialog.setTitle(msg);
                 mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
-        }) ;
+        });
     }
 
     private void downBook(NewDownBookInfo info) {
@@ -1121,8 +1133,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         });
     }
 
-    /**图书下载完成后的回调*/
-    protected void  onDownBookFinish(){
+    /**
+     * 图书下载完成后的回调
+     */
+    protected void onDownBookFinish() {
 
     }
 
