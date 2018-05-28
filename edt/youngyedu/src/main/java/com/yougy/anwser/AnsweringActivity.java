@@ -223,7 +223,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     public void loadData() {
         showNetDialog();
-        NetWorkManager.queryQuestionItemList(fromUserId, null, itemId, null)
+        NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
