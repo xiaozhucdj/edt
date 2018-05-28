@@ -78,6 +78,7 @@ public class OrderListActivity extends ShopBaseActivity {
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
                         intent.putExtra("orderId", holder.getData().orderId);
+                        intent.putExtra("showSuccessDialog" , false);
                         startActivity(intent);
                     }
                 });

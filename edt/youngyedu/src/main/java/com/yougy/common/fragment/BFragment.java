@@ -2,6 +2,7 @@ package com.yougy.common.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
@@ -53,11 +54,14 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     protected CompositeSubscription subscription;
     protected ConnectableObservable<Object> tapEventEmitter;
     protected Context context;
-    private String tag;
+    public String tag;
 
     protected boolean mIsRefresh;
 
-
+    public void loadIntent(Class<?> cls) {
+        Intent intent = new Intent(getActivity(), cls);
+        startActivity(intent);
+    }
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -149,6 +153,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         if (!StringUtils.isEmpty(json)) {
             books = GsonUtil.fromBooks(json);
         }
+
         return books;
     }
 
@@ -362,7 +367,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
      * 下载 图书的 任务
      */
 
-    protected void downBookTask(int bookId) {
+    public void downBookTask(int bookId) {
         if (mDownDialog == null) {
             mDownDialog = new DownBookDialog(getActivity());
         }
@@ -504,6 +509,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     public void nextPageForKey() {
 
     }
+
 
 
 }

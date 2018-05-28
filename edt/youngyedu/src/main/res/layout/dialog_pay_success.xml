@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent">
+
+    <LinearLayout
+        android:layout_width="600px"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_rounded_rectangle_all_white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60px">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20px"
+                android:text="购买成功"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <ImageView
+                android:id="@+id/img_close"
+                android:layout_width="20px"
+                android:layout_height="20px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20px"
+                android:background="@null"
+                android:src="@drawable/img_serachbook_cancel" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/black" />
+
+
+        <TextView
+            android:id="@+id/tv_order_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40px"
+            android:layout_marginTop="20px"
+            android:singleLine="true"
+            android:text="订单编号:"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+
+        <TextView
+            android:id="@+id/tv_order_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40px"
+            android:layout_marginTop="20px"
+            android:singleLine="true"
+            android:text="下单时间:"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+
+
+        <TextView
+            android:id="@+id/tv_order_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40px"
+            android:layout_marginTop="20px"
+            android:singleLine="true"
+            android:text="订单详情:"
+            android:textColor="@color/black"
+            android:textSize="20px" />
+
+
+        <TextView
+            android:id="@+id/tv_sales_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40px"
+            android:layout_marginTop="20px"
+            android:singleLine="true"
+            android:text="活动详情"
+            android:textColor="@color/white"
+            android:textSize="20px"
+            android:gravity="center"
+            />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40px"
+            android:layout_marginRight="40px"
+            android:layout_marginTop="20px">
+
+
+            <ImageView
+                android:id="@+id/img_book_icon"
+                android:layout_width="128dp"
+                android:layout_height="168dp"
+                android:background="@drawable/img_book_backgroud"
+                android:paddingBottom="6dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="6dp"
+                android:paddingTop="2dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_book_cover" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
+                android:layout_toRightOf="@id/img_book_icon"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/tv_book_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40px"
+                    android:singleLine="true"
+                    android:text="null"
+                    android:textColor="@color/black"
+                    android:textSize="20px" />
+
+                <TextView
+                    android:id="@+id/tv_book_auther"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="15px"
+                    android:singleLine="true"
+                    android:text="null"
+                    android:textColor="@color/black"
+                    android:textSize="20px" />
+
+                <TextView
+                    android:id="@+id/tv_factory_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="15px"
+                    android:singleLine="true"
+                    android:text="null"
+                    android:textColor="@color/black"
+                    android:textSize="20px" />
+
+                <TextView
+                    android:id="@+id/tv_market_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="15px"
+                    android:singleLine="true"
+                    android:text="null"
+                    android:textColor="@color/black"
+                    android:textSize="20px" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_cancelAndConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30px"
+            android:layout_marginTop="60px">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="200px"
+                android:layout_height="48px"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="40px"
+                android:background="@drawable/bind_cancel_btn_bg"
+                android:gravity="center"
+                android:text="返回书城"
+                android:textColor="@color/black"
+                android:textSize="24px"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="200px"
+                android:layout_height="48px"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="40px"
+                android:background="@drawable/bind_confirm_btn_bg"
+                android:gravity="center"
+                android:text="阅读图书"
+                android:textColor="@color/white"
+                android:textSize="24px"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

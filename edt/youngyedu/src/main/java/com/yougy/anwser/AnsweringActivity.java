@@ -28,6 +28,9 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -45,7 +48,8 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.message.EndQuestionAttachment;
+import com.yougy.message.YXClient;
+import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
@@ -83,6 +87,7 @@ import static com.yougy.common.eventbus.EventBusConstant.EVENT_LOCKER_ACTIVITY_P
  */
 
 public class AnsweringActivity extends AnswerBaseActivity {
+    public static int lastExamId;
     ActivityAnsweringBinding binding;
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -101,7 +106,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     String itemId;
     String fromUserId;
-    int examId;
+    public int examId;
 
 
     private ParsedQuestionItem questionItem;
@@ -146,7 +151,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (TextUtils.isEmpty(itemId)) {
             ToastUtil.showCustomToast(this, "item 为空,开始问答失败");
             LogUtils.e("FH", "item 为空,开始问答失败");
-            finish();
+            myFinish();
+            return;
         }
         fromUserId = getIntent().getStringExtra("from");
 //        fromUserId = "10001037";//填空
@@ -154,7 +160,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (TextUtils.isEmpty(fromUserId)) {
             ToastUtil.showCustomToast(this, "from userId 为空,开始问答失败");
             LogUtils.e("FH", "from userId 为空,开始问答失败");
-            finish();
+            myFinish();
+            return;
         }
         examId = getIntent().getIntExtra("examId", -1);
 //        examId = 1235;//填空
@@ -162,12 +169,14 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (examId == -1) {
             ToastUtil.showCustomToast(this, "examId 为空,开始问答失败");
             LogUtils.e("FH", "examId 为空,开始问答失败");
-            finish();
+            myFinish();
+            return;
         }
         startTimeMill = getIntent().getLongExtra("startTimeMill", -1);
         if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
+        lastExamId = examId;
     }
 
     @Override
@@ -201,7 +210,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                                 timedTask.stop();
                                             }
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                         }
                                     }).show();
                                 }
@@ -225,7 +234,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         } else {
                             ToastUtil.showCustomToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
                             LogUtils.e("FH", "获取到的题目为空,开始问答失败");
-                            finish();
+                            myFinish();
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -344,11 +353,18 @@ public class AnsweringActivity extends AnswerBaseActivity {
         switch (view.getId()) {
 
             case R.id.btn_left:
-                finish();
+                myFinish();
                 break;
             case R.id.commit_answer_btn:
                 //防止快速多次点击
                 binding.commitAnswerBtn.setClickable(false);
+
+                if ("选择".equals(questionList.get(0).getExtraData())) {
+                    if (checkedAnswerList.size() == 0) {
+                        ToastUtil.showCustomToast(this, "请先选择结果后再提交");
+                        return;
+                    }
+                }
 
                 saveHomeWorkData();
                 getUpLoadInfo();
@@ -664,7 +680,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         ToastUtil.showCustomToast(this, "请完成作答");
         // TODO: 2017/9/13 这里先保留关闭页面，做测试使用
-        finish();
+        myFinish();
     }
 
     private void saveResultBitmap(String fileName) {
@@ -744,7 +760,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                             binding.commitAnswerBtn.setClickable(true);
                                         }
                                     },
@@ -768,7 +784,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                         binding.commitAnswerBtn.setClickable(true);
                                     }
                                 },
@@ -898,7 +914,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                         binding.commitAnswerBtn.setClickable(true);
                                     }
                                 },
@@ -935,14 +951,32 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
+
+                        double d = (double) ((LinkedTreeMap) ((ArrayList) o).get(0)).get("replyId");
+                        YXClient.getInstance().sendReply(fromUserId, SessionTypeEnum.P2P, String.valueOf((int) d), examId + "", new RequestCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void param) {
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
+                            }
+
+                            @Override
+                            public void onFailed(int code) {
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功,通知教师失败 : " + code);
+                            }
+
+                            @Override
+                            public void onException(Throwable exception) {
+                                exception.printStackTrace();
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功,通知教师失败 : " + exception.getMessage());
+                            }
+                        });
                         if (timedTask != null) {
                             timedTask.stop();
                         }
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", questionItem);
                         startActivity(intent);
-                        finish();
-                        ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
+                        myFinish();
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -953,7 +987,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                     }
                                 }).show();
                             }
@@ -964,7 +998,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                             binding.commitAnswerBtn.setClickable(true);
                                         }
                                     },
@@ -1153,36 +1187,47 @@ public class AnsweringActivity extends AnswerBaseActivity {
         EventBus.getDefault().post(baseEvent);
     }
 
-    private boolean mEventResult =false ;
+    private boolean mEventResult = false;
+
     @Override
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
-        if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT )&& !mEventResult) {
+        if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT) && !mEventResult) {
             LogUtils.i("type .." + event.getType());
-            mEventResult = true ;
+            mEventResult = true;
             UIUtils.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (mCaogaoNoteBoard!=null){
+                    if (mCaogaoNoteBoard != null) {
                         mCaogaoNoteBoard.leaveScribbleMode();
                         mCaogaoNoteBoard.setIntercept(false);
                     }
 
-                    if (mNbvAnswerBoard!=null){
+                    if (mNbvAnswerBoard != null) {
                         mNbvAnswerBoard.leaveScribbleMode();
                         mNbvAnswerBoard.setIntercept(false);
                     }
                     LogUtils.i("type .." + "111111111111111111111");
                     RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
                 }
-            },3000) ;
-        } if (event.getType().equalsIgnoreCase(EVENT_LOCKER_ACTIVITY_PUSE )) {
-            if (mCaogaoNoteBoard!=null){
+            }, 3000);
+        }
+        if (event.getType().equalsIgnoreCase(EVENT_LOCKER_ACTIVITY_PUSE)) {
+            if (mCaogaoNoteBoard != null) {
                 mCaogaoNoteBoard.setIntercept(false);
             }
 
-            if (mNbvAnswerBoard!=null){
+            if (mNbvAnswerBoard != null) {
                 mNbvAnswerBoard.setIntercept(false);
+            }
+        }
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.setIntercept(true);
+            }
+
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.setIntercept(true);
             }
         }
     }
@@ -1190,12 +1235,16 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mCaogaoNoteBoard!=null){
+    }
+
+    private void myFinish() {
+        finish();
+        if (mCaogaoNoteBoard != null) {
             mCaogaoNoteBoard.leaveScribbleMode();
             mCaogaoNoteBoard.setIntercept(true);
         }
 
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode();
             mNbvAnswerBoard.setIntercept(true);
         }

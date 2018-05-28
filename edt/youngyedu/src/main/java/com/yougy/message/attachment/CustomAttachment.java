@@ -1,4 +1,4 @@
-package com.yougy.message;
+package com.yougy.message.attachment;
 
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 

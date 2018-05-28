@@ -28,9 +28,12 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LocalLockActivity;
-import com.yougy.message.AskQuestionAttachment;
-import com.yougy.message.EndQuestionAttachment;
+import com.yougy.message.attachment.AskQuestionAttachment;
+import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.YXClient;
+import com.yougy.message.attachment.OverallLockAttachment;
+import com.yougy.message.attachment.OverallUnlockAttachment;
+import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.order.LockerActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
@@ -49,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import okhttp3.OkHttpClient;
 
+import static com.yougy.common.activity.BaseActivity.getCurrentActivity;
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
 
 //import com.tencent.bugly.crashreport.CrashReport;
@@ -191,11 +195,10 @@ public class YougyApplicationManager extends LitePalApplication {
             //初始化云信配置,注册全局性的处理器和解析器等
             YXClient.getInstance().initOption(this);
             //初始化命令消息监听器,在此处处理
-            YXClient.getInstance().setOnCommandCustomMsgListener(new YXClient.OnMessageListener() {
+            YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment) {
-
                         Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                         newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
@@ -206,10 +209,36 @@ public class YougyApplicationManager extends LitePalApplication {
                     } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         rxBus.send(message);
                     }
+                    else if(message.getAttachment() instanceof OverallLockAttachment){
+                        //TODO 全局锁屏
+                        LogUtils.i("全局锁屏");
+
+                        SpUtils.setOrder("order1");
+                        Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
+                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(newIntent);
+                    }
+                    else if (message.getAttachment() instanceof OverallUnlockAttachment){
+                        LogUtils.i("全局解锁");
+                        //TODO 全局解锁
+                        SpUtils.setOrder("order0");
+                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
+                        EventBus.getDefault().post(baseEvent);
+                    }
+                    else if (message.getAttachment() instanceof RetryAskQuestionAttachment){
+                        if (AnsweringActivity.lastExamId != ((RetryAskQuestionAttachment) message.getAttachment()).examId){
+                            Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
+                            newIntent.putExtra("from", ((RetryAskQuestionAttachment) message.getAttachment()).userId + "");
+                            newIntent.putExtra("examId", ((RetryAskQuestionAttachment) message.getAttachment()).examId);
+                            startActivity(newIntent);
+                        }
+                    }
                 }
             });
 
-            YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
+          /*  YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     LogUtils.e("onNewMessage : " + message.getContent());
@@ -234,7 +263,7 @@ public class YougyApplicationManager extends LitePalApplication {
                         //上锁学科
                     }
                 }
-            });
+            });*/
         }
         checkAnr();
        LogUtils.setOpenLog(!Commons.isRelase);

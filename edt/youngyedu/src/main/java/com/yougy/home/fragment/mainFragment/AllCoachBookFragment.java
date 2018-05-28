@@ -317,6 +317,9 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            if (mCountBooks.size() > 0) {
+                mAdaptetFragmentAllTextBook.notifyDataSetChanged();
+            }
             if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
                 loadData();
             }
@@ -325,6 +328,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
 
     private void loadData() {
+        LogUtils.e("loadData ..."+tag);
         if (YougyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
@@ -553,7 +557,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
                 refreshAdapterData(btnIndex+1);
             }
         });
-
+        mPageBtnBar.removeAllViews();
         mPageBtnBar.setCurrentSelectPageIndex(0);
         mPageBtnBar.refreshPageBar();
     }
@@ -657,6 +661,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     protected void onDownBookFinish() {
         super.onDownBookFinish();
+        mAdaptetFragmentAllTextBook.notifyItemChanged(mDownPosition);
         bookItemClick(mDownPosition);
     }
 }

@@ -291,4 +291,23 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"queryFavor"})
     Observable<BaseResult<List<Favor>>> queryFavor(@Field("userId") Integer userId);
+
+    @POST("bookStore")
+    Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Body BookStoreQueryBookInfoReq req);
+
+    /**
+     * 书架图书移除
+     */
+    @FormUrlEncoded
+    @POST("common/v1")
+    @DefaultField(keys = {"m"}, values = {"common_removeBookcaseBooks"})
+    Observable<BaseResult<Object>> removeBookInBookcase(@Field("bookId") Integer bookId, @Field("userId") Integer userId);
+
+    /**
+     * 添加上架图书
+     */
+    @FormUrlEncoded
+    @POST("common/v1")
+    @DefaultField(keys = {"m"}, values = {"common_addBookcaseBooks"})
+    Observable<BaseResult<Object>> addBookToBookcase(@Field("bookId") Integer bookId, @Field("userId") Integer userId);
 }

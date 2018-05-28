@@ -1,10 +1,12 @@
 package com.yougy.order;
 
 
+import android.content.Intent;
+import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -13,7 +15,6 @@ import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.message.YXClient;
-import com.yougy.message.ui.ChattingActivity;
 import com.yougy.ui.activity.R;
 
 import de.greenrobot.event.EventBus;
@@ -46,12 +47,15 @@ public class LockerActivity extends BaseActivity {
     @Override
     protected void initLayout() {
 
-        this.findViewById(R.id.btn_check).setOnClickListener(new View.OnClickListener() {
+        this.findViewById(R.id.ll_check_msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkNetAndRefreshLogin();
             }
         });
+        TextView tv = this.findViewById(R.id.tv_line_text);
+        tv.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
+        tv.getPaint().setAntiAlias(true);//抗锯齿
     }
 
     @Override
@@ -70,6 +74,12 @@ public class LockerActivity extends BaseActivity {
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER)) {
             mIsBack = true;
+
+            if (!BaseActivity.isContainsActivity(MainActivity.class.getName())){
+                Intent newIntent = new Intent(getApplicationContext(), MainActivity.class);
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(newIntent);
+            }
             this.finish();
         } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT) && !mEventResult) {
             mEventResult = true;
@@ -105,7 +115,7 @@ public class LockerActivity extends BaseActivity {
     }
 
     private void checkNetAndRefreshLogin() {
-        if (!NetUtils.isNetConnected()){
+        if (!NetUtils.isNetConnected()) {
             jumpTonet();
             return;
         }

@@ -275,8 +275,8 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         refresh();
         //当前分页大于1 ，需要收到设置到分页尾部。
         if (mCounts != 1) {
-            page(mCounts);
             mPageBtnBar.setCurrentSelectPageIndex(mCounts-1);
+            page(mCounts);
             mPageBtnBar.refreshPageBar();
         }
 

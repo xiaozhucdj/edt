@@ -1,4 +1,4 @@
-package com.yougy.message;
+package com.yougy.message.attachment;
 
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachmentParser;
@@ -23,6 +23,15 @@ public class CustomAttachParser implements MsgAttachmentParser {
     static String KEY_CLUE = "clue";
     static String KEY_CONTENT = "content";
 
+    final static String CLUE_PROMOTE_BOOK = "promoteBook";
+    final static String CLUE_ASK_QUESTION = "askQuestion";
+    final static String CLUE_END_QUESTION = "endQuestion";
+    final static String CLUE_NOTIFY_PAD_FOR_INTERLOCUTION = "notifyPadForInterlocution";
+    final static String CLUE_OVERALLLOCK = "overallLock";
+    final static String CLUE_OVERALLUNLOCK = "overallUnlock";
+    final static String CLUE_RETRY_ASK_QUESTION = "retryAskQuestion";
+    final static String CLUE_SEND_REPLY = "sendReply";
+
     // 根据解析到的消息类型，确定附件对象类型
     @Override
     public MsgAttachment parse(String json) {
@@ -32,22 +41,31 @@ public class CustomAttachParser implements MsgAttachmentParser {
             JSONObject object = new JSONObject(json).getJSONObject(KEY_CONTENT);
             String clue = object.getString(KEY_CLUE);
             double version = object.getDouble(KEY_VERSION);
-            JSONObject data = null;
             switch (clue){
-                case "promoteBook" :
+                case CLUE_PROMOTE_BOOK:
                     attachment = new BookRecommandAttachment(clue , version);
-                    data =  object;
                     break;
-                case "askQuestion" :
+                case CLUE_ASK_QUESTION:
                     attachment = new AskQuestionAttachment(clue , version);
-                    data = object;
                     break;
-                case "endQuestion" :
+                case CLUE_END_QUESTION:
                     attachment = new EndQuestionAttachment(clue , version);
-                    data = object;
+                    break;
+                case CLUE_NOTIFY_PAD_FOR_INTERLOCUTION:
+                    attachment = new WendaQuestionAddAttachment(clue , version);
+                    break;
+                case CLUE_OVERALLLOCK:
+                    attachment = new OverallLockAttachment(clue , version);
+                    break;
+                case CLUE_OVERALLUNLOCK:
+                    attachment = new OverallUnlockAttachment(clue , version);
+                    break;
+                case CLUE_RETRY_ASK_QUESTION:
+                    attachment = new RetryAskQuestionAttachment(clue , version);
+                    break;
             }
             if (attachment != null) {
-                attachment.fromJson(data);
+                attachment.fromJson(object);
             }
         } catch (JSONException e) {
             e.printStackTrace();
