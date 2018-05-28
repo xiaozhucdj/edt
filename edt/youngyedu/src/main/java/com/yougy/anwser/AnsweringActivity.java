@@ -141,7 +141,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     public void init() {
         LogUtils.e("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
-//        itemId = "73";//填空
+//        itemId = "2499";//填空
 //        itemId = "189";//选择
         if (TextUtils.isEmpty(itemId)) {
             ToastUtil.showCustomToast(this, "item 为空,开始问答失败");
@@ -149,7 +149,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             finish();
         }
         fromUserId = getIntent().getStringExtra("from");
-//        fromUserId = "10000200";//填空
+//        fromUserId = "10001037";//填空
 //        fromUserId = "10000239";//选择
         if (TextUtils.isEmpty(fromUserId)) {
             ToastUtil.showCustomToast(this, "from userId 为空,开始问答失败");
@@ -157,7 +157,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             finish();
         }
         examId = getIntent().getIntExtra("examId", -1);
-//        examId = 148;//填空
+//        examId = 1235;//填空
 //        examId = 772;//选择
         if (examId == -1) {
             ToastUtil.showCustomToast(this, "examId 为空,开始问答失败");
@@ -301,6 +301,36 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     }
 
+    public String saveBitmapToFile1(Bitmap bitmap) {
+
+        String fileDir = FileUtils.getAppFilesDir() + "/answer_result";
+        FileUtils.createDirs(fileDir);
+
+
+        File f = new File(fileDir,  "test111.png");
+        FileOutputStream fOut = null;
+        try {
+            f.createNewFile();
+            fOut = new FileOutputStream(f);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return f.getAbsolutePath();
+    }
+
+
     public void onClick(View view) {
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
@@ -326,7 +356,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_clear_write:
 
-                mNbvAnswerBoard.clearAll();
+//                mNbvAnswerBoard.clearAll();
+
+                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
 
                 break;
             case R.id.tv_add_page:
