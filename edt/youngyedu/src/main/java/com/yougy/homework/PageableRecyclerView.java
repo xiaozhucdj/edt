@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.frank.etude.pageBtnBar.PageBtnBar;
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.ui.activity.R;
 
 /**
@@ -46,13 +48,11 @@ import com.yougy.ui.activity.R;
 
 public class PageableRecyclerView extends LinearLayout {
     RecyclerView recyclerView;
-    ViewGroup pageBtnContainer;
+    PageBtnBar pageBtnBar;
 
     private int maxItemNumInOnePage = 0;
     private Adapter customAdapter;
 
-
-    private int currentSelectPageIndex = 0;
 
     public PageableRecyclerView(Context context) {
         this(context, null);
@@ -78,16 +78,16 @@ public class PageableRecyclerView extends LinearLayout {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                position = position + currentSelectPageIndex * maxItemNumInOnePage;
+                position = position + pageBtnBar.getCurrentSelectPageIndex() * maxItemNumInOnePage;
                 customAdapter.onBindViewHolder(holder , position);
             }
 
             @Override
             public int getItemCount() {
-                if (customAdapter == null){
+                if (customAdapter == null || pageBtnBar.getCurrentSelectPageIndex() == -1){
                     return 0;
                 }
-                int temp = customAdapter.getItemCount() - currentSelectPageIndex * maxItemNumInOnePage;
+                int temp = customAdapter.getItemCount() - pageBtnBar.getCurrentSelectPageIndex() * maxItemNumInOnePage;
                 if (temp > maxItemNumInOnePage){
                     return maxItemNumInOnePage;
                 }
@@ -96,20 +96,27 @@ public class PageableRecyclerView extends LinearLayout {
         });
         LayoutParams rcvParam = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0 , 1);
         addView(recyclerView, rcvParam);
-        LinearLayout linearLayout = new LinearLayout(getContext());
-        linearLayout.setOrientation(HORIZONTAL);
-        linearLayout.setGravity(Gravity.CENTER);
-        LayoutParams pageBtnContainerParam = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        pageBtnContainer = linearLayout;
-        addView(pageBtnContainer, pageBtnContainerParam);
-    }
+        pageBtnBar = new PageBtnBar(getContext());
+        pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getContext()) {
+            @Override
+            public int getPageBtnCount() {
+                if (customAdapter == null){
+                    return 0;
+                }
+                return (customAdapter.getItemCount() + maxItemNumInOnePage - 1) / maxItemNumInOnePage;
+            }
 
-    public <VG extends ViewGroup> PageableRecyclerView setCustomPageBtnContainer(VG container) {
-        if (pageBtnContainer != null) {
-            removeView(pageBtnContainer);
-        }
-        pageBtnContainer = container;
-        return this;
+            @Override
+            public void onPageBtnClick(View view, int i, String s) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+                if (customAdapter != null){
+                    customAdapter.onSelectPageChanged(i);
+                }
+            }
+        });
+        pageBtnBar.refreshPageBar();
+        LayoutParams pageBtnContainerParam = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        addView(pageBtnBar , pageBtnContainerParam);
     }
 
     public PageableRecyclerView setMaxItemNumInOnePage(int maxItemNumInOnePage) {
@@ -129,47 +136,16 @@ public class PageableRecyclerView extends LinearLayout {
     public PageableRecyclerView setAdapter(Adapter adapter){
         customAdapter = adapter;
         customAdapter.setPageableRecyclerView(this);
+        notifyDataSetChanged();
         return this;
     }
 
     public void notifyDataSetChanged() {
-        if (customAdapter == null){
+        if (customAdapter == null || recyclerView == null){
             return;
         }
         recyclerView.getAdapter().notifyDataSetChanged();
-        refreshPageBar();
-    }
-
-    private void refreshPageBar() {
-        int needPageNum;
-        if (maxItemNumInOnePage == 0){
-            needPageNum = 0;
-        }
-        else {
-            needPageNum = customAdapter.getItemCount()%maxItemNumInOnePage== 0
-                    ? customAdapter.getItemCount()/maxItemNumInOnePage
-                    : customAdapter.getItemCount()/maxItemNumInOnePage + 1;
-        }
-        if (needPageNum <= 1) {
-            pageBtnContainer.removeAllViews();
-            return;
-        }
-        int currentPageNum = pageBtnContainer.getChildCount();
-        while (currentPageNum > needPageNum) {
-            pageBtnContainer.removeViewAt(currentPageNum - 1);
-            currentPageNum--;
-        }
-        while (currentPageNum < needPageNum) {
-            pageBtnContainer.addView(customAdapter.makePageBtn((currentPageNum + 1) + ""));
-            currentPageNum++;
-        }
-        for (int i = 0; i < pageBtnContainer.getChildCount(); i++) {
-            if (i == currentSelectPageIndex) {
-                pageBtnContainer.getChildAt(i).setSelected(true);
-            } else {
-                pageBtnContainer.getChildAt(i).setSelected(false);
-            }
-        }
+        pageBtnBar.refreshPageBar();
     }
 
     public void addItemDecoration(RecyclerView.ItemDecoration decor) {
@@ -180,14 +156,13 @@ public class PageableRecyclerView extends LinearLayout {
         recyclerView.addOnItemTouchListener(listener);
     }
 
-    public void setCurrentPage(int page){
-        currentSelectPageIndex = page - 1;
+    public void setCurrentPage(int pageIndex){
+        pageBtnBar.setCurrentSelectPageIndex(pageIndex);
         notifyDataSetChanged();
-        customAdapter.onSelectPageChanged(currentSelectPageIndex);
     }
 
-    public int getCurrentSelectPage(){
-        return currentSelectPageIndex + 1;
+    public int getCurrentSelectPageIndex(){
+        return pageBtnBar.getCurrentSelectPageIndex();
     }
 
     public RecyclerView getRealRcyView() {
@@ -205,25 +180,8 @@ public class PageableRecyclerView extends LinearLayout {
         public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
         public abstract void onBindViewHolder(VH holder, int position);
         public abstract int getItemCount();
-        public void onSelectPageChanged(int changedPageIndex){
-        }
+        public void onSelectPageChanged(int changedPageIndex) {
 
-        private Button makePageBtn(final String text) {
-            Button button = (Button) LayoutInflater.from(pageableRecyclerView.getContext())
-                    .inflate(R.layout.item_page_btn , pageableRecyclerView.pageBtnContainer , false);
-            button.setText(text);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int index = Integer.parseInt(text) - 1;
-                    pageableRecyclerView.currentSelectPageIndex = index;
-                    pageableRecyclerView.notifyDataSetChanged();
-                    onSelectPageChanged(index);
-                }
-            });
-            return button;
         }
     }
-
-
 }
