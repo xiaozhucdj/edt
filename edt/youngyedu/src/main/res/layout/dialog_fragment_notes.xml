@@ -98,13 +98,6 @@
             android:layout_marginTop="20px"
             android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/img_btn_style_white"
-                android:layout_width="132px"
-                android:layout_height="172px"
-                android:layout_marginRight="82px"
-                android:background="@null"
-                android:src="@drawable/img_btn_note_type_blank_select" />
 
             <ImageButton
                 android:id="@+id/img_btn_style_biji"
@@ -118,8 +111,17 @@
                 android:id="@+id/img_btn_style_tianzi"
                 android:layout_width="132px"
                 android:layout_height="172px"
+                android:layout_marginRight="82px"
                 android:background="@null"
                 android:src="@drawable/img_btn_note_type_gird_select" />
+
+
+            <ImageButton
+                android:id="@+id/img_btn_style_white"
+                android:layout_width="132px"
+                android:layout_height="172px"
+                android:background="@null"
+                android:src="@drawable/img_btn_note_type_blank_select" />
         </LinearLayout>
 
 
