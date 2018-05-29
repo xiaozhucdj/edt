@@ -43,7 +43,7 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
     private ImageButton mImgBtnTianZi;
     private String mStrSubject;
 
-    private NoteInfo.NoteStyleOption mOption = NoteInfo.NoteStyleOption.NOTE_TYPE_BLANK;
+    private NoteInfo.NoteStyleOption mOption = NoteInfo.NoteStyleOption.NOTE_TYPE_LINE;
     private RecyclerView mRecyclerView;
     private Context mContex;
     private DialogNoteSubjectAdapter mAdaptet;

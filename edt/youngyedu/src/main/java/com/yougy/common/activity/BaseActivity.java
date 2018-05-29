@@ -184,7 +184,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
             mRefreshRun = new Runnable() {
                 @Override
                 public void run() {
-                    RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
+                    invalidate();
                 }
             };
         }
@@ -204,6 +204,11 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         }
         super.onPause();
     }
+
+    public void invalidate() {
+        RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
+    }
+
 
     @Override
     protected void onDestroy() {

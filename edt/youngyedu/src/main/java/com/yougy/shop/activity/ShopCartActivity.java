@@ -158,7 +158,7 @@ public class ShopCartActivity extends ShopBaseActivity {
      * @return 如果所有item都被选中, 返回true, 只要有任意一个没有被选中, 返回false.
      */
     private boolean isAllSelected() {
-        int currentPageIndex = binding.mainRecyclerview.getCurrentSelectPage() - 1;
+        int currentPageIndex = binding.mainRecyclerview.getCurrentSelectPageIndex();
         if (currentPageIndex == -1){
             return false;
         }
@@ -316,7 +316,7 @@ public class ShopCartActivity extends ShopBaseActivity {
     }
     public void onSelectAllClick(View view){
         boolean setCheck = !binding.selectAllCheckbox.isSelected();
-        int currentPageIndex = binding.mainRecyclerview.getCurrentSelectPage() - 1;
+        int currentPageIndex = binding.mainRecyclerview.getCurrentSelectPageIndex();
         if (currentPageIndex == -1){
             return;
         }

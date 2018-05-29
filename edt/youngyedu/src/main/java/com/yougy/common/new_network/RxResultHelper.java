@@ -7,6 +7,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.util.ArrayList;
@@ -173,6 +174,24 @@ public class RxResultHelper {
             }
         };
     }
+
+    public static Observable.Transformer<List<QuestionReplySummary> , List<QuestionReplySummary>> parseReply(){
+        return new Observable.Transformer<List<QuestionReplySummary>, List<QuestionReplySummary>>() {
+            @Override
+            public Observable<List<QuestionReplySummary>> call(Observable<List<QuestionReplySummary>> listObservable) {
+                return listObservable.map(new Func1<List<QuestionReplySummary>, List<QuestionReplySummary>>() {
+                    @Override
+                    public List<QuestionReplySummary> call(List<QuestionReplySummary> replyList) {
+                        for (QuestionReplySummary reply : replyList) {
+                            reply.parsedContent();
+                        }
+                        return replyList;
+                    }
+                });
+            }
+        };
+    }
+
 
     public static Observable.Transformer<List<QuestionReplyDetail> , List<QuestionReplyDetail>> parseReplyDetail(){
         return new Observable.Transformer<List<QuestionReplyDetail>, List<QuestionReplyDetail>>() {

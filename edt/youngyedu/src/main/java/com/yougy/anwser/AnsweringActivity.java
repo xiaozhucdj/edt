@@ -1019,6 +1019,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         }
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", questionItem);
+                        intent.putExtra("replyId" , String.valueOf((int) d));
                         startActivity(intent);
                         myFinish();
                     }
