@@ -231,7 +231,7 @@ public final class NetWorkManager {
 
     public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId, Integer userId) {
          LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
-        return getInstance().getServerApi().queryReply(examId, userId)
+        return getInstance().getServerApi().queryReply(examId, userId , null)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -274,11 +274,12 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId) {
+    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId , String replyId) {
          LogUtils.e("FH", "!!!!!调用ServerApi查询考试回答情况:queryReply");
-        return getInstance().getServerApi().queryReply(examId, userId)
+        return getInstance().getServerApi().queryReply(examId, userId , replyId)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+                .compose(RxResultHelper.parseReply());
     }
 
     public static Observable<List<CartItem>> queryCart(String userId) {

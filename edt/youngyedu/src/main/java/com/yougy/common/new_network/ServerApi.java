@@ -152,7 +152,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryReply"})
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
-            , @Field("userId") Integer userId);
+            , @Field("userId") Integer userId , @Field("replyId") String replyId);
 
     /**
      * 作业本错题移除
