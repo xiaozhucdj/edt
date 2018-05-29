@@ -65,6 +65,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     RecyclerView allQuestionPage;
     @BindView(R.id.rcv_chooese_item)
     RecyclerView rcvChooese;
+    @BindView(R.id.ll_chooese_item)
+    LinearLayout llChooeseItem;
     @BindView(R.id.content_displayer)
     ContentDisplayer contentDisplayer;
     @BindView(R.id.rl_answer)
@@ -216,7 +218,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
 
-                if ("选择".equals(questionList.get(0).getExtraData())) {
+                if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
                     if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
@@ -325,6 +327,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                                 isAddAnswerBoard = false;
                             }
                             rcvChooese.setVisibility(View.VISIBLE);
+                            llChooeseItem.setVisibility(View.GONE);
 
                             //选择题不能加页
                             tvAddPage.setVisibility(View.GONE);
@@ -338,12 +341,26 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                                 rcvChooese.getAdapter().notifyDataSetChanged();
                             }
 
+                        } else if ("判断".equals(questionList.get(0).getExtraData())) {
+
+                            if (isAddAnswerBoard) {
+                                rlAnswer.removeView(mNbvAnswerBoard);
+                                isAddAnswerBoard = false;
+                            }
+                            rcvChooese.setVisibility(View.GONE);
+                            llChooeseItem.setVisibility(View.VISIBLE);
+                            //选择题不能加页
+                            tvAddPage.setVisibility(View.GONE);
+                            tvClearWrite.setVisibility(View.GONE);
+
+
                         } else {
                             if (!isAddAnswerBoard) {
                                 rlAnswer.addView(mNbvAnswerBoard);
                                 isAddAnswerBoard = true;
                             }
                             rcvChooese.setVisibility(View.GONE);
+                            llChooeseItem.setVisibility(View.GONE);
                             tvAddPage.setVisibility(View.VISIBLE);
                             tvClearWrite.setVisibility(View.VISIBLE);
 
@@ -780,7 +797,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             }
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
             EventBus.getDefault().post(baseEvent);
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) ||(event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE) )){
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) || (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE))) {
             LogUtils.i("type .." + event.getType());
             if (mNbvAnswerBoard != null) {
                 mNbvAnswerBoard.setIntercept(false);
