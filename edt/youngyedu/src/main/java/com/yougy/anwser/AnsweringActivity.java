@@ -223,7 +223,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     public void loadData() {
         showNetDialog();
-        NetWorkManager.queryQuestionItemList(fromUserId, null, itemId, null)
+        NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
@@ -292,7 +292,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
 
-                if ("选择".equals(questionList.get(0).getExtraData())) {
+                if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
                     if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
@@ -316,7 +316,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         FileUtils.createDirs(fileDir);
 
 
-        File f = new File(fileDir,  "test111.png");
+        File f = new File(fileDir, "test111.png");
         FileOutputStream fOut = null;
         try {
             f.createNewFile();
@@ -362,6 +362,14 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 if ("选择".equals(questionList.get(0).getExtraData())) {
                     if (checkedAnswerList.size() == 0) {
                         ToastUtil.showCustomToast(this, "请先选择结果后再提交");
+                        binding.commitAnswerBtn.setClickable(true);
+                        return;
+                    }
+                }
+                if ("判断".equals(questionList.get(0).getExtraData())) {
+                    if (checkedAnswerList.size() == 0) {
+                        ToastUtil.showCustomToast(this, "请先判断后再提交");
+                        binding.commitAnswerBtn.setClickable(true);
                         return;
                     }
                 }
@@ -432,6 +440,24 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }
 
                 break;
+
+            case R.id.rb_right:
+                if (checkedAnswerList.size() == 0) {
+                    checkedAnswerList.add("true");
+                } else {
+                    checkedAnswerList.set(0, "true");
+                }
+                break;
+
+            case R.id.rb_error:
+                if (checkedAnswerList.size() == 0) {
+                    checkedAnswerList.add("false");
+                } else {
+                    checkedAnswerList.set(0, "false");
+                }
+                break;
+
+
         }
     }
 
@@ -531,6 +557,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                 isAddAnswerBoard = false;
                             }
                             binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+                            binding.llChooeseItem.setVisibility(View.GONE);
                             //选择题不能加页
                             binding.tvAddPage.setVisibility(View.GONE);
                             binding.tvClearWrite.setVisibility(View.GONE);
@@ -543,12 +570,26 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                 binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
                             }
 
+                        } else if ("判断".equals(questionList.get(0).getExtraData())) {
+
+                            if (isAddAnswerBoard) {
+                                binding.rlAnswer.removeView(mNbvAnswerBoard);
+                                isAddAnswerBoard = false;
+                            }
+                            binding.rcvChooeseItem.setVisibility(View.GONE);
+                            binding.llChooeseItem.setVisibility(View.VISIBLE);
+                            //选择题不能加页
+                            binding.tvAddPage.setVisibility(View.GONE);
+                            binding.tvClearWrite.setVisibility(View.GONE);
+
+
                         } else {
                             if (!isAddAnswerBoard) {
                                 binding.rlAnswer.addView(mNbvAnswerBoard);
                                 isAddAnswerBoard = true;
                             }
                             binding.rcvChooeseItem.setVisibility(View.GONE);
+                            binding.llChooeseItem.setVisibility(View.GONE);
                             binding.tvAddPage.setVisibility(View.VISIBLE);
                             binding.tvClearWrite.setVisibility(View.VISIBLE);
 
@@ -839,6 +880,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 for (int i = 0; i < pathList.size(); i++) {
 
                     String picPath = pathList.get(i);
+                    if (picPath == null) {
+                        continue;
+                    }
                     String picName = picPath.substring(picPath.lastIndexOf("/"));
 
 
