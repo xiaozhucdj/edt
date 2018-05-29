@@ -26,6 +26,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
@@ -146,7 +147,7 @@ public class SettingMainActivity extends BaseActivity {
             public void call(Object o) {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
-                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET+","+SpUtils.getVersion());
+                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
 //                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
 //                        startService(intent);
 //                        SpUtils.clearSP();
@@ -222,6 +223,13 @@ public class SettingMainActivity extends BaseActivity {
             public void onClick(DialogInterface dialog, int which) {
                 unBindRequest();
                 dialog.dismiss();
+                RefreshUtil.invalidate(binding.getRoot());
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                RefreshUtil.invalidate(binding.getRoot());
             }
         }).show();
     }
@@ -272,7 +280,12 @@ public class SettingMainActivity extends BaseActivity {
     }
 
     public void changePwd(View view) {
-        new ChangePwdDialog(this).show();
+        new ChangePwdDialog(this).setPwdListener(new ChangePwdDialog.DialogPwdListener() {
+            @Override
+            public void onPwdListener() {
+                RefreshUtil.invalidate(binding.getRoot());
+            }
+        }).show();
     }
 
 
