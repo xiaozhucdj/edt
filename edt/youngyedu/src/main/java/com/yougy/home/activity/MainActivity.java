@@ -43,6 +43,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
@@ -75,7 +76,6 @@ import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
 //import com.tencent.bugly.crashreport.CrashReport;
-import static android.R.id.message;
 
 
 /**
@@ -163,6 +163,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     };
     private ImageView imgSextIcon;
+    private long mLastTime;
 
 
     /***************************************************************************/
@@ -318,6 +319,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
+        long currentTime =System.currentTimeMillis();
+        if (mLastTime>0 && SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")){
+            if (currentTime -mLastTime  < 2000){
+                UIUtils.showToastSafe("操作过快");
+                return;
+            }
+        }
+        mLastTime = currentTime ;
+
         int clickedViewId = v.getId();
         setSysTime();
 
