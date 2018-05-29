@@ -130,14 +130,13 @@ public class AnswerRecordDetailActivity extends BaseActivity{
     protected void loadData() {
         binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
         NetWorkManager
-                .queryReply(examId, SpUtils.getUserId())
+                .queryReply(examId, SpUtils.getUserId() , null)
 //                .queryReply("238")//TODO 测试用,删掉
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                                @Override
                                public void call(List<QuestionReplySummary> studentReplies) {
                                    //可能会有多个回答,取最后一个,并解析
                                    QuestionReplySummary studentReply = studentReplies.get(studentReplies.size() - 1);
-                                   studentReply.parsedContent();
                                    if (studentReply.getReplyScore() == 100){
 //                                       binding.buttomText.setText("正确");
                                        binding.buttomText.setText("");
