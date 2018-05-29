@@ -100,7 +100,7 @@ public class PageableRecyclerView extends LinearLayout {
         pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getContext()) {
             @Override
             public int getPageBtnCount() {
-                if (customAdapter == null){
+                if (customAdapter == null || maxItemNumInOnePage == 0){
                     return 0;
                 }
                 return (customAdapter.getItemCount() + maxItemNumInOnePage - 1) / maxItemNumInOnePage;
