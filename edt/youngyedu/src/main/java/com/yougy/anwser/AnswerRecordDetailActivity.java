@@ -12,6 +12,7 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerRecordDetailBinding;
 
@@ -153,8 +154,12 @@ public class AnswerRecordDetailActivity extends BaseActivity{
                                        binding.buttomIcon.setImageResource(R.drawable.img_bandui);
                                    }
                                    binding.contentDisplayer.getmContentAdaper().updateDataList("reply"
-                                           , (ArrayList<Content_new>) studentReply.getParsedContentList());
-
+                                           , ListUtil.conditionalSubList(studentReply.getParsedContentList(), new ListUtil.ConditionJudger<Content_new>() {
+                                               @Override
+                                               public boolean isMatchCondition(Content_new nodeInList) {
+                                                   return nodeInList.getType() == Content_new.Type.IMG_URL;
+                                               }
+                                           }));
                                    currentShowReplyPageIndex = 0;
                                    currentShowAnalysisPageIndex = 0;
 
