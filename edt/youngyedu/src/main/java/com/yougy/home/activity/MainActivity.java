@@ -322,7 +322,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         long currentTime =System.currentTimeMillis();
         if (mLastTime>0 && SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")){
-            if (currentTime -mLastTime  < 2000){
+            if (currentTime -mLastTime  <1000){
                 UIUtils.showToastSafe("操作过快");
                 return;
             }
