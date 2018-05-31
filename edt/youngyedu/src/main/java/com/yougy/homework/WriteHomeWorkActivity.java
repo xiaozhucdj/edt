@@ -137,6 +137,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RadioButton rbError;
     @BindView(R.id.rb_right)
     RadioButton rbRight;
+    @BindView(R.id.tv_homework_position)
+    TextView tvHomeWorkPosition;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -927,6 +929,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 刷新上一题下一题按钮的UI,如果已经是第一题或者最后一题了,就置灰按钮
      */
     public void refreshLastAndNextQuestionBtns() {
+        tvHomeWorkPosition.setText("选择题目(" + (showHomeWorkPosition + 1) + "/" + homeWorkPageSize + ")");
+
         if (showHomeWorkPosition > 0) {
             lastQuestionBtn.setVisibility(View.VISIBLE);
             lastQuestionText.setTextColor(Color.WHITE);
