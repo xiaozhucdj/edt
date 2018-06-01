@@ -62,6 +62,7 @@ import com.yougy.order.LockerActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
+import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -164,6 +165,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     };
     private ImageView imgSextIcon;
     private long mLastTime;
+    private TextView testVersion;
 
 
     /***************************************************************************/
@@ -296,11 +298,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_check_update).setOnClickListener(this);
 
         imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
+
+        testVersion  = (TextView) this.findViewById(R.id.test_version);
     }
 
 
     @Override
     protected void loadData() {
+        if (BuildConfig.DEBUG){
+            testVersion.setVisibility(View.VISIBLE);
+            testVersion.setText(UIUtils.getString(R.string.app_name));
+        }
+
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
             imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));

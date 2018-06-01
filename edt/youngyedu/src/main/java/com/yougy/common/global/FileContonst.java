@@ -114,19 +114,19 @@ public class FileContonst {
 
     public final static String IS_REFERENCE_BOOK = "is_reference_book";
 
-    public static int withS =151;
-    public static int withL =201;
+    public static int withS =150;
+    public static int withL =200;
 
-    public static int heightS =201;
+    public static int heightS =200;
 
-    public static int heightL = 267;
+    public static int heightL = 266;
 
     static {
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
-            withS = 151;
-            heightS = 201;
-            withL =201 ;
-            heightL =267 ;
+            withS = 150;
+            heightS = 200;
+            withL =200 ;
+            heightL =266;
 
         }
     }
