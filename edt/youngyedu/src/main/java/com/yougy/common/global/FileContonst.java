@@ -1,5 +1,7 @@
 package com.yougy.common.global;
 
+import com.yougy.common.utils.SystemUtils;
+
 /**
  * Created by Administrator on 2016/8/9.
  */
@@ -111,4 +113,22 @@ public class FileContonst {
     public final static String LOAD_APP_RESET = "0" ;
 
     public final static String IS_REFERENCE_BOOK = "is_reference_book";
+
+    public static int withS =151;
+    public static int withL =201;
+
+    public static int heightS =201;
+
+    public static int heightL = 267;
+
+    static {
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+            withS = 151;
+            heightS = 201;
+            withL =201 ;
+            heightL =267 ;
+
+        }
+    }
+
 }

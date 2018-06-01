@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.shop.bean.Favor;
 import com.yougy.ui.activity.R;
@@ -110,7 +111,7 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
 
 
     private void refreshImg(ImageView view, String url) {
-        int w = getMeasuredWidth();
+/*        int w = getMeasuredWidth();
         int h = getMeasuredHeight();
         if (w == 0 || h == 0) {
             //测量控件大小
@@ -123,13 +124,13 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
             if (h == 0){
                 h = view.getLayoutParams() == null ? 0 : view.getLayoutParams().height;
             }
-        }
+        }*/
         ImageLoaderManager.getInstance().loadImageContext(mContext,
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                w,
-                h,
+                FileContonst.withS ,
+                FileContonst.heightS,
                 view);
     }
     public void setPosition(int position){

@@ -7,6 +7,7 @@ import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
@@ -77,6 +78,7 @@ public final class NetWorkManager {
                 newBuilder.header("Content-Type", "application/json");
                 newBuilder.header("Accept", "application/json");
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
+                newBuilder.addHeader("X-Auth-Options" , SystemUtils.getDeviceModel()) ;
                 if (Commons.isRelase) {
                     newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
                 }

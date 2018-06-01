@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
@@ -352,7 +353,7 @@ public class ShopCartActivity extends ShopBaseActivity {
         refreshView();
     }
     private void refreshImg(ImageView view, String url) {
-        int w = view.getMeasuredWidth();
+/*        int w = view.getMeasuredWidth();
         int h = view.getMeasuredHeight();
         if (w == 0 || h == 0) {
             //测量控件大小
@@ -365,13 +366,13 @@ public class ShopCartActivity extends ShopBaseActivity {
             if (h == 0){
                 h = view.getLayoutParams() == null ? 0 : view.getLayoutParams().height;
             }
-        }
+        }*/
         ImageLoaderManager.getInstance().loadImageContext(ShopCartActivity.this,
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                w,
-                h,
+                FileContonst.withS ,
+                FileContonst.heightS,
                 view);
     }
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.StringUtils;
@@ -97,8 +98,8 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                151,
-                201,
+                FileContonst.withS,
+                FileContonst.heightS,
                 view);
     }
 }
