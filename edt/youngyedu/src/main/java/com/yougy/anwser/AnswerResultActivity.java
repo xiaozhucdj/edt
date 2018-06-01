@@ -13,10 +13,10 @@ import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerResultBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.functions.Action1;
@@ -124,7 +124,13 @@ public class AnswerResultActivity extends BaseActivity{
                     finish();
                     return;
                 }
-                binding.contentDisplayer.getmContentAdaper().updateDataList("reply" , (ArrayList<Content_new>) replySummaries.get(0).getParsedContentList());
+                binding.contentDisplayer.getmContentAdaper().updateDataList("reply"
+                        , ListUtil.conditionalSubList(replySummaries.get(0).getParsedContentList(), new ListUtil.ConditionJudger<Content_new>() {
+                    @Override
+                    public boolean isMatchCondition(Content_new nodeInList) {
+                        return nodeInList.getType() == Content_new.Type.IMG_URL;
+                    }
+                }));
                 binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
                 if (questionType.equals("选择")){
                     binding.contentDisplayer.getmContentAdaper().setSubText("答案 : " + RxResultHelper.parseAnswerList(parsedQuestionItem.answerContentList));

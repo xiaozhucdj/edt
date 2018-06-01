@@ -8,14 +8,13 @@ import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -134,6 +133,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
     LinearLayout nextQuestionBtn;
     @BindView(R.id.tv_save_homework)
     TextView tvSaveHomework;
+    @BindView(R.id.rb_error)
+    RadioButton rbError;
+    @BindView(R.id.rb_right)
+    RadioButton rbRight;
+    @BindView(R.id.tv_homework_position)
+    TextView tvHomeWorkPosition;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -161,6 +166,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private List<ParsedQuestionItem.Answer> chooeseAnswerList;
     //选择题选择的结果
     private ArrayList<String> checkedAnswerList = new ArrayList<String>();
+    //判断题判断的结果
+    private ArrayList<String> judgeAnswerList = new ArrayList<String>();
     //作业中某一题对返回结果解析后拿到的结果对象
     private ParsedQuestionItem parsedQuestionItem;
 
@@ -544,7 +551,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     rcvChooese.getAdapter().notifyDataSetChanged();
                 }
 
-            }else if ("判断".equals(questionList.get(0).getExtraData())) {
+            } else if ("判断".equals(questionList.get(0).getExtraData())) {
 
                 if (isAddAnswerBoard) {
                     rlAnswer.removeView(mNbvAnswerBoard);
@@ -556,8 +563,22 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 tvAddPage.setVisibility(View.GONE);
                 tvClearWrite.setVisibility(View.GONE);
 
+                //从之前judgeAnswerList中回显之前保存的判断结果，如果有的话
+                if (judgeAnswerList.size() != 0) {
+                    String judgeResult = judgeAnswerList.get(0);
+                    if ("true".equals(judgeResult)) {
+                        rbRight.setChecked(true);
+                        rbError.setChecked(false);
+                    } else {
+                        rbRight.setChecked(false);
+                        rbError.setChecked(true);
+                    }
+                } else {
+                    rbRight.setChecked(false);
+                    rbError.setChecked(false);
+                }
 
-            }  else {
+            } else {
                 if (!isAddAnswerBoard) {
                     rlAnswer.addView(mNbvAnswerBoard);
                     isAddAnswerBoard = true;
@@ -708,13 +729,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework, R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework})
+    @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
+            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right})
     public void onClick(View view) {
 
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
-
 
         if (mCaogaoNoteBoard != null && mCaogaoNoteBoard.getVisibility() == View.VISIBLE) {
             mCaogaoNoteBoard.leaveScribbleMode(true);
@@ -884,6 +905,21 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     llCaogaoControl.setVisibility(View.GONE);
                 }
                 break;
+
+            case R.id.rb_right:
+                if (judgeAnswerList.size() == 0) {
+                    judgeAnswerList.add("true");
+                } else {
+                    judgeAnswerList.set(0, "true");
+                }
+                break;
+            case R.id.rb_error:
+                if (judgeAnswerList.size() == 0) {
+                    judgeAnswerList.add("false");
+                } else {
+                    judgeAnswerList.set(0, "false");
+                }
+                break;
         }
     }
 
@@ -893,6 +929,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 刷新上一题下一题按钮的UI,如果已经是第一题或者最后一题了,就置灰按钮
      */
     public void refreshLastAndNextQuestionBtns() {
+        tvHomeWorkPosition.setText("选择题目(" + (showHomeWorkPosition + 1) + "/" + homeWorkPageSize + ")");
+
         if (showHomeWorkPosition > 0) {
             lastQuestionBtn.setVisibility(View.VISIBLE);
             lastQuestionText.setTextColor(Color.WHITE);
@@ -945,6 +983,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         //保存待上传图片，用于上传
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
+        getSpUtil().setDataList(examId + "_" + position + "_judge_list", judgeAnswerList);
 
 
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
@@ -972,6 +1011,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 //            cgBytes.clear();
             pathList.clear();
             checkedAnswerList.clear();
+            judgeAnswerList.clear();
         }
 
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
@@ -1010,7 +1050,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
         List<String> tmpCheckedAnswerList = getSpUtil().getDataList(examId + "_" + position + "_chooese_list");
         if (tmpCheckedAnswerList != null && tmpCheckedAnswerList.size() > 0) {
             checkedAnswerList.addAll(tmpCheckedAnswerList);
-
+        }
+        //回显之前存储在sp中的判断结果数据（如果有）
+        List<String> tmpJudgeAnswerList = getSpUtil().getDataList(examId + "_" + position + "_judge_list");
+        if (tmpJudgeAnswerList != null && tmpJudgeAnswerList.size() > 0) {
+            judgeAnswerList.addAll(tmpJudgeAnswerList);
         }
 
     }
@@ -1125,6 +1169,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                         tmpPathList.clear();
                         List<String> tmpCheckedAnswerList = getSpUtil().getDataList(examId + "_" + i + "_chooese_list");
+                        List<String> tmpJudgeAnswerList = getSpUtil().getDataList(examId + "_" + i + "_judge_list");
                         String useTime = SharedPreferencesUtil.getSpUtil().getString(examId + "_" + i + "_use_time", "");
 
                         HomeWorkResultbean homeWorkResultbean = new HomeWorkResultbean();
@@ -1134,7 +1179,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
-                        homeWorkResultbean.setTxtContent(tmpCheckedAnswerList);
+                        homeWorkResultbean.setTxtContent(tmpJudgeAnswerList.size() > 0 ? tmpJudgeAnswerList : tmpCheckedAnswerList);
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
 
@@ -1143,6 +1188,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         DataCacheUtils.reomve(getBaseContext(), examId + "_" + i + "_caogao_bytes_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_path_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_chooese_list");
+                        SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_judge_list");
                         SharedPreferencesUtil.getSpUtil().remove(examId + "_" + i + "_use_time");
                     } else {
 
@@ -1560,6 +1606,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
             checkedAnswerList.clear();
         }
         checkedAnswerList = null;
+        if (judgeAnswerList != null) {
+            judgeAnswerList.clear();
+        }
+        judgeAnswerList = null;
 
         if (timedTask != null) {
             timedTask.stop();

@@ -89,6 +89,7 @@
 
 
             <TextView
+                android:id="@+id/tv_homework_position"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
@@ -136,11 +137,10 @@
                 <com.yougy.anwser.ContentDisplayer
                     android:id="@+id/content_displayer"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                     />
-               <!-- android:layout_marginTop="15px"
-                android:paddingLeft="5px"
-                android:paddingRight="5px"-->
+                    android:layout_height="match_parent" />
+                <!-- android:layout_marginTop="15px"
+                 android:paddingLeft="5px"
+                 android:paddingRight="5px"-->
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rcv_chooese_item"
