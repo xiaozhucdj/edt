@@ -53,6 +53,7 @@ import de.greenrobot.event.EventBus;
 import okhttp3.OkHttpClient;
 
 import static com.yougy.common.activity.BaseActivity.getCurrentActivity;
+import static com.yougy.common.global.Commons.isRelase;
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
 
 //import com.tencent.bugly.crashreport.CrashReport;
@@ -127,12 +128,15 @@ public class YougyApplicationManager extends LitePalApplication {
             //创建试读PDF 文件夹
             FileUtils.createDirs(FileUtils.getProbationBookFilesDir());
 
+            if (isRelase) {
+                //处理异常
+                String logFile = FileUtils.getLogFilesDir() + DateUtils.getCurrentTimeSimpleYearMonthDayString() + "/" + "Error_Log.txt";
+                FileUtils.makeParentsDir(logFile);
+                YoungyUncaughtExceptionHandler handler = new YoungyUncaughtExceptionHandler(logFile);
+                Thread.setDefaultUncaughtExceptionHandler(handler);
+            }
 
-            //处理异常
-            String logFile = FileUtils.getLogFilesDir() + DateUtils.getCurrentTimeSimpleYearMonthDayString() + "/" + "Error_Log.txt";
-            FileUtils.makeParentsDir(logFile);
-            YoungyUncaughtExceptionHandler handler = new YoungyUncaughtExceptionHandler(logFile);
-            Thread.setDefaultUncaughtExceptionHandler(handler);
+
 
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(REQUEST_TIME, TimeUnit.MILLISECONDS)
@@ -265,8 +269,8 @@ public class YougyApplicationManager extends LitePalApplication {
                 }
             });*/
         }
-        checkAnr();
-       LogUtils.setOpenLog(!Commons.isRelase);
+//        checkAnr();
+       LogUtils.setOpenLog(!isRelase);
     }
 
     private void checkAnr() {

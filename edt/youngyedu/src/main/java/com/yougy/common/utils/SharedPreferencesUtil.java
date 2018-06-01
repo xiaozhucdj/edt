@@ -16,12 +16,14 @@ public class SharedPreferencesUtil {
     private SharedPreferences sp;
 
     private static SharedPreferencesUtil spUtil;
+    private static String studentId;
 
     private SharedPreferencesUtil(Context context) {
         sp = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public static SharedPreferencesUtil getSpUtil() {
+        studentId = SpUtils.getAccountId() + "";
         if (spUtil == null) {
             spUtil = new SharedPreferencesUtil(YougyApplicationManager.getInstance());
         }
@@ -30,37 +32,37 @@ public class SharedPreferencesUtil {
 
     public void remove(String key) {
         if (sp != null) {
-            sp.edit().remove(key).commit();
+            sp.edit().remove(studentId + "-" + key).commit();
         }
     }
 
     public void putBoolean(String key, boolean value) {
         if (sp != null) {
-            sp.edit().putBoolean(key, value).commit();
+            sp.edit().putBoolean(studentId + "-" + key, value).commit();
         }
     }
 
     public void putFloat(String key, float value) {
         if (sp != null) {
-            sp.edit().putFloat(key, value).commit();
+            sp.edit().putFloat(studentId + "-" + key, value).commit();
         }
     }
 
     public void putInt(String key, int value) {
         if (sp != null) {
-            sp.edit().putInt(key, value).commit();
+            sp.edit().putInt(studentId + "-" + key, value).commit();
         }
     }
 
     public void putLong(String key, long value) {
         if (sp != null) {
-            sp.edit().putLong(key, value).commit();
+            sp.edit().putLong(studentId + "-" + key, value).commit();
         }
     }
 
     public void putString(String key, String value) {
         if (sp != null) {
-            sp.edit().putString(key, value).commit();
+            sp.edit().putString(studentId + "-" + key, value).commit();
 
         }
     }
@@ -78,7 +80,7 @@ public class SharedPreferencesUtil {
         Gson gson = new Gson();
         //转换成json数据，再保存
         String strJson = gson.toJson(datalist);
-        sp.edit().putString(tag, strJson).commit();
+        sp.edit().putString(studentId + "-" + tag, strJson).commit();
 
     }
 
@@ -90,7 +92,7 @@ public class SharedPreferencesUtil {
      */
     public <T> List<T> getDataList(String tag) {
         List<T> datalist = new ArrayList<T>();
-        String strJson = sp.getString(tag, null);
+        String strJson = sp.getString(studentId + "-" + tag, null);
         if (null == strJson) {
             return datalist;
         }
@@ -105,7 +107,7 @@ public class SharedPreferencesUtil {
     public String getString(String key, String defValue) {
         String value = null;
         if (sp != null) {
-            value = sp.getString(key, defValue);
+            value = sp.getString(studentId + "-" + key, defValue);
         }
         return value;
     }
@@ -113,7 +115,7 @@ public class SharedPreferencesUtil {
     public boolean getBoolean(String key, boolean defValue) {
         boolean value = false;
         if (sp != null) {
-            value = sp.getBoolean(key, defValue);
+            value = sp.getBoolean(studentId + "-" + key, defValue);
         }
         return value;
     }
@@ -121,7 +123,7 @@ public class SharedPreferencesUtil {
     public int getInt(String key, int defValue) {
         int value = 0;
         if (sp != null) {
-            value = sp.getInt(key, defValue);
+            value = sp.getInt(studentId + "-" + key, defValue);
         }
         return value;
     }
@@ -129,7 +131,7 @@ public class SharedPreferencesUtil {
     public long getLong(String key, long defValue) {
         long value = 0;
         if (sp != null) {
-            value = sp.getLong(key, defValue);
+            value = sp.getLong(studentId + "-" + key, defValue);
         }
         return value;
     }

@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.onyx.android.sdk.ui.compat.AppCompatImageViewCollection;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.StringUtils;
@@ -18,8 +18,6 @@ import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
 import java.util.List;
-
-import static com.yougy.ui.activity.R.id.img_add_icon;
 
 /**
  * Created by Administrator on 2016/7/14.
@@ -72,14 +70,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             holder.mImgBookDeleteL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mDeletePs = position ;
+                    mDeletePs = position;
                     mOnItemDeleteListener.onItemDeteteClickL(position);
                 }
             });
             holder.mImgBookDeleteS.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mDeletePs = position ;
+                    mDeletePs = position;
                     mOnItemDeleteListener.onItemDeteteClickS(position);
                 }
             });
@@ -146,7 +144,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             mImgBookDownS = (ImageView) itemView.findViewById(R.id.img_down_book_s);
 
 
-
             mImgBookDeleteL = (ImageView) itemView.findViewById(R.id.img_delete_book_l);
             mImgBookDeleteS = (ImageView) itemView.findViewById(R.id.img_delete_book_s);
 
@@ -174,7 +171,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                 }
 
 
-                loadImage(mInfos.get(position).getBookCoverL(), 201, 267, mImgBookIconL);
+                loadImage(mInfos.get(position).getBookCoverL(), FileContonst.withL,
+                        FileContonst.heightL, mImgBookIconL);
                 if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
                     mImgBookDownL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book_l));
                 } else {
@@ -184,7 +182,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             } else {
                 mRlL.setVisibility(View.GONE);
                 mRlS.setVisibility(View.VISIBLE);
-                loadImage(mInfos.get(position).getBookCoverS(), 151, 201, mImgBookIconS);
+                loadImage(mInfos.get(position).getBookCoverS(), FileContonst.withS,
+                        FileContonst.heightS, mImgBookIconS);
                 if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
                     mImgBookDownS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book_s));
                 } else {

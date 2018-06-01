@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.utils.LogUtils;
@@ -78,8 +79,8 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                128,
-                168,
+                FileContonst.withS ,
+                FileContonst.heightS,
                 view);
     }
 }

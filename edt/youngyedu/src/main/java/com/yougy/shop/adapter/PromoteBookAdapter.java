@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
@@ -74,7 +74,7 @@ public class PromoteBookAdapter extends RecyclerView.Adapter<PromoteBookAdapter.
 
         public void setViewData(int position) {
             if (mInfos != null && mInfos.size() > 0) {
-                refreshImg(imgBookIcon, mInfos.get(position).getBookCoverL());
+                refreshImg(imgBookIcon, mInfos.get(position).getBookCoverS());
                 tvBookTitle.setText(mInfos.get(position).getBookTitle());
                 tvBookPirce.setText("￥"+mInfos.get(position).getBookSalePrice());
             }
@@ -82,6 +82,7 @@ public class PromoteBookAdapter extends RecyclerView.Adapter<PromoteBookAdapter.
     }
 
     private void refreshImg(ImageView view, String url) {
+/*
         int w = view.getMeasuredWidth();
         int h = view.getMeasuredHeight();
 
@@ -91,14 +92,15 @@ public class PromoteBookAdapter extends RecyclerView.Adapter<PromoteBookAdapter.
             w = result[0];
             h = result[1];
         }
+*/
 
 
         ImageLoaderManager.getInstance().loadImageContext(mContext,
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                w,
-                h,
+                FileContonst.withS ,
+                FileContonst.heightS,
                 view);
     }
 }
