@@ -62,6 +62,7 @@ import com.yougy.order.LockerActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
+import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -74,6 +75,8 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.Call;
+
+import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 
 //import com.tencent.bugly.crashreport.CrashReport;
 
@@ -164,6 +167,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     };
     private ImageView imgSextIcon;
     private long mLastTime;
+    private TextView testVersion;
 
 
     /***************************************************************************/
@@ -296,11 +300,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_check_update).setOnClickListener(this);
 
         imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
+
+        testVersion  = (TextView) this.findViewById(R.id.test_version);
     }
 
 
     @Override
     protected void loadData() {
+        if (BuildConfig.DEBUG){
+            testVersion.setVisibility(View.VISIBLE);
+            testVersion.setText(UIUtils.getString(R.string.app_name));
+        }
+
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
             imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));
@@ -1007,8 +1018,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        //TODO:测试 锁屏
-        if (SpUtils.getOrder().equals("order1")){
+
+        if (SpUtils.getOrder().contains(LOCK_SCREEN) && SpUtils.getOrder().contains(DateUtils.getCalendarString())){
             Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(newIntent);

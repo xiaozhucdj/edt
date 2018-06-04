@@ -28,9 +28,9 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LocalLockActivity;
+import com.yougy.message.YXClient;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.EndQuestionAttachment;
-import com.yougy.message.YXClient;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
@@ -52,8 +52,9 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import okhttp3.OkHttpClient;
 
-import static com.yougy.common.activity.BaseActivity.getCurrentActivity;
 import static com.yougy.common.global.Commons.isRelase;
+import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
+import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
 
 //import com.tencent.bugly.crashreport.CrashReport;
@@ -137,7 +138,6 @@ public class YougyApplicationManager extends LitePalApplication {
             }
 
 
-
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(REQUEST_TIME, TimeUnit.MILLISECONDS)
                     .readTimeout(REQUEST_TIME, TimeUnit.MILLISECONDS)
@@ -168,7 +168,6 @@ public class YougyApplicationManager extends LitePalApplication {
             strategy.setUploadProcess(processName == null || processName.equals(packageName));
             // 初始化Bugly
             CrashReport.initCrashReport(context, "9629dd7708", false, strategy);
-
 
 
             //AutoLayout初始化
@@ -212,25 +211,27 @@ public class YougyApplicationManager extends LitePalApplication {
 
                     } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         rxBus.send(message);
-                    }
-                    else if(message.getAttachment() instanceof OverallLockAttachment){
+                    } else if (message.getAttachment() instanceof OverallLockAttachment) {
                         //TODO 全局锁屏
-                        LogUtils.i("全局锁屏");
-
-                        SpUtils.setOrder("order1");
-                        Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
-                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(newIntent);
-                    }
-                    else if (message.getAttachment() instanceof OverallUnlockAttachment){
-                        LogUtils.i("全局解锁");
+                        String time = ((OverallLockAttachment) message.getAttachment()).time;
+                        LogUtils.i("全局锁屏" + time);
+                        if (time.equalsIgnoreCase(DateUtils.getCalendarString())) {
+                            SpUtils.setOrder(LOCK_SCREEN + time);
+                            Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(newIntent);
+                        }
+                    } else if (message.getAttachment() instanceof OverallUnlockAttachment) {
+                        String time = ((OverallUnlockAttachment) message.getAttachment()).time;
+                        LogUtils.i("全局解锁" + time);
                         //TODO 全局解锁
-                        SpUtils.setOrder("order0");
-                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
-                        EventBus.getDefault().post(baseEvent);
-                    }
-                    else if (message.getAttachment() instanceof RetryAskQuestionAttachment){
-                        if (AnsweringActivity.lastExamId != ((RetryAskQuestionAttachment) message.getAttachment()).examId){
+                        if (time.equalsIgnoreCase(DateUtils.getCalendarString())) {
+                            SpUtils.setOrder(NO_LOCK_SCREEN);
+                            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
+                            EventBus.getDefault().post(baseEvent);
+                        }
+                    } else if (message.getAttachment() instanceof RetryAskQuestionAttachment) {
+                        if (AnsweringActivity.lastExamId != ((RetryAskQuestionAttachment) message.getAttachment()).examId) {
                             Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
@@ -270,7 +271,7 @@ public class YougyApplicationManager extends LitePalApplication {
             });*/
         }
 //        checkAnr();
-       LogUtils.setOpenLog(!isRelase);
+        LogUtils.setOpenLog(!isRelase);
     }
 
     private void checkAnr() {

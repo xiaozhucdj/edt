@@ -183,7 +183,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         requestPromoteBook();
                     }
                     //图片
-                    refreshImg(binding.bookCoverImv, mBookInfo.getBookCoverL());
+                    refreshImg(binding.bookCoverImv, mBookInfo.getBookCoverS());
                     //标题
                     binding.titleTv.setText("图书详情");
                     //图书名称
@@ -329,8 +329,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                200,
-                267,
+                FileContonst.withS ,
+                FileContonst.heightS,
                 view);
     }
 

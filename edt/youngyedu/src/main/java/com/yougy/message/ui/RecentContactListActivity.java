@@ -17,6 +17,8 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.YXClient;
+import com.yougy.message.attachment.HomeworkRemindAttachment;
+import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityRecentContactBinding;
 import com.yougy.ui.activity.databinding.ItemRecentContactListBinding;
@@ -146,8 +148,16 @@ public class RecentContactListActivity extends MessageBaseActivity {
             RecentContact contact = YXClient.getInstance().getRecentContactList().get(position);
             ItemRecentContactListBinding binding = (ItemRecentContactListBinding) convertView.getTag();
             binding.setContact(contact);
-            if (contact.getMsgType() == MsgTypeEnum.custom && contact.getAttachment() != null && contact.getAttachment() instanceof BookRecommandAttachment){
-                binding.messageInfoTv.setText("[推荐图书]");
+            if (contact.getMsgType() == MsgTypeEnum.custom && contact.getAttachment() != null ){
+                if (contact.getAttachment() instanceof BookRecommandAttachment){
+                    binding.messageInfoTv.setText("[推荐图书]");
+                }
+                else if (contact.getAttachment() instanceof HomeworkRemindAttachment){
+                    binding.messageInfoTv.setText("[作业提醒]");
+                }
+                else {
+                    binding.messageInfoTv.setText(contact.getContent());
+                }
             }
             else {
                 binding.messageInfoTv.setText(contact.getContent());

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yougy.common.dialog.BaseDialog;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.ui.activity.R;
 
@@ -154,8 +155,8 @@ public class PaySuccessDialog extends BaseDialog implements View.OnClickListener
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                151,
-                201,
+                FileContonst.withS ,
+                FileContonst.heightS,
                 view);
     }
 }

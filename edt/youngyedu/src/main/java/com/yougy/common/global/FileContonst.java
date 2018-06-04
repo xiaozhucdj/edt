@@ -1,5 +1,7 @@
 package com.yougy.common.global;
 
+import com.yougy.common.utils.SystemUtils;
+
 /**
  * Created by Administrator on 2016/8/9.
  */
@@ -58,7 +60,7 @@ public class FileContonst {
 
     public final static String NOTE_OBJECT = "NOTE_INFO";
 
-    public final static String  NOTE_BOOK_ID = "noteFitBookId";
+    public final static String NOTE_BOOK_ID = "noteFitBookId";
 
     ///////////////////////////作业 笔记 课本 跳转//////////////////////////////////////////
     /**
@@ -84,31 +86,59 @@ public class FileContonst {
     /**
      * 判断是否添加了笔记需要在 当前笔记设置状态，全部笔记使用判断
      */
-    public static boolean globeIsAdd = false ;
+    public static boolean globeIsAdd = false;
 
-    /**笔记标记*/
-    public final static String NOTE_MARK ="noteMark" ;
+    /**
+     * 笔记标记
+     */
+    public final static String NOTE_MARK = "noteMark";
 
-    public final  static  boolean OPEN_ONYX_READER = true ;
-
-
-    public final  static  int  PAGE_COUNTS = 9 ;
-
-    public final  static  int  PAGE_LINES= 3 ;
-
-    public static final String  DOWN_LOAD_BOOKS_KEY =  "down_load_books_key" ;
-    public final  static  int  SEARCH_PAGE_COUNTS = 20 ;
-
-    public final  static  int  SMALL_PAGE_LINES= 5;
-
-    public final  static  int  SMALL_PAGE_COUNTS= 15;
-
-    public final  static  int  MIN_ALL_ITEM_SUBJECT= 200;
+    public final static boolean OPEN_ONYX_READER = true;
 
 
-    public final static String LOAD_APP_STUDENT = "1" ;
+    public final static int PAGE_COUNTS = 9;
 
-    public final static String LOAD_APP_RESET = "0" ;
+    public final static int PAGE_LINES = 3;
+
+    public static final String DOWN_LOAD_BOOKS_KEY = "down_load_books_key";
+    public final static int SEARCH_PAGE_COUNTS = 20;
+
+    public final static int SMALL_PAGE_LINES = 5;
+
+    public final static int SMALL_PAGE_COUNTS = 15;
+
+    public final static int MIN_ALL_ITEM_SUBJECT = 200;
+
+
+    public final static String LOAD_APP_STUDENT = "1";
+
+    public final static String LOAD_APP_RESET = "0";
 
     public final static String IS_REFERENCE_BOOK = "is_reference_book";
+
+    public static int withS = 150;
+    public static int withL = 200;
+
+    public static int heightS = 200;
+
+    public static int heightL = 266;
+
+    static {
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+            withS = 150;
+            heightS = 200;
+            withL = 200;
+            heightL = 266;
+
+        }
+    }
+
+    /***
+     * 消息锁屏
+     */
+    public final static String  LOCK_SCREEN= "lock_screen";
+
+    public final static String  NO_LOCK_SCREEN= "unlocking_screen";
+
+
 }

@@ -56,6 +56,8 @@ import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.attachment.CustomAttachParser;
 import com.yougy.message.attachment.EndQuestionAttachment;
+import com.yougy.message.attachment.HomeworkRemindAttachment;
+import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.ReplyAttachment;
@@ -153,6 +155,7 @@ public class YXClient {
                             || newMessage.getAttachment() instanceof OverallLockAttachment
                             || newMessage.getAttachment() instanceof OverallUnlockAttachment
                             || newMessage.getAttachment() instanceof RetryAskQuestionAttachment
+                            || newMessage.getAttachment() instanceof NeedRefreshHomeworkAttachment
                             ){
                         //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
@@ -722,7 +725,13 @@ public class YXClient {
                             @Override
                             public boolean isMatchCondition(IMMessage nodeInList) {
                                 return nodeInList.getMsgType() == MsgTypeEnum.custom
-                                        && (nodeInList.getAttachment() == null || !(nodeInList.getAttachment() instanceof BookRecommandAttachment));
+                                        && (
+                                        nodeInList.getAttachment() == null
+                                                || (
+                                                !(nodeInList.getAttachment() instanceof BookRecommandAttachment)
+                                                        && !(nodeInList.getAttachment() instanceof HomeworkRemindAttachment)
+                                        )
+                                );
                             }
                         });
                         callback.onSuccess(param);

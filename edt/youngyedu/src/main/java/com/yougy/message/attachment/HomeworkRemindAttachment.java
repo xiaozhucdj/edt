@@ -4,19 +4,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by FH on 2018/5/9.
+ * Created by FH on 2017/4/18.
  */
 
-public class OverallLockAttachment extends CustomAttachment {
-    final String KEY_TIME = "time";
+public class HomeworkRemindAttachment extends CustomAttachment{
+    final String KEY_EXAM_ID = "examId";
+    final String KEY_EXAM_NAME = "examName";
 
-    public String time;
-    public OverallLockAttachment(String clue , double version) {
+    public String examName;
+    public String examId;
+
+    public HomeworkRemindAttachment(String clue , double version) {
         super(clue , version);
     }
-    public OverallLockAttachment(String time) {
-        super(CustomAttachParser.CLUE_OVERALLLOCK , 1);
-        this.time = time;
+
+    public HomeworkRemindAttachment(String examName, String examId) {
+        super(CustomAttachParser.CLUE_HOMEWORK_REMIND , 0.1);
+        this.examName = examName;
+        this.examId = examId;
     }
 
     /**
@@ -26,7 +31,8 @@ public class OverallLockAttachment extends CustomAttachment {
     @Override
     protected void parseData(JSONObject data) throws JSONException{
         JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
-        time = introJsonObj.getString(KEY_TIME);
+        examName = introJsonObj.getString(KEY_EXAM_NAME);
+        examId = introJsonObj.getString(KEY_EXAM_ID);
     }
 
     /**
@@ -38,7 +44,8 @@ public class OverallLockAttachment extends CustomAttachment {
         JSONObject returnJsonObj = new JSONObject();
         JSONObject introJsonObj = new JSONObject();
         try {
-            introJsonObj.put(KEY_TIME , time);
+            introJsonObj.put(KEY_EXAM_NAME , examName);
+            introJsonObj.put(KEY_EXAM_ID , examId);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
         }
         catch (JSONException e) {
