@@ -1169,6 +1169,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
      * 刷新上一题下一题按钮的UI,如果已经是第一题或者最后一题了,就置灰按钮
      */
     public void refreshLastAndNextQuestionBtns() {
+
+        titleTextview.setText(studentName + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
+
         if (currentShowQuestionIndex > 0) {
             lastHomeworkBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
             lastHomeworkText.setVisibility(View.VISIBLE);
