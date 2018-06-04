@@ -162,6 +162,7 @@
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
         <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
+        <activity android:name="com.yougy.homework.CheckHomeWorkActivity" />
         <activity android:name="com.yougy.shop.activity.ShopPromotionActivity"/>
         <!--问答图书章节列表-->
         <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" />

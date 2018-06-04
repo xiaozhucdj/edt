@@ -117,7 +117,7 @@ public class SearchActivity extends ShopBaseActivity {
         binding.versionWrap.setVerticalMargin(25);
 
         CustomLinearLayoutManager stageManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        stageManager.setScrollEnabled(false);
+        stageManager.setScrollHorizontalEnabled(false);
         binding.stageRecycler.setLayoutManager(stageManager);
         binding.stageRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.stageRecycler) {
             @Override

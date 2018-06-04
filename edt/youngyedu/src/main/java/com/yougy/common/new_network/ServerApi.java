@@ -310,4 +310,32 @@ public interface ServerApi {
     @POST("common/v1")
     @DefaultField(keys = {"m"}, values = {"common_addBookcaseBooks"})
     Observable<BaseResult<Object>> addBookToBookcase(@Field("bookId") Integer bookId, @Field("userId") Integer userId);
+
+    /**
+     * 问题解答上传oss
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postCommentRequest"})
+    Observable<BaseResult<STSbean>> postCommentRequest(@Field("replyId") String replyId);
+
+    /**
+     * 作业评定(结束某个学生的作业,其实就是调了这个接口就会将这个学生这次考试的错题写到错题本里去,不调就不写)
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"closeHomework"})
+    Observable<BaseResult<Object>> closeHomework(@Field("examId") Integer examId
+            , @Field("courseId") Integer courseId , @Field("userId") String userId);
+
+    /**
+     * 教师批改上传（单题）
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postComment"})
+    Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
+            , @Field("content") String content, @Field("replyCommentator") String replyCommentator);
+
+
 }

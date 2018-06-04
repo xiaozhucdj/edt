@@ -267,7 +267,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             //作业中某一题题目、答案切换
             questionPageNumAdapter = new QuestionPageNumAdapter();
             CustomLinearLayoutManager linearLayoutManager = new CustomLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            linearLayoutManager.setScrollEnabled(false);
+            linearLayoutManager.setScrollHorizontalEnabled(false);
             allQuestionPage.setLayoutManager(linearLayoutManager);
             allQuestionPage.setAdapter(questionPageNumAdapter);
 

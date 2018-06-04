@@ -394,4 +394,24 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+
+    public static Observable<Object> closeHomework(Integer examId, Integer courseId, String userId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi进行作业评定,关闭单学生单次作业并写入错题本");
+        return getInstance().getServerApi().closeHomework(examId, courseId, userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> postComment(String replyId, String score, String content, String replyCommentator) {
+        return getInstance().getServerApi().postComment(replyId, score, content, replyCommentator)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<STSbean> postCommentRequest(String replyId) {
+        return getInstance().getServerApi().postCommentRequest(replyId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 }

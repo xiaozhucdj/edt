@@ -493,7 +493,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             //作业中某一题题目、答案切换
             questionPageNumAdapter = new QuestionPageNumAdapter();
             CustomLinearLayoutManager linearLayoutManager = new CustomLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            linearLayoutManager.setScrollEnabled(false);
+            linearLayoutManager.setScrollHorizontalEnabled(false);
             binding.rcvAllQuestionPage.setLayoutManager(linearLayoutManager);
             binding.rcvAllQuestionPage.setAdapter(questionPageNumAdapter);
 

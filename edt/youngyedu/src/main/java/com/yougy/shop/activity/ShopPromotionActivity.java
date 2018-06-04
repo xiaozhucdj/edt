@@ -63,7 +63,7 @@ public class ShopPromotionActivity extends ShopBaseActivity{
     @Override
     protected void initLayout() {
         CustomLinearLayoutManager layoutManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        layoutManager.setScrollEnabled(false);
+        layoutManager.setScrollHorizontalEnabled(false);
         binding.promotionRecycler.setLayoutManager(layoutManager);
     }
 

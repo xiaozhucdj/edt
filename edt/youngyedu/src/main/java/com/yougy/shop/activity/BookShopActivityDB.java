@@ -351,7 +351,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         });
 
         CustomLinearLayoutManager classifyManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        classifyManager.setScrollEnabled(false);
+        classifyManager.setScrollHorizontalEnabled(false);
         binding.classifyRecycler.setLayoutManager(classifyManager);
         binding.classifyRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.classifyRecycler) {
             @Override
@@ -361,7 +361,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             }
         });
         CustomLinearLayoutManager stageManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        stageManager.setScrollEnabled(false);
+        stageManager.setScrollHorizontalEnabled(false);
         binding.stageRecycler.setLayoutManager(stageManager);
         binding.stageRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.stageRecycler) {
             @Override
