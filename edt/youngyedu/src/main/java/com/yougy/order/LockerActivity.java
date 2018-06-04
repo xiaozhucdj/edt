@@ -10,14 +10,18 @@ import android.widget.TextView;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 
 import de.greenrobot.event.EventBus;
+
+import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
 
 
 /**
@@ -122,6 +126,11 @@ public class LockerActivity extends BaseActivity {
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
+                if (!SpUtils.getOrder().contains(DateUtils.getCalendarString())){
+                    SpUtils.setOrder(NO_LOCK_SCREEN);
+                    BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
+                    onEventMainThread(baseEvent);
+                }
             }
         });
     }

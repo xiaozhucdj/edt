@@ -76,6 +76,8 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
+import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
+
 //import com.tencent.bugly.crashreport.CrashReport;
 
 
@@ -1016,8 +1018,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        //TODO:测试 锁屏
-        if (SpUtils.getOrder().equals("order1")){
+
+        if (SpUtils.getOrder().contains(LOCK_SCREEN) && SpUtils.getOrder().contains(DateUtils.getCalendarString())){
             Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(newIntent);
