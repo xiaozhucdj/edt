@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.manager.NetManager;
@@ -44,7 +45,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by yuanye 2016/08/22
  */
-public abstract class BaseActivity extends FragmentActivity implements UiPromptDialog.Listener {
+public abstract class BaseActivity extends RxAppCompatActivity implements UiPromptDialog.Listener {
     protected String tag = getClass().getName();
     /**
      * UI 线程ID

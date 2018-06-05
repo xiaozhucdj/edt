@@ -4,17 +4,25 @@ import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
+import com.yougy.common.model.Version;
+import com.yougy.common.protocol.request.BookStoreCategoryReq;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.init.bean.Student;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
+import com.yougy.shop.bean.CategoryInfo;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.shop.bean.Favor;
 import com.yougy.shop.bean.OrderDetailBean;
@@ -364,5 +372,45 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<List<Student>> login(NewLoginReq req){
+        return getInstance().getServerApi().login(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
+    /**
+     * 获取版本号
+     */
+    public static Observable<Version> getVersion() {
+        LogUtils.e("FH", "!!!!!调用ServerApi获取版本号:getVersion");
+        return getInstance().getServerApi().getVersion()
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> bindDevice(Integer userId, String deviceId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi绑定设备:bindDevice");
+        return getInstance().getServerApi().bindDevice(userId, deviceId, SystemUtils.getDeviceModel())
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<AliyunData> queryDownloadAliyunData() {
+        return getInstance(false).getServerApi().queryDownloadAliyunData(SpUtils.getUserId())
+                .compose(RxResultHelper.handleResult(null));
+    }
+
+    public static Observable<AliyunData> queryUploadAliyunData() {
+        return getInstance(false).getServerApi().queryUploadAliyunData(SpUtils.getUserId())
+                .compose(RxResultHelper.handleResult(null));
+    }
+
+    /**
+     * 图书分类查询
+     */
+    public static Observable<List<CategoryInfo>> queryBookCategoryInfo(BookStoreCategoryReq req) {
+        return getInstance().getServerApi().queryBookCategory(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 }

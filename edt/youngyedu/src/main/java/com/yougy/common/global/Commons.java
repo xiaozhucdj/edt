@@ -48,5 +48,8 @@ public class Commons {
 
     //常量 ,设备ID
     public static String UUID;
+    public final static String LOAD_APP_STUDENT = "2" ;
+
+    public final static String LOAD_APP_RESET = "0" ;
 }
 

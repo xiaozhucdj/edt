@@ -17,6 +17,9 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.model.Version;
+import com.yougy.common.new_network.ApiException;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.callback.NewUpdateCallBack;
@@ -43,6 +46,7 @@ import com.yougy.view.dialog.HintDialog;
 import org.litepal.LitePal;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -184,10 +188,45 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             jumpActivity(LocalLockActivity.class);
         }
     }
-
+    private void newLogin(){
+        NewLoginReq req = new NewLoginReq();
+        req.setDeviceId(Commons.UUID);
+        NetWorkManager.login(req).compose(bindToLifecycle())
+                .subscribe(students -> {
+                    Student student = students.get(0);
+                    if (!student.getUserRole().equals("教师")) {
+                        new HintDialog(getThisActivity(), "权限错误:本设备已被其他账号绑定过,请先解绑后重新登录", "退出程序", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finishAll();
+                            }
+                        }).show();
+                    } else {
+                        LogUtils.e("FH", "自动登录成功");
+                        SpUtils.saveStudent(student);
+                        checkLocalLockAndJump();
+                    }
+                }, throwable -> {
+                    if (throwable instanceof ApiException) {
+                        LogUtils.e("FH", "自动登录失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
+                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", Commons.LOAD_APP_RESET+ "," + SpUtils.getVersion());
+                        jumpActivity(LoginActivity.class);
+                    } else {
+                        LogUtils.e("FH", "自动登录失败原因:其他错误:" + throwable.toString());
+                        if (-1 == SpUtils.getUserId()) {
+                            LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到wifi设置");
+                            jumpWifiActivity();
+                        } else {
+                            LogUtils.e("FH", "自动登录失败,有之前的登录信息");
+                            checkLocalLockAndJump();
+                        }
+                    }
+                });
+    }
     private void login() {
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
+//        newLogin(loginReq);
         NewProtocolManager.login(loginReq, new LoginCallBack(this, loginReq) {
             @Override
             public void onBefore(Request request, int id) {
@@ -210,7 +249,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         }).show();
                     } else {
                         LogUtils.e("FH", "自动登录成功");
-                        SpUtils.saveStudent(response.getData().get(0));
+                        SpUtils.saveStudent(student);
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
@@ -303,6 +342,42 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                 login();
             }
         });
+    }
+
+    private void getNerServerVersion(){
+        NetWorkManager.getVersion().compose(bindToLifecycle())
+                .subscribe(version -> {
+                    int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
+                    int serverVersion = TextUtils.isEmpty(version.getAppVersion()) ? -1 : Integer.parseInt(version.getAppVersion());
+                    if (serverVersion > localVersion && !TextUtils.isEmpty(version.getAppUrl())) {
+                        LogUtils.e("FH" , "检测到有更新的版本,当前版本vCode=" + localVersion + " 服务器版本vCode=" + serverVersion + "弹出升级提示框");
+                        mHandler.post(() -> new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
+                                , "现在升级", "暂缓升级", (dialog, which) -> {
+                                    //现在升级
+                                    LogUtils.e("FH" , "用户点击现在升级");
+
+                                    SpUtils.setVersion("" + serverVersion);
+                                    if (SpUtils.getStudent().getUserId() == -1) {
+                                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init",  Commons.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                                    } else {
+                                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", Commons.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                                    }
+
+                                    dialog.dismiss();
+                                    doDownLoad(SplashActivity.this, version.getAppUrl());
+                                }, (dialog, which) -> {
+                            //暂缓升级
+                            LogUtils.e("FH" , "用户点击暂缓升级,直接登录");
+                            dialog.dismiss();
+                            newLogin();
+                        }).show());
+                    } else {
+                        LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
+                        newLogin();
+                    }
+                }, throwable -> {
+                    newLogin();
+                });
     }
 
     private void jumpWifiActivity() {
