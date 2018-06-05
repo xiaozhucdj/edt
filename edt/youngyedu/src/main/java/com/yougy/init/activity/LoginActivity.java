@@ -215,33 +215,6 @@ public class LoginActivity extends BaseActivity {
 //        newLogin(loginReq);
     }
 
-    private void newLogin(NewLoginReq req){
-        NetWorkManager.login(req).compose(bindToLifecycle())
-                .subscribe(students -> {
-                    Student student = students.get(0);
-                    if (!student.getUserRole().equals(getString(R.string.student))){
-                        new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用教师账号登录").show();
-                    }
-                    else {
-                        LogUtils.e("FH", "登录成功,弹出信息确认dialog");
-                        confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this ,student);
-                        confirmUserInfoDialog.show();
-                    }
-                }, throwable -> {
-                    if (throwable instanceof ApiException){
-                        if (((ApiException) throwable).getCode().equals("401")){
-                            new HintDialog(getThisActivity() , "登录失败:用户名密码错误").show();
-                            return;
-                        }
-                    }
-                    new ConfirmDialog(getThisActivity(), "登录失败,是否重试", "重试", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            login(null);
-                        }
-                    }).show();
-                });
-    }
 
     public void forgetPwd(View view){
         new HintDialog(this, "请联系管理员请求重置你的乐课账户密码,重置成功后请重新登录即可").show();

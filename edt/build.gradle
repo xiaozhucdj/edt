@@ -3,12 +3,11 @@
 buildscript {
     repositories {
         jcenter()
-        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.antfortune.freeline:gradle:0.8.7'
+        classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'com.novoda:bintray-release:0.3.4'
+        classpath 'com.antfortune.freeline:gradle:0.8.6'
         classpath "me.tatarka:gradle-retrolambda:3.6.1"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -28,7 +27,6 @@ allprojects {
                 password = "2a50e0096a2842d3725bcc949c9b8d2b0e40265a"
             }
         }
-        google()
     }
 }
 
