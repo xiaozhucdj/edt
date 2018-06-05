@@ -9,7 +9,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.onyx.android.sdk.ui.compat.AppCompatImageViewCollection;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
+import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
@@ -25,6 +29,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
     private final Fragment mFragment;
     private Context mContext;
     private List<BookInfo> mInfos;
+    private boolean mIsReference;
+    private OnItemDeteteListener mOnItemDeleteListener;//声明接口
+
+    public void setReference(boolean isReference) {
+        mIsReference = isReference;
+    }
 
     public void setPicL(boolean L) {
         mIsL = L;
@@ -55,6 +65,40 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
     @Override
     public void onBindViewHolder(final HolerFragmentBook holder, int position) {
         holder.setViewData(position);
+
+        if (mOnItemDeleteListener != null) {
+            holder.mImgBookDeleteL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDeletePs = position;
+                    mOnItemDeleteListener.onItemDeteteClickL(position);
+                }
+            });
+            holder.mImgBookDeleteS.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDeletePs = position;
+                    mOnItemDeleteListener.onItemDeteteClickS(position);
+                }
+            });
+
+
+            holder.mImgBookIconL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemDeleteListener.onItemDownClickL(position);
+                }
+            });
+
+            holder.mImgBookIconS.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemDeleteListener.onItemDownClickS(position);
+                }
+            });
+
+        }
+
     }
 
     /**
@@ -68,6 +112,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
         return 0;
     }
 
+
+    public void setOnItemClickListener(OnItemDeteteListener onItemClickListener) {
+        mOnItemDeleteListener = onItemClickListener;
+    }
+
     /**
      * holder
      */
@@ -77,6 +126,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
         private final ImageView mImgBookIconS;
         private final RelativeLayout mRlL;
         private final RelativeLayout mRlS;
+        private final ImageView mImgBookDeleteL;
+        private final ImageView mImgBookDeleteS;
+        private final ImageView mImgAdd;
+        private final ImageView mImgBookDownL;
+        private final ImageView mImgBookDownS;
+
 
         public HolerFragmentBook(View itemView) {
             super(itemView);
@@ -84,23 +139,60 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
             mImgBookIconS = (ImageView) itemView.findViewById(R.id.img_book_iconS);
             mRlL = (RelativeLayout) itemView.findViewById(R.id.rl_book_itemL);
             mRlS = (RelativeLayout) itemView.findViewById(R.id.rl_book_itemS);
+
+            mImgBookDownL = (ImageView) itemView.findViewById(R.id.img_down_book_l);
+            mImgBookDownS = (ImageView) itemView.findViewById(R.id.img_down_book_s);
+
+
+            mImgBookDeleteL = (ImageView) itemView.findViewById(R.id.img_delete_book_l);
+            mImgBookDeleteS = (ImageView) itemView.findViewById(R.id.img_delete_book_s);
+
+
+            mImgAdd = (ImageView) itemView.findViewById(R.id.img_add_icon);
+
         }
 
 
         public void setViewData(int position) {
+            if (mIsReference) {
+                mImgBookDeleteL.setVisibility(View.VISIBLE);
+                mImgBookDeleteS.setVisibility(View.VISIBLE);
+            }
             if (mIsL) {
                 mRlL.setVisibility(View.VISIBLE);
                 mRlS.setVisibility(View.GONE);
+                if (mInfos.get(position).getBookId() == -1) {
+                    mImgBookDownL.setVisibility(View.GONE);
+                    mImgBookDownS.setVisibility(View.GONE);
+                    mImgBookDeleteL.setVisibility(View.GONE);
+                    mImgAdd.setVisibility(View.VISIBLE);
+                    mImgBookIconL.setImageDrawable(null);
+                    return;
+                }
 
-                loadImage( mInfos.get(position).getBookCoverL(), 201, 267, mImgBookIconL);
+
+                loadImage(mInfos.get(position).getBookCoverL(), FileContonst.withL,
+                        FileContonst.heightL, mImgBookIconL);
+                if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
+                    mImgBookDownL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book_l));
+                } else {
+                    mImgBookDownL.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book_l));
+                }
+
             } else {
                 mRlL.setVisibility(View.GONE);
                 mRlS.setVisibility(View.VISIBLE);
-                loadImage( mInfos.get(position).getBookCoverS(), 151, 201, mImgBookIconS);
+                loadImage(mInfos.get(position).getBookCoverS(), FileContonst.withS,
+                        FileContonst.heightS, mImgBookIconS);
+                if (!StringUtils.isEmpty((FileUtils.getBookFileName(mInfos.get(position).getBookId(), FileUtils.bookDir)))) {
+                    mImgBookDownS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_down_book_s));
+                } else {
+                    mImgBookDownS.setImageDrawable(UIUtils.getDrawable(R.drawable.img_un_down_book_s));
+                }
             }
         }
 
-        private void loadImage(String url , int w, int h, ImageView iv) {
+        private void loadImage(String url, int w, int h, ImageView iv) {
             if (mInfos != null && mInfos.size() > 0) {
                 ImageLoaderManager.getInstance().loadImageFragment(mFragment,
                         url,
@@ -111,5 +203,25 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
                         iv);
             }
         }
+    }
+
+    public interface OnItemDeteteListener {
+        void onItemDeteteClickL(int position);
+
+        void onItemDeteteClickS(int position);
+
+        void onItemDownClickL(int position);
+
+        void onItemDownClickS(int position);
+    }
+
+    public int mDeletePs;
+
+    public int getDeletePs() {
+        return mDeletePs;
+    }
+
+    public boolean isPicL() {
+        return mIsL;
     }
 }

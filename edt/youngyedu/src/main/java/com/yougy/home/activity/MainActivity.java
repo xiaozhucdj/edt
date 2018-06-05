@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-//import com.tencent.bugly.crashreport.CrashReport;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
@@ -29,7 +28,6 @@ import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
-import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
@@ -45,6 +43,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
@@ -59,9 +58,11 @@ import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
 import com.yougy.message.YXClient;
 import com.yougy.message.ui.RecentContactListActivity;
+import com.yougy.order.LockerActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.shop.activity.OrderListActivity;
+import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -74,6 +75,10 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.Call;
+
+import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
+
+//import com.tencent.bugly.crashreport.CrashReport;
 
 
 /**
@@ -161,6 +166,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     };
     private ImageView imgSextIcon;
+    private long mLastTime;
+    private TextView testVersion;
 
 
     /***************************************************************************/
@@ -293,11 +300,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_check_update).setOnClickListener(this);
 
         imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
+
+        testVersion  = (TextView) this.findViewById(R.id.test_version);
     }
 
 
     @Override
     protected void loadData() {
+        if (BuildConfig.DEBUG){
+            testVersion.setVisibility(View.VISIBLE);
+            testVersion.setText(UIUtils.getString(R.string.app_name));
+        }
+
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
             imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));
@@ -316,6 +330,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
+        long currentTime =System.currentTimeMillis();
+        if (mLastTime>0 && SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")){
+            if (currentTime -mLastTime  <1000){
+                UIUtils.showToastSafe("操作过快");
+                return;
+            }
+        }
+        mLastTime = currentTime ;
+
         int clickedViewId = v.getId();
         setSysTime();
 
@@ -993,6 +1017,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }.execute((Object[]) null);
             }
         });
+
+
+        if (SpUtils.getOrder().contains(LOCK_SCREEN) && SpUtils.getOrder().contains(DateUtils.getCalendarString())){
+            Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
+            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(newIntent);
+        }
     }
 
     private void setSysWifi() {

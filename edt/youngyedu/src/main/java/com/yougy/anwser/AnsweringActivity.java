@@ -28,6 +28,9 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -45,7 +48,8 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.message.EndQuestionAttachment;
+import com.yougy.message.YXClient;
+import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
@@ -74,6 +78,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static com.yougy.common.eventbus.EventBusConstant.EVENT_ANSWERING_RESULT;
+import static com.yougy.common.eventbus.EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE;
 
 /**
  * Created by FH on 2017/3/22.
@@ -82,6 +87,7 @@ import static com.yougy.common.eventbus.EventBusConstant.EVENT_ANSWERING_RESULT;
  */
 
 public class AnsweringActivity extends AnswerBaseActivity {
+    public static int lastExamId;
     ActivityAnsweringBinding binding;
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -100,7 +106,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     String itemId;
     String fromUserId;
-    int examId;
+    public int examId;
 
 
     private ParsedQuestionItem questionItem;
@@ -140,33 +146,37 @@ public class AnsweringActivity extends AnswerBaseActivity {
     public void init() {
         LogUtils.e("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
-//        itemId = "73";//填空
+//        itemId = "2499";//填空
 //        itemId = "189";//选择
         if (TextUtils.isEmpty(itemId)) {
             ToastUtil.showCustomToast(this, "item 为空,开始问答失败");
             LogUtils.e("FH", "item 为空,开始问答失败");
-            finish();
+            myFinish();
+            return;
         }
         fromUserId = getIntent().getStringExtra("from");
-//        fromUserId = "10000200";//填空
+//        fromUserId = "10001037";//填空
 //        fromUserId = "10000239";//选择
         if (TextUtils.isEmpty(fromUserId)) {
             ToastUtil.showCustomToast(this, "from userId 为空,开始问答失败");
             LogUtils.e("FH", "from userId 为空,开始问答失败");
-            finish();
+            myFinish();
+            return;
         }
         examId = getIntent().getIntExtra("examId", -1);
-//        examId = 148;//填空
+//        examId = 1235;//填空
 //        examId = 772;//选择
         if (examId == -1) {
             ToastUtil.showCustomToast(this, "examId 为空,开始问答失败");
             LogUtils.e("FH", "examId 为空,开始问答失败");
-            finish();
+            myFinish();
+            return;
         }
         startTimeMill = getIntent().getLongExtra("startTimeMill", -1);
         if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
+        lastExamId = examId;
     }
 
     @Override
@@ -200,7 +210,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                                 timedTask.stop();
                                             }
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                         }
                                     }).show();
                                 }
@@ -213,7 +223,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     public void loadData() {
         showNetDialog();
-        NetWorkManager.queryQuestionItemList(fromUserId, null, itemId, null)
+        NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
@@ -224,7 +234,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         } else {
                             ToastUtil.showCustomToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
                             LogUtils.e("FH", "获取到的题目为空,开始问答失败");
-                            finish();
+                            myFinish();
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -282,7 +292,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
 
-                if ("选择".equals(questionList.get(0).getExtraData())) {
+                if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
                     if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
@@ -300,6 +310,36 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     }
 
+    public String saveBitmapToFile1(Bitmap bitmap) {
+
+        String fileDir = FileUtils.getAppFilesDir() + "/answer_result";
+        FileUtils.createDirs(fileDir);
+
+
+        File f = new File(fileDir, "test111.png");
+        FileOutputStream fOut = null;
+        try {
+            f.createNewFile();
+            fOut = new FileOutputStream(f);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return f.getAbsolutePath();
+    }
+
+
     public void onClick(View view) {
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
@@ -313,11 +353,26 @@ public class AnsweringActivity extends AnswerBaseActivity {
         switch (view.getId()) {
 
             case R.id.btn_left:
-                finish();
+                myFinish();
                 break;
             case R.id.commit_answer_btn:
                 //防止快速多次点击
                 binding.commitAnswerBtn.setClickable(false);
+
+                if ("选择".equals(questionList.get(0).getExtraData())) {
+                    if (checkedAnswerList.size() == 0) {
+                        ToastUtil.showCustomToast(this, "请先选择结果后再提交");
+                        binding.commitAnswerBtn.setClickable(true);
+                        return;
+                    }
+                }
+                if ("判断".equals(questionList.get(0).getExtraData())) {
+                    if (checkedAnswerList.size() == 0) {
+                        ToastUtil.showCustomToast(this, "请先判断后再提交");
+                        binding.commitAnswerBtn.setClickable(true);
+                        return;
+                    }
+                }
 
                 saveHomeWorkData();
                 getUpLoadInfo();
@@ -325,7 +380,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_clear_write:
 
-                mNbvAnswerBoard.clearAll();
+//                mNbvAnswerBoard.clearAll();
+
+                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
 
                 break;
             case R.id.tv_add_page:
@@ -383,6 +440,24 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }
 
                 break;
+
+            case R.id.rb_right:
+                if (checkedAnswerList.size() == 0) {
+                    checkedAnswerList.add("true");
+                } else {
+                    checkedAnswerList.set(0, "true");
+                }
+                break;
+
+            case R.id.rb_error:
+                if (checkedAnswerList.size() == 0) {
+                    checkedAnswerList.add("false");
+                } else {
+                    checkedAnswerList.set(0, "false");
+                }
+                break;
+
+
         }
     }
 
@@ -418,7 +493,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             //作业中某一题题目、答案切换
             questionPageNumAdapter = new QuestionPageNumAdapter();
             CustomLinearLayoutManager linearLayoutManager = new CustomLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            linearLayoutManager.setScrollEnabled(false);
+            linearLayoutManager.setScrollHorizontalEnabled(false);
             binding.rcvAllQuestionPage.setLayoutManager(linearLayoutManager);
             binding.rcvAllQuestionPage.setAdapter(questionPageNumAdapter);
 
@@ -482,6 +557,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                 isAddAnswerBoard = false;
                             }
                             binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+                            binding.llChooeseItem.setVisibility(View.GONE);
                             //选择题不能加页
                             binding.tvAddPage.setVisibility(View.GONE);
                             binding.tvClearWrite.setVisibility(View.GONE);
@@ -494,12 +570,26 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                 binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
                             }
 
+                        } else if ("判断".equals(questionList.get(0).getExtraData())) {
+
+                            if (isAddAnswerBoard) {
+                                binding.rlAnswer.removeView(mNbvAnswerBoard);
+                                isAddAnswerBoard = false;
+                            }
+                            binding.rcvChooeseItem.setVisibility(View.GONE);
+                            binding.llChooeseItem.setVisibility(View.VISIBLE);
+                            //选择题不能加页
+                            binding.tvAddPage.setVisibility(View.GONE);
+                            binding.tvClearWrite.setVisibility(View.GONE);
+
+
                         } else {
                             if (!isAddAnswerBoard) {
                                 binding.rlAnswer.addView(mNbvAnswerBoard);
                                 isAddAnswerBoard = true;
                             }
                             binding.rcvChooeseItem.setVisibility(View.GONE);
+                            binding.llChooeseItem.setVisibility(View.GONE);
                             binding.tvAddPage.setVisibility(View.VISIBLE);
                             binding.tvClearWrite.setVisibility(View.VISIBLE);
 
@@ -631,7 +721,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         ToastUtil.showCustomToast(this, "请完成作答");
         // TODO: 2017/9/13 这里先保留关闭页面，做测试使用
-        finish();
+        myFinish();
     }
 
     private void saveResultBitmap(String fileName) {
@@ -711,7 +801,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                             binding.commitAnswerBtn.setClickable(true);
                                         }
                                     },
@@ -735,7 +825,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                         binding.commitAnswerBtn.setClickable(true);
                                     }
                                 },
@@ -790,6 +880,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 for (int i = 0; i < pathList.size(); i++) {
 
                     String picPath = pathList.get(i);
+                    if (picPath == null) {
+                        continue;
+                    }
                     String picName = picPath.substring(picPath.lastIndexOf("/"));
 
 
@@ -865,7 +958,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                         binding.commitAnswerBtn.setClickable(true);
                                     }
                                 },
@@ -902,14 +995,33 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
+
+                        double d = (double) ((LinkedTreeMap) ((ArrayList) o).get(0)).get("replyId");
+                        YXClient.getInstance().sendReply(fromUserId, SessionTypeEnum.P2P, String.valueOf((int) d), examId + "", new RequestCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void param) {
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
+                            }
+
+                            @Override
+                            public void onFailed(int code) {
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功,通知教师失败 : " + code);
+                            }
+
+                            @Override
+                            public void onException(Throwable exception) {
+                                exception.printStackTrace();
+                                ToastUtil.showCustomToast(getApplicationContext(), "提交成功,通知教师失败 : " + exception.getMessage());
+                            }
+                        });
                         if (timedTask != null) {
                             timedTask.stop();
                         }
                         Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
                         intent.putExtra("question", questionItem);
+                        intent.putExtra("replyId" , String.valueOf((int) d));
                         startActivity(intent);
-                        finish();
-                        ToastUtil.showCustomToast(getApplicationContext(), "提交成功");
+                        myFinish();
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -920,7 +1032,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
                                         dialog.dismiss();
-                                        finish();
+                                        myFinish();
                                     }
                                 }).show();
                             }
@@ -931,7 +1043,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            finish();
+                                            myFinish();
                                             binding.commitAnswerBtn.setClickable(true);
                                         }
                                     },
@@ -1120,41 +1232,64 @@ public class AnsweringActivity extends AnswerBaseActivity {
         EventBus.getDefault().post(baseEvent);
     }
 
-    private boolean mEventResult =false ;
+    private boolean mEventResult = false;
+
     @Override
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
-        if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT )&& !mEventResult) {
-            LogUtils.i("type .." + EVENT_ANSWERING_RESULT);
-            mEventResult = true ;
+        if (event.getType().equalsIgnoreCase(EVENT_ANSWERING_RESULT) && !mEventResult) {
+            LogUtils.i("type .." + event.getType());
+            mEventResult = true;
             UIUtils.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (mCaogaoNoteBoard!=null){
+                    if (mCaogaoNoteBoard != null) {
                         mCaogaoNoteBoard.leaveScribbleMode();
                         mCaogaoNoteBoard.setIntercept(false);
                     }
 
-                    if (mNbvAnswerBoard!=null){
+                    if (mNbvAnswerBoard != null) {
                         mNbvAnswerBoard.leaveScribbleMode();
                         mNbvAnswerBoard.setIntercept(false);
                     }
                     LogUtils.i("type .." + "111111111111111111111");
                     RefreshUtil.invalidate(((ViewGroup) findViewById(android.R.id.content)).getChildAt(0));
                 }
-            },3000) ;
+            }, 3000);
+        }
+        if (event.getType().equalsIgnoreCase(EVENT_LOCKER_ACTIVITY_PUSE)) {
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.setIntercept(false);
+            }
+
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.setIntercept(false);
+            }
+        }
+        if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
+            if (mCaogaoNoteBoard != null) {
+                mCaogaoNoteBoard.setIntercept(true);
+            }
+
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.setIntercept(true);
+            }
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mCaogaoNoteBoard!=null){
+    }
+
+    private void myFinish() {
+        finish();
+        if (mCaogaoNoteBoard != null) {
             mCaogaoNoteBoard.leaveScribbleMode();
             mCaogaoNoteBoard.setIntercept(true);
         }
 
-        if (mNbvAnswerBoard!=null){
+        if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode();
             mNbvAnswerBoard.setIntercept(true);
         }

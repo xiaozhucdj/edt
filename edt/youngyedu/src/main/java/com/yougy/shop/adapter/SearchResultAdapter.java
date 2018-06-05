@@ -1,82 +1,102 @@
 package com.yougy.shop.adapter;
 
-import android.app.Activity;
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
-import com.yougy.init.bean.BookInfo;
+import com.yougy.common.utils.LogUtils;
+import com.yougy.shop.bean.BookInfo;
+import com.yougy.ui.activity.BR;
 import com.yougy.ui.activity.R;
+import com.yougy.ui.activity.SearchResult;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
- * Created by jiangliang on 2016/9/19.
+ * Created by jiangliang on 2017/3/2.
  */
+
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultHolder> {
 
     private List<BookInfo> mBookInfos;
+    private String bookSummary;
+
     public SearchResultAdapter(List<BookInfo> infos) {
+        LogUtils.e("SearchResult", "adapter............................");
         mBookInfos = infos;
     }
 
     @Override
     public SearchResultHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return SearchResultHolder.create(parent);
+        LogUtils.e(getClass().getName(),"before.......");
+        SearchResult binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.search_result_item1, parent, false);
+        LogUtils.e(getClass().getName(),"after.......");
+        SearchResultHolder holder = new SearchResultHolder(binding.getRoot());
+        holder.setBinding(binding);
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(SearchResultHolder holder, int position) {
-        holder.bindView(mBookInfos.get(position));
+        BookInfo bookInfo = mBookInfos.get(position);
+        String infoSummary;
+        if (TextUtils.isEmpty(bookInfo.getBookSummary())) {
+            infoSummary = "";
+        } else {
+            infoSummary = Html.fromHtml(bookInfo.getBookSummary()).toString();
+        }
+        if (!TextUtils.isEmpty(infoSummary) && infoSummary.length() > 65) {
+            bookSummary = "简介："+infoSummary.substring(0, 65) + "......";
+        } else {
+            bookSummary = "简介："+infoSummary;
+        }
+        if (TextUtils.isEmpty(bookSummary)){
+            bookSummary = "暂无简介";
+        }
+        if (TextUtils.isEmpty(bookInfo.getBookAuthor())){
+            bookInfo.setBookAuthor("作者：暂无");
+        }else{
+            bookInfo.setBookAuthor("作者："+bookInfo.getBookAuthor());
+        }
+        ImageLoaderManager.getInstance().loadImageContext(holder.binding.bookImg.getContext(),
+                bookInfo.getBookCoverS(),
+                R.drawable.img_book_cover,
+                R.drawable.img_book_cover,
+                FileContonst.withS ,
+                FileContonst.heightS,
+                holder.binding.bookImg);
+        LogUtils.e(getClass().getName(),"book info : " + bookInfo);
+        holder.getBinding().setVariable(BR.bookInfo, bookInfo);
+        holder.getBinding().setVariable(BR.bookSummary,bookSummary);
+        holder.getBinding().executePendingBindings();
     }
 
     @Override
     public int getItemCount() {
-        return mBookInfos == null ? 0 : mBookInfos.size();
+        return mBookInfos.size();
     }
 
-    public static class SearchResultHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.book_img)
-        ImageView mBookImg;
-        @BindView(R.id.book_name)
-        TextView mBookName;
-        @BindView(R.id.book_author)
-        TextView mBookAuthor;
-        @BindView(R.id.book_intro)
-        TextView mBookIntro;
+    class SearchResultHolder extends RecyclerView.ViewHolder {
+        private SearchResult binding;
 
         public SearchResultHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
         }
 
-        public void bindView(BookInfo info) {
-            ImageLoaderManager.getInstance().loadImageActivity((Activity) mBookImg.getContext(),info.getBookCoverL(),R.drawable.img_book_cover,mBookImg);
-            mBookName.setText(info.getBookTitle());
-            mBookAuthor.setText(info.getBookAuthor());
-            if (TextUtils.isEmpty(info.getBookSummary())){
-                mBookIntro.setText("");
-            }
-            else {
-                mBookIntro.setText(Html.fromHtml(info.getBookSummary()));
-            }
+        public void setBinding(SearchResult binding) {
+            this.binding = binding;
         }
 
-        public static SearchResultHolder create(ViewGroup parent) {
-            return new SearchResultHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.search_result_item, parent, false));
+        public SearchResult getBinding() {
+            return this.binding;
         }
     }
+
 }
-
-
-

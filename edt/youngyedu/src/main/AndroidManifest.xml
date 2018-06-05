@@ -82,7 +82,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.yougy.shop.activity.SearchActivityDb"
+            android:name="com.yougy.shop.activity.SearchActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <!--商城收藏页-->
         <activity
@@ -105,6 +105,7 @@
 
         <activity
             android:name="com.yougy.shop.activity.ShopBookDetailsActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.yougy.shop.activity.ProbationReadBookActivity"
@@ -161,6 +162,7 @@
         <activity android:name="com.yougy.anwser.AnswerResultActivity" />
         <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
         <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
+        <activity android:name="com.yougy.homework.CheckHomeWorkActivity" />
         <activity android:name="com.yougy.shop.activity.ShopPromotionActivity"/>
         <!--问答图书章节列表-->
         <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" />
@@ -242,6 +244,11 @@
         <meta-data
             android:name="design_height"
             android:value="1232" />
+
+        <activity
+            android:name="com.yougy.order.LockerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
     </application>
 </manifest>

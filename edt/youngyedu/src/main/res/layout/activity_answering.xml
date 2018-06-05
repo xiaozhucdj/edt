@@ -117,10 +117,12 @@
                     <com.yougy.anwser.ContentDisplayer
                         android:id="@+id/content_displayer"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="15px"
-                        android:paddingLeft="5px"
-                        android:paddingRight="5px" />
+                        android:layout_height="match_parent" />
+
+                    <!-- android:layout_marginTop="15px"
+                     android:paddingLeft="5px"
+                     android:paddingRight="5px"-->
+
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rcv_chooese_item"
@@ -129,6 +131,45 @@
                         android:layout_alignBottom="@id/content_displayer"
                         android:layout_centerHorizontal="true"
                         android:visibility="gone" />
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_chooese_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_alignBottom="@id/content_displayer"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <RadioGroup
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb_error"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:button="@drawable/rb_result_selector"
+                                android:onClick="onClick"
+                                android:text=" 错误（x）"
+                                android:textSize="28px" />
+
+                            <RadioButton
+                                android:id="@+id/rb_right"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="200dp"
+                                android:button="@drawable/rb_result_selector"
+                                android:onClick="onClick"
+                                android:text=" 正确（√）"
+                                android:textSize="28px" />
+                        </RadioGroup>
+
+
+                    </LinearLayout>
 
 
                 </RelativeLayout>
@@ -243,10 +284,9 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="270dp"
                 android:background="@drawable/img_press_jiaye"
-                android:gravity="center"
-                android:onClick="onClick"
                 android:clickable="true"
-                />
+                android:gravity="center"
+                android:onClick="onClick" />
 
             <TextView
                 android:id="@+id/tv_clear_write"

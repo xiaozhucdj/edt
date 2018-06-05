@@ -44,10 +44,38 @@ public class EventBusConstant {
     public static final String  need_refresh = "need_refresh";
     public static final String  answer_event = "answer_event";
 
+
+
+    /***********************************************问答****************************************************/
+
     /**正在显示 问答*/
     public static final String EVENT_ANSWERING_SHOW = "event_answering_show";
     /**退出手绘模式要通知 asweractivity*/
     public static final String EVENT_ANSWERING_RESULT = "event_answering_result";
 
     public static final String EVENT_ANSWERING_PUASE = "event_answering_puase";
+    /*****************************************************************************************************/
+
+
+
+    /******************************************锁*********************************************************/
+    /**清除activity锁*/
+    public static final String EVENT_CLEAR_ACTIIVTY_ORDER = "event_clear_actiivty_order";
+    /**清除学科锁*/
+    public static final String EVENT_CLEAR_SUBJECT_ORDER = "event_clear_subject_order";
+
+    /**开启activity锁*/
+    public static final String EVENT_START_ACTIIVTY_ORDER = "event_start_actiivty_order";
+    /**开启学科锁*/
+    public static final String EVENT_START_SUBJECT_ORDER = "event_start_subject_order";
+
+
+
+    /**EVENT_START_ACTIIVTY_ORDER 接收后返回 结果 EVENT_START_ACTIIVTY_ORDER_RESULT*/
+    public static final String EVENT_START_ACTIIVTY_ORDER_RESULT = "event_start_actiivty_order_result";
+
+    /**关掉LockerActivity 恢复手写模式*/
+    public static final String EVENT_LOCKER_ACTIVITY_PUSE = "event_locker_activity_puse";
+
+    /***************************************************************************************************/
 }

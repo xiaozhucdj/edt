@@ -13,6 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
+
 
 /**
  * Created by jiangliang on 2016/6/30.
@@ -400,6 +402,16 @@ public class SpUtils {
         if (StringUtils.isEmpty(v)){
             v= "1";
         }
+        return v ;
+    }
+
+
+    public static void setOrder(String order) {
+        sp.edit().putString("order", order).apply();
+    }
+
+    public static String getOrder() {
+        String v = sp.getString("order", NO_LOCK_SCREEN);
         return v ;
     }
 }

@@ -7,6 +7,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.util.ArrayList;
@@ -64,6 +65,46 @@ public class RxResultHelper {
             }
         };
     }
+
+    public static <T> Observable.Transformer<BaseResult<T>, BaseResult<T>> dismissDialog(final LoadingProgressDialog loadingProgressDialog) {
+        return new Observable.Transformer<BaseResult<T>, BaseResult<T>>() {
+            @Override
+            public Observable<BaseResult<T>> call(Observable<BaseResult<T>> tObservable) {
+                return tObservable.flatMap(
+                        new Func1<BaseResult<T>, Observable<BaseResult<T>>>() {
+                            @Override
+                            public Observable<BaseResult<T>> call(BaseResult<T> entity) {
+                                if (loadingProgressDialog != null && loadingProgressDialog.isShowing()) {
+                                    LogUtils.e("FH", "!!!!! success call  " + loadingProgressDialog.toString());
+                                    loadingProgressDialog.dismiss();
+                                }
+                                if (entity.getCode() == 200) {
+                                    return createData(entity);
+                                } else {
+                                    return Observable.error(new ApiException(entity.getCode() + "", entity.getMsg()));
+                                }
+                            }
+                        },
+                        new Func1<Throwable, Observable<BaseResult<T>>>() {
+                            @Override
+                            public Observable<BaseResult<T>> call(Throwable throwable) {
+                                if (loadingProgressDialog != null && loadingProgressDialog.isShowing()) {
+                                    LogUtils.e("FH", "!!!!! error call  " + loadingProgressDialog.toString());
+                                    loadingProgressDialog.dismiss();
+                                }
+                                return Observable.error(throwable);
+                            }
+                        }, new Func0<Observable<BaseResult<T>>>() {
+                            @Override
+                            public Observable<BaseResult<T>> call() {
+                                return null;
+                            }
+                        }
+                );
+            }
+        };
+    }
+
 
     public static class ResultHandler<T> implements Func1<BaseResult<T> , Observable<T>>{
         @Override
@@ -133,6 +174,24 @@ public class RxResultHelper {
             }
         };
     }
+
+    public static Observable.Transformer<List<QuestionReplySummary> , List<QuestionReplySummary>> parseReply(){
+        return new Observable.Transformer<List<QuestionReplySummary>, List<QuestionReplySummary>>() {
+            @Override
+            public Observable<List<QuestionReplySummary>> call(Observable<List<QuestionReplySummary>> listObservable) {
+                return listObservable.map(new Func1<List<QuestionReplySummary>, List<QuestionReplySummary>>() {
+                    @Override
+                    public List<QuestionReplySummary> call(List<QuestionReplySummary> replyList) {
+                        for (QuestionReplySummary reply : replyList) {
+                            reply.parsedContent();
+                        }
+                        return replyList;
+                    }
+                });
+            }
+        };
+    }
+
 
     public static Observable.Transformer<List<QuestionReplyDetail> , List<QuestionReplyDetail>> parseReplyDetail(){
         return new Observable.Transformer<List<QuestionReplyDetail>, List<QuestionReplyDetail>>() {

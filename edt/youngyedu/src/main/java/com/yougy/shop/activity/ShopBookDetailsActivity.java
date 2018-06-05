@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.download.DownloadListener;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.ImageLoaderManager;
@@ -60,6 +62,7 @@ import com.yougy.ui.activity.databinding.ActivityShopBookDetailBinding;
 import com.yougy.ui.activity.databinding.ItemShopBookDetailPromotionListBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.DividerGridItemDecoration;
+import com.yougy.view.dialog.BookDetailsDialog;
 import com.yougy.view.dialog.DownBookDialog;
 import com.yougy.view.dialog.HintDialog;
 
@@ -68,6 +71,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 import static com.yougy.shop.activity.ShopPromotionActivity.COUPON_ID;
@@ -102,7 +106,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
      * 图书推荐数据集
      */
     private List<BookInfo> mBooks = new ArrayList<>();
-    private DownBookDialog mDialog;
+    private DownBookDialog mProbationDialog;
 
     private int bookId;
 
@@ -144,6 +148,13 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         bookId = getIntent().getIntExtra(ShopGloble.BOOK_ID, -1);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        init();
+    }
+
     /**
      * 初始化 布局 默认值
      */
@@ -172,7 +183,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         requestPromoteBook();
                     }
                     //图片
-                    refreshImg(binding.bookCoverImv, mBookInfo.getBookCoverL());
+                    refreshImg(binding.bookCoverImv, mBookInfo.getBookCoverS());
                     //标题
                     binding.titleTv.setText("图书详情");
                     //图书名称
@@ -232,24 +243,71 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     protected void refreshView() {
     }
 
+
+    private BookDetailsDialog mBookDetailsDialog ;
     private void showReaderForPackage() {
-//        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
+/*//        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.books_reader, mTagBookReader);
         } else {
             showTagCancelAndDetermineDialog(R.string.books_already_buy, R.string.cancel, R.string.play_package, mTagBookReader);
+        }*/
+        if (!NetUtils.isNetConnected()) {
+            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+            return;
         }
+
+        NetWorkManager.addBookToBookcase(mBookInfo.getBookId() ,SpUtils.getUserId()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                UIUtils.showToastSafe("添加图书成功");
+                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                EventBus.getDefault().post(baseEvent);
+                if (mBookDetailsDialog == null){
+                    mBookDetailsDialog = new BookDetailsDialog(ShopBookDetailsActivity.this) ;
+                    mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
+                        @Override
+                        public void onCancelListener() {
+                            mBookDetailsDialog.dismiss();
+                            ShopBookDetailsActivity.this.finish();
+                        }
+
+                        @Override
+                        public void onConfirmListener() {
+                            mBookDetailsDialog.dismiss();
+                            if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
+                                jumpToControlFragmentActivity();
+
+                            }else{
+                                if (NetUtils.isNetConnected()) {
+                                    downBookTask(mBookInfo.getBookId());
+                                } else {
+                                    showCancelAndDetermineDialog(R.string.jump_to_net);
+                                }
+                            }
+                        }
+                    });
+                }
+                mBookDetailsDialog.show();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
+                UIUtils.showToastSafe("添加图书失败,请稍候再试");
+            }
+        });
     }
 
     private void downBookDialog() {
         if (NetUtils.isNetConnected()) {
-            if (mDialog == null) {
-                mDialog = new DownBookDialog(this);
-                mDialog.setListener(this);
+            if (mProbationDialog == null) {
+                mProbationDialog = new DownBookDialog(this);
+                mProbationDialog.setListener(this);
             }
-            mDialog.show();
-            mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
-            mDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+            mProbationDialog.show();
+            mProbationDialog.getBtnConfirm().setVisibility(View.VISIBLE);
+            mProbationDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
         } else {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
         }
@@ -271,8 +329,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                200,
-                267,
+                FileContonst.withS ,
+                FileContonst.heightS,
                 view);
     }
 
@@ -359,7 +417,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 }
                 else if (!TextUtils.isEmpty(targetCouponContentBean.getFree())){
                     itemBinding.promotionName.setText("限免");
-                    itemBinding.promotionContent.setText("显示免费");
+                    itemBinding.promotionContent.setText("限时免费");
                 }
                 else if (!TextUtils.isEmpty(targetCouponContentBean.getOff())){
                     itemBinding.promotionName.setText("折扣");
@@ -565,12 +623,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     @Override
     public void onCancelListener() {
         DownloadManager.cancel();
-        mDialog.dismiss();
+        mProbationDialog.dismiss();
     }
 
     @Override
     public void onConfirmListener() {
-        mDialog.getBtnConfirm().setVisibility(View.GONE);
+        mProbationDialog.getBtnConfirm().setVisibility(View.GONE);
 
         if (mBookInfo.isBookInShelf()) {
             //下载文件
@@ -612,8 +670,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             public void onDownloadError(int what, Exception exception) {
                 LogUtils.i("  onDownloadError     what ........" + what);
                 DownloadManager.cancel();
-                mDialog.setTitle(UIUtils.getString(R.string.down_book_error));
-                mDialog.getBtnConfirm().setVisibility(View.VISIBLE);
+                mProbationDialog.setTitle(UIUtils.getString(R.string.down_book_error));
+                mProbationDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -623,13 +681,13 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
             @Override
             public void onProgress(int what, int progress, long fileCount) {
-                mDialog.setTitle(String.format(getString(R.string.down_book_loading), progress + "%"));
+                mProbationDialog.setTitle(String.format(getString(R.string.down_book_loading), progress + "%"));
             }
 
             @Override
             public void onFinish(int what, String filePath) {
                 if (DownloadManager.isFinish()) {
-                    mDialog.dismiss();
+                    mProbationDialog.dismiss();
                     // 自动进入
                     if (mBookInfo.isBookInShelf()) {
                         jumpToControlFragmentActivity();
@@ -673,15 +731,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     private void jumpToControlFragmentActivity() {
 //        String filePath = FileUtils.getTextBookFilesDir() + mBookInfo.getBookId() + ".pdf";
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
+
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
             //笔记创建者
             extras.putInt(FileContonst.NOTE_CREATOR, -1);
-            //笔记id
-            extras.putInt(FileContonst.NOTE_ID, mBookInfo.getBookFitNoteId());
-            //图书id
-            extras.putInt(FileContonst.BOOK_ID, mBookInfo.getBookId());
             //分类码
             extras.putInt(FileContonst.CATEGORY_ID, mBookInfo.getBookCategory());
             //笔记类型
@@ -690,10 +745,15 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             extras.putString(FileContonst.NOTE_SUBJECT_NAME, mBookInfo.getBookFitSubjectName());
             //作业ID
             extras.putInt(FileContonst.HOME_WROK_ID, mBookInfo.getBookFitHomeworkId());
+            //笔记id
+            extras.putInt(FileContonst.NOTE_ID, mBookInfo.getBookFitNoteId());
+            //图书id
+            extras.putInt(FileContonst.BOOK_ID, mBookInfo.getBookId());
             extras.putString(FileContonst.NOTE_TITLE, mBookInfo.getBookFitNoteTitle());
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
+            this.finish();
         } else {
-//            downBookDialog();
+//        downBookDialog();
             //跳转到书包
             loadIntentWithSpecificFlag(MainActivity.class, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             finish();
@@ -787,7 +847,6 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         startActivity(intent);
     }
 
-
     private void refreshCartCount() {
         NetWorkManager.queryCart(String.valueOf(SpUtils.getUserId()))
                 .subscribe(new Action1<List<CartItem>>() {
@@ -810,5 +869,11 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         throwable.printStackTrace();
                     }
                 });
+    }
+
+    @Override
+    protected void onDownBookFinish() {
+        super.onDownBookFinish();
+        jumpToControlFragmentActivity();
     }
 }

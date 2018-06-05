@@ -257,14 +257,14 @@
                         android:visibility="gone" />
                 </FrameLayout>
 
-                <LinearLayout
-                    android:id="@+id/page_number_layout"
+                <com.frank.etude.pageBtnBar.PageBtnBar
+                    android:id="@+id/page_btn_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="20px"
-                    android:gravity="center"
-                    android:orientation="horizontal" />
+                    android:gravity="center" />
+
             </RelativeLayout>
 
             <RelativeLayout

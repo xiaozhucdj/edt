@@ -4,10 +4,10 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_gravity="center_horizontal"
         android:id="@+id/rl_book_itemL"
         android:layout_width="wrap_content"
-        android:layout_height="348px">
+        android:layout_height="348px"
+        android:layout_gravity="center_horizontal">
 
         <ImageView
             android:id="@+id/img_book_iconL"
@@ -20,6 +20,42 @@
             android:paddingRight="21px"
             android:scaleType="fitXY"
             android:src="@drawable/book_adaper_item_icon_test_normal" />
+
+
+        <ImageView
+            android:id="@+id/img_down_book_l"
+            android:layout_width="52px"
+            android:layout_height="52px"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@id/img_book_iconL"
+            android:layout_marginBottom="41px"
+            android:layout_marginRight="21px"
+            android:background="@null"
+            android:src="@drawable/img_delete_book_l" />
+
+        <ImageView
+            android:id="@+id/img_delete_book_l"
+            android:layout_width="52px"
+            android:layout_height="52px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="41px"
+            android:background="@null"
+            android:src="@drawable/img_delete_book_l"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/img_add_icon"
+            android:layout_width="222px"
+            android:layout_height="288px"
+            android:layout_marginBottom="20px"
+            android:layout_marginTop="40px"
+            android:background="@null"
+            android:paddingBottom="21px"
+            android:paddingRight="21px"
+            android:scaleType="fitXY"
+            android:src="@drawable/note_add_iv_normal"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -39,5 +75,27 @@
             android:paddingRight="11px"
             android:scaleType="fitXY"
             android:src="@drawable/book_adaper_item_icon_test_normal" />
+
+
+        <ImageView
+            android:id="@+id/img_delete_book_s"
+            android:layout_width="46px"
+            android:layout_height="46px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="11px"
+            android:background="@null"
+            android:src="@drawable/img_delete_book_s"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/img_down_book_s"
+            android:layout_width="46px"
+            android:layout_height="46px"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@id/img_book_iconS"
+            android:layout_marginBottom="11px"
+            android:layout_marginRight="11px"
+            android:background="@null" />
+
     </RelativeLayout>
 </FrameLayout>

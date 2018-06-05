@@ -1,18 +1,22 @@
-package com.yougy.message;
+package com.yougy.message.attachment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by FH on 2017/4/18.
+ * Created by FH on 2018/5/9.
  */
 
-public class EndQuestionAttachment extends CustomAttachment{
-    final String KEY_EXAM_ID = "examId";
-    public int examID;
+public class OverallLockAttachment extends CustomAttachment {
+    final String KEY_TIME = "time";
 
-    public EndQuestionAttachment(String clue , double version) {
+    public String time;
+    public OverallLockAttachment(String clue , double version) {
         super(clue , version);
+    }
+    public OverallLockAttachment(String time) {
+        super(CustomAttachParser.CLUE_OVERALLLOCK , 1);
+        this.time = time;
     }
 
     /**
@@ -21,9 +25,8 @@ public class EndQuestionAttachment extends CustomAttachment{
      */
     @Override
     protected void parseData(JSONObject data) throws JSONException{
-//        JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
-        JSONObject paramJsonObj = data.getJSONObject(CustomAttachParser.KEY_PARAM);
-        examID = paramJsonObj.getInt(KEY_EXAM_ID);
+        JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
+        time = introJsonObj.getString(KEY_TIME);
     }
 
     /**
@@ -33,12 +36,10 @@ public class EndQuestionAttachment extends CustomAttachment{
     @Override
     protected JSONObject packData() {
         JSONObject returnJsonObj = new JSONObject();
-        JSONObject paramJsonObj = new JSONObject();
         JSONObject introJsonObj = new JSONObject();
         try {
-            paramJsonObj.put(KEY_EXAM_ID , examID);
+            introJsonObj.put(KEY_TIME , time);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
-            returnJsonObj.put(CustomAttachParser.KEY_PARAM , paramJsonObj);
         }
         catch (JSONException e) {
             e.printStackTrace();

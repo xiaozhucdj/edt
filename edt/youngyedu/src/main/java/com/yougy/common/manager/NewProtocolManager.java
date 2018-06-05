@@ -30,6 +30,7 @@ import com.yougy.common.protocol.request.NewUpdateUserReq;
 import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.PostStringBuilder;
 import com.zhy.http.okhttp.callback.Callback;
@@ -95,6 +96,7 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        builder.addHeader("X-Auth-Options" , SystemUtils.getDeviceModel()) ;
         if (Commons.isRelase) {
             builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
         }
@@ -126,6 +128,7 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        builder.addHeader("X-Auth-Options" , SystemUtils.getDeviceModel()) ;
         if (Commons.isRelase) {
             builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
         }

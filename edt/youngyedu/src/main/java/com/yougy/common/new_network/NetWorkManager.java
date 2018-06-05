@@ -1,5 +1,6 @@
 package com.yougy.common.new_network;
 
+import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
@@ -84,6 +85,7 @@ public final class NetWorkManager {
                 newBuilder.header("Content-Type", "application/json");
                 newBuilder.header("Accept", "application/json");
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
+                newBuilder.addHeader("X-Auth-Options" , SystemUtils.getDeviceModel()) ;
                 if (Commons.isRelase) {
                     newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
                 }
@@ -238,7 +240,7 @@ public final class NetWorkManager {
 
     public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId, Integer userId) {
          LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
-        return getInstance().getServerApi().queryReply(examId, userId)
+        return getInstance().getServerApi().queryReply(examId, userId , null)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -281,11 +283,12 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId) {
+    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId , String replyId) {
          LogUtils.e("FH", "!!!!!调用ServerApi查询考试回答情况:queryReply");
-        return getInstance().getServerApi().queryReply(examId, userId)
+        return getInstance().getServerApi().queryReply(examId, userId , replyId)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+                .compose(RxResultHelper.parseReply());
     }
 
     public static Observable<List<CartItem>> queryCart(String userId) {
@@ -372,8 +375,26 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Student>> login(NewLoginReq req){
+    public static Observable<List<Student>> login(NewLoginReq req) {
         return getInstance().getServerApi().login(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+    /**
+     * 根据类别获取图书信息
+     */
+    public static Observable<BaseResult<List<BookInfo>>> queryBookInfo(BookStoreQueryBookInfoReq req) {
+        return getInstance().getServerApi().queryBookInfo(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.dismissDialog(loadingProgressDialog))
+                ;
+    }
+
+    /**
+     * 移除架上图书
+     */
+    public static Observable<Object> removeBookInBookcase(Integer bookId , Integer userId) {
+        return getInstance().getServerApi().removeBookInBookcase(bookId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -387,10 +408,25 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+    /**
+     * 添加架上图书
+     */
+    public static Observable<Object> addBookToBookcase(Integer bookId , Integer userId) {
+        return getInstance().getServerApi().addBookToBookcase(bookId, userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
     public static Observable<Object> bindDevice(Integer userId, String deviceId) {
         LogUtils.e("FH", "!!!!!调用ServerApi绑定设备:bindDevice");
         return getInstance().getServerApi().bindDevice(userId, deviceId, SystemUtils.getDeviceModel())
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> closeHomework(Integer examId, Integer courseId, String userId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi进行作业评定,关闭单学生单次作业并写入错题本");
+        return getInstance().getServerApi().closeHomework(examId, courseId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -403,6 +439,17 @@ public final class NetWorkManager {
     public static Observable<AliyunData> queryUploadAliyunData() {
         return getInstance(false).getServerApi().queryUploadAliyunData(SpUtils.getUserId())
                 .compose(RxResultHelper.handleResult(null));
+    }
+    public static Observable<Object> postComment(String replyId, String score, String content, String replyCommentator) {
+        return getInstance().getServerApi().postComment(replyId, score, content, replyCommentator)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<STSbean> postCommentRequest(String replyId) {
+        return getInstance().getServerApi().postCommentRequest(replyId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     /**

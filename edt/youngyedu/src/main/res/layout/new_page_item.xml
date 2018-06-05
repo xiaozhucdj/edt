@@ -7,5 +7,5 @@
     android:background="@drawable/page_btn_bg_selector"
     android:gravity="center"
     android:textColor="@drawable/page_btn_text_selector"
-    android:textSize="12px"
+    android:textSize="22px"
     />

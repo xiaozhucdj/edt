@@ -143,6 +143,9 @@ public class NoteBookView2 extends View {
         invalidate();
     }
 
+    public Bitmap getBitmap(){
+        return mBitmap;
+    }
 
     private int mCanvasColor = 0x00000000;
 
@@ -232,6 +235,7 @@ public class NoteBookView2 extends View {
         mBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
         return bos.toByteArray();
     }
+
 
 
     private Line line;

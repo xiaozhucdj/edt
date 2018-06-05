@@ -214,6 +214,18 @@
                     android:src="@drawable/icon_student_122px" />
 
                 <TextView
+                    android:visibility="gone"
+                    android:id="@+id/test_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20px"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="24px" />
+
+
+                <TextView
                     android:id="@+id/tv_userName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -285,6 +297,7 @@
                     android:background="@color/black" />>
 
                 <Button
+                    android:visibility="gone"
                     android:id="@+id/btn_bookStore"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
@@ -296,6 +309,7 @@
                     android:textSize="24px" />
 
                 <View
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />

@@ -101,6 +101,8 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     public long mNoteMark = -1;
     public int mHomewrokId;
 
+    public  boolean mIsReferenceBook ;
+
     @Override
     protected void init() {
         if (getIntent() != null && getIntent().getExtras() != null) {
@@ -127,6 +129,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             params.put(FileContonst.NOTE_SUBJECT_NAME, mNoteSubject);
             params.put(FileContonst.NOTE_BOOK_ID, mBookId + "");
             mHomewrokId = bundle.getInt(FileContonst.HOME_WROK_ID, -1);
+            mIsReferenceBook = bundle.getBoolean(FileContonst.IS_REFERENCE_BOOK);
         }
     }
 
@@ -167,6 +170,10 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             if (FileContonst.OPEN_ONYX_READER){
                 if (null == mHandleOnyxReader) {
                     mHandleOnyxReader = new HandleOnyxReaderFragment();
+                    Bundle args = new Bundle();
+                    args.putBoolean("MISREFERENCEBOOK", mIsReferenceBook);
+                    mHandleOnyxReader.setArguments(args);
+
                     if (params.size() > 0) {
                         mHandleOnyxReader.setParams(params);
                     }

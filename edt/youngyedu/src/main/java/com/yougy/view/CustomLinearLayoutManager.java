@@ -5,11 +5,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 
 /**
- * Created by jiangliang on 2017/5/22.
+ * 禁止RecycleView的滑动
  */
-
 public class CustomLinearLayoutManager extends LinearLayoutManager {
-    private boolean isScrollEnabled = true;
+    private boolean isScrollVerticalEnabled = true;
+    private boolean isScrollHorizontalEnabled = true;
 
     public CustomLinearLayoutManager(Context context) {
         super(context);
@@ -23,18 +23,21 @@ public class CustomLinearLayoutManager extends LinearLayoutManager {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-
-    public void setScrollEnabled(boolean flag) {
-        this.isScrollEnabled = flag;
+    public void setScrollVerticalEnabled(boolean flag) {
+        this.isScrollVerticalEnabled = flag;
     }
-
-    @Override
-    public boolean canScrollHorizontally() {
-        return isScrollEnabled && super.canScrollHorizontally();
+    public void setScrollHorizontalEnabled(boolean flag) {
+        this.isScrollHorizontalEnabled = flag;
     }
 
     @Override
     public boolean canScrollVertically() {
-        return isScrollEnabled && super.canScrollVertically();
+        //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
+        return isScrollVerticalEnabled && super.canScrollVertically();
+    }
+
+    @Override
+    public boolean canScrollHorizontally() {
+        return isScrollHorizontalEnabled && super.canScrollHorizontally();
     }
 }

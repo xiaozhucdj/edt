@@ -16,6 +16,7 @@ import com.onyx.android.sdk.reader.host.request.GotoPageRequest;
 import com.onyx.android.sdk.reader.host.request.NextScreenRequest;
 import com.onyx.android.sdk.reader.host.request.OpenRequest;
 import com.onyx.android.sdk.reader.host.request.PreviousScreenRequest;
+import com.onyx.android.sdk.reader.host.request.ScaleToPageCropRequest;
 import com.onyx.android.sdk.reader.host.wrapper.Reader;
 import com.onyx.android.sdk.reader.utils.PagePositionUtils;
 import com.onyx.data.DrmCertificateFactory;
@@ -40,6 +41,13 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     private int mPags;
     private String path;
     private boolean mIsInit ;
+    private int mPage;
+    private boolean mIsCropPage ;
+
+    public void setCropPage(boolean isCropPage){
+        mIsCropPage = isCropPage ;
+    }
+
     public ReaderPresenter(ReaderContract.ReaderView readerView) {
         this.readerView = readerView;
     }
@@ -129,6 +137,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
 
     @Override
     public void gotoPage(final int page) {
+        mPage = page ;
         LogUtils.e(getClass().getName(), "gotoPage..............." + page);
         GotoPageRequest gotoPageRequest = new GotoPageRequest(page);
         getReader().submitRequest(getContext(), gotoPageRequest, new BaseCallback() {
@@ -158,8 +167,13 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    mIsInit = true ;
-                    readerView.updatePage(page, getReader().getViewportBitmap().getBitmap());
+
+                    if (mIsCropPage){
+                        cropPage();
+                    }else{
+                        mIsInit = true ;
+                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap());
+                    }
                 } else {
                     readerView.showThrowable(throwable);
                 }
@@ -261,4 +275,23 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     public int getPages() {
         return mPags;
     }
+
+
+
+    /**裁剪*/
+    private void cropPage() {
+        final ScaleToPageCropRequest request = new ScaleToPageCropRequest((mPage+""));
+        getReader().submitRequest(getContext(), request, new BaseCallback() {
+            @Override
+            public void done(BaseRequest baseRequest, Throwable throwable) {
+                if (throwable == null) {
+                    mIsInit = true ;
+                    readerView.updatePage(mPage, getReader().getViewportBitmap().getBitmap());
+                } else {
+                    readerView.showThrowable(throwable);
+                }
+            }
+        });
+    }
 }
+

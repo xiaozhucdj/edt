@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
@@ -27,6 +28,8 @@ import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.mistake_note.BookStructureActivity;
+import com.yougy.message.YXClient;
+import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FragmentExerciseBookBinding;
 import com.yougy.ui.activity.databinding.ItemHomeworkListBinding;
@@ -222,6 +225,14 @@ public class ExerciseBookFragment extends BFragment {
             }
         });
         binding.doingHomeworkBtn.setSelected(true);
+        YXClient.getInstance().with(getActivity()).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                if (message.getAttachment() instanceof NeedRefreshHomeworkAttachment){
+                    refreshData();
+                }
+            }
+        });
         return binding.getRoot();
     }
 

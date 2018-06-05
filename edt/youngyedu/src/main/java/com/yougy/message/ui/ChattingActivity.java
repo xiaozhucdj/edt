@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
@@ -35,10 +36,12 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.message.BookRecommandAttachment;
+import com.yougy.homework.WriteHomeWorkActivity;
+import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.MyEdittext;
 import com.yougy.message.SizeUtil;
 import com.yougy.message.YXClient;
+import com.yougy.message.attachment.HomeworkRemindAttachment;
 import com.yougy.shop.activity.ShopBookDetailsActivity;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;
@@ -233,6 +236,29 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
+                if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")){
+                    YXClient.getInstance().sendTestMessage(id, type, "109010001", "2", new ArrayList<String>(){{
+                        add("1420");
+                        add("1421");
+                    }}, new RequestCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void param) {
+                            LogUtils.v("发送测试消息成功");
+                        }
+
+                        @Override
+                        public void onFailed(int code) {
+                            LogUtils.v("发送测试消息失败" + code);
+                        }
+
+                        @Override
+                        public void onException(Throwable exception) {
+                            LogUtils.v("发送测试消息失败" + exception.getMessage());
+                            exception.printStackTrace();
+                        }
+                    });
+                    return;
+                }
                 IMMessage message = YXClient.getInstance().sendTextMessage(id ,
                         type , binding.messageEdittext.getText().toString() , ChattingActivity.this);
                 if (message != null) {
@@ -364,28 +390,53 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     ));
                 }
                 else if (imMessage.getMsgType() == MsgTypeEnum.custom){
-                    chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
-                    chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
-                    final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();
-                    if(attachment != null){
-                        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-                        spannableStringBuilder.append("向您推荐图书 : 《");
-                        SpannableString spannableString = new SpannableString(attachment.bookName);
-                        spannableString.setSpan(new ClickableSpan() {
-                            @Override
-                            public void onClick(View widget) {
-                                Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
-                                intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookId));
-                                startActivity(intent);
+                    if (imMessage.getAttachment() instanceof BookRecommandAttachment){
+                        chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
+                        chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
+                        final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();
+                        if(attachment != null){
+                            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                            spannableStringBuilder.append("向您推荐图书 : 《");
+                            SpannableString spannableString = new SpannableString(attachment.bookName);
+                            spannableString.setSpan(new ClickableSpan() {
+                                @Override
+                                public void onClick(View widget) {
+                                    Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
+                                    intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookId));
+                                    startActivity(intent);
+                                }
+                            }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                            spannableStringBuilder.append(spannableString);
+                            spannableStringBuilder.append("》，请点击书名查看图书详情。");
+                            if (!TextUtils.isEmpty(attachment.recommand_msg)) {
+                                spannableStringBuilder.append("\r\n推荐信息 :　" + attachment.recommand_msg);
                             }
-                        }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                        spannableStringBuilder.append(spannableString);
-                        spannableStringBuilder.append("》，请点击书名查看图书详情。");
-                        if (!TextUtils.isEmpty(attachment.recommand_msg)) {
-                            spannableStringBuilder.append("\r\n推荐信息 :　" + attachment.recommand_msg);
+                            chattingItembinding.rightTextTv.setText(spannableStringBuilder);
+                            chattingItembinding.rightTextTv.setMovementMethod(LinkMovementMethod.getInstance());
                         }
-                        chattingItembinding.rightTextTv.setText(spannableStringBuilder);
-                        chattingItembinding.rightTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+                    }
+                    else if (imMessage.getAttachment() instanceof HomeworkRemindAttachment){
+                        chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
+                        chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
+                        final HomeworkRemindAttachment attachment = (HomeworkRemindAttachment)imMessage.getAttachment();
+                        if(attachment != null){
+                            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                            spannableStringBuilder.append("今天的家庭作业还没有完成哦！请点击：");
+                            SpannableString spannableString = new SpannableString(attachment.examName);
+                            spannableString.setSpan(new ClickableSpan() {
+                                @Override
+                                public void onClick(View widget) {
+                                    Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
+                                    intent.putExtra("examId", attachment.examId);
+                                    intent.putExtra("examName" , attachment.examName);
+                                    startActivity(intent);
+                                }
+                            }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                            spannableStringBuilder.append(spannableString);
+                            spannableStringBuilder.append("尽快完成作业作答！");
+                            chattingItembinding.rightTextTv.setText(spannableStringBuilder);
+                            chattingItembinding.rightTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+                        }
                     }
                 }
                 else {
@@ -452,25 +503,47 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 else if (imMessage.getMsgType() == MsgTypeEnum.custom){
                     chattingItembinding.leftTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.leftFileDialogLayout.setVisibility(View.GONE);
-                    final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();
-                    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-                    spannableStringBuilder.append("向您推荐图书 : 《");
-                    SpannableString spannableString = new SpannableString(attachment.bookName);
-                    spannableString.setSpan(new ClickableSpan() {
-                        @Override
-                        public void onClick(View widget) {
-                            Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
-                            intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookId));
-                            startActivity(intent);
+                    if(imMessage.getAttachment() instanceof BookRecommandAttachment){
+                        final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();
+                        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                        spannableStringBuilder.append("向您推荐图书 : 《");
+                        SpannableString spannableString = new SpannableString(attachment.bookName);
+                        spannableString.setSpan(new ClickableSpan() {
+                            @Override
+                            public void onClick(View widget) {
+                                Intent intent = new Intent(getThisActivity(), ShopBookDetailsActivity.class);
+                                intent.putExtra(ShopGloble.BOOK_ID, Integer.parseInt(attachment.bookId));
+                                startActivity(intent);
+                            }
+                        }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        spannableStringBuilder.append(spannableString);
+                        spannableStringBuilder.append("》，请点击书名查看图书详情。");
+                        if (!TextUtils.isEmpty(attachment.recommand_msg)) {
+                            spannableStringBuilder.append("\r\n推荐信息 :　" + attachment.recommand_msg);
                         }
-                    }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                    spannableStringBuilder.append(spannableString);
-                    spannableStringBuilder.append("》，请点击书名查看图书详情。");
-                    if (!TextUtils.isEmpty(attachment.recommand_msg)) {
-                        spannableStringBuilder.append("\r\n推荐信息 :　" + attachment.recommand_msg);
+                        chattingItembinding.leftTextTv.setText(spannableStringBuilder);
+                        chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
                     }
-                    chattingItembinding.leftTextTv.setText(spannableStringBuilder);
-                    chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+                    else if (imMessage.getAttachment() instanceof HomeworkRemindAttachment){
+                        final HomeworkRemindAttachment attachment = (HomeworkRemindAttachment)imMessage.getAttachment();
+                        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                        spannableStringBuilder.append("今天的家庭作业还没有完成哦！请点击：");
+                        SpannableString spannableString = new SpannableString(attachment.examName);
+                        spannableString.setSpan(new ClickableSpan() {
+                            @Override
+                            public void onClick(View widget) {
+                                Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
+                                intent.putExtra("examId", attachment.examId);
+                                intent.putExtra("examName" , attachment.examName);
+                                startActivity(intent);
+                            }
+                        }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        spannableStringBuilder.append(spannableString);
+                        spannableStringBuilder.append("尽快完成作业作答！");
+                        chattingItembinding.leftTextTv.setText(spannableStringBuilder);
+                        chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+                    }
+
                 }
                 else {
 

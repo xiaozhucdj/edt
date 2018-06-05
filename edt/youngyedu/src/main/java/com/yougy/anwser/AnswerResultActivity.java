@@ -2,16 +2,24 @@ package com.yougy.anwser;
 
 import android.databinding.DataBindingUtil;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerResultBinding;
+
+import java.util.List;
+
+import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/9/6.
@@ -20,9 +28,10 @@ import com.yougy.ui.activity.databinding.ActivityAnswerResultBinding;
 
 public class AnswerResultActivity extends BaseActivity{
     ActivityAnswerResultBinding binding;
+    String replyId;
     ParsedQuestionItem parsedQuestionItem;
     String questionType;
-    int currentShowQuestionPageIndex = 0;
+    int currentShowReplyPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
 
     @Override
@@ -34,15 +43,19 @@ public class AnswerResultActivity extends BaseActivity{
     @Override
     protected void init() {
         Parcelable question = getIntent().getParcelableExtra("question");
+        replyId = getIntent().getStringExtra("replyId");
         if (question == null){
             ToastUtil.showCustomToast(this , "题目内容获取失败");
             finish();
+            return;
         }
-        else {
-            parsedQuestionItem = (ParsedQuestionItem) question;
-            questionType = (String) parsedQuestionItem.questionContentList.get(0).getExtraData();
-
+        if (TextUtils.isEmpty(replyId)){
+            ToastUtil.showCustomToast(this , "学生回答获取失败");
+            finish();
+            return;
         }
+        parsedQuestionItem = (ParsedQuestionItem) question;
+        questionType = (String) parsedQuestionItem.questionContentList.get(0).getExtraData();
     }
     @Override
     protected void initLayout() {
@@ -73,7 +86,7 @@ public class AnswerResultActivity extends BaseActivity{
             @Override
             public int getPageBtnCount() {
                 if (binding.questionBodyBtn.isSelected()){
-                    return binding.contentDisplayer.getmContentAdaper().getPageCount("question");
+                    return binding.contentDisplayer.getmContentAdaper().getPageCount("reply");
                 }
                 else if (binding.answerAnalysisBtn.isSelected()){
                     return binding.contentDisplayer.getmContentAdaper().getPageCount("analysis");
@@ -90,7 +103,7 @@ public class AnswerResultActivity extends BaseActivity{
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
                 if (binding.questionBodyBtn.isSelected()){
-                    currentShowQuestionPageIndex = btnIndex;
+                    currentShowReplyPageIndex = btnIndex;
                     refreshView();
                 }
                 else if (binding.answerAnalysisBtn.isSelected()){
@@ -103,19 +116,42 @@ public class AnswerResultActivity extends BaseActivity{
 
     @Override
     protected void loadData() {
-        binding.contentDisplayer.getmContentAdaper().updateDataList("question" , parsedQuestionItem.questionContentList);
-        binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
-        if (questionType.equals("选择")){
-            binding.contentDisplayer.getmContentAdaper().setSubText("答案 : " + RxResultHelper.parseAnswerList(parsedQuestionItem.answerContentList));
-        }
-        binding.questionBodyBtn.performClick();
+        NetWorkManager.queryReply(null , null , replyId).subscribe(new Action1<List<QuestionReplySummary>>() {
+            @Override
+            public void call(List<QuestionReplySummary> replySummaries) {
+                if (replySummaries.size() == 0){
+                    ToastUtil.showCustomToast(getApplicationContext() , "获取学生回答失败");
+                    finish();
+                    return;
+                }
+                binding.contentDisplayer.getmContentAdaper().updateDataList("reply"
+                        , ListUtil.conditionalSubList(replySummaries.get(0).getParsedContentList(), new ListUtil.ConditionJudger<Content_new>() {
+                    @Override
+                    public boolean isMatchCondition(Content_new nodeInList) {
+                        return nodeInList.getType() == Content_new.Type.IMG_URL;
+                    }
+                }));
+                binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
+                if (questionType.equals("选择")){
+                    binding.contentDisplayer.getmContentAdaper().setSubText("答案 : " + RxResultHelper.parseAnswerList(parsedQuestionItem.answerContentList));
+                }
+                binding.questionBodyBtn.performClick();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                ToastUtil.showCustomToast(AnswerResultActivity.this , "获取学生回答失败");
+                throwable.printStackTrace();
+                finish();
+            }
+        });
     }
 
     @Override
     protected void refreshView() {
         if (binding.questionBodyBtn.isSelected()){
             binding.questionTypeTextview.setText("题目类型 : " + questionType);
-            binding.contentDisplayer.getmContentAdaper().toPage("question" , currentShowQuestionPageIndex , false);
+            binding.contentDisplayer.getmContentAdaper().toPage("reply" , currentShowReplyPageIndex, false);
         }
         else if (binding.answerAnalysisBtn.isSelected()){
             binding.questionTypeTextview.setText("解析");
