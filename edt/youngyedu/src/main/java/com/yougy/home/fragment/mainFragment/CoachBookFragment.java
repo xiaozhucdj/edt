@@ -173,7 +173,7 @@ public class CoachBookFragment extends BFragment {
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
             //设置年级
-            req.setBookFitGradeName(SpUtils.getGradeName());
+            req.setBookFitGradeName();
             req.setBookCategoryMatch(20000);
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);

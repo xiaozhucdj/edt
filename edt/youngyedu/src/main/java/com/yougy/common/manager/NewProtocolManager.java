@@ -68,6 +68,7 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
+        builder.addHeader("X-Device-Model" , SystemUtils.getDeviceModel()) ;
         if (Commons.isRelase) {
             builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
         }
@@ -96,7 +97,7 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
-        builder.addHeader("X-Auth-Options" , SystemUtils.getDeviceModel()) ;
+        builder.addHeader("X-Device-Model" , SystemUtils.getDeviceModel()) ;;
         if (Commons.isRelase) {
             builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
         }
@@ -128,7 +129,7 @@ public class NewProtocolManager {
         builder.tag(url);
         //根据协议设置ID在回调函数 统一处理
         builder.id(id);
-        builder.addHeader("X-Auth-Options" , SystemUtils.getDeviceModel()) ;
+        builder.addHeader("X-Device-Model" , SystemUtils.getDeviceModel()) ;;
         if (Commons.isRelase) {
             builder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
         }

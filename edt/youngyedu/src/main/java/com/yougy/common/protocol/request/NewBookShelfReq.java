@@ -7,23 +7,28 @@ import com.yougy.common.utils.DateUtils;
  * 书架查询
  */
 
-public class NewBookShelfReq extends NewBaseReq{
-    /**用户编码*/
-    private int userId = -1 ;
+public class NewBookShelfReq extends NewBaseReq {
+    /**
+     * 用户编码
+     */
+    private int userId = -1;
 
-    private int courseId= -1 ;
+    private int courseId = -1;
     /**对应年级名称*/
-    private String bookFitGradeName ;
-    /**模糊分类编码 ,10000(课本)，30000(课外书) ,(辅导书20000)*/
-    private int bookCategoryMatch = -1 ;
-    /**缓存图书的ID*/
-    private int cacheId ;
+    /**
+     * 模糊分类编码 ,10000(课本)，30000(课外书) ,(辅导书20000)
+     */
+    private int bookCategoryMatch = -1;
+    /**
+     * 缓存图书的ID
+     */
+    private int cacheId;
 
-    private String bookFitCourseTime ;
+    private String bookFitCourseTime;
 
     public NewBookShelfReq() {
-        m = "bookShelf" ;
-        address = "classRoom" ;
+        m = "bookShelf";
+        address = "classRoom";
     }
 
     public void setUserId(int userId) {
@@ -34,9 +39,11 @@ public class NewBookShelfReq extends NewBaseReq{
         this.courseId = courseId;
     }
 
-    public void setBookFitGradeName(String bookFitGradeName) {
-        this.bookFitGradeName = bookFitGradeName;
-        bookFitCourseTime = DateUtils.getCalendarString() ;
+    /***
+     * 传时间
+     */
+    public void setBookFitGradeName() {
+        bookFitCourseTime = DateUtils.getCalendarString();
     }
 
     public void setBookCategoryMatch(int bookCategoryMatch) {
