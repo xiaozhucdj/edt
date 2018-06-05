@@ -206,7 +206,7 @@ public class TextBookFragment extends BFragment {
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
             //设置年级
-            req.setBookFitGradeName(SpUtils.getGradeName());
+            req.setBookFitGradeName();
             req.setBookCategoryMatch(10000);
             mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
             NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
