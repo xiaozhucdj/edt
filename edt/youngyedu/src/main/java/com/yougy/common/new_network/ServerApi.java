@@ -4,15 +4,22 @@ import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
+import com.yougy.common.bean.AliyunData;
+import com.yougy.common.model.Version;
+import com.yougy.common.protocol.request.BookStoreCategoryReq;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.init.bean.Student;
+import com.yougy.init.bean.UserInfo;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.bean.CartItem;
+import com.yougy.shop.bean.CategoryInfo;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.shop.bean.Favor;
 import com.yougy.shop.bean.OrderDetailBean;
@@ -292,6 +299,49 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"queryFavor"})
     Observable<BaseResult<List<Favor>>> queryFavor(@Field("userId") Integer userId);
 
+    /**
+     * 登录接口
+     */
+    @FormUrlEncoded
+    @POST("users")
+    @DefaultField(keys = {"m"},values = {"login"})
+    Observable<BaseResult<List<Student>>> login(@Body NewLoginReq req);
+
+    /**
+     * 获取版本
+     */
+    @FormUrlEncoded
+    @POST("version")
+    @DefaultField(keys = {"m","os"},values = {"getAppVersion","student"})
+    Observable<BaseResult<Version>> getVersion();
+
+    /**
+     * 设备绑定
+     *
+     * @param userId
+     * @param deviceId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("device")
+    @DefaultField(keys = {"m"}, values = {"bindDevice"})
+    Observable<BaseResult<Object>> bindDevice(@Field("userId") Integer userId
+            , @Field("deviceId") String deviceId, @Field("deviceModel") String deviceModel);
+
+    @FormUrlEncoded
+    @POST("device")
+    @DefaultField(keys = {"m"}, values = {"loadDeviceDB"})
+    Observable<BaseResult<AliyunData>> queryDownloadAliyunData(@Field("userId") int userId);
+
+    @FormUrlEncoded
+    @POST("device")
+    @DefaultField(keys = {"m"}, values = {"saveDeviceDB"})
+    Observable<BaseResult<AliyunData>> queryUploadAliyunData(@Field("userId") int userId);
+
+
+    ///////////////////////////////书城//////////////////////////////////////
+    @POST("bookStore")
+    Observable<BaseResult<List<CategoryInfo>>> queryBookCategory(@Body BookStoreCategoryReq req);
     @POST("bookStore")
     Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Body BookStoreQueryBookInfoReq req);
 
@@ -310,4 +360,30 @@ public interface ServerApi {
     @POST("common/v1")
     @DefaultField(keys = {"m"}, values = {"common_addBookcaseBooks"})
     Observable<BaseResult<Object>> addBookToBookcase(@Field("bookId") Integer bookId, @Field("userId") Integer userId);
+
+    /**
+     * 问题解答上传oss
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postCommentRequest"})
+    Observable<BaseResult<STSbean>> postCommentRequest(@Field("replyId") String replyId);
+
+    /**
+     * 作业评定(结束某个学生的作业,其实就是调了这个接口就会将这个学生这次考试的错题写到错题本里去,不调就不写)
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"closeHomework"})
+    Observable<BaseResult<Object>> closeHomework(@Field("examId") Integer examId
+            , @Field("courseId") Integer courseId , @Field("userId") String userId);
+
+    /**
+     * 教师批改上传（单题）
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postComment"})
+    Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
+            , @Field("content") String content, @Field("replyCommentator") String replyCommentator);
 }

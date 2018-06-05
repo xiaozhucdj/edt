@@ -24,6 +24,8 @@ import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.BookStoreQueryBookInfoReq;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.protocol.request.BookStoreCategoryReq;
+import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
 import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.utils.LogUtils;
@@ -180,33 +182,34 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取分类数据
      */
     private Observable<List<CategoryInfo>> getCategoryInfo() {
-        return create(subscriber -> {
-            try {
-                long start = System.currentTimeMillis();
-                Response response = NewProtocolManager.queryBookCategory(new NewBookStoreCategoryReq());
-                long end = System.currentTimeMillis();
-                LogUtils.e(tag,"getCategoryInfo takes time : " + (end - start));
-                if (response.isSuccessful()) {
-                    start = System.currentTimeMillis();
-                    String resultJson = response.body().string();
-                    end = System.currentTimeMillis();
-                    LogUtils.e(tag, "category info size : " + resultJson.length() + ",take time : " + (end - start));
-                    start = System.currentTimeMillis();
-                    Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
-
-//                    List<CategoryInfo> categories = json2list(resultJson);
-                    end = System.currentTimeMillis();
-                    LogUtils.e(tag,"getCategoryInfo jiexi shuju takes time : " + (end - start));
-                    List<CategoryInfo> categories = result.getData();
-                    LogUtils.e(tag, "categories' size : " + categories.size());
-
-                    subscriber.onNext(categories);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                LogUtils.e(tag, "IOException : " + e.getMessage());
-            }
-        });
+        return NetWorkManager.queryBookCategoryInfo(new BookStoreCategoryReq());
+//        return create(subscriber -> {
+//            try {
+//                long start = System.currentTimeMillis();
+//                Response response = NewProtocolManager.queryBookCategory(new NewBookStoreCategoryReq());
+//                long end = System.currentTimeMillis();
+//                LogUtils.e(tag,"getCategoryInfo takes time : " + (end - start));
+//                if (response.isSuccessful()) {
+//                    start = System.currentTimeMillis();
+//                    String resultJson = response.body().string();
+//                    end = System.currentTimeMillis();
+//                    LogUtils.e(tag, "category info size : " + resultJson.length() + ",take time : " + (end - start));
+//                    start = System.currentTimeMillis();
+//                    Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
+//
+////                    List<CategoryInfo> categories = json2list(resultJson);
+//                    end = System.currentTimeMillis();
+//                    LogUtils.e(tag,"getCategoryInfo jiexi shuju takes time : " + (end - start));
+//                    List<CategoryInfo> categories = result.getData();
+//                    LogUtils.e(tag, "categories' size : " + categories.size());
+//
+//                    subscriber.onNext(categories);
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                LogUtils.e(tag, "IOException : " + e.getMessage());
+//            }
+//        });
     }
 
     private void handleHomeInfo(List<BookInfo> bookInfos) {
@@ -351,7 +354,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         });
 
         CustomLinearLayoutManager classifyManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        classifyManager.setScrollEnabled(false);
+        classifyManager.setScrollHorizontalEnabled(false);
         binding.classifyRecycler.setLayoutManager(classifyManager);
         binding.classifyRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.classifyRecycler) {
             @Override
@@ -361,7 +364,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             }
         });
         CustomLinearLayoutManager stageManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        stageManager.setScrollEnabled(false);
+        stageManager.setScrollHorizontalEnabled(false);
         binding.stageRecycler.setLayoutManager(stageManager);
         binding.stageRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.stageRecycler) {
             @Override
