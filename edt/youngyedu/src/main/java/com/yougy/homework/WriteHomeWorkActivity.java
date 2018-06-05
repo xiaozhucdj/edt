@@ -841,7 +841,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_add_page:
                 if (btnLocked == false) {
                     btnLocked = true;
-                    if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                    if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") >= 5) {
                         ToastUtil.showCustomToast(this, "最多只能加5张纸");
                         btnLocked = false;
                         return;
