@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
@@ -63,7 +64,7 @@ import rx.functions.Func1;
 /**
  * Created by yuanye 2016/08/22
  */
-public abstract class BaseActivity extends FragmentActivity implements UiPromptDialog.Listener {
+public abstract class BaseActivity extends RxAppCompatActivity implements UiPromptDialog.Listener {
     protected String tag = getClass().getName();
     /**
      * UI 线程ID

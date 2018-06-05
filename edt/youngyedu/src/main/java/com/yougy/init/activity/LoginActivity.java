@@ -1,5 +1,6 @@
 package com.yougy.init.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
@@ -15,6 +16,8 @@ import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.new_network.ApiException;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.request.NewLoginReq;
@@ -27,7 +30,10 @@ import com.yougy.init.bean.Student;
 import com.yougy.init.dialog.ConfirmUserInfoDialog;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLoginBinding;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
+
+import java.util.List;
 
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
@@ -174,7 +180,7 @@ public class LoginActivity extends BaseActivity {
                     NewLoginRep response = (NewLoginRep) o;
                     if (response.getCode() == ProtocolId.RET_SUCCESS && response.getCount()>0) {
                         Student student = response.getData().get(0);
-                        if (!student.getUserRole().equals("学生")){
+                        if (!student.getUserRole().equals(getString(R.string.student))){
                             new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用学生账号登录").show();
                         }
                         else {
@@ -206,6 +212,35 @@ public class LoginActivity extends BaseActivity {
         loginReq.setUserName(binding.accountEdittext.getText().toString());
         loginReq.setUserPassword(binding.pwdEdittext.getText().toString());
         NewProtocolManager.login(loginReq,new LoginCallBack(this ,loginReq));
+//        newLogin(loginReq);
+    }
+
+    private void newLogin(NewLoginReq req){
+        NetWorkManager.login(req).compose(bindToLifecycle())
+                .subscribe(students -> {
+                    Student student = students.get(0);
+                    if (!student.getUserRole().equals(getString(R.string.student))){
+                        new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用教师账号登录").show();
+                    }
+                    else {
+                        LogUtils.e("FH", "登录成功,弹出信息确认dialog");
+                        confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this ,student);
+                        confirmUserInfoDialog.show();
+                    }
+                }, throwable -> {
+                    if (throwable instanceof ApiException){
+                        if (((ApiException) throwable).getCode().equals("401")){
+                            new HintDialog(getThisActivity() , "登录失败:用户名密码错误").show();
+                            return;
+                        }
+                    }
+                    new ConfirmDialog(getThisActivity(), "登录失败,是否重试", "重试", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            login(null);
+                        }
+                    }).show();
+                });
     }
 
     public void forgetPwd(View view){
