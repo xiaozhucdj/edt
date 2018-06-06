@@ -1,12 +1,14 @@
 package com.yougy.common.new_network;
 
+import android.view.WindowManager;
+
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
-import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.NewLoginReq;
@@ -85,7 +87,7 @@ public final class NetWorkManager {
                 newBuilder.header("Content-Type", "application/json");
                 newBuilder.header("Accept", "application/json");
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
-                newBuilder.addHeader("X-Device-Model" , SystemUtils.getDeviceModel()) ;
+                newBuilder.addHeader("X-Device-Model", SystemUtils.getDeviceModel());
                 if (Commons.isRelase) {
                     newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
                 }
@@ -131,12 +133,21 @@ public final class NetWorkManager {
             }
         }
 
-        if (flag && BaseActivity.getForegroundActivity() != null) {
-            if (loadingProgressDialog == null || !loadingProgressDialog.isShowing()){
-                loadingProgressDialog = new LoadingProgressDialog(BaseActivity.getForegroundActivity());
-                loadingProgressDialog.show();
+        synchronized (NetWorkManager.class) {
+            if (flag) {
+                if (loadingProgressDialog == null) {
+                    loadingProgressDialog = new LoadingProgressDialog(YougyApplicationManager.getInstance().getApplicationContext());
+                    loadingProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                    loadingProgressDialog.show();
+                } else {
+                    if (!loadingProgressDialog.isShowing()) {
+                        loadingProgressDialog.show();
+                    }
+                }
             }
         }
+
+
         return mInstance;
     }
 
@@ -147,7 +158,7 @@ public final class NetWorkManager {
 
     public static Observable<List<ParsedQuestionItem>> queryQuestionItemList(String userId, String bookId
             , String itemId, Integer cursor) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询问答题目列表:queryQuestionItemList");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询问答题目列表:queryQuestionItemList");
         return getInstance().getServerApi().queryTotalQuestionList(userId, bookId, itemId, cursor)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
@@ -174,86 +185,86 @@ public final class NetWorkManager {
     }
 
     public Observable<Object> queryToken(String userId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询云信对应token:queryToken");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询云信对应token:queryToken");
         return getServerApi().queryToken(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<DownloadInfo>> downloadBook(String userId, String bookId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi下载图书:downloadBook");
+        LogUtils.e("FH", "!!!!!调用ServerApi下载图书:downloadBook");
         return getInstance().getServerApi().downloadBook(userId, bookId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<HomeworkBookSummary>> queryHomeworkBookList(String userId, String homeworkFitGradeName) {
-         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本列表:queryHomeworkBookList");
+        LogUtils.e("FH", "!!!!!调用ServerApi获取作业本列表:queryHomeworkBookList");
         return getInstance().getServerApi().queryHomeworkBookList(userId, homeworkFitGradeName)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "II02" , true)
+        LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "II02", true)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "II01" , true)
+        LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "II01", true)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<BookInfo>> queryBook(String bookId, String userId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
+        LogUtils.e("FH", "!!!!!调用ServerApi获取图书信息:queryBook");
         return getInstance().getServerApi().queryBook(bookId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> refreshHomeworkBook(Integer homeworkId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi刷新作业本:refreshHomeworkBook");
+        LogUtils.e("FH", "!!!!!调用ServerApi刷新作业本:refreshHomeworkBook");
         return getInstance().getServerApi().refreshHomeworkBook(homeworkId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<QuestionReplyDetail>> queryReplyDetail(Integer examId, Integer itemId, String userId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答详情:queryReplyDetail");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答详情:queryReplyDetail");
         return getInstance().getServerApi().reviewComment(examId, itemId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReplyDetail());
     }
 
-    public static Observable<List<HomeworkDetail>> queryExam(String examId , String examStartTime) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询考试:queryExam");
-        return getInstance().getServerApi().queryExam(examId , examStartTime)
+    public static Observable<List<HomeworkDetail>> queryExam(String examId, String examStartTime) {
+        LogUtils.e("FH", "!!!!!调用ServerApi查询考试:queryExam");
+        return getInstance().getServerApi().queryExam(examId, examStartTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
     public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId, Integer userId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
-        return getInstance().getServerApi().queryReply(examId, userId , null)
+        LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
+        return getInstance().getServerApi().queryReply(examId, userId, null)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> deleteMistake_thorough(Integer homeworkId, String itemId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi移除错题(彻底删除):deleteMistake_thorough");
+        LogUtils.e("FH", "!!!!!调用ServerApi移除错题(彻底删除):deleteMistake_thorough");
         return getInstance().getServerApi().removeHomeworkExcerpt(homeworkId, "{\"item\":" + itemId + "}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> deleteMistake(Integer homeworkId, String itemId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi移除错题(标记为删除):deleteMistake");
+        LogUtils.e("FH", "!!!!!调用ServerApi移除错题(标记为删除):deleteMistake");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
                 , "{\"item\":" + itemId + ",\"extra\":{\"deleted\":true}}")
                 .compose(RxSchedulersHelper.io_main())
@@ -261,7 +272,7 @@ public final class NetWorkManager {
     }
 
     public static Observable<Object> setMistakeLastScore(Integer homeworkId, String itemId, int score) {
-         LogUtils.e("FH", "!!!!!调用ServerApi设置错题上次自评结果:setMistakeLastScore");
+        LogUtils.e("FH", "!!!!!调用ServerApi设置错题上次自评结果:setMistakeLastScore");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
                 , "{\"item\":" + itemId + ",\"extra\":{\"lastScore\":" + score + "}}")
                 .compose(RxSchedulersHelper.io_main())
@@ -269,107 +280,107 @@ public final class NetWorkManager {
     }
 
     public static Observable<List<CourseInfo>> queryCourse(Integer userId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询课程:queryCourse");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询课程:queryCourse");
         return getInstance().getServerApi().queryCourse(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<HomeworkDetail>> queryAnswer(String classId, String bookId, Integer cursor) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询问答:queryAnswer");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询问答:queryAnswer");
         return getInstance().getServerApi().queryAnswer(classId, bookId, cursor)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId , String replyId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询考试回答情况:queryReply");
-        return getInstance().getServerApi().queryReply(examId, userId , replyId)
+    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId, String replyId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi查询考试回答情况:queryReply");
+        return getInstance().getServerApi().queryReply(examId, userId, replyId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReply());
     }
 
     public static Observable<List<CartItem>> queryCart(String userId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询用户购物车:queryCart");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询用户购物车:queryCart");
         return getInstance(false).getServerApi().queryCart(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> removeCart(RemoveRequestObj removeRequestObj) {
-         LogUtils.e("FH", "!!!!!调用ServerApi删除多项收藏夹:removeCart");
+        LogUtils.e("FH", "!!!!!调用ServerApi删除多项收藏夹:removeCart");
         return getInstance().getServerApi().removeCart(removeRequestObj)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<OrderDetailBean>> queryOrderTree(String orderId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询订单树,包含分拆的子订单");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询订单树,包含分拆的子订单");
         return getInstance().getServerApi().queryOrderTree(orderId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<OrderSummary>> queryMyOrderList(String orderOwner) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单");
         return getInstance().getServerApi().queryOrderSole(orderOwner)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<QueryQRStrObj>> checkOrder(String orderId, int orderOwner, double orderPrice, int payMethod) {
-         LogUtils.e("FH", "!!!!!调用ServerApi进行订单结算获取二维码:checkOrder");
+        LogUtils.e("FH", "!!!!!调用ServerApi进行订单结算获取二维码:checkOrder");
         return getInstance().getServerApi().checkOrder(orderId, orderOwner, orderPrice, payMethod)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> isOrderPaySuccess(String orderId, int orderOwner) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询订单支付情况:isOrderPaySuccess");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询订单支付情况:isOrderPaySuccess");
         return getInstance().getServerApi().isOrderPaySuccess(orderId, orderOwner)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> cancelOrder(String orderId, Integer orderOwner) {
-         LogUtils.e("FH", "!!!!!调用ServerApi取消订单:cancelOrder");
+        LogUtils.e("FH", "!!!!!调用ServerApi取消订单:cancelOrder");
         return getInstance().getServerApi().cancelOrder(orderId, orderOwner)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<OrderInfo>> queryOrder(String orderOwner, String orderStatus) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单列表:queryOrder");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单列表:queryOrder");
         return getInstance().getServerApi().queryMyOrderList(orderOwner, orderStatus)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<OrderIdObj>> createOrder(CreateOrderRequestObj createOrderRequestObj) {
-         LogUtils.e("FH", "!!!!!调用ServerApi创建订单:createOrder");
+        LogUtils.e("FH", "!!!!!调用ServerApi创建订单:createOrder");
         return getInstance().getServerApi().createOrder(createOrderRequestObj)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> removeFavor(Integer userId, Integer bookId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi删除单项收藏夹:removeFavor");
+        LogUtils.e("FH", "!!!!!调用ServerApi删除单项收藏夹:removeFavor");
         return getInstance().getServerApi().removeFavor(userId, bookId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<Object> removeFavor(RemoveRequestObj removeRequestObj) {
-         LogUtils.e("FH", "!!!!!调用ServerApi删除多项收藏夹:removeFavor");
+        LogUtils.e("FH", "!!!!!调用ServerApi删除多项收藏夹:removeFavor");
         return getInstance().getServerApi().removeFavor(removeRequestObj)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<Favor>> queryFavor(Integer userId) {
-         LogUtils.e("FH", "!!!!!调用ServerApi查询收藏夹:queryFavor");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询收藏夹:queryFavor");
         return getInstance().getServerApi().queryFavor(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
@@ -380,6 +391,7 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
     /**
      * 根据类别获取图书信息
      */
@@ -393,7 +405,7 @@ public final class NetWorkManager {
     /**
      * 移除架上图书
      */
-    public static Observable<Object> removeBookInBookcase(Integer bookId , Integer userId) {
+    public static Observable<Object> removeBookInBookcase(Integer bookId, Integer userId) {
         return getInstance().getServerApi().removeBookInBookcase(bookId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
@@ -408,10 +420,11 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
     /**
      * 添加架上图书
      */
-    public static Observable<Object> addBookToBookcase(Integer bookId , Integer userId) {
+    public static Observable<Object> addBookToBookcase(Integer bookId, Integer userId) {
         return getInstance().getServerApi().addBookToBookcase(bookId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
@@ -440,6 +453,7 @@ public final class NetWorkManager {
         return getInstance(false).getServerApi().queryUploadAliyunData(SpUtils.getUserId())
                 .compose(RxResultHelper.handleResult(null));
     }
+
     public static Observable<Object> postComment(String replyId, String score, String content, String replyCommentator) {
         return getInstance().getServerApi().postComment(replyId, score, content, replyCommentator)
                 .compose(RxSchedulersHelper.io_main())
