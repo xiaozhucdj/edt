@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/shop_book_img_height"
         android:background="@drawable/img_bg"
-        android:paddingBottom="@dimen/shop_book_img_padding"
-        android:paddingRight="@dimen/shop_book_img_padding"
+        android:paddingBottom="@dimen/image_padding"
+        android:paddingRight="@dimen/image_padding"
         android:scaleType="fitXY" />
 
     <LinearLayout

@@ -174,7 +174,10 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 LogUtils.i("onItemDownClickL");
                 if (mBooks.get(position).getBookId() == -1) {
                     if (NetUtils.isNetConnected()) {
-                        loadIntent(BookShopActivityDB.class);
+                        Intent intent = new Intent(getActivity(),BookShopActivityDB.class);
+                        intent.putExtra(BookShopActivityDB.CLASSIFY_POSITION,BookShopActivityDB.CLASSIFY_POSITION_EXTRA);
+                        startActivity(intent);
+
                     } else {
                         showCancelAndDetermineDialog(R.string.jump_to_net);
                     }

@@ -109,4 +109,7 @@
     <dimen name="stage_button_width">170px</dimen>
     <dimen name="stage_button_height">36px</dimen>
     <dimen name="stage_text_size">20px</dimen>
+    <dimen name="image_width">162px</dimen>
+    <dimen name="image_height">212px</dimen>
+    <dimen name="image_padding">12px</dimen>
 </resources>
