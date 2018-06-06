@@ -1269,6 +1269,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
 
+                        onBackPressed();
+
 //                        NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
 //                            @Override
 //                            public void call(Object o) {

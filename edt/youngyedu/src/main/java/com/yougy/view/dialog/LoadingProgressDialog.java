@@ -16,12 +16,12 @@ public class LoadingProgressDialog extends BaseDialog {
 
     public LoadingProgressDialog(Context context) {
         super(context);
-        setOwnerActivity((Activity) context);
+//        setOwnerActivity((Activity) context);
     }
 
     public LoadingProgressDialog(Context context, int themeResId) {
         super(context, themeResId);
-        setOwnerActivity((Activity) context);
+//        setOwnerActivity((Activity) context);
     }
 
     @Override
