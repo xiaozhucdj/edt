@@ -7,6 +7,7 @@ import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
+import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
@@ -344,6 +345,8 @@ public interface ServerApi {
     Observable<BaseResult<List<CategoryInfo>>> queryBookCategory(@Body BookStoreCategoryReq req);
     @POST("bookStore")
     Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Body BookStoreQueryBookInfoReq req);
+    @POST("bookStore")
+    Observable<BaseResult<List<BookInfo>>> queryBookShopHomeInfo(@Body BookStoreHomeReq req);
 
     /**
      * 书架图书移除
