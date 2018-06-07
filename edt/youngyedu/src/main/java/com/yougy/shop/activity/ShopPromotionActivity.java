@@ -41,7 +41,7 @@ public class ShopPromotionActivity extends ShopBaseActivity{
 
     private PromotionBinding binding;
     private PromotionAdapter mPromotionAdapter;
-    private static final int COUNT_PER_PAGE = 5;
+    private static final int COUNT_PER_PAGE = 4;
     public static final String COUPON_ID = "couponId";
 
     private List<Button> btns = new ArrayList<>();
