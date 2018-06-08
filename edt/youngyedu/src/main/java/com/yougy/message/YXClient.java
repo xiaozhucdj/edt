@@ -1071,14 +1071,14 @@ public class YXClient {
                         loadingDialog.dismiss();
                     }
                    LogUtils.e("FH" , "wifi未连接");
-                    new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
+/*                    new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
                             activity.startActivity(intent);
                             dialog.dismiss();
                         }
-                    }, "打开").show();
+                    }, "打开").show();*/
                     return;
                 }
                 YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", new RequestCallbackWrapper() {

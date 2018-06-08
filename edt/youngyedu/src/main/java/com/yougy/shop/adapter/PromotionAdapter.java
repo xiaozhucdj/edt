@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
@@ -26,6 +27,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
 
     private List<BookInfo> infos;
     private String bookSummary;
+
     public PromotionAdapter(List<BookInfo> infos) {
         LogUtils.e("SearchResult", "adapter............................");
         this.infos = infos;
@@ -33,9 +35,9 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
 
     @Override
     public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LogUtils.e(getClass().getName(),"before.......");
+        LogUtils.e(getClass().getName(), "before.......");
         PromotionResult binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.promotion_item, parent, false);
-        LogUtils.e(getClass().getName(),"after.......");
+        LogUtils.e(getClass().getName(), "after.......");
         BookHolder holder = new BookHolder(binding.getRoot());
         holder.setBinding(binding);
         return holder;
@@ -43,6 +45,9 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
 
     @Override
     public void onBindViewHolder(BookHolder holder, int position) {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, position == 0 ? 23 : 66, 0, 0);
+        holder.binding.layout.setLayoutParams(params);
         BookInfo bookInfo = infos.get(position);
         String infoSummary;
         if (TextUtils.isEmpty(bookInfo.getBookSummary())) {
@@ -51,28 +56,28 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
             infoSummary = Html.fromHtml(bookInfo.getBookSummary()).toString();
         }
         if (!TextUtils.isEmpty(infoSummary) && infoSummary.length() > 65) {
-            bookSummary = "简介："+infoSummary.substring(0, 65) + "......";
+            bookSummary = "简介：" + infoSummary.substring(0, 65) + "......";
         } else {
-            bookSummary = "简介："+infoSummary;
+            bookSummary = "简介：" + infoSummary;
         }
-        if (TextUtils.isEmpty(bookSummary)){
+        if (TextUtils.isEmpty(bookSummary)) {
             bookSummary = "暂无简介";
         }
-        if (TextUtils.isEmpty(bookInfo.getBookAuthor())){
+        if (TextUtils.isEmpty(bookInfo.getBookAuthor())) {
             bookInfo.setBookAuthor("作者：");
-        }else{
-            bookInfo.setBookAuthor("作者："+bookInfo.getBookAuthor());
+        } else {
+            bookInfo.setBookAuthor("作者：" + bookInfo.getBookAuthor());
         }
 
         ImageLoaderManager.getInstance().loadImageContext(holder.binding.bookImg.getContext(),
                 bookInfo.getBookCoverS(),
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                FileContonst.withS ,
+                FileContonst.withS,
                 FileContonst.heightS,
                 holder.binding.bookImg);
         holder.getBinding().setVariable(BR.bookInfo, bookInfo);
-        holder.getBinding().setVariable(BR.bookSummary,bookSummary);
+        holder.getBinding().setVariable(BR.bookSummary, bookSummary);
         holder.getBinding().executePendingBindings();
     }
 
@@ -80,9 +85,11 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Book
     public int getItemCount() {
         return infos.size();
     }
+
     public BookInfo getItemBook(int position) {
         return infos.get(position);
     }
+
     class BookHolder extends RecyclerView.ViewHolder {
         private PromotionResult binding;
 

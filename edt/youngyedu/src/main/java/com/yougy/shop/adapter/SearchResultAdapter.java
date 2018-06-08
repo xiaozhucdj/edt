@@ -61,7 +61,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             bookSummary = "暂无简介";
         }
         if (TextUtils.isEmpty(bookInfo.getBookAuthor())){
-            bookInfo.setBookAuthor("作者：暂无");
+            bookInfo.setBookAuthor("作者：");
         }else{
             bookInfo.setBookAuthor("作者："+bookInfo.getBookAuthor());
         }

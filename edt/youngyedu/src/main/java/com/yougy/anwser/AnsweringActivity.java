@@ -222,7 +222,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     public void loadData() {
-        showNetDialog();
+        showNoNetDialog();
         NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
@@ -784,7 +784,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * 获取oss上传所需信息
      */
     private void getUpLoadInfo() {
-        if (showNetDialog()) {
+        if (showNoNetDialog()) {
             binding.commitAnswerBtn.setClickable(true);
             return;
         }
@@ -848,7 +848,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * @param stSbean
      */
     public void upLoadPic(STSbean stSbean) {
-        if (showNetDialog()) {
+        if (showNoNetDialog()) {
             binding.commitAnswerBtn.setClickable(true);
             return;
         }
@@ -983,7 +983,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * 将上传信息提交给服务器
      */
     private void writeInfoToS() {
-        if (showNetDialog()) {
+        if (showNoNetDialog()) {
             binding.commitAnswerBtn.setClickable(true);
             return;
         }

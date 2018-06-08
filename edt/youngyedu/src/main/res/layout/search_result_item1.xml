@@ -12,20 +12,20 @@
     <!--android:layout_height="160dp"-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="223px"
+        android:layout_height="278px"
         >
 
         <ImageView
             android:id="@+id/book_img"
-            android:layout_width="132px"
-            android:layout_height="172px"
-            android:layout_marginTop="25px"
+            android:layout_width="@dimen/image_width"
+            android:layout_height="@dimen/image_height"
+            android:layout_marginTop="38px"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/shu_bg"
             android:src="@drawable/cart_book"
-            android:paddingRight="11px"
-            android:paddingBottom="11px"
+            android:paddingRight="@dimen/image_padding"
+            android:paddingBottom="@dimen/image_padding"
             />
 
         <ImageView
@@ -75,7 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/book_intro"
             android:layout_toRightOf="@+id/book_img"
-            android:layout_alignBottom="@+id/book_img"
+            android:layout_marginTop="20px"
+            android:layout_below="@+id/book_intro"
             android:includeFontPadding="false"
             android:text="@{bookInfo.bookAuthor}"
             android:textSize="20px"

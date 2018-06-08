@@ -103,7 +103,7 @@
                 android:id="@+id/tv_coach_book"
                 android:layout_width="120px"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="23px"
+                android:layout_marginLeft="24px"
                 android:background="@drawable/home_tabs_tv_bg_selector"
                 android:gravity="center"
                 android:text="辅导书"

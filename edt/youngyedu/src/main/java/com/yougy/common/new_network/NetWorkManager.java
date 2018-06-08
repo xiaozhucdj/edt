@@ -11,6 +11,7 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
+import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
@@ -474,4 +475,17 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+
+    /**
+     * 书城首页信息
+     */
+    public static Observable<List<BookInfo>> queryBookShopHomeInfo(BookStoreHomeReq req) {
+        return getInstance().getServerApi().queryBookShopHomeInfo(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+
+
 }
