@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.protocol.request.PromotionReq;
@@ -47,7 +48,7 @@ public class ShopPromotionActivity extends ShopBaseActivity{
     private List<Button> btns = new ArrayList<>();
     private List<BookInfo> mPageInfos = new ArrayList<>();
     private int couponId;
-
+    private int totalCount = 0;
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_promotion_layout);
@@ -65,6 +66,24 @@ public class ShopPromotionActivity extends ShopBaseActivity{
         CustomLinearLayoutManager layoutManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         layoutManager.setScrollHorizontalEnabled(false);
         binding.promotionRecycler.setLayoutManager(layoutManager);
+        binding.pageNumberLayout.setPageBarAdapter(new PageBtnBarAdapter(getThisActivity()) {
+            @Override
+            public int getPageBtnCount() {
+                return (totalCount + COUNT_PER_PAGE - 1)/ COUNT_PER_PAGE;
+            }
+
+            @Override
+            public void onPageBtnClick(View view, int i, String s) {
+                mPageInfos.clear();
+                int start = i * COUNT_PER_PAGE;
+                int end = (i + 1) * COUNT_PER_PAGE;
+                if (end > infos.size()) {
+                    end = infos.size();
+                }
+                mPageInfos.addAll(infos.subList(start, end));
+                mPromotionAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -106,15 +125,15 @@ public class ShopPromotionActivity extends ShopBaseActivity{
     protected void refreshView() {
 
     }
-
+    private List<BookInfo> infos;
     private void updateUI(PromotionResult result){
         binding.promotionName.setText(result.getCouponName());
         binding.promotionContent.setText(result.getCouponContentExplain());
         String time = getString(R.string.activity_time,result.getCouponStartTime(),result.getCouponEndTime());
         binding.activityTime.setText(time);
 
-        List<BookInfo> infos = result.getCouponBook();
-        generateBtn(infos);
+        infos = result.getCouponBook();
+//        generateBtn(infos);
         if (mPageInfos.size() > 0) {
             mPageInfos.clear();
         }
@@ -128,6 +147,8 @@ public class ShopPromotionActivity extends ShopBaseActivity{
                 itemClick(mPromotionAdapter.getItemBook(vh.getAdapterPosition()));
             }
         });
+        totalCount = infos.size();
+        binding.pageNumberLayout.refreshPageBar();
     }
 
     private void itemClick(BookInfo bookInfo) {
