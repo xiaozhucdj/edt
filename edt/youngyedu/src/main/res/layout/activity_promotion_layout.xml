@@ -82,14 +82,21 @@
                 />
         </LinearLayout>
 
-        <LinearLayout
+        <!--<LinearLayout-->
+            <!--android:id="@+id/page_number_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginBottom="16px"-->
+            <!--android:gravity="center"-->
+            <!--android:orientation="horizontal" />-->
+        <com.frank.etude.pageBtnBar.PageBtnBar
             android:id="@+id/page_number_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="16px"
-            android:gravity="center"
-            android:orientation="horizontal" />
+            android:layout_marginBottom="20px"
+            android:gravity="center" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/promotion_recycler"
