@@ -208,7 +208,8 @@ public class SettingMainActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.img_wifi:
-                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
+//                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
+                boolean isConnected =false ;
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
                 break;

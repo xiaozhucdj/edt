@@ -22,6 +22,7 @@ import com.yougy.common.down.DownloadBookListener;
 import com.yougy.common.down.NewDownBookInfo;
 import com.yougy.common.down.NewDownBookManager;
 import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
@@ -36,6 +37,7 @@ import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.message.YXClient;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;
@@ -148,7 +150,19 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     }
 
     public void onEventMainThread(BaseEvent event) {
-
+        if (event == null) {
+            return;
+        } else if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
+            if (NetManager.getInstance().isWifiConnected(this)) {
+                YXClient.checkNetAndRefreshLogin(this, null);
+                if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
+                    mUiPromptDialog.dismiss();
+                }
+            } else {
+                if (mUiPromptDialog != null && !mUiPromptDialog.isShowing())
+                    mUiPromptDialog.show();
+            }
+        }
     }
 
     /**
@@ -442,7 +456,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         for (BaseActivity activity : mActivities) {
             if (activity.getClass().getName().equalsIgnoreCase(className))
                 result = true;
-              break;
+            break;
         }
         return result;
     }
@@ -959,9 +973,9 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
      * 如果网络已经连接,则返回false,并且不弹出提示框.
      * 如果网络没有连接,则返回true,并且弹出提示框
      */
-    public final boolean showNetDialog() {
+    public final boolean showNoNetDialog() {
         if (NetUtils.isNetConnected()) {
-            return false;
+            return  false;
         }
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
@@ -983,11 +997,13 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
                 }
             });
         }
-        mUiPromptDialog.show();
-        mUiPromptDialog.setTag(0);
-        mUiPromptDialog.setTitle(R.string.jump_to_net);
-        mUiPromptDialog.setDialogStyle(false);
-        return true;
+        if (!mUiPromptDialog.isShowing()) {
+            mUiPromptDialog.show();
+            mUiPromptDialog.setTag(0);
+            mUiPromptDialog.setTitle(R.string.jump_to_net);
+            mUiPromptDialog.setDialogStyle(false);
+        }
+        return true ;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1152,5 +1168,11 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         mDownDialog.getBtnConfirm().setVisibility(View.GONE);
         mDownDialog.setTitle(String.format(getString(R.string.down_book_loading), 0 + "%"));
         queryBookDownLoadSyn(bookId);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        showNoNetDialog();
     }
 }

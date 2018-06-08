@@ -221,7 +221,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void wifi(View view){
-        boolean isConnected = NetManager.getInstance().isWifiConnected(this);
+//        boolean isConnected = NetManager.getInstance().isWifiConnected(this);
+        boolean isConnected =false ;
         NetManager.getInstance().changeWiFi(this, !isConnected);
         binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
     }
