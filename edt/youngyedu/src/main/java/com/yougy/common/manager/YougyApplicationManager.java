@@ -64,7 +64,7 @@ import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENT
  */
 public class YougyApplicationManager extends LitePalApplication {
 
-    private final int REQUEST_TIME = 10 * 1000;
+    private final int REQUEST_TIME =15* 1000;
     public static final boolean DEBUG = true;
 
     private static Context instance;
