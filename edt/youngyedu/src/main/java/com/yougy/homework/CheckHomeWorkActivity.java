@@ -1061,30 +1061,21 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                             } else {
 
-                                new ConfirmDialog(CheckHomeWorkActivity.this, "批改完成，请选择其他学生继续批改！", new DialogInterface.OnClickListener() {
+                                NetWorkManager.closeHomework(examId, null, studentId + "")
+                                        .subscribe(new Action1<Object>() {
+                                            @Override
+                                            public void call(Object o) {
+                                                ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
+                                                back();
 
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-//                                        back();
-                                        NetWorkManager.closeHomework(examId, null, studentId + "")
-                                                .subscribe(new Action1<Object>() {
-                                                    @Override
-                                                    public void call(Object o) {
-                                                        ToastUtil.showCustomToast(getBaseContext(), "该学生批改完毕");
-                                                        back();
-
-                                                    }
-                                                }, new Action1<Throwable>() {
-                                                    @Override
-                                                    public void call(Throwable throwable) {
-                                                        throwable.printStackTrace();
-                                                        ToastUtil.showCustomToast(getBaseContext(), "该学生批改完毕提交错误了");
-                                                    }
-                                                });
-
-                                    }
-                                }, "确定").show();
+                                            }
+                                        }, new Action1<Throwable>() {
+                                            @Override
+                                            public void call(Throwable throwable) {
+                                                throwable.printStackTrace();
+                                                ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                                            }
+                                        });
 
                             }
                         }

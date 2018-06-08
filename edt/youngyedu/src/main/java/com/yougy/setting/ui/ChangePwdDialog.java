@@ -77,7 +77,6 @@ public class ChangePwdDialog extends BaseDialog {
         } else if (!SpUtils.getLocalLockPwd().equals(binding.oldPwdEdtv.getText().toString())) {
 //            new HintDialog(mContext , "您输入的旧密码不正确").show();
             UIUtils.showToastSafe("您输入的旧密码不正确", Toast.LENGTH_SHORT);
-
         } else {
             SpUtils.setLocalLockPwd(binding.newPwdEdtv.getText().toString());
             if (mPwdListener != null) {
@@ -107,4 +106,5 @@ public class ChangePwdDialog extends BaseDialog {
 
          void onPwdListener();
     }
+
 }

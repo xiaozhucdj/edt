@@ -22,10 +22,12 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.homework.CheckHomeWorkActivity;
 import com.yougy.homework.CheckedHomeworkOverviewActivity;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
+import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.mistake_note.BookStructureActivity;
 import com.yougy.message.YXClient;
@@ -85,20 +87,28 @@ public class ExerciseBookFragment extends BFragment {
                         holder.setData(doingList.get(position));
                         break;
                     case WAIT_FOR_CHECK:
-                        holder.binding.statusTv.setText("待\n批\n改");
-                        holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
-                        holder.setData(waitForCheckList.get(position));
+                        HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);
+                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())){
+                            holder.binding.statusTv.setText("自\n\n评");
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
+                            holder.setData(waitForCheckList.get(position));
+                        }
+                        else {
+                            holder.binding.statusTv.setText("待\n批\n改");
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
+                            holder.setData(waitForCheckList.get(position));
+                        }
                         break;
                     case CHECKED:
-                        HomeworkSummary homeworkSummary = checkedList.get(position);
-                        if (homeworkSummary.getExtra().getStatusCode().equals("IH51")){
+                        HomeworkSummary checkedHomeworkSummary = checkedList.get(position);
+                        if (checkedHomeworkSummary.getExtra().getStatusCode().equals("IH51")){
                             holder.binding.statusTv.setText("未\n提\n交");
                         }
-                        else if (homeworkSummary.getExtra().getStatusCode().equals("IH05")){
+                        else if (checkedHomeworkSummary.getExtra().getStatusCode().equals("IH05")){
                             holder.binding.statusTv.setText("已\n批\n改");
                         }
                         holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
-                        holder.setData(homeworkSummary);
+                        holder.setData(checkedHomeworkSummary);
                         break;
                 }
             }
@@ -122,9 +132,9 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 Intent intent;
+                MyHolder holder = (MyHolder) vh;
                 switch (currentStatus) {
                     case CHECKED:
-                        MyHolder holder = (MyHolder) vh;
                         if (holder.getData().getExtra().getStatusCode().equals("IH51")){
                             ToastUtil.showCustomToast(getActivity() , "本次作业您未提交,无法查看");
                         }
@@ -136,7 +146,12 @@ public class ExerciseBookFragment extends BFragment {
                         }
                         break;
                     case WAIT_FOR_CHECK:
-                        //TODO 待批改项点击
+                        HomeworkSummary uncheckedHomeworkSummary = holder.getData();
+                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())){
+                            intent = new Intent(getActivity() , CheckHomeWorkActivity.class);
+                            intent.putExtra("examId" , uncheckedHomeworkSummary.getExam());
+                            startActivity(intent);
+                        }
                         break;
                     case DOING:
                         intent = new Intent(getActivity(), WriteHomeWorkActivity.class);
@@ -317,7 +332,8 @@ public class ExerciseBookFragment extends BFragment {
                                     }
                                 } else if ("IH02".equals(statusCode)) {//作答中
                                     doingList.add(homeworkSummary);
-                                } else if ("IH03".equals(statusCode) || "IH04".equals(statusCode)) {//未批改,批改中都算待批改
+                                } else if ("IH03".equals(statusCode) || "IH04".equals(statusCode) //未批改,批改中都算待批改
+                                        || "IH52".equals(statusCode)) {//自评中也算待批改
                                     waitForCheckList.add(homeworkSummary);
                                 } else if ("IH05".equals(statusCode) || "IH51".equals(statusCode)) {//已批改,未提交都算已批改
                                     checkedList.add(homeworkSummary);

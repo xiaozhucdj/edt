@@ -39,7 +39,8 @@
                 android:gravity="center"
                 android:text="旧密码 : "
                 android:textColor="@color/black"
-                android:textSize="24px" />
+                android:textSize="24px"
+                />
 
             <EditText
                 android:id="@+id/old_pwd_edtv"
@@ -56,17 +57,18 @@
                 android:padding="10px"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:textSize="22px" />
+                android:textSize="22px"
+                android:maxLength="16"/>
 
             <TextView
                 android:id="@+id/new_pwd_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/old_pwd_edtv"
-                android:layout_marginLeft="40px"
+                android:layout_marginLeft="89px"
                 android:layout_marginTop="27px"
                 android:gravity="center"
-                android:text="确认新密码 : "
+                android:text="新密码 : "
                 android:textColor="@color/black"
                 android:textSize="24px" />
 
@@ -85,7 +87,8 @@
                 android:padding="10px"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:textSize="22px" />
+                android:textSize="22px"
+                android:maxLength="16"/>
 
             <TextView
                 android:id="@+id/again_new_pwd_tv"
@@ -114,7 +117,8 @@
                 android:padding="10px"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:textSize="22px" />
+                android:textSize="22px"
+                android:maxLength="16"/>
 
             <TextView
                 android:id="@+id/hint_tv"
