@@ -72,11 +72,11 @@
                 android:layout_width="@dimen/image_width"
                 android:layout_height="@dimen/image_height"
                 android:layout_gravity="center"
-                android:background="@drawable/img_shu"
+                android:background="@drawable/shu_bg"
                 android:paddingBottom="@dimen/image_padding"
                 android:paddingRight="@dimen/image_padding"
                 android:scaleType="fitXY"
-                android:src="@drawable/img_book_cover" />
+                 />
 
             <TextView
                 android:id="@+id/book_name_tv"

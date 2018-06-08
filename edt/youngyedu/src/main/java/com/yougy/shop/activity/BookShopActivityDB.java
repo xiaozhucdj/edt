@@ -25,6 +25,7 @@ import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.BookStoreQueryBookInfoReq;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
+import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookStoreBookReq;
 import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
 import com.yougy.common.protocol.request.NewBookStoreHomeReq;
@@ -66,7 +67,7 @@ import static rx.Observable.create;
  */
 public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdapter.OnMoreClickListener {
 
-//    @BindString(R.string.all_version)
+    //    @BindString(R.string.all_version)
 //    String mAllVersion;
 //    @BindString(R.string.school_version)
 //    String mSchoolVersion;
@@ -127,10 +128,10 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     protected void loadData() {
         getCategoryInfo().subscribe(categoryInfos -> {
             handleCategoryInfo(categoryInfos);
-            int position = getIntent().getIntExtra(CLASSIFY_POSITION,CLASSIFY_POSITION_ALL);
-            if (position == CLASSIFY_POSITION_GUID){
+            int position = getIntent().getIntExtra(CLASSIFY_POSITION, CLASSIFY_POSITION_ALL);
+            if (position == CLASSIFY_POSITION_GUID) {
                 guidebookSelected();
-            }else{
+            } else {
                 extrabookSelected();
             }
         });
@@ -256,29 +257,30 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取首页数据
      */
     private Observable<List<BookInfo>> getHomeInfo() {
-        return create(subscriber -> {
-            long start = System.currentTimeMillis();
-            Response response = NewProtocolManager.queryBookShopHome(new NewBookStoreHomeReq());
-            long end = System.currentTimeMillis();
-            LogUtils.e(tag,"getHomeInfo takes time : " + (end - start));
-            if (response.isSuccessful()) {
-                try {
-                    String resultJson = response.body().string();
-                    LogUtils.e(tag, "home info : " + resultJson);
-                    start = System.currentTimeMillis();
-                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-                    LogUtils.e(tag, "bookinfos : " + result.getData().size());
-                    end = System.currentTimeMillis();
-                    LogUtils.e(tag,"getHomeInfo jiexi shuju takes time : " + (end - start));
-                    subscriber.onNext(result.getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
+        return NetWorkManager.queryBookShopHomeInfo(new BookStoreHomeReq());
+//        return create(subscriber -> {
+//            long start = System.currentTimeMillis();
+//            Response response = NewProtocolManager.queryBookShopHome(new NewBookStoreHomeReq());
+//            long end = System.currentTimeMillis();
+//            LogUtils.e(tag,"getHomeInfo takes time : " + (end - start));
+//            if (response.isSuccessful()) {
+//                try {
+//                    String resultJson = response.body().string();
+//                    LogUtils.e(tag, "home info : " + resultJson);
+//                    start = System.currentTimeMillis();
+//                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
+//                    LogUtils.e(tag, "bookinfos : " + result.getData().size());
+//                    end = System.currentTimeMillis();
+//                    LogUtils.e(tag,"getHomeInfo jiexi shuju takes time : " + (end - start));
+//                    subscriber.onNext(result.getData());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
     }
 
     /**
@@ -392,7 +394,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getThisActivity()) {
             @Override
             public int getPageBtnCount() {
-                return (totalCount + COUNT_PER_PAGE - 1)/ COUNT_PER_PAGE;
+                return (totalCount + COUNT_PER_PAGE - 1) / COUNT_PER_PAGE;
             }
 
             @Override
@@ -456,21 +458,21 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private boolean flag = false;
+
     public void clickTvAll(View view) {
+        hideRecycler();
+        mClassifyId = -1;
+        mClassifyPosition = CLASSIFY_POSITION_ALL;
+        hideSpinnerLayout();
+        binding.tvAll.setSelected(true);
+        binding.guidebook.setSelected(false);
+        binding.extrabook.setSelected(false);
+        binding.textbook.setSelected(false);
+        hideAll();
+        binding.singleClassifyLayout.setVisibility(View.GONE);
+        binding.allClassifyRecycler.setVisibility(View.VISIBLE);
         if (!flag){
             getHomeInfo().subscribe(this::handleHomeInfo);
-        }else {
-            hideRecycler();
-            mClassifyId = -1;
-            mClassifyPosition = CLASSIFY_POSITION_ALL;
-            hideSpinnerLayout();
-            binding.tvAll.setSelected(true);
-            binding.guidebook.setSelected(false);
-            binding.extrabook.setSelected(false);
-            binding.textbook.setSelected(false);
-            hideAll();
-            binding.singleClassifyLayout.setVisibility(View.GONE);
-            binding.allClassifyRecycler.setVisibility(View.VISIBLE);
         }
     }
 
@@ -648,7 +650,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 //        if (binding.correspondSchool.isChecked()) {
 //            hideFiltrateTv();
 //        } else {
-            showFiltrateTv();
+        showFiltrateTv();
 //        }
         showCorrespondSchoolCb();
         refreshSearchResultView();
@@ -683,7 +685,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 //        if (binding.correspondSchool.isChecked()) {
 //            hideFiltrateTv();
 //        } else {
-            showFiltrateTv();
+        showFiltrateTv();
 //        }
         showCorrespondSchoolCb();
         refreshSearchResultView();
@@ -713,7 +715,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         mSubject = "";
 //        mVersion = binding.correspondSchool.isChecked() ? mSchoolVersion : mAllVersion;
 //        if (binding.classifyButton.getVisibility() == View.VISIBLE) {
-            mVersion = "";
+        mVersion = "";
 //        }
     }
 
@@ -823,7 +825,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 //        if (binding.correspondSchool.getVisibility() == View.VISIBLE) {
 //            binding.correspondSchool.setVisibility(View.GONE);
 //        }
-        if (binding.filtrate.getVisibility() == View.VISIBLE){
+        if (binding.filtrate.getVisibility() == View.VISIBLE) {
             binding.filtrate.setVisibility(View.GONE);
         }
     }
@@ -843,9 +845,10 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     /**
      * 隐藏筛选布局
      */
-    public void hideFiltrateLayout(View view){
+    public void hideFiltrateLayout(View view) {
         hideFiltrateLayout();
     }
+
     private void hideFiltrateLayout() {
         for (int i = 0; i < binding.subjectWrap.getChildCount(); i++) {
             View child = binding.subjectWrap.getChildAt(i);
@@ -968,7 +971,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 //        if (binding.correspondSchool.getVisibility() == View.GONE) {
 //            binding.correspondSchool.setVisibility(View.VISIBLE);
 //        }
-        if(binding.filtrate.getVisibility() == View.GONE){
+        if (binding.filtrate.getVisibility() == View.GONE) {
             binding.filtrate.setVisibility(View.VISIBLE);
         }
     }

@@ -231,7 +231,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     @Override
     public void loadData() {
 
-        showNetDialog();
+        showNoNetDialog();
         NetWorkManager.queryReplyDetail(examId, null, String.valueOf(studentId))
                 .subscribe(new Action1<List<QuestionReplyDetail>>() {
                     @Override
@@ -870,7 +870,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
      */
     private void getUpLoadInfo() {
 
-        showNetDialog();
+        showNoNetDialog();
 
         NetWorkManager.postCommentRequest(questionReplyDetail.getReplyId() + "")
                 .subscribe(new Action1<STSbean>() {

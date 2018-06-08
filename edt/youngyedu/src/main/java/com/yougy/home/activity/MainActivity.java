@@ -301,13 +301,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
 
-        testVersion  = (TextView) this.findViewById(R.id.test_version);
+        testVersion = (TextView) this.findViewById(R.id.test_version);
     }
 
 
     @Override
     protected void loadData() {
-        if (BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             testVersion.setVisibility(View.VISIBLE);
             testVersion.setText(UIUtils.getString(R.string.app_name));
         }
@@ -331,14 +331,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        long currentTime =System.currentTimeMillis();
-        if (mLastTime>0 && SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")){
-            if (currentTime -mLastTime  <1000){
+        long currentTime = System.currentTimeMillis();
+        if (mLastTime > 0 && SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            if (currentTime - mLastTime < 1000) {
                 UIUtils.showToastSafe("操作过快");
                 return;
             }
         }
-        mLastTime = currentTime ;
+        mLastTime = currentTime;
 
         int clickedViewId = v.getId();
         setSysTime();
@@ -505,7 +505,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.img_wifi:
-                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
+//                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
+                boolean isConnected =false ;
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
                 break;
@@ -1019,7 +1020,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
 
-        if (SpUtils.getOrder().contains(LOCK_SCREEN) && SpUtils.getOrder().contains(DateUtils.getCalendarString())){
+        if (SpUtils.getOrder().contains(LOCK_SCREEN) && SpUtils.getOrder().contains(DateUtils.getCalendarString())) {
             Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(newIntent);
@@ -1041,7 +1042,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_2));
             }
             if (YougyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
-                LogUtils.e(tag,"setSysWifi upload................");
+                LogUtils.e(tag, "setSysWifi upload................");
                 startService(new Intent(this, UploadService.class));
             }
         } else {
@@ -1138,7 +1139,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-
     //=================================升级相关代码 开始=============================================================
     private int lastProgress;
 
@@ -1165,8 +1165,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             //现在升级
-                                            SpUtils.setVersion(""+serverVersion);
-                                            FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" , FileContonst.LOAD_APP_STUDENT+","+SpUtils.getVersion());
+                                            SpUtils.setVersion("" + serverVersion);
+                                            FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
                                             dialog.dismiss();
                                             doDownLoad(MainActivity.this, url);
                                         }
@@ -1215,7 +1215,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         DownloadManager.downloadId = DownloadManager.getInstance().add(DownloadManager.getDownLoadRequest(mContext, downloadUrl, new DownloadStatusListenerV1() {
             @Override
             public void onDownloadComplete(DownloadRequest downloadRequest) {
-                LogUtils.e("FH" , "下载完成,开始安装");
+                LogUtils.e("FH", "下载完成,开始安装");
                 // 更新进度条显示
                 downProgressDialog.setDownProgress("100%");
                 downProgressDialog.dismiss();
@@ -1229,7 +1229,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onDownloadFailed(DownloadRequest downloadRequest, int errorCode, String errorMessage) {
                 downProgressDialog.setDownProgress("更新失败，重新更新下载");
-                LogUtils.e("FH" , "更新失败: errorCode=" + errorCode + " errorMsg=" + errorMessage);
+                LogUtils.e("FH", "更新失败: errorCode=" + errorCode + " errorMsg=" + errorMessage);
                 // TODO: 2017/4/25
                 downProgressDialog.dismiss();
                 doDownLoad(mContext, downloadUrl);
@@ -1238,7 +1238,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onProgress(DownloadRequest downloadRequest, long totalBytes, long downloadedBytes, int progress) {
                 if (lastProgress != progress) {
-                    LogUtils.e("FH" , "下载进度变化------" + progress + "%");
+                    LogUtils.e("FH", "下载进度变化------" + progress + "%");
                     lastProgress = progress;
                     String content = downloadedBytes * 100 / totalBytes + "%";
                     downProgressDialog.setDownProgress(content);
