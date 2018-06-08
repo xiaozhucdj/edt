@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ import rx.functions.Action1;
  * Created by Administrator on 2016/7/12.
  * 文件夹
  */
-public class FolderFragment extends BFragment  {
+public class FolderFragment extends BFragment {
     /**
      * 适配器 数据
      */
@@ -64,8 +65,8 @@ public class FolderFragment extends BFragment  {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
 //        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
 
 
@@ -95,10 +96,15 @@ public class FolderFragment extends BFragment  {
      */
     private void itemClick(int position) {
         HomeworkBookSummary info = mCourseInfos.get(position);
-        Intent intent = new Intent(getActivity() , AnswerBookStructureActivity.class);
-        intent.putExtra("bookName" , info.getCourseBookTitle());
-        intent.putExtra("bookId" , info.getCourseBookId());
-        intent.putExtra("homeworkId" , info.getHomeworkId());
+
+        if ( info.getCourseBookId() == -1 || info.getCourseBookId() == 0){
+            ToastUtil.showCustomToast(getActivity() , "该学科还没有教材");
+            return;
+        }
+        Intent intent = new Intent(getActivity(), AnswerBookStructureActivity.class);
+        intent.putExtra("bookName", info.getCourseBookTitle());
+        intent.putExtra("bookId", info.getCourseBookId());
+        intent.putExtra("homeworkId", info.getHomeworkId());
         startActivity(intent);
     }
 
@@ -144,7 +150,7 @@ public class FolderFragment extends BFragment  {
                     }, new Action1<Throwable>() {
                         @Override
                         public void call(Throwable throwable) {
-                            ToastUtil.showCustomToast(getContext() , "获取作业本数据失败,请点击刷新重新获取");
+                            ToastUtil.showCustomToast(getContext(), "获取作业本数据失败,请点击刷新重新获取");
                             throwable.printStackTrace();
                         }
                     });
@@ -163,7 +169,7 @@ public class FolderFragment extends BFragment  {
     /***
      * 刷新适配器数据
      */
-    private void refreshAdapterData(int  pagerIndex) {
+    private void refreshAdapterData(int pagerIndex) {
         //设置page页数数据
         mCourseInfos.clear();
         if ((pagerIndex - 1) * COUNT_PER_PAGE + COUNT_PER_PAGE > mCountCourses.size()) { // 不是 正数被
@@ -231,7 +237,7 @@ public class FolderFragment extends BFragment  {
 /*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
                 contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
 
-                refreshAdapterData(btnIndex+1);
+                refreshAdapterData(btnIndex + 1);
             }
         });
         mPageBtnBar.setCurrentSelectPageIndex(0);

@@ -207,7 +207,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity{
     }
     //我已学会
     public void onHasLearnedBtnCLick(View view){
-        if (!showNetDialog()){
+        if (!showNoNetDialog()){
             new FullScreenHintDialog(this , "hasLearned")
                     .setIconResId(R.drawable.icon_caution_big)
                     .setContentText("是否从我的错题本中移除该题?")

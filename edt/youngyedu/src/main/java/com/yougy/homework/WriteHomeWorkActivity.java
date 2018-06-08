@@ -302,7 +302,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void loadData() {
 
-        showNetDialog();
+        showNoNetDialog();
 
         NetWorkManager.queryExam(examId, null).subscribe(new Action1<List<HomeworkDetail>>() {
             @Override
@@ -1064,7 +1064,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 获取oss上传所需信息
      */
     private void getUpLoadInfo() {
-        showNetDialog();
+        showNoNetDialog();
         NetWorkManager.queryReplyRequest(SpUtils.getUserId() + "")
                 .subscribe(new Action1<STSbean>() {
                     @Override
