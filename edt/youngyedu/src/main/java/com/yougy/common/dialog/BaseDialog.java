@@ -2,7 +2,9 @@ package com.yougy.common.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
@@ -79,4 +81,10 @@ public abstract class BaseDialog extends Dialog {
 //            }
 //        }
 //    }
+
+
+    public BaseDialog setOnDismissListener_return(@Nullable OnDismissListener listener) {
+        setOnDismissListener(listener);
+        return this;
+    }
 }

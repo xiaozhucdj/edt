@@ -285,6 +285,11 @@ public class SettingMainActivity extends BaseActivity {
             public void onPwdListener() {
                 RefreshUtil.invalidate(binding.getRoot());
             }
+        }).setOnDismissListener_return(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                RefreshUtil.invalidate(binding.getRoot());
+            }
         }).show();
     }
 
