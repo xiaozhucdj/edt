@@ -224,13 +224,13 @@ public class SettingMainActivity extends BaseActivity {
             public void onClick(DialogInterface dialog, int which) {
                 unBindRequest();
                 dialog.dismiss();
-                RefreshUtil.invalidate(binding.getRoot());
+                invalidateDelayed();
             }
         }, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                RefreshUtil.invalidate(binding.getRoot());
+                invalidateDelayed();
             }
         }).show();
     }
@@ -284,7 +284,7 @@ public class SettingMainActivity extends BaseActivity {
         new ChangePwdDialog(this).setPwdListener(new ChangePwdDialog.DialogPwdListener() {
             @Override
             public void onPwdListener() {
-                RefreshUtil.invalidate(binding.getRoot());
+                invalidateDelayed();
             }
         }).setOnDismissListener_return(new DialogInterface.OnDismissListener() {
             @Override
