@@ -159,8 +159,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
                     mUiPromptDialog.dismiss();
                 }
             } else {
-                if (mUiPromptDialog != null && !mUiPromptDialog.isShowing())
-                    mUiPromptDialog.show();
+                showNoNetDialog();
             }
         }
     }
