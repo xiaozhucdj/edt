@@ -153,7 +153,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         if (event == null) {
             return;
         } else if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
-            if (NetManager.getInstance().isWifiConnected(this)) {
+            if (NetManager.getInstance().isWifiConnected(this) && SpUtils.getUserId()>0) {
                 YXClient.checkNetAndRefreshLogin(this, null);
                 if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
                     mUiPromptDialog.dismiss();
@@ -191,8 +191,11 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
 //                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
 //                        | PowerManager.ON_AFTER_RELEASE, BaseActivity.this.getClass().getName());
 //        mWakeLock.acquire();
+        invalidateDelayed();
 
+    }
 
+    public void invalidateDelayed() {
         if (mRefreshRun == null) {
             mRefreshRun = new Runnable() {
                 @Override
