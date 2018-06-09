@@ -16,8 +16,8 @@
             android:layout_centerInParent="true"
             android:background="@drawable/shape_rounded_rectangle_all_white"
             android:paddingBottom="30px"
-            android:paddingLeft="50px"
-            android:paddingRight="50px"
+            android:paddingLeft="53px"
+            android:paddingRight="53px"
             android:paddingTop="30px">
 
             <TextView
@@ -44,16 +44,20 @@
 
 
             <Button
+                android:layout_marginRight="1px"
+                android:layout_marginTop="1px"
                 android:id="@+id/cancle_btn"
                 android:layout_width="200px"
                 android:layout_height="48px"
-                android:background="@drawable/bind_cancel_btn_bg"
                 android:layout_below="@id/content_tv"
+                android:background="@drawable/bind_cancel_btn_bg"
                 android:text="@string/cancel"
                 android:textColor="@color/black"
                 android:textSize="24px" />
 
             <Button
+                android:layout_marginRight="1px"
+                android:layout_marginTop="1px"
                 android:id="@+id/confirm_btn"
                 android:layout_width="200px"
                 android:layout_height="48px"

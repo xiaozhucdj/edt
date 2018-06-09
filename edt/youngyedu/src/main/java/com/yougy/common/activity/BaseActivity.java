@@ -218,6 +218,10 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         if (mRefreshRun != null) {
             YougyApplicationManager.getMainThreadHandler().removeCallbacks(mRefreshRun);
         }
+
+        if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
+            mUiPromptDialog.dismiss();
+        }
         super.onPause();
     }
 

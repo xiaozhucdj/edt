@@ -47,6 +47,7 @@ import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
@@ -1055,7 +1056,7 @@ public class YXClient {
      */
     public static void checkNetAndRefreshLogin(Activity activity , Runnable onRefreshSuccessRunnable) {
         if (loadingDialog == null || !loadingDialog.isShowing()){
-            loadingDialog  = new LoadingProgressDialog(activity);
+            loadingDialog  = new LoadingProgressDialog(BaseActivity.getCurrentActivity());
             loadingDialog.show();
             loadingDialog.setTitle("正在连接服务器...");
         }
@@ -1112,12 +1113,12 @@ public class YXClient {
                                 if (loadingDialog != null && loadingDialog.isShowing()){
                                     loadingDialog.dismiss();
                                 }
-                                new ConfirmDialog(activity, "连接到消息服务器失败 : "
+                                new ConfirmDialog(BaseActivity.getCurrentActivity(), "连接到消息服务器失败 : "
                                         + reason + " , 是否重连?", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        checkNetAndRefreshLogin(activity , onRefreshSuccessRunnable);
+                                        checkNetAndRefreshLogin(BaseActivity.getCurrentActivity() , onRefreshSuccessRunnable);
                                     }
                                 }, "重新连接").show();
                             }
