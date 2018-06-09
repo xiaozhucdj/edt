@@ -84,6 +84,7 @@ import rx.functions.Action1;
  * 对云信api的封装,实际上是一个完整的云信的Client,只是没有界面,提供注册listener和多种get方法与外界的UI界面交互.
  */
 public class YXClient {
+    private static ConfirmDialog mMsgFail;
     Context mContext;
 
     static public final String ID = "id";
@@ -93,14 +94,14 @@ public class YXClient {
     static public final String TEAM = "team";
     static public final String IS_FETCHING = "is_fetching";
 
-    private final long UPDATE_THRESHOLD = 1000*60*60;
+    private final long UPDATE_THRESHOLD = 1000 * 60 * 60;
 
     private static volatile YXClient instance = null;
-    HashMap<String , EmptyFragment> emptyFragmentMap = new HashMap<String, EmptyFragment>();
+    HashMap<String, EmptyFragment> emptyFragmentMap = new HashMap<String, EmptyFragment>();
     private ArrayList<RecentContact> recentContactList = new ArrayList<RecentContact>();
     private HashMap<String, Bundle> userInfoMap = new HashMap<String, Bundle>();
     private HashMap<String, Bundle> teamInfoMap = new HashMap<String, Bundle>();
-    private HashMap<String , Pair<Long , List<TeamMember>>> groupMemberMap = new HashMap<String, Pair<Long, List<TeamMember>>>();
+    private HashMap<String, Pair<Long, List<TeamMember>>> groupMemberMap = new HashMap<String, Pair<Long, List<TeamMember>>>();
     private ArrayList<Team> myTeamList = new ArrayList<Team>();
     private String currentAccount = null;
     private StatusCode currentOnlineStatus = null;
@@ -108,7 +109,6 @@ public class YXClient {
     private boolean teamDataInitFinish = false;
 
     private static LoadingProgressDialog loadingDialog;
-
 
 
     //全局所有的用户信息更新监听器列表
@@ -124,8 +124,8 @@ public class YXClient {
     private ArrayList<OnThingsChangedListener<List<Team>>> onMyTeamListChangeListeners
             = new ArrayList<OnThingsChangedListener<List<Team>>>();
     //全局所有的群成员变更监听器列表
-    private ArrayList<OnThingsChangedListener<Pair<String , List<TeamMember>>>> onTeamMemberChangedListeners
-            = new ArrayList<OnThingsChangedListener<Pair<String,List<TeamMember>>>>();
+    private ArrayList<OnThingsChangedListener<Pair<String, List<TeamMember>>>> onTeamMemberChangedListeners
+            = new ArrayList<OnThingsChangedListener<Pair<String, List<TeamMember>>>>();
     //全局所有的自定义新到消息监听器列表
     private ArrayList<OnMessageListener> onNewMessageListenerList = new ArrayList<OnMessageListener>();
     //全局所有的自定义消息发送状态监听器列表
@@ -144,78 +144,77 @@ public class YXClient {
             //并且把新建的p2p消息插入云信SDK的本地数据库,这样就方便以后查询p2p历史记录时,可以直接一次性的把群消息和p2p消息都查出来.
             //插入数据库后SDK的最近联系人列表也会自动更新,不需要手动通知.
             for (IMMessage newMessage : imMessages) {
-               LogUtils.e("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType() + " attach : " + newMessage.getAttachment());
-                if ((newMessage.getMsgType()) == MsgTypeEnum.custom){
-                    if (newMessage.getAttachment() == null){
+                LogUtils.e("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType() + " attach : " + newMessage.getAttachment());
+                if ((newMessage.getMsgType()) == MsgTypeEnum.custom) {
+                    if (newMessage.getAttachment() == null) {
                         // 解析有问题的自定义消息attachment为空,滤掉这类消息
                         continue;
-                    }
-                    else if (newMessage.getAttachment() instanceof AskQuestionAttachment
+                    } else if (newMessage.getAttachment() instanceof AskQuestionAttachment
                             || newMessage.getAttachment() instanceof EndQuestionAttachment
                             || newMessage.getAttachment() instanceof WendaQuestionAddAttachment
                             || newMessage.getAttachment() instanceof OverallLockAttachment
                             || newMessage.getAttachment() instanceof OverallUnlockAttachment
                             || newMessage.getAttachment() instanceof RetryAskQuestionAttachment
                             || newMessage.getAttachment() instanceof NeedRefreshHomeworkAttachment
-                            ){
+                            ) {
                         //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
                             listener.onNewMessage(newMessage);
                         }
                         continue;
-                    }
-                    else {
+                    } else {
 
                     }
                 }
                 if (newMessage.getSessionType() == SessionTypeEnum.Team) {
-                   LogUtils.e("FH" , "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
+                    LogUtils.e("FH", "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
                     IMMessage localMessage = null;
-                    switch (newMessage.getMsgType()){
+                    switch (newMessage.getMsgType()) {
                         case file:
-                            localMessage = MessageBuilder.createFileMessage(newMessage.getFromAccount() , SessionTypeEnum.P2P , null , null);
+                            localMessage = MessageBuilder.createFileMessage(newMessage.getFromAccount(), SessionTypeEnum.P2P, null, null);
                             localMessage.setAttachment(newMessage.getAttachment());
                             localMessage.setAttachStatus(newMessage.getAttachStatus());
                             break;
                         case custom:
-                            localMessage = MessageBuilder.createCustomMessage(newMessage.getFromAccount() , SessionTypeEnum.P2P, "[图书推荐]" , newMessage.getAttachment());
+                            localMessage = MessageBuilder.createCustomMessage(newMessage.getFromAccount(), SessionTypeEnum.P2P, "[图书推荐]", newMessage.getAttachment());
                             localMessage.setAttachStatus(newMessage.getAttachStatus());
                             break;
                         case text:
-                            localMessage = MessageBuilder.createTextMessage(newMessage.getFromAccount(), SessionTypeEnum.P2P , newMessage.getContent());
+                            localMessage = MessageBuilder.createTextMessage(newMessage.getFromAccount(), SessionTypeEnum.P2P, newMessage.getContent());
                             break;
                         default:
-                           LogUtils.e("FH" , "未知类型 " + newMessage.getMsgType() + "新建消息失败");
+                            LogUtils.e("FH", "未知类型 " + newMessage.getMsgType() + "新建消息失败");
                     }
-                    if (localMessage != null){
-                       LogUtils.e("FH" , "开始插入数据库");
+                    if (localMessage != null) {
+                        LogUtils.e("FH", "开始插入数据库");
                         localMessage.setFromAccount(newMessage.getFromAccount());
                         localMessage.setDirect(MsgDirectionEnum.In);
                         localMessage.setStatus(MsgStatusEnum.success);
 
-                        NIMClient.getService(MsgService.class).saveMessageToLocalEx(localMessage , false , newMessage.getTime())
-                        .setCallback(new RequestCallback<Void>() {
-                            @Override
-                            public void onSuccess(Void param) {
-                               LogUtils.e("FH" , "插入数据库成功");
-                            }
-                            @Override
-                            public void onFailed(int code) {
-                               LogUtils.e("FH" , "插入数据库失败 : " + code);
-                            }
-                            @Override
-                            public void onException(Throwable exception) {
-                               LogUtils.e("FH" , "插入数据库失败 : " + exception.getMessage());
-                                exception.printStackTrace();
-                            }
-                        });
+                        NIMClient.getService(MsgService.class).saveMessageToLocalEx(localMessage, false, newMessage.getTime())
+                                .setCallback(new RequestCallback<Void>() {
+                                    @Override
+                                    public void onSuccess(Void param) {
+                                        LogUtils.e("FH", "插入数据库成功");
+                                    }
+
+                                    @Override
+                                    public void onFailed(int code) {
+                                        LogUtils.e("FH", "插入数据库失败 : " + code);
+                                    }
+
+                                    @Override
+                                    public void onException(Throwable exception) {
+                                        LogUtils.e("FH", "插入数据库失败 : " + exception.getMessage());
+                                        exception.printStackTrace();
+                                    }
+                                });
                         SpUtils.addUnreadMsgCount(localMessage.getSessionId());
                         for (OnMessageListener listener : onNewMessageListenerList) {
                             listener.onNewMessage(localMessage);
                         }
                     }
-                }
-                else {
+                } else {
                     SpUtils.addUnreadMsgCount(newMessage.getSessionId());
                     for (OnMessageListener listener : onNewMessageListenerList) {
                         listener.onNewMessage(newMessage);
@@ -238,7 +237,7 @@ public class YXClient {
         @Override
         public void onEvent(CustomNotification customNotification) {
             lv("收到自定义通知" + " content : " + customNotification.getContent()
-            + " from : " + customNotification.getFromAccount()
+                    + " from : " + customNotification.getFromAccount()
                     + " sstype : " + customNotification.getSessionType()
                     + " ssid : " + customNotification.getSessionId()
                     + " time : " + customNotification.getTime());
@@ -261,13 +260,12 @@ public class YXClient {
         @Override
         public void onEvent(StatusCode statusCode) {
             currentOnlineStatus = statusCode;
-           LogUtils.e("FH" , "onlineStatus 变更: " + statusCode);
-            if (statusCode == StatusCode.PWD_ERROR){
+            LogUtils.e("FH", "onlineStatus 变更: " + statusCode);
+            if (statusCode == StatusCode.PWD_ERROR) {
 //                if (!TextUtils.isEmpty(currentAccount)){
 //                    getTokenAndLogin(currentAccount , null);
 //                }
-            }
-            else if (statusCode == StatusCode.KICKOUT){
+            } else if (statusCode == StatusCode.KICKOUT) {
 
             }
         }
@@ -281,37 +279,36 @@ public class YXClient {
             //因此需要手动过滤群消息导致的联系人变动,并且把变动后的最近联系人列表中的群消息项删除,再通知到UI注册的监听器.
             //另外,学生端10位id的其他学生和6位id的管理员都不需要显示在最近通话中,此处滤掉
             lv("收到最近联系人变更(包含群) " + newRecentContactList.size() + "个");
-            for (int i = newRecentContactList.size() - 1 ; i >= 0 ; i--) {
+            for (int i = newRecentContactList.size() - 1; i >= 0; i--) {
                 RecentContact newRecentContact = newRecentContactList.get(i);
-                if (newRecentContact.getSessionType() == SessionTypeEnum.Team){
+                if (newRecentContact.getSessionType() == SessionTypeEnum.Team) {
                     newRecentContactList.remove(newRecentContact);
                     continue;
                 }
                 if (newRecentContact.getContactId().length() == 6
-                        || (newRecentContact.getContactId().length() == 10 && !newRecentContact.getContactId().equals(SpUtils.getUserId()))){
+                        || (newRecentContact.getContactId().length() == 10 && !newRecentContact.getContactId().equals(SpUtils.getUserId()))) {
                     //另外,学生端10位id的其他学生和6位id的管理员都不需要显示在最近通话中,此处滤掉
                     newRecentContactList.remove(newRecentContact);
                     continue;
                 }
-                for (int j = 0 ; j < recentContactList.size() ;) {
+                for (int j = 0; j < recentContactList.size(); ) {
                     RecentContact oldContact = recentContactList.get(j);
                     if (oldContact.getContactId().equals(newRecentContact.getContactId())) {
                         recentContactList.remove(oldContact);
                         break;
-                    }
-                    else {
+                    } else {
                         j++;
                     }
                 }
-                switch (newRecentContact.getSessionType()){
+                switch (newRecentContact.getSessionType()) {
                     case P2P:
-                        updateUserInfo(newRecentContact.getContactId() , false);
+                        updateUserInfo(newRecentContact.getContactId(), false);
                         break;
                 }
             }
-            recentContactList.addAll(0 , newRecentContactList);
+            recentContactList.addAll(0, newRecentContactList);
             for (OnThingsChangedListener<List<RecentContact>> listener : onRecentContactChangeListeners) {
-                listener.onThingChanged(recentContactList , UNKNOWN);
+                listener.onThingChanged(recentContactList, UNKNOWN);
             }
         }
     };
@@ -321,19 +318,19 @@ public class YXClient {
         public void onEvent(List<Team> newTeams) {
             //收到群组资料变更,参数为变更的群组
             lv("收到群组资料变更 变更的群个数 " + newTeams.size());
-            for (final Team newTeam: newTeams) {
+            for (final Team newTeam : newTeams) {
                 if (ListUtil.conditionalRemove(myTeamList, new ListUtil.ConditionJudger<Team>() {
                     @Override
                     public boolean isMatchCondition(Team nodeInList) {
                         return nodeInList.getId().equals(newTeam.getId());
                     }
-                }) != 0){
+                }) != 0) {
                     myTeamList.addAll(0, newTeams);
                 }
                 Bundle bundle = makeTeamInfoBundle(newTeam);
-                teamInfoMap.put(newTeam.getId() , bundle);
-                for (OnThingsChangedListener<Bundle> listener: onTeamInfoChangeListeners) {
-                    listener.onThingChanged(bundle , ALL);
+                teamInfoMap.put(newTeam.getId(), bundle);
+                for (OnThingsChangedListener<Bundle> listener : onTeamInfoChangeListeners) {
+                    listener.onThingChanged(bundle, ALL);
                 }
             }
             myTeamList.addAll(0, newTeams);
@@ -353,11 +350,11 @@ public class YXClient {
             });
             groupMemberMap.remove(quitedTeam.getId());
             teamInfoMap.remove(quitedTeam.getId());
-            List<Team> list = new ArrayList<Team>(){{
+            List<Team> list = new ArrayList<Team>() {{
                 add(quitedTeam);
             }};
             for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
-                listener.onThingChanged(list , DELETE);
+                listener.onThingChanged(list, DELETE);
             }
         }
     };
@@ -368,19 +365,19 @@ public class YXClient {
         public void onEvent(List<TeamMember> members) {
             lv("收到群成员资料变化观察者通知 数量 " + members.size());
             for (final TeamMember newMember : members) {
-                if (newMember.getAccount().length() == 6 || (newMember.getAccount().length() == 10 && !newMember.getAccount().equals(SpUtils.getUserId() + ""))){
+                if (newMember.getAccount().length() == 6 || (newMember.getAccount().length() == 10 && !newMember.getAccount().equals(SpUtils.getUserId() + ""))) {
                     //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
                     continue;
                 }
-                if (getTeamMemberByID(newMember.getTid()) != null){
-                    Pair<Long , List<TeamMember>> pair = groupMemberMap.get(newMember.getTid());
+                if (getTeamMemberByID(newMember.getTid()) != null) {
+                    Pair<Long, List<TeamMember>> pair = groupMemberMap.get(newMember.getTid());
                     pair.first = System.currentTimeMillis();
                     if (ListUtil.conditionalContains(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
                         @Override
                         public boolean isMatchCondition(TeamMember nodeInList) {
                             return nodeInList.getAccount().equals(newMember.getAccount());
                         }
-                    })){
+                    })) {
                         ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
                             @Override
                             public boolean isMatchCondition(TeamMember nodeInList) {
@@ -388,14 +385,15 @@ public class YXClient {
                             }
                         });
                         pair.sencond.add(newMember);
-                        for (OnThingsChangedListener<Pair<String , List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                            listener.onThingChanged(new Pair<>(newMember.getTid() , pair.sencond) , ALL);
+                        for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
+                            listener.onThingChanged(new Pair<>(newMember.getTid(), pair.sencond), ALL);
                         }
-                    }
-                    else {
+                    } else {
                         pair.sencond.add(newMember);
                         for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                            listener.onThingChanged(new Pair<>(newMember.getTid(), (List<TeamMember>)new ArrayList<TeamMember>() {{add(newMember);}})
+                            listener.onThingChanged(new Pair<>(newMember.getTid(), (List<TeamMember>) new ArrayList<TeamMember>() {{
+                                        add(newMember);
+                                    }})
                                     , NEW);
                         }
                     }
@@ -404,16 +402,16 @@ public class YXClient {
         }
     };
     //群成员被移除观察者
-    private Observer<TeamMember> teamMemberRemoveObserver = new Observer<TeamMember>(){
+    private Observer<TeamMember> teamMemberRemoveObserver = new Observer<TeamMember>() {
         @Override
         public void onEvent(final TeamMember teamMember) {
             lv("收到群成员被移除通知" + teamMember);
-            if (teamMember.getAccount().length() == 6 || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtils.getUserId()+""))){
+            if (teamMember.getAccount().length() == 6 || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtils.getUserId() + ""))) {
                 //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
                 return;
             }
-            if (getTeamMemberByID(teamMember.getTid()) != null){
-                Pair<Long , List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
+            if (getTeamMemberByID(teamMember.getTid()) != null) {
+                Pair<Long, List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
                 pair.first = System.currentTimeMillis();
                 ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
                     @Override
@@ -421,11 +419,11 @@ public class YXClient {
                         return nodeInList.getAccount().equals(teamMember.getAccount());
                     }
                 });
-                List<TeamMember> list = new ArrayList<TeamMember>(){{
+                List<TeamMember> list = new ArrayList<TeamMember>() {{
                     add(teamMember);
                 }};
                 for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                    listener.onThingChanged(new Pair<String, List<TeamMember>>(teamMember.getTid() , list) , DELETE);
+                    listener.onThingChanged(new Pair<String, List<TeamMember>>(teamMember.getTid(), list), DELETE);
                 }
             }
         }
@@ -437,22 +435,24 @@ public class YXClient {
             lv("过滤器收到信息!message type :　" + message.getMsgType() +
                     " content : " + message.getContent() +
                     " attach : " + message.getAttachment() +
-                    ((message.getAttachment() != null && message.getAttachment() instanceof NotificationAttachment) ? "attType : " + ((NotificationAttachment)message.getAttachment()).getType() : ""));
+                    ((message.getAttachment() != null && message.getAttachment() instanceof NotificationAttachment) ? "attType : " + ((NotificationAttachment) message.getAttachment()).getType() : ""));
             //过滤通知类消息
-            if (message.getMsgType() == MsgTypeEnum.notification){
-                if (message.getAttachment() != null && message.getAttachment() instanceof MemberChangeAttachment){
+            if (message.getMsgType() == MsgTypeEnum.notification) {
+                if (message.getAttachment() != null && message.getAttachment() instanceof MemberChangeAttachment) {
                     MemberChangeAttachment memberChangeAttachment = (MemberChangeAttachment) message.getAttachment();
-                    if (memberChangeAttachment.getType() == NotificationType.InviteMember){
+                    if (memberChangeAttachment.getType() == NotificationType.InviteMember) {
                         ArrayList<String> target = memberChangeAttachment.getTargets();
                         for (String id : target) {
-                            if (id.equals(SpUtils.justForTest())){
+                            if (id.equals(SpUtils.justForTest())) {
                                 NIMClient.getService(TeamService.class).queryTeam(message.getSessionId()).setCallback(new RequestCallbackWrapper<Team>() {
                                     @Override
                                     public void onResult(int code, final Team result, Throwable exception) {
-                                        if (code == ResponseCode.RES_SUCCESS){
+                                        if (code == ResponseCode.RES_SUCCESS) {
                                             myTeamList.add(result);
-                                            for (OnThingsChangedListener<List<Team>> listener: onMyTeamListChangeListeners){
-                                                listener.onThingChanged(new ArrayList<Team>(){{add(result);}}, NEW);
+                                            for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
+                                                listener.onThingChanged(new ArrayList<Team>() {{
+                                                    add(result);
+                                                }}, NEW);
                                             }
                                         }
                                     }
@@ -470,22 +470,23 @@ public class YXClient {
     //自定义消息解析器
     private CustomAttachParser customAttachParser = new CustomAttachParser();
 
-    public ListenerManager with(final Application application){
+    public ListenerManager with(final Application application) {
         return new ListenerManager();
     }
+
     /**
      * 获得一个与给定activity绑定的{@link YXClient.ListenerManager}
      * 用于添加和移除listener,绑定activity后,add的listener会自动在activity的onDestroy生命周期中注销,防止内存泄漏.
      * 因此如没有特殊需要,add的listener不用手动remove.
      *
      * @param activity 需要绑定的activity
-     * @return 与给定activity生命周期绑定的ListenerManager,使用此manager 添加的listener,不需要手动remove.
+     * @return 与给定activity生命周期绑定的ListenerManager, 使用此manager 添加的listener,不需要手动remove.
      * 它们会在activity onDestroy()的时候自动remove.
      */
-    public synchronized ListenerManager with (final Activity activity){
+    public synchronized ListenerManager with(final Activity activity) {
         lv("call with activity=" + activity);
         EmptyFragment emptyFragment = emptyFragmentMap.get(activity.toString());
-        if (emptyFragment != null){
+        if (emptyFragment != null) {
             lv("emptyFragment 已经存在:" + emptyFragment.toString());
             lv("返回manager:" + emptyFragment.lifeCycle.getManager());
             return emptyFragment.lifeCycle.getManager();
@@ -493,35 +494,43 @@ public class YXClient {
         final ListenerManager manager = new ListenerManager();
         LifeCycle lifeCycle = new LifeCycle() {
             @Override
-            void onStart() {}
+            void onStart() {
+            }
+
             @Override
-            void onResume() {}
+            void onResume() {
+            }
+
             @Override
-            void onPause() {}
+            void onPause() {
+            }
+
             @Override
-            void onStop() {}
+            void onStop() {
+            }
+
             @Override
             void onDestroy() {
                 lv("onDestroy-----lifeCycle manage=" + getManager().toString());
-                while(getManager().myOnMyTeamListChangeListeners.size() > 0){
+                while (getManager().myOnMyTeamListChangeListeners.size() > 0) {
                     getManager().removeOnMyTeamListChangeListener(getManager().myOnMyTeamListChangeListeners.get(0));
                 }
-                while(getManager().myOnTeamMemberChangedListeners.size() > 0){
+                while (getManager().myOnTeamMemberChangedListeners.size() > 0) {
                     getManager().removeOnTeamMemberChangeListener(getManager().myOnTeamMemberChangedListeners.get(0));
                 }
-                while(getManager().myOnTeamInfoChangeListeners.size() > 0){
+                while (getManager().myOnTeamInfoChangeListeners.size() > 0) {
                     getManager().removeOnTeamInfoChangeListener(getManager().myOnTeamInfoChangeListeners.get(0));
                 }
-                while(getManager().myOnRecentContactChangeListeners.size() > 0){
+                while (getManager().myOnRecentContactChangeListeners.size() > 0) {
                     getManager().removeOnRecentContactListChangeListener(getManager().myOnRecentContactChangeListeners.get(0));
                 }
-                while(getManager().myOnUserInfoChangeListeners.size() > 0){
+                while (getManager().myOnUserInfoChangeListeners.size() > 0) {
                     getManager().removeOnUserInfoChangeListener(getManager().myOnUserInfoChangeListeners.get(0));
                 }
-                while(getManager().myOnNewMessageListenerList.size() > 0){
+                while (getManager().myOnNewMessageListenerList.size() > 0) {
                     getManager().removeOnNewMessageListener(getManager().myOnNewMessageListenerList.get(0));
                 }
-                while(getManager().myOnNewCommandCustomMsgListenerList.size() > 0){
+                while (getManager().myOnNewCommandCustomMsgListenerList.size() > 0) {
                     getManager().removeOnNewCommandCustomMsgListener(getManager().myOnNewCommandCustomMsgListenerList.get(0));
                 }
                 emptyFragmentMap.remove(activity.toString());
@@ -530,10 +539,10 @@ public class YXClient {
 
         emptyFragment = new EmptyFragment().setlifeCycle(lifeCycle);
         lv("emptyFragment 不存在 新建emptyFragment:" + emptyFragment);
-        emptyFragmentMap.put(activity.toString() , emptyFragment);
+        emptyFragmentMap.put(activity.toString(), emptyFragment);
         FragmentManager fragmentManager = activity.getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(emptyFragment , "empty");
+        transaction.add(emptyFragment, "empty");
         transaction.commit();
         lv("返回manager:" + manager.toString());
         return manager;
@@ -542,6 +551,7 @@ public class YXClient {
 
     /**
      * 获取单例的实例
+     *
      * @return
      */
     public static YXClient getInstance() {
@@ -563,68 +573,72 @@ public class YXClient {
     public static void initNimClient(Application application) {
         SDKOptions sdkOptions = new SDKOptions();
         sdkOptions.appKey = Commons.YUNXING_APP_KEY;
-        NIMClient.init(application , null , sdkOptions);
+        NIMClient.init(application, null, sdkOptions);
     }
 
     /**
      * 初始化云信配置,注册全局性的处理器和解析器等
      * 初始化并不会登录,所有数据的同步和会在登录成功后获取.登录建议使用{@link YXClient#getTokenAndLogin(String, RequestCallbackWrapper)}
+     *
      * @param context 上下文环境
      */
-    public void initOption(Context context){
+    public void initOption(Context context) {
         mContext = context;
         //注册消息过滤器
         NIMClient.getService(MsgService.class).registerIMMessageFilter(messageFilter);
         //注册自定义消息解析器
         NIMClient.getService(MsgService.class).registerCustomAttachmentParser(customAttachParser);
         //注册新到消息观察者
-        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver , true);
+        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incommingMessageObserver, true);
         //注册消息发送状态改变观察者
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(msgSendStatusObserver, true);
         //注册系统通知观察者
-        NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver , true);
+        NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver, true);
         //注册自定义通知观察者
-        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver , true);
+        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
     }
 
     /**
      * 使用用户名密码登录云信
-     * @param account 用户名
-     * @param token 密码,由于多端登录的存在,改密码可能随时被变更,
-     *              建议使用{@link YXClient#getTokenAndLogin(String, RequestCallbackWrapper)}获取最新密码登录.
-     *              如果密码错误,会自动联网获取最新密码,并且重新登录.
+     *
+     * @param account  用户名
+     * @param token    密码,由于多端登录的存在,改密码可能随时被变更,
+     *                 建议使用{@link YXClient#getTokenAndLogin(String, RequestCallbackWrapper)}获取最新密码登录.
+     *                 如果密码错误,会自动联网获取最新密码,并且重新登录.
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
-    public void login(String account , String token , final RequestCallbackWrapper callback){
-       LogUtils.e("FH" , "yx login " + account + "  " + token);
+    public void login(String account, String token, final RequestCallbackWrapper callback) {
+        LogUtils.e("FH", "yx login " + account + "  " + token);
         currentAccount = account;
-        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , true);
-        LoginInfo loginInfo = new LoginInfo(account , token);
+        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver, true);
+        LoginInfo loginInfo = new LoginInfo(account, token);
         NIMClient.getService(AuthService.class).login(loginInfo).setCallback(new RequestCallback() {
             @Override
             public void onSuccess(Object param) {
                 lv("登录成功!" + param);
-                if (!recentContactInitFinish){
+                if (!recentContactInitFinish) {
                     initRecentContact();
                 }
-                if (!teamDataInitFinish){
+                if (!teamDataInitFinish) {
                     initTeamData();
                 }
-                if (callback != null){
+                if (callback != null) {
                     callback.onSuccess(param);
                 }
             }
+
             @Override
             public void onFailed(int code) {
                 lv("登录失败!code=" + code);
-                if (callback != null){
+                if (callback != null) {
                     callback.onFailed(code);
                 }
             }
+
             @Override
             public void onException(Throwable exception) {
                 lv("登录失败!exception=" + exception);
-                if (callback != null){
+                if (callback != null) {
                     callback.onException(exception);
                 }
             }
@@ -634,42 +648,41 @@ public class YXClient {
     /**
      * 从我方服务器上拉取账号对应的云信token,并且使用该token登录云信
      *
-     * @param account 要登录的账号
+     * @param account  要登录的账号
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
-    public void getTokenAndLogin(final String account , final RequestCallbackWrapper callback){
-            NetWorkManager.getInstance(false).queryToken(account).subscribe(new Action1<Object>() {
-                @Override
-                public void call(Object o) {
-                    try {
-                        List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
-                        String token = (String) result.get(0).get("token");
-                        login(account , token , callback);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                        if (callback != null){
-                           LogUtils.e("FH" , "获取token失败,解析错误");
-                            callback.onFailed(-997);
-                        }
+    public void getTokenAndLogin(final String account, final RequestCallbackWrapper callback) {
+        NetWorkManager.getInstance(false).queryToken(account).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                try {
+                    List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
+                    String token = (String) result.get(0).get("token");
+                    login(account, token, callback);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (callback != null) {
+                        LogUtils.e("FH", "获取token失败,解析错误");
+                        callback.onFailed(-997);
                     }
                 }
-            }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                    throwable.printStackTrace();
-                   LogUtils.e("FH" , "获取token失败,可能是网络错误");
-                    if (callback != null){
-                        callback.onFailed(-998);
-                    }
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
+                LogUtils.e("FH", "获取token失败,可能是网络错误");
+                if (callback != null) {
+                    callback.onFailed(-998);
                 }
-            });
+            }
+        });
     }
 
     /**
      * 云信账号登出
      */
-    public void logout(){
+    public void logout() {
         reInitData();
         NIMClient.getService(AuthService.class).logout();
     }
@@ -677,7 +690,7 @@ public class YXClient {
     /**
      * 把本实例下的所有数据全部初始化,监听器等等全部注销
      */
-    public void reInitData(){
+    public void reInitData() {
         //数据全部初始化,之前的数据全部销毁
         onRecentContactChangeListeners.clear();
         onTeamInfoChangeListeners.clear();
@@ -685,11 +698,11 @@ public class YXClient {
         onMyTeamListChangeListeners.clear();
         onTeamMemberChangedListeners.clear();
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactObserver, false);
-        NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver , false);
+        NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver, false);
         NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, false);
-        NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , false);
-        NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , false);
-        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver , false);
+        NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver, false);
+        NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver, false);
+        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver, false);
 
         recentContactList.clear();
         userInfoMap.clear();
@@ -706,17 +719,18 @@ public class YXClient {
 
     /**
      * 查询历史消息,只能查询给定锚点时间点之前的消息
+     *
      * @param sessionType 会话类型,可以为Team或者P2P
-     * @param sessionId 会话ID(群ID或者其他用户ID)
-     * @param limit 查询条数最大值
-     * @param anchorTime 查询锚点时间,本方法只会查询给定锚点时间点之前的消息
-     * @param callback 回调,查询结果会在callback中异步返回
+     * @param sessionId   会话ID(群ID或者其他用户ID)
+     * @param limit       查询条数最大值
+     * @param anchorTime  查询锚点时间,本方法只会查询给定锚点时间点之前的消息
+     * @param callback    回调,查询结果会在callback中异步返回
      */
-    public void queryHistoryMsgList (SessionTypeEnum sessionType , String sessionId, int  limit , long anchorTime
-            , final RequestCallback<List<IMMessage>> callback){
-        IMMessage anchor = MessageBuilder.createEmptyMessage(sessionId , sessionType, anchorTime);
+    public void queryHistoryMsgList(SessionTypeEnum sessionType, String sessionId, int limit, long anchorTime
+            , final RequestCallback<List<IMMessage>> callback) {
+        IMMessage anchor = MessageBuilder.createEmptyMessage(sessionId, sessionType, anchorTime);
         lv("开始查询历史消息 sstype : " + sessionType + " ssid : " + sessionId + " limit : " + limit + " anchorTime : " + anchorTime);
-        NIMClient.getService(MsgService.class).queryMessageListEx(anchor, QueryDirectionEnum.QUERY_OLD, limit , true)
+        NIMClient.getService(MsgService.class).queryMessageListEx(anchor, QueryDirectionEnum.QUERY_OLD, limit, true)
                 .setCallback(new RequestCallback<List<IMMessage>>() {
                     @Override
                     public void onSuccess(List<IMMessage> param) {
@@ -737,11 +751,13 @@ public class YXClient {
                         });
                         callback.onSuccess(param);
                     }
+
                     @Override
                     public void onFailed(int code) {
                         callback.onFailed(code);
 
                     }
+
                     @Override
                     public void onException(Throwable exception) {
                         callback.onException(exception);
@@ -757,12 +773,13 @@ public class YXClient {
      *              该参数仅对图片和视频类消息有效
      * @return AbortableFuture 调用跟踪。可设置回调函数，可中止下载操作
      */
-    public AbortableFuture<Void> downloadAttachment(IMMessage msg, boolean thumb){
+    public AbortableFuture<Void> downloadAttachment(IMMessage msg, boolean thumb) {
         return NIMClient.getService(MsgService.class).downloadAttachment(msg, thumb);
     }
 
     /**
      * 获取最近联系人列表
+     *
      * @return
      */
     public ArrayList<RecentContact> getRecentContactList() {
@@ -771,56 +788,60 @@ public class YXClient {
 
     /**
      * 通过群id获取群资料bundle
+     *
      * @param id 群id
      * @return 获取的bundle内容可以见 {@link YXClient#makeTeamInfoBundle(Team)},
      * 如果之前没有获取过该群的info,会立刻返回null,并且向sdk查询最新的群info,异步查询的结果通过onTeamInfoChangedListener通知.
      * 可以通过{@link ListenerManager#addOnTeamInfoChangeListener(OnThingsChangedListener)}绑定监听器
      */
-    public Bundle getTeamInfo(String id){
+    public Bundle getTeamInfo(String id) {
         Bundle bundle = teamInfoMap.get(id);
-        updateTeamInfo(id , false);
+        updateTeamInfo(id, false);
         lv("调用getTeamInfo , 返回" + bundle);
         return bundle;
     }
 
     /**
      * 通过群id获取群名称
+     *
      * @param id 群id
      * @return 群名称.
      * 如果之前没有获取过该群的name,会立刻返回null,并且向sdk查询最新的群name,异步查询的结果通过onTeamInfoChangedListener通知.
      * 可以通过{@link ListenerManager#addOnTeamInfoChangeListener(OnThingsChangedListener)}绑定监听器
      */
-    public String getTeamNameByID(String id){
+    public String getTeamNameByID(String id) {
         Bundle bundle = getTeamInfo(id);
-        if (bundle != null){
-            return bundle.getSerializable(TEAM) == null ? null : ((Team)bundle.getSerializable(TEAM)).getName();
+        if (bundle != null) {
+            return bundle.getSerializable(TEAM) == null ? null : ((Team) bundle.getSerializable(TEAM)).getName();
         }
         return null;
     }
 
     /**
      * 通过用户id获取用户资料bundle
+     *
      * @param id 用户id
      * @return 获取的bundle内容可以见 {@link YXClient#makeUserInfoBundle(String, String, String)}
      * 如果之前没有获取过该用户的info,会立刻返回null,并且向sdk查询最新的用户info,异步查询的结果通过onUserInfoChangedListener通知.
      * 可以通过{@link ListenerManager#addOnUserInfoChangeListener(OnThingsChangedListener)}绑定监听器
      */
-    public Bundle getUserInfo(String id){
+    public Bundle getUserInfo(String id) {
         Bundle bundle = userInfoMap.get(id);
-        updateUserInfo(id , false);
+        updateUserInfo(id, false);
         lv("调用getUserInfo , 返回" + bundle);
         return bundle;
     }
 
     /**
      * 通过用户id获取用户名称
+     *
      * @param id 用户id
-     * @return 如果之前没有获取过该用户的name,会立刻返回null,并且向sdk查询最新的info,异步查询的结果通过onUserInfoChangedListener通知.
+     * @return 如果之前没有获取过该用户的name, 会立刻返回null, 并且向sdk查询最新的info, 异步查询的结果通过onUserInfoChangedListener通知.
      * 可以通过{@link ListenerManager#addOnUserInfoChangeListener(OnThingsChangedListener)}绑定监听器
      */
-    public String getUserNameByID(String id){
+    public String getUserNameByID(String id) {
         Bundle bundle = getUserInfo(id);
-        if (bundle != null){
+        if (bundle != null) {
             return bundle.getString(USER_NAME);
         }
         return null;
@@ -828,13 +849,14 @@ public class YXClient {
 
     /**
      * 通过用户id获取用户头像path
+     *
      * @param id 用户id
-     * @return 如果之前没有获取过该用户的avatar,会立刻返回null,并且向sdk查询最新的info,异步查询的结果通过onUserInfoChangedListener通知.
+     * @return 如果之前没有获取过该用户的avatar, 会立刻返回null, 并且向sdk查询最新的info, 异步查询的结果通过onUserInfoChangedListener通知.
      * 可以通过{@link ListenerManager#addOnUserInfoChangeListener(OnThingsChangedListener)}绑定监听器
      */
-    public String getUserAvatarByID(String id){
+    public String getUserAvatarByID(String id) {
         Bundle bundle = getUserInfo(id);
-        if (bundle != null){
+        if (bundle != null) {
             return bundle.getString(USER_AVATAR);
         }
         return null;
@@ -843,9 +865,10 @@ public class YXClient {
 
     /**
      * 获取我加入的所有群的列表
+     *
      * @return
      */
-    public ArrayList<Team> getMyTeamList(){
+    public ArrayList<Team> getMyTeamList() {
         NIMClient.getService(TeamService.class).queryTeamList()
                 .setCallback(new RequestCallbackWrapper<List<Team>>() {
                     @Override
@@ -855,7 +878,7 @@ public class YXClient {
                             myTeamList.clear();
                             myTeamList.addAll(result);
                             for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
-                                listener.onThingChanged(myTeamList , ALL);
+                                listener.onThingChanged(myTeamList, ALL);
                             }
                         }
                     }
@@ -865,27 +888,26 @@ public class YXClient {
 
     /**
      * 根据群id,查询群成员列表
+     *
      * @param id 群id
-     * @return 如果之前没有查询过,会立即返回null.并且会异步向sdk查询该群成员列表,查询到的结果会通过已经注册的onTeamMemberChangedListener通知
+     * @return 如果之前没有查询过, 会立即返回null.并且会异步向sdk查询该群成员列表, 查询到的结果会通过已经注册的onTeamMemberChangedListener通知
      * 具体请见{@link ListenerManager#addOnTeamMemberChangeListener(OnThingsChangedListener)}
      */
-    public List<TeamMember> getTeamMemberByID(final String id){
+    public List<TeamMember> getTeamMemberByID(final String id) {
         lv("查询群id=" + id + "的成员列表");
         Pair<Long, List<TeamMember>> pair = groupMemberMap.get(id);
-        if (pair == null){
+        if (pair == null) {
             lv("之前没有查询过该群的成员列表,查询服务器 群id=" + id);
             updateTeamMember(id);
             return null;
-        }
-        else {
+        } else {
             long lastUpdateTimemill = pair.first;
             List<TeamMember> returnList = pair.sencond;
-            if (System.currentTimeMillis() - lastUpdateTimemill > UPDATE_THRESHOLD){
+            if (System.currentTimeMillis() - lastUpdateTimemill > UPDATE_THRESHOLD) {
                 lv("该群成员列表过期,查询服务器 群id=" + id);
                 updateTeamMember(id);
                 return null;
-            }
-            else {
+            } else {
                 lv("查到本机存有群id=" + id + "的群成员列表 size :" + returnList.size());
                 return returnList;
             }
@@ -893,18 +915,18 @@ public class YXClient {
     }
 
 
-    public IMMessage sendTestMessage(String id , SessionTypeEnum typeEnum
-            , String bookId , String cursorId , ArrayList<String> itemIdList, RequestCallback<Void> requestCallback){
+    public IMMessage sendTestMessage(String id, SessionTypeEnum typeEnum
+            , String bookId, String cursorId, ArrayList<String> itemIdList, RequestCallback<Void> requestCallback) {
         lv("发送测试消息,对方id=" + id + " type=" + typeEnum + " bookId=" + bookId + " cursorId=" + cursorId + " itemId=" + itemIdList.toString());
         final IMMessage message;
-        switch (typeEnum){
+        switch (typeEnum) {
             case P2P:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[测试消息]"
-                        , new WendaQuestionAddAttachment(bookId , cursorId , itemIdList));
+                message = MessageBuilder.createCustomMessage(id, SessionTypeEnum.P2P, "[测试消息]"
+                        , new WendaQuestionAddAttachment(bookId, cursorId, itemIdList));
                 break;
             case Team:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[测试消息]"
-                        , new WendaQuestionAddAttachment(bookId , cursorId , itemIdList));
+                message = MessageBuilder.createCustomMessage(id, SessionTypeEnum.Team, "[测试消息]"
+                        , new WendaQuestionAddAttachment(bookId, cursorId, itemIdList));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);
@@ -913,25 +935,24 @@ public class YXClient {
         CustomMessageConfig config = new CustomMessageConfig();
         config.enableRoaming = true;
         message.setConfig(config);
-        if (requestCallback != null){
-            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(requestCallback);
-        }
-        else {
-            NIMClient.getService(MsgService.class).sendMessage(message , true);
+        if (requestCallback != null) {
+            NIMClient.getService(MsgService.class).sendMessage(message, true).setCallback(requestCallback);
+        } else {
+            NIMClient.getService(MsgService.class).sendMessage(message, true);
         }
         return message;
     }
 
-    public IMMessage sendReply(String id , SessionTypeEnum typeEnum
-            , String replyId , String examId , RequestCallback<Void> requestCallback){
+    public IMMessage sendReply(String id, SessionTypeEnum typeEnum
+            , String replyId, String examId, RequestCallback<Void> requestCallback) {
         lv("发送测试消息,对方id=" + id + " type=" + typeEnum + " replyId=" + replyId + " examId=" + examId);
         final IMMessage message;
-        switch (typeEnum){
+        switch (typeEnum) {
             case P2P:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.P2P, "[自定义消息]" , new ReplyAttachment(replyId , examId));
+                message = MessageBuilder.createCustomMessage(id, SessionTypeEnum.P2P, "[自定义消息]", new ReplyAttachment(replyId, examId));
                 break;
             case Team:
-                message = MessageBuilder.createCustomMessage(id , SessionTypeEnum.Team , "[自定义消息]" , new ReplyAttachment(replyId , examId));
+                message = MessageBuilder.createCustomMessage(id, SessionTypeEnum.Team, "[自定义消息]", new ReplyAttachment(replyId, examId));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);
@@ -940,25 +961,22 @@ public class YXClient {
         CustomMessageConfig config = new CustomMessageConfig();
         config.enableRoaming = true;
         message.setConfig(config);
-        if (requestCallback != null){
-            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(requestCallback);
-        }
-        else {
-            NIMClient.getService(MsgService.class).sendMessage(message , true);
+        if (requestCallback != null) {
+            NIMClient.getService(MsgService.class).sendMessage(message, true).setCallback(requestCallback);
+        } else {
+            NIMClient.getService(MsgService.class).sendMessage(message, true);
         }
         return message;
     }
 
 
-
-
-    public void sendQuestion(String id , SessionTypeEnum typeEnum , String msg){
+    public void sendQuestion(String id, SessionTypeEnum typeEnum, String msg) {
         CustomNotification notification = new CustomNotification();
         notification.setSessionId(id);
         notification.setSessionType(typeEnum);
         JSONObject json = new JSONObject();
         try {
-            json.put("id" , "1");
+            json.put("id", "1");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -967,32 +985,27 @@ public class YXClient {
     }
 
 
-
-
-
-
-
-
     /**
      * 发送文字消息
-     * @param id 发送的对象id
-     * @param typeEnum  发送的对象类型,可以是群或个人
-     * @param msg 发送的消息文字
+     *
+     * @param id       发送的对象id
+     * @param typeEnum 发送的对象类型,可以是群或个人
+     * @param msg      发送的消息文字
      * @return 实际发送的消息体
      */
-    public IMMessage sendTextMessage(String id , SessionTypeEnum typeEnum , String msg , final OnErrorListener<IMMessage> onErrorListener){
+    public IMMessage sendTextMessage(String id, SessionTypeEnum typeEnum, String msg, final OnErrorListener<IMMessage> onErrorListener) {
         lv("发送文字消息,对方id=" + id + " type=" + typeEnum + " msg=" + msg);
-        if (TextUtils.isEmpty(msg)){
+        if (TextUtils.isEmpty(msg)) {
             lv("要发送的文字消息内容为空,取消发送");
             return null;
         }
         final IMMessage message;
-        switch (typeEnum){
+        switch (typeEnum) {
             case P2P:
-                message = MessageBuilder.createTextMessage(id , SessionTypeEnum.P2P, msg.trim());
+                message = MessageBuilder.createTextMessage(id, SessionTypeEnum.P2P, msg.trim());
                 break;
             case Team:
-                message = MessageBuilder.createTextMessage(id , SessionTypeEnum.Team , msg.trim());
+                message = MessageBuilder.createTextMessage(id, SessionTypeEnum.Team, msg.trim());
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);
@@ -1001,13 +1014,13 @@ public class YXClient {
         CustomMessageConfig config = new CustomMessageConfig();
         config.enableRoaming = true;
         message.setConfig(config);
-        NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
+        NIMClient.getService(MsgService.class).sendMessage(message, true).setCallback(new RequestCallbackWrapper<Void>() {
             @Override
             public void onResult(int code, Void result, Throwable exception) {
                 lv("发送消息的回调 : code " + code);
-                if (code == 802){
-                    if (onErrorListener != null){
-                        onErrorListener.onError(code , message);
+                if (code == 802) {
+                    if (onErrorListener != null) {
+                        onErrorListener.onError(code, message);
                     }
                 }
             }
@@ -1017,28 +1030,29 @@ public class YXClient {
 
     /**
      * 发送文字消息给多个id(群发)
+     *
      * @param idList 目标id列表
-     * @param msg 文字消息
+     * @param msg    文字消息
      * @return 实际发送的消息体
      */
     public ArrayList<IMMessage> sendTextMessage(ArrayList<String> idList, String msg
-            , final OnErrorListener<IMMessage> onErrorListener){
+            , final OnErrorListener<IMMessage> onErrorListener) {
         lv("发送文字消息,对方id=" + idList + " msg=" + msg);
-        if (TextUtils.isEmpty(msg)){
+        if (TextUtils.isEmpty(msg)) {
             lv("要发送的文字消息内容为空,取消发送");
             return null;
         }
         ArrayList<IMMessage> returnList = new ArrayList<IMMessage>();
         for (String id : idList) {
-            final IMMessage message = MessageBuilder.createTextMessage(id , SessionTypeEnum.P2P, msg.trim());
+            final IMMessage message = MessageBuilder.createTextMessage(id, SessionTypeEnum.P2P, msg.trim());
             CustomMessageConfig config = new CustomMessageConfig();
             config.enableRoaming = true;
             message.setConfig(config);
-            NIMClient.getService(MsgService.class).sendMessage(message , true).setCallback(new RequestCallbackWrapper<Void>() {
+            NIMClient.getService(MsgService.class).sendMessage(message, true).setCallback(new RequestCallbackWrapper<Void>() {
                 @Override
                 public void onResult(int code, Void result, Throwable exception) {
-                    if (code == 802){
-                        onErrorListener.onError(code , message);
+                    if (code == 802) {
+                        onErrorListener.onError(code, message);
                     }
                 }
             });
@@ -1048,30 +1062,30 @@ public class YXClient {
     }
 
 
-
     /**
      * 检查WiFi是否打开,并且尝试刷新式登录
-     * @param activity 上下文环境,必须是activity,用于获取window在出现错误的时候弹出dialog提示.
+     *
+     * @param activity                 上下文环境,必须是activity,用于获取window在出现错误的时候弹出dialog提示.
      * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
      */
-    public static void checkNetAndRefreshLogin(Activity activity , Runnable onRefreshSuccessRunnable) {
-        if (loadingDialog == null || !loadingDialog.isShowing()){
-            loadingDialog  = new LoadingProgressDialog(BaseActivity.getCurrentActivity());
+    public static void checkNetAndRefreshLogin(Activity activity, Runnable onRefreshSuccessRunnable) {
+        if (loadingDialog == null || !loadingDialog.isShowing()) {
+            loadingDialog = new LoadingProgressDialog(BaseActivity.getCurrentActivity());
             loadingDialog.show();
             loadingDialog.setTitle("正在连接服务器...");
         }
         final int MAX_RETRY_TIMES = 3;
         //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
-        RecursiveLooper.recursiveRun(MAX_RETRY_TIMES , new RecursiveLooper.RecursiveLoopRunnable(){
+        RecursiveLooper.recursiveRun(MAX_RETRY_TIMES, new RecursiveLooper.RecursiveLoopRunnable() {
             @Override
             public void run(int currentLooopTimes) {
-               LogUtils.e("FH!!!" , "recursiveRun : " + currentLooopTimes);
+                LogUtils.e("FH!!!", "recursiveRun : " + currentLooopTimes);
                 if (!NetUtils.isNetConnected()) {
                     //无网络,直接失败,不重试.
-                    if (loadingDialog != null && loadingDialog.isShowing()){
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
                         loadingDialog.dismiss();
                     }
-                   LogUtils.e("FH" , "wifi未连接");
+                    LogUtils.e("FH", "wifi未连接");
 /*                    new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -1086,41 +1100,41 @@ public class YXClient {
                     @Override
                     public void onResult(int code, Object result, Throwable exception) {
                         if (code == ResponseCode.RES_SUCCESS) {
-                           LogUtils.e("FH", "刷新式登录成功");
-                            if (loadingDialog != null && loadingDialog.isShowing()){
+                            LogUtils.e("FH", "刷新式登录成功");
+                            if (loadingDialog != null && loadingDialog.isShowing()) {
                                 loadingDialog.dismiss();
                             }
                             //成功一次,则跳转到成功逻辑
                             doBreak();
                         } else {
                             String reason;
-                            if (code == -998){
+                            if (code == -998) {
                                 reason = "获取token失败!可能是网络原因";
-                            }
-                            else if(code == -997){
+                            } else if (code == -997) {
                                 reason = "获取token失败!解析失败";
-                            }
-                            else {
+                            } else {
                                 reason = "Code " + code;
                             }
-                           LogUtils.e("FH", "刷新式登录失败 :" + reason);
-                            if (currentLooopTimes < MAX_RETRY_TIMES){
+                            LogUtils.e("FH", "刷新式登录失败 :" + reason);
+                            if (currentLooopTimes < MAX_RETRY_TIMES) {
                                 //失败次数未达上限,自动重试.
                                 doContinue();
-                            }
-                            else {
+                            } else {
                                 //失败次数达到上限,进入失败逻辑
-                                if (loadingDialog != null && loadingDialog.isShowing()){
+                                if (loadingDialog != null && loadingDialog.isShowing()) {
                                     loadingDialog.dismiss();
                                 }
-                                new ConfirmDialog(BaseActivity.getCurrentActivity(), "连接到消息服务器失败 : "
+                                mMsgFail=  new ConfirmDialog(BaseActivity.getCurrentActivity(), "连接到消息服务器失败 : "
                                         + reason + " , 是否重连?", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        checkNetAndRefreshLogin(BaseActivity.getCurrentActivity() , onRefreshSuccessRunnable);
+                                        checkNetAndRefreshLogin(BaseActivity.getCurrentActivity(), onRefreshSuccessRunnable);
                                     }
-                                }, "重新连接").show();
+                                }, "重新连接") ;
+                                if (!mMsgFail.isShowing()) {
+                                    mMsgFail.show();
+                                }
                             }
                         }
                     }
@@ -1139,9 +1153,10 @@ public class YXClient {
 
     /**
      * 获取当前在线状态
+     *
      * @return
      */
-    public StatusCode getCurrentOnlineStatus(){
+    public StatusCode getCurrentOnlineStatus() {
         lv("当前在线状态为" + currentOnlineStatus);
         return currentOnlineStatus;
     }
@@ -1149,16 +1164,16 @@ public class YXClient {
     /**
      * 注册各种关于群成员结构信息变动的全局监听器,并且获取我的群列表
      */
-    private void initTeamData(){
+    private void initTeamData() {
         lv("正在初始化我加入的群列表");
         // 注册群资料变动观察者
-        NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver , true);
+        NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver, true);
         // 注册群组被移除的观察者。在退群，被踢，群被解散时会收到该通知。
         NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, true);
         // 群成员资料变化观察者通知。群组添加新成员，成员资料变化会收到该通知。
-        NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , true);
+        NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver, true);
         // 注册移除群成员的观察者通知。
-        NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , true);
+        NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver, true);
 
         NIMClient.getService(TeamService.class).queryTeamList()
                 .setCallback(new RequestCallbackWrapper<List<Team>>() {
@@ -1167,21 +1182,21 @@ public class YXClient {
                         if (code == ResponseCode.RES_SUCCESS) {
                             lv("获取我加入的群列表成功,获取到" + (result == null ? result : result.size()) + "个加入的群");
                             for (Team team : result) {
-                                teamInfoMap.put(team.getId() , makeTeamInfoBundle(team));
+                                teamInfoMap.put(team.getId(), makeTeamInfoBundle(team));
                                 getTeamMemberByID(team.getId());
                             }
                             myTeamList.addAll(result);
                             for (OnThingsChangedListener<List<Team>> listener : onMyTeamListChangeListeners) {
-                                listener.onThingChanged(result , ALL);
+                                listener.onThingChanged(result, ALL);
                             }
                             teamDataInitFinish = true;
                         } else {
                             lv("获取我加入的群列表失败, code : " + code + "  exception : " + exception);
                             //注销群相关的监听器
-                            NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver , false);
+                            NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver, false);
                             NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, false);
-                            NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver , false);
-                            NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver , false);
+                            NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver, false);
+                            NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver, false);
                         }
                     }
                 });
@@ -1199,16 +1214,16 @@ public class YXClient {
                 if (code == ResponseCode.RES_SUCCESS) {
                     lv("获取最近联系人列表成功,获取到" + (result == null ? result : result.size()) + "个最近联系人(包含群)");
                     for (RecentContact newContact : result) {
-                        if (newContact.getSessionType() == SessionTypeEnum.Team){
+                        if (newContact.getSessionType() == SessionTypeEnum.Team) {
                             //滤掉群消息的最近联系人
                             continue;
                         }
                         String id = newContact.getContactId();
-                        if (id.length() == 10 || id.length() == 6){
+                        if (id.length() == 10 || id.length() == 6) {
                             //学生端10位id的其他学生和6位id的管理员都不需要显示在最近通话中,此处滤掉
                             continue;
                         }
-                        updateUserInfo(id , true);
+                        updateUserInfo(id, true);
                         recentContactList.add(newContact);
                     }
                     recentContactInitFinish = true;
@@ -1222,9 +1237,10 @@ public class YXClient {
 
     /**
      * 从云端获取群成员列表,并且通知UI注册的监听器,通知的是全体成员的列表(ALL),列表以Pair<群id , List<{@link TeamMember}>>的格式通知
+     *
      * @param id 群id
      */
-    private void updateTeamMember(final String id){
+    private void updateTeamMember(final String id) {
         NIMClient.getService(TeamService.class).queryMemberList(id).setCallback(new RequestCallback<List<TeamMember>>() {
             @Override
             public void onSuccess(List<TeamMember> param) {
@@ -1235,44 +1251,46 @@ public class YXClient {
                             @Override
                             public boolean isMatchCondition(TeamMember nodeInList) {
                                 return nodeInList.getAccount().length() == 6
-                                        || (nodeInList.getAccount().length() == 10 && !nodeInList.getAccount().equals(SpUtils.getUserId()+""));
+                                        || (nodeInList.getAccount().length() == 10 && !nodeInList.getAccount().equals(SpUtils.getUserId() + ""));
                             }
                         }
                 );
-                groupMemberMap.put(id , new Pair<Long, List<TeamMember>>(System.currentTimeMillis() , param));
-                Pair pair = new Pair<String, List<TeamMember>>(id , param);
+                groupMemberMap.put(id, new Pair<Long, List<TeamMember>>(System.currentTimeMillis(), param));
+                Pair pair = new Pair<String, List<TeamMember>>(id, param);
                 for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                    listener.onThingChanged(pair , ALL);
+                    listener.onThingChanged(pair, ALL);
                 }
             }
+
             @Override
-            public void onFailed(int code) {}
+            public void onFailed(int code) {
+            }
+
             @Override
-            public void onException(Throwable exception) {}
+            public void onException(Throwable exception) {
+            }
         });
     }
 
-    private void updateUserInfo(final String id){
+    private void updateUserInfo(final String id) {
         Bundle bundle = userInfoMap.get(id);
         if (bundle == null || bundle.getString(id) == null) {
             lv("发现之前没有载入过该用户资料,开始从sdk数据库获取用户资料...id=" + id);
             NimUserInfo nimUserInfo = NIMClient.getService(UserService.class).getUserInfo(id);
             if (nimUserInfo != null) {
-                if (bundle != null){
+                if (bundle != null) {
                     boolean isFetching = bundle.getBoolean(IS_FETCHING);
-                    bundle = makeUserInfoBundle(id , nimUserInfo.getName() , nimUserInfo.getAvatar());
-                    bundle.putBoolean(IS_FETCHING , isFetching);
+                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar());
+                    bundle.putBoolean(IS_FETCHING, isFetching);
+                } else {
+                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar());
                 }
-                else {
-                    bundle = makeUserInfoBundle(id , nimUserInfo.getName() , nimUserInfo.getAvatar());
-                }
-                userInfoMap.put(id , bundle);
+                userInfoMap.put(id, bundle);
                 lv("从sdk载入用户资料成功,id=" + id + " userName=" + nimUserInfo.getName() + " userAvatarPath=" + nimUserInfo.getAvatar());
                 for (OnThingsChangedListener<Bundle> listener : onUserInfoChangeListeners) {
-                    listener.onThingChanged(bundle , ALL);
+                    listener.onThingChanged(bundle, ALL);
                 }
-            }
-            else {
+            } else {
                 lv("从sdk载入用户资料失败,id=" + id);
             }
         }
@@ -1287,7 +1305,7 @@ public class YXClient {
                 Bundle tempBundle = makeUserInfoBundle(id, userName, userAvatarPath);
                 userInfoMap.put(id, tempBundle);
                 for (OnThingsChangedListener<Bundle> listener : onUserInfoChangeListeners) {
-                    listener.onThingChanged(tempBundle , ALL);
+                    listener.onThingChanged(tempBundle, ALL);
                 }
                 changeUserInfoFetchingStatus(id, false);
             }
@@ -1305,32 +1323,29 @@ public class YXClient {
             }
         });
     }
-    private void updateUserInfo(final String id , boolean forceUpdate) {
+
+    private void updateUserInfo(final String id, boolean forceUpdate) {
         lv("调用更新用户资料 id=" + id + " forceUpdate=" + forceUpdate);
         if (TextUtils.isEmpty(id)) {
             lv("调用更新用户资料,失败,因为id为空");
             return;
         }
-        if (forceUpdate){
+        if (forceUpdate) {
             lv("要求强制更新用户资料 id=" + id);
             updateUserInfo(id);
-        }
-        else {
+        } else {
             Bundle bundle = userInfoMap.get(id);
-            if (bundle == null){
+            if (bundle == null) {
                 lv("用户资料不存在于本地,需要更新 id=" + id);
                 updateUserInfo(id);
-            }
-            else if (bundle.getBoolean(IS_FETCHING)){
+            } else if (bundle.getBoolean(IS_FETCHING)) {
                 lv("已经有其他的请求正在更新这个用户数据,本次请求取消...id=" + id);
-            }
-            else {
-                long lastUpdate = bundle.getLong(LAST_UPDATE , -1);
-                if (lastUpdate < 0 || System.currentTimeMillis() - lastUpdate > UPDATE_THRESHOLD){
+            } else {
+                long lastUpdate = bundle.getLong(LAST_UPDATE, -1);
+                if (lastUpdate < 0 || System.currentTimeMillis() - lastUpdate > UPDATE_THRESHOLD) {
                     lv("用户资料已经过期,需要更新 id=" + id);
                     updateUserInfo(id);
-                }
-                else {
+                } else {
                     lv("用户资料没有过期,不需要更新 id=" + id);
                 }
             }
@@ -1348,47 +1363,45 @@ public class YXClient {
     /**
      * 生成一个用户资料bundle
      *
-     * @param id 用户id
-     * @param userName 用户名称
+     * @param id         用户id
+     * @param userName   用户名称
      * @param avatarPath 用户头像路径
-     *
-     * @return 用户资料bundle,其中包含
+     * @return 用户资料bundle, 其中包含
      * <p>用户id,使用bundle.getString({@link YXClient#ID})
      * <p>用户名称 使用bundle.getString({@link YXClient#USER_NAME})
      * <p>用户头像路径 使用bundle.getString({@link YXClient#USER_AVATAR})
      * <p>该条用户资料最后更新时间戳 使用bundle.getLong({@link YXClient#LAST_UPDATE})获取
      */
-    private Bundle makeUserInfoBundle(String id , String userName , String avatarPath){
+    private Bundle makeUserInfoBundle(String id, String userName, String avatarPath) {
         Bundle bundle = new Bundle();
-        bundle.putString(ID , id);
-        bundle.putString(USER_NAME , userName);
-        bundle.putString(USER_AVATAR , avatarPath);
-        bundle.putLong(LAST_UPDATE , System.currentTimeMillis());
+        bundle.putString(ID, id);
+        bundle.putString(USER_NAME, userName);
+        bundle.putString(USER_AVATAR, avatarPath);
+        bundle.putLong(LAST_UPDATE, System.currentTimeMillis());
         return bundle;
     }
 
-    private void changeUserInfoFetchingStatus(String id , boolean isFetching){
+    private void changeUserInfoFetchingStatus(String id, boolean isFetching) {
         Bundle bundle = userInfoMap.get(id);
-        if (isFetching){
-            if (bundle == null){
-                bundle = makeUserInfoBundle(null , null , null);
-                userInfoMap.put(id , bundle);
+        if (isFetching) {
+            if (bundle == null) {
+                bundle = makeUserInfoBundle(null, null, null);
+                userInfoMap.put(id, bundle);
             }
-            bundle.putBoolean(IS_FETCHING , isFetching);
-        }
-        else {
-            if (bundle != null){
+            bundle.putBoolean(IS_FETCHING, isFetching);
+        } else {
+            if (bundle != null) {
                 if (bundle.getString(ID) == null) bundle.remove(id);
                 else {
-                    bundle.putBoolean(IS_FETCHING , isFetching);
+                    bundle.putBoolean(IS_FETCHING, isFetching);
                 }
             }
         }
     }
 
-    private void updateTeamInfo(final String id){
+    private void updateTeamInfo(final String id) {
         lv("开始后台网络更新群资料 id=" + id);
-        changeTeamInfoFetchingStatus(id , true);
+        changeTeamInfoFetchingStatus(id, true);
         pullTeamInfo(id, new RequestCallback<Team>() {
             @Override
             public void onSuccess(Team param) {
@@ -1397,15 +1410,17 @@ public class YXClient {
                 Bundle tempBundle = makeTeamInfoBundle(param);
                 teamInfoMap.put(id, tempBundle);
                 for (OnThingsChangedListener<Bundle> listener : onTeamInfoChangeListeners) {
-                    listener.onThingChanged(tempBundle , ALL);
+                    listener.onThingChanged(tempBundle, ALL);
                 }
                 changeTeamInfoFetchingStatus(id, false);
             }
+
             @Override
             public void onFailed(int code) {
                 lv("后台网络更新群资料失败,id=" + id + " code=" + code);
                 changeTeamInfoFetchingStatus(id, false);
             }
+
             @Override
             public void onException(Throwable exception) {
                 lv("后台网络更新群资料失败,id=" + id + " exception=" + exception);
@@ -1413,32 +1428,29 @@ public class YXClient {
             }
         });
     }
-    private void updateTeamInfo(final String id , boolean forceUpdate) {
+
+    private void updateTeamInfo(final String id, boolean forceUpdate) {
         lv("调用更新群资料 id=" + id + " forceUpdate=" + forceUpdate);
         if (TextUtils.isEmpty(id)) {
             lv("调用更新群资料,失败,因为id为空");
             return;
         }
-        if (forceUpdate){
+        if (forceUpdate) {
             lv("要求强制更新群资料 id=" + id);
             updateTeamInfo(id);
-        }
-        else{
+        } else {
             Bundle bundle = teamInfoMap.get(id);
-            if (bundle == null){
+            if (bundle == null) {
                 lv("群资料不存在于本地,需要更新 id=" + id);
                 updateTeamInfo(id);
-            }
-            else if (bundle.getBoolean(IS_FETCHING)){
+            } else if (bundle.getBoolean(IS_FETCHING)) {
                 lv("已经有其他的请求正在更新这个群数据,本次请求取消...id=" + id);
-            }
-            else {
-                long lastUpdate = bundle.getLong(LAST_UPDATE , -1);
-                if (lastUpdate < 0 || System.currentTimeMillis() - lastUpdate > UPDATE_THRESHOLD){
+            } else {
+                long lastUpdate = bundle.getLong(LAST_UPDATE, -1);
+                if (lastUpdate < 0 || System.currentTimeMillis() - lastUpdate > UPDATE_THRESHOLD) {
                     lv("群资料已经过期,需要更新 id=" + id);
                     updateTeamInfo(id);
-                }
-                else {
+                } else {
                     lv("群资料没有过期,不需要更新 id=" + id);
                 }
             }
@@ -1452,6 +1464,7 @@ public class YXClient {
      * 注意
      * 直接调用本方法将不会触发各种监听器,也不会缓存到本地的缓存中,如果需要触发各种业务相关的监听器,可以使用
      * {@link YXClient#getTeamInfo(String)}
+     *
      * @param id
      * @param callback
      */
@@ -1461,20 +1474,19 @@ public class YXClient {
     }
 
 
-    private void changeTeamInfoFetchingStatus(String id , boolean isFetching){
+    private void changeTeamInfoFetchingStatus(String id, boolean isFetching) {
         Bundle bundle = teamInfoMap.get(id);
-        if (isFetching){
-            if (bundle == null){
+        if (isFetching) {
+            if (bundle == null) {
                 bundle = makeTeamInfoBundle(null);
-                teamInfoMap.put(id , bundle);
+                teamInfoMap.put(id, bundle);
             }
-            bundle.putBoolean(IS_FETCHING , isFetching);
-        }
-        else {
-            if (bundle != null){
+            bundle.putBoolean(IS_FETCHING, isFetching);
+        } else {
+            if (bundle != null) {
                 if (bundle.getString(ID) == null) bundle.remove(id);
                 else {
-                    bundle.putBoolean(IS_FETCHING , isFetching);
+                    bundle.putBoolean(IS_FETCHING, isFetching);
                 }
             }
         }
@@ -1484,35 +1496,34 @@ public class YXClient {
      * 生成一个群资料bundle
      *
      * @param team 群资料
-     *
-     * @return 群资料bundle,其中包含
+     * @return 群资料bundle, 其中包含
      * <p>群信息 使用bundle.getSerializable({@link YXClient#TEAM})
      * <p>该条群资料最后更新时间戳 使用bundle.getLong({@link YXClient#LAST_UPDATE})获取
      */
-    private Bundle makeTeamInfoBundle(Team team){
+    private Bundle makeTeamInfoBundle(Team team) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(TEAM , team);
-        bundle.putLong(LAST_UPDATE , System.currentTimeMillis());
+        bundle.putSerializable(TEAM, team);
+        bundle.putLong(LAST_UPDATE, System.currentTimeMillis());
         return bundle;
     }
 
     private static void lv(String msg) {
-       LogUtils.e("FHH", msg);
+        LogUtils.e("FHH", msg);
     }
 
 
     /**
      * 获取未读消息条数
-     * @param ssid p2p消息传用户id,群消息传群id
+     *
+     * @param ssid        p2p消息传用户id,群消息传群id
      * @param sessionType p2p消息传{@link SessionTypeEnum#P2P}, 群消息传{@link SessionTypeEnum#Team}
      * @return 未读消息数
      */
-    public static int getUnreadMsgCount (String ssid , SessionTypeEnum sessionType){
+    public static int getUnreadMsgCount(String ssid, SessionTypeEnum sessionType) {
         int unreadMsgCount = 0;
-        if (sessionType == SessionTypeEnum.P2P){
+        if (sessionType == SessionTypeEnum.P2P) {
             unreadMsgCount = SpUtils.getUnreadMsgCount(ssid);
-        }
-        else if (sessionType == SessionTypeEnum.Team){
+        } else if (sessionType == SessionTypeEnum.Team) {
             unreadMsgCount = SpUtils.getUnreadMsgCount("g" + ssid);
         }
         lv("获取未读消息数 ssid=" + ssid + "  setSessionType=" + sessionType + "  获取结果为 : " + unreadMsgCount);
@@ -1521,15 +1532,15 @@ public class YXClient {
 
     /**
      * 清除未读消息计数
-     * @param ssid p2p消息传用户id,群消息传群id
+     *
+     * @param ssid        p2p消息传用户id,群消息传群id
      * @param sessionType p2p消息传{@link SessionTypeEnum#P2P}, 群消息传{@link SessionTypeEnum#Team}
      */
-    public static void clearUnreadMsgCount(String ssid , SessionTypeEnum sessionType){
+    public static void clearUnreadMsgCount(String ssid, SessionTypeEnum sessionType) {
         lv("清除未读消息计数 ssid=" + ssid + "  setSessionType=" + sessionType);
-        if (sessionType == SessionTypeEnum.P2P){
+        if (sessionType == SessionTypeEnum.P2P) {
             SpUtils.clearUnreadMsgCount(ssid);
-        }
-        else if (sessionType == SessionTypeEnum.Team){
+        } else if (sessionType == SessionTypeEnum.Team) {
             SpUtils.clearUnreadMsgCount("g" + ssid);
         }
     }
@@ -1537,14 +1548,14 @@ public class YXClient {
     /**
      * 清除所有未读计数
      */
-    public static void clearAllUnreadMsgCount(){
+    public static void clearAllUnreadMsgCount() {
         lv("清除所有未读计数");
         SpUtils.clearAllUnreadMsgCount();
     }
 
-    public void callOnRecentContactChangeLiseners(){
+    public void callOnRecentContactChangeLiseners() {
         for (OnThingsChangedListener<List<RecentContact>> listener : onRecentContactChangeListeners) {
-            listener.onThingChanged(null , UNKNOWN);
+            listener.onThingChanged(null, UNKNOWN);
         }
     }
 
@@ -1565,159 +1576,177 @@ public class YXClient {
         public ArrayList<OnThingsChangedListener<List<Team>>> myOnMyTeamListChangeListeners
                 = new ArrayList<OnThingsChangedListener<List<Team>>>();
         //本Manage管理的群成员变更监听器列表
-        public ArrayList<OnThingsChangedListener<Pair<String , List<TeamMember>>>> myOnTeamMemberChangedListeners
-                = new ArrayList<OnThingsChangedListener<Pair<String,List<TeamMember>>>>();
+        public ArrayList<OnThingsChangedListener<Pair<String, List<TeamMember>>>> myOnTeamMemberChangedListeners
+                = new ArrayList<OnThingsChangedListener<Pair<String, List<TeamMember>>>>();
         //本Manage管理的自定义的新到消息监听器列表
         public ArrayList<OnMessageListener> myOnNewMessageListenerList = new ArrayList<OnMessageListener>();
         //本Manage管理的自定义的消息发送状态监听器列表
         public ArrayList<OnMessageListener> myOnMsgStatusChangedListenerList = new ArrayList<OnMessageListener>();
         //本Manage管理的命令型消息监听器列表
         public ArrayList<OnMessageListener> myOnNewCommandCustomMsgListenerList = new ArrayList<OnMessageListener>();
+
         /**
          * 添加最近联系人列表变化监听器
+         *
          * @param listener 监听器通知UI的内容类型为UNKNOWN,即为发生变动的最近联系人的集合,
          *                 此处的集合不是所有最近联系人的集合,只是发生变化了的联系人的集合.
          */
-        public void addOnRecentContactListChangeListener(OnThingsChangedListener<List<RecentContact>> listener){
+        public void addOnRecentContactListChangeListener(OnThingsChangedListener<List<RecentContact>> listener) {
             onRecentContactChangeListeners.add(listener);
             myOnRecentContactChangeListeners.add(listener);
         }
 
         /**
          * 移除最近联系人列表变化监听器
+         *
          * @param listener
          */
-        public void removeOnRecentContactListChangeListener(OnThingsChangedListener<List<RecentContact>> listener){
+        public void removeOnRecentContactListChangeListener(OnThingsChangedListener<List<RecentContact>> listener) {
             onRecentContactChangeListeners.remove(listener);
             myOnRecentContactChangeListeners.remove(listener);
         }
 
         /**
          * 添加用户资料变化监听器,
+         *
          * @param listener 目前监听器通知的内容类型为ALL.通知列表中只有一个变动后的用户资料Bundle
          *                 具体内容可以见{@link YXClient#makeUserInfoBundle(String, String, String)}
          */
-        public void addOnUserInfoChangeListener(OnThingsChangedListener<Bundle> listener){
+        public void addOnUserInfoChangeListener(OnThingsChangedListener<Bundle> listener) {
             onUserInfoChangeListeners.add(listener);
             myOnUserInfoChangeListeners.add(listener);
         }
 
         /**
          * 移除用户资料变化监听器
+         *
          * @param listener
          */
-        public void removeOnUserInfoChangeListener(OnThingsChangedListener<Bundle> listener){
+        public void removeOnUserInfoChangeListener(OnThingsChangedListener<Bundle> listener) {
             onUserInfoChangeListeners.remove(listener);
             myOnUserInfoChangeListeners.remove(listener);
         }
 
-         /**
+        /**
          * 添加群资料变化监听器,
+         *
          * @param listener 目前监听器通知的内容类型为ALL.通知列表中只有一个变动后的群资料Bundle
          *                 具体内容可以见{@link YXClient#makeTeamInfoBundle(Team)}
          */
-        public void addOnTeamInfoChangeListener(OnThingsChangedListener<Bundle> listener){
+        public void addOnTeamInfoChangeListener(OnThingsChangedListener<Bundle> listener) {
             onTeamInfoChangeListeners.add(listener);
             myOnTeamInfoChangeListeners.add(listener);
         }
 
         /**
          * 移除群资料变化监听器
+         *
          * @param listener
          */
-        public void removeOnTeamInfoChangeListener(OnThingsChangedListener<Bundle> listener){
+        public void removeOnTeamInfoChangeListener(OnThingsChangedListener<Bundle> listener) {
             onTeamInfoChangeListeners.remove(listener);
             myOnTeamInfoChangeListeners.remove(listener);
         }
 
         /**
          * 添加我加入的群列表变化监听器,
+         *
          * @param listener 监听器通知的内容类型有整个群列表(ALL),群列表增加(NEW),群列表减少(DELETE)
-         * 内容分别为整个群列表,增加的群的list,减少的群的list
+         *                 内容分别为整个群列表,增加的群的list,减少的群的list
          */
-        public void addOnMyTeamListChangeListener(OnThingsChangedListener<List<Team>> listener){
+        public void addOnMyTeamListChangeListener(OnThingsChangedListener<List<Team>> listener) {
             onMyTeamListChangeListeners.add(listener);
             myOnMyTeamListChangeListeners.add(listener);
         }
 
         /**
          * 移除我加入的群列表变化监听器
+         *
          * @param listener
          */
-        public void removeOnMyTeamListChangeListener(OnThingsChangedListener<List<Team>> listener){
+        public void removeOnMyTeamListChangeListener(OnThingsChangedListener<List<Team>> listener) {
             onMyTeamListChangeListeners.remove(listener);
             myOnMyTeamListChangeListeners.remove(listener);
         }
 
         /**
          * 添加群成员变化监听器,
+         *
          * @param listener 监听器通知的内容类型有整个群的成员列表全部(ALL),新增成员的list(NEW),减少成员的list(DELETE)
-         * 返回的数据格式为{@link Pair}类型的的数据,pair.first为成员变化的群的id号,pair.second为上述对应的列表
+         *                 返回的数据格式为{@link Pair}类型的的数据,pair.first为成员变化的群的id号,pair.second为上述对应的列表
          */
-        public void addOnTeamMemberChangeListener(OnThingsChangedListener<Pair<String, List<TeamMember>>> listener){
+        public void addOnTeamMemberChangeListener(OnThingsChangedListener<Pair<String, List<TeamMember>>> listener) {
             onTeamMemberChangedListeners.add(listener);
             myOnTeamMemberChangedListeners.add(listener);
         }
 
 
-
         /**
          * 移除群成员变化监听器
+         *
          * @param listener
          */
-        public void removeOnTeamMemberChangeListener(OnThingsChangedListener<Pair<String, List<TeamMember>>> listener){
+        public void removeOnTeamMemberChangeListener(OnThingsChangedListener<Pair<String, List<TeamMember>>> listener) {
             onTeamMemberChangedListeners.remove(listener);
             myOnTeamMemberChangedListeners.remove(listener);
         }
 
         /**
          * 添加新到消息监听器
+         *
          * @param listener 通知内容为新到的{@link IMMessage},不会通知群消息(已屏蔽)
          */
-        public void addOnNewMessageListener(OnMessageListener listener){
+        public void addOnNewMessageListener(OnMessageListener listener) {
             onNewMessageListenerList.add(listener);
             myOnNewMessageListenerList.add(listener);
         }
+
         /**
          * 移除新到消息监听器
+         *
          * @param listener
          */
-        public void removeOnNewMessageListener(OnMessageListener listener){
+        public void removeOnNewMessageListener(OnMessageListener listener) {
             onNewMessageListenerList.remove(listener);
             myOnNewMessageListenerList.remove(listener);
         }
 
         /**
          * 添加消息发送状态变化监听器
+         *
          * @param listener 通知内容为新到的{@link IMMessage},包含所有类型
          */
-        public void addOnMsgStatusChangedListener(OnMessageListener listener){
+        public void addOnMsgStatusChangedListener(OnMessageListener listener) {
             onMsgStatusChangedListenerList.add(listener);
             myOnMsgStatusChangedListenerList.add(listener);
         }
 
         /**
          * 移除消息发送状态变化监听器
+         *
          * @param listener
          */
-        public void removeOnMsgStatusChangedListener(OnMessageListener listener){
+        public void removeOnMsgStatusChangedListener(OnMessageListener listener) {
             onMsgStatusChangedListenerList.remove(listener);
             myOnMsgStatusChangedListenerList.remove(listener);
         }
+
         /**
          * 添加命令型消息监听器,用于接收命令型(不需要在消息列表中显示)消息的消息,例如开始问答,结束问答等
+         *
          * @param listener 注意在本消息监听器中收到的消息不会在onNewMessageListener中被接收到
          */
-        public void addOnNewCommandCustomMsgListener(OnMessageListener listener){
+        public void addOnNewCommandCustomMsgListener(OnMessageListener listener) {
             onNewCommandCustomMsgListenerList.add(listener);
             myOnNewCommandCustomMsgListenerList.add(listener);
         }
 
         /**
          * 移除新到消息监听器
+         *
          * @param listener
          */
-        public void removeOnNewCommandCustomMsgListener(OnMessageListener listener){
+        public void removeOnNewCommandCustomMsgListener(OnMessageListener listener) {
             onNewCommandCustomMsgListenerList.remove(listener);
             myOnNewCommandCustomMsgListenerList.remove(listener);
         }
@@ -1739,54 +1768,64 @@ public class YXClient {
         @Override
         public void onStart() {
             super.onStart();
-            if (lifeCycle != null){
+            if (lifeCycle != null) {
                 lifeCycle.onStart();
             }
         }
+
         @Override
         public void onResume() {
             super.onResume();
-            if (lifeCycle != null){
+            if (lifeCycle != null) {
                 lifeCycle.onResume();
             }
         }
+
         @Override
         public void onPause() {
             super.onPause();
-            if (lifeCycle != null){
+            if (lifeCycle != null) {
                 lifeCycle.onPause();
             }
         }
+
         @Override
         public void onStop() {
             super.onStop();
-            if (lifeCycle != null){
+            if (lifeCycle != null) {
                 lifeCycle.onStop();
             }
         }
+
         @Override
         public void onDestroy() {
             super.onDestroy();
-            if (lifeCycle != null){
+            if (lifeCycle != null) {
                 lifeCycle.onDestroy();
             }
         }
     }
 
-    public abstract class LifeCycle{
+    public abstract class LifeCycle {
         private ListenerManager manager;
+
         public ListenerManager getManager() {
             return manager;
         }
+
         public LifeCycle setManager(ListenerManager manager) {
             this.manager = manager;
             return this;
         }
 
         abstract void onStart();
+
         abstract void onResume();
+
         abstract void onPause();
+
         abstract void onStop();
+
         abstract void onDestroy();
     }
 
@@ -1798,21 +1837,23 @@ public class YXClient {
 
     /**
      * 对象改变监听器
+     *
      * @param <T>
      */
     public interface OnThingsChangedListener<T> {
-        void onThingChanged(T thing , int type);
+        void onThingChanged(T thing, int type);
     }
 
     public interface OnMessageListener {
         void onNewMessage(IMMessage message);
     }
 
-    public interface KeyPointController{
+    public interface KeyPointController {
         void before();
+
         void onSuccess();
+
         /**
-         *
          * @param code -999 wifi没有连接
          *             -998 获取token失败,网络原因
          *             -997 获取token失败,解析原因
@@ -1822,43 +1863,44 @@ public class YXClient {
 
     /**
      * 错误监听器
+     *
      * @param <D>
      */
-    public interface OnErrorListener<D>{
-        void onError(int code , D data);
+    public interface OnErrorListener<D> {
+        void onError(int code, D data);
     }
 
-    public static class RecursiveLooper{
+    public static class RecursiveLooper {
 
-        public abstract static class RecursiveLoopRunnable{
+        public abstract static class RecursiveLoopRunnable {
             private boolean isRunning = false;
             private int needLoopTimes;
             private int currentLoopTimes = 1;
 
-            public void doContinue(){
+            public void doContinue() {
                 currentLoopTimes++;
-                if (currentLoopTimes > needLoopTimes){
+                if (currentLoopTimes > needLoopTimes) {
                     onAfterLoop(false);
                     isRunning = false;
-                }
-                else {
+                } else {
                     run(currentLoopTimes);
                 }
             }
 
-            public void doBreak(){
+            public void doBreak() {
                 onAfterLoop(true);
                 isRunning = false;
             }
 
-            public void onAfterLoop(boolean beenBreak){}
+            public void onAfterLoop(boolean beenBreak) {
+            }
 
             public abstract void run(int currentLooopTimes);
         }
 
-        public static boolean recursiveRun(int loopTimes , RecursiveLoopRunnable runnable){
-            if (loopTimes > 0){
-                if (runnable.isRunning){
+        public static boolean recursiveRun(int loopTimes, RecursiveLoopRunnable runnable) {
+            if (loopTimes > 0) {
+                if (runnable.isRunning) {
                     return false;
                 }
                 runnable.needLoopTimes = loopTimes;

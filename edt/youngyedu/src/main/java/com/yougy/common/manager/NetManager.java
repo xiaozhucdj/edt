@@ -10,6 +10,7 @@ import android.net.wifi.WifiManager;
 
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.message.YXClient;
 
 import de.greenrobot.event.EventBus;
 
@@ -93,8 +94,10 @@ public class NetManager {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) || action.equalsIgnoreCase(WIFI_STATE_CHANGED_ACTION )) {
-//                boolean isConnected = NetManager.getInstance().isWifiConnected(context);
-//                LogUtils.i("yuanye ...ccccccccc"+isConnected);
+                boolean isConnected = NetManager.getInstance().isWifiConnected(context);
+                if (isConnected){
+                    YXClient.checkNetAndRefreshLogin(null, null);
+                }
                 NetManager.getInstance().changeWiFi(context,true);
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_WIIF, "");
                 EventBus.getDefault().post(baseEvent);

@@ -149,12 +149,12 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         loadData();
     }
 
+
     public void onEventMainThread(BaseEvent event) {
         if (event == null) {
             return;
         } else if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
-            if (NetManager.getInstance().isWifiConnected(this) && SpUtils.getUserId()>0) {
-                YXClient.checkNetAndRefreshLogin(this, null);
+            if (NetManager.getInstance().isWifiConnected(this) && SpUtils.getUserId() > 0) {
                 if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
                     mUiPromptDialog.dismiss();
                 }
@@ -981,7 +981,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
      */
     public final boolean showNoNetDialog() {
         if (NetUtils.isNetConnected()) {
-            return  false;
+            return false;
         }
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
@@ -1009,7 +1009,7 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
             mUiPromptDialog.setTitle(R.string.jump_to_net);
             mUiPromptDialog.setDialogStyle(false);
         }
-        return true ;
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
