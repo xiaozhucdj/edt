@@ -1070,6 +1070,9 @@ public class YXClient {
      * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
      */
     public static void checkNetAndRefreshLogin(Activity activity, Runnable onRefreshSuccessRunnable) {
+        if (SpUtils.getUserId()<=0){
+            return;
+        }
         if (loadingDialog == null || !loadingDialog.isShowing()) {
             loadingDialog = new LoadingProgressDialog(BaseActivity.getCurrentActivity());
             loadingDialog.show();

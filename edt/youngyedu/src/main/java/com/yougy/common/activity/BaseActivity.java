@@ -154,11 +154,13 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         if (event == null) {
             return;
         } else if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
-            if (NetManager.getInstance().isWifiConnected(this) && SpUtils.getUserId() > 0) {
+            if (NetManager.getInstance().isWifiConnected(this) ) {
                 if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
                     mUiPromptDialog.dismiss();
+                    LogUtils.e("yuanye base EVENT_WIIF  1");
                 }
             } else {
+                LogUtils.e("yuanye base EVENT_WIIF  2");
                 showNoNetDialog();
             }
         }
@@ -1179,6 +1181,5 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     @Override
     protected void onStart() {
         super.onStart();
-        showNoNetDialog();
     }
 }
