@@ -190,9 +190,9 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     }
     private void login() {
         LogUtils.e(tag,"login...................");
-//        NewLoginReq loginReq = new NewLoginReq();
-//        loginReq.setDeviceId(Commons.UUID);
-        NetWorkManager.login(null, null, null, Commons.UUID, null)
+        NewLoginReq loginReq = new NewLoginReq();
+        loginReq.setDeviceId(Commons.UUID);
+        NetWorkManager.login(loginReq)
                 .compose(bindToLifecycle())
                 .subscribe(students -> {
                     Student student = students.get(0);

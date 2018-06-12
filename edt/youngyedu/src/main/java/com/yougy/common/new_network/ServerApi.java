@@ -309,7 +309,9 @@ public interface ServerApi {
     Observable<BaseResult<List<Student>>> login(@Field("userName") String userName
             , @Field("userPassword") String userPassword, @Field("userToken") String userToken
             , @Field("deviceId") String deviceId, @Field("userId") String userId);
-//    Observable<BaseResult<List<Student>>> login(@Body NewLoginReq req);
+
+    @POST("users")
+    Observable<BaseResult<List<Student>>> login(@Body NewLoginReq req);
 
     /**
      * 获取版本

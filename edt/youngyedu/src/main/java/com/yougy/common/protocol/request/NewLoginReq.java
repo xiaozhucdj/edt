@@ -16,6 +16,7 @@ public class NewLoginReq  extends  NewBaseReq{
     /***设备编码*/
     private  String deviceId;
 
+    private String userId;
 
     public NewLoginReq() {
         m = "login";
@@ -36,5 +37,9 @@ public class NewLoginReq  extends  NewBaseReq{
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
