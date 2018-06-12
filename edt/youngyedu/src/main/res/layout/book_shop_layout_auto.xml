@@ -86,9 +86,30 @@
                     />
 
                 <ImageView
-                    android:id="@+id/cart_go"
+                    android:id="@+id/order_btn"
                     style="@style/shopImgStyle"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/shop_img_padding"
+                    android:onClick="@{activity.clickOrderBtn}"
+                    android:src="@drawable/order_btn_selector"
+                    />
+                <TextView
+                    android:id="@+id/new_order_count_tv"
+                    android:layout_width="20px"
+                    android:layout_height="20px"
+                    android:layout_alignLeft="@id/order_btn"
+                    android:layout_alignTop="@id/order_btn"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="18px"
+                    android:background="@drawable/black_dot"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="12px" />
+
+                <ImageView
+                    android:id="@+id/cart_go"
+                    style="@style/shopImgStyle"
+                    android:layout_toLeftOf="@id/order_btn"
                     android:layout_marginRight="@dimen/shop_img_padding"
                     android:onClick="@{activity.clickCartGo}"
                     android:src="@drawable/gouwuche_selector"
