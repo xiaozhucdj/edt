@@ -5,8 +5,7 @@
 /build
 /captures
 *.class
-.idea/copyright
-.idea/libraries
+.idea/
 
 /freeline
 /freeline_core

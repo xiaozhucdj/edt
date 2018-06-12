@@ -503,6 +503,12 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         loadIntent(ShopFavoriteActivity.class);
     }
 
+    public void clickOrderBtn(View view) {
+        hideRecycler();
+        SpUtils.setNewOrderCount(0);
+        loadIntent(OrderListActivity.class);
+    }
+
     public void search(View view) {
         generateHistoryRecord();
         binding.searchLayout.setVisibility(View.VISIBLE);
@@ -1046,9 +1052,21 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 });
     }
 
+    private void refreshNewOrderCount(){
+        int newOrderCount = SpUtils.getNewOrderCount();
+        if (newOrderCount <= 0){
+            binding.newOrderCountTv.setVisibility(View.GONE);
+        }
+        else {
+            binding.newOrderCountTv.setVisibility(View.VISIBLE);
+            binding.newOrderCountTv.setText(newOrderCount + "");
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         refreshCartCount();
+        refreshNewOrderCount();
     }
 }

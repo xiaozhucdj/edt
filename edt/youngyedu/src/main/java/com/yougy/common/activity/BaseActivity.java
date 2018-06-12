@@ -150,16 +150,18 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
         loadData();
     }
 
+
     public void onEventMainThread(BaseEvent event) {
         if (event == null) {
             return;
         } else if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
-            if (NetManager.getInstance().isWifiConnected(this) && SpUtils.getUserId()>0) {
-                YXClient.checkNetAndRefreshLogin(this, null);
+            if (NetManager.getInstance().isWifiConnected(this) ) {
                 if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
                     mUiPromptDialog.dismiss();
+                    LogUtils.e("yuanye base EVENT_WIIF  1");
                 }
             } else {
+                LogUtils.e("yuanye base EVENT_WIIF  2");
                 showNoNetDialog();
             }
         }
@@ -218,6 +220,10 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 
         if (mRefreshRun != null) {
             YougyApplicationManager.getMainThreadHandler().removeCallbacks(mRefreshRun);
+        }
+
+        if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
+            mUiPromptDialog.dismiss();
         }
         super.onPause();
     }
@@ -978,7 +984,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
      */
     public final boolean showNoNetDialog() {
         if (NetUtils.isNetConnected()) {
-            return  false;
+            return false;
         }
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
@@ -1006,7 +1012,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
             mUiPromptDialog.setTitle(R.string.jump_to_net);
             mUiPromptDialog.setDialogStyle(false);
         }
-        return true ;
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1176,6 +1182,5 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
     @Override
     protected void onStart() {
         super.onStart();
-        showNoNetDialog();
     }
 }

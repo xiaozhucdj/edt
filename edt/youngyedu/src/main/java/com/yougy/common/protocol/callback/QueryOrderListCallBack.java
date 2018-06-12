@@ -2,6 +2,7 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.ProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
@@ -23,7 +24,7 @@ public class QueryOrderListCallBack extends BaseCallBack<QueryBookOrderListRep> 
 
     public QueryOrderListCallBack(Context context, int protocol) {
         super(context);
-        mProtocol =protocol ;
+        mProtocol = protocol;
     }
 
     @Override
@@ -44,12 +45,12 @@ public class QueryOrderListCallBack extends BaseCallBack<QueryBookOrderListRep> 
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtils.getAccountId()), null , mProtocol, this);
+        ProtocolManager.queryBookOrderProtocol(String.valueOf(SpUtils.getAccountId()), null, mProtocol, this);
     }
 
     @Override
     public void onUiCancelListener() {
         super.onUiCancelListener();
-        ((OrderListActivity)mContext).finish();
+        ((BaseActivity) mContext).finish();
     }
 }

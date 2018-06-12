@@ -25,6 +25,7 @@ public class SpUtils {
     private static final String LOCATION_Y = "locationY";
     private static final String LABEL_CONTENT = "label_content";
     private static final String USER_FILE = "user";
+    private static final String SP_OTHERS = "others";
 
     private static final String STUDENT_ID = "student_id";
     private static final String STUDENT_NAME = "student_name";
@@ -37,6 +38,11 @@ public class SpUtils {
 
     private static final SharedPreferences unReadMsgSp = UIUtils.getContext()
             .getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE);
+    private static final SharedPreferences othersSp = UIUtils.getContext()
+            .getSharedPreferences(SP_OTHERS, Context.MODE_PRIVATE);
+
+    //新订单数量
+    private static final String NEW_ORDER_COUNT= "newOrderCount";
 
     /**
      * 年级
@@ -251,6 +257,7 @@ public class SpUtils {
         UIUtils.getContext().getSharedPreferences(HISTORY_RECORD , Context.MODE_PRIVATE).edit().clear().apply();
         UIUtils.getContext().getSharedPreferences(UUID , Context.MODE_PRIVATE).edit().clear().apply();
         UIUtils.getContext().getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(SP_OTHERS , Context.MODE_PRIVATE).edit().clear().apply();
     }
 
     /**
@@ -406,10 +413,41 @@ public class SpUtils {
     }
 
 
+    /**
+     * 获取新订单数量(只统计本机发起的新订单数量,在其他端取消和下单造成的新订单改变不会在这个值中体现)
+     */
+    public static int getNewOrderCount(){
+        return othersSp.getInt(NEW_ORDER_COUNT , -1);
+    }
+
+    /**
+     * 新订单数量+1
+     */
+    public static void newOrderCountPlusOne(){
+        int originalNewOrderCount = getNewOrderCount();
+        if (originalNewOrderCount == -1){
+            setNewOrderCount(1);
+        }
+        else {
+            setNewOrderCount(originalNewOrderCount + 1);
+        }
+    }
+
+    /**
+     * 设置新订单数量
+     */
+    public static void setNewOrderCount(int newOrderCount){
+        othersSp.edit().putInt(NEW_ORDER_COUNT , newOrderCount).commit();
+    }
+
+
+
+
+    //锁屏相关,此处order=命令
     public static void setOrder(String order) {
         sp.edit().putString("order", order).apply();
     }
-
+    //锁屏相关,此处order=命令
     public static String getOrder() {
         String v = sp.getString("order", NO_LOCK_SCREEN);
         return v ;
