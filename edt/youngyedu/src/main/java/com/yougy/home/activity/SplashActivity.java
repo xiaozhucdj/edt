@@ -241,6 +241,43 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
     //升级接口 m=getAppVersion&id=student   用id来判断学生端、教师端 http://ocghxr9lf.bkt.clouddn.com/sample-debug.apk
     private void getServerVersion() {
+        NetWorkManager.getVersion()
+                .compose(bindToLifecycle())
+                .subscribe(version -> {
+                    int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
+                    int serverVersion = TextUtils.isEmpty(version.getAppVersion()) ? -1 : Integer.parseInt(version.getAppVersion());
+                    String url = version.getAppUrl();
+                    if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                        mHandler.post(() -> new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
+                                , "现在升级", "暂缓升级", (dialog, which) -> {
+                            //现在升级
+                            LogUtils.e("FH", "用户点击现在升级");
+                            SpUtils.setVersion("" + serverVersion);
+                            if (SpUtils.getStudent().getUserId() == -1) {
+                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                            } else {
+                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                            }
+                            dialog.dismiss();
+                            doDownLoad(SplashActivity.this, url);
+                        }, (dialog, which) -> {
+                            //暂缓升级
+                            LogUtils.e("FH", "用户点击暂缓升级,直接登录");
+                            dialog.dismiss();
+                            login();
+                        }).show());
+                    } else {
+                        LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
+                        login();
+                    }
+                }, throwable -> {
+                    LogUtils.e("FH", "检测版本失败.");
+                    login();
+                });
+//        getVersionOld();
+    }
+
+    private void getVersionOld() {
         NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(SplashActivity.this) {
             @Override
             public void onResponse(NewGetAppVersionRep response, int id) {

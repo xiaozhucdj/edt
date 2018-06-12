@@ -389,4 +389,5 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
             , @Field("content") String content, @Field("replyCommentator") String replyCommentator);
+
 }
