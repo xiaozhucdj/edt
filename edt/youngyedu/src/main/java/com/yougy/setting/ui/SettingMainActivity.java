@@ -272,7 +272,10 @@ public class SettingMainActivity extends BaseActivity {
         loadingProgressDialog.dismiss();
         switch (msg.what) {
             case UNBIND_SUCCESS:
-                showCenterDetermineDialog(R.string.unbind_success);
+//                showCenterDetermineDialog(R.string.unbind_success);
+                UIUtils.showToastSafe("解绑成功");
+                finishAll();
+                loadIntent(LoginActivity.class);
                 break;
             case UNBIND_FAILED:
                 showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);

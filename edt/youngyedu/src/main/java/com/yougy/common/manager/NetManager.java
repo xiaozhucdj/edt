@@ -103,7 +103,7 @@ public class NetManager {
             String action = intent.getAction();
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) || action.equalsIgnoreCase(WIFI_STATE_CHANGED_ACTION)) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
-                if (isConnected && SpUtils.getUserId() > 0 && !BaseActivity.getCurrentActivity().getClass().getName().equalsIgnoreCase(LoginActivity.class.getName())) {
+                if (isConnected && SpUtils.getUserId() > 0 ) {
                     YXClient.checkNetAndRefreshLogin(null, null);
                 }
                 NetManager.getInstance().changeWiFi(context, true);
