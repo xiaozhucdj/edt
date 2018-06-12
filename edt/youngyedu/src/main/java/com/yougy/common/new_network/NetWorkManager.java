@@ -13,6 +13,7 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
@@ -443,6 +444,14 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<Object> unbindDevice(NewUnBindDeviceReq unBindDeviceReq){
+        LogUtils.e("FH", "!!!!!调用ServerApi解绑设备:unbindDevice");
+        return getInstance().getServerApi().unbindDevice(unBindDeviceReq)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
     public static Observable<Object> closeHomework(Integer examId, Integer courseId, String userId) {
         LogUtils.e("FH", "!!!!!调用ServerApi进行作业评定,关闭单学生单次作业并写入错题本");

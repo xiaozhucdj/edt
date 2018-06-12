@@ -452,4 +452,5 @@ public class SpUtils {
         String v = sp.getString("order", NO_LOCK_SCREEN);
         return v ;
     }
+
 }

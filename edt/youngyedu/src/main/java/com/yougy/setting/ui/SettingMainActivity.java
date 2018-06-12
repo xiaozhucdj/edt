@@ -17,6 +17,7 @@ import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
@@ -27,6 +28,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
+import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
@@ -37,9 +39,14 @@ import com.yougy.ui.activity.databinding.ActivitySettingBinding;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
+import org.litepal.tablemanager.Connector;
+
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
+
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 
 /**
  * 账号设置界面
@@ -148,9 +155,6 @@ public class SettingMainActivity extends BaseActivity {
                 if (o instanceof NewUnBindDeviceRep) {
                     if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
                         FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
-//                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
-//                        startService(intent);
-//                        SpUtils.clearSP();
                         showCenterDetermineDialog(R.string.unbind_success);
                         YXClient.getInstance().logout();
                     } else {
@@ -209,7 +213,7 @@ public class SettingMainActivity extends BaseActivity {
                 break;
             case R.id.img_wifi:
 //                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
-                boolean isConnected =false ;
+                boolean isConnected = false;
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
                 break;
@@ -219,19 +223,13 @@ public class SettingMainActivity extends BaseActivity {
     public void unBind(View view) {
 
         new ConfirmDialog(this, "确定解绑该账号吗?", "账号解绑后,存储在本设备上的资料都将遗失,\n请慎重操作"
-                , "解绑", "取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                unBindRequest();
-                dialog.dismiss();
-                invalidateDelayed();
-            }
-        }, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                invalidateDelayed();
-            }
+                , "解绑", "取消", (dialog, which) -> {
+            unBindRequest();
+            dialog.dismiss();
+            invalidateDelayed();
+        }, (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+            invalidateDelayed();
         }).show();
     }
 
@@ -260,10 +258,28 @@ public class SettingMainActivity extends BaseActivity {
                 }
             }).start();
         } else {
-            NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
-            unBindDeviceReq.setDeviceId(Commons.UUID);
-            NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
+            unbindDevice();
         }
+    }
+
+    private void unbindDevice() {
+        NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
+        unBindDeviceReq.setDeviceId(Commons.UUID);
+//            NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
+        NetWorkManager.unbindDevice(unBindDeviceReq)
+                .compose(bindToLifecycle())
+                .subscribe(o -> {
+                    SpUtils.clearSP();
+                    SpUtils.changeInitFlag(false);
+                    Connector.resetHelper();
+                    deleteDatabase(DATABASE_NAME);
+                    deleteDatabase(JOURNAL_NAME);
+                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                    showCenterDetermineDialog(R.string.unbind_success);
+                    YXClient.getInstance().logout();
+                }, throwable -> {
+                    showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
+                });
     }
 
     @Override
