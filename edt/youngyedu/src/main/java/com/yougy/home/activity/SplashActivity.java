@@ -189,9 +189,39 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         }
     }
     private void login() {
-        NewLoginReq loginReq = new NewLoginReq();
-        loginReq.setDeviceId(Commons.UUID);
-//        newLogin(loginReq);
+        LogUtils.e(tag,"login...................");
+//        NewLoginReq loginReq = new NewLoginReq();
+//        loginReq.setDeviceId(Commons.UUID);
+        NetWorkManager.login(null, null, null, Commons.UUID, null)
+                .compose(bindToLifecycle())
+                .subscribe(students -> {
+                    Student student = students.get(0);
+                    if (!student.getUserRole().equals("学生")) {
+                        new HintDialog(getThisActivity(), "权限错误:本设备已被其他账号绑定过,请先解绑后重新登录", "退出程序", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finishAll();
+                            }
+                        }).show();
+                    } else {
+                        LogUtils.e("FH", "自动登录成功");
+                        SpUtils.saveStudent(student);
+                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
+                        checkLocalLockAndJump();
+                    }
+                }, throwable -> {
+                    if (-1 == SpUtils.getAccountId()) {
+                        LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
+                        jumpActivity(LoginActivity.class);
+                    } else {
+                        LogUtils.e("FH", "自动登录失败,有之前的登录信息");
+                        checkLocalLockAndJump();
+                    }
+                });
+//        loginOld(loginReq);
+    }
+
+    private void loginOld(NewLoginReq loginReq) {
         NewProtocolManager.login(loginReq, new LoginCallBack(this, loginReq) {
             @Override
             public void onBefore(Request request, int id) {
@@ -271,6 +301,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         login();
                     }
                 }, throwable -> {
+                    LogUtils.e(tag,throwable.getMessage());
                     LogUtils.e("FH", "检测版本失败.");
                     login();
                 });
