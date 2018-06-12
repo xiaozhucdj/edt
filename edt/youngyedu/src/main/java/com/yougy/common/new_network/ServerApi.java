@@ -389,4 +389,58 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
             , @Field("content") String content, @Field("replyCommentator") String replyCommentator);
+
+    /**
+     * 添加单个收藏夹
+     *
+     * @param userId
+     * @param bookId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"appendFavor"})
+    Observable<BaseResult<Object>> appendFavor(@Field("userId") Integer userId, @Field("bookId") Integer bookId);
+
+    /**
+     * 添加单个购物车
+     *
+     * @param userId
+     * @param bookId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"appendCart"})
+    Observable<BaseResult<Object>> appendCart(@Field("userId") Integer userId, @Field("bookId") Integer bookId);
+
+    /**
+     * 查询商城图书详情
+     *
+     * @param userId
+     * @param bookId
+     * @param bookTitle
+     * @param bookVersion
+     * @param bookCategory
+     * @param bookCategoryMatch
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryBook"})
+    Observable<BaseResult<List<BookInfo>>> queryShopBook(@Field("userId") Integer userId
+            , @Field("bookId") Integer bookId, @Field("bookTitle") String bookTitle, @Field("bookVersion") Integer bookVersion
+            , @Field("bookCategory") Integer bookCategory, @Field("bookCategoryMatch") Integer bookCategoryMatch);
+
+    /**
+     * 获取推荐图书列表
+     *
+     * @param userId
+     * @param bookId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"promoteBook"})
+    Observable<BaseResult<List<BookInfo>>> promoteBook(@Field("userId") int userId, @Field("bookId") int bookId);
 }

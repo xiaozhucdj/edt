@@ -486,6 +486,34 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<Object> appendFavor(Integer userId, Integer bookId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi添加单项收藏夹:appendFavor");
+        return getInstance().getServerApi().appendFavor(userId, bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> appendCart(Integer userId, Integer bookId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi添加单项购物车:appendCart");
+        return getInstance().getServerApi().appendCart(userId, bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<BookInfo>> queryShopBook(Integer userId, Integer bookId
+            , String bookTitle, Integer bookVersion, Integer bookCategory, Integer bookCategoryMatch) {
+        LogUtils.e("FH", "!!!!!调用ServerApi查询商城图书:queryShopBook");
+        return getInstance().getServerApi().queryShopBook(userId, bookId, bookTitle, bookVersion, bookCategory, bookCategoryMatch)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+    public static Observable<List<BookInfo>> promoteBook(Integer userId, int bookId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi获取推荐书列表:promoteBook");
+        return getInstance().getServerApi().promoteBook(userId, bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
 
 }

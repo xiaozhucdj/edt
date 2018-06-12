@@ -84,6 +84,7 @@
                 android:textSize="24px"
                 android:gravity="center"
                 android:layout_centerVertical="true"
+                android:clickable="true"
                 android:onClick="onCheckout"
                 />
             <TextView

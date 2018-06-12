@@ -279,9 +279,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         mIvMsg = (ImageView) findViewById(R.id.iv_home_msg);
 
-        //订单
-        findViewById(R.id.btn_order).setOnClickListener(this);
-
         mImgWSysWifi = (ImageView) this.findViewById(R.id.img_wifi);
         mImgWSysWifi.setOnClickListener(this);
         mImgWSysPower = (ImageView) this.findViewById(R.id.img_electricity);
@@ -486,14 +483,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     showCancelAndDetermineDialog(R.string.jump_to_net);
                 }
 
-                break;
-            case R.id.btn_order:
-                LogUtils.i("订单");
-                if (NetUtils.isNetConnected()) {
-                    loadIntent(OrderListActivity.class);
-                } else {
-                    showCancelAndDetermineDialog(R.string.jump_to_net);
-                }
                 break;
             case R.id.btn_refresh:
                 LogUtils.i("刷新列表");
