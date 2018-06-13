@@ -249,6 +249,7 @@ public class SettingMainActivity extends BaseActivity {
     private void unbindDevice() {
         NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
         unBindDeviceReq.setDeviceId(Commons.UUID);
+        unBindDeviceReq.setUserId(SpUtils.getUserId());
 //            NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
         NetWorkManager.unbindDevice(unBindDeviceReq)
                 .compose(bindToLifecycle())
