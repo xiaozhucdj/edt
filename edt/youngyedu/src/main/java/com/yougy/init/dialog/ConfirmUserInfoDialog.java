@@ -53,6 +53,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
     Activity mActivity;
     Student student;
     ConfirmUserinfoDialogLayoutBinding binding;
+
     public ConfirmUserInfoDialog(Activity activity, Student student) {
         super(activity);
         mActivity = activity;
@@ -63,10 +64,11 @@ public class ConfirmUserInfoDialog extends BaseDialog {
     protected void init() {
 
     }
+
     @Override
     protected void initLayout() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity)
-                , R.layout.confirm_userinfo_dialog_layout , null , false);
+                , R.layout.confirm_userinfo_dialog_layout, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
         AliyunUtil.DATABASE_NAME = student.getUserId() + ".db";
@@ -76,7 +78,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         binding.numTv.setText("编号 : " + student.getUserNum());
         SpannableString spannableString = new SpannableString("我们为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改");
         StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
-        spannableString.setSpan(styleSpan , 16 , 22 , Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(styleSpan, 16, 22, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         binding.localPwdHintTv.setText(spannableString);
         binding.cancleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,23 +105,22 @@ public class ConfirmUserInfoDialog extends BaseDialog {
             @Override
             public void call(Object o) {
                 if (o instanceof NewBindDeviceRep) {
-                    if (((NewBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS){
-                        FileUtils.writeProperties(FileUtils.getSDCardPath()+"leke_init" , FileContonst.LOAD_APP_STUDENT+","+SpUtils.getVersion());
-                        File file = new File(getContext().getDatabasePath(student.getUserId()+".db").getAbsolutePath());
-                        if (!file.exists()){
+                    if (((NewBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
+                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                        File file = new File(getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
+                        if (!file.exists()) {
                             getContext().startService(new Intent(getContext(), DownloadService.class));
                         }
 
-                       LogUtils.e("FH" , "绑定成功,开始登录云信SDK");
+                        LogUtils.e("FH", "绑定成功,开始登录云信SDK");
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(student.getUserId()), new RequestCallbackWrapper() {
                             @Override
                             public void onResult(int code, Object result, Throwable exception) {
-                                if (code != ResponseCode.RES_SUCCESS){
-                                   LogUtils.e("FH" , "云信SDK登录失败 : code : " + code);
-                                    new HintDialog(mActivity , "云信SDK登录失败 : code : " + code).show();
-                                }
-                                else {
-                                   LogUtils.e("FH" , "云信SDK登录成功 , 重置本机锁密码并提示");
+                                if (code != ResponseCode.RES_SUCCESS) {
+                                    LogUtils.e("FH", "云信SDK登录失败 : code : " + code);
+                                    new HintDialog(mActivity, "云信SDK登录失败 : code : " + code).show();
+                                } else {
+                                    LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
                                     binding.confirmBtn.setVisibility(View.GONE);
                                     binding.cancleBtn.setVisibility(View.GONE);
                                     binding.localPwdHintTv.setVisibility(View.VISIBLE);
@@ -131,17 +132,16 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                                 }
                             }
                         });
-                    }
-                    else {
-                       LogUtils.e("FH" , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg());
-                        new HintDialog(mActivity , "绑定失败 : " + ((NewBindDeviceRep) o).getMsg()).show();
+                    } else {
+                        LogUtils.e("FH", "绑定失败 : " + ((NewBindDeviceRep) o).getMsg());
+                        new HintDialog(mActivity, "绑定失败 : " + ((NewBindDeviceRep) o).getMsg()).show();
                     }
                 }
             }
-        },new Action1<Throwable>() {
+        }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-               LogUtils.e("FH", "绑定失败 : " + throwable.getMessage());
+                LogUtils.e("FH", "绑定失败 : " + throwable.getMessage());
                 throwable.printStackTrace();
                 dismiss();
                 new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
@@ -150,19 +150,50 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         subscription.add(tapEventEmitter.connect());
     }
 
-    public void confirm(){
+    public void confirm() {
         NewBindDeviceReq deviceReq = new NewBindDeviceReq();
         deviceReq.setDeviceId(Commons.UUID);
         deviceReq.setUserId(student.getUserId());
-        NewProtocolManager.bindDevice(deviceReq,new BindCallBack(mActivity));
+        NewProtocolManager.bindDevice(deviceReq, new BindCallBack(mActivity));
+        NetWorkManager.bindDevice(student.getUserId(), Commons.UUID)
+                .subscribe(o -> {
+                    LogUtils.e("FH", "绑定成功,开始登录云信SDK");
+                    SpUtils.saveStudent(student);
+                    File file = new File(getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
+                    if (!file.exists()) {
+                        getContext().startService(new Intent(getContext(), DownloadService.class));
+                    }
+
+                    YXClient.getInstance().getTokenAndLogin(student.getUserId() + "", new RequestCallbackWrapper() {
+                        @Override
+                        public void onResult(int code, Object result, Throwable exception) {
+                            if (code != ResponseCode.RES_SUCCESS) {
+                                LogUtils.e("FH", "云信SDK登录失败 : code : " + code);
+                                new HintDialog(mActivity, "云信SDK登录失败 : code : " + code).show();
+                            } else {
+                                LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
+                                binding.confirmBtn.setVisibility(View.GONE);
+                                binding.cancleBtn.setVisibility(View.GONE);
+                                binding.localPwdHintTv.setVisibility(View.VISIBLE);
+                                binding.startUseBtn.setVisibility(View.VISIBLE);
+                                binding.titleTv.setText("恭喜,用户与设备绑定成功");
+                                SpUtils.setLocalLockPwd("123456");
+                            }
+                        }
+                    });
+                }, throwable -> {
+                    dismiss();
+                    new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
+                });
     }
 
 
-    public void startUse (){
+    public void startUse() {
         dismiss();
-        mActivity.startActivity(new Intent(mActivity , MainActivity.class));
+        mActivity.startActivity(new Intent(mActivity, MainActivity.class));
         mActivity.finish();
     }
+
     @Override
     public void show() {
         super.show();
