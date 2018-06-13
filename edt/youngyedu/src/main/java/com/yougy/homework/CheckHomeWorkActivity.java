@@ -27,6 +27,8 @@ import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
+import com.frank.etude.pageBtnBar.PageBtnBar;
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.STSResultbean;
@@ -89,10 +91,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
     TextView analysisBtn;
     @BindView(R.id.rl_answer)
     RelativeLayout rlAnswer;
-    @BindView(R.id.last_page_btn)
-    ImageView lastPageBtn;
-    @BindView(R.id.next_page_btn)
-    ImageView nextPageBtn;
     @BindView(R.id.img_btn_right)
     ImageButton btnRight;
 
@@ -123,13 +121,15 @@ public class CheckHomeWorkActivity extends BaseActivity {
     TextView nextHomeworkText;
     @BindView(R.id.next_homework_icon)
     ImageView nextHomeworkIcon;
+    @BindView(R.id.page_btn_bar)
+    PageBtnBar pageBtnBar;
 
     private CustomLinearLayoutManager linearLayoutManager;
 
     private NoteBookView2 mNbvAnswerBoard;
 
     //模拟一共有多少页
-    int pageSize = 0;
+    private int pageSize = 0;
     //每页展示页码数
     private static final int PAGE_SHOW_SIZE = 10;
     //当前展示的题目编号（展示的第几题）从0开始。
@@ -161,7 +161,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private int score = -1;
 
     //上一题，下一题的状态 上一题：1，下一题：2.
-    private int commitType = 0;
+//    private int commitType = 0;
 
     //获取给学生评判的分数。其中-1表示还没判分，数值用来判断展示已批改还是未批改。选择自动判断也是通过该数值。
     private List<Integer> replyScoreList = new ArrayList<>();
@@ -192,9 +192,58 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     currentShowReplyPageIndex = selectPageIndex;
                 } else if (typeKey.equals("analysis")) {
                     currentShowAnalysisPageIndex = selectPageIndex;
+                } else {
+                    currentShowReplyPageIndex = selectPageIndex;
                 }
-                refreshPageBtns();
+
+                pageBtnBar.setCurrentSelectPageIndex(selectPageIndex);
+                pageBtnBar.refreshPageBar();
             }
+        });
+
+        pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getApplicationContext()) {
+            @Override
+            public int getPageBtnCount() {
+                if (questionBodyBtn.isSelected()) {
+
+                    if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
+                        return contentDisplayer.getmContentAdaper().getPageCount("question");
+                    } else {
+                        return contentDisplayer.getmContentAdaper().getPageCount("reply");
+                    }
+                } else if (analysisBtn.isSelected()) {
+                    return contentDisplayer.getmContentAdaper().getPageCount("analysis");
+                }
+                return 0;
+            }
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+
+                if (mNbvAnswerBoard != null && mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
+                    mNbvAnswerBoard.leaveScribbleMode(true);
+                }
+
+                if (questionBodyBtn.isSelected()) {
+
+                    //保存没触发前的界面数据
+                    saveCheckData();
+
+                    currentShowReplyPageIndex = btnIndex;
+                    if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
+                        contentDisplayer.getmContentAdaper().toPage("question", currentShowReplyPageIndex, false, false);
+                    } else {
+                        contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false, false);
+                    }
+                    getShowCheckDate();
+
+
+                } else if (analysisBtn.isSelected()) {
+                    currentShowAnalysisPageIndex = btnIndex;
+                    contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
+                }
+            }
+
         });
 
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
@@ -280,13 +329,20 @@ public class CheckHomeWorkActivity extends BaseActivity {
         String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
         ArrayList<Content_new> replyList;
         if ("选择".equals(questionType) || "判断".equals(questionType)) {
-            replyList = ListUtil.conditionalSubList(questionReplyDetail.getParsedReplyContentList(), new ListUtil.ConditionJudger<Content_new>() {
-                @Override
-                public boolean isMatchCondition(Content_new nodeInList) {
-                    return nodeInList.getType() != Content_new.Type.TEXT;
-                }
-            });
-            contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(questionReplyDetail.getParsedQuestionItem().answerContentList));
+            //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
+            autoToNextQuestion();
+            return;
+
+
+            //展示当前选择或者判断题在界面上。
+
+//            replyList = ListUtil.conditionalSubList(questionReplyDetail.getParsedReplyContentList(), new ListUtil.ConditionJudger<Content_new>() {
+//                @Override
+//                public boolean isMatchCondition(Content_new nodeInList) {
+//                    return nodeInList.getType() != Content_new.Type.TEXT;
+//                }
+//            });
+//            contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(questionReplyDetail.getParsedQuestionItem().answerContentList));
         } else {
             replyList = (ArrayList<Content_new>) questionReplyDetail.getParsedReplyContentList();
             contentDisplayer.getmContentAdaper().setSubText(null);
@@ -376,22 +432,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
         }
     }
 
-    public void refreshPageChangeBtns(String tag) {
-        int currentSelectPageIndex = contentDisplayer.getmContentAdaper().getCurrentSelectPageIndex();
-        if (currentSelectPageIndex == 0 || currentSelectPageIndex == -1) {
-            lastPageBtn.setVisibility(View.INVISIBLE);
-        } else {
-            lastPageBtn.setVisibility(View.VISIBLE);
-        }
-
-        if ((currentSelectPageIndex + 1) >= contentDisplayer.getmContentAdaper().getPageCount(tag)) {
-            nextPageBtn.setVisibility(View.INVISIBLE);
-        } else {
-            nextPageBtn.setVisibility(View.VISIBLE);
-        }
-    }
-
-
     private void setPageNumberView() {
         pageNumAdapter = new PageNumAdapter();
         linearLayoutManager = new CustomLinearLayoutManager(this);
@@ -439,8 +479,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     }
 
     @OnClick({R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_homework_error, R.id.tv_homework_half_right, R.id.tv_homework_right,
-            R.id.question_body_btn, R.id.analysis_btn, R.id.last_page_btn, R.id.next_page_btn,
-            R.id.img_btn_right, R.id.iv_check_change})
+            R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change})
     public void onClick(View view) {
 
         if (mNbvAnswerBoard != null) {
@@ -450,96 +489,48 @@ public class CheckHomeWorkActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.tv_last_homework:
 
-                if (llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
+                //不提交批改数据，直接跳转到上一题
+                if (currentShowQuestionIndex > 0) {
+                    currentShowQuestionIndex--;
+                    pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
 
-                    if (score == -1) {
-                        ToastUtil.showCustomToast(this, "请先对该题判对错");
-                        return;
-                    }
-                    //保存没触发前的界面数据,并提交批改数据到服务器
-                    saveCheckData();
-
-                    //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
-                    replyScoreList.set(currentShowQuestionIndex, score);
-
-                    commitType = 1;
-                    getUpLoadInfo();
                 } else {
-
-                    //不提交批改数据，直接跳转到上一题
-                    if (currentShowQuestionIndex > 0) {
-                        currentShowQuestionIndex--;
-                        pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
-
-                    } else {
-                        ToastUtil.showCustomToast(getBaseContext(), "已经是第一题了");
-                    }
+                    ToastUtil.showCustomToast(getBaseContext(), "已经是第一题了");
                 }
-
                 break;
             case R.id.tv_next_homework:
-                if (llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
-
-                    if (score == -1) {
-                        ToastUtil.showCustomToast(this, "请先对该题判对错");
-                        return;
-                    }
-
-                    //保存没触发前的界面数据
-                    saveCheckData();
-
-                    //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
-                    replyScoreList.set(currentShowQuestionIndex, score);
-                    commitType = 2;
-                    getUpLoadInfo();
-                } else {
-                    if (currentShowQuestionIndex < pageSize - 1) {
-
-                        currentShowQuestionIndex++;
-                        pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
-
-                    } else {
-                        new ConfirmDialog(this, "批改完成，请选择其他学生继续批改！", new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-//                                back();
-
-                                NetWorkManager.closeHomework(examId, null, studentId + "")
-                                        .subscribe(new Action1<Object>() {
-                                            @Override
-                                            public void call(Object o) {
-                                                ToastUtil.showCustomToast(getBaseContext(), "该学生批改完毕");
-                                                back();
-
-                                            }
-                                        }, new Action1<Throwable>() {
-                                            @Override
-                                            public void call(Throwable throwable) {
-                                                throwable.printStackTrace();
-                                                ToastUtil.showCustomToast(getBaseContext(), "该学生批改完毕提交错误了");
-                                            }
-                                        });
-
-                            }
-                        }, "确定").show();
-
-                    }
-                }
+                autoToNextQuestion();
                 break;
             case R.id.tv_homework_error:
                 score = 0;
-                ToastUtil.showCustomToast(this, "该题判为错误");
+                //保存没触发前的界面数据,并提交批改数据到服务器
+                saveCheckData();
+
+                //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
+                replyScoreList.set(currentShowQuestionIndex, score);
+
+                getUpLoadInfo();
 
                 break;
             case R.id.tv_homework_half_right:
                 score = 50;
-                ToastUtil.showCustomToast(this, "该题判为部分正确");
+                //保存没触发前的界面数据,并提交批改数据到服务器
+                saveCheckData();
+
+                //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
+                replyScoreList.set(currentShowQuestionIndex, score);
+
+                getUpLoadInfo();
                 break;
             case R.id.tv_homework_right:
                 score = 100;
-                ToastUtil.showCustomToast(this, "该题判为正确");
+                //保存没触发前的界面数据,并提交批改数据到服务器
+                saveCheckData();
+
+                //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
+                replyScoreList.set(currentShowQuestionIndex, score);
+
+                getUpLoadInfo();
                 break;
 
 
@@ -556,10 +547,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     analysisBtn.setSelected(false);
                     if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
                         contentDisplayer.getmContentAdaper().toPage("question", currentShowReplyPageIndex, false, false);
-                        refreshPageChangeBtns("question");
                     } else {
                         contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false, false);
-                        refreshPageChangeBtns("reply");
                     }
                     getShowCheckDate();
                 }
@@ -573,51 +562,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                     analysisBtn.setSelected(true);
                     contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
-                    refreshPageChangeBtns("analysis");
-                }
-                break;
-            case R.id.last_page_btn:
-                //上一页
-                if (questionBodyBtn.isSelected()) {
-
-                    //保存没触发前的界面数据
-                    saveCheckData();
-
-                    currentShowReplyPageIndex--;
-                    if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
-                        contentDisplayer.getmContentAdaper().toPage("question", currentShowReplyPageIndex, false, false);
-                        refreshPageChangeBtns("question");
-                    } else {
-                        contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false, false);
-                        refreshPageChangeBtns("reply");
-                    }
-                    getShowCheckDate();
-                } else if (analysisBtn.isSelected()) {
-                    currentShowAnalysisPageIndex--;
-                    contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
-                    refreshPageChangeBtns("analysis");
-                }
-                break;
-            case R.id.next_page_btn:
-                //下一页
-                if (questionBodyBtn.isSelected()) {
-                    //保存没触发前的界面数据
-                    saveCheckData();
-
-                    currentShowReplyPageIndex++;
-                    if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
-                        contentDisplayer.getmContentAdaper().toPage("question", currentShowReplyPageIndex, false, false);
-                        refreshPageChangeBtns("question");
-                    } else {
-                        contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false, false);
-                        refreshPageChangeBtns("reply");
-                    }
-                    getShowCheckDate();
-
-                } else if (analysisBtn.isSelected()) {
-                    currentShowAnalysisPageIndex++;
-                    contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
-                    refreshPageChangeBtns("analysis");
                 }
                 break;
             case R.id.img_btn_right:
@@ -654,46 +598,22 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 llHomeWorkCheckOption.setVisibility(View.VISIBLE);
                 llCheckAgain.setVisibility(View.GONE);
                 mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                //TODO: yuanye : start   解决 重新批改后无法手写
+
+                replyScoreList.set(currentShowQuestionIndex, -1);
+               /* //yuanye : start   解决 重新批改后无法手写
                 questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
                 questionReplyDetail.setReplyScore(-1);
+
                 replyScoreList.clear();
                 for (int i = 0; i < pageSize; i++) {
                     replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
                 }
 
-                //TODO: yuanye : end
+                //yuanye : end*/
                 break;
 
         }
     }
-
-    public void refreshPageBtns() {
-        if (questionBodyBtn.isSelected()) {
-            if (currentShowReplyPageIndex == 0) {
-                lastPageBtn.setClickable(false);
-            } else {
-                lastPageBtn.setClickable(true);
-            }
-            if ((currentShowReplyPageIndex + 1) >= contentDisplayer.getmContentAdaper().getPageCount("reply")) {
-                nextPageBtn.setClickable(false);
-            } else {
-                nextPageBtn.setClickable(true);
-            }
-        } else if (analysisBtn.isSelected()) {
-            if (currentShowAnalysisPageIndex == 0) {
-                lastPageBtn.setClickable(false);
-            } else {
-                lastPageBtn.setClickable(true);
-            }
-            if ((currentShowAnalysisPageIndex + 1) >= contentDisplayer.getmContentAdaper().getPageCount("analysis")) {
-                nextPageBtn.setClickable(false);
-            } else {
-                nextPageBtn.setClickable(true);
-            }
-        }
-    }
-
 
     private void saveCheckData() {
         if (bytesList.size() == 0) {
@@ -1041,48 +961,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         bytesList.clear();
                         pathList.clear();
 
-                        if (commitType == 1) {
-
-                            if (currentShowQuestionIndex > 0) {
-
-
-                                currentShowQuestionIndex--;
-                                pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
-
-                            } else {
-                                ToastUtil.showCustomToast(getBaseContext(), "已经是第一题了");
-                            }
-
-                        } else if (commitType == 2) {
-                            if (currentShowQuestionIndex < pageSize - 1) {
-
-                                currentShowQuestionIndex++;
-                                pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
-
-                            } else {
-
-                                NetWorkManager.closeHomework(examId, null, studentId + "")
-                                        .subscribe(new Action1<Object>() {
-                                            @Override
-                                            public void call(Object o) {
-                                                ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
-                                                back();
-
-                                            }
-                                        }, new Action1<Throwable>() {
-                                            @Override
-                                            public void call(Throwable throwable) {
-                                                throwable.printStackTrace();
-                                                ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
-                                            }
-                                        });
-
-                            }
-                        }
-
-                        commitType = 0;
-
-
+                        autoToNextQuestion();
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -1093,6 +972,67 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 });
 
     }
+
+    /**
+     * 如果有则跳转到下一题，没有直接提交关闭作业接口
+     */
+    private void autoToNextQuestion() {
+        if (currentShowQuestionIndex < pageSize - 1) {
+
+            currentShowQuestionIndex++;
+            pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
+
+        } else {
+
+            //是否有未批改的作业
+            if (replyScoreList.contains(-1)) {
+
+                new ConfirmDialog(CheckHomeWorkActivity.this, null, "检测到有作业未批改，是否继续批改？", "继续批改", "直接提交",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                int position = replyScoreList.indexOf(-1);
+                                pageNumAdapter.onItemClickListener.onItemClick1(position);
+
+                            }
+                        }, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        closeHomework();
+                    }
+                }).show();
+
+
+            } else {
+                closeHomework();
+            }
+        }
+    }
+
+    /**
+     * 关闭该作业，设置为批改完毕
+     */
+    private void closeHomework() {
+        NetWorkManager.closeHomework(examId, null, studentId + "")
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
+                        back();
+
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                    }
+                });
+    }
+
 
     //提交完毕后刷新底部题目角标
     private void changeHomeWorkCorner(int position) {
@@ -1164,11 +1104,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
         titleTextview.setText(studentName + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
 
         if (currentShowQuestionIndex > 0) {
-            lastHomeworkBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
+//            lastHomeworkBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
             lastHomeworkText.setVisibility(View.VISIBLE);
             lastHomeworkIcon.setVisibility(View.VISIBLE);
         } else {
-            lastHomeworkBtn.setBackgroundColor(getResources().getColor(R.color.gray_999999));
+//            lastHomeworkBtn.setBackgroundColor(getResources().getColor(R.color.gray_999999));
             lastHomeworkText.setVisibility(View.GONE);
             lastHomeworkIcon.setVisibility(View.GONE);
         }
@@ -1181,6 +1121,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 //            nextHomeworkBtn.setBackgroundColor(getResources().getColor(R.color.gray_999999));
 //            nextHomeworkText.setVisibility(View.GONE);
             nextHomeworkIcon.setVisibility(View.GONE);
+            nextHomeworkText.setVisibility(View.GONE);
             nextHomeworkText.setText("完成批改");
         }
     }
