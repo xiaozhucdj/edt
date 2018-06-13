@@ -456,4 +456,5 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"promoteBook"})
     Observable<BaseResult<List<BookInfo>>> promoteBook(@Field("userId") int userId, @Field("bookId") int bookId);
+
 }

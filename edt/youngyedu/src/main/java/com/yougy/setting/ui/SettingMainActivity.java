@@ -8,7 +8,9 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.bean.AliyunData;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
@@ -41,8 +43,10 @@ import com.yougy.view.dialog.LoadingProgressDialog;
 
 import org.litepal.tablemanager.Connector;
 
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
@@ -135,7 +139,6 @@ public class SettingMainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
-        handleEvent();
     }
 
     @Override
@@ -146,25 +149,6 @@ public class SettingMainActivity extends BaseActivity {
             subscription = null;
         }
         tapEventEmitter = null;
-    }
-
-    protected void handleEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewUnBindDeviceRep) {
-                    if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
-                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
-                        showCenterDetermineDialog(R.string.unbind_success);
-                        YXClient.getInstance().logout();
-                    } else {
-                        LogUtils.i("unbind fail ..." + getString(R.string.unbind_fail) + ((NewUnBindDeviceRep) o).getMsg());
-                        showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
-                    }
-                }
-            }
-        }));
-        subscription.add(tapEventEmitter.connect());
     }
 
     @Override
@@ -192,12 +176,9 @@ public class SettingMainActivity extends BaseActivity {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
         }
         initSysIcon();
-        binding.avatarImv.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                LogUtils.setOpenLog(true);
-                return true;
-            }
+        binding.avatarImv.setOnLongClickListener(v -> {
+            LogUtils.setOpenLog(true);
+            return true;
         });
     }
 
@@ -234,8 +215,6 @@ public class SettingMainActivity extends BaseActivity {
     }
 
     private LoadingProgressDialog loadingProgressDialog;
-    private static final int UNBIND_SUCCESS = 10000;
-    private static final int UNBIND_FAILED = 10001;
 
     private void unBindRequest() {
         if (!NetUtils.isNetConnected()) {
@@ -248,15 +227,20 @@ public class SettingMainActivity extends BaseActivity {
                 loadingProgressDialog = new LoadingProgressDialog(this);
                 loadingProgressDialog.show();
             }
-            new Thread(() -> {
+
+            NetWorkManager.queryUploadAliyunData().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aliyunData -> {
                 try {
-                    AliyunUtil.upload();
-                    sendMessage(UNBIND_SUCCESS);
+                    AliyunUtil aliyunUtil = new AliyunUtil(aliyunData);
+                    PutObjectResult result = aliyunUtil.upload();
+                    if (result.getStatusCode() == 200) {
+                        unbindDevice();
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    sendMessage(UNBIND_FAILED);
+                    showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
+                } finally {
+                    loadingProgressDialog.dismiss();
                 }
-            }).start();
+            });
         } else {
             unbindDevice();
         }
@@ -280,23 +264,6 @@ public class SettingMainActivity extends BaseActivity {
                 }, throwable -> {
                     showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
                 });
-    }
-
-    @Override
-    protected void onHandleMessage(Message msg) {
-        super.onHandleMessage(msg);
-        loadingProgressDialog.dismiss();
-        switch (msg.what) {
-            case UNBIND_SUCCESS:
-//                showCenterDetermineDialog(R.string.unbind_success);
-                UIUtils.showToastSafe("解绑成功");
-                finishAll();
-                loadIntent(LoginActivity.class);
-                break;
-            case UNBIND_FAILED:
-                showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
-                break;
-        }
     }
 
     public void changePwd(View view) {
