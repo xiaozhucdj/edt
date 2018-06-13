@@ -57,7 +57,7 @@ public class LockerActivity extends BaseActivity {
                 checkNetAndRefreshLogin();
             }
         });
-        TextView tv = this.findViewById(R.id.tv_line_text);
+        TextView tv = (TextView) this.findViewById(R.id.tv_line_text);
         tv.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         tv.getPaint().setAntiAlias(true);//抗锯齿
     }

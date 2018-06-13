@@ -13,6 +13,7 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
@@ -387,10 +388,16 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Student>> login(NewLoginReq req) {
-        return getInstance().getServerApi().login(req)
+    public static Observable<List<Student>> login(NewLoginReq req){
+        return getInstance(false).getServerApi().login(req)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(null));
+    }
+
+    public static Observable<List<Student>> login(String userName, String userPassword, String userToken, String deviceId, String userId) {
+        return getInstance(false).getServerApi().login(userName,userPassword,userToken,deviceId,userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(null));
     }
 
     /**
@@ -438,6 +445,14 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<Object> unbindDevice(NewUnBindDeviceReq unBindDeviceReq){
+        LogUtils.e("FH", "!!!!!调用ServerApi解绑设备:unbindDevice");
+        return getInstance().getServerApi().unbindDevice(unBindDeviceReq)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+
     public static Observable<Object> closeHomework(Integer examId, Integer courseId, String userId) {
         LogUtils.e("FH", "!!!!!调用ServerApi进行作业评定,关闭单学生单次作业并写入错题本");
         return getInstance().getServerApi().closeHomework(examId, courseId, userId)
@@ -482,6 +497,34 @@ public final class NetWorkManager {
      */
     public static Observable<List<BookInfo>> queryBookShopHomeInfo(BookStoreHomeReq req) {
         return getInstance().getServerApi().queryBookShopHomeInfo(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> appendFavor(Integer userId, Integer bookId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi添加单项收藏夹:appendFavor");
+        return getInstance().getServerApi().appendFavor(userId, bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> appendCart(Integer userId, Integer bookId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi添加单项购物车:appendCart");
+        return getInstance().getServerApi().appendCart(userId, bookId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<BookInfo>> queryShopBook(Integer userId, Integer bookId
+            , String bookTitle, Integer bookVersion, Integer bookCategory, Integer bookCategoryMatch) {
+        LogUtils.e("FH", "!!!!!调用ServerApi查询商城图书:queryShopBook");
+        return getInstance().getServerApi().queryShopBook(userId, bookId, bookTitle, bookVersion, bookCategory, bookCategoryMatch)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+    public static Observable<List<BookInfo>> promoteBook(Integer userId, int bookId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi获取推荐书列表:promoteBook");
+        return getInstance().getServerApi().promoteBook(userId, bookId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

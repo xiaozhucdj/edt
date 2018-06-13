@@ -64,6 +64,7 @@ import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.ReplyAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.WendaQuestionAddAttachment;
+import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -1069,10 +1070,13 @@ public class YXClient {
      * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
      */
     public static void checkNetAndRefreshLogin(Activity activity, Runnable onRefreshSuccessRunnable) {
+        if (SpUtils.getUserId()<=0){
+            return;
+        }
         if (loadingDialog == null || !loadingDialog.isShowing()) {
             loadingDialog = new LoadingProgressDialog(BaseActivity.getCurrentActivity());
             loadingDialog.show();
-            loadingDialog.setTitle("正在连接服务器...");
+            loadingDialog.setTitle(R.string.loading_text);
         }
         final int MAX_RETRY_TIMES = 3;
         //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
@@ -1124,14 +1128,16 @@ public class YXClient {
                                 if (loadingDialog != null && loadingDialog.isShowing()) {
                                     loadingDialog.dismiss();
                                 }
-                                mMsgFail=  new ConfirmDialog(BaseActivity.getCurrentActivity(), "连接到消息服务器失败 : "
-                                        + reason + " , 是否重连?", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        checkNetAndRefreshLogin(BaseActivity.getCurrentActivity(), onRefreshSuccessRunnable);
-                                    }
-                                }, "重新连接") ;
+                                if (mMsgFail == null || !mMsgFail.isShowing()) {
+                                    mMsgFail = new ConfirmDialog(BaseActivity.getCurrentActivity(), "连接到消息服务器失败 : "
+                                            + reason + " , 是否重连?", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            checkNetAndRefreshLogin(BaseActivity.getCurrentActivity(), onRefreshSuccessRunnable);
+                                        }
+                                    }, "重新连接");
+                                }
                                 if (!mMsgFail.isShowing()) {
                                     mMsgFail.show();
                                 }

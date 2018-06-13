@@ -8,7 +8,9 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.bean.AliyunData;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
@@ -17,6 +19,7 @@ import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
@@ -27,6 +30,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
+import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
@@ -37,9 +41,16 @@ import com.yougy.ui.activity.databinding.ActivitySettingBinding;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
+import org.litepal.tablemanager.Connector;
+
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
+
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 
 /**
  * 账号设置界面
@@ -128,7 +139,6 @@ public class SettingMainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         subscription = new CompositeSubscription();
         tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
-        handleEvent();
     }
 
     @Override
@@ -139,28 +149,6 @@ public class SettingMainActivity extends BaseActivity {
             subscription = null;
         }
         tapEventEmitter = null;
-    }
-
-    protected void handleEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewUnBindDeviceRep) {
-                    if (((NewUnBindDeviceRep) o).getCode() == ProtocolId.RET_SUCCESS) {
-                        FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
-//                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
-//                        startService(intent);
-//                        SpUtils.clearSP();
-                        showCenterDetermineDialog(R.string.unbind_success);
-                        YXClient.getInstance().logout();
-                    } else {
-                        LogUtils.i("unbind fail ..." + getString(R.string.unbind_fail) + ((NewUnBindDeviceRep) o).getMsg());
-                        showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
-                    }
-                }
-            }
-        }));
-        subscription.add(tapEventEmitter.connect());
     }
 
     @Override
@@ -188,12 +176,9 @@ public class SettingMainActivity extends BaseActivity {
             binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
         }
         initSysIcon();
-        binding.avatarImv.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                LogUtils.setOpenLog(true);
-                return true;
-            }
+        binding.avatarImv.setOnLongClickListener(v -> {
+            LogUtils.setOpenLog(true);
+            return true;
         });
     }
 
@@ -209,7 +194,7 @@ public class SettingMainActivity extends BaseActivity {
                 break;
             case R.id.img_wifi:
 //                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
-                boolean isConnected =false ;
+                boolean isConnected = false;
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
                 break;
@@ -219,25 +204,17 @@ public class SettingMainActivity extends BaseActivity {
     public void unBind(View view) {
 
         new ConfirmDialog(this, "确定解绑该账号吗?", "账号解绑后,存储在本设备上的资料都将遗失,\n请慎重操作"
-                , "解绑", "取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                unBindRequest();
-                dialog.dismiss();
-                invalidateDelayed();
-            }
-        }, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                invalidateDelayed();
-            }
+                , "解绑", "取消", (dialog, which) -> {
+            unBindRequest();
+            dialog.dismiss();
+            invalidateDelayed();
+        }, (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+            invalidateDelayed();
         }).show();
     }
 
     private LoadingProgressDialog loadingProgressDialog;
-    private static final int UNBIND_SUCCESS = 10000;
-    private static final int UNBIND_FAILED = 10001;
 
     private void unBindRequest() {
         if (!NetUtils.isNetConnected()) {
@@ -250,34 +227,43 @@ public class SettingMainActivity extends BaseActivity {
                 loadingProgressDialog = new LoadingProgressDialog(this);
                 loadingProgressDialog.show();
             }
-            new Thread(() -> {
+
+            NetWorkManager.queryUploadAliyunData().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aliyunData -> {
                 try {
-                    AliyunUtil.upload();
-                    sendMessage(UNBIND_SUCCESS);
+                    AliyunUtil aliyunUtil = new AliyunUtil(aliyunData);
+                    PutObjectResult result = aliyunUtil.upload();
+                    if (result.getStatusCode() == 200) {
+                        unbindDevice();
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    sendMessage(UNBIND_FAILED);
+                    showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
+                } finally {
+                    loadingProgressDialog.dismiss();
                 }
-            }).start();
+            });
         } else {
-            NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
-            unBindDeviceReq.setDeviceId(Commons.UUID);
-            NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
+            unbindDevice();
         }
     }
 
-    @Override
-    protected void onHandleMessage(Message msg) {
-        super.onHandleMessage(msg);
-        loadingProgressDialog.dismiss();
-        switch (msg.what) {
-            case UNBIND_SUCCESS:
-                showCenterDetermineDialog(R.string.unbind_success);
-                break;
-            case UNBIND_FAILED:
-                showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
-                break;
-        }
+    private void unbindDevice() {
+        NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
+        unBindDeviceReq.setDeviceId(Commons.UUID);
+//            NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
+        NetWorkManager.unbindDevice(unBindDeviceReq)
+                .compose(bindToLifecycle())
+                .subscribe(o -> {
+                    SpUtils.clearSP();
+                    SpUtils.changeInitFlag(false);
+                    Connector.resetHelper();
+                    deleteDatabase(DATABASE_NAME);
+                    deleteDatabase(JOURNAL_NAME);
+                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                    showCenterDetermineDialog(R.string.unbind_success);
+                    YXClient.getInstance().logout();
+                }, throwable -> {
+                    showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
+                });
     }
 
     public void changePwd(View view) {

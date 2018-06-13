@@ -201,45 +201,28 @@ public class ShopCartActivity extends ShopBaseActivity {
                 return;
             }
         }
-        NetWorkManager.queryOrder(String.valueOf(SpUtils.getUserId()), "[\"已支付\",\"待支付\"]")
-                .subscribe(new Action1<List<OrderInfo>>() {
+        //新建订单
+        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), new ArrayList<BookIdObj>() {
+            {
+                for (CartItem cartItem : checkedCartItemList) {
+                    add(new BookIdObj(cartItem.bookId));
+                }
+            }
+        })).subscribe(new Action1<List<OrderIdObj>>() {
                     @Override
-                    public void call(List<OrderInfo> orderInfos) {
-                        LogUtils.e("FH", "查询已支付待支付订单成功 : 未支付订单个数 : " + orderInfos.size());
-                        if (orderInfos.size() > 0) {
-                            new HintDialog(getThisActivity(), "您还有未完成的订单,请支付或取消后再生成新的订单").show();
-                            return;
-                        }
-                        //新建订单
-                        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), new ArrayList<BookIdObj>() {
-                            {
-                                for (CartItem cartItem : checkedCartItemList) {
-                                    add(new BookIdObj(cartItem.bookId));
-                                }
-                            }
-                        })).subscribe(new Action1<List<OrderIdObj>>() {
-                                    @Override
-                                    public void call(List<OrderIdObj> orders) {
-                                        OrderIdObj orderIdObj = orders.get(0);
-                                        Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
-                                        intent.putExtra("orderId", orderIdObj.getOrderId());
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }, new Action1<Throwable>() {
-                                    @Override
-                                    public void call(Throwable throwable) {
-                                        showCenterDetermineDialog(R.string.get_order_fail);
-                                        LogUtils.e("FH", "生成订单失败");
-                                        throwable.printStackTrace();
-                                    }
-                                });
+                    public void call(List<OrderIdObj> orders) {
+                        OrderIdObj orderIdObj = orders.get(0);
+                        Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
+                        intent.putExtra("orderId", orderIdObj.getOrderId());
+                        startActivity(intent);
+                        finish();
+                        SpUtils.newOrderCountPlusOne();
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        new HintDialog(getThisActivity(), "查询已支付待支付订单失败" ).show();
-                        LogUtils.e("FH", "查询已支付待支付订单失败 : " + throwable.getMessage());
+                        showCenterDetermineDialog(R.string.get_order_fail);
+                        LogUtils.e("FH", "生成订单失败");
                         throwable.printStackTrace();
                     }
                 });

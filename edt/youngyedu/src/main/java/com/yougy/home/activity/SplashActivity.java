@@ -189,9 +189,39 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         }
     }
     private void login() {
+        LogUtils.e(tag,"login...................");
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
-//        newLogin(loginReq);
+        NetWorkManager.login(loginReq)
+                .compose(bindToLifecycle())
+                .subscribe(students -> {
+                    Student student = students.get(0);
+                    if (!student.getUserRole().equals("学生")) {
+                        new HintDialog(getThisActivity(), "权限错误:本设备已被其他账号绑定过,请先解绑后重新登录", "退出程序", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finishAll();
+                            }
+                        }).show();
+                    } else {
+                        LogUtils.e("FH", "自动登录成功");
+                        SpUtils.saveStudent(student);
+                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
+                        checkLocalLockAndJump();
+                    }
+                }, throwable -> {
+                    if (-1 == SpUtils.getAccountId()) {
+                        LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
+                        jumpActivity(LoginActivity.class);
+                    } else {
+                        LogUtils.e("FH", "自动登录失败,有之前的登录信息");
+                        checkLocalLockAndJump();
+                    }
+                });
+//        loginOld(loginReq);
+    }
+
+    private void loginOld(NewLoginReq loginReq) {
         NewProtocolManager.login(loginReq, new LoginCallBack(this, loginReq) {
             @Override
             public void onBefore(Request request, int id) {
@@ -241,6 +271,44 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
 
     //升级接口 m=getAppVersion&id=student   用id来判断学生端、教师端 http://ocghxr9lf.bkt.clouddn.com/sample-debug.apk
     private void getServerVersion() {
+        NetWorkManager.getVersion()
+                .compose(bindToLifecycle())
+                .subscribe(version -> {
+                    int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
+                    int serverVersion = TextUtils.isEmpty(version.getAppVersion()) ? -1 : Integer.parseInt(version.getAppVersion());
+                    String url = version.getAppUrl();
+                    if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                        mHandler.post(() -> new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
+                                , "现在升级", "暂缓升级", (dialog, which) -> {
+                            //现在升级
+                            LogUtils.e("FH", "用户点击现在升级");
+                            SpUtils.setVersion("" + serverVersion);
+                            if (SpUtils.getStudent().getUserId() == -1) {
+                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                            } else {
+                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                            }
+                            dialog.dismiss();
+                            doDownLoad(SplashActivity.this, url);
+                        }, (dialog, which) -> {
+                            //暂缓升级
+                            LogUtils.e("FH", "用户点击暂缓升级,直接登录");
+                            dialog.dismiss();
+                            login();
+                        }).show());
+                    } else {
+                        LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
+                        login();
+                    }
+                }, throwable -> {
+                    LogUtils.e(tag,throwable.getMessage());
+                    LogUtils.e("FH", "检测版本失败.");
+                    login();
+                });
+//        getVersionOld();
+    }
+
+    private void getVersionOld() {
         NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(SplashActivity.this) {
             @Override
             public void onResponse(NewGetAppVersionRep response, int id) {

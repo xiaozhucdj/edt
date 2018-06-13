@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.down.DownloadBookListener;
 import com.yougy.common.down.NewDownBookInfo;
@@ -65,7 +66,7 @@ import rx.functions.Func1;
 /**
  * Created by yuanye 2016/08/22
  */
-public abstract class BaseActivity extends FragmentActivity implements UiPromptDialog.Listener {
+public abstract class BaseActivity extends RxAppCompatActivity implements UiPromptDialog.Listener {
     protected String tag = getClass().getName();
     /**
      * UI 线程ID
@@ -154,11 +155,13 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
         if (event == null) {
             return;
         } else if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
-            if (NetManager.getInstance().isWifiConnected(this) && SpUtils.getUserId() > 0) {
+            if (NetManager.getInstance().isWifiConnected(this) ) {
                 if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
                     mUiPromptDialog.dismiss();
+                    LogUtils.e("yuanye base EVENT_WIIF  1");
                 }
             } else {
+                LogUtils.e("yuanye base EVENT_WIIF  2");
                 showNoNetDialog();
             }
         }
@@ -1179,6 +1182,5 @@ public abstract class BaseActivity extends FragmentActivity implements UiPromptD
     @Override
     protected void onStart() {
         super.onStart();
-        showNoNetDialog();
     }
 }

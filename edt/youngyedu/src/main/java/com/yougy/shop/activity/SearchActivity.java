@@ -66,7 +66,7 @@ public class SearchActivity extends ShopBaseActivity {
     private SearchResultAdapter mAdapter;
     private int totalCount = 0;
 
-    private static final int COUNT_PER_PAGE = 5;
+    private static final int COUNT_PER_PAGE = 4;
 
     private List<String> mHistoryRecords;
 

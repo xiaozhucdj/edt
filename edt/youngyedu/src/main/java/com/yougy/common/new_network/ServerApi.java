@@ -9,6 +9,7 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
@@ -306,6 +307,11 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("users")
     @DefaultField(keys = {"m"},values = {"login"})
+    Observable<BaseResult<List<Student>>> login(@Field("userName") String userName
+            , @Field("userPassword") String userPassword, @Field("userToken") String userToken
+            , @Field("deviceId") String deviceId, @Field("userId") String userId);
+
+    @POST("users")
     Observable<BaseResult<List<Student>>> login(@Body NewLoginReq req);
 
     /**
@@ -328,6 +334,13 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"bindDevice"})
     Observable<BaseResult<Object>> bindDevice(@Field("userId") Integer userId
             , @Field("deviceId") String deviceId, @Field("deviceModel") String deviceModel);
+
+    /**
+     * 设备解绑
+     */
+    @POST("device")
+    Observable<BaseResult<Object>> unbindDevice(@Body NewUnBindDeviceReq unBindDeviceReq);
+
 
     @FormUrlEncoded
     @POST("device")
@@ -389,4 +402,59 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
             , @Field("content") String content, @Field("replyCommentator") String replyCommentator);
+
+    /**
+     * 添加单个收藏夹
+     *
+     * @param userId
+     * @param bookId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"appendFavor"})
+    Observable<BaseResult<Object>> appendFavor(@Field("userId") Integer userId, @Field("bookId") Integer bookId);
+
+    /**
+     * 添加单个购物车
+     *
+     * @param userId
+     * @param bookId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"appendCart"})
+    Observable<BaseResult<Object>> appendCart(@Field("userId") Integer userId, @Field("bookId") Integer bookId);
+
+    /**
+     * 查询商城图书详情
+     *
+     * @param userId
+     * @param bookId
+     * @param bookTitle
+     * @param bookVersion
+     * @param bookCategory
+     * @param bookCategoryMatch
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"queryBook"})
+    Observable<BaseResult<List<BookInfo>>> queryShopBook(@Field("userId") Integer userId
+            , @Field("bookId") Integer bookId, @Field("bookTitle") String bookTitle, @Field("bookVersion") Integer bookVersion
+            , @Field("bookCategory") Integer bookCategory, @Field("bookCategoryMatch") Integer bookCategoryMatch);
+
+    /**
+     * 获取推荐图书列表
+     *
+     * @param userId
+     * @param bookId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"promoteBook"})
+    Observable<BaseResult<List<BookInfo>>> promoteBook(@Field("userId") int userId, @Field("bookId") int bookId);
+
 }
