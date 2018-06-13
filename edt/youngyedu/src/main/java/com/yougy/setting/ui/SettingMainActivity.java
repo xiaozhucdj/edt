@@ -4,33 +4,26 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.yougy.common.activity.BaseActivity;
-import com.yougy.common.bean.AliyunData;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.UnBindCallback;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
-import com.yougy.common.protocol.response.NewUnBindDeviceRep;
 import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
-import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
@@ -44,7 +37,6 @@ import com.yougy.view.dialog.LoadingProgressDialog;
 import org.litepal.tablemanager.Connector;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -250,7 +242,6 @@ public class SettingMainActivity extends BaseActivity {
         NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
         unBindDeviceReq.setDeviceId(Commons.UUID);
         unBindDeviceReq.setUserId(SpUtils.getUserId());
-//            NewProtocolManager.unbindDevice(unBindDeviceReq, new UnBindCallback(SettingMainActivity.this));
         NetWorkManager.unbindDevice(unBindDeviceReq)
                 .compose(bindToLifecycle())
                 .subscribe(o -> {
@@ -268,17 +259,7 @@ public class SettingMainActivity extends BaseActivity {
     }
 
     public void changePwd(View view) {
-        new ChangePwdDialog(this).setPwdListener(new ChangePwdDialog.DialogPwdListener() {
-            @Override
-            public void onPwdListener() {
-                invalidateDelayed();
-            }
-        }).setOnDismissListener_return(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                RefreshUtil.invalidate(binding.getRoot());
-            }
-        }).show();
+        new ChangePwdDialog(this).setPwdListener(this::invalidateDelayed).setOnDismissListener_return(dialog -> RefreshUtil.invalidate(binding.getRoot())).show();
     }
 
 
