@@ -221,7 +221,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("bookStore")
     @DefaultField(keys = {"m" , "orderParent"}, values = {"queryOrderSole" , "0"})
-    Observable<BaseResult<List<OrderSummary>>> queryOrderSole(@Field("orderOwner") String orderOwner);
+    Observable<BaseResult<List<OrderSummary>>> queryOrderSole(@Field("orderOwner") String orderOwner , @Field("ps") Integer ps , @Field("pn") Integer pn);
 
     /**
      * 订单结算,获取支付二维码
