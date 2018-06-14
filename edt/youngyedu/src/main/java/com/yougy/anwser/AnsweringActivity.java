@@ -661,7 +661,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     private void setChooeseResult() {
 
         //清理掉其他题中的作业结果。
-        checkedAnswerList.clear();
+//        checkedAnswerList.clear();
 
         binding.rcvChooeseItem.setAdapter(new RecyclerView.Adapter() {
             @Override

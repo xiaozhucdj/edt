@@ -188,7 +188,7 @@
 
 
         <!--底部分页按钮栏-->
-        <com.yougy.anwser.PageBtnBar
+        <com.frank.etude.pageBtnBar.PageBtnBar
             android:id="@+id/page_btn_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
