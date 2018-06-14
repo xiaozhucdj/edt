@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.WindowManager;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.netease.nimlib.sdk.AbortableFuture;
@@ -49,6 +50,7 @@ import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
+import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -649,13 +651,13 @@ public class YXClient {
     /**
      * 从我方服务器上拉取账号对应的云信token,并且使用该token登录云信
      *
-     * @param account  要登录的账号
-     * @param callback 登录结果回调,如果为null,则不处理回调
+     * @param account     要登录的账号
+     * @param callback    登录结果回调,如果为null,则不处理回调
      * @param updateToken 是否要向服务器请求更新一个新的token,此参数用于获取的token无法登录云信(302密码错误)的情况.
      *                    这时就应该传true,服务器会自动生成一个新的token,并将其返回给我们.
      */
-    public void getTokenAndLogin(final String account, final RequestCallbackWrapper callback , boolean updateToken) {
-        if (updateToken){
+    public void getTokenAndLogin(final String account, final RequestCallbackWrapper callback, boolean updateToken) {
+        if (updateToken) {
             NetWorkManager.getInstance(false).updateToken(account).subscribe(new Action1<Object>() {
                 @Override
                 public void call(Object o) {
@@ -681,8 +683,7 @@ public class YXClient {
                     }
                 }
             });
-        }
-        else {
+        } else {
             NetWorkManager.getInstance(false).queryToken(account).subscribe(new Action1<Object>() {
                 @Override
                 public void call(Object o) {
@@ -1101,18 +1102,29 @@ public class YXClient {
      * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
      */
     public static void checkNetAndRefreshLogin(Activity activity, Runnable onRefreshSuccessRunnable) {
-        if (SpUtils.getUserId()<=0){
+        if (SpUtils.getUserId() <= 0) {
             return;
         }
-        if (loadingDialog == null || !loadingDialog.isShowing()) {
-            loadingDialog = new LoadingProgressDialog(BaseActivity.getCurrentActivity());
+
+        if (loadingDialog == null) {
+            loadingDialog = new LoadingProgressDialog(YougyApplicationManager.getInstance().getApplicationContext());
+            loadingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
+
+        if (loadingDialog.isShowing()) {
+            return;
+        } else {
             loadingDialog.show();
             loadingDialog.setTitle(R.string.loading_text);
         }
+
+        LogUtils.e("yuanye YX调用。。。。。");
+
         final int MAX_RETRY_TIMES = 3;
         //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
         RecursiveLooper.recursiveRun(MAX_RETRY_TIMES, new RecursiveLooper.RecursiveLoopRunnable() {
             boolean tokenExpire = false;
+
             @Override
             public void run(int currentLooopTimes) {
                 LogUtils.e("FH!!!", "recursiveRun : " + currentLooopTimes);
@@ -1149,7 +1161,7 @@ public class YXClient {
                             } else if (code == -997) {
                                 reason = "获取token失败!解析失败";
                             } else {
-                                if (code == 302){
+                                if (code == 302) {
                                     tokenExpire = true;
                                 }
                                 reason = "Code " + code;
@@ -1180,7 +1192,7 @@ public class YXClient {
                             }
                         }
                     }
-                } , tokenExpire);
+                }, tokenExpire);
             }
 
             @Override
