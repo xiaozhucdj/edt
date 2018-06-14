@@ -15,18 +15,9 @@ import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.model.Version;
-import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.LoginCallBack;
-import com.yougy.common.protocol.callback.NewUpdateCallBack;
-import com.yougy.common.protocol.request.NewGetAppVersionReq;
 import com.yougy.common.protocol.request.NewLoginReq;
-import com.yougy.common.protocol.response.NewGetAppVersionRep;
-import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -46,14 +37,10 @@ import com.yougy.view.dialog.HintDialog;
 import org.litepal.LitePal;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Request;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
 
@@ -62,7 +49,7 @@ import rx.subscriptions.CompositeSubscription;
  * <p>
  * APP 第一个页面，欢迎
  */
-public class SplashActivity extends BaseActivity implements LoginCallBack.OnJumpListener {
+public class SplashActivity extends BaseActivity {
     protected CompositeSubscription subscription;
     protected ConnectableObservable<Object> tapEventEmitter;
 
@@ -175,21 +162,19 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
             new HintDialog(SplashActivity.this
                     , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
                     , "确定"
-                    , new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    SpUtils.setLocalLockPwd("123456");
-                    loadIntent(LocalLockActivity.class);
-                    finish();
-                }
+                    , dialog -> {
+                SpUtils.setLocalLockPwd("123456");
+                loadIntent(LocalLockActivity.class);
+                finish();
             }).show();
         } else {
             LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
             jumpActivity(LocalLockActivity.class);
         }
     }
+
     private void login() {
-        LogUtils.e(tag,"login...................");
+        LogUtils.e(tag, "login...................");
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
         NetWorkManager.login(loginReq)
@@ -253,7 +238,7 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         login();
                     }
                 }, throwable -> {
-                    LogUtils.e(tag,throwable.getMessage());
+                    LogUtils.e(tag, throwable.getMessage());
                     LogUtils.e("FH", "检测版本失败.");
                     login();
                 });
@@ -270,14 +255,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
     protected void refreshView() {
     }
 
-    @Override
     public void jumpActivity(final Class clazz) {
-        Observable.timer(2000, TimeUnit.MILLISECONDS).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
-            @Override
-            public void call(Long aLong) {
-                loadIntent(SplashActivity.this, clazz);
-                SplashActivity.this.finish();
-            }
+        Observable.timer(2000, TimeUnit.MILLISECONDS).subscribeOn(AndroidSchedulers.mainThread()).subscribe(aLong -> {
+            loadIntent(SplashActivity.this, clazz);
+            SplashActivity.this.finish();
         });
     }
 

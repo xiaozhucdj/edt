@@ -15,11 +15,9 @@ import com.netease.nimlib.sdk.ResponseCode;
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.BindCallBack;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.service.DownloadService;
@@ -29,7 +27,6 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
-import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
@@ -154,7 +151,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         NewBindDeviceReq deviceReq = new NewBindDeviceReq();
         deviceReq.setDeviceId(Commons.UUID);
         deviceReq.setUserId(student.getUserId());
-        NewProtocolManager.bindDevice(deviceReq, new BindCallBack(mActivity));
+//        NewProtocolManager.bindDevice(deviceReq, new BindCallBack(mActivity));
         NetWorkManager.bindDevice(student.getUserId(), Commons.UUID)
                 .subscribe(o -> {
                     LogUtils.e("FH", "绑定成功,开始登录云信SDK");

@@ -12,12 +12,10 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NetManager;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
-import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.DateUtils;
@@ -29,9 +27,6 @@ import com.yougy.init.dialog.ConfirmUserInfoDialog;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLoginBinding;
 import com.yougy.view.dialog.HintDialog;
-
-
-import java.util.List;
 
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;

@@ -71,6 +71,6 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
         String uuid = Commons.UUID;
         NewBindDeviceReq deviceReq = new NewBindDeviceReq();
         deviceReq.setDeviceId(uuid);
-        NewProtocolManager.bindDevice(deviceReq,this);
+//        NewProtocolManager.bindDevice(deviceReq,this);
     }
 }
