@@ -141,8 +141,8 @@ public class LocalLockActivity extends BaseActivity {
     }
 
     public void enter(View view) {
-        if (TextUtils.isEmpty(binding.localLockEdittext.getText())) {
-            new HintDialog(getThisActivity(), "密码不能为空").show();
+        if (TextUtils.isEmpty(binding.localLockEdittext.getText()) || binding.localLockEdittext.getText().length() < 6) {
+            new HintDialog(getThisActivity(), "密码长度太短").show();
             return;
         }
         LogUtils.e("FH", "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtils.getLocalLockPwd());

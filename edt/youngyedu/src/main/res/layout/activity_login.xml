@@ -184,7 +184,9 @@
                 android:singleLine="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:textSize="24px" />
+                android:textSize="24px"
+                android:maxLength="16"
+                />
         </LinearLayout>
 
         <TextView
