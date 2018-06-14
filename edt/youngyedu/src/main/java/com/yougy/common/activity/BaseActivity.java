@@ -38,7 +38,6 @@ import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.message.YXClient;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;

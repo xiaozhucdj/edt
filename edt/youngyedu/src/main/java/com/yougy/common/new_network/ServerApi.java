@@ -86,6 +86,14 @@ public interface ServerApi {
     Observable<BaseResult<Object>> queryToken(@Field("userId") String userId);
 
     /**
+     *  按userId更新云信token,并返回更新后的token
+     */
+    @FormUrlEncoded
+    @POST("netease")
+    @DefaultField(keys = {"m"} , values = {"updateToken"})
+    Observable<BaseResult<Object>> updateToken(@Field("userId") String userId);
+
+    /**
      * 图书下载
      */
     @FormUrlEncoded

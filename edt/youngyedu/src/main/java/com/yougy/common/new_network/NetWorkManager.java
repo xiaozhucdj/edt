@@ -188,12 +188,17 @@ public final class NetWorkManager {
     }
 
     public Observable<Object> queryToken(String userId) {
-        LogUtils.e("FH", "!!!!!调用ServerApi查询云信对应token:queryToken");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询云信token:queryToken");
         return getServerApi().queryToken(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
-
+    public Observable<Object> updateToken(String userId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi更新云信token:updateToken");
+        return getServerApi().updateToken(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
     public static Observable<List<DownloadInfo>> downloadBook(String userId, String bookId) {
         LogUtils.e("FH", "!!!!!调用ServerApi下载图书:downloadBook");
         return getInstance().getServerApi().downloadBook(userId, bookId)

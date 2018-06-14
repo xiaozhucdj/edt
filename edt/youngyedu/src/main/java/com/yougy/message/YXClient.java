@@ -579,7 +579,7 @@ public class YXClient {
 
     /**
      * 初始化云信配置,注册全局性的处理器和解析器等
-     * 初始化并不会登录,所有数据的同步和会在登录成功后获取.登录建议使用{@link YXClient#getTokenAndLogin(String, RequestCallbackWrapper)}
+     * 初始化并不会登录,所有数据的同步和会在登录成功后获取.登录建议使用{@link YXClient#getTokenAndLogin(String, RequestCallbackWrapper, boolean)}
      *
      * @param context 上下文环境
      */
@@ -604,7 +604,7 @@ public class YXClient {
      *
      * @param account  用户名
      * @param token    密码,由于多端登录的存在,改密码可能随时被变更,
-     *                 建议使用{@link YXClient#getTokenAndLogin(String, RequestCallbackWrapper)}获取最新密码登录.
+     *                 建议使用{@link YXClient#getTokenAndLogin(String, RequestCallbackWrapper, boolean)}获取最新密码登录.
      *                 如果密码错误,会自动联网获取最新密码,并且重新登录.
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
@@ -651,33 +651,64 @@ public class YXClient {
      *
      * @param account  要登录的账号
      * @param callback 登录结果回调,如果为null,则不处理回调
+     * @param updateToken 是否要向服务器请求更新一个新的token,此参数用于获取的token无法登录云信(302密码错误)的情况.
+     *                    这时就应该传true,服务器会自动生成一个新的token,并将其返回给我们.
      */
-    public void getTokenAndLogin(final String account, final RequestCallbackWrapper callback) {
-        NetWorkManager.getInstance(false).queryToken(account).subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                try {
-                    List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
-                    String token = (String) result.get(0).get("token");
-                    login(account, token, callback);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (callback != null) {
-                        LogUtils.e("FH", "获取token失败,解析错误");
-                        callback.onFailed(-997);
+    public void getTokenAndLogin(final String account, final RequestCallbackWrapper callback , boolean updateToken) {
+        if (updateToken){
+            NetWorkManager.getInstance(false).updateToken(account).subscribe(new Action1<Object>() {
+                @Override
+                public void call(Object o) {
+                    try {
+                        List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
+                        String token = (String) result.get(0).get("token");
+                        login(account, token, callback);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (callback != null) {
+                            LogUtils.e("FH", "获取token失败,解析错误");
+                            callback.onFailed(-997);
+                        }
                     }
                 }
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                throwable.printStackTrace();
-                LogUtils.e("FH", "获取token失败,可能是网络错误");
-                if (callback != null) {
-                    callback.onFailed(-998);
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    throwable.printStackTrace();
+                    LogUtils.e("FH", "获取token失败,可能是网络错误");
+                    if (callback != null) {
+                        callback.onFailed(-998);
+                    }
                 }
-            }
-        });
+            });
+        }
+        else {
+            NetWorkManager.getInstance(false).queryToken(account).subscribe(new Action1<Object>() {
+                @Override
+                public void call(Object o) {
+                    try {
+                        List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
+                        String token = (String) result.get(0).get("token");
+                        login(account, token, callback);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (callback != null) {
+                            LogUtils.e("FH", "获取token失败,解析错误");
+                            callback.onFailed(-997);
+                        }
+                    }
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    throwable.printStackTrace();
+                    LogUtils.e("FH", "获取token失败,可能是网络错误");
+                    if (callback != null) {
+                        callback.onFailed(-998);
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -1081,6 +1112,7 @@ public class YXClient {
         final int MAX_RETRY_TIMES = 3;
         //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
         RecursiveLooper.recursiveRun(MAX_RETRY_TIMES, new RecursiveLooper.RecursiveLoopRunnable() {
+            boolean tokenExpire = false;
             @Override
             public void run(int currentLooopTimes) {
                 LogUtils.e("FH!!!", "recursiveRun : " + currentLooopTimes);
@@ -1117,8 +1149,12 @@ public class YXClient {
                             } else if (code == -997) {
                                 reason = "获取token失败!解析失败";
                             } else {
+                                if (code == 302){
+                                    tokenExpire = true;
+                                }
                                 reason = "Code " + code;
                             }
+
                             LogUtils.e("FH", "刷新式登录失败 :" + reason);
                             if (currentLooopTimes < MAX_RETRY_TIMES) {
                                 //失败次数未达上限,自动重试.
@@ -1144,7 +1180,7 @@ public class YXClient {
                             }
                         }
                     }
-                });
+                } , tokenExpire);
             }
 
             @Override

@@ -191,7 +191,8 @@ public class SplashActivity extends BaseActivity {
                     } else {
                         LogUtils.e("FH", "自动登录成功");
                         SpUtils.saveStudent(student);
-                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
+                        //此处先注释掉,因为现在进主界面会自动登录云信,不用在此处登,以后如果改了在放开注释
+//                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
                 }, throwable -> {
