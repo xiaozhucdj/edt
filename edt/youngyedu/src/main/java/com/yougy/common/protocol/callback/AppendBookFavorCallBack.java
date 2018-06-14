@@ -3,7 +3,7 @@ package com.yougy.common.protocol.callback;
 import android.content.Context;
 
 import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.request.AppendBookFavorRequest;
 import com.yougy.common.protocol.response.AppendBookFavorRep;
 import com.yougy.common.rx.RxBus;
@@ -37,7 +37,7 @@ public class AppendBookFavorCallBack extends BaseCallBack<AppendBookFavorRep> {
     @Override
     public void onResponse(AppendBookFavorRep response, int id) {
         LogUtils.e("AppendBookFavorCallBack", "send AppendBookFavorRep event");
-        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
 
     }

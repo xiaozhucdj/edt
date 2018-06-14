@@ -35,7 +35,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
@@ -879,7 +879,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
         OSSLog.enableLog();
-        OSS oss = new OSSClient(YougyApplicationManager.getContext(), endpoint, credentialProvider, conf);
+        OSS oss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, credentialProvider, conf);
 
 
         Observable.create(new Observable.OnSubscribe<Object>() {

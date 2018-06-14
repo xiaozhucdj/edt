@@ -2,7 +2,6 @@ package com.yougy.home.activity;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.BatteryManager;
@@ -30,14 +29,9 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
-import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.model.Version;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.callback.NewUpdateCallBack;
-import com.yougy.common.protocol.request.NewGetAppVersionReq;
-import com.yougy.common.protocol.response.NewGetAppVersionRep;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
@@ -63,7 +57,6 @@ import com.yougy.message.ui.RecentContactListActivity;
 import com.yougy.order.LockerActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
-import com.yougy.shop.activity.OrderListActivity;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
@@ -76,8 +69,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import okhttp3.Call;
-import rx.functions.Action1;
 
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 
@@ -1033,7 +1024,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             } else if (level < -80 && level >= -100) {
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(R.drawable.img_wifi_2));
             }
-            if (YougyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
+            if (YoungyApplicationManager.isWifiAvailable() && SpUtils.isContentChanged()) {
                 LogUtils.e(tag, "setSysWifi upload................");
                 startService(new Intent(this, UploadService.class));
             }

@@ -1,6 +1,5 @@
 package com.yougy.setting.ui;
 
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -15,7 +14,7 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.AliyunUtil;
@@ -130,7 +129,7 @@ public class SettingMainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
+        tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
     }
 
     @Override

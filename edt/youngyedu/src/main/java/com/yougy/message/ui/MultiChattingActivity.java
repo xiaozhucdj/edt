@@ -25,7 +25,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;
@@ -245,7 +245,7 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
     }
 
     public void scrollToBottom(long delay){
-        YougyApplicationManager.getMainThreadHandler().postDelayed(new Runnable() {
+        YoungyApplicationManager.getMainThreadHandler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 binding.chattingListview.setSelection(adapter.getCount() - 1);

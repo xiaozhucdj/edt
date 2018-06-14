@@ -3,7 +3,7 @@ package com.yougy.common.protocol.callback;
 import android.content.Context;
 
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.rx.RxBus;
@@ -71,7 +71,7 @@ public class NewTextBookCallBack extends CacheInfoBack<NewBookShelfRep> {
 
     @Override
     public void onResponse(NewBookShelfRep response, int id) {
-            RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+            RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(response);
     }
 
@@ -80,7 +80,7 @@ public class NewTextBookCallBack extends CacheInfoBack<NewBookShelfRep> {
         e.printStackTrace();
         LogUtils.i("获取图书列表 失败");
         if (id != NewProtocolManager.NewProtocolId.ID_BOOK_SHELF){
-            RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+            RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(id+"");
         }else{
             super.onError(call, e, id);

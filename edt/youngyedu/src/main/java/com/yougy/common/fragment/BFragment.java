@@ -16,7 +16,7 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
@@ -69,7 +69,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         tag = getClass().getName();
         LogUtils.e(tag, "onAttach...........");
         subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(context).toObserverable().publish();
+        tapEventEmitter = YoungyApplicationManager.getRxBus(context).toObserverable().publish();
         handleEvent();
         EventBus.getDefault().register(this);
     }
@@ -83,7 +83,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         super.onResume();
         LogUtils.e(tag, "onResume...........");
       /*  subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(context).toObserverable().publish();
+        tapEventEmitter = YoungyApplicationManager.getRxBus(context).toObserverable().publish();
         handleEvent();*/
     }
 
@@ -99,7 +99,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         tapEventEmitter = null;
         if (!hidden) {
             subscription = new CompositeSubscription();
-            tapEventEmitter = YougyApplicationManager.getRxBus(context).toObserverable().publish();
+            tapEventEmitter = YoungyApplicationManager.getRxBus(context).toObserverable().publish();
             handleEvent();
         }
     }
@@ -126,7 +126,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         mHide = menuVisible;
         if (menuVisible && context != null) {
             subscription = new CompositeSubscription();
-            tapEventEmitter = YougyApplicationManager.getRxBus(context).toObserverable().publish();
+            tapEventEmitter = YoungyApplicationManager.getRxBus(context).toObserverable().publish();
             handleEvent();
         } else {
             if (subscription != null) {

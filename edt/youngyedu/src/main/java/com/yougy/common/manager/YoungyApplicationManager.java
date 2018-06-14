@@ -62,7 +62,7 @@ import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENT
 /**
  * Created by Administrator on 2016/8/24.
  */
-public class YougyApplicationManager extends LitePalApplication {
+public class YoungyApplicationManager extends LitePalApplication {
 
     private final int REQUEST_TIME =15* 1000;
     public static final boolean DEBUG = true;
@@ -75,7 +75,7 @@ public class YougyApplicationManager extends LitePalApplication {
     /**
      * 全局Context
      */
-    public static YougyApplicationManager mInstance;
+    public static YoungyApplicationManager mInstance;
     /**
      * 主线程ID
      */
@@ -90,7 +90,7 @@ public class YougyApplicationManager extends LitePalApplication {
     private static Looper mMainLooper;
 //    private static RefWatcher watcher;
 
-    private static YougyApplicationManager mContext;
+    private static YoungyApplicationManager mContext;
 
     ANRWatchDog anrWatchDog = new ANRWatchDog(9000);
 
@@ -374,14 +374,14 @@ public class YougyApplicationManager extends LitePalApplication {
         return null;
     }
 
-    public static YougyApplicationManager getApp() {
+    public static YoungyApplicationManager getApp() {
         return mContext;
     }
 
     private RxBus rxBus;
 
     public static RxBus getRxBus(Context context) {
-        YougyApplicationManager application = (YougyApplicationManager) context.getApplicationContext();
+        YoungyApplicationManager application = (YoungyApplicationManager) context.getApplicationContext();
         return application.rxBus;
     }
 
@@ -398,7 +398,7 @@ public class YougyApplicationManager extends LitePalApplication {
         return instance;
     }
 
-    public static YougyApplicationManager getApplication() {
+    public static YoungyApplicationManager getApplication() {
         return mInstance;
     }
 

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 
 /**
  * Created by liuchao on 2016/3/10.
@@ -34,7 +34,7 @@ public class VersionUtils {
     }
 
     public static String getVersionName() {
-        Context mContext = YougyApplicationManager.getApp();
+        Context mContext = YoungyApplicationManager.getApp();
         String result = "1.0.0";
         try {
             if (mContext == null) {

@@ -3,7 +3,7 @@ package com.yougy.common.protocol.callback;
 import android.content.Context;
 
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.response.NewDeleteNoteRep;
 import com.yougy.common.rx.RxBus;
@@ -32,7 +32,7 @@ public class NewDelteNoteCallBack   extends BaseCallBack<NewDeleteNoteRep>{
 
     @Override
     public void onResponse(NewDeleteNoteRep response, int id) {
-            RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+            RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(response);
         }
 

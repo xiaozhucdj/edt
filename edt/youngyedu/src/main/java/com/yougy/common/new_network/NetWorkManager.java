@@ -9,7 +9,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
@@ -139,7 +139,7 @@ public final class NetWorkManager {
         synchronized (NetWorkManager.class) {
             if (flag) {
                 if (loadingProgressDialog == null) {
-                    loadingProgressDialog = new LoadingProgressDialog(YougyApplicationManager.getInstance().getApplicationContext());
+                    loadingProgressDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
                     loadingProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
                     loadingProgressDialog.show();
                 } else {

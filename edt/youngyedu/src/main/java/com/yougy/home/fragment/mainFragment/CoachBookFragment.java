@@ -20,7 +20,7 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
@@ -168,7 +168,7 @@ public class CoachBookFragment extends BFragment {
 
     private void loadData() {
         LogUtils.e("loadData ..."+tag);
-        if (YougyApplicationManager.isWifiAvailable()) {
+        if (YoungyApplicationManager.isWifiAvailable()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
             req.setUserId(SpUtils.getAccountId());

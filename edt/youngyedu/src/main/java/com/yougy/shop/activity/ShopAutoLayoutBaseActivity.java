@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.WindowManager;
 
 import com.yougy.common.activity.AutoLayoutBaseActivity;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.LogUtils;
 
 import butterknife.ButterKnife;
@@ -38,7 +38,7 @@ public abstract class ShopAutoLayoutBaseActivity extends AutoLayoutBaseActivity 
         LogUtils.e("FH" , "=== onResume");
         super.onResume();
         subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
+        tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
     }
 

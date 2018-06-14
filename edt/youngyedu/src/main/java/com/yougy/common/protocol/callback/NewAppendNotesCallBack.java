@@ -3,7 +3,7 @@ package com.yougy.common.protocol.callback;
 import android.content.Context;
 
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.request.NewInserAllNoteReq;
 import com.yougy.common.protocol.response.NewInserAllNoteRep;
 import com.yougy.common.rx.RxBus;
@@ -33,7 +33,7 @@ public class NewAppendNotesCallBack extends BaseCallBack<NewInserAllNoteRep> {
 
     @Override
     public void onResponse(NewInserAllNoteRep response, int id) {
-        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }
 

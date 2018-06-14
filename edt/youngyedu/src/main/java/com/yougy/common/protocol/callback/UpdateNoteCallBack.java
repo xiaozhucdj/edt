@@ -2,7 +2,7 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.shop.bean.BaseData;
@@ -27,7 +27,7 @@ public class UpdateNoteCallBack extends BaseCallBack<BaseData> {
     @Override
     public void onResponse(BaseData response, int id) {
         if (response.getCode() == 200) {
-            RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+            RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(response);
         }
     }

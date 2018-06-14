@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class SharedPreferencesUtil {
     public static SharedPreferencesUtil getSpUtil() {
         studentId = SpUtils.getAccountId() + "";
         if (spUtil == null) {
-            spUtil = new SharedPreferencesUtil(YougyApplicationManager.getInstance());
+            spUtil = new SharedPreferencesUtil(YoungyApplicationManager.getInstance());
         }
         return spUtil;
     }

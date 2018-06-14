@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.response.QueryShopBookDetailRep;
 import com.yougy.common.rx.RxBus;
@@ -43,7 +43,7 @@ public class QueryShopBookDetailCallBack extends BaseCallBack<QueryShopBookDetai
 
     @Override
     public void onResponse(QueryShopBookDetailRep response, int id) {
-        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }
 

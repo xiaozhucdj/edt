@@ -22,9 +22,8 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
@@ -259,7 +258,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     private void loadData() {
         LogUtils.e("loadData ..."+tag);
-        if (YougyApplicationManager.isWifiAvailable()) {
+        if (YoungyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID

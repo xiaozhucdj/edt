@@ -14,11 +14,9 @@ import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.yougy.common.bean.AliyunData;
-import com.yougy.common.bean.Result;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
-import com.yougy.common.protocol.request.AliyunDataUploadReq;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 
 import org.litepal.LitePal;
@@ -52,7 +50,7 @@ public class AliyunUtil {
         JOURNAL_NAME = SpUtils.getUserId() + ".db-journal";
         LogUtils.e(tag, "accessKeyId : " + data.getAccessKeyId() + ",accessKeySecret : " + data.getAccessKeySecret() + ",securityToken : " + data.getSecurityToken());
         OSSCredentialProvider credentialProvider = new OSSStsTokenCredentialProvider(data.getAccessKeyId(), data.getAccessKeySecret(), data.getSecurityToken());
-        filePath = YougyApplicationManager.getContext().getDatabasePath(DATABASE_NAME).getAbsolutePath();
+        filePath = YoungyApplicationManager.getContext().getDatabasePath(DATABASE_NAME).getAbsolutePath();
         objectKey = "leke" + File.separator + "appDB" + File.separator + DATABASE_NAME;
 
         ClientConfiguration conf = new ClientConfiguration();
@@ -61,7 +59,7 @@ public class AliyunUtil {
         conf.setMaxConcurrentRequest(5); // 最大并发请求书，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
         OSSLog.enableLog();
-        oss = new OSSClient(YougyApplicationManager.getContext(), endpoint, credentialProvider, conf);
+        oss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, credentialProvider, conf);
     }
 
     public PutObjectResult upload() throws Exception {

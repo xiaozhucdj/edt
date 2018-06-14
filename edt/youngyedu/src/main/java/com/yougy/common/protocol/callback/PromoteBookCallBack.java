@@ -3,7 +3,7 @@ package com.yougy.common.protocol.callback;
 import android.content.Context;
 
 import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.PromoteBookRequest;
 import com.yougy.common.protocol.response.PromoteBookRep;
@@ -34,7 +34,7 @@ public class PromoteBookCallBack extends BaseCallBack<PromoteBookRep> {
     @Override
     public void onResponse(PromoteBookRep response, int id) {
         LogUtils.e("PromoteBookCallBack", "send PromoteBookRep event");
-        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }
 

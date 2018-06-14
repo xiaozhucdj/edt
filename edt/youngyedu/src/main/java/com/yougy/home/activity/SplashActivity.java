@@ -15,7 +15,7 @@ import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.utils.FileUtils;
@@ -26,7 +26,6 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
-import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -64,7 +63,7 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         LitePal.getDatabase();
         subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
+        tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
     }
 

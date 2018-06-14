@@ -10,25 +10,18 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.netease.nimlib.sdk.RequestCallbackWrapper;
-import com.netease.nimlib.sdk.ResponseCode;
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.global.Commons;
-import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
-import com.yougy.common.protocol.response.NewBindDeviceRep;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.AliyunUtil;
-import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.init.bean.Student;
-import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ConfirmUserinfoDialogLayoutBinding;
 import com.yougy.view.dialog.HintDialog;
@@ -149,7 +142,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
     public void show() {
         super.show();
         subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(mActivity).toObserverable().publish();
+        tapEventEmitter = YoungyApplicationManager.getRxBus(mActivity).toObserverable().publish();
         handleEvent();
     }
 
