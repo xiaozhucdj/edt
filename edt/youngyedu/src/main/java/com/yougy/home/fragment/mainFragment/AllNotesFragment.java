@@ -772,10 +772,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             }
         } else {
             for (NoteInfo noteInfo : mServerInfos) {
-                //设置当前年级锁需要的书 ，并且做分页显示
-                if (StringUtils.isEquals(key, noteInfo.getNoteFitSubjectName())) {
-                    mCountInfos.add(noteInfo);
-                }else if ("无".equalsIgnoreCase(key)){
+                if (StringUtils.isEmpty(noteInfo.getNoteFitSubjectName()) || StringUtils.isEquals(key, noteInfo.getNoteFitSubjectName())) {
                     mCountInfos.add(noteInfo);
                 }
             }
