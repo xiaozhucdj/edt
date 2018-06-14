@@ -19,13 +19,13 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
+import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.new_network.Protocol;
 import com.yougy.common.protocol.callback.BaseCallBack;
-import com.yougy.common.protocol.callback.NewNoteBookCallBack;
 import com.yougy.common.protocol.request.NewInserAllNoteReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.response.NewInserAllNoteRep;
-import com.yougy.common.protocol.response.NewQueryNoteRep;
 import com.yougy.common.protocol.response.NewUpdateNoteRep;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
@@ -52,9 +52,8 @@ import java.util.TreeSet;
 
 import okhttp3.Call;
 import okhttp3.Response;
-import rx.functions.Action1;
 
-import static com.yougy.common.manager.NewProtocolManager.NewCacheId.ALL_CODE_NOTE;
+import static com.yougy.common.utils.GsonUtil.fromNotes;
 
 /**
  * Created by Administrator on 2016/7/12.
@@ -127,7 +126,6 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     private ViewGroup mGroupGrade;
     //    private Subscription mSub;
     private ViewGroup mLoadingNull;
-    private NewNoteBookCallBack mNewNoteBookCallBack;
     private String mAddStr;
     private String mUpdataStr;
     private boolean mIsPackUp;
@@ -260,11 +258,11 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             mBookFitGrade.get(mFitGradeIndex).setSelect(false);
             mFitGradeIndex = -1;
             mFitGradeAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             for (BookCategory bookCategory : mBookFitGrade) {
                 bookCategory.setSelect(false);
             }
-            mFitGradeAdapter.notifyDataSetChanged() ;
+            mFitGradeAdapter.notifyDataSetChanged();
         }
         //替换position
         mSubjectIndex = position;
@@ -333,12 +331,13 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mServerInfos.size() == 0 ) {
+        if (mIsFist && !hidden && mServerInfos.size() == 0) {
             loadData();
         }
     }
+
     private void loadData() {
-        if (NetUtils.isNetConnected()){
+        if (NetUtils.isNetConnected()) {
             mLoadingNull.setVisibility(View.GONE);
             mAddStr = DataCacheUtils.getString(UIUtils.getContext(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
             mUpdataStr = DataCacheUtils.getString(UIUtils.getContext(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA);
@@ -352,22 +351,23 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                 LogUtils.i("获取本学期笔记列表");
                 getNotes();
             }
-        }else{
+        } else {
             getNotes();
         }
     }
 
-    /**更新离线修改的笔记*/
+    /**
+     * 更新离线修改的笔记
+     */
     private void requestOffLineUpdataNote() {
         NewUpdateNoteReq req = new NewUpdateNoteReq();
         req.setUserId(SpUtils.getAccountId());
-        req.setData(GsonUtil.fromNotes(mUpdataStr));
-        NewProtocolManager.updateNote(req ,  new BaseCallBack<NewUpdateNoteRep>(getActivity()){
+        req.setData(fromNotes(mUpdataStr));
+        NewProtocolManager.updateNote(req, new BaseCallBack<NewUpdateNoteRep>(getActivity()) {
 
             @Override
             public NewUpdateNoteRep parseNetworkResponse(Response response, int id) throws Exception {
                 String str = response.body().string();
-//                System.out.println("response json ...." + str);
                 return GsonUtil.fromJson(str, NewUpdateNoteRep.class);
             }
 
@@ -382,26 +382,28 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             public void onError(Call call, Exception e, int id) {
                 getNotes();
             }
-        } );
+        });
     }
 
-    /**离线上传笔记*/
+    /**
+     * 离线上传笔记
+     */
     private void requestOffLineAddNote() {
         NewInserAllNoteReq req = new NewInserAllNoteReq();
         req.setUserId(SpUtils.getAccountId());
-        req.setData(GsonUtil.fromNotes(mAddStr));
+        req.setData(fromNotes(mAddStr));
         NewProtocolManager.inserAllNote(req, new BaseCallBack<NewInserAllNoteRep>(getActivity()) {
             @Override
             public NewInserAllNoteRep parseNetworkResponse(Response response, int id) throws Exception {
-                String json = response.body().string() ;
-                LogUtils.i("respons add notes json =="+json);
-                return GsonUtil.fromJson(json,NewInserAllNoteRep.class) ;
+                String json = response.body().string();
+                LogUtils.i("respons add notes json ==" + json);
+                return GsonUtil.fromJson(json, NewInserAllNoteRep.class);
             }
 
             @Override
             public void onResponse(NewInserAllNoteRep response, int id) {
                 //判断是否有离线修改的笔记
-                if (response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+                if (response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
                     mAddStr = "";
                     DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, "");
                     if (!StringUtils.isEmpty(mUpdataStr)) {
@@ -440,13 +442,34 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_NOTE));
             //设置年级
             req.setNoteFitGradeName("");
-            mNewNoteBookCallBack = new NewNoteBookCallBack(getActivity(), req);
-            NewProtocolManager.queryNote(req, mNewNoteBookCallBack);
+            NetWorkManager.queryNote(req).subscribe(noteInfos -> {
+                List<NoteInfo> books = getOnffLine();
+                LogUtils.e(tag,"books : " + books + ",note infos : " + noteInfos);
+                if (noteInfos != null && noteInfos.size() > 0) {
+                    DataCacheUtils.putString(getActivity(), Protocol.CacheId.ALL_CODE_NOTE, GsonUtil.toJson(noteInfos));
+                    if (books != null && books.size() > 0) {
+                        noteInfos.addAll(books);
+                    }
+                    setLoading(View.GONE);
+                    refresh(noteInfos);
+                } else {
+                    DataCacheUtils.putString(getActivity(), Protocol.CacheId.ALL_CODE_NOTE, "");
+                    setLoading(View.GONE);
+                    refresh(noteInfos);
+                }
+            }, throwable -> {
+                List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+                if (infos != null && infos.size() > 0) {
+                    setLoading(View.GONE);
+                    refresh(infos);
+                } else {
+                    setLoading(View.VISIBLE);
+                }
+            });
             LogUtils.e(TAG, "query notes from server...");
         } else {
             LogUtils.e(TAG, "query notes from database...");
             List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
-//            mSub = getNotesObserver().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
             if (infos != null && infos.size() > 0) {
                 setLoading(View.GONE);
                 refresh(infos);
@@ -456,53 +479,24 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         }
     }
 
+    private List<NoteInfo> getOnffLine() {
+        // 离线添加的笔记
+        String offLineAddStr = DataCacheUtils.getString(getActivity(), Protocol.OffLineId.OFF_LINE_ADD);
+        List<NoteInfo> books = new ArrayList<>();
+        if (!StringUtils.isEmpty(offLineAddStr)) {
+            books.addAll(fromNotes(offLineAddStr));
+        }
+        return books;
+    }
+
     private void refresh(List<NoteInfo> infos) {
         mServerInfos.clear();
         mServerInfos.addAll(infos);
         refreshFirstAdapterData();
     }
 
-    @Override
-    protected void handleEvent() {
-
-        handleNoteBookEvent();
-        super.handleEvent();
-    }
-
-    private void handleNoteBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewQueryNoteRep && !mHide && mNewNoteBookCallBack != null) {
-                    NewQueryNoteRep data = (NewQueryNoteRep) o;
-                    if (data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && data != null && data.getData() != null && data.getData().size() > 0) {
-                        setLoading(View.GONE);
-                        refresh(data.getData());
-                    } else {
-                        setLoading(View.VISIBLE);
-                    }
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, ALL_CODE_NOTE + "")) {
-                    LogUtils.i(" onerror 处理 ...........");
-                    List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
-                    if (infos != null && infos.size() > 0) {
-                        setLoading(View.GONE);
-                        refresh(infos);
-                    } else {
-                        setLoading(View.VISIBLE);
-                    }
-                }
-            }
-        }));
-    }
-
-
     private void setLoading(final int visibility) {
-        UIUtils.post(new Runnable() {
-            @Override
-            public void run() {
-                mLoadingNull.setVisibility(visibility);
-            }
-        });
+        UIUtils.post(() -> mLoadingNull.setVisibility(visibility));
     }
 
     ///////////////////////////////////点击事件//////////////////////////////////////
@@ -546,7 +540,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                     info.setCategoryName(noteInfo.getNoteFitSubjectName());
                     info.setCategoryId(noteInfo.getNoteFitSubjectId());
                     mTreeSubject.add(info);
-                }else{
+                } else {
                     BookCategory info = new BookCategory();
                     info.setCategoryName("无");
                     info.setCategoryId(-1);
@@ -664,7 +658,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
 /*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
                 contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
 
-                refreshAdapterData(btnIndex+1);
+                refreshAdapterData(btnIndex + 1);
             }
         });
         mPageBtnBar.removeAllViews();
@@ -672,7 +666,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         mPageBtnBar.refreshPageBar();
     }
 
-    private void refreshAdapterData(int pagerIndex){
+    private void refreshAdapterData(int pagerIndex) {
         //还原上个按钮状态
         //设置当前按钮状态
 
@@ -710,7 +704,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
 
             case R.id.tv_gradeMore:
                 mIsPackUp = !mIsPackUp;
-                setLlTermSize() ;
+                setLlTermSize();
      /*           int tagGrade = (int) mGradeMore.getTag();
                 if (tagGrade == 0) {
                     setMoreSize(mGroupGrade);
@@ -734,7 +728,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                 llTerm.setVisibility(View.GONE);
                 llTerm.setVisibility(View.VISIBLE);
             }
-        }, 200) ;
+        }, 200);
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
@@ -773,7 +767,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                 //设置当前年级锁需要的书 ，并且做分页显示
                 if (StringUtils.isEquals(key, noteInfo.getNoteFitSubjectName())) {
                     mCountInfos.add(noteInfo);
-                }else if ("无".equalsIgnoreCase(key)){
+                } else if ("无".equalsIgnoreCase(key)) {
                     mCountInfos.add(noteInfo);
                 }
             }
@@ -975,7 +969,6 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     }
 
 
-
     /**
      * 设置一行item 显示大小
      *
@@ -1024,16 +1017,16 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         if (event.getType().equalsIgnoreCase(EventBusConstant.all_notes)) {
             LogUtils.i("type .." + EventBusConstant.all_notes);
             loadData();
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.add_note)) {
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.add_note)) {
             LogUtils.i("type .." + EventBusConstant.add_note);
             NoteInfo noteInfo = (NoteInfo) event.getExtraData();
             mServerInfos.add(noteInfo);
-            if (mServerInfos.size()>0){
+            if (mServerInfos.size() > 0) {
                 setLoading(View.GONE);
-            }else{
+            } else {
                 setLoading(View.VISIBLE);
             }
-            refreshFirstAdapterData() ;
+            refreshFirstAdapterData();
         } else if (event.getType().equalsIgnoreCase(EventBusConstant.delete_note)) {
             LogUtils.i("type .." + EventBusConstant.delete_note);
             NoteInfo noteInfo = (NoteInfo) event.getExtraData();
@@ -1043,9 +1036,9 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                     for (NoteInfo noteModel : mServerInfos) {
                         if (noteModel.getNoteId() == noteInfo.getNoteId()) {
                             mServerInfos.remove(noteModel);
-                            if (mServerInfos.size()>0){
+                            if (mServerInfos.size() > 0) {
                                 mLoadingNull.setVisibility(View.GONE);
-                            }else{
+                            } else {
                                 mLoadingNull.setVisibility(View.VISIBLE);
                             }
                             refreshFirstAdapterData();
@@ -1056,9 +1049,9 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                     for (NoteInfo noteModel : mServerInfos) {
                         if (noteModel.getNoteMark() == noteInfo.getNoteMark()) {
                             mServerInfos.remove(noteModel);
-                            if (mServerInfos.size()>0){
+                            if (mServerInfos.size() > 0) {
                                 mLoadingNull.setVisibility(View.GONE);
-                            }else{
+                            } else {
                                 mLoadingNull.setVisibility(View.VISIBLE);
                             }
 
@@ -1089,7 +1082,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                             //学科修改了 需要更新所以的操作
                             if (!noteModel.getNoteFitSubjectName().equalsIgnoreCase(noteInfo.getNoteFitSubjectName())) {
                                 noteModel.setNoteFitSubjectName(noteInfo.getNoteFitSubjectName());
-                                LogUtils.i("getNoteFitSubjectName =="+noteInfo.getNoteFitSubjectName());
+                                LogUtils.i("getNoteFitSubjectName ==" + noteInfo.getNoteFitSubjectName());
                                 refreshFirstAdapterData();
                                 break;
                             }
