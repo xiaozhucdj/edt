@@ -126,7 +126,8 @@
             android:text="123456"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
-            android:textSize="24px" />
+            android:textSize="24px"
+            android:maxLength="16"/>
 
         <TextView
             android:id="@+id/forget_pwd_btn"

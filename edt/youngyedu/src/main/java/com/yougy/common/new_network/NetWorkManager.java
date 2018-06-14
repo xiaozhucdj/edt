@@ -1,5 +1,6 @@
 package com.yougy.common.new_network;
 
+import android.util.Pair;
 import android.view.WindowManager;
 
 import com.yougy.anwser.BaseResult;
@@ -325,11 +326,11 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<OrderSummary>> queryMyOrderList(String orderOwner) {
+    public static Observable<Pair<Integer , List<OrderSummary>>> queryMyOrderList(String orderOwner , Integer ps ,Integer pn) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单");
-        return getInstance().getServerApi().queryOrderSole(orderOwner)
+        return getInstance().getServerApi().queryOrderSole(orderOwner , ps , pn)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult_new(loadingProgressDialog));
     }
 
     public static Observable<List<QueryQRStrObj>> checkOrder(String orderId, int orderOwner, double orderPrice, int payMethod) {

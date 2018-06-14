@@ -569,7 +569,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             if (binding.rcvChooeseItem.getAdapter() != null) {
                                 binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
                             }
-
+                            if (saveQuestionPage == 0) {
+                                binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+                            } else {
+                                binding.rcvChooeseItem.setVisibility(View.GONE);
+                            }
                         } else if ("判断".equals(questionList.get(0).getExtraData())) {
 
                             if (isAddAnswerBoard) {
@@ -582,6 +586,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             binding.tvAddPage.setVisibility(View.GONE);
                             binding.tvClearWrite.setVisibility(View.GONE);
 
+                            if (saveQuestionPage == 0) {
+                                binding.llChooeseItem.setVisibility(View.VISIBLE);
+                            } else {
+                                binding.llChooeseItem.setVisibility(View.GONE);
+                            }
 
                         } else {
                             if (!isAddAnswerBoard) {
@@ -652,7 +661,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     private void setChooeseResult() {
 
         //清理掉其他题中的作业结果。
-        checkedAnswerList.clear();
+//        checkedAnswerList.clear();
 
         binding.rcvChooeseItem.setAdapter(new RecyclerView.Adapter() {
             @Override

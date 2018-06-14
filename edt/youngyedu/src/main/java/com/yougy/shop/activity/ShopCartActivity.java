@@ -25,7 +25,6 @@ import com.yougy.shop.bean.BookIdObj;
 import com.yougy.shop.bean.CartItem;
 import com.yougy.shop.bean.Coupon;
 import com.yougy.shop.bean.OrderIdObj;
-import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.RemoveRequestObj;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.ui.activity.R;

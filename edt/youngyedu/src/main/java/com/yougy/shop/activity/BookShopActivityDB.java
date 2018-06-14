@@ -314,7 +314,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     @Override
     protected void initLayout() {
 //        mVersion = mSchoolVersion;
-//        binding.tvAll.setSelected(true);
+//        itemBinding.tvAll.setSelected(true);
         binding.allClassifyRecycler.addItemDecoration(new SpaceItemDecoration(UIUtils.px2dip(15)));
         binding.allClassifyRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.singleClassifyRecycler.addItemDecoration(new GridSpacingItemDecoration(SPAN_COUNT, UIUtils.px2dip(32), false));
@@ -653,7 +653,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.guidebook.setSelected(true);
         hideClassifySpinner();
         hideFiltrateLayout();
-//        if (binding.correspondSchool.isChecked()) {
+//        if (itemBinding.correspondSchool.isChecked()) {
 //            hideFiltrateTv();
 //        } else {
         showFiltrateTv();
@@ -688,7 +688,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.extrabook.setSelected(false);
         binding.textbook.setSelected(true);
         hideClassifySpinner();
-//        if (binding.correspondSchool.isChecked()) {
+//        if (itemBinding.correspondSchool.isChecked()) {
 //            hideFiltrateTv();
 //        } else {
         showFiltrateTv();
@@ -719,8 +719,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private void resetComposite() {
         mSubject = "";
-//        mVersion = binding.correspondSchool.isChecked() ? mSchoolVersion : mAllVersion;
-//        if (binding.classifyButton.getVisibility() == View.VISIBLE) {
+//        mVersion = itemBinding.correspondSchool.isChecked() ? mSchoolVersion : mAllVersion;
+//        if (itemBinding.classifyButton.getVisibility() == View.VISIBLE) {
         mVersion = "";
 //        }
     }
@@ -828,8 +828,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 隐藏只显示学校版本选项
      */
     private void hideCorrespondSchoolCb() {
-//        if (binding.correspondSchool.getVisibility() == View.VISIBLE) {
-//            binding.correspondSchool.setVisibility(View.GONE);
+//        if (itemBinding.correspondSchool.getVisibility() == View.VISIBLE) {
+//            itemBinding.correspondSchool.setVisibility(View.GONE);
 //        }
         if (binding.filtrate.getVisibility() == View.VISIBLE) {
             binding.filtrate.setVisibility(View.GONE);
@@ -974,8 +974,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 显示只显示学校版本
      */
     private void showCorrespondSchoolCb() {
-//        if (binding.correspondSchool.getVisibility() == View.GONE) {
-//            binding.correspondSchool.setVisibility(View.VISIBLE);
+//        if (itemBinding.correspondSchool.getVisibility() == View.GONE) {
+//            itemBinding.correspondSchool.setVisibility(View.VISIBLE);
 //        }
         if (binding.filtrate.getVisibility() == View.GONE) {
             binding.filtrate.setVisibility(View.VISIBLE);

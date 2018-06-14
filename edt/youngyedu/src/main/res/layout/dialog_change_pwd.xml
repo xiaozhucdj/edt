@@ -138,7 +138,7 @@
                 android:layout_alignLeft="@id/again_new_pwd_edtv"
                 android:layout_below="@id/hint_tv"
                 android:layout_marginTop="20px"
-                android:background="@drawable/change_pwd_cancle_btn_bg"
+                android:background="@drawable/btn_bg_round_rectangle_gray_line_150_48"
                 android:gravity="center"
                 android:text="@string/cancel"
                 android:textColor="@color/black"

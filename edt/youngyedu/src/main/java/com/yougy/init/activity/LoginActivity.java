@@ -194,11 +194,11 @@ public class LoginActivity extends BaseActivity {
 
     public void login(View view){
         if (TextUtils.isEmpty(binding.accountEdittext.getText())){
-            new HintDialog(getThisActivity() , "乐课账号不能为空").show();
+            new HintDialog(getThisActivity() , "账号不能为空").show();
             return;
         }
-        if (TextUtils.isEmpty(binding.pwdEdittext.getText())){
-            new HintDialog(getThisActivity() , "乐课密码不能为空").show();
+        if (TextUtils.isEmpty(binding.pwdEdittext.getText()) || binding.pwdEdittext.getText().length() < 6){
+            new HintDialog(getThisActivity() , "密码长度太短").show();
             return;
         }
         NewLoginReq loginReq = new NewLoginReq();

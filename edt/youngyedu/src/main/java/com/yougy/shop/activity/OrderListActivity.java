@@ -3,17 +3,19 @@ package com.yougy.shop.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Paint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.homework.PageableRecyclerView;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityShopOrderListBinding;
@@ -37,6 +39,9 @@ import static android.view.View.VISIBLE;
 public class OrderListActivity extends ShopBaseActivity {
     ActivityShopOrderListBinding binding;
     ArrayList<OrderSummary> orderList = new ArrayList<OrderSummary>();
+    int totalCount = 0;
+    final int ITEM_NUM_PER_PAGE = 3;
+    ArrayList<String> selectedOrderIdList = new ArrayList<String>();
 
     @Override
     public void init() {
@@ -45,27 +50,33 @@ public class OrderListActivity extends ShopBaseActivity {
 
     @Override
     protected void initLayout() {
-
-    }
-
-    public View layout() {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_shop_order_list, null, false);
-        UIUtils.recursiveAuto(binding.getRoot());
-        binding.mainRecyclerview.setMaxItemNumInOnePage(6);
         binding.mainRecyclerview.setLayoutManager(new LinearLayoutManager(OrderListActivity.this
                 , LinearLayoutManager.VERTICAL , false));
-        binding.mainRecyclerview.setAdapter(new PageableRecyclerView.Adapter<MyHolder>() {
+        binding.mainRecyclerview.setAdapter(new RecyclerView.Adapter<MyHolder>() {
             @Override
             public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 MyHolder holder = new MyHolder(DataBindingUtil.inflate(LayoutInflater.from(OrderListActivity.this)
-                        , R.layout.item_order_list , null , false));
-                holder.binding.cancleBtn.setOnClickListener(new View.OnClickListener() {
+                        , R.layout.item_order_list , binding.mainRecyclerview , false));
+                holder.itemBinding.checkbox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (v.isSelected()){
+                            selectedOrderIdList.remove(holder.getData().orderId);
+                        }
+                        else {
+                            selectedOrderIdList.add(holder.getData().orderId);
+                        }
+                        v.setSelected(!v.isSelected());
+                        binding.selectAllCheckbox.setSelected(isAllSelected());
+                    }
+                });
+                holder.itemBinding.cancleBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         cancelOrder(holder.orderSummary.orderId);
                     }
                 });
-                holder.binding.payBtn.setOnClickListener(new View.OnClickListener() {
+                holder.itemBinding.payBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
@@ -73,7 +84,13 @@ public class OrderListActivity extends ShopBaseActivity {
                         startActivity(intent);
                     }
                 });
-                holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                holder.itemBinding.deleteBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                holder.itemBinding.getRoot().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
@@ -96,6 +113,49 @@ public class OrderListActivity extends ShopBaseActivity {
                 return orderList.size();
             }
         });
+        binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(this) {
+            @Override
+            public int getPageBtnCount() {
+                return (totalCount + ITEM_NUM_PER_PAGE - 1)/ITEM_NUM_PER_PAGE;
+            }
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+                refreshData(btnIndex);
+            }
+        });
+        binding.selectAllCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.isSelected()){
+                    for (OrderSummary orderSummary : orderList){
+                        selectedOrderIdList.remove(orderSummary.orderId);
+                    }
+                }
+                else {
+                    for (OrderSummary orderSummary :
+                            orderList) {
+                        if (!selectedOrderIdList.contains(orderSummary.orderId)){
+                            selectedOrderIdList.add(orderSummary.orderId);
+                        }
+                    }
+                }
+                binding.mainRecyclerview.getAdapter().notifyDataSetChanged();
+                v.setSelected(!v.isSelected());
+            }
+        });
+        binding.deleteSelectedOrderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        binding.deleteSelectedOrderBtn.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+    }
+
+    public View layout() {
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_shop_order_list, null, false);
+        UIUtils.recursiveAuto(binding.getRoot());
         return binding.getRoot();
     }
 
@@ -105,7 +165,7 @@ public class OrderListActivity extends ShopBaseActivity {
             @Override
             public void call(Object o) {
                 if (o instanceof String && o.equals("refreshOrderList")) {
-                    refreshData();
+                    refreshData(binding.pageBtnBar.getCurrentSelectPageIndex());
                 }
             }
         }));
@@ -120,31 +180,34 @@ public class OrderListActivity extends ShopBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshData();
+        refreshData(binding.pageBtnBar.getCurrentSelectPageIndex());
     }
 
     @Override
-    public void loadData() {}
+    public void loadData() {
+
+    }
 
     @Override
     protected void refreshView() {
 
     }
 
-    private void refreshData() {
-        NetWorkManager.queryMyOrderList(String.valueOf(SpUtils.getUserId()))
-                .subscribe(new Action1<List<OrderSummary>>() {
+    private void refreshData(int pageIndex) {
+        NetWorkManager.queryMyOrderList(String.valueOf(SpUtils.getUserId()) , ITEM_NUM_PER_PAGE , pageIndex + 1)
+                .subscribe(new Action1<Pair<Integer, List<OrderSummary>>>() {
                     @Override
-                    public void call(List<OrderSummary> orderSummaryList) {
+                    public void call(Pair<Integer, List<OrderSummary>> result) {
                         orderList.clear();
-                        if (orderSummaryList.size() == 0){
+                        totalCount = result.first;
+                        if (totalCount == 0) {
                             binding.noResultLayout.setVisibility(VISIBLE);
-                        }
-                        else {
+                        } else {
                             binding.noResultLayout.setVisibility(GONE);
-                            orderList.addAll(orderSummaryList);
-                            binding.mainRecyclerview.setCurrentPage(1);
-                            binding.mainRecyclerview.notifyDataSetChanged();
+                            orderList.addAll(result.second);
+                            binding.mainRecyclerview.getAdapter().notifyDataSetChanged();
+                            binding.pageBtnBar.refreshPageBar();
+                            binding.selectAllCheckbox.setSelected(isAllSelected());
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -156,14 +219,11 @@ public class OrderListActivity extends ShopBaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                refreshData();
+                                refreshData(binding.pageBtnBar.getCurrentSelectPageIndex());
                             }
                         }, "重试").show();
                     }
                 });
-    }
-
-    private void setOnClickListenersInItem(OrderListItem item) {
     }
 
     public void cancelOrder(String orderId) {
@@ -176,7 +236,7 @@ public class OrderListActivity extends ShopBaseActivity {
                             public void call(Object o) {
                                 new HintDialog(getThisActivity(), "取消订单成功").show();
                                 LogUtils.e("FH", "取消订单成功");
-                                refreshData();
+                                refreshData(binding.pageBtnBar.getCurrentSelectPageIndex());
                             }
                         }, new Action1<Throwable>() {
                             @Override
@@ -209,32 +269,43 @@ public class OrderListActivity extends ShopBaseActivity {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        refreshData();
+        refreshData(binding.pageBtnBar.getCurrentSelectPageIndex());
+    }
+
+    private boolean isAllSelected(){
+        if (orderList.size() == 0){
+            return false;
+        }
+        for (OrderSummary orderSummary : orderList) {
+            if (!selectedOrderIdList.contains(orderSummary.orderId)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public class MyHolder extends RecyclerView.ViewHolder{
-        ItemOrderListBinding binding;
+        ItemOrderListBinding itemBinding;
         OrderSummary orderSummary;
-        public MyHolder(ItemOrderListBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+        public MyHolder(ItemOrderListBinding itemBinding) {
+            super(itemBinding.getRoot());
+            this.itemBinding = itemBinding;
         }
         public void setData(OrderSummary data){
             orderSummary = data;
-            binding.orderNumTv.setText("订单编号 : " + orderSummary.orderId);
-            binding.orderPriceTv.setText("订单金额 : ￥" + orderSummary.orderAmount);
-            binding.orderTimeTv.setText("下单时间 : " + orderSummary.orderCreateTime);
+            itemBinding.orderNumTv.setText("订单编号 : " + orderSummary.orderId);
+//            itemBinding.order.setText("订单金额 : ￥" + orderSummary.orderAmount);
+            itemBinding.orderTimeTv.setText("下单时间 : " + orderSummary.orderCreateTime);
+            itemBinding.orderStatusTv.setText(orderSummary.orderStatus);
             if (orderSummary.orderStatus.equals("待支付")){
-                binding.orderStatusTv.setVisibility(GONE);
-                binding.cancleBtn.setVisibility(VISIBLE);
-                binding.payBtn.setVisibility(VISIBLE);
+                itemBinding.cancleBtn.setVisibility(VISIBLE);
+                itemBinding.payBtn.setVisibility(VISIBLE);
             }
             else {
-                binding.orderStatusTv.setText(orderSummary.orderStatus);
-                binding.orderStatusTv.setVisibility(VISIBLE);
-                binding.cancleBtn.setVisibility(GONE);
-                binding.payBtn.setVisibility(GONE);
+                itemBinding.cancleBtn.setVisibility(GONE);
+                itemBinding.payBtn.setVisibility(GONE);
             }
+            itemBinding.checkbox.setSelected(selectedOrderIdList.contains(data.orderId));
         }
         public OrderSummary getData(){
             return orderSummary;

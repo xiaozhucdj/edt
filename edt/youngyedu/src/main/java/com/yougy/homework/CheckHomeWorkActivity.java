@@ -992,7 +992,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                dialog.dismiss();
                                 int position = replyScoreList.indexOf(-1);
                                 pageNumAdapter.onItemClickListener.onItemClick1(position);
 
@@ -1001,6 +1001,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                         closeHomework();
                     }
                 }).show();
@@ -1116,6 +1117,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 //            nextHomeworkBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
 //            nextHomeworkText.setVisibility(View.VISIBLE);
             nextHomeworkIcon.setVisibility(View.VISIBLE);
+            nextHomeworkText.setVisibility(View.VISIBLE);
             nextHomeworkText.setText("下一题");
         } else {
 //            nextHomeworkBtn.setBackgroundColor(getResources().getColor(R.color.gray_999999));
