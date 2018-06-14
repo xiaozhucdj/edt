@@ -1,5 +1,7 @@
 package com.yougy.common.new_network;
 
+import android.util.Pair;
+
 import com.yougy.anwser.BaseResult;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
@@ -65,6 +67,48 @@ public class RxResultHelper {
             }
         };
     }
+
+    public static <T> Observable.Transformer<BaseResult<T>, Pair<Integer , T>> handleResult_new(final LoadingProgressDialog loadingProgressDialog) {
+        LogUtils.e("FH" , "!!!!! handleResult " + loadingProgressDialog);
+        return new Observable.Transformer<BaseResult<T>, Pair<Integer , T>>() {
+            @Override
+            public Observable<Pair<Integer , T>> call(Observable<BaseResult<T>> tObservable) {
+                return tObservable.flatMap(
+                        new Func1<BaseResult<T>, Observable<Pair<Integer , T>>>() {
+                            @Override
+                            public Observable<Pair<Integer , T>> call(BaseResult<T> entity) {
+                                LogUtils.e("FH", "!!!!! success call  " + loadingProgressDialog);
+                                if (loadingProgressDialog != null){
+                                    loadingProgressDialog.dismiss();
+                                }
+                                if (entity.getCode() == 200) {
+                                    Pair<Integer , T> pair = new Pair<Integer, T>(entity.getCount() , entity.getData());
+                                    return createData(pair);
+                                } else {
+                                    return Observable.error(new ApiException(entity.getCode() + "", entity.getMsg()));
+                                }
+                            }
+                        },
+                        new Func1<Throwable, Observable<Pair<Integer , T>>>() {
+                            @Override
+                            public Observable<Pair<Integer , T>> call(Throwable throwable) {
+                                LogUtils.e("FH", "!!!!! error call  " + loadingProgressDialog);
+                                if (loadingProgressDialog != null){
+                                    loadingProgressDialog.dismiss();
+                                }
+                                return Observable.error(throwable);
+                            }
+                        }, new Func0<Observable<Pair<Integer , T>>>() {
+                            @Override
+                            public Observable<Pair<Integer , T>> call() {
+                                return null;
+                            }
+                        }
+                );
+            }
+        };
+    }
+
 
     public static <T> Observable.Transformer<BaseResult<T>, BaseResult<T>> dismissDialog(final LoadingProgressDialog loadingProgressDialog) {
         return new Observable.Transformer<BaseResult<T>, BaseResult<T>>() {

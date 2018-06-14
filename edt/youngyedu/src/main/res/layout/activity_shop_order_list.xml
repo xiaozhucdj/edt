@@ -40,13 +40,52 @@
             android:layout_below="@id/title_bar"
             android:background="@color/black" />
 
-        <com.yougy.homework.PageableRecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/main_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="1050px"
             android:layout_below="@id/title_bar"
-            android:layout_marginBottom="30px" />
-
+            android:paddingLeft="30px"
+            />
+        <ImageButton
+            android:id="@+id/select_all_checkbox"
+            android:layout_width="20px"
+            android:layout_height="20px"
+            android:layout_marginLeft="30px"
+            android:layout_below="@id/main_recyclerview"
+            android:layout_marginTop="20px"
+            android:background="@drawable/btn_check_select"
+            />
+        <TextView
+            android:id="@+id/select_all_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全选"
+            android:textSize="24px"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@id/select_all_checkbox"
+            android:layout_alignBottom="@id/select_all_checkbox"
+            android:layout_marginBottom="-5px"
+            android:layout_marginLeft="20px"
+            />
+        <TextView
+            android:id="@+id/delete_selected_order_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="删除"
+            android:textSize="24px"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@id/select_all_text"
+            android:layout_alignBottom="@id/select_all_text"
+            android:layout_marginLeft="20px"
+            />
+        <com.frank.etude.pageBtnBar.PageBtnBar
+            android:id="@+id/page_btn_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/select_all_checkbox"
+            android:layout_marginTop="30px"
+            />
         <LinearLayout
             android:id="@+id/no_result_layout"
             android:layout_width="match_parent"
@@ -56,7 +95,8 @@
             android:background="@color/white"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone"
+            >
 
             <TextView
                 android:layout_width="wrap_content"
