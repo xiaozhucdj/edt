@@ -64,17 +64,21 @@ public class AliyunUtil {
         oss = new OSSClient(YougyApplicationManager.getContext(), endpoint, credentialProvider, conf);
     }
 
-    public static void upload() throws Exception{
-        Response response = NewProtocolManager.queryAliyunData(new AliyunDataUploadReq());
-        if (response.isSuccessful()) {
-            String resultJson = response.body().string();
-            Result<AliyunData> result = ResultUtils.fromJsonObject(resultJson, AliyunData.class);
-            AliyunData data = result.getData();
-            AliyunUtil util = new AliyunUtil(data);
-            util.method();
-        }
-//            1000010054
+    public PutObjectResult upload() throws Exception {
+        PutObjectRequest put = new PutObjectRequest(bucketName, objectKey, filePath);
+        return oss.putObject(put);
     }
+
+//    public static void upload() throws Exception{
+//        Response response = NewProtocolManager.queryAliyunData(new AliyunDataUploadReq());
+//        if (response.isSuccessful()) {
+//            String resultJson = response.body().string();
+//            Result<AliyunData> result = ResultUtils.fromJsonObject(resultJson, AliyunData.class);
+//            AliyunData data = result.getData();
+//            AliyunUtil util = new AliyunUtil(data);
+//            util.method();
+//        }
+//    }
 
     private void method() throws Exception {
         PutObjectRequest put = new PutObjectRequest(bucketName, objectKey, filePath);

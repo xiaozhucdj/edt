@@ -14,6 +14,7 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
@@ -388,10 +389,16 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Student>> login(NewLoginReq req) {
-        return getInstance().getServerApi().login(req)
+    public static Observable<List<Student>> login(NewLoginReq req){
+        return getInstance(false).getServerApi().login(req)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(null));
+    }
+
+    public static Observable<List<Student>> login(String userName, String userPassword, String userToken, String deviceId, String userId) {
+        return getInstance(false).getServerApi().login(userName,userPassword,userToken,deviceId,userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(null));
     }
 
     /**
@@ -438,6 +445,14 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<Object> unbindDevice(NewUnBindDeviceReq unBindDeviceReq){
+        LogUtils.e("FH", "!!!!!调用ServerApi解绑设备:unbindDevice");
+        return getInstance().getServerApi().unbindDevice(unBindDeviceReq)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
     public static Observable<Object> closeHomework(Integer examId, Integer courseId, String userId) {
         LogUtils.e("FH", "!!!!!调用ServerApi进行作业评定,关闭单学生单次作业并写入错题本");

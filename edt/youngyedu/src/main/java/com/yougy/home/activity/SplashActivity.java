@@ -189,22 +189,13 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
         }
     }
     private void login() {
+        LogUtils.e(tag,"login...................");
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
-//        newLogin(loginReq);
-        NewProtocolManager.login(loginReq, new LoginCallBack(this, loginReq) {
-            @Override
-            public void onBefore(Request request, int id) {
-            }
-
-            @Override
-            public void onAfter(int id) {
-            }
-
-            @Override
-            public void onResponse(NewLoginRep response, int id) {
-                if (response.getCode() == ProtocolId.RET_SUCCESS && response.getCount() > 0) {
-                    Student student = response.getData().get(0);
+        NetWorkManager.login(loginReq)
+                .compose(bindToLifecycle())
+                .subscribe(students -> {
+                    Student student = students.get(0);
                     if (!student.getUserRole().equals("学生")) {
                         new HintDialog(getThisActivity(), "权限错误:本设备已被其他账号绑定过,请先解绑后重新登录", "退出程序", new DialogInterface.OnDismissListener() {
                             @Override
@@ -218,26 +209,17 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
-                } else {
-                    LogUtils.e("FH", "自动登录失败 , 失败原因:本设备没有被绑定过,跳转到用户名密码登录界面");
-                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
-                    jumpActivity(LoginActivity.class);
-                }
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                LogUtils.e("FH", "自动登录失败原因:其他错误:" + e.getMessage());
-                if (-1 == SpUtils.getAccountId()) {
-                    LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
-                    jumpActivity(LoginActivity.class);
-                } else {
-                    LogUtils.e("FH", "自动登录失败,有之前的登录信息");
-                    checkLocalLockAndJump();
-                }
-            }
-        });
+                }, throwable -> {
+                    if (-1 == SpUtils.getAccountId()) {
+                        LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
+                        jumpActivity(LoginActivity.class);
+                    } else {
+                        LogUtils.e("FH", "自动登录失败,有之前的登录信息");
+                        checkLocalLockAndJump();
+                    }
+                });
     }
+
 
     //升级接口 m=getAppVersion&id=student   用id来判断学生端、教师端 http://ocghxr9lf.bkt.clouddn.com/sample-debug.apk
     private void getServerVersion() {
@@ -271,79 +253,10 @@ public class SplashActivity extends BaseActivity implements LoginCallBack.OnJump
                         login();
                     }
                 }, throwable -> {
+                    LogUtils.e(tag,throwable.getMessage());
                     LogUtils.e("FH", "检测版本失败.");
                     login();
                 });
-//        getVersionOld();
-    }
-
-    private void getVersionOld() {
-        NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(SplashActivity.this) {
-            @Override
-            public void onResponse(NewGetAppVersionRep response, int id) {
-                LogUtils.e("FH", "getVersion : " + response.toString());
-                super.onResponse(response, id);
-                if (response != null && response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && response.getData() != null) {
-                    try {
-                        LogUtils.i(SplashActivity.class.getName() + ":" + response.getData().toString());
-                        NewGetAppVersionRep.Data data = response.getData();
-                        int serverVersion = Integer.parseInt(data.getVer());
-                        int localVersion = VersionUtils.getVersionCode(SplashActivity.this);
-                        LogUtils.i("袁野 localVersion ==" + localVersion);
-                        final String url = data.getUrl();
-
-                        if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
-                            LogUtils.e("FH", "检测到有更新的版本,当前版本vCode=" + localVersion + " 服务器版本vCode=" + serverVersion + "弹出升级提示框");
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
-                                            , "现在升级", "暂缓升级", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //现在升级
-                                            LogUtils.e("FH", "用户点击现在升级");
-                                            SpUtils.setVersion("" + serverVersion);
-                                            if (SpUtils.getStudent().getUserId() == -1) {
-                                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
-                                            } else {
-                                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
-                                            }
-                                            dialog.dismiss();
-                                            doDownLoad(SplashActivity.this, url);
-                                        }
-                                    }, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //暂缓升级
-                                            LogUtils.e("FH", "用户点击暂缓升级,直接登录");
-                                            dialog.dismiss();
-                                            login();
-                                        }
-                                    }).show();
-                                }
-                            });
-                        } else {
-                            LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
-                            login();
-                        }
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        LogUtils.e("FH", "检测版本失败:" + e.getMessage());
-                        login();
-                    }
-                } else {
-                    LogUtils.e("FH", "检测版本失败.");
-                    login();
-                }
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                e.printStackTrace();
-                login();
-            }
-        });
     }
 
 

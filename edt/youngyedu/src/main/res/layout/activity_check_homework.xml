@@ -105,34 +105,6 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/last_page_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center"
-                android:layout_marginLeft="20px"
-                android:src="@drawable/img_question_last" />
-
-            <ImageView
-                android:id="@+id/next_page_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center"
-                android:layout_marginRight="20px"
-                android:src="@drawable/img_question_next" />
-
-            <!--<ImageView
-                android:id="@+id/iv_shadow_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10px"
-                android:layout_marginTop="10px"
-                android:src="@drawable/img_bg_touying" />-->
-
         </RelativeLayout>
     </LinearLayout>
 
@@ -154,6 +126,77 @@
             android:visibility="gone"></android.support.v7.widget.RecyclerView>
 
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:layout_marginRight="20px">
+
+            <LinearLayout
+                android:id="@+id/tv_last_homework"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/last_homework_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_shangyige" />
+
+                <TextView
+                    android:id="@+id/last_homework_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10px"
+                    android:gravity="center_vertical"
+                    android:text="上一题"
+                    android:textColor="@color/black"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/tv_next_homework"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/next_homework_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="下一题"
+                    android:textColor="@color/black"
+                    android:textSize="24sp" />
+
+                <ImageView
+                    android:id="@+id/next_homework_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10px"
+                    android:src="@drawable/img_xiayige" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+        <!--底部分页按钮栏-->
+        <com.yougy.anwser.PageBtnBar
+            android:id="@+id/page_btn_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="36px"
+            android:orientation="horizontal" />
+
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2px"
@@ -167,41 +210,6 @@
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
-
-            <LinearLayout
-                android:id="@+id/tv_last_homework"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:background="@drawable/bmp_bg_blue"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/last_homework_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/img_timu_last" />
-
-                <TextView
-                    android:id="@+id/last_homework_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:text="上一题"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
-
-            </LinearLayout>
-
-
-            <View
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:background="@color/black" />
 
             <LinearLayout
                 android:id="@+id/ll_homework_check_option"
@@ -322,42 +330,7 @@
                     android:textSize="24sp" />
             </RelativeLayout>
 
-            <View
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:background="@color/black" />
-
-
-            <LinearLayout
-                android:id="@+id/tv_next_homework"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:background="@drawable/bmp_bg_blue"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-
-                <TextView
-                    android:id="@+id/next_homework_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center_vertical"
-                    android:text="下一题"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
-
-                <ImageView
-                    android:id="@+id/next_homework_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/img_timu_next" />
-            </LinearLayout>
             <!--android:textColor="@drawable/answer_detail_btn_text_color_selector"-->
-
 
         </LinearLayout>
 

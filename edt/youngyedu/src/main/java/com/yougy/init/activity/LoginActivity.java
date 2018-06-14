@@ -15,6 +15,7 @@ import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.callback.LoginCallBack;
 import com.yougy.common.protocol.request.NewLoginReq;
@@ -29,6 +30,8 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLoginBinding;
 import com.yougy.view.dialog.HintDialog;
 
+
+import java.util.List;
 
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
@@ -206,8 +209,20 @@ public class LoginActivity extends BaseActivity {
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setUserName(binding.accountEdittext.getText().toString());
         loginReq.setUserPassword(binding.pwdEdittext.getText().toString());
-        NewProtocolManager.login(loginReq,new LoginCallBack(this ,loginReq));
-//        newLogin(loginReq);
+        NetWorkManager.login(loginReq)
+                .compose(bindToLifecycle())
+                .subscribe(students -> {
+                    Student student = students.get(0);
+                    if (!student.getUserRole().equals(getString(R.string.student))) {
+                        new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用学生账号登录").show();
+                    } else {
+                        LogUtils.e("FH", "登录成功,弹出信息确认dialog");
+                        SpUtils.saveStudent(student);
+                        confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this, student);
+                        confirmUserInfoDialog.show();
+                    }
+                }, throwable -> new HintDialog(getThisActivity() , "登录失败:用户名密码错误").show());
+//        NewProtocolManager.login(loginReq,new LoginCallBack(this ,loginReq));
     }
 
 

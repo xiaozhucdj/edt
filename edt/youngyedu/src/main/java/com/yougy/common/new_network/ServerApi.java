@@ -9,6 +9,7 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
@@ -306,6 +307,11 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("users")
     @DefaultField(keys = {"m"},values = {"login"})
+    Observable<BaseResult<List<Student>>> login(@Field("userName") String userName
+            , @Field("userPassword") String userPassword, @Field("userToken") String userToken
+            , @Field("deviceId") String deviceId, @Field("userId") String userId);
+
+    @POST("users")
     Observable<BaseResult<List<Student>>> login(@Body NewLoginReq req);
 
     /**
@@ -328,6 +334,13 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"bindDevice"})
     Observable<BaseResult<Object>> bindDevice(@Field("userId") Integer userId
             , @Field("deviceId") String deviceId, @Field("deviceModel") String deviceModel);
+
+    /**
+     * 设备解绑
+     */
+    @POST("device")
+    Observable<BaseResult<Object>> unbindDevice(@Body NewUnBindDeviceReq unBindDeviceReq);
+
 
     @FormUrlEncoded
     @POST("device")
@@ -443,4 +456,5 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"promoteBook"})
     Observable<BaseResult<List<BookInfo>>> promoteBook(@Field("userId") int userId, @Field("bookId") int bookId);
+
 }

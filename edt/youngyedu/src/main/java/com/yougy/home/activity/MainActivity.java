@@ -33,6 +33,8 @@ import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.model.Version;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.callback.NewUpdateCallBack;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
 import com.yougy.common.protocol.response.NewGetAppVersionRep;
@@ -75,6 +77,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.Call;
+import rx.functions.Action1;
 
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 
@@ -495,7 +498,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.img_wifi:
 //                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
-                boolean isConnected =false ;
+                boolean isConnected = false;
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 mImgWSysWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
                 break;
@@ -1133,58 +1136,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //升级接口 m=getAppVersion&id=student   用id来判断学生端、教师端 http://ocghxr9lf.bkt.clouddn.com/sample-debug.apk
     private void getServerVersion() {
-        NewProtocolManager.getAppVersion(new NewGetAppVersionReq(), new NewUpdateCallBack(MainActivity.this) {
-            @Override
-            public void onResponse(NewGetAppVersionRep response, int id) {
-                super.onResponse(response, id);
-                if (response != null && response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS && response.getData() != null) {
-                    try {
-                        LogUtils.i(SplashActivity.class.getName() + ":" + response.getData().toString());
-                        NewGetAppVersionRep.Data data = response.getData();
-                        int serverVersion = Integer.parseInt(data.getVer());
-                        int localVersion = VersionUtils.getVersionCode(MainActivity.this);
-                        LogUtils.i("袁野 localVersion ==" + localVersion);
-                        final String url = data.getUrl();
-                        if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
-                                            , "现在升级", "暂缓升级", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //现在升级
-                                            SpUtils.setVersion("" + serverVersion);
-                                            FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
-                                            dialog.dismiss();
-                                            doDownLoad(MainActivity.this, url);
-                                        }
-                                    }, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //暂缓升级
-                                            dialog.dismiss();
-                                        }
-                                    }).show();
-                                }
-                            });
-                        } else {
-                            ToastUtil.showCustomToast(MainActivity.this, "当前版本 : " + VersionUtils.getVersionName() + " ,已经是最新版本了");
-                        }
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        ToastUtil.showCustomToast(MainActivity.this, "服务器返回数据错误:" + e.getMessage());
+        NetWorkManager.getVersion()
+                .compose(bindToLifecycle())
+                .subscribe(version -> {
+                    int serverVersion = TextUtils.isEmpty(version.getAppVersion()) ? -1 : Integer.parseInt(version.getAppVersion());
+                    int localVersion = VersionUtils.getVersionCode(MainActivity.this);
+                    LogUtils.i("袁野 localVersion ==" + localVersion);
+                    final String url = version.getAppUrl();
+                    if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
+                        mHandler.post(() -> new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
+                                , "现在升级", "暂缓升级", (dialog, which) -> {
+                            //现在升级
+                            SpUtils.setVersion("" + serverVersion);
+                            FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                            dialog.dismiss();
+                            doDownLoad(MainActivity.this, url);
+                        }, (dialog, which) -> {
+                            //暂缓升级
+                            dialog.dismiss();
+                        }).show());
+                    } else {
+                        ToastUtil.showCustomToast(MainActivity.this, "当前版本 : " + VersionUtils.getVersionName() + " ,已经是最新版本了");
                     }
-                } else {
+                }, throwable -> {
                     ToastUtil.showCustomToast(MainActivity.this, "检测版本失败，请稍后重试");
-                }
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                ToastUtil.showCustomToast(MainActivity.this, "检测版本失败，请稍后重试");
-            }
-        });
+                });
     }
 
     /**
