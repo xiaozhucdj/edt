@@ -104,9 +104,9 @@ public class YoungyUncaughtExceptionHandler implements Thread.UncaughtExceptionH
                 } catch (Exception e) {
                     LogUtils.e(e);
                 } finally {
-                 /*   Intent intent = new Intent(YougyApplicationManager.getContext(),SplashActivity.class);
+                 /*   Intent intent = new Intent(YoungyApplicationManager.getContext(),SplashActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    YougyApplicationManager.getContext().startActivity(intent);*/
+                    YoungyApplicationManager.getContext().startActivity(intent);*/
                     BaseActivity.finishAll();
                     android.os.Process.killProcess(android.os.Process.myPid());  //结束进程之前可以把你程序的注销或者退出代码放在这
                 }

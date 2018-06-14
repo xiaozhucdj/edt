@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
@@ -75,7 +75,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
             LogUtils.e("BookAdapter","book info : " + info);
             searchResultImg.setImageResource(R.drawable.cart_book);
             searchResultName.setText(info.getBookTitle());
-            searchResultPrice.setText(String.format(YougyApplicationManager.getInstance().getResources().getString(R.string.book_price), String.valueOf(info.getBookSpotPrice())));
+            searchResultPrice.setText(String.format(YoungyApplicationManager.getInstance().getResources().getString(R.string.book_price), String.valueOf(info.getBookSpotPrice())));
             if (info.getBookSpotPrice() < info.getBookSalePrice()) {
                 searchResultPrePrice.setVisibility(View.VISIBLE);
                 searchResultPrePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);

@@ -34,7 +34,7 @@
 
 
     <application
-        android:name="com.yougy.common.manager.YougyApplicationManager"
+        android:name="com.yougy.common.manager.YoungyApplicationManager"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"

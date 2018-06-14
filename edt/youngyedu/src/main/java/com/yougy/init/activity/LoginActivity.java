@@ -13,7 +13,7 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewLoginReq;
@@ -149,7 +149,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         subscription = new CompositeSubscription();
-        tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
+        tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
 
     }

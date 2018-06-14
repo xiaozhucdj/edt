@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,7 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
@@ -38,7 +37,6 @@ import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.message.YXClient;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;
@@ -207,7 +205,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
                 }
             };
         }
-        YougyApplicationManager.getMainThreadHandler().postDelayed(mRefreshRun, 2000);
+        YoungyApplicationManager.getMainThreadHandler().postDelayed(mRefreshRun, 2000);
     }
 
     @Override
@@ -219,7 +217,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 //        }
 
         if (mRefreshRun != null) {
-            YougyApplicationManager.getMainThreadHandler().removeCallbacks(mRefreshRun);
+            YoungyApplicationManager.getMainThreadHandler().removeCallbacks(mRefreshRun);
         }
 
         if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {

@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.yougy.common.activity.BaseActivity;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.view.Toaster;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -32,21 +32,21 @@ public class UIUtils {
      * 获取Context
      */
     public static Context getContext() {
-        return YougyApplicationManager.getApplication();
+        return YoungyApplicationManager.getApplication();
     }
 
     /**
      * 获取主线程id
      */
     public static int getMainThreadId() {
-        return YougyApplicationManager.getMainThreadId();
+        return YoungyApplicationManager.getMainThreadId();
     }
 
     /**
      * 获取主线程
      */
     public static Thread getMainThread() {
-        return YougyApplicationManager.getMainThread();
+        return YoungyApplicationManager.getMainThread();
     }
 
     /**
@@ -60,14 +60,14 @@ public class UIUtils {
      * 获取主线程的handler
      */
     public static Handler getMainThreadHandler() {
-        return YougyApplicationManager.getMainThreadHandler();
+        return YoungyApplicationManager.getMainThreadHandler();
     }
 
     /**
      * 获取主线程的looper
      */
     public static Looper getMainThreadLooper() {
-        return YougyApplicationManager.getMainThreadLooper();
+        return YoungyApplicationManager.getMainThreadLooper();
     }
 
     /**

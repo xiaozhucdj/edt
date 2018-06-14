@@ -444,7 +444,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             req.setNoteFitGradeName("");
             NetWorkManager.queryNote(req).subscribe(noteInfos -> {
                 List<NoteInfo> books = getOnffLine();
-                LogUtils.e(tag,"books : " + books + ",note infos : " + noteInfos);
+                LogUtils.e(tag, "books : " + books + ",note infos : " + noteInfos);
                 if (noteInfos != null && noteInfos.size() > 0) {
                     DataCacheUtils.putString(getActivity(), Protocol.CacheId.ALL_CODE_NOTE, GsonUtil.toJson(noteInfos));
                     if (books != null && books.size() > 0) {
@@ -514,6 +514,8 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
      */
     private void refreshFirstAdapterData() {
         //删除上次数据
+        mFitGradeIndex = -1;
+        mSubjectIndex = -1;
         mTreeFitGrade.clear();
         mTreeSubject.clear();
         mBookFitGrade.clear();
@@ -768,14 +770,16 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                 if (StringUtils.isEquals(key, noteInfo.getNoteFitSubjectName())) {
                     mCountInfos.add(noteInfo);
                 } else if ("无".equalsIgnoreCase(key)) {
-                    mCountInfos.add(noteInfo);
+                    if (StringUtils.isEmpty(noteInfo.getNoteFitSubjectName()) || StringUtils.isEquals(key, noteInfo.getNoteFitSubjectName())) {
+                        mCountInfos.add(noteInfo);
+                    }
                 }
             }
+
+            LogUtils.i("po ....mCountInfos" + mCountInfos.size());
+            initPages();
+
         }
-
-        LogUtils.i("po ....mCountInfos" + mCountInfos.size());
-        initPages();
-
     }
 
 
@@ -784,6 +788,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     /***
      * 初始化 测试数据
      */
+
     private void initTestData() {
 
         NoteInfo NoteInfo1 = new NoteInfo();

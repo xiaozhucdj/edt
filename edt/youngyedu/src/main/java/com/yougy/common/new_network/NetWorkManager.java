@@ -9,7 +9,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
@@ -141,7 +141,7 @@ public final class NetWorkManager {
         synchronized (NetWorkManager.class) {
             if (flag) {
                 if (loadingProgressDialog == null) {
-                    loadingProgressDialog = new LoadingProgressDialog(YougyApplicationManager.getInstance().getApplicationContext());
+                    loadingProgressDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
                     loadingProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
                     loadingProgressDialog.show();
                 } else {
@@ -190,12 +190,17 @@ public final class NetWorkManager {
     }
 
     public Observable<Object> queryToken(String userId) {
-        LogUtils.e("FH", "!!!!!调用ServerApi查询云信对应token:queryToken");
+        LogUtils.e("FH", "!!!!!调用ServerApi查询云信token:queryToken");
         return getServerApi().queryToken(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
-
+    public Observable<Object> updateToken(String userId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi更新云信token:updateToken");
+        return getServerApi().updateToken(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
     public static Observable<List<DownloadInfo>> downloadBook(String userId, String bookId) {
         LogUtils.e("FH", "!!!!!调用ServerApi下载图书:downloadBook");
         return getInstance().getServerApi().downloadBook(userId, bookId)

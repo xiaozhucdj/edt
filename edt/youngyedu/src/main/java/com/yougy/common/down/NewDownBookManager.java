@@ -12,7 +12,7 @@ import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
 import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.alibaba.sdk.android.oss.model.GetObjectResult;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
@@ -69,7 +69,7 @@ public class NewDownBookManager {
     }
 
     private void initOSSClient(String endpoint) {
-        mOss = new OSSClient(YougyApplicationManager.getContext(), endpoint, mMredetialProvider, mConf);
+        mOss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, mMredetialProvider, mConf);
     }
 
     private void init(NewDownBookInfo info) {

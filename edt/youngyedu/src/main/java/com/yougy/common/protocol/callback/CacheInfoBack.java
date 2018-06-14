@@ -28,7 +28,7 @@ public abstract class CacheInfoBack<T> extends BaseCallBack<T> {
     void operateCacheInfo(int id) {
         if (!StringUtils.isEmpty(mJson)) {
             List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", id+"").find(CacheJsonInfo.class);
-//            YougyApplicationManager.closeDb();
+//            YoungyApplicationManager.closeDb();
             File dbFile = mWeakReference.get().getDatabasePath(AliyunUtil.DATABASE_NAME);
             if (infos != null && infos.size() > 0 && dbFile.exists()) {
                 LogUtils.e("当前 有缓存的JSON ，需要更新");

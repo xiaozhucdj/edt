@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.response.NewQueryNoteRep;
 import com.yougy.common.rx.RxBus;
@@ -74,7 +74,7 @@ public class NewNoteBookCallBack extends CacheInfoBack<NewQueryNoteRep> {
     }
     @Override
     public void onResponse(NewQueryNoteRep response, int id) {
-            RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+            RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(response);
     }
 
@@ -88,7 +88,7 @@ public class NewNoteBookCallBack extends CacheInfoBack<NewQueryNoteRep> {
     public void onError(Call call, Exception e, int id) {
         e.printStackTrace();
         LogUtils.i("onError ....请求获取 笔记失败  ");
-        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(id + "");
     }
 }

@@ -3,7 +3,7 @@ package com.yougy.shop.activity;
 import android.os.Bundle;
 
 import com.yougy.common.activity.BaseActivity;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
@@ -31,7 +31,7 @@ public abstract class ShopBaseActivity extends BaseActivity {
         super.onResume();
         if (subscription == null){
             subscription = new CompositeSubscription();
-            tapEventEmitter = YougyApplicationManager.getRxBus(this).toObserverable().publish();
+            tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
             handleEvent();
         }
     }

@@ -4,8 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.protocol.response.NewBindDeviceRep;
@@ -45,7 +44,7 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     public void onResponse(NewBindDeviceRep response, int id) {
         if (response != null&&response.getCode()== ProtocolId.RET_SUCCESS) {
             downloadDb();
-            RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+            RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
             rxBus.send(response);
         }
     }
@@ -53,7 +52,7 @@ public class BindCallBack extends BaseCallBack<NewBindDeviceRep> {
     private void downloadDb(){
         LogUtils.e("FH" , "注意这儿:DATABASE_NAME=" + DATABASE_NAME);
         final File dbfile = mWeakReference.get().getDatabasePath(DATABASE_NAME);
-        if (YougyApplicationManager.isWifiAvailable() && !SpUtils.isInit()) {
+        if (YoungyApplicationManager.isWifiAvailable() && !SpUtils.isInit()) {
             Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
                 File parent = dbfile.getParentFile();
                 if (!parent.exists()){

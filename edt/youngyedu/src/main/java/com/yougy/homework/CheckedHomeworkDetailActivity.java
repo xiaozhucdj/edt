@@ -40,6 +40,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
 
     int currentShowQuestionPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
+    private String questionType;
 
     @Override
     protected void setContentView() {
@@ -98,7 +99,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                             return;
                         }
                         data = questionReplyDetails.get(0);
-                        String questionType = (String) data.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+                        questionType = (String) data.getParsedQuestionItem().questionContentList.get(0).getExtraData();
                         binding.contentDisplayer.getmContentAdaper()
                                 .updateDataList("reply" , ListUtil.conditionalSubList(data.getParsedReplyContentList(), new ListUtil.ConditionJudger<Content_new>() {
                                     @Override
@@ -110,7 +111,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                                 , data.getParsedQuestionItem().analysisContentList);
                         binding.contentDisplayer.getmContentAdaper().updateDataList("question"
                                 , data.getParsedQuestionItem().questionContentList);
-                        if (questionType.equals("选择")){
+                        if ("选择".equals(questionType)){
                             binding.contentDisplayer.getmContentAdaper()
                                     .setSubText("答案 : " + RxResultHelper.parseAnswerList(data.getParsedQuestionItem().answerContentList));
                         }
@@ -162,7 +163,12 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
             }
         }
         else if (binding.answerAnalysisBtn.isSelected()) {
-            binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
+            if ("选择".equals(questionType)){
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , true);
+            }
+            else{
+                binding.contentDisplayer.getmContentAdaper().toPage("analysis" , currentShowAnalysisPageIndex , false);
+            }
         }
         refreshQuestionChangeBtns();
     }

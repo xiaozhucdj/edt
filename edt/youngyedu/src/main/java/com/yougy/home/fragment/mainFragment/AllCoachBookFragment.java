@@ -19,7 +19,7 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
@@ -329,7 +329,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
     private void loadData() {
         LogUtils.e("loadData ..."+tag);
-        if (YougyApplicationManager.isWifiAvailable()) {
+        if (YoungyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
@@ -429,7 +429,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      * 刷新适配器数据
      */
     private void refreshFirstAdapterData() {
-
+        mFitGradeIndex = -1;
+        mSubjectIndex  =- 1;
         //删除上次数据
         mTreeFitGrade.clear();
         mTreeSubject.clear();

@@ -4,13 +4,12 @@ import android.content.Context;
 
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.manager.ProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.response.QueryBookOrderListRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.shop.activity.OrderListActivity;
 
 import okhttp3.Response;
 
@@ -37,7 +36,7 @@ public class QueryOrderListCallBack extends BaseCallBack<QueryBookOrderListRep> 
     @Override
     public void onResponse(QueryBookOrderListRep response, int id) {
         LogUtils.e("QueryOrderListCallBack", "send QueryBookOrderListRep event");
-        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }
 

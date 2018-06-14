@@ -6,8 +6,7 @@ package com.yougy.common.protocol.callback;
 
 import android.content.Context;
 
-import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.rx.RxBus;
@@ -37,7 +36,7 @@ public class LoginCallBack extends BaseCallBack<NewLoginRep> {
     @Override
     public void onResponse(NewLoginRep response, int id) {
         LogUtils.e("onResponse",Thread.currentThread().getName());
-        RxBus rxBus = YougyApplicationManager.getRxBus(mWeakReference.get());
+        RxBus rxBus = YoungyApplicationManager.getRxBus(mWeakReference.get());
         rxBus.send(response);
     }
 
