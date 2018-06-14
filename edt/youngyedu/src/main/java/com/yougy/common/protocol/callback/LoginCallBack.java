@@ -44,7 +44,7 @@ public class LoginCallBack extends BaseCallBack<NewLoginRep> {
     @Override
     public void onUiDetermineListener() {
 //        ProtocolManager.loginProtocol(Commons.UUID, ProtocolId.PROTOCOL_ID_LOGIN, this);
-          NewProtocolManager.login(mReq,this);
+//          NewProtocolManager.login(mReq,this);
     }
 
     public interface OnJumpListener {

@@ -63,6 +63,6 @@ public class UnBindCallback extends BaseCallBack<NewUnBindDeviceRep> {
         NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
         unBindDeviceReq.setDeviceId(Commons.UUID);
         unBindDeviceReq.setUserId(SpUtils.getUserId());
-        NewProtocolManager.unbindDevice(unBindDeviceReq, this);
+//        NewProtocolManager.unbindDevice(unBindDeviceReq, this);
     }
 }
