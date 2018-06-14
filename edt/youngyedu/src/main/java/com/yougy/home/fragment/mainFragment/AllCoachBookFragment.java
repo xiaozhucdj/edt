@@ -429,7 +429,8 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      * 刷新适配器数据
      */
     private void refreshFirstAdapterData() {
-
+        mFitGradeIndex = -1;
+        mSubjectIndex  =- 1;
         //删除上次数据
         mTreeFitGrade.clear();
         mTreeSubject.clear();

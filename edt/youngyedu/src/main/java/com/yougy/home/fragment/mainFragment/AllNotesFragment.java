@@ -520,6 +520,8 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
      */
     private void refreshFirstAdapterData() {
         //删除上次数据
+        mFitGradeIndex = -1;
+        mSubjectIndex  =- 1;
         mTreeFitGrade.clear();
         mTreeSubject.clear();
         mBookFitGrade.clear();
