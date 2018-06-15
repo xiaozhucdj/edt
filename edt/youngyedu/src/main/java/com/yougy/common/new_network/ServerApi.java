@@ -8,6 +8,7 @@ import com.yougy.common.bean.AliyunData;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
+import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
@@ -472,5 +473,11 @@ public interface ServerApi {
      */
     @POST("classRoom")
     Observable<BaseResult<List<NoteInfo>>> queryNote(@Body NewQueryNoteReq req);
+
+    /**
+     * 笔记删除
+     */
+    @POST("classRoom")
+    Observable<BaseResult<Object>> deleteNote(@Body NewDeleteNoteReq req);
 
 }

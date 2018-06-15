@@ -81,7 +81,7 @@ public class NewNoteBookCallBack extends CacheInfoBack<NewQueryNoteRep> {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        NewProtocolManager.queryNote(newQueryNoteReq ,this);
+//        NewProtocolManager.queryNote(newQueryNoteReq ,this);
     }
 
     @Override

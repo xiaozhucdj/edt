@@ -14,11 +14,10 @@ import com.jakewharton.rxbinding.view.RxView;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.protocol.callback.NewDelteNoteCallBack;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.callback.NewUpdaNoteCallBack;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
-import com.yougy.common.protocol.response.NewDeleteNoteRep;
 import com.yougy.common.protocol.response.NewUpdateNoteRep;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
@@ -118,7 +117,6 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
 
     @Override
     protected void handleEvent() {
-        handleRemoveEvent();
         handleUpdateEvent();
         super.handleEvent();
     }
@@ -129,7 +127,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
             public void call(Object o) {
                 if (o instanceof NewUpdateNoteRep) {
                     NewUpdateNoteRep req = (NewUpdateNoteRep) o;
-                    if (req!=null && req.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
+                    if (req != null && req.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
 //
                         //更新缓存数据 ,说明
                         if (mControlActivity.mNoteMark <= 0) { //服务器独立创建的笔记
@@ -203,7 +201,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                         updataNoteInfo(mUpdateInfo);
                         BaseEvent baseEvent = new BaseEvent(EventBusConstant.alter_note, mUpdateInfo);
                         EventBus.getDefault().post(baseEvent);
-                    }else{
+                    } else {
                         showCenterDetermineDialog(R.string.updata_note_fail);
                     }
                 }
@@ -228,54 +226,6 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         setNoteStyle(mControlActivity.mNoteStyle);
     }
 
-    private void handleRemoveEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewDeleteNoteRep ) {
-                    NewDeleteNoteRep rep  = (NewDeleteNoteRep) o;
-                    if (rep!=null && rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS){
-
-                        //删除缓存中的当前笔记 包含该bean
-                        String cutterStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
-                        if (!StringUtils.isEmpty(cutterStr)) {
-                            List<NoteInfo> cutters = GsonUtil.fromNotes(cutterStr);
-                            for (NoteInfo model : cutters) {
-                                if (model.getNoteId() == mControlActivity.mNoteId) {
-                                    cutters.remove(model);
-                                    DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, GsonUtil.toJson(cutters));
-                                    break;
-                                }
-                            }
-                        }
-
-                        //删除缓存中全部笔记 包含的 bean
-                        String allStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
-                        if (!StringUtils.isEmpty(allStr)) {
-                            List<NoteInfo> alls = fromNotes(allStr);
-                            for (NoteInfo model : alls) {
-                                if (model.getNoteId() ==  mControlActivity.mNoteId) {
-                                    alls.remove(model);
-                                    DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.ALL_CODE_NOTE, GsonUtil.toJson(alls));
-                                    break;
-                                }
-
-                            }
-                        }
-                        //通知fragmentUI
-                        NoteInfo model = new NoteInfo();
-                        model.setNoteId(mControlActivity.mNoteId);
-                        model.setNoteMark(mControlActivity.mNoteMark);
-                        BaseEvent baseEvent = new BaseEvent(EventBusConstant.delete_note, model);
-                        EventBus.getDefault().post(baseEvent);
-                        getActivity().finish();
-                    }else{
-                        showCenterDetermineDialog(R.string.delete_note_fail);
-                    }
-                }
-            }
-        }));
-    }
 
     @NonNull
     private Subscriber<Void> getNextSubscriber() {
@@ -415,7 +365,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
     @Override
     protected void initDatas() {
         //TODO:袁野
-        if (mControlActivity.mNoteMark >0) {
+        if (mControlActivity.mNoteMark > 0) {
             fileName = mControlActivity.mNoteMark + "";
         } else {
             fileName = mControlActivity.mNoteId + "";
@@ -478,7 +428,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
             setNoteStyle(mControlActivity.mNoteStyle);
         } else {
             LogUtils.i("leke_type");
-            LogUtils.i("leke_type=="+mNote.getNoteStyle());
+            LogUtils.i("leke_type==" + mNote.getNoteStyle());
             setNoteStyle(mNote.getNoteStyle());
         }
 
@@ -617,7 +567,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                             @Override
                             public void onSureClick() {
                                 //删除本地数据
-                                if (mControlActivity.mNoteId <0 ){
+                                if (mControlActivity.mNoteId < 0) {
                                     String addStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD);
                                     //判断离线添加是否有数据 并且外面传来的参数是离线添加的数据
                                     if (!StringUtils.isEmpty(addStr) && mControlActivity.mNoteMark != -1) {
@@ -673,16 +623,50 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
     }
 
 
-
-
-
     //协议删除笔记
 
     private void delteNoteProtocol() {
         NewDeleteNoteReq req = new NewDeleteNoteReq();
         req.setUserId(SpUtils.getAccountId());
         req.setNoteId(mControlActivity.mNoteId);
-        NewProtocolManager.deleteNote(req ,new NewDelteNoteCallBack(getActivity(),req));
+//        NewProtocolManager.deleteNote(req ,new NewDelteNoteCallBack(getActivity(),req));
+        NetWorkManager.deleteNote(req)
+                .subscribe(o -> {
+                    String cutterStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+                    if (!StringUtils.isEmpty(cutterStr)) {
+                        List<NoteInfo> cutters = GsonUtil.fromNotes(cutterStr);
+                        for (NoteInfo model : cutters) {
+                            if (model.getNoteId() == mControlActivity.mNoteId) {
+                                cutters.remove(model);
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, GsonUtil.toJson(cutters));
+                                break;
+                            }
+                        }
+                    }
+
+                    //删除缓存中全部笔记 包含的 bean
+                    String allStr = DataCacheUtils.getString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE);
+                    if (!StringUtils.isEmpty(allStr)) {
+                        List<NoteInfo> alls = fromNotes(allStr);
+                        for (NoteInfo model : alls) {
+                            if (model.getNoteId() == mControlActivity.mNoteId) {
+                                alls.remove(model);
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_NOTE, GsonUtil.toJson(alls));
+                                break;
+                            }
+
+                        }
+                    }
+                    //通知fragmentUI
+                    NoteInfo model = new NoteInfo();
+                    model.setNoteId(mControlActivity.mNoteId);
+                    model.setNoteMark(mControlActivity.mNoteMark);
+                    BaseEvent baseEvent = new BaseEvent(EventBusConstant.delete_note, model);
+                    EventBus.getDefault().post(baseEvent);
+                    getActivity().finish();
+                }, throwable -> {
+                    showCenterDetermineDialog(R.string.delete_note_fail);
+                });
     }
 
     @Override
@@ -718,12 +702,12 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
      * 更新笔记
      */
     private void updataNoteProtocol() {
-        NewUpdateNoteReq req = new NewUpdateNoteReq() ;
+        NewUpdateNoteReq req = new NewUpdateNoteReq();
         req.setUserId(SpUtils.getAccountId());
-        List<NoteInfo> infos = new ArrayList<>() ;
-        infos.add(mUpdateInfo) ;
+        List<NoteInfo> infos = new ArrayList<>();
+        infos.add(mUpdateInfo);
         req.setData(infos);
-        NewProtocolManager.updateNote(req , new NewUpdaNoteCallBack(getActivity() ,req) );
+        NewProtocolManager.updateNote(req, new NewUpdaNoteCallBack(getActivity(), req));
     }
 
     private void saveLastNumber(int number) {
@@ -844,7 +828,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         if (mUpdateSub != null) {
             initScription.unsubscribe();
         }
-        if (mNoteBookView!=null){
+        if (mNoteBookView != null) {
             mNoteBookView.recycle();
         }
 
@@ -853,7 +837,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         }
 
         mRunThread = null;
-        Runtime.getRuntime().gc() ;
+        Runtime.getRuntime().gc();
     }
 
     @Override
@@ -867,23 +851,23 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_SHOW)) {
-            LogUtils.i("type .." +event.getType());
-            if (mNoteBookView!=null){
+            LogUtils.i("type .." + event.getType());
+            if (mNoteBookView != null) {
                 mNoteBookView.leaveScribbleMode();
-                mNoteBookView.setIntercept(true) ;
+                mNoteBookView.setIntercept(true);
             }
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_RESULT, "");
             EventBus.getDefault().post(baseEvent);
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) ||(event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE) )){
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_ANSWERING_PUASE) || (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_LOCKER_ACTIVITY_PUSE))) {
             LogUtils.i("type .." + event.getType());
             if (mNoteBookView != null) {
                 mNoteBookView.setIntercept(false);
             }
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
-            LogUtils.i("type .." +event.getType());
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.EVENT_START_ACTIIVTY_ORDER)) {
+            LogUtils.i("type .." + event.getType());
             if (mNoteBookView != null) {
                 mNoteBookView.leaveScribbleMode();
-                mNoteBookView.setIntercept(true) ;
+                mNoteBookView.setIntercept(true);
             }
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
