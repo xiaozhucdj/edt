@@ -50,7 +50,7 @@ import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -1107,7 +1107,7 @@ public class YXClient {
         }
 
         if (loadingDialog == null) {
-            loadingDialog = new LoadingProgressDialog(YougyApplicationManager.getInstance().getApplicationContext());
+            loadingDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
             loadingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
 
