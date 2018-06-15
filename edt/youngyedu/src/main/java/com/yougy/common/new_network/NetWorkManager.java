@@ -14,10 +14,12 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
+import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
@@ -487,6 +489,31 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+
+    public static Observable<List<NoteInfo>> queryNote(NewQueryNoteReq req){
+        return getInstance().getServerApi().queryNote(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 图书分类查询

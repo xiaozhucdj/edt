@@ -20,6 +20,8 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
+import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.new_network.Protocol;
 import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.protocol.callback.NewAppendNotesCallBack;
 import com.yougy.common.protocol.callback.NewNoteBookCallBack;
@@ -51,6 +53,8 @@ import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 import okhttp3.Response;
 import rx.functions.Action1;
+
+import static com.yougy.common.utils.GsonUtil.fromNotes;
 
 
 /**
@@ -103,7 +107,6 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
     private CreatNoteDialog mNoteDialog;
     private boolean mIsFist;
     //    private Subscription mSub;
-    private NewNoteBookCallBack mNewNoteBookCallBack;
     private ViewGroup mLoadingNull;
     private String mAddStr;
     private String mUpdataStr;
@@ -124,7 +127,6 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
      */
     private void initNotes() {
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_view);
-//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
@@ -255,10 +257,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
 
     @Override
     protected void handleEvent() {
-
-        handleNoteBookEvent();
         handleAppendNoteEvent();
-
         super.handleEvent();
     }
 
@@ -275,7 +274,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         refresh();
         //当前分页大于1 ，需要收到设置到分页尾部。
         if (mCounts != 1) {
-            mPageBtnBar.setCurrentSelectPageIndex(mCounts-1);
+            mPageBtnBar.setCurrentSelectPageIndex(mCounts - 1);
             page(mCounts);
             mPageBtnBar.refreshPageBar();
         }
@@ -306,38 +305,6 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         }));
     }
 
-    private void handleNoteBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewQueryNoteRep && !mHide && mNewNoteBookCallBack != null) {
-                    NewQueryNoteRep data = (NewQueryNoteRep) o;
-                    if (data != null && data.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
-                        if (data.getData() != null && data.getData().size() > 0) {
-                            List<NoteInfo> notes = data.getData();
-                            mServerInfos.clear();
-                            mServerInfos.addAll(notes);
-                        }
-                        //添加addItem
-                        if (!mServerInfos.contains(addCreatNoteItem())) {
-                            mServerInfos.add(0, addCreatNoteItem());
-                        }
-                        refresh();
-                    }
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE + "")) {
-                    LogUtils.i("使用缓存数据");
-
-                    List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
-                    mServerInfos.clear();
-                    if (infos != null) {
-                        mServerInfos.addAll(infos);
-                    }
-                    mServerInfos.add(0, addCreatNoteItem());
-
-                }
-            }
-        }));
-    }
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
@@ -385,7 +352,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
     private void requestOffLineUpdataNote() {
         NewUpdateNoteReq req = new NewUpdateNoteReq();
         req.setUserId(SpUtils.getAccountId());
-        req.setData(GsonUtil.fromNotes(mUpdataStr));
+        req.setData(fromNotes(mUpdataStr));
         NewProtocolManager.updateNote(req, new BaseCallBack<NewUpdateNoteRep>(getActivity()) {
 
             @Override
@@ -415,7 +382,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
     private void requestOffLineAddNote() {
         NewInserAllNoteReq req = new NewInserAllNoteReq();
         req.setUserId(SpUtils.getAccountId());
-        req.setData(GsonUtil.fromNotes(mAddStr));
+        req.setData(fromNotes(mAddStr));
         NewProtocolManager.inserAllNote(req, new BaseCallBack<NewInserAllNoteRep>(getActivity()) {
             @Override
             public NewInserAllNoteRep parseNetworkResponse(Response response, int id) throws Exception {
@@ -466,10 +433,36 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE));
             //设置年级
             req.setNoteFitGradeName(SpUtils.getGradeName());
-            mNewNoteBookCallBack = new NewNoteBookCallBack(getActivity(), req);
-            NewProtocolManager.queryNote(req, mNewNoteBookCallBack);
+            NetWorkManager.queryNote(req).subscribe(noteInfos -> {
+                List<NoteInfo> books = getOnffLine();
+                LogUtils.e(tag, "noteinfos : " + noteInfos + ",books : " + books);
+                if (noteInfos != null && noteInfos.size() > 0) {
+                    DataCacheUtils.putString(getActivity(), Protocol.CacheId.CODE_CURRENT_NOTE, GsonUtil.toJson(noteInfos));
+                    if (books != null && books.size() > 0) {
+                        noteInfos.addAll(books);
+                    }
+                    mServerInfos.clear();
+                    mServerInfos.addAll(noteInfos);
+                    //添加addItem
+                } else {
+                    DataCacheUtils.putString(getActivity(), Protocol.CacheId.CODE_CURRENT_NOTE, "");
+                }
+                if (!mServerInfos.contains(addCreatNoteItem())) {
+                    mServerInfos.add(0, addCreatNoteItem());
+                }
+                refresh();
+            }, throwable -> {
+                List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
+                mServerInfos.clear();
+                if (infos != null) {
+                    mServerInfos.addAll(infos);
+                }
+                mServerInfos.add(0, addCreatNoteItem());
+            });
 
-        } else {
+        } else
+
+        {
             LogUtils.e(TAG, "query notes from database...");
             List<NoteInfo> infos = getCacheNotes(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE);
             mServerInfos.clear();
@@ -479,8 +472,18 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
             mServerInfos.add(0, addCreatNoteItem());
             refresh();
         }
+
     }
 
+    private List<NoteInfo> getOnffLine() {
+        // 离线添加的笔记
+        String offLineAddStr = DataCacheUtils.getString(getActivity(), Protocol.OffLineId.OFF_LINE_ADD);
+        List<NoteInfo> books = new ArrayList<>();
+        if (!StringUtils.isEmpty(offLineAddStr)) {
+            books.addAll(fromNotes(offLineAddStr));
+        }
+        return books;
+    }
 
     private void page(int index) {
 
@@ -600,7 +603,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         String str = DataCacheUtils.getString(getActivity(), key);
         List<NoteInfo> notes;
         if (!StringUtils.isEmpty(str)) {
-            notes = GsonUtil.fromNotes(str);
+            notes = fromNotes(str);
         } else {
             notes = new ArrayList<>();
         }

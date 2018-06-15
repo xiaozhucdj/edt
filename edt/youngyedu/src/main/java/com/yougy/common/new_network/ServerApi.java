@@ -9,7 +9,9 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
@@ -464,5 +466,11 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"promoteBook"})
     Observable<BaseResult<List<BookInfo>>> promoteBook(@Field("userId") int userId, @Field("bookId") int bookId);
+
+    /**
+     * 笔记查询
+     */
+    @POST("classRoom")
+    Observable<BaseResult<List<NoteInfo>>> queryNote(@Body NewQueryNoteReq req);
 
 }

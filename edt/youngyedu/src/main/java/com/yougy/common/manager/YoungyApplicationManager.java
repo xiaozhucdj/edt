@@ -57,7 +57,6 @@ import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
 
-//import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * Created by Administrator on 2016/8/24.
