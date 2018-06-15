@@ -7,7 +7,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.WindowManager;
@@ -50,7 +49,7 @@ import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.YougyApplicationManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -664,6 +663,7 @@ public class YXClient {
                     try {
                         List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
                         String token = (String) result.get(0).get("token");
+                        SpUtils.setLocalYXToken(token);
                         login(account, token, callback);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -690,6 +690,7 @@ public class YXClient {
                     try {
                         List<LinkedTreeMap> result = (List<LinkedTreeMap>) o;
                         String token = (String) result.get(0).get("token");
+                        SpUtils.setLocalYXToken(token);
                         login(account, token, callback);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1107,7 +1108,7 @@ public class YXClient {
         }
 
         if (loadingDialog == null) {
-            loadingDialog = new LoadingProgressDialog(YougyApplicationManager.getInstance().getApplicationContext());
+            loadingDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
             loadingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
 
@@ -1123,11 +1124,11 @@ public class YXClient {
         final int MAX_RETRY_TIMES = 3;
         //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
         RecursiveLooper.recursiveRun(MAX_RETRY_TIMES, new RecursiveLooper.RecursiveLoopRunnable() {
-            boolean tokenExpire = false;
-
+            boolean localTokenWrong = false;
+            boolean remoteTokenWrong = false;
             @Override
             public void run(int currentLooopTimes) {
-                LogUtils.e("FH!!!", "recursiveRun : " + currentLooopTimes);
+                LogUtils.e("FH!", "刷新式登录云信 : 第" + currentLooopTimes + "次");
                 if (!NetUtils.isNetConnected()) {
                     //无网络,直接失败,不重试.
                     if (loadingDialog != null && loadingDialog.isShowing()) {
@@ -1144,7 +1145,8 @@ public class YXClient {
                     }, "打开").show();*/
                     return;
                 }
-                YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", new RequestCallbackWrapper() {
+
+                RequestCallbackWrapper requestCallbackWrapper = new RequestCallbackWrapper() {
                     @Override
                     public void onResult(int code, Object result, Throwable exception) {
                         if (code == ResponseCode.RES_SUCCESS) {
@@ -1161,18 +1163,30 @@ public class YXClient {
                             } else if (code == -997) {
                                 reason = "获取token失败!解析失败";
                             } else {
-                                if (code == 302) {
-                                    tokenExpire = true;
+                                if (code == 302){
+                                    if (localTokenWrong){
+                                        remoteTokenWrong = true;
+                                        LogUtils.e("FH", "标记remoteToken为无效");
+                                    }
+                                    else {
+                                        localTokenWrong = true;
+                                        LogUtils.e("FH", "标记localToken为无效");
+                                    }
+                                }
+                                else {
+                                    LogUtils.e("FH", "标记localToken为有效");
+                                    localTokenWrong = false;
                                 }
                                 reason = "Code " + code;
                             }
-
                             LogUtils.e("FH", "刷新式登录失败 :" + reason);
                             if (currentLooopTimes < MAX_RETRY_TIMES) {
                                 //失败次数未达上限,自动重试.
+                                LogUtils.e("FH", "失败次数未达上限" + MAX_RETRY_TIMES + "次,自动重试");
                                 doContinue();
                             } else {
                                 //失败次数达到上限,进入失败逻辑
+                                LogUtils.e("FH", "失败次数达到上限" + MAX_RETRY_TIMES + "次,进入失败逻辑");
                                 if (loadingDialog != null && loadingDialog.isShowing()) {
                                     loadingDialog.dismiss();
                                 }
@@ -1192,7 +1206,26 @@ public class YXClient {
                             }
                         }
                     }
-                }, tokenExpire);
+                };
+                String localToken = SpUtils.getLocalYXToken();
+                if (TextUtils.isEmpty(localToken)){
+                    LogUtils.e("FH", "标记localToken为无效");
+                    localTokenWrong = true;
+                }
+                if (!localTokenWrong){
+                    LogUtils.e("FH", "本地token有效,使用本地token登录云信");
+                    YXClient.getInstance().login(SpUtils.getUserId() + "" , localToken , requestCallbackWrapper);
+                }
+                else {
+                    if (remoteTokenWrong){
+                        LogUtils.e("FH", "本地token无效,远程token无效,更新远程token再登录云信");
+                        YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper , true);
+                    }
+                    else {
+                        LogUtils.e("FH", "本地token无效,远程token有效,请求远程token登录云信");
+                        YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper , false);
+                    }
+                }
             }
 
             @Override

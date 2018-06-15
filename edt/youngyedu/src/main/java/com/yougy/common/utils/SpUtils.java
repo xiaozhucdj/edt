@@ -57,6 +57,7 @@ public class SpUtils {
     private static String GRADE_DISPLAY = "gradeDisplay" ;
 
     private static final String LOCAL_LOCK_PWD = "LOCAL_LOCK_PWD";
+    private static final String LOCAL_YX_TOKEN = "LOCAL_YX_TOKEN";
 
     /**
      * 当前学期学科
@@ -328,6 +329,16 @@ public class SpUtils {
         pwd = rot13(pwd);
         sp.edit().putString(LOCAL_LOCK_PWD , pwd).apply();
     }
+
+    public static String getLocalYXToken() {
+        return rot13(sp.getString(LOCAL_YX_TOKEN, ""));
+    }
+
+    public static void setLocalYXToken(String pwd) {
+        pwd = rot13(pwd);
+        sp.edit().putString(LOCAL_YX_TOKEN, pwd).apply();
+    }
+
 
     public static int getUnreadMsgCount (String ssid){
         LogUtils.e("FH" , "getUnreadMsgCount ssid=" + ssid);
