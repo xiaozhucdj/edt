@@ -122,8 +122,8 @@ public class SearchActivity extends ShopBaseActivity {
         binding.stageRecycler.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.stageRecycler) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-                hideStageRecyclerLayout(null);
                 generateSubjectLayout(mStageAdapter.getItem(vh.getAdapterPosition()));
+                hideStageRecyclerLayout(null);
             }
         });
         binding.searchEt.addTextChangedListener(new TextWatcher() {
@@ -159,7 +159,7 @@ public class SearchActivity extends ShopBaseActivity {
             @Override
             public void onPageBtnClick(View view, int i, String s) {
                 hideFiltrateLayout();
-                queryBookBaseOnFiltration(i+1);
+                queryBookBaseOnFiltration(i + 1);
             }
         });
         mAdapter = new SearchResultAdapter(mBookInfos);
@@ -173,41 +173,37 @@ public class SearchActivity extends ShopBaseActivity {
     }
 
     private void generateSubjectLayout(CategoryInfo info) {
-        LogUtils.e(tag, "subject is : " + mSubjects.length);
+        LogUtils.e(tag, "subject is : " + mSubjects.length + ",generateSubjectLayout");
         preChoosedBookCategoryMatch = info.getCategoryId();
         binding.stageButton.setText(info.getCategoryDisplay());
         List<CategoryInfo> childs = info.getCategoryList();
-        LogUtils.e(tag, "childs : " + childs);
         if (binding.subjectWrap.getChildCount() != 0) {
             binding.subjectWrap.removeAllViews();
         }
         if (null == childs || childs.size() == 0) {
+            LogUtils.e(tag, "childs : " + childs);
             binding.subjectLayout.setVisibility(View.GONE);
-            return;
         } else {
             showSubjectLayout();
-        }
-        for (final CategoryInfo item : childs) {
+            for (final CategoryInfo item : childs) {
 
-            View layout = View.inflate(this, R.layout.text_view, null);
-            final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
-            String display = item.getCategoryDisplay();
-            if (display.length() > 4) {
-                display = display.substring(0, 4);
-            }
-            tv.setText(display);
-            tv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                View layout = View.inflate(this, R.layout.text_view, null);
+                final TextView tv = layout.findViewById(R.id.text_tv);
+                String display = item.getCategoryDisplay();
+                if (display.length() > 4) {
+                    display = display.substring(0, 4);
+                }
+                tv.setText(display);
+                tv.setOnClickListener(v -> {
                     SearchActivity.this.resetSubjectTv();
                     SearchActivity.this.generateVersionLayout(item);
                     binding.versionLayout.setVisibility(View.VISIBLE);
                     mSubject = item.getCategoryDisplay();
                     preChoosedBookCategory = item.getCategoryId();
                     tv.setSelected(true);
-                }
-            });
-            binding.subjectWrap.addView(layout);
+                });
+                binding.subjectWrap.addView(layout);
+            }
         }
 
     }
@@ -471,7 +467,7 @@ public class SearchActivity extends ShopBaseActivity {
         binding.subjectLayout.setVisibility(View.VISIBLE);
     }
 
-    private void showVersionLayout(){
+    private void showVersionLayout() {
         binding.versionLayout.setVisibility(View.VISIBLE);
     }
 

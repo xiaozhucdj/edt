@@ -202,6 +202,7 @@
                 android:onClick="@{activity.cancel}" />
 
             <RelativeLayout
+                android:id="@+id/right_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/text_color_white"

@@ -5,6 +5,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.yougy.common.utils.LogUtils;
+
 /**
  * Created by jiangliang on 2017/1/11.
  */
