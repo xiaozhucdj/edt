@@ -17,6 +17,7 @@ import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
@@ -38,6 +39,7 @@ import com.yougy.shop.bean.OrderDetailBean;
 import com.yougy.shop.bean.OrderIdObj;
 import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
+import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -501,6 +503,12 @@ public final class NetWorkManager {
 
     public static Observable<Object> deleteNote(NewDeleteNoteReq req){
         return getInstance().getServerApi().deleteNote(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<PromotionResult>> queryPromotion(PromotionReq req){
+        return getInstance().getServerApi().queryPromotion(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

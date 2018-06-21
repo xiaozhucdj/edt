@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ResultUtils;
@@ -32,6 +33,7 @@ import java.util.List;
 import okhttp3.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -90,35 +92,9 @@ public class ShopPromotionActivity extends ShopBaseActivity{
     public void loadData() {
         PromotionReq req = new PromotionReq();
         req.setCouponId(couponId);
-       Observable.create((Observable.OnSubscribe<PromotionResult>) subscriber -> {
-            Response response = NewProtocolManager.queryPromotionActivityInfo(req);
-            if (response.isSuccessful()){
-                try {
-                    String resultJson = response.body().string();
-                    LogUtils.e(tag,"result json : " + resultJson);
-                    Result<List<PromotionResult>> result = ResultUtils.fromJsonArray(resultJson, PromotionResult.class);
-                    List<PromotionResult> promotions = result.getData();
-                    subscriber.onNext(promotions.get(0));
-                    subscriber.onCompleted();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-       .observeOn(AndroidSchedulers.mainThread())
-       .subscribe(new ShopSubscriber<PromotionResult>(this) {
-           @Override
-           public void require() {
-               loadData();
-           }
-
-           @Override
-           public void onNext(PromotionResult promotionResult) {
-                updateUI(promotionResult);
-           }
-       });
-
-
+        NetWorkManager.queryPromotion(req)
+                .compose(bindToLifecycle())
+                .subscribe(promotionResults -> updateUI(promotionResults.get(0)));
     }
 
     @Override
@@ -133,7 +109,6 @@ public class ShopPromotionActivity extends ShopBaseActivity{
         binding.activityTime.setText(time);
 
         infos = result.getCouponBook();
-//        generateBtn(infos);
         if (mPageInfos.size() > 0) {
             mPageInfos.clear();
         }

@@ -12,6 +12,7 @@ import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
@@ -19,7 +20,6 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.init.bean.Student;
-import com.yougy.init.bean.UserInfo;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
@@ -31,6 +31,7 @@ import com.yougy.shop.bean.OrderDetailBean;
 import com.yougy.shop.bean.OrderIdObj;
 import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
+import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
 
 import java.util.List;
@@ -479,5 +480,12 @@ public interface ServerApi {
      */
     @POST("classRoom")
     Observable<BaseResult<Object>> deleteNote(@Body NewDeleteNoteReq req);
+
+
+    /**
+     * 促销活动查询
+     */
+    @POST("bookStore")
+    Observable<BaseResult<List<PromotionResult>>> queryPromotion(@Body PromotionReq req);
 
 }
