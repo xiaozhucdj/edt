@@ -15,6 +15,7 @@ import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
@@ -24,7 +25,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.Protocol;
 import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.protocol.callback.NewAppendNotesCallBack;
-import com.yougy.common.protocol.request.NewInserAllNoteReq;
+import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.response.NewInserAllNoteRep;
@@ -39,6 +40,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.NotesAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -46,11 +48,13 @@ import com.yougy.view.dialog.CreatNoteDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 import okhttp3.Response;
 import rx.functions.Action1;
+import rx.functions.Func1;
 
 import static com.yougy.common.utils.GsonUtil.fromNotes;
 
@@ -253,12 +257,6 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         return mAddInfo;
     }
 
-    @Override
-    protected void handleEvent() {
-        handleAppendNoteEvent();
-        super.handleEvent();
-    }
-
     private void appendNote(int noteId) {
         // 移除+号
         mServerInfos.remove(0);
@@ -281,28 +279,6 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         BaseEvent baseEvent = new BaseEvent(EventBusConstant.add_note, mCreatInfo);
         EventBus.getDefault().post(baseEvent);
     }
-
-    private void handleAppendNoteEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewInserAllNoteRep) {
-                    LogUtils.e(TAG, "handleAppendNoteEvent..................");
-                    NewInserAllNoteRep rep = (NewInserAllNoteRep) o;
-                    if (rep.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
-                        //缓存中 当前 全部 笔记添加 ，以防止无网络的时候使用上次缓存数据
-                        appendNote(rep.getData().get(0).getNoteId());
-                        addCacheData(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, mCreatInfo);
-                        addCacheData(NewProtocolManager.NewCacheId.ALL_CODE_NOTE, mCreatInfo);
-
-                    } else {
-                        showCenterDetermineDialog(R.string.add_note_fail);
-                    }
-                }
-            }
-        }));
-    }
-
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
@@ -378,21 +354,12 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
      * 离线上传笔记
      */
     private void requestOffLineAddNote() {
-        NewInserAllNoteReq req = new NewInserAllNoteReq();
+        NewInsertAllNoteReq req = new NewInsertAllNoteReq();
         req.setUserId(SpUtils.getAccountId());
         req.setData(fromNotes(mAddStr));
-        NewProtocolManager.inserAllNote(req, new BaseCallBack<NewInserAllNoteRep>(getActivity()) {
-            @Override
-            public NewInserAllNoteRep parseNetworkResponse(Response response, int id) throws Exception {
-                String json = response.body().string();
-                LogUtils.i("respons add notes json ==" + json);
-                return GsonUtil.fromJson(json, NewInserAllNoteRep.class);
-            }
-
-            @Override
-            public void onResponse(NewInserAllNoteRep response, int id) {
-                //判断是否有离线修改的笔记
-                if (response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
+        NetWorkManager.insertAllNote(req).compose(((BaseActivity)context).bindToLifecycle())
+                .filter(Objects::nonNull)
+                .subscribe(insertNoteIds -> {
                     mAddStr = "";
                     DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, "");
                     if (!StringUtils.isEmpty(mUpdataStr)) {
@@ -402,21 +369,15 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
                         LogUtils.i("获取本学期笔记列表");
                         getNotes();
                     }
-                }
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                //判断是否有离线修改的笔记
-                if (!StringUtils.isEmpty(mUpdataStr)) {
-                    LogUtils.i("网络请求 离线更新笔记");
-                    requestOffLineUpdataNote();
-                } else {
-                    LogUtils.i("获取本学期笔记列表");
-                    getNotes();
-                }
-            }
-        });
+                }, throwable -> {
+                    if (!StringUtils.isEmpty(mUpdataStr)) {
+                        LogUtils.i("网络请求 离线更新笔记");
+                        requestOffLineUpdataNote();
+                    } else {
+                        LogUtils.i("获取本学期笔记列表");
+                        getNotes();
+                    }
+                });
     }
 
     /***
@@ -583,12 +544,18 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
      */
     private void creatNoteInfoProtocol() {
         if (NetUtils.isNetConnected()) {
-            NewInserAllNoteReq req = new NewInserAllNoteReq();
+            NewInsertAllNoteReq req = new NewInsertAllNoteReq();
             req.setUserId(SpUtils.getAccountId());
             List<NoteInfo> infos = new ArrayList<>();
             infos.add(mCreatInfo);
             req.setData(infos);
-            NewProtocolManager.inserAllNote(req, new NewAppendNotesCallBack(getActivity(), req));
+            NetWorkManager.insertAllNote(req).compose(((BaseActivity) context).bindToLifecycle())
+                    .subscribe(insertNoteIds -> {
+                        //缓存中 当前 全部 笔记添加 ，以防止无网络的时候使用上次缓存数据
+                        appendNote(insertNoteIds.get(0).getNoteId());
+                        addCacheData(NewProtocolManager.NewCacheId.CODE_CURRENT_NOTE, mCreatInfo);
+                        addCacheData(NewProtocolManager.NewCacheId.ALL_CODE_NOTE, mCreatInfo);
+                    }, throwable -> showCenterDetermineDialog(R.string.add_note_fail));
         } else {
             //添加离线笔记
             addCacheData(NewProtocolManager.OffLineId.OFF_LINE_ADD, mCreatInfo);

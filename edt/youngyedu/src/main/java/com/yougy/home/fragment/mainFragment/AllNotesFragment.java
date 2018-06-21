@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
@@ -22,7 +23,7 @@ import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.Protocol;
 import com.yougy.common.protocol.callback.BaseCallBack;
-import com.yougy.common.protocol.request.NewInserAllNoteReq;
+import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.response.NewInserAllNoteRep;
@@ -40,6 +41,7 @@ import com.yougy.home.adapter.FitGradeAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
+import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -48,10 +50,13 @@ import com.yougy.view.DividerGridItemDecoration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import okhttp3.Call;
 import okhttp3.Response;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 import static com.yougy.common.utils.GsonUtil.fromNotes;
 
@@ -389,21 +394,18 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
      * 离线上传笔记
      */
     private void requestOffLineAddNote() {
-        NewInserAllNoteReq req = new NewInserAllNoteReq();
+        NewInsertAllNoteReq req = new NewInsertAllNoteReq();
         req.setUserId(SpUtils.getAccountId());
         req.setData(fromNotes(mAddStr));
-        NewProtocolManager.inserAllNote(req, new BaseCallBack<NewInserAllNoteRep>(getActivity()) {
-            @Override
-            public NewInserAllNoteRep parseNetworkResponse(Response response, int id) throws Exception {
-                String json = response.body().string();
-                LogUtils.i("respons add notes json ==" + json);
-                return GsonUtil.fromJson(json, NewInserAllNoteRep.class);
-            }
-
-            @Override
-            public void onResponse(NewInserAllNoteRep response, int id) {
-                //判断是否有离线修改的笔记
-                if (response.getCode() == NewProtocolManager.NewCodeResult.CODE_SUCCESS) {
+        NetWorkManager.insertAllNote(req).compose(((BaseActivity) context).bindToLifecycle()).filter(Objects::nonNull).subscribe(insertNoteIds -> {
+                    if (!StringUtils.isEmpty(mUpdataStr)) {
+                        LogUtils.i("网络请求 离线更新笔记");
+                        requestOffLineUpdataNote();
+                    } else {
+                        LogUtils.i("获取本学期笔记列表");
+                        getNotes();
+                    }
+                }, throwable -> {
                     mAddStr = "";
                     DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, "");
                     if (!StringUtils.isEmpty(mUpdataStr)) {
@@ -413,21 +415,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
                         LogUtils.i("获取本学期笔记列表");
                         getNotes();
                     }
-                }
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                //判断是否有离线修改的笔记
-                if (!StringUtils.isEmpty(mUpdataStr)) {
-                    LogUtils.i("网络请求 离线更新笔记");
-                    requestOffLineUpdataNote();
-                } else {
-                    LogUtils.i("获取本学期笔记列表");
-                    getNotes();
-                }
-            }
-        });
+                });
     }
 
     /***

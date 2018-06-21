@@ -9,9 +9,9 @@ import java.util.List;
  * 添加全部笔记
  */
 
-public class NewInserAllNoteReq extends NewBaseReq {
+public class NewInsertAllNoteReq extends NewBaseReq {
 
-    public NewInserAllNoteReq() {
+    public NewInsertAllNoteReq() {
         m = "insertNote";
         address = "classRoom";
     }

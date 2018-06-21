@@ -40,6 +40,6 @@ public class NewDelteNoteCallBack   extends BaseCallBack<NewDeleteNoteRep>{
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        NewProtocolManager.deleteNote(deleteNoteRep,this);
+//        NewProtocolManager.deleteNote(deleteNoteRep,this);
     }
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
-import com.yougy.common.protocol.request.NewInserAllNoteReq;
+import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.response.NewInserAllNoteRep;
 import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.GsonUtil;
@@ -18,8 +18,8 @@ import okhttp3.Response;
 
 public class NewAppendNotesCallBack extends BaseCallBack<NewInserAllNoteRep> {
 
-    private NewInserAllNoteReq newInserAllNoteReq ;
-    public NewAppendNotesCallBack(Context context,NewInserAllNoteReq req) {
+    private NewInsertAllNoteReq newInserAllNoteReq ;
+    public NewAppendNotesCallBack(Context context,NewInsertAllNoteReq req) {
         super(context);
         newInserAllNoteReq = req ;
     }
@@ -40,6 +40,6 @@ public class NewAppendNotesCallBack extends BaseCallBack<NewInserAllNoteRep> {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        NewProtocolManager.inserAllNote(newInserAllNoteReq, this);
+//        NewProtocolManager.inserAllNote(newInserAllNoteReq, this);
     }
 }
