@@ -15,15 +15,15 @@ import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
-import com.yougy.common.protocol.callback.NewTextBookCallBack;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
-import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -39,8 +39,6 @@ import com.yougy.view.CustomGridLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.functions.Action1;
 
 import static android.content.ContentValues.TAG;
 
@@ -66,8 +64,6 @@ public class CoachBookFragment extends BFragment {
     private BookAdapter mBookAdapter;
     private boolean mIsFist;
 
-    //    private Subscription mSub;
-    private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
     private PageBtnBar mPageBtnBar;
     private BookInfo mAddBook;
@@ -82,8 +78,7 @@ public class CoachBookFragment extends BFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
-//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+        mRecyclerView = mRootView.findViewById(R.id.recycler_View);
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
@@ -100,8 +95,7 @@ public class CoachBookFragment extends BFragment {
                 itemClick(vh.getAdapterPosition());
             }
         });
-//        mBookAdapter.notifyDataSetChanged();
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
@@ -119,9 +113,6 @@ public class CoachBookFragment extends BFragment {
             }
             return;
         }
-
-
-//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
@@ -177,24 +168,13 @@ public class CoachBookFragment extends BFragment {
             //设置年级
             req.setBookFitGradeName();
             req.setBookCategoryMatch(20000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
-            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
-
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
+                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK)));
         } else {
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
-//            mSub= getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        if (mSub != null) {
-//            mSub.unsubscribe();
-//        }
-    }
-
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
@@ -254,7 +234,6 @@ public class CoachBookFragment extends BFragment {
             LogUtils.i("initPages2.."); //小于1页
             mBooks.addAll(mCountBooks.subList(0, mCountBooks.size()));
         }
-//        mBookAdapter.notifyDataSetChanged();
         notifyDataSetChanged();
     }
 
@@ -273,9 +252,6 @@ public class CoachBookFragment extends BFragment {
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
-/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
-                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
-
                 refreshAdapterData(btnIndex+1);
             }
         });
@@ -284,34 +260,8 @@ public class CoachBookFragment extends BFragment {
     }
 
 
-    //////////////////////////RX////////////////////////////////////////////
-    @Override
-    protected void handleEvent() {
-        handleTextBookEvent();
-        super.handleEvent();
-    }
-
-
-    private void handleTextBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
-                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getData();
-                    freshUI(bookInfos);
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_COACH_BOOK + "")) {
-                    LogUtils.i("yuanye...请求服务器 加载出错 ---CoachBookFragment");
-                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK));
-                }
-            }
-        }));
-    }
-
-
     private void freshUI(List<BookInfo> bookInfos) {
         mIsRefresh = false;
-        mNewTextBookCallBack = null;
         mCountBooks.clear();
         mCountBooks.add(0,getAddBook());
         if (bookInfos != null && bookInfos.size() > 0) {

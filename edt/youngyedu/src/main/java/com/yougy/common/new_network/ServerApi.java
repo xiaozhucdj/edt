@@ -8,6 +8,7 @@ import com.yougy.common.bean.AliyunData;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
+import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
@@ -503,5 +504,8 @@ public interface ServerApi {
      */
     @POST("classRoom")
     Observable<BaseResult<Object>> updateNote(@Body NewUpdateNoteReq req);
+
+    @POST("classRoom")
+    Observable<BaseResult<List<com.yougy.init.bean.BookInfo>>> getBookShelf(@Body NewBookShelfReq req);
 
 }

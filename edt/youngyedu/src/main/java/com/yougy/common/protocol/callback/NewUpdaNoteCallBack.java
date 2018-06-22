@@ -41,6 +41,6 @@ public class NewUpdaNoteCallBack extends BaseCallBack<NewUpdateNoteRep> {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        NewProtocolManager.updateNote(updateNoteReq ,this);
+//        NewProtocolManager.updateNote(updateNoteReq ,this);
     }
 }

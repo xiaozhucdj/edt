@@ -18,6 +18,7 @@ import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
@@ -25,11 +26,8 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
-import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -37,22 +35,14 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
-import com.yougy.home.bean.CacheJsonInfo;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.shop.activity.BookShopActivityDB;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
-import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.SearchBookDialog;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
 
 import static android.content.ContentValues.TAG;
 
@@ -121,9 +111,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      */
     private TextView mTvSerachErrorTitle;
     private SearchBookDialog mSearchDialog;
-    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
-    private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
     private DividerItemDecoration divider;
     private PageBtnBar mPageBtnBar;
@@ -140,13 +128,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
+        mRecyclerView = mRootView.findViewById(R.id.recycler_View);
 
         divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
-
-//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
 
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
         layout.setScrollEnabled(false);
@@ -194,18 +180,18 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
         mRecyclerView.setAdapter(mBookAdapter);
 
-        mLlSearchKeyTitle = (LinearLayout) mRootView.findViewById(R.id.ll_referenceKey);
-        mLlSearchKeyResut = (LinearLayout) mRootView.findViewById(R.id.ll_referenceResult);
-        mTvAllBooks = (TextView) mRootView.findViewById(R.id.tv_referenceBooks);
+        mLlSearchKeyTitle = mRootView.findViewById(R.id.ll_referenceKey);
+        mLlSearchKeyResut = mRootView.findViewById(R.id.ll_referenceResult);
+        mTvAllBooks = mRootView.findViewById(R.id.tv_referenceBooks);
         mTvAllBooks.setOnClickListener(this);
         /**
          * 搜索结果错误提示关键字
          */
-        mTvSerachKeyContext = (TextView) mRootView.findViewById(R.id.tv_referenceKeyContext);
-        mTvSerachErrorTitle = (TextView) mRootView.findViewById(R.id.tv_referenceResultTitle);
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        mTvSerachKeyContext = mRootView.findViewById(R.id.tv_referenceKeyContext);
+        mTvSerachErrorTitle = mRootView.findViewById(R.id.tv_referenceResultTitle);
+        mLoadingNull = mRootView.findViewById(R.id.loading_null);
 
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
 
         return mRootView;
     }
@@ -214,7 +200,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
         LogUtils.i("book id ....." + info.toString());
-//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
@@ -266,25 +251,14 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
             //设置年级
-//            req.setBookFitGradeName("");
             req.setBookCategoryMatch(30000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
-            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
+                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK)));
         } else {
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
-//            mSub = getObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(getSubscriber());
         }
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        if (mSub != null) {
-//            mSub.unsubscribe();
-//        }
-    }
-
 
     public void loadIntentWithExtras(Class<? extends Activity> cls, Bundle extras) {
         Intent intent = new Intent(getActivity(), cls);
@@ -310,7 +284,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     }
 
     private void freshUI(List<BookInfo> bookInfos) {
-        mNewTextBookCallBack = null;
         mIsRefresh = false;
         mLoadingNull.setVisibility(View.GONE);
         LogUtils.i("freshUI.....freshUI");
@@ -323,7 +296,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             mServerBooks.clear();
             mServerBooks.add(getAddBook());
             initPages(mServerBooks, COUNT_PER_PAGE);
-//            mLoadingNull.setVisibility(View.VISIBLE);
         }
     }
 
@@ -378,7 +350,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         } else {
             mBooks.addAll(mCountBooks.subList(0, mCountBooks.size()));
         }
-//        mBookAdapter.notifyDataSetChanged();
         notifyDataSetChanged();
     }
 
@@ -447,83 +418,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         searchResult();
     }
 
-    //////////////////////////RX////////////////////////////////////////////
-    @Override
-    protected void handleEvent() {
-        handleTextBookEvent();
-        super.handleEvent();
-    }
-
-
-    private void handleTextBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
-                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getData();
-                    freshUI(bookInfos);
-
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK + "")) {
-                    LogUtils.i("使用缓存课本");
-                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
-                }
-            }
-        }));
-    }
-
-    private Observable<List<BookInfo>> getObservable() {
-        return Observable.create(new Observable.OnSubscribe<List<BookInfo>>() {
-            @Override
-            public void call(Subscriber<? super List<BookInfo>> subscriber) {
-                List<CacheJsonInfo> infos = DataSupport.where("cacheID = ? ", NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK + "").find(CacheJsonInfo.class);
-                if (infos != null && infos.size() > 0) {
-                    subscriber.onNext(GsonUtil.fromJson(infos.get(0).getCacheJSON(), NewBookShelfRep.class).getData());
-                } else {
-                    UIUtils.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLoadingNull.setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                }
-                subscriber.onCompleted();
-            }
-        });
-    }
-
-    private Subscriber<List<BookInfo>> getSubscriber() {
-        return new Subscriber<List<BookInfo>>() {
-            LoadingProgressDialog dialog;
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                dialog = new LoadingProgressDialog(getActivity());
-                dialog.show();
-                dialog.setTitle("数据加载中...");
-            }
-
-            @Override
-            public void onCompleted() {
-                LogUtils.e(TAG, "onCompleted...");
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(List<BookInfo> bookInfos) {
-                freshUI(bookInfos);
-            }
-        };
-    }
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -546,16 +440,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
         super.onEventMainThread(event);
         if (event.getType().equalsIgnoreCase(EventBusConstant.current_reference_book)) {
             LogUtils.i("type .." + EventBusConstant.current_reference_book);
-//            mLlSearchKeyTitle.setVisibility(View.GONE);
-//            mLlSearchKeyResut.setVisibility(View.GONE);
-//            mRecyclerView.setVisibility(View.VISIBLE);
-
-//            mRecyclerView.addItemDecoration(divider);
-//            //TODO:设置 recyleview ,和adapter大小
-//            CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
-//            layout.setScrollEnabled(false);
-//            mRecyclerView.setLayoutManager(layout);
-//            mBookAdapter.setPicL(true);
             if (mLlSearchKeyTitle.getVisibility() == View.GONE) {
                 loadData();
             }
@@ -666,19 +550,12 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             return;
         }
 
-
-        NetWorkManager.getInstance().removeBookInBookcase(mBooks.get(mBookAdapter.getDeletePs()).getBookId(), SpUtils.getUserId()).subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                UIUtils.showToastSafe("移除图书成功");
-                localRemoveBook();
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                throwable.printStackTrace();
-                UIUtils.showToastSafe("移除图书失败,请稍候再试");
-            }
+        NetWorkManager.removeBookInBookcase(mBooks.get(mBookAdapter.getDeletePs()).getBookId(), SpUtils.getUserId()).subscribe(o -> {
+            UIUtils.showToastSafe("移除图书成功");
+            localRemoveBook();
+        }, throwable -> {
+            throwable.printStackTrace();
+            UIUtils.showToastSafe("移除图书失败,请稍候再试");
         });
 
     }

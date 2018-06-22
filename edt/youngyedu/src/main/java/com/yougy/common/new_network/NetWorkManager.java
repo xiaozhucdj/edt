@@ -13,6 +13,7 @@ import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
+import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
@@ -527,6 +528,14 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<List<com.yougy.init.bean.BookInfo>> getBookShelf(NewBookShelfReq req){
+        return getInstance().getServerApi().getBookShelf(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+
 
 
 

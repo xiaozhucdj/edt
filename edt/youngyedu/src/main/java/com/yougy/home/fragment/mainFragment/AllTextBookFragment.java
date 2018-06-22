@@ -14,12 +14,14 @@ import android.widget.TextView;
 
 import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.response.NewBookShelfRep;
@@ -118,14 +120,9 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     private AllBookAdapter mAdaptetFragmentAllTextBook;
     private SubjectAdapter mSubjectAdapter;
     private FitGradeAdapter mFitGradeAdapter;
-    private TextView mSubMore;
     private TextView mGradeMore;
 
-    private ViewGroup mGroupSub;
-    private ViewGroup mGroupGrade;
-    //    private Subscription mSub;
     private ViewGroup mLoadingNull;
-    private NewTextBookCallBack mNewTextBookCallBack;
     private boolean mIsPackUp;
     private LinearLayout llTerm;
     private int mDownPosition;
@@ -134,25 +131,18 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_all_book, null);
-        mBookItemTile = (TextView) mRootView.findViewById(R.id.tv_bookItemTile);
+        mBookItemTile = mRootView.findViewById(R.id.tv_bookItemTile);
         initFitGradeAdapter();
         initSubjectAdapter();
         initBookAdapter();
 
-        mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
-       /* mSubMore.setEnabled(false);
-        mSubMore.setTag(0);
-        mSubMore.setOnClickListener(this);*/
 
-        mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
-//        mGradeMore.setTag(0);
+        mGradeMore = mRootView.findViewById(R.id.tv_gradeMore);
         mGradeMore.setOnClickListener(this);
 
-        mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
-        mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
-        llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        mLoadingNull = mRootView.findViewById(R.id.loading_null);
+        llTerm = mRootView.findViewById(R.id.ll_term);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
 
 
         return mRootView;
@@ -163,7 +153,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
      * 初始化年级
      */
     private void initFitGradeAdapter() {
-        mFitGradeView = (RecyclerView) mRootView.findViewById(R.id.recycler_fitGrade);
+        mFitGradeView = mRootView.findViewById(R.id.recycler_fitGrade);
         mFitGradeView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
         layout.setScrollEnabled(false);
@@ -220,7 +210,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
      */
     private void initSubjectAdapter() {
 
-        mSubjectView = (RecyclerView) mRootView.findViewById(R.id.recycler_subject);
+        mSubjectView = mRootView.findViewById(R.id.recycler_subject);
         mSubjectView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
         layout.setScrollEnabled(false);
@@ -259,11 +249,11 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
             mBookFitGrade.get(mFitGradeIndex).setSelect(false);
             mFitGradeIndex = -1;
             mFitGradeAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             for (BookCategory bookCategory : mBookFitGrade) {
                 bookCategory.setSelect(false);
             }
-            mFitGradeAdapter.notifyDataSetChanged() ;
+            mFitGradeAdapter.notifyDataSetChanged();
         }
         //替换position
         mSubjectIndex = position;
@@ -280,7 +270,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
      * 初始化课本
      */
     private void initBookAdapter() {
-        mBookView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
+        mBookView = mRootView.findViewById(R.id.recycler_books);
         mBookView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);
@@ -297,11 +287,10 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     }
 
     private void itemClick(int position) {
-        mDownPosition = position ;
+        mDownPosition = position;
         BookInfo info = mBooks.get(position);
         LogUtils.i("book id ....." + info.toString());
-//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
@@ -349,8 +338,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     }
 
     private void loadData() {
-
-        LogUtils.e("loadData ..."+tag);
+        LogUtils.e("loadData ..." + tag);
         if (YoungyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
@@ -359,10 +347,9 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
             //设置年级
-//            req.setBookFitGradeName("");
             req.setBookCategoryMatch(10000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
-            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity) context).bindToLifecycle())
+                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK)));
         } else {
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
@@ -426,13 +413,10 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     private void setLlTermSize() {
 
         // 延迟2S 解决 硬件残影问题
-        llTerm.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                llTerm.setVisibility(View.GONE);
-                llTerm.setVisibility(View.VISIBLE);
-            }
-        }, 200) ;
+        llTerm.postDelayed(() -> {
+            llTerm.setVisibility(View.GONE);
+            llTerm.setVisibility(View.VISIBLE);
+        }, 200);
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
@@ -445,13 +429,12 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     }
 
 
-
     /***
      * 刷新适配器数据
      */
     private void refreshFirstAdapterData() {
         mFitGradeIndex = -1;
-        mSubjectIndex  =- 1;
+        mSubjectIndex = -1;
         //删除上次数据
         mTreeFitGrade.clear();
         mTreeSubject.clear();
@@ -569,10 +552,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
-/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
-                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
-
-                refreshAdapterData(btnIndex+1);
+                refreshAdapterData(btnIndex + 1);
             }
         });
         mPageBtnBar.removeAllViews();
@@ -580,7 +560,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
         mPageBtnBar.refreshPageBar();
     }
 
-    private void refreshAdapterData(int pagerIndex ){
+    private void refreshAdapterData(int pagerIndex) {
         //设置page页数数据
         mBooks.clear();
 
@@ -592,9 +572,9 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
         mAdaptetFragmentAllTextBook.notifyDataSetChanged();
 
     }
+
     private void freshUI(List<BookInfo> bookInfos) {
-        mIsRefresh =false ;
-        mNewTextBookCallBack = null ;
+        mIsRefresh = false;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mServerBooks.clear();
@@ -603,27 +583,6 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
         } else {
             mLoadingNull.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    protected void handleEvent() {
-        handleTextBookEvent();
-        super.handleEvent();
-    }
-
-    private void handleTextBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
-                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getData();
-                    freshUI(bookInfos);
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK + "")) {
-                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
-                }
-            }
-        }));
     }
 
     @Override
@@ -650,7 +609,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
         if (event.getType().equalsIgnoreCase(EventBusConstant.all_text_book)) {
             LogUtils.i("type .." + EventBusConstant.all_text_book);
             loadData();
-        }else if (event.getType().equalsIgnoreCase(EventBusConstant.alter_note)) {
+        } else if (event.getType().equalsIgnoreCase(EventBusConstant.alter_note)) {
             LogUtils.i("type .." + EventBusConstant.alter_note);
             // 用户自己创建的笔记 不需要做处理
             NoteInfo noteInfo = (NoteInfo) event.getExtraData();

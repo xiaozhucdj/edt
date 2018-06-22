@@ -15,14 +15,15 @@ import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
-import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -38,8 +39,6 @@ import com.yougy.view.CustomGridLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.functions.Action1;
 
 import static android.content.ContentValues.TAG;
 import static com.yougy.common.global.FileContonst.PAGE_COUNTS;
@@ -67,7 +66,6 @@ public class TextBookFragment extends BFragment {
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
     private boolean mIsFist;
-    //    private Subscription msb;
     private ViewGroup mLoadingNull;
     private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
@@ -76,8 +74,7 @@ public class TextBookFragment extends BFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
-//        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
+        mRecyclerView = mRootView.findViewById(R.id.recycler_View);
 
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
@@ -96,16 +93,15 @@ public class TextBookFragment extends BFragment {
             }
         });
         notifyDataSetChanged();
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        mLoadingNull = mRootView.findViewById(R.id.loading_null);
 
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
-//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
 
         LogUtils.i("yuanye ..." + info.getBookId());
         LogUtils.i("yuanye ..." + FileUtils.getTextBookFilesDir());
@@ -137,30 +133,6 @@ public class TextBookFragment extends BFragment {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
         }
-    }
-
-    @Override
-    protected void handleEvent() {
-        handleTextBookEvent();
-        super.handleEvent();
-    }
-
-
-    private void handleTextBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                //展示数据,服务器返回
-                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) {
-                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getData();
-                    freshUI(bookInfos);
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK + "")) {
-                    //服务请求错误
-                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
-                }
-            }
-        }));
     }
 
     @Override
@@ -208,8 +180,8 @@ public class TextBookFragment extends BFragment {
             //设置年级
             req.setBookFitGradeName();
             req.setBookCategoryMatch(10000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
-            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
+                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK)));
         } else {
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
@@ -298,20 +270,11 @@ public class TextBookFragment extends BFragment {
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
-/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
-                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
-
                 refreshAdapterData(btnIndex + 1);
             }
         });
         mPageBtnBar.setCurrentSelectPageIndex(0);
         mPageBtnBar.refreshPageBar();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
     }
 
     @Override

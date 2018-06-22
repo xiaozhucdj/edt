@@ -14,15 +14,15 @@ import android.widget.TextView;
 
 import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
-import com.yougy.common.protocol.callback.NewTextBookCallBack;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
-import com.yougy.common.protocol.response.NewBookShelfRep;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -45,15 +45,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
-import rx.functions.Action1;
-
 import static android.content.ContentValues.TAG;
 
 /**
  * Created by Administrator on 2016/7/12.
  * 全部辅导课本
  */
-public class AllCoachBookFragment extends BFragment implements View.OnClickListener{
+public class AllCoachBookFragment extends BFragment implements View.OnClickListener {
 
     //////////////////////////////////////集合数据/////////////////////////////////////////////////////
     /**
@@ -120,7 +118,6 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
 
     private ViewGroup mLoadingNull;
-    private NewTextBookCallBack mNewTextBookCallBack;
     private LinearLayout llTerm;
     private boolean mIsPackUp;
     private int mDownPosition;
@@ -129,15 +126,15 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_all_book, null);
-        mBookItemTile = (TextView) mRootView.findViewById(R.id.tv_bookItemTile);
+        mBookItemTile = mRootView.findViewById(R.id.tv_bookItemTile);
         initFitGradeAdapter();
         initSubjectAdapter();
         initBookAdapter();
-        mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
+        mGradeMore = mRootView.findViewById(R.id.tv_gradeMore);
         mGradeMore.setOnClickListener(this);
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
-        llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        mLoadingNull = mRootView.findViewById(R.id.loading_null);
+        llTerm = mRootView.findViewById(R.id.ll_term);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
@@ -145,7 +142,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      * 初始化年级
      */
     private void initFitGradeAdapter() {
-        mFitGradeView = (RecyclerView) mRootView.findViewById(R.id.recycler_fitGrade);
+        mFitGradeView = mRootView.findViewById(R.id.recycler_fitGrade);
         mFitGradeView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
         layout.setScrollEnabled(false);
@@ -201,7 +198,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      * 初始化科目
      */
     private void initSubjectAdapter() {
-        mSubjectView = (RecyclerView) mRootView.findViewById(R.id.recycler_subject);
+        mSubjectView = mRootView.findViewById(R.id.recycler_subject);
         mSubjectView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
         layout.setScrollEnabled(false);
@@ -261,7 +258,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      * 初始化课本
      */
     private void initBookAdapter() {
-        mBookView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
+        mBookView = mRootView.findViewById(R.id.recycler_books);
         mBookView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);
@@ -278,11 +275,10 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }
 
     private void bookItemClick(int position) {
-        mDownPosition = position ;
+        mDownPosition = position;
         BookInfo info = mBooks.get(position);
         LogUtils.i("book id ....." + info.toString());
-//        String filePath = FileUtils.getTextBookFilesDir() + info.getBookId() + ".pdf";
-        if (!StringUtils.isEmpty( FileUtils.getBookFileName( info.getBookId() ,FileUtils.bookDir))) {
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
             Bundle extras = new Bundle();
             //课本进入
             extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
@@ -328,7 +324,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
 
     private void loadData() {
-        LogUtils.e("loadData ..."+tag);
+        LogUtils.e("loadData ..." + tag);
         if (YoungyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
@@ -337,13 +333,10 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             //设置缓存数据ID的key
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
             //设置年级
-//            req.setBookFitGradeName("");
             req.setBookCategoryMatch(20000);
-            mNewTextBookCallBack = new NewTextBookCallBack(getActivity(), req);
-            NewProtocolManager.bookShelf(req, mNewTextBookCallBack);
-
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity) context).bindToLifecycle())
+                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK)));
         } else {
-
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
         }
@@ -407,13 +400,10 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
     }
 
     private void setLlTermSize() {
-        llTerm.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                llTerm.setVisibility(View.GONE);
-                llTerm.setVisibility(View.VISIBLE);
-            }
-        }, 200) ;
+        llTerm.postDelayed(() -> {
+            llTerm.setVisibility(View.GONE);
+            llTerm.setVisibility(View.VISIBLE);
+        }, 200);
 
         RelativeLayout.LayoutParams params;
         if (mIsPackUp) {
@@ -430,7 +420,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      */
     private void refreshFirstAdapterData() {
         mFitGradeIndex = -1;
-        mSubjectIndex  =- 1;
+        mSubjectIndex = -1;
         //删除上次数据
         mTreeFitGrade.clear();
         mTreeSubject.clear();
@@ -552,10 +542,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
-/*                contentDisplayer.getContentAdaper().setSubText(parseSubText(questionItemList.get(btnIndex)));
-                contentDisplayer.getContentAdaper().toPage("question" , btnIndex , true);*/
-
-                refreshAdapterData(btnIndex+1);
+                refreshAdapterData(btnIndex + 1);
             }
         });
         mPageBtnBar.removeAllViews();
@@ -576,36 +563,7 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
         mAdaptetFragmentAllTextBook.notifyDataSetChanged();
     }
 
-
-    //////////////////////////RX////////////////////////////////////////////
-    @Override
-    protected void handleEvent() {
-        handleTextBookEvent();
-        super.handleEvent();
-    }
-
-
-    private void handleTextBookEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                LogUtils.e(TAG, "handleTextBookEvent......");
-                if (o instanceof NewBookShelfRep && !mHide && mNewTextBookCallBack != null) { //网数据库存储 协议返回的JSON
-                    NewBookShelfRep shelfProtocol = (NewBookShelfRep) o;
-                    List<BookInfo> bookInfos = shelfProtocol.getData();
-                    freshUI(bookInfos);
-                } else if (o instanceof String && !mHide && StringUtils.isEquals((String) o, NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK + "")) {
-                    LogUtils.i("yuanye...请求服务器 加载出错 ---AllNotesFragment");
-                    freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_COACH_BOOK));
-                }
-            }
-        }));
-    }
-
-
-
     private void freshUI(List<BookInfo> bookInfos) {
-        mNewTextBookCallBack = null;
         mIsRefresh = false;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
