@@ -48,6 +48,8 @@ import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.decoration.GridSpacingItemDecoration;
 import com.yougy.view.decoration.SpaceItemDecoration;
 
+import org.litepal.util.LogUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,19 +69,6 @@ import static rx.Observable.create;
  */
 public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdapter.OnMoreClickListener {
 
-    //    @BindString(R.string.all_version)
-//    String mAllVersion;
-//    @BindString(R.string.school_version)
-//    String mSchoolVersion;
-    @BindArray(R.array.classifies)
-    String[] mExtraClassifies;
-    @BindArray(R.array.stages)
-    String[] mStages;
-    @BindArray(R.array.subjects)
-    String[] mSubjects;
-    @BindArray(R.array.versions)
-    String[] mVersions;
-
     private String mStage = "";
     private String mVersion = "";
     private String mSubject = "";
@@ -87,8 +76,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private int stagePosition;
 
-    //    private StageAdapter mExtraClassifyAdapter;
-    //    private StageAdapter mStageAdapter;
     private RecyclerAdapter mStageAdapter;
     private RecyclerAdapter mExtraClassifyAdapter;
 
@@ -96,10 +83,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     private SparseIntArray mClassifyIds = new SparseIntArray();
     private int mClassifyId = -1;
     private List<List<BookInfo>> mRecommandInfos = new ArrayList<>();
-
-    private List<BookInfo> textbooks;
-    private List<BookInfo> guidbooks;
-    private List<BookInfo> extrabooks;
 
     private BookAdapter mBookAdapter;
     private BookShopAdapter adapter;
@@ -116,7 +99,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private int totalCount = 0;
 
-    private List<BookInfo> bookInfos = new ArrayList<BookInfo>();
+    private List<BookInfo> bookInfos = new ArrayList<>();
 
     public static final String CLASSIFY_POSITION = "classify_position";
     public static final int CLASSIFY_POSITION_ALL = -1;
@@ -135,29 +118,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 extrabookSelected();
             }
         });
-//        Observable<List<BookInfo>> observable = Observable.zip(getCategoryInfo(), getHomeInfo(), (categoryInfos, bookInfos) -> {
-//            long start = System.currentTimeMillis();
-//            handleCategoryInfo(categoryInfos);
-//            long end = System.currentTimeMillis();
-//            LogUtils.e(tag, "call........................." + (end - start));
-//            return bookInfos;
-//        }).subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread());
-//        ShopSubscriber<List<BookInfo>> subscriber = new ShopSubscriber<List<BookInfo>>(this) {
-//
-//            @Override
-//            public void onNext(List<BookInfo> bookInfos) {
-//                LogUtils.e(tag, "book infos' size : " + bookInfos.size());
-//                handleHomeInfo(bookInfos);
-//                onCompleted();
-//            }
-//
-//            @Override
-//            public void require() {
-//                loadData();
-//            }
-//        };
-//        observable.subscribe(subscriber);
     }
 
 
@@ -174,7 +134,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             mClassifies.add(level1.getCategoryDisplay());
             mClassifyIds.put(i, level1.getCategoryId());
             List<CategoryInfo> childs1 = level1.getCategoryList();
-//            LogUtils.e(tag,"childs1 : " + childs1);
             gradeSparseArray.put(level1.getCategoryId(), childs1);
             grades.add(level1);
             if (null != childs1 && childs1.size() > 0) {
@@ -182,7 +141,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                     CategoryInfo level2 = level1.getCategoryList().get(j);
                     List<CategoryInfo> childs2 = level2.getCategoryList();
                     subjectSparseArray.put(level2.getCategoryId(), childs2);
-//                    LogUtils.e(tag, "childs2 : " + childs2);
                     if (null != childs2 && childs2.size() > 0) {
                         for (int n = 0; n < childs2.size(); n++) {
                             CategoryInfo level3 = childs2.get(n);
@@ -199,33 +157,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      */
     private Observable<List<CategoryInfo>> getCategoryInfo() {
         return NetWorkManager.queryBookCategoryInfo(new BookStoreCategoryReq());
-//        return create(subscriber -> {
-//            try {
-//                long start = System.currentTimeMillis();
-//                Response response = NewProtocolManager.queryBookCategory(new NewBookStoreCategoryReq());
-//                long end = System.currentTimeMillis();
-//                LogUtils.e(tag,"getCategoryInfo takes time : " + (end - start));
-//                if (response.isSuccessful()) {
-//                    start = System.currentTimeMillis();
-//                    String resultJson = response.body().string();
-//                    end = System.currentTimeMillis();
-//                    LogUtils.e(tag, "category info size : " + resultJson.length() + ",take time : " + (end - start));
-//                    start = System.currentTimeMillis();
-//                    Result<List<CategoryInfo>> result = ResultUtils.fromJsonArray(resultJson, CategoryInfo.class);
-//
-////                    List<CategoryInfo> categories = json2list(resultJson);
-//                    end = System.currentTimeMillis();
-//                    LogUtils.e(tag,"getCategoryInfo jiexi shuju takes time : " + (end - start));
-//                    List<CategoryInfo> categories = result.getData();
-//                    LogUtils.e(tag, "categories' size : " + categories.size());
-//
-//                    subscriber.onNext(categories);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                LogUtils.e(tag, "IOException : " + e.getMessage());
-//            }
-//        });
     }
 
     private void handleHomeInfo(List<BookInfo> bookInfos) {
@@ -237,14 +168,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 if (category.equals(info.getBookCategoryFamilyName())) {
                     infos.add(info);
                 }
-            }
-            if ("教材".equals(category)) {
-                textbooks = infos;
-            } else if ("教辅".equals(category)) {
-                guidbooks = infos;
-                LogUtils.e(tag, "教辅：" + infos);
-            } else {
-                extrabooks = infos;
             }
             mRecommandInfos.add(infos);
         }
@@ -258,29 +181,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      */
     private Observable<List<BookInfo>> getHomeInfo() {
         return NetWorkManager.queryBookShopHomeInfo(new BookStoreHomeReq());
-//        return create(subscriber -> {
-//            long start = System.currentTimeMillis();
-//            Response response = NewProtocolManager.queryBookShopHome(new NewBookStoreHomeReq());
-//            long end = System.currentTimeMillis();
-//            LogUtils.e(tag,"getHomeInfo takes time : " + (end - start));
-//            if (response.isSuccessful()) {
-//                try {
-//                    String resultJson = response.body().string();
-//                    LogUtils.e(tag, "home info : " + resultJson);
-//                    start = System.currentTimeMillis();
-//                    Result<List<BookInfo>> result = ResultUtils.fromJsonArray(resultJson, BookInfo.class);
-//                    LogUtils.e(tag, "bookinfos : " + result.getData().size());
-//                    end = System.currentTimeMillis();
-//                    LogUtils.e(tag,"getHomeInfo jiexi shuju takes time : " + (end - start));
-//                    subscriber.onNext(result.getData());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
     }
 
     /**
@@ -293,42 +193,29 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         req.setPs(COUNT_PER_PAGE);
         req.setPn(pageNo);
         req.setUserId(SpUtils.getUserId());
-        NetWorkManager.queryBookInfo(req).subscribe(new Action1<BaseResult<List<BookInfo>>>() {
-            @Override
-            public void call(BaseResult<List<BookInfo>> result) {
-                totalCount = result.getCount();
-                binding.pageBtnBar.refreshPageBar();
-                bookInfos.clear();
-                bookInfos.addAll(result.getData());
-                BookShopActivityDB.this.refreshSingleClassifyRecycler(result.getData());
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                LogUtils.e(tag, "error is : " + throwable.getMessage());
-            }
-        });
+        NetWorkManager.queryBookInfo(req).subscribe(result -> {
+            totalCount = result.getCount();
+            binding.pageBtnBar.refreshPageBar();
+            bookInfos.clear();
+            bookInfos.addAll(result.getData());
+            BookShopActivityDB.this.refreshSingleClassifyRecycler(result.getData());
+        }, throwable -> LogUtils.e(tag, "error is : " + throwable.getMessage()));
     }
 
 
     @Override
     protected void initLayout() {
-//        mVersion = mSchoolVersion;
-//        itemBinding.tvAll.setSelected(true);
         binding.allClassifyRecycler.addItemDecoration(new SpaceItemDecoration(UIUtils.px2dip(15)));
         binding.allClassifyRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.singleClassifyRecycler.addItemDecoration(new GridSpacingItemDecoration(SPAN_COUNT, UIUtils.px2dip(32), false));
         binding.singleClassifyRecycler.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
         binding.correspondSchool.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            showAllVersion = !isChecked;
             hideRecycler();
             if (isChecked) {
                 hideFiltrateTv();
                 hideFiltrateLayout();
-//                mVersion = mSchoolVersion;
             } else {
                 showFiltrateTv();
-//                mVersion = mAllVersion;
             }
             setCompositeText();
             refreshSingleClassifyRecycler(bookInfos);
@@ -359,16 +246,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 binding.searchOrCancelTv.setText(s.length() == 0 ? R.string.cancel : R.string.search);
             }
         });
-        binding.searchEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                hideSearchLayout();
-                mSearchKey = binding.searchEt.getText().toString();
-                if (!TextUtils.isEmpty(mSearchKey)) {
-                    search();
-                }
-                return false;
+        binding.searchEt.setOnEditorActionListener((v, actionId, event) -> {
+            hideSearchLayout();
+            mSearchKey = binding.searchEt.getText().toString();
+            if (!TextUtils.isEmpty(mSearchKey)) {
+                search();
             }
+            return false;
         });
 
         CustomLinearLayoutManager classifyManager = new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -471,7 +355,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         hideAll();
         binding.singleClassifyLayout.setVisibility(View.GONE);
         binding.allClassifyRecycler.setVisibility(View.VISIBLE);
-        if (!flag){
+        if (!flag) {
             getHomeInfo().subscribe(this::handleHomeInfo);
         }
     }
@@ -592,12 +476,8 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         showClassifySpinner();
         refreshSearchResultView();
         resetComposite();
-//        if (extrabooks == null) {
         binding.pageBtnBar.setCurrentSelectPageIndex(-1);
         getSingleBookInfo(1);
-//        } else {
-//            refreshSingleClassifyRecycler(extrabooks);
-//        }
     }
 
     private void stageItemClick(int position) {
@@ -653,21 +533,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.guidebook.setSelected(true);
         hideClassifySpinner();
         hideFiltrateLayout();
-//        if (itemBinding.correspondSchool.isChecked()) {
-//            hideFiltrateTv();
-//        } else {
         showFiltrateTv();
-//        }
         showCorrespondSchoolCb();
         refreshSearchResultView();
         resetComposite();
         setCompositeText();
-//        if (guidbooks == null) {
         binding.pageBtnBar.setCurrentSelectPageIndex(-1);
         getSingleBookInfo(1);
-//        } else {
-//            refreshSingleClassifyRecycler(guidbooks);
-//        }
     }
 
 
@@ -688,29 +560,21 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.extrabook.setSelected(false);
         binding.textbook.setSelected(true);
         hideClassifySpinner();
-//        if (itemBinding.correspondSchool.isChecked()) {
-//            hideFiltrateTv();
-//        } else {
         showFiltrateTv();
-//        }
         showCorrespondSchoolCb();
         refreshSearchResultView();
         resetComposite();
         setCompositeText();
-//        if (textbooks == null) {
         binding.pageBtnBar.setCurrentSelectPageIndex(-1);
         getSingleBookInfo(1);
-//        } else {
-//            refreshSingleClassifyRecycler(textbooks);
-//        }
     }
 
-    private boolean showAllVersion;
 
     private void refreshSingleClassifyRecycler(List<BookInfo> infos) {
         LogUtils.e(tag, "refreshSingleClassifyRecycler..............");
         mBookAdapter.notifyDataSetChanged();
         binding.emptyTv.setVisibility(infos.size() == 0 ? View.VISIBLE : View.GONE);
+        binding.singleClassifyRecycler.setVisibility(infos.size() == 0 ? View.GONE : View.VISIBLE);
     }
 
     private void itemClick(BookInfo bookInfo) {
@@ -719,10 +583,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     private void resetComposite() {
         mSubject = "";
-//        mVersion = itemBinding.correspondSchool.isChecked() ? mSchoolVersion : mAllVersion;
-//        if (itemBinding.classifyButton.getVisibility() == View.VISIBLE) {
         mVersion = "";
-//        }
     }
 
     private void setCompositeText() {
@@ -781,7 +642,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         } else {
             mStage = grade;
             for (int position = 0; position < gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).size(); position++) {
-//            for (CategoryInfo info : gradeSparseArray.get(mClassifyIds.get(mClassifyPosition))) {
                 CategoryInfo info = gradeSparseArray.get(mClassifyIds.get(mClassifyPosition)).get(position);
                 if (mStage.equals(info.getCategoryDisplay())) {
                     mClassifyId = info.getCategoryId();
@@ -828,9 +688,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 隐藏只显示学校版本选项
      */
     private void hideCorrespondSchoolCb() {
-//        if (itemBinding.correspondSchool.getVisibility() == View.VISIBLE) {
-//            itemBinding.correspondSchool.setVisibility(View.GONE);
-//        }
         if (binding.filtrate.getVisibility() == View.VISIBLE) {
             binding.filtrate.setVisibility(View.GONE);
         }
@@ -895,7 +752,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         for (int i = 0; i < subjectInfos.size(); i++) {
             final CategoryInfo info = subjectInfos.get(i);
             View layout = View.inflate(this, R.layout.text_view, null);
-            final TextView subjectTv = (TextView) layout.findViewById(R.id.text_tv);
+            final TextView subjectTv = layout.findViewById(R.id.text_tv);
             String display = info.getCategoryDisplay();
             if (display.length() > 4) {
                 display = display.substring(0, 4);
@@ -904,7 +761,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             subjectTv.setOnClickListener(v -> {
                 for (int i1 = 0; i1 < binding.subjectWrap.getChildCount(); i1++) {
                     View child = binding.subjectWrap.getChildAt(i1);
-                    TextView tv = (TextView) child.findViewById(R.id.text_tv);
+                    TextView tv = child.findViewById(R.id.text_tv);
                     if (tv.isSelected()) {
                         tv.setSelected(false);
                     }
@@ -922,14 +779,16 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.versionWrap.removeAllViews();
         List<CategoryInfo> versionInfos = versionSparseArray.get(info.getCategoryId());
         if (versionInfos == null || versionInfos.size() == 0) {
-            ToastUtil.showCustomToast(this, "没有对应版本。。。");
+            BookStoreQueryBookInfoReq req = new BookStoreQueryBookInfoReq();
+            req.setBookCategoryMatch(bookCategory);
+            queryBookByVersion(req);
             return;
         }
         LogUtils.e(tag, "version's size : " + versionInfos.size());
         for (int j = 0; j < versionInfos.size(); j++) {
             final CategoryInfo versionInfo = versionInfos.get(j);
             View layout = View.inflate(this, R.layout.text_view, null);
-            final TextView versionTv = (TextView) layout.findViewById(R.id.text_tv);
+            final TextView versionTv = layout.findViewById(R.id.text_tv);
             String display = versionInfo.getCategoryDisplay();
             if (display.length() > 4) {
                 display = display.substring(0, 4);
@@ -938,7 +797,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             versionTv.setOnClickListener(v -> {
                 for (int i = 0; i < binding.versionWrap.getChildCount(); i++) {
                     View child = binding.versionWrap.getChildAt(i);
-                    TextView tv = (TextView) child.findViewById(R.id.text_tv);
+                    TextView tv = child.findViewById(R.id.text_tv);
                     if (tv.isSelected()) {
                         tv.setSelected(false);
                     }
@@ -959,13 +818,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     }
 
     private void queryBookByVersion(final BookStoreQueryBookInfoReq req) {
-        NetWorkManager.queryBookInfo(req).subscribe(new Action1<BaseResult<List<BookInfo>>>() {
-            @Override
-            public void call(BaseResult<List<BookInfo>> result) {
-                BookShopActivityDB.this.setCompositeText();
-                BookShopActivityDB.this.hideFiltrateLayout();
-                BookShopActivityDB.this.refreshSingleClassifyRecycler(result.getData());
-            }
+        NetWorkManager.queryBookInfo(req).subscribe(result -> {
+            LogUtils.e(tag, "query book : " + result);
+            BookShopActivityDB.this.setCompositeText();
+            BookShopActivityDB.this.hideFiltrateLayout();
+            BookShopActivityDB.this.refreshSingleClassifyRecycler(result.getData());
+        }, throwable -> {
+            LogUtils.e(tag, "throwable : " + throwable);
         });
     }
 
@@ -974,9 +833,6 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 显示只显示学校版本
      */
     private void showCorrespondSchoolCb() {
-//        if (itemBinding.correspondSchool.getVisibility() == View.GONE) {
-//            itemBinding.correspondSchool.setVisibility(View.VISIBLE);
-//        }
         if (binding.filtrate.getVisibility() == View.GONE) {
             binding.filtrate.setVisibility(View.VISIBLE);
         }
@@ -1052,12 +908,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 });
     }
 
-    private void refreshNewOrderCount(){
+    private void refreshNewOrderCount() {
         int newOrderCount = SpUtils.getNewOrderCount();
-        if (newOrderCount <= 0){
+        if (newOrderCount <= 0) {
             binding.newOrderCountTv.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             binding.newOrderCountTv.setVisibility(View.VISIBLE);
             binding.newOrderCountTv.setText(newOrderCount + "");
         }

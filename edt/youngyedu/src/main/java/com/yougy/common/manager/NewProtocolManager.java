@@ -11,7 +11,7 @@ import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
 import com.yougy.common.protocol.request.NewDeleteUserLogReq;
 import com.yougy.common.protocol.request.NewGetAppVersionReq;
-import com.yougy.common.protocol.request.NewInserAllNoteReq;
+import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewInserNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewLogoutReq;
@@ -402,7 +402,7 @@ public class NewProtocolManager {
      * @param req
      * @param callbac
      */
-    public static void inserAllNote(NewInserAllNoteReq req, Callback callbac) {
+    public static void inserAllNote(NewInsertAllNoteReq req, Callback callbac) {
         setCommon(Commons.NEW_URL + req.getAddress(), GsonUtil.toJson(req), NewProtocolId.ID_INSER_NOTE, callbac);
     }
 

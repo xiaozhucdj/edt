@@ -9,10 +9,12 @@ import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
+import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.request.PromotionReq;
+import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
@@ -487,5 +489,11 @@ public interface ServerApi {
      */
     @POST("bookStore")
     Observable<BaseResult<List<PromotionResult>>> queryPromotion(@Body PromotionReq req);
+
+    /**
+     * 添加笔记
+     */
+    @POST("classRoom")
+    Observable<BaseResult<List<InsertNoteId>>> insertAllNoteApi(@Body NewInsertAllNoteReq req);
 
 }
