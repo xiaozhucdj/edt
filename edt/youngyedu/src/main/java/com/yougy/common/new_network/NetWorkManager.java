@@ -18,6 +18,7 @@ import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
@@ -521,7 +522,11 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-
+    public static Observable<Object> updateNote(NewUpdateNoteReq req){
+        return getInstance().getServerApi().updateNote(req)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
 
 

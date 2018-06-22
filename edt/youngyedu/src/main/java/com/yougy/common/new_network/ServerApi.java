@@ -13,6 +13,7 @@ import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
+import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
@@ -495,5 +496,12 @@ public interface ServerApi {
      */
     @POST("classRoom")
     Observable<BaseResult<List<InsertNoteId>>> insertAllNoteApi(@Body NewInsertAllNoteReq req);
+
+
+    /**
+     * 更新笔记
+     */
+    @POST("classRoom")
+    Observable<BaseResult<Object>> updateNote(@Body NewUpdateNoteReq req);
 
 }

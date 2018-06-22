@@ -22,12 +22,9 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.Protocol;
-import com.yougy.common.protocol.callback.BaseCallBack;
 import com.yougy.common.protocol.request.NewInsertAllNoteReq;
 import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
-import com.yougy.common.protocol.response.NewInserAllNoteRep;
-import com.yougy.common.protocol.response.NewUpdateNoteRep;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
@@ -41,7 +38,6 @@ import com.yougy.home.adapter.FitGradeAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.home.adapter.SubjectAdapter;
 import com.yougy.home.bean.BookCategory;
-import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
@@ -52,11 +48,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
-
-import okhttp3.Call;
-import okhttp3.Response;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 import static com.yougy.common.utils.GsonUtil.fromNotes;
 
@@ -368,26 +359,14 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         NewUpdateNoteReq req = new NewUpdateNoteReq();
         req.setUserId(SpUtils.getAccountId());
         req.setData(fromNotes(mUpdataStr));
-        NewProtocolManager.updateNote(req, new BaseCallBack<NewUpdateNoteRep>(getActivity()) {
-
-            @Override
-            public NewUpdateNoteRep parseNetworkResponse(Response response, int id) throws Exception {
-                String str = response.body().string();
-                return GsonUtil.fromJson(str, NewUpdateNoteRep.class);
-            }
-
-            @Override
-            public void onResponse(NewUpdateNoteRep response, int id) {
-                mUpdataStr = "";
-                DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA, "");
-                getNotes();
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                getNotes();
-            }
-        });
+        NetWorkManager.updateNote(req).compose(((BaseActivity)context).bindToLifecycle())
+                .subscribe(o -> {
+                    mUpdataStr = "";
+                    DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA, "");
+                    getNotes();
+                }, throwable -> {
+                    getNotes();
+                });
     }
 
     /**
