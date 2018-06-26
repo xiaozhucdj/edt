@@ -22,7 +22,6 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.callback.NewTextBookCallBack;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -67,7 +66,6 @@ public class TextBookFragment extends BFragment {
     private BookAdapter mBookAdapter;
     private boolean mIsFist;
     private ViewGroup mLoadingNull;
-    private NewTextBookCallBack mNewTextBookCallBack;
     private int mDownPosition;
     private PageBtnBar mPageBtnBar;
 
@@ -143,7 +141,6 @@ public class TextBookFragment extends BFragment {
 
     private void freshUI(List<BookInfo> bookInfos) {
         mIsRefresh = false;
-        mNewTextBookCallBack = null;
         if (bookInfos != null && bookInfos.size() > 0) {
             mLoadingNull.setVisibility(View.GONE);
             mCountBooks.clear();

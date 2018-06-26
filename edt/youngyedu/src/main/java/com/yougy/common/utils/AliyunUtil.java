@@ -15,9 +15,7 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
-import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalDB;
@@ -26,8 +24,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import okhttp3.Response;
 
 /**
  * Created by jiangliang on 2017/4/14.
@@ -67,33 +63,6 @@ public class AliyunUtil {
         return oss.putObject(put);
     }
 
-//    public static void upload() throws Exception{
-//        Response response = NewProtocolManager.queryAliyunData(new AliyunDataUploadReq());
-//        if (response.isSuccessful()) {
-//            String resultJson = response.body().string();
-//            Result<AliyunData> result = ResultUtils.fromJsonObject(resultJson, AliyunData.class);
-//            AliyunData data = result.getData();
-//            AliyunUtil util = new AliyunUtil(data);
-//            util.method();
-//        }
-//    }
-
-    private void method() throws Exception {
-        PutObjectRequest put = new PutObjectRequest(bucketName, objectKey, filePath);
-        PutObjectResult putObjectResult = oss.putObject(put);
-        LogUtils.e(tag, "upload status code : " + putObjectResult.getStatusCode());
-        if (putObjectResult.getStatusCode() == 200) {
-            NewUnBindDeviceReq unBindDeviceReq = new NewUnBindDeviceReq();
-            unBindDeviceReq.setDeviceId(Commons.UUID);
-            unBindDeviceReq.setUserId(SpUtils.getUserId());
-            Response response = NewProtocolManager.unbindDevice(unBindDeviceReq);
-            if (response.isSuccessful()) {
-                SpUtils.clearSP();
-            }
-        }
-
-    }
-
     public void asyncUpload() {
         PutObjectRequest put = new PutObjectRequest(bucketName, objectKey, filePath);
         LogUtils.e(tag, "upload ................" + "file path : " + filePath + ",object key : " + objectKey + ",bucket name : " + bucketName);
@@ -102,10 +71,6 @@ public class AliyunUtil {
             public void onSuccess(PutObjectRequest putObjectRequest, PutObjectResult putObjectResult) {
                 LogUtils.e(tag, "onSuccess put object result................");
                 SpUtils.changeContent(false);
-//                SpUtils.changeInitFlag(false);
-//                Connector.resetHelper();
-//                deleteDatabase(DATABASE_NAME);
-//                deleteDatabase(JOURNAL_NAME);
             }
 
             @Override

@@ -103,31 +103,24 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         NewBindDeviceReq deviceReq = new NewBindDeviceReq();
         deviceReq.setDeviceId(Commons.UUID);
         deviceReq.setUserId(student.getUserId());
-//        NewProtocolManager.bindDevice(deviceReq, new BindCallBack(mActivity));
         NetWorkManager.bindDevice(student.getUserId(), Commons.UUID)
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        LogUtils.e("FH", "绑定成功");
-                        SpUtils.saveStudent(student);
-                        File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
-                        if (!file.exists()) {
-                            ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));
-                        }
-                        LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
-                        binding.confirmBtn.setVisibility(View.GONE);
-                        binding.cancleBtn.setVisibility(View.GONE);
-                        binding.localPwdHintTv.setVisibility(View.VISIBLE);
-                        binding.startUseBtn.setVisibility(View.VISIBLE);
-                        binding.titleTv.setText("恭喜,用户与设备绑定成功");
-                        SpUtils.setLocalLockPwd("123456");
+                .subscribe(o -> {
+                    LogUtils.e("FH", "绑定成功");
+                    SpUtils.saveStudent(student);
+                    File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
+                    if (!file.exists()) {
+                        ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        ConfirmUserInfoDialog.this.dismiss();
-                        new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
-                    }
+                    LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
+                    binding.confirmBtn.setVisibility(View.GONE);
+                    binding.cancleBtn.setVisibility(View.GONE);
+                    binding.localPwdHintTv.setVisibility(View.VISIBLE);
+                    binding.startUseBtn.setVisibility(View.VISIBLE);
+                    binding.titleTv.setText("恭喜,用户与设备绑定成功");
+                    SpUtils.setLocalLockPwd("123456");
+                }, throwable -> {
+                    ConfirmUserInfoDialog.this.dismiss();
+                    new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
                 });
     }
 
