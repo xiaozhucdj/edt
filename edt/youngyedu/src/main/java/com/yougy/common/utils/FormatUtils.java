@@ -89,5 +89,31 @@ public class FormatUtils {
         }
         return b;
     }
+
+    public static String formatTime (long time) {
+        if (time < 0) {
+            return "";
+        }
+        int second = (int) (time / 60);
+        int minute = 0, hour = 0, day = 0;
+        if (second > 59) {
+            minute = second / 60;
+            second = second % 60;
+            if (minute > 59) {
+                hour = minute / 60;
+                minute = minute % 60;
+                if (hour > 23) {
+                    day = hour / 24;
+                    hour = hour % 24;
+                }
+            }
+        }
+        String d = day > 0 ? (day + "天"): "";
+        String h = hour > 0 ? (hour < 10 ? "0" + hour : String.valueOf(hour)) : "";
+        String m = minute > 0 ? (minute < 10 ? "0" + minute : String.valueOf(minute)) : "";
+        String s = second > 0 ? (second < 10 ? "0" + second : String.valueOf(second)) : "";
+        return d + h + m + s;
+    }
+
 }
 

@@ -158,6 +158,8 @@ public class ExerciseBookFragment extends BFragment {
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
                         intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
                         intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
+                        //传参是否定时作业
+                        intent.putExtra("isTimerWork",true);
                         startActivity(intent);
                         break;
                 }

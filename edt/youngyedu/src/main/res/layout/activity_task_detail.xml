@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data></data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="76px">
+            <ImageView
+                android:id="@+id/imageView_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:src="@drawable/icon_fanhui"
+                android:paddingLeft="30px"
+                android:paddingRight="30px"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:id="@+id/text_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ac_network"
+                android:textSize="30px"
+                android:visibility="gone"
+                android:textColor="@android:color/black"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80px"
+            android:orientation="horizontal"
+            android:background="@color/gray_737373">
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tab_task_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="70px"
+                    android:textSize="32sp"
+                    android:gravity="center_horizontal|bottom"
+                    android:paddingBottom="5px"
+                    android:textColor="@android:color/white"
+                    android:text="任务内容"/>
+
+                <View
+                    android:id="@+id/line_content"
+                    android:layout_width="300px"
+                    android:layout_height="10px"
+                    android:background="@android:color/holo_green_dark"
+                    ></View>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tab_task_material"
+                    android:layout_width="match_parent"
+                    android:layout_height="70px"
+                    android:textSize="32sp"
+                    android:gravity="center_horizontal|bottom"
+                    android:paddingBottom="5px"
+                    android:textColor="@android:color/white"
+                    android:text="学习资料"/>
+
+                <View
+                    android:id="@+id/line_material"
+                    android:layout_width="300px"
+                    android:layout_height="10px"
+                    android:background="@android:color/holo_green_dark"
+                    ></View>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tab_task_exercise"
+                    android:layout_width="match_parent"
+                    android:layout_height="70px"
+                    android:textSize="32sp"
+                    android:gravity="center_horizontal|bottom"
+                    android:paddingBottom="5px"
+                    android:textColor="@android:color/white"
+                    android:text="任务练习"/>
+
+                <View
+                    android:id="@+id/line_exercise"
+                    android:layout_width="300px"
+                    android:layout_height="10px"
+                    android:background="@android:color/holo_green_dark"
+                    ></View>
+            </LinearLayout>
+
+
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <FrameLayout
+                android:id="@+id/task_detail_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/bottom_confirm_btn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textColor="@android:color/white"
+                android:textSize="28sp"
+                android:background="#00ff99"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:text="我已完成任务"/>
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

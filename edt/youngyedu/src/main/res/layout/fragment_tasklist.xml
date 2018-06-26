@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data></data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_task_act"
+            android:layout_width="match_parent"
+            android:layout_height="800px">
+        </android.support.v7.widget.RecyclerView>
+
+        <com.frank.etude.pageBtnBar.PageBtnBar
+            android:id="@+id/btn_bar_task_act"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="36px"
+            android:gravity="center"
+            android:orientation="horizontal"
+            />
+    </LinearLayout>
+</layout>
