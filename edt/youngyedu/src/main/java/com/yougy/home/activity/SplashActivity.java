@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.ImageView;
 
 import com.badoo.mobile.util.WeakHandler;
 import com.onyx.android.sdk.utils.NetworkUtil;
@@ -15,7 +14,6 @@ import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.utils.FileUtils;
@@ -40,8 +38,6 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.observables.ConnectableObservable;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by FH on 2016/8/25.
@@ -49,36 +45,15 @@ import rx.subscriptions.CompositeSubscription;
  * APP 第一个页面，欢迎
  */
 public class SplashActivity extends BaseActivity {
-    protected CompositeSubscription subscription;
-    protected ConnectableObservable<Object> tapEventEmitter;
 
-    private ImageView mImgLogo;
     private int lastProgress;
 
     private WeakHandler mHandler = new WeakHandler();
-//    private PowerManager.WakeLock mWakeLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LitePal.getDatabase();
-        subscription = new CompositeSubscription();
-        tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
-        handleEvent();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (subscription != null) {
-            subscription.clear();
-            subscription = null;
-        }
-        tapEventEmitter = null;
-    }
-
-    protected void handleEvent() {
-        subscription.add(tapEventEmitter.connect());
     }
 
 
@@ -123,7 +98,6 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initLayout() {
-        mImgLogo = (ImageView) this.findViewById(R.id.img_logo);
     }
 
     @Override
@@ -268,7 +242,6 @@ public class SplashActivity extends BaseActivity {
     private void doDownLoad(final Context mContext, final String downloadUrl) {
         final DownProgressDialog downProgressDialog = new DownProgressDialog(mContext);
 
-//        downProgressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         downProgressDialog.show();
         downProgressDialog.setDownProgress("0%");
 
@@ -330,22 +303,5 @@ public class SplashActivity extends BaseActivity {
         intent.setDataAndType(Uri.fromFile(new File(DownloadManager.getApkPath())),
                 "application/vnd.android.package-archive");
         mContext.startActivity(intent);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        if (mWakeLock != null) {
-//            mWakeLock.release();
-//        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
-//                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-//                        | PowerManager.ON_AFTER_RELEASE, this.getClass().getName());
-//        mWakeLock.acquire();
     }
 }

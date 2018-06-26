@@ -12,7 +12,6 @@ import android.view.View;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
 import com.yougy.common.service.DownloadService;
@@ -28,18 +27,11 @@ import com.yougy.view.dialog.HintDialog;
 
 import java.io.File;
 
-import rx.functions.Action1;
-import rx.observables.ConnectableObservable;
-import rx.subscriptions.CompositeSubscription;
-
 /**
  * Created by FH on 2017/6/26.
  */
 
 public class ConfirmUserInfoDialog extends BaseDialog {
-    protected CompositeSubscription subscription;
-    protected ConnectableObservable<Object> tapEventEmitter;
-
     Activity mActivity;
     Student student;
     ConfirmUserinfoDialogLayoutBinding binding;
@@ -70,34 +62,11 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
         spannableString.setSpan(styleSpan, 16, 22, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         binding.localPwdHintTv.setText(spannableString);
-        binding.cancleBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-        binding.confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                confirm();
-            }
-        });
-        binding.startUseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startUse();
-            }
-        });
+        binding.cancleBtn.setOnClickListener(v -> dismiss());
+        binding.confirmBtn.setOnClickListener(v -> confirm());
+        binding.startUseBtn.setOnClickListener(v -> startUse());
     }
 
-    protected void handleEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-            }
-        }));
-        subscription.add(tapEventEmitter.connect());
-    }
 
     public void confirm() {
         NewBindDeviceReq deviceReq = new NewBindDeviceReq();
@@ -129,23 +98,5 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         dismiss();
         mActivity.startActivity(new Intent(mActivity, MainActivity.class));
         mActivity.finish();
-    }
-
-    @Override
-    public void show() {
-        super.show();
-        subscription = new CompositeSubscription();
-        tapEventEmitter = YoungyApplicationManager.getRxBus(mActivity).toObserverable().publish();
-        handleEvent();
-    }
-
-    @Override
-    public void dismiss() {
-        super.dismiss();
-        if (subscription != null) {
-            subscription.clear();
-            subscription = null;
-        }
-        tapEventEmitter = null;
     }
 }

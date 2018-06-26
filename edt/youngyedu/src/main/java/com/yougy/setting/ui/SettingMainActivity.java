@@ -2,7 +2,6 @@ package com.yougy.setting.ui;
 
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -14,7 +13,6 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
-import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.AliyunUtil;
@@ -36,9 +34,7 @@ import com.yougy.view.dialog.LoadingProgressDialog;
 import org.litepal.tablemanager.Connector;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
 import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
@@ -49,9 +45,6 @@ import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
  */
 
 public class SettingMainActivity extends BaseActivity {
-    protected CompositeSubscription subscription;
-    protected ConnectableObservable<Object> tapEventEmitter;
-
     ActivitySettingBinding binding;
     private int mTagNoNet = 1;
     private int mTagUnbindFail = 2;
@@ -124,24 +117,6 @@ public class SettingMainActivity extends BaseActivity {
 
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        subscription = new CompositeSubscription();
-        tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (subscription != null) {
-            subscription.clear();
-            subscription = null;
-        }
-        tapEventEmitter = null;
-    }
-
     @Override
     public void init() {
 
@@ -184,7 +159,6 @@ public class SettingMainActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.img_wifi:
-//                boolean isConnected = NetManager.getInstance().isWifiConnected(this);
                 boolean isConnected = false;
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));

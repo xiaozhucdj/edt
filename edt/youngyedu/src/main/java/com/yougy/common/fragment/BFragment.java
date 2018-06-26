@@ -16,7 +16,6 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
@@ -40,8 +39,6 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.observables.ConnectableObservable;
-import rx.subscriptions.CompositeSubscription;
 
 import static com.yougy.common.utils.GsonUtil.fromNotes;
 
@@ -51,8 +48,6 @@ import static com.yougy.common.utils.GsonUtil.fromNotes;
 
 public abstract class BFragment extends Fragment implements UiPromptDialog.Listener {
     public boolean mHide;
-    protected CompositeSubscription subscription;
-    protected ConnectableObservable<Object> tapEventEmitter;
     protected Context context;
     public String tag;
 
@@ -68,15 +63,9 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         context = activity;
         tag = getClass().getName();
         LogUtils.e(tag, "onAttach...........");
-        subscription = new CompositeSubscription();
-        tapEventEmitter = YoungyApplicationManager.getRxBus(context).toObserverable().publish();
-        handleEvent();
         EventBus.getDefault().register(this);
     }
 
-    protected void handleEvent() {
-        subscription.add(tapEventEmitter.connect());
-    }
 
     @Override
     public void onResume() {
@@ -92,27 +81,12 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         super.onHiddenChanged(hidden);
         mHide = hidden;
         LogUtils.e(tag, "mhide is : " + hidden);
-        if (subscription != null) {
-            subscription.clear();
-            subscription = null;
-        }
-        tapEventEmitter = null;
-        if (!hidden) {
-            subscription = new CompositeSubscription();
-            tapEventEmitter = YoungyApplicationManager.getRxBus(context).toObserverable().publish();
-            handleEvent();
-        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         LogUtils.e(tag, "onDestroyView............");
-        if (subscription != null) {
-            subscription.clear();
-        }
-        subscription = null;
-        tapEventEmitter = null;
         EventBus.getDefault().unregister(this);
     }
 
@@ -124,17 +98,6 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
             getView().setVisibility(menuVisible ? View.VISIBLE : View.GONE);
         }
         mHide = menuVisible;
-        if (menuVisible && context != null) {
-            subscription = new CompositeSubscription();
-            tapEventEmitter = YoungyApplicationManager.getRxBus(context).toObserverable().publish();
-            handleEvent();
-        } else {
-            if (subscription != null) {
-                subscription.clear();
-                subscription = null;
-            }
-            tapEventEmitter = null;
-        }
     }
 
 
