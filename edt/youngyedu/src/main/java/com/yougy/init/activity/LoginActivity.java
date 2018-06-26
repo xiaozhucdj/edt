@@ -13,11 +13,8 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
-import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.ProtocolId;
 import com.yougy.common.protocol.request.NewLoginReq;
-import com.yougy.common.protocol.response.NewLoginRep;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
@@ -28,17 +25,11 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLoginBinding;
 import com.yougy.view.dialog.HintDialog;
 
-import rx.functions.Action1;
-import rx.observables.ConnectableObservable;
-import rx.subscriptions.CompositeSubscription;
-
 /**
  * Created by FH on 2017/6/22.
  */
 
 public class LoginActivity extends BaseActivity {
-    protected CompositeSubscription subscription;
-    protected ConnectableObservable<Object> tapEventEmitter;
 
     ActivityLoginBinding binding;
     ConfirmUserInfoDialog confirmUserInfoDialog;
@@ -148,48 +139,6 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        subscription = new CompositeSubscription();
-        tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
-        handleEvent();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (subscription != null) {
-            subscription.clear();
-            subscription = null;
-        }
-        tapEventEmitter = null;
-
-    }
-
-    protected void handleEvent() {
-        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof NewLoginRep){
-                    NewLoginRep response = (NewLoginRep) o;
-                    if (response.getCode() == ProtocolId.RET_SUCCESS && response.getCount()>0) {
-                        Student student = response.getData().get(0);
-                        if (!student.getUserRole().equals(getString(R.string.student))){
-                            new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用学生账号登录").show();
-                        }
-                        else {
-                            LogUtils.e("FH", "登录成功,弹出信息确认dialog");
-                            SpUtils.saveStudent(student);
-                            confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this , student);
-                            confirmUserInfoDialog.show();
-                        }
-                    }
-                    else if (response.getCode() == 401){
-                        new HintDialog(getThisActivity() , "登录失败:用户名密码错误").show();
-                    }
-                }
-            }
-        }));
-        subscription.add(tapEventEmitter.connect());
     }
 
     public void login(View view){
