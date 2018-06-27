@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.antfortune.freeline'
 //apply plugin: 'com.jakewharton.butterknife'
-//apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     signingConfigs {
@@ -111,7 +111,7 @@ dependencies {
     compile files('libs/volley.jar')
     compile 'org.sufficientlysecure:html-textview:3.0'
     compile files('libs/eventbus-2.2.1.jar')
-    compile 'com.android.support:multidex:1.0.3'
+//    compile 'com.android.support:multidex:1.0.3'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.google.zxing:core:3.3.0'
@@ -124,8 +124,8 @@ dependencies {
     compile "com.trello:rxlifecycle:${rxlifecycle_need_version}"
     compile "com.trello:rxlifecycle-components:${rxlifecycle_need_version}"
     //bugly
-//    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
-//    compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
 
     //文件下载框架
     compile 'com.mani:ThinDownloadManager:1.2.5'
