@@ -14,7 +14,6 @@ import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.onyx.android.sdk.utils.NetworkUtil;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yougy.anwser.AnsweringActivity;
@@ -22,7 +21,6 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
-import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -30,7 +28,6 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.AskQuestionAttachment;
-import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
@@ -56,6 +53,8 @@ import static com.yougy.common.global.Commons.isRelase;
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
+
+//import com.tencent.bugly.crashreport.CrashReport;
 
 
 /**
@@ -119,8 +118,6 @@ public class YoungyApplicationManager extends LitePalApplication {
             mMainThread = Thread.currentThread();
             mMainLooper = getMainLooper();
 
-            rxBus = new RxBus();
-
             //创建 课本 文件夹
             FileUtils.createDirs(FileUtils.getTextBookFilesDir());
             //创建 课本 图片 文件夹
@@ -163,10 +160,10 @@ public class YoungyApplicationManager extends LitePalApplication {
             // 获取当前进程名
             String processName = getProcessName(android.os.Process.myPid());
             // 设置是否为上报进程
-            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
-            strategy.setUploadProcess(processName == null || processName.equals(packageName));
+//            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
+//            strategy.setUploadProcess(processName == null || processName.equals(packageName));
             // 初始化Bugly
-            CrashReport.initCrashReport(context, "9629dd7708", false, strategy);
+//            CrashReport.initCrashReport(context, "9629dd7708", false, strategy);
 
 
             //AutoLayout初始化
@@ -208,9 +205,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                         newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
                         startActivity(newIntent);
 
-                    } else if (message.getAttachment() instanceof EndQuestionAttachment) {
-                        rxBus.send(message);
-                    } else if (message.getAttachment() instanceof OverallLockAttachment) {
+                    }else if (message.getAttachment() instanceof OverallLockAttachment) {
                         //TODO 全局锁屏
                         String time = ((OverallLockAttachment) message.getAttachment()).time;
                         LogUtils.i("全局锁屏" + time);
@@ -377,21 +372,10 @@ public class YoungyApplicationManager extends LitePalApplication {
         return mContext;
     }
 
-    private RxBus rxBus;
-
-    public static RxBus getRxBus(Context context) {
-        YoungyApplicationManager application = (YoungyApplicationManager) context.getApplicationContext();
-        return application.rxBus;
-    }
-
     public static boolean isWifiAvailable() {
         WifiManager manager = (WifiManager) instance.getSystemService(Context.WIFI_SERVICE);
         return manager.isWifiEnabled();
     }
-
-//    public static RefWatcher getWatcher() {
-//        return watcher;
-//    }
 
     public static Context getInstance() {
         return instance;

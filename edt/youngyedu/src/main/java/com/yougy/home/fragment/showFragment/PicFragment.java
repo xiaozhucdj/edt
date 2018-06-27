@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yougy.common.fragment.BFragment;
-import com.yougy.common.manager.YoungyApplicationManager;
-import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.ImageLoader;
 import com.yougy.home.bean.Photograph;
 import com.yougy.ui.activity.PicBinding;
@@ -57,8 +55,6 @@ public class PicFragment extends BFragment {
 
     public void delete(View view){
         removeFragment();
-        RxBus rxBus = YoungyApplicationManager.getRxBus(getContext());
-        rxBus.send(photo);
     }
 
 
