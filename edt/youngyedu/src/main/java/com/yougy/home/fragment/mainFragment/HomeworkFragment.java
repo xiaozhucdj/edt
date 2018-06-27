@@ -119,6 +119,11 @@ public class HomeworkFragment extends BFragment {
     }
 
     @Override
+    protected void handleEvent() {
+        super.handleEvent();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mIsFist = true;

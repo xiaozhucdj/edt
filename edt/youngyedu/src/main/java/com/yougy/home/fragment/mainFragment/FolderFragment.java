@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,6 +106,11 @@ public class FolderFragment extends BFragment {
         intent.putExtra("bookId", info.getCourseBookId());
         intent.putExtra("homeworkId", info.getHomeworkId());
         startActivity(intent);
+    }
+
+    @Override
+    protected void handleEvent() {
+        super.handleEvent();
     }
 
     @Override

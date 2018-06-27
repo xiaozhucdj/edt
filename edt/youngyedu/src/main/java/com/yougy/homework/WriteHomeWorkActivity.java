@@ -48,7 +48,6 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
@@ -73,8 +72,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -210,14 +207,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private Boolean btnLocked = false;
 
-    private boolean isTimerWork = false; //是否定时作业
-    private int timeSpace = 0;  // 定时时间
-    private long startTime = 0;// 开始时间
-    private long residueTime; //剩余时间
-    private Timer mTimer ;
-    private TimerTask mTimerTask;
-
-
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_homework);
@@ -233,81 +222,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
             mIsFinish = true;
             finish();
         }
-        isTimerWork = getIntent().getBooleanExtra("isTimerWork", false);
-        if (isTimerWork) {
-            judgeWorkIsEnd();
-        }
+
         examName = getIntent().getStringExtra("examName");
         tvTitle.setText(examName);
-    }
-
-    /**
-     * 判断定时作业是否到时间  未到时间继续 到时间自动提交作业
-     */
-    private void judgeWorkIsEnd () {
-        SharedPreferencesUtil sharedPreferencesUtil = SharedPreferencesUtil.getSpUtil();
-        startTime  = sharedPreferencesUtil.getLong("startWorkTime" + "_" + examId, 0);
-        long currentTime = System.currentTimeMillis();
-        LogUtils.d("timerWork init startTime :"  + startTime);
-        if (startTime == 0 || (currentTime - startTime > 0 &&  currentTime -  startTime < timeSpace)) {
-            if (startTime == 0) {//记录开始时间
-                startTime =   System.currentTimeMillis();
-                sharedPreferencesUtil.putLong("startWorkTime" + "_" + examId, startTime);
-                residueTime = timeSpace;
-            } else {
-                residueTime = timeSpace - (currentTime - startTime);
-            }
-            //继续作业
-            LogUtils.d("timerWork init continue ....");
-            startTimerTask();
-        } else {
-            //作业到时间  自动提交
-            LogUtils.d("timerWork init submit ....");
-            autoSubmitHomeWork();
-        }
-    }
-
-    private synchronized void startTimerTask () {
-        if (mTimer ==  null) {
-            mTimer = new Timer();
-            mTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    //判断时间是否到了
-                    if (residueTime > 1000) {
-                        residueTime -= 1000;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //更新UI 剩余时间变化
-                                FormatUtils.formatTime(residueTime);
-                            }
-                        });
-                    } else {
-                        residueTime = 0;
-                        cancelTimerTask();
-                        autoSubmitHomeWork();
-                    }
-                }
-            };
-            mTimer.schedule(mTimerTask, 0, 1000);
-        }
-    }
-
-    private synchronized void cancelTimerTask () {
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer = null;
-            mTimerTask = null;
-        }
-    }
-
-    /**
-     * 时间到了自动提交任务
-     */
-    private void autoSubmitHomeWork () {
-        //是否要提示：
-        getUpLoadInfo();
     }
 
     @Override
@@ -1739,7 +1656,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             mCaogaoNoteBoard.recycle();
         }
         mCaogaoNoteBoard = null;
-        cancelTimerTask();
+
         Glide.get(this).clearMemory();
         contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
@@ -1748,7 +1665,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        cancelTimerTask();
         if (!mIsFinish)
             tvSaveHomework.callOnClick();
     }

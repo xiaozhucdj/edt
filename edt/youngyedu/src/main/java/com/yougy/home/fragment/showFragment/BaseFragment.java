@@ -71,6 +71,7 @@ import com.yougy.home.bean.Position;
 import com.yougy.home.svgparser.SVG;
 import com.yougy.home.svgparser.SVGParser;
 import com.yougy.rx_subscriber.BaseSubscriber;
+import com.yougy.shop.bean.BaseData;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView;
 import com.yougy.view.controlView.ControlView;
@@ -97,7 +98,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static android.os.Environment.getExternalStorageDirectory;
@@ -256,9 +260,47 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         addListener();
     }
 
+    @Override
+    protected void handleEvent() {
+        handleUploadEvent();
+        handleDeleteEvent();
+        super.handleEvent();
+    }
+
+    private void handleDeleteEvent() {
+        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof Photograph) {
+                    final Photograph photo = (Photograph) o;
+                    mFrameLayout.removeView(currentClickedImg);
+                    Observable.create(new Observable.OnSubscribe<Object>() {
+                        @Override
+                        public void call(Subscriber<? super Object> subscriber) {
+                            int count = photo.delete();
+                            LogUtils.e(TAG, "count is : " + count);
+                        }
+                    }).subscribeOn(Schedulers.io()).subscribe();
+                }
+            }
+        }));
+    }
+
+    private void handleUploadEvent() {
+        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof BaseData) {
+                    //TODO:更新数据库的笔记
+                    LogUtils.e(TAG, "笔记上传成功。。。");
+                }
+            }
+        }));
+    }
+
     private void initBaseView() {
         /***baseFragment 根View*/
-        mParentLayout = mRoot.findViewById(R.id.parent_layout);
+        mParentLayout = (FrameLayout) mRoot.findViewById(R.id.parent_layout);
         /**
          *         opt_container .xml
          *         显示笔工具栏
@@ -270,73 +312,74 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
 
         // 显示笔工具栏  LinearLayout
-        mPaintChoose = mRoot.findViewById(R.id.paint_choose);
+        mPaintChoose = (RelativeLayout) mRoot.findViewById(R.id.paint_choose);
         //钢笔
-        mPen = mRoot.findViewById(R.id.pen);
+        mPen = (ImageButton) mRoot.findViewById(R.id.pen);
         //铅笔
-        mPencil = mRoot.findViewById(R.id.pencil);
+        mPencil = (ImageButton) mRoot.findViewById(R.id.pencil);
         //油性黑笔
-        mOliBlackPen = mRoot.findViewById(R.id.oli_black_pen);
+        mOliBlackPen = (ImageButton) mRoot.findViewById(R.id.oli_black_pen);
         //马克笔
-        mMakerPen = mRoot.findViewById(R.id.maker_pen);
+        mMakerPen = (ImageButton) mRoot.findViewById(R.id.maker_pen);
         //橡皮
-        mEraser = mRoot.findViewById(R.id.eraser);
+        mEraser = (ImageView) mRoot.findViewById(R.id.eraser);
         // 颜色 ImageButton
-        mColor = mRoot.findViewById(R.id.color);
+        mColor = (ImageButton) mRoot.findViewById(R.id.color);
         // 笔大小 SeekBar
-        mPenSizePg = mRoot.findViewById(R.id.pen_size_pg);
+        mPenSizePg = (SeekBar) mRoot.findViewById(R.id.pen_size_pg);
         //笔大小 ImageView
-        mPenSizeIv = mRoot.findViewById(R.id.pen_size);
+        mPenSizeIv = (ImageView) mRoot.findViewById(R.id.pen_size);
         // 透明度 SeekBar
-        mPenAlphaPg = mRoot.findViewById(R.id.pen_alpha_pg);
+        mPenAlphaPg = (SeekBar) mRoot.findViewById(R.id.pen_alpha_pg);
         //透明度  ImageView
-        mPenAlphaIv = mRoot.findViewById(R.id.pen_alpha);
+        mPenAlphaIv = (ImageView) mRoot.findViewById(R.id.pen_alpha);
 /**********************************************************************/
         /***
          *  按钮 工具栏
          */
 
         // 按钮 工具栏 总控件
-        mOptionLayout = mRoot.findViewById(R.id.opt_layout);
+        mOptionLayout = (LinearLayout) mRoot.findViewById(R.id.opt_layout);
 
         //书包
-        mBookPackageIv = mRoot.findViewById(R.id.book_package);
+        mBookPackageIv = (ImageView) mRoot.findViewById(R.id.book_package);
         //手势
-        mGestureIv = mRoot.findViewById(R.id.gesture);
+        mGestureIv = (ImageView) mRoot.findViewById(R.id.gesture);
         // 画笔 并且弹出 笔栏目
-        mPaintDrawIv = mRoot.findViewById(R.id.paint_draw);
+        mPaintDrawIv = (ImageView) mRoot.findViewById(R.id.paint_draw);
         // 画图 显示一个webViwe 添加刘阳HTML
+        mDrawPicIv = (ImageView) mRoot.findViewById(R.id.draw_pic);
         // 添加标签
-        mLabelIv = mRoot.findViewById(R.id.label);
-        mDrawPicIv = mRoot.findViewById(R.id.draw_pic);
-        mImgShowOtherIcon = (ImageView) mRoot.findViewById(R.id.img_showOhterIcon);
-        mDirectoryIv = mRoot.findViewById(R.id.directory);
+        mLabelIv = (ImageView) mRoot.findViewById(R.id.label);
         // 插入图片 调用系统 相册
-        mImageIv = mRoot.findViewById(R.id.image);
+        mImageIv = (ImageView) mRoot.findViewById(R.id.image);
         // 截图
-        mScreenshotIv = mRoot.findViewById(R.id.screenshot);
+        mScreenshotIv = (ImageView) mRoot.findViewById(R.id.screenshot);
         // 发送
-        mSendIv = mRoot.findViewById(R.id.send);
+        mSendIv = (ImageView) mRoot.findViewById(R.id.send);
         // 后退
-        mUndoIv = mRoot.findViewById(R.id.undo);
+        mUndoIv = (ImageView) mRoot.findViewById(R.id.undo);
         RxView.clicks(mUndoIv).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getUndoSubscriber());
         //前进
-        mRedoIv = mRoot.findViewById(R.id.redo);
+        mRedoIv = (ImageView) mRoot.findViewById(R.id.redo);
         RxView.clicks(mRedoIv).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getRedoSubscriber());
         // 添加书签
-        mBookMarkerIv = mRoot.findViewById(R.id.bookmark);
+        mBookMarkerIv = (ImageView) mRoot.findViewById(R.id.bookmark);
         //查看目录
+        mDirectoryIv = (ImageView) mRoot.findViewById(R.id.directory);
 
         //切换Fragment 课本
-        mTextbookIv = mRoot.findViewById(R.id.textbook);
+        mTextbookIv = (ImageView) mRoot.findViewById(R.id.textbook);
 
         //切换Fragment 作业
-        mExerciseBookIv = mRoot.findViewById(R.id.exercise_book);
+        mExerciseBookIv = (ImageView) mRoot.findViewById(R.id.exercise_book);
 
 
 
         //修改笔记
-        mImgupdataNote = mRoot.findViewById(R.id.img_updataNote);
+        mImgupdataNote = (ImageView) mRoot.findViewById(R.id.img_updataNote);
+
+//        if (mControlActivity.mBookId > 0 && !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
 
         if (mControlActivity.mBookId > 0) {
             mTextbookIv.setEnabled(true);
@@ -346,11 +389,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
         mImgupdataNote.setOnClickListener(this);
         //删除笔记
-        mImgDeleteNote = mRoot.findViewById(img_deleteNote);
+        mImgDeleteNote = (ImageView) mRoot.findViewById(img_deleteNote);
         mImgDeleteNote.setOnClickListener(this);
 
         //切换Fragment 笔记
-        mNotebookIv = mRoot.findViewById(R.id.notebook);
+        mNotebookIv = (ImageView) mRoot.findViewById(R.id.notebook);
         mNotebookIv.setEnabled(mControlActivity.mNoteId > 0);
 
         // 判断作业状体按钮
@@ -369,17 +412,17 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
 
         // 显示 书签和 目录内容的 控件
-        mBookNeedLayout = mRoot.findViewById(R.id.book_need_layout);
+        mBookNeedLayout = (LinearLayout) mRoot.findViewById(R.id.book_need_layout);
 
         /**
          *  Seekbar 底部进度条
          */
 
         // Seekbar 根VIEW
-        mRl_page = mRoot.findViewById(R.id.rl_page);
+        mRl_page = (RelativeLayout) mRoot.findViewById(R.id.rl_page);
 
         //替换布局的  ViewStub
-        mStub = mRoot.findViewById(R.id.view_stub);
+        mStub = (ViewStub) mRoot.findViewById(R.id.view_stub);
 
         /***
          *  初始化 按钮状态
@@ -392,20 +435,21 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         mPenAlphaPg.setProgress(100);*/
         mGestureIv.setSelected(true);
         // 绘制控件
-        mFrameLayout = mRoot.findViewById(R.id.note_parent);
+        mFrameLayout = (MyFrameLayout) mRoot.findViewById(R.id.note_parent);
         // 截图 View
         mScreenShotView = new ScreenShotView(mContext);
 
         //其他按钮根布局
-        mLlOtherIcon = mRoot.findViewById(R.id.ll_OtherIcon);
+        mLlOtherIcon = (LinearLayout) mRoot.findViewById(R.id.ll_OtherIcon);
         mLlOtherIcon.setVisibility(View.GONE);
         //控制是否显示其它按钮
-        mImgPaste = mRoot.findViewById(R.id.paste);
+        mImgShowOtherIcon = (ImageView) mRoot.findViewById(R.id.img_showOhterIcon);
+        mImgPaste = (ImageView) mRoot.findViewById(R.id.paste);
         setPasteEnable();
 
 
-        mTvPenOrEraser = mRoot.findViewById(R.id.tv_pen_or_eraser);
-        mSeekPenOrEraser = mRoot.findViewById(R.id.seek_pen_or_eraser);
+        mTvPenOrEraser = (TextView) mRoot.findViewById(R.id.tv_pen_or_eraser);
+        mSeekPenOrEraser = (SeekBar) mRoot.findViewById(R.id.seek_pen_or_eraser);
         mSeekPenOrEraser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -551,7 +595,12 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     @NonNull
     protected Observable<Void> getSaveObservable() {
-        return Observable.create(subscriber -> save());
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                save();
+            }
+        });
     }
 
     Map<String, String> params = new HashMap<>();
@@ -767,6 +816,21 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 toNoteBookFragment();
                 break;
             case R.id.exercise_book:
+//                Bundle extras = new Bundle();
+//                //图书ID
+//                extras.putInt(FileContonst.BOOK_ID, mControlActivity.mBookId);
+//                //笔记ID
+//                extras.putInt(FileContonst.NOTE_ID, mControlActivity.mNoteId);
+//                //作业ID
+//                extras.putInt(FileContonst.HOME_WROK_ID, mControlActivity.mHomewrokId);
+//                //笔记名字
+//                extras.putString(FileContonst.NOTE_TITLE, mControlActivity.mNotetitle);
+//                //笔记样式
+//                extras.putInt(FileContonst.NOTE_Style, mControlActivity.mNoteStyle);
+//
+//                Intent intent = new Intent(getActivity(), MainActivityScreen.class);
+//                intent.putExtras(extras);
+//                startActivity(intent);
                 toExerciseBookFragment();
                 break;
             case R.id.cancel_cut:
@@ -804,7 +868,23 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 getActivity().onBackPressed();
                 break;
         }
+//        if (null != view && isNeedHide && view != mPaintDrawIv && mPaintChoose.getVisibility() == View.VISIBLE) {
+//            outAnimator();
+//        }
 
+
+        /**
+         * 根据状态 切换 手势 笔 截图 三个按钮的选择状态
+         */
+//        if (null != view && view == mScreenshotIv) {
+//            mScreenshotIv.setSelected(true);
+//            mGestureIv.setSelected(false);
+//            mPaintDrawIv.setSelected(false);
+//        } else {
+//            mScreenshotIv.setSelected(false);
+//            mGestureIv.setSelected(mIsIntercept);
+//            mPaintDrawIv.setSelected(!mIsIntercept);
+//        }
     }
 
     public void leaveScribbleMode(boolean needFreshUI) {
@@ -858,6 +938,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
      * 更新 画笔大小和 透明度 的seek值
      */
     private void updateStatus(int color, int progress, int alpha) {
+  /*      GradientDrawable drawable = (GradientDrawable) mPenSizeIv.getBackground();
+        drawable.setColor(color);
+        GradientDrawable alphaDrawable = (GradientDrawable) mPenAlphaIv.getBackground();
+        alphaDrawable.setColor(color);*/
         mPenSizePg.setProgress(progress);
         mPenAlphaPg.setProgress(alpha);
         updatePaintColor(color);
@@ -899,7 +983,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //设置菜单显示的位置
         popWindow.showAtLocation(mPaintChoose, Gravity.TOP, 0, 2 * mPaintChoose.getHeight() + UIUtils.getStatusBarHeight());
         //监听触屏事件
-        popWindow.setTouchInterceptor((view, event) -> false);
+        popWindow.setTouchInterceptor(new View.OnTouchListener() {
+            public boolean onTouch(View view, MotionEvent event) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -920,6 +1008,15 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
      * 画笔选择界面进入动画
      */
     private void inAnimatior() {
+       /* ObjectAnimator animator = ObjectAnimator.ofFloat(mPaintChoose, PROPERTY_NAME, 0, chooserHeight);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                mPaintChoose.setVisibility(View.VISIBLE);
+            }
+        });
+        animator.setDuration(500);
+        animator.start();*/
         updateStatus(mPaintDrawState.getPanColor(), mPaintDrawState.getPanSizeProgress(), mPaintDrawState.getPanAlphProgress());
         //  mNoteBookView.setDrawState(mPaintDrawState.getPanSize() ,mPaintDrawState.getPanColor(), mPaintDrawState.getPanAlphProgress());
         mPaintChoose.setVisibility(View.VISIBLE);
@@ -929,6 +1026,15 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
      * 画笔选择界面退出动画
      */
     private void outAnimator() {
+    /*    ObjectAnimator animator = ObjectAnimator.ofFloat(mPaintChoose, PROPERTY_NAME, chooserHeight, 0);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mPaintChoose.setVisibility(View.INVISIBLE);
+            }
+        });
+        animator.setDuration(500);
+        animator.start();*/
         mPaintChoose.setVisibility(View.GONE);
     }
 
@@ -1016,55 +1122,98 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             photo.setLeftMargin(params.leftMargin);
             photo.setTopMargin(params.topMargin);
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            Observable.create((Observable.OnSubscribe<Bitmap>) subscriber -> {
-                if (requestCode == 1) {
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = mContext.getContentResolver().query(data.getData(), filePathColumn, null, null, null);
-                    if (null != cursor) {
-                        cursor.moveToFirst();
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        path = cursor.getString(columnIndex);
-                        cursor.close();
+            Observable.create(new Observable.OnSubscribe<Bitmap>() {
+                @Override
+                public void call(Subscriber<? super Bitmap> subscriber) {
+                    if (requestCode == 1) {
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                        Cursor cursor = mContext.getContentResolver().query(data.getData(), filePathColumn, null, null, null);
+                        if (null != cursor) {
+                            cursor.moveToFirst();
+                            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                            path = cursor.getString(columnIndex);
+                            cursor.close();
+                        }
                     }
-                }
-                if (!subscriber.isUnsubscribed()) {
-                    Bitmap bitmap = ImageLoader.loadBmpFromFile(path);
-                    subscriber.onNext(bitmap);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-                    photo.setBytes(bos.toByteArray());
-                    boolean result = photo.save();
-                    LogUtils.e(TAG, "result is : " + result);
-                    mNote.getPhotographList().add(photo);
-                    mNote.save();
+                    if (!subscriber.isUnsubscribed()) {
+                        Bitmap bitmap = ImageLoader.loadBmpFromFile(path);
+                        subscriber.onNext(bitmap);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+                        photo.setBytes(bos.toByteArray());
+                        boolean result = photo.save();
+                        LogUtils.e(TAG, "result is : " + result);
+                        mNote.getPhotographList().add(photo);
+                        mNote.save();
+                    }
                 }
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(bitmap -> addPic(photo, bitmap, params));
+                    .subscribe(new Action1<Bitmap>() {
+                        @Override
+                        public void call(Bitmap bitmap) {
+                            addPic(photo, bitmap, params);
+                        }
+                    });
         }
     }
 
     protected void addPic(final Photograph photo, Bitmap bitmap, FrameLayout.LayoutParams params) {
+//        final MoveImageView imageView = new MoveImageView(mContext);
+//        imageView.setImageResource(R.drawable.img_pic_normal);
+//        imageView.setPhotograph(photo);
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                LogUtils.e(TAG, "photo is clicked................");
+//                currentClickedImg = imageView;
+//                imageView.setImageResource(R.drawable.img_pic_normal);
+//                EpdController.leaveScribbleMode(mNoteBookView);
+//                flag = false;
+//                usePhoto(photo);
+//                FrameLayout.LayoutParams tmp = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+//                curImgViewPosition = new Position(tmp.leftMargin, tmp.topMargin);
+//            }
+//        });
+//        imageView.setUpdateImageViewMapListener(this);
+//        mFrameLayout.addView(imageView, params);
+//        imageViews.put(new Position(params.leftMargin, params.topMargin), imageView);
         MoveRelativeLayout1 view = (MoveRelativeLayout1) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
         view.setPhotoGraph(photo);
-        final Button deleteBtn = view.findViewById(R.id.delete_pic);
-        ImageView imagebtn = view.findViewById(R.id.insert_pic);
+        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
+        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
         imagebtn.setImageBitmap(bitmap);
         params.width = bitmap.getWidth();
         params.height = bitmap.getHeight();
-        deleteBtn.setOnClickListener(v -> {
-            final MoveRelativeLayout1 layout = (MoveRelativeLayout1) v.getParent();
-            mFrameLayout.removeView(layout);
-            Observable.create(subscriber -> {
-                Photograph photograph = layout.getPhotoGraph();
-                if (null != photograph) {
-                    mNote.getPhotographList().remove(photograph);
-                    int count = photograph.delete();
-                    LogUtils.e(TAG, "count is : " + count);
-                }
-            }).subscribeOn(Schedulers.io()).subscribe();
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final MoveRelativeLayout1 layout = (MoveRelativeLayout1) v.getParent();
+                mFrameLayout.removeView(layout);
+                Observable.create(new Observable.OnSubscribe<Object>() {
+                    @Override
+                    public void call(Subscriber<? super Object> subscriber) {
+                        Photograph photograph = layout.getPhotoGraph();
+                        if (null != photograph) {
+                            mNote.getPhotographList().remove(photograph);
+                            int count = photograph.delete();
+                            LogUtils.e(TAG, "count is : " + count);
+                        }
+                    }
+                }).subscribeOn(Schedulers.io()).subscribe();
+            }
         });
-        view.setOnClickListener(v -> deleteBtn.setVisibility(View.VISIBLE));
-        view.setOnHideDeleteBtnListener(() -> deleteBtn.setVisibility(View.GONE));
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteBtn.setVisibility(View.VISIBLE);
+            }
+        });
+        view.setOnHideDeleteBtnListener(new MoveRelativeLayout1.OnHideDeleteBtnListener() {
+            @Override
+            public void hideDeleteBtn() {
+                deleteBtn.setVisibility(View.GONE);
+            }
+        });
         mFrameLayout.addView(view, params);
     }
 
@@ -1081,16 +1230,19 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     @Override
     public void deleteLabel() {
         mFrameLayout.removeView(imageViews.remove(curImgViewPosition));
-        Observable.create(subscriber -> {
-            if (curImgViewPosition != null) {
-                labelCount--;
-                int leftmargin = curImgViewPosition.getLeftMargin();
-                int topmargin = curImgViewPosition.getTopMargin();
-                Label tmp = getCurrentLabel(leftmargin, topmargin);
-                if (null != tmp) {
-                    mNote.getLabelList().remove(tmp);
-                    int rowsNum = tmp.delete();
-                    LogUtils.e(TAG, "rowsNum is : " + rowsNum);
+        Observable.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+                if (curImgViewPosition != null) {
+                    labelCount--;
+                    int leftmargin = curImgViewPosition.getLeftMargin();
+                    int topmargin = curImgViewPosition.getTopMargin();
+                    Label tmp = getCurrentLabel(leftmargin, topmargin);
+                    if (null != tmp) {
+                        mNote.getLabelList().remove(tmp);
+                        int rowsNum = tmp.delete();
+                        LogUtils.e(TAG, "rowsNum is : " + rowsNum);
+                    }
                 }
             }
         }).subscribeOn(Schedulers.io()).subscribe();
@@ -1129,6 +1281,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                     x = (int) event.getX();
                     //纵坐标应减去顶部操作栏的高度
                     y = (int) event.getY();
+//                popX = x;
+//                popY = y;
                     if (mScreenShotView.getParent() != null) {
                         ((ViewGroup) mScreenShotView.getParent()).removeView(mScreenShotView);
                     }
@@ -1141,6 +1295,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                     right = (int) event.getX();
                     bottom = (int) event.getY();
                     mScreenShotView.setSeat(x, y, right, bottom);
+//                mScreenShotView.postInvalidate();
                     break;
                 case MotionEvent.ACTION_UP:
                     mScreenShotView.postInvalidate();
@@ -1154,6 +1309,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                     }
                     bitmap = getBitmap();
                     if (null != bitmap) {
+//                    showScreenCutOptWindow();
                         showScreenCutOptLayout();
                     } else {
                         ToastUtil.showCustomToast(mContext, "请正确截图。。。");
@@ -1172,6 +1328,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
      * 显示截图操作窗口
      */
     private PopupWindow cutPopWindow;
+    //    private int popX;
+//    private int popY;
     private Button cancelCut;
     private Button copyCut;
     private Button sendCut;
@@ -1180,22 +1338,22 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     private void showScreenCutOptLayout() {
         if (screenCutOptLayout == null) {
-            screenCutOptLayout = mRoot.findViewById(R.id.screen_cut_layout);
+            screenCutOptLayout = (LinearLayout) mRoot.findViewById(R.id.screen_cut_layout);
         }
         if (cancelCut == null) {
-            cancelCut = mRoot.findViewById(R.id.cancel_cut);
+            cancelCut = (Button) mRoot.findViewById(R.id.cancel_cut);
             cancelCut.setOnClickListener(this);
         }
         if (copyCut == null) {
-            copyCut = mRoot.findViewById(R.id.copy_cut);
+            copyCut = (Button) mRoot.findViewById(R.id.copy_cut);
             copyCut.setOnClickListener(this);
         }
         if (sendCut == null) {
-            sendCut = mRoot.findViewById(R.id.send_cut);
+            sendCut = (Button) mRoot.findViewById(R.id.send_cut);
             sendCut.setOnClickListener(this);
         }
         if (saveCut == null) {
-            saveCut = mRoot.findViewById(R.id.save_cut);
+            saveCut = (Button) mRoot.findViewById(R.id.save_cut);
             saveCut.setOnClickListener(this);
         }
         screenCutOptLayout.setVisibility(View.VISIBLE);
@@ -1204,10 +1362,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     private void showScreenCutOptWindow() {
         View view = View.inflate(mContext, R.layout.screencut_opt_layout, null);
-        Button cancelCut = view.findViewById(R.id.cancel_cut);
-        Button copyCut = view.findViewById(R.id.copy_cut);
-        Button sendCut = view.findViewById(R.id.send_cut);
-        Button saveCut = view.findViewById(R.id.save_cut);
+        Button cancelCut = (Button) view.findViewById(R.id.cancel_cut);
+        Button copyCut = (Button) view.findViewById(R.id.copy_cut);
+        Button sendCut = (Button) view.findViewById(R.id.send_cut);
+        Button saveCut = (Button) view.findViewById(R.id.save_cut);
         cancelCut.setOnClickListener(this);
         copyCut.setOnClickListener(this);
         sendCut.setOnClickListener(this);
@@ -1225,11 +1383,16 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         //设置菜单显示的位置
         int[] locations = new int[2];
         mScreenShotView.getLocationInWindow(locations);
+//        cutPopWindow.showAtLocation(mParentLayout, Gravity.NO_GRAVITY, popX, popY + 20);
         int y = UIUtils.getScreenHeight() - 40;
         LogUtils.e(TAG, " y is : " + y);
         cutPopWindow.showAtLocation(mParentLayout, Gravity.BOTTOM, 0, 0);
         //监听触屏事件
-        cutPopWindow.setTouchInterceptor((view1, event) -> false);
+        cutPopWindow.setTouchInterceptor(new View.OnTouchListener() {
+            public boolean onTouch(View view, MotionEvent event) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -1242,17 +1405,21 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     }
 
     private void saveCutPic() {
-        Observable.create(subscriber -> {
-            try {
-                FileOutputStream fout = new FileOutputStream("mnt/sdcard/img.png");
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+        Observable.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+                try {
+                    FileOutputStream fout = new FileOutputStream("mnt/sdcard/img.png");
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }).subscribeOn(Schedulers.io()).subscribe();
     }
 
     private void cutCommenOpt() {
+//        cutPopWindow.dismiss();
         screenCutOptLayout.setVisibility(View.GONE);
         mScreenShotView.setSign(true);
         mFrameLayout.setInterceptable(true);
@@ -1318,24 +1485,32 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     private void addLabel2UI(final Label label) {
         final FrameLayout.LayoutParams params = createLayoutParams();
-        Observable.create((Observable.OnSubscribe<Label>) subscriber -> {
-            Label tmp = DataSupport.findLast(Label.class);
-            if (tmp != null) {
-                label.setId(tmp.getId() + 1);
+        Observable.create(new Observable.OnSubscribe<Label>() {
+            @Override
+            public void call(Subscriber<? super Label> subscriber) {
+                Label tmp = DataSupport.findLast(Label.class);
+                if (tmp != null) {
+                    label.setId(tmp.getId() + 1);
+                }
+                labelCount++;
+                label.setLeftMargin(params.leftMargin);
+                label.setTopMargin(params.topMargin);
+                LogUtils.e(TAG, "save label : " + label);
+                label.save();
+                mNote.getLabelList().add(label);
+                mNote.save();
+                LogUtils.e(TAG, "save note is : " + mNote);
+                saveBook();
+                subscriber.onNext(label);
             }
-            labelCount++;
-            label.setLeftMargin(params.leftMargin);
-            label.setTopMargin(params.topMargin);
-            LogUtils.e(TAG, "save label : " + label);
-            label.save();
-            mNote.getLabelList().add(label);
-            mNote.save();
-            LogUtils.e(TAG, "save note is : " + mNote);
-            saveBook();
-            subscriber.onNext(label);
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(label1 -> addLabel(params, label1));
+                .subscribe(new Action1<Label>() {
+                    @Override
+                    public void call(Label label) {
+                        addLabel(params, label);
+                    }
+                });
     }
 
     protected void addMoveView() {
@@ -1354,15 +1529,18 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         final MoveImageView imageView = new MoveImageView(mContext);
         imageView.setImageResource(R.drawable.icon_label);
         imageView.setLabel(label);
-        imageView.setOnClickListener(v -> {
-            LogUtils.e(TAG, "label is clicked................");
-            imageView.setImageResource(R.drawable.icon_label);
-            EpdController.leaveScribbleMode(mNoteBookView);
-            flag = false;
-            useNote(label);
-            FrameLayout.LayoutParams tmp = (FrameLayout.LayoutParams) imageView.getLayoutParams();
-            curImgViewPosition = new Position(tmp.leftMargin, tmp.topMargin);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.e(TAG, "label is clicked................");
+                imageView.setImageResource(R.drawable.icon_label);
+                EpdController.leaveScribbleMode(mNoteBookView);
+                flag = false;
+                useNote(label);
+                FrameLayout.LayoutParams tmp = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+                curImgViewPosition = new Position(tmp.leftMargin, tmp.topMargin);
 
+            }
         });
         imageView.setUpdateImageViewMapListener(this);
         mFrameLayout.addView(imageView, params);
@@ -1392,20 +1570,23 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     public void updateImageViewMap(final Position position, int type, MoveImageView imageView) {
         leaveScribbleMode(true);
         imageViews.put(position, imageView);
-        Observable.create(subscriber -> {
-            Label tmp = getCurrentLabel(position.getLeftMargin(), position.getTopMargin());
-            if (null != tmp) {
-                tmp.update(tmp.getId());
-            }
+        Observable.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+                Label tmp = getCurrentLabel(position.getLeftMargin(), position.getTopMargin());
+                if (null != tmp) {
+                    tmp.update(tmp.getId());
+                }
 
-            Diagram diagram = getCurrentDiagram(position.getLeftMargin(), position.getTopMargin());
-            if (null != diagram) {
-                diagram.update(diagram.getId());
-            }
+                Diagram diagram = getCurrentDiagram(position.getLeftMargin(), position.getTopMargin());
+                if (null != diagram) {
+                    diagram.update(diagram.getId());
+                }
 
-            Photograph photo = getCurrentPhotograph(position.getLeftMargin(), position.getTopMargin());
-            if (null != photo) {
-                photo.update(photo.getId());
+                Photograph photo = getCurrentPhotograph(position.getLeftMargin(), position.getTopMargin());
+                if (null != photo) {
+                    photo.update(photo.getId());
+                }
             }
         }).subscribeOn(Schedulers.io()).subscribe();
 
@@ -1453,6 +1634,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             animatorSet.playTogether(animatorX, animatorY);
             animatorSet.setDuration(100);
             animatorSet.start();
+            if (mNoteBookView != null) {
+//                mNoteBookView.setPaintSize(temp * 30);
+            }
         } else {
             mPenAlphaIv.setAlpha(temp);
             setPanDrawStates(temp * 30, mPaintDrawState.getPanColor(), seekBar.getProgress(), mPaintDrawState.getPanAlphProgress());
@@ -1521,57 +1705,83 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         diagram.setDiagramPath(path);
         diagram.setLeftMargin(params.leftMargin);
         diagram.setTopMargin(params.topMargin);
-        Observable.create((Observable.OnSubscribe<Picture>) subscriber -> {
-            SVG svg = SVGParser.getSVGFromInputStream(new ByteArrayInputStream(points.getBytes()));
-            Picture picture = svg.getPicture();
-            try {
-                FileOutputStream fos = new FileOutputStream(new File(path));
-                picture.writeToStream(fos);
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+        Observable.create(new Observable.OnSubscribe<Picture>() {
+            @Override
+            public void call(Subscriber<? super Picture> subscriber) {
+                SVG svg = SVGParser.getSVGFromInputStream(new ByteArrayInputStream(points.getBytes()));
+                Picture picture = svg.getPicture();
+                try {
+                    FileOutputStream fos = new FileOutputStream(new File(path));
+                    picture.writeToStream(fos);
+                    fos.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                diagram.save();
+                LogUtils.e(TAG, "save diagram is : " + diagram);
+                mNote.getDiagramList().add(diagram);
+                mNote.save();
+                LogUtils.e(TAG, "save note is : " + mNote);
+                saveBook();
+                subscriber.onNext(picture);
             }
-            diagram.save();
-            LogUtils.e(TAG, "save diagram is : " + diagram);
-            mNote.getDiagramList().add(diagram);
-            mNote.save();
-            LogUtils.e(TAG, "save note is : " + mNote);
-            saveBook();
-            subscriber.onNext(picture);
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(picture -> addDiagram(params, picture, diagram));
+                .subscribe(new Action1<Picture>() {
+                    @Override
+                    public void call(Picture picture) {
+                        addDiagram(params, picture, diagram);
+                    }
+                });
     }
 
     protected void addDiagram(final FrameLayout.LayoutParams params, Picture picture, final Diagram diagram) {
         PictureDrawable drawable = new PictureDrawable(picture);
         final MoveRelativeLayout view = (MoveRelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
         view.setDiagram(diagram);
-        final Button deleteBtn = view.findViewById(R.id.delete_pic);
-        ImageView imagebtn;
-        imagebtn = view.findViewById(R.id.insert_pic);
+        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
+        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
         imagebtn.setImageDrawable(drawable);
         params.width = 400;
         params.height = 400;
-        deleteBtn.setOnClickListener(v -> {
-            MoveRelativeLayout layout = (MoveRelativeLayout) v.getParent();
-            mFrameLayout.removeView(layout);
-            final Diagram diag = layout.getDiagram();
-            Observable.create(subscriber -> {
-                if (null != diag) {
-                    diag.delete();
-                }
-            }).subscribeOn(Schedulers.io()).subscribe();
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MoveRelativeLayout layout = (MoveRelativeLayout) v.getParent();
+                mFrameLayout.removeView(layout);
+                final Diagram diag = layout.getDiagram();
+                Observable.create(new Observable.OnSubscribe<Object>() {
+                    @Override
+                    public void call(Subscriber<? super Object> subscriber) {
+                        if (null != diag) {
+                            diag.delete();
+                        }
+                    }
+                }).subscribeOn(Schedulers.io()).subscribe();
 
+            }
         });
-        view.setOnClickListener(v -> deleteBtn.setVisibility(View.VISIBLE));
-        view.setOnHideDeleteBtnListener(() -> deleteBtn.setVisibility(View.GONE));
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteBtn.setVisibility(View.VISIBLE);
+            }
+        });
+        view.setOnHideDeleteBtnListener(new MoveRelativeLayout.OnHideDeleteBtnListener() {
+            @Override
+            public void hideDeleteBtn() {
+                deleteBtn.setVisibility(View.GONE);
+            }
+        });
 
         if (drawFlag) {
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(() -> {
-                mFrameLayout.addView(view, params);
-                drawFlag = false;
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mFrameLayout.addView(view, params);
+                    drawFlag = false;
+                }
             });
         } else {
             mFrameLayout.addView(view, params);
@@ -1592,21 +1802,27 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
      * 绘制便签
      */
     private void drawLabel(final Note note) {
-        Observable.create((Observable.OnSubscribe<List<Label>>) subscriber -> {
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(note.getLabelList());
+        Observable.create(new Observable.OnSubscribe<List<Label>>() {
+            @Override
+            public void call(Subscriber<? super List<Label>> subscriber) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(note.getLabelList());
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(labels -> {
-                    if (labels.size() > 0) {
-                        labelCount = labels.size();
-                        for (Label label : labels) {
-                            FrameLayout.LayoutParams layoutParams = createLayoutParams();
-                            layoutParams.leftMargin = label.getLeftMargin();
-                            layoutParams.topMargin = label.getTopMargin();
-                            LogUtils.e(TAG, "label is : " + label);
-                            addLabel(layoutParams, label);
+                .subscribe(new Action1<List<Label>>() {
+                    @Override
+                    public void call(List<Label> labels) {
+                        if (labels.size() > 0) {
+                            labelCount = labels.size();
+                            for (Label label : labels) {
+                                FrameLayout.LayoutParams layoutParams = createLayoutParams();
+                                layoutParams.leftMargin = label.getLeftMargin();
+                                layoutParams.topMargin = label.getTopMargin();
+                                LogUtils.e(TAG, "label is : " + label);
+                                addLabel(layoutParams, label);
+                            }
                         }
                     }
                 });
@@ -1616,46 +1832,58 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
      * 绘制图片
      */
     private void drawPhoto(final Note note) {
-        Observable.create((Observable.OnSubscribe<List<Photograph>>) subscriber -> {
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(note.getPhotographList());
+        Observable.create(new Observable.OnSubscribe<List<Photograph>>() {
+            @Override
+            public void call(Subscriber<? super List<Photograph>> subscriber) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(note.getPhotographList());
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(photographs -> {
-                    if (photographs.size() > 0) {
-                        for (Photograph photo : photographs) {
-                            LogUtils.e(TAG, "photo is : " + photo);
-                            FrameLayout.LayoutParams layoutParams = createLayoutParams();
-                            layoutParams.leftMargin = photo.getLeftMargin();
-                            layoutParams.topMargin = photo.getTopMargin();
-                            Bitmap bitmap = ImageLoader.loadBmpFromBytes(photo.getBytes());
-                            addPic(photo, bitmap, layoutParams);
+                .subscribe(new Action1<List<Photograph>>() {
+                    @Override
+                    public void call(List<Photograph> photographs) {
+                        if (photographs.size() > 0) {
+                            for (Photograph photo : photographs) {
+                                LogUtils.e(TAG, "photo is : " + photo);
+                                FrameLayout.LayoutParams layoutParams = createLayoutParams();
+                                layoutParams.leftMargin = photo.getLeftMargin();
+                                layoutParams.topMargin = photo.getTopMargin();
+                                Bitmap bitmap = ImageLoader.loadBmpFromBytes(photo.getBytes());
+                                addPic(photo, bitmap, layoutParams);
+                            }
                         }
                     }
                 });
     }
 
     private void drawDiagram(final Note note) {
-        Observable.create((Observable.OnSubscribe<List<Diagram>>) subscriber -> {
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(note.getDiagramList());
+        Observable.create(new Observable.OnSubscribe<List<Diagram>>() {
+            @Override
+            public void call(Subscriber<? super List<Diagram>> subscriber) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(note.getDiagramList());
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(diagrams -> {
-                    if (diagrams.size() > 0) {
-                        pictureCount = diagrams.size();
-                        for (Diagram diagram : diagrams) {
-                            LogUtils.e(TAG, "diagram is : " + diagram);
-                            FrameLayout.LayoutParams params = createLayoutParams();
-                            params.leftMargin = diagram.getLeftMargin();
-                            params.topMargin = diagram.getTopMargin();
-                            try {
-                                Picture picture = Picture.createFromStream(new FileInputStream(diagram.getDiagramPath()));
-                                addDiagram(params, picture, diagram);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                .subscribe(new Action1<List<Diagram>>() {
+                    @Override
+                    public void call(List<Diagram> diagrams) {
+                        if (diagrams.size() > 0) {
+                            pictureCount = diagrams.size();
+                            for (Diagram diagram : diagrams) {
+                                LogUtils.e(TAG, "diagram is : " + diagram);
+                                FrameLayout.LayoutParams params = createLayoutParams();
+                                params.leftMargin = diagram.getLeftMargin();
+                                params.topMargin = diagram.getTopMargin();
+                                try {
+                                    Picture picture = Picture.createFromStream(new FileInputStream(diagram.getDiagramPath()));
+                                    addDiagram(params, picture, diagram);
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
@@ -1663,17 +1891,23 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     }
 
     private void drawLines(final Note note) {
-        Observable.create((Observable.OnSubscribe<List<Line>>) subscriber -> {
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(note.getLines());
+        Observable.create(new Observable.OnSubscribe<List<Line>>() {
+            @Override
+            public void call(Subscriber<? super List<Line>> subscriber) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(note.getLines());
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(lines -> {
-                    if (lines.size() > 0) {
-                        mNoteBookView.drawLines(lines, true);
-                    } else {
-                        mNoteBookView.clear();
+                .subscribe(new Action1<List<Line>>() {
+                    @Override
+                    public void call(List<Line> lines) {
+                        if (lines.size() > 0) {
+                            mNoteBookView.drawLines(lines, true);
+                        } else {
+                            mNoteBookView.clear();
+                        }
                     }
                 });
     }
@@ -1713,28 +1947,48 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         final Photograph photo = new Photograph();
         photo.setLeftMargin(params.leftMargin);
         photo.setTopMargin(params.topMargin);
-        Observable.create((Observable.OnSubscribe<Bitmap>) subscriber -> {
-            Bitmap bitmap = BitmapFactory.decodeFile(uriPase.getPath());
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-            photo.setBytes(bos.toByteArray());
-            boolean result = photo.save();
-            LogUtils.e(TAG, "result is : " + result);
-            mNote.getPhotographList().add(photo);
-            mNote.save();
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(ImageLoader.loadBitmap(uriPase.getPath()));
+        Observable.create(new Observable.OnSubscribe<Bitmap>() {
+            @Override
+            public void call(Subscriber<? super Bitmap> subscriber) {
+                Bitmap bitmap = BitmapFactory.decodeFile(uriPase.getPath());
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+                photo.setBytes(bos.toByteArray());
+                boolean result = photo.save();
+                LogUtils.e(TAG, "result is : " + result);
+                mNote.getPhotographList().add(photo);
+                mNote.save();
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(ImageLoader.loadBitmap(uriPase.getPath()));
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(bitmap -> addPic(photo, ImageLoader.loadBitmap(uriPase.getPath()), params));
+                .subscribe(new Action1<Bitmap>() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        addPic(photo, ImageLoader.loadBitmap(uriPase.getPath()), params);
+                    }
+                });
     }
 
+    protected Subscription backScription;
+    protected Subscription nextScription;
+    protected Subscription initScription;
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         leaveScribbleMode(false);
+        if (backScription != null) {
+            backScription.unsubscribe();
+        }
+        if (nextScription != null) {
+            nextScription.unsubscribe();
+        }
+        if (initScription != null) {
+            initScription.unsubscribe();
+        }
     }
 
     //TODO:袁野
