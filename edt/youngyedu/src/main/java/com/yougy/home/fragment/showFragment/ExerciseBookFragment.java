@@ -254,15 +254,15 @@ public class ExerciseBookFragment extends BFragment {
         });
 
         //课堂作业和家庭作业切换
-        binding.enterSwitchWorkMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //直接设置刷新适配器数据
-                binding.enterSwitchWorkMode.setText("进入家庭作业");
-                currentIsHomework = !currentIsHomework;
-                refreshData();
-            }
-        });
+//        binding.enterSwitchWorkMode.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //直接设置刷新适配器数据
+//                binding.enterSwitchWorkMode.setText("进入家庭作业");
+//                currentIsHomework = !currentIsHomework;
+//                refreshData();
+//            }
+//        });
         return binding.getRoot();
     }
 
