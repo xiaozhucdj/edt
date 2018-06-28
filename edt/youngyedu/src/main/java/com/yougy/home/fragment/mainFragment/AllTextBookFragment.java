@@ -489,9 +489,11 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
+            mBookItemTile.setVisibility(View.VISIBLE);
             mBookItemTile.setText(SpUtils.getGradeName() + "课本");
             //显示隐藏更多
         } else {
+            mBookItemTile.setVisibility(View.INVISIBLE);
             LogUtils.i("当前还没有书");
         }
     }

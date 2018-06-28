@@ -545,6 +545,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
+            mBookItemTile.setVisibility(View.VISIBLE);
             mBookItemTile.setText(SpUtils.getGradeName() + "笔记");
 
 
@@ -566,6 +567,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
             setLineSize(mGroupSub);
             setLineSize(mGroupGrade);*/
         } else {
+            mBookItemTile.setVisibility(View.INVISIBLE);
             LogUtils.i("当前还没有书");
         }
     }

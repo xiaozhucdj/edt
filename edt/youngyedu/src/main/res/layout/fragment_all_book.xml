@@ -13,9 +13,10 @@
         android:layout_marginTop="234px"
         android:drawableLeft="@drawable/all_iv_book_name_line"
         android:drawablePadding="20px"
-
         android:textColor="@color/black"
-        android:textSize="26px" />
+
+        android:textSize="26px"
+        android:visibility="invisible" />
 
 
     <!-- <ImageView

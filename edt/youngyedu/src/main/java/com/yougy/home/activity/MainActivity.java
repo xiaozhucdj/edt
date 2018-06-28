@@ -322,14 +322,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        long currentTime = System.currentTimeMillis();
+   /*     long currentTime = System.currentTimeMillis();
         if (mLastTime > 0 && SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
             if (currentTime - mLastTime < 1000) {
                 UIUtils.showToastSafe("操作过快");
                 return;
             }
         }
-        mLastTime = currentTime;
+        mLastTime = currentTime;*/
 
         int clickedViewId = v.getId();
         setSysTime();

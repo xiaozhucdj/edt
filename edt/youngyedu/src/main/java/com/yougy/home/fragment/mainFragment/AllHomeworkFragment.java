@@ -479,9 +479,11 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
+            mBookItemTile.setVisibility(View.VISIBLE);
             mBookItemTile.setText(SpUtils.getGradeName() + "作业");
             //显示隐藏更多
         } else {
+            mBookItemTile.setVisibility(View.INVISIBLE);
             LogUtils.i("当前还没有书");
         }
     }

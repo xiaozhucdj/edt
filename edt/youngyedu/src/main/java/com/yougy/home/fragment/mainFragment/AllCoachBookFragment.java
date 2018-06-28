@@ -481,8 +481,10 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
             mFitGradeAdapter.notifyDataSetChanged();
             mSubjectAdapter.notifyDataSetChanged();
             initPages();
+            mBookItemTile.setVisibility(View.VISIBLE);
             mBookItemTile.setText(SpUtils.getGradeName() + "辅导书");
         } else {
+            mBookItemTile.setVisibility(View.INVISIBLE);
             LogUtils.i("当前还没有书");
         }
     }
