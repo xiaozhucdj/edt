@@ -82,10 +82,10 @@
                 android:id="@+id/content_displayer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="15px"
+                android:layout_marginTop="1px"
+                />
                 android:paddingLeft="30px"
                 android:paddingRight="30px"
-                />
             <TextView
                 android:id="@+id/last_page_btn"
                 android:layout_width="39px"

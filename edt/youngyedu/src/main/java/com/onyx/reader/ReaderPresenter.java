@@ -77,7 +77,10 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    setDocumentViewRect(readerView.getContentView().getWidth(), readerView.getContentView().getHeight());
+//                    setDocumentViewRect(readerView.getContentView().getWidth(), readerView.getContentView().getHeight());
+                    int h = 920;
+                    int w = 960;
+                    setDocumentViewRect(w, h);
                 } else {
                     readerView.showThrowable(throwable);
                 }

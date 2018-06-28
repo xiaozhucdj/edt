@@ -95,11 +95,11 @@
             android:id="@+id/content_displayer"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_marginTop="15px"
+            android:layout_marginTop="1px"
             android:layout_weight="1"
+            />
             android:paddingLeft="30px"
             android:paddingRight="30px"
-            />
         <com.yougy.anwser.PageBtnBar
             android:id="@+id/page_btn_bar"
             android:layout_width="match_parent"

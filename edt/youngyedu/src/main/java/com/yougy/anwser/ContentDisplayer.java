@@ -143,6 +143,7 @@ public class ContentDisplayer extends RelativeLayout {
         addView(picImageView , params);
 
         pdfImageView = new ImageView(getContext());
+        pdfImageView.setScaleType(ImageView.ScaleType.MATRIX);
         params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(BELOW , subTextview.getId());
         addView(pdfImageView , params);
