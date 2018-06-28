@@ -5,6 +5,8 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -48,6 +50,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
@@ -207,6 +210,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private Boolean btnLocked = false;
 
+    private boolean isTimerWork = false; //是否定时作业
+    private int timeSpace = 10000;  // 定时时间
+    private long startTime = 0;// 开始时间
+    private long residueTime; //剩余时间
+    private boolean isAutoSubmit = false; //是否到时间自动提交
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_homework);
@@ -216,7 +225,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void init() {
 
         examId = getIntent().getStringExtra("examId");
-
         if (TextUtils.isEmpty(examId)) {
             ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
             mIsFinish = true;
@@ -225,6 +233,81 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         examName = getIntent().getStringExtra("examName");
         tvTitle.setText(examName);
+
+        isTimerWork = getIntent().getBooleanExtra("isTimerWork", false);
+        if (isTimerWork) {
+            judgeWorkIsEnd();
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isAutoSubmit) {
+            YoungyApplicationManager.getMainThreadHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    autoSubmitHomeWork();
+                }
+            }, 2500);
+        }
+    }
+
+    /**
+     * 判断定时作业是否到时间  未到时间继续 到时间自动提交作业
+     */
+    private void judgeWorkIsEnd () {
+        SharedPreferencesUtil sharedPreferencesUtil = SharedPreferencesUtil.getSpUtil();
+        startTime  = sharedPreferencesUtil.getLong("startWorkTime" + "_" + examId, 0);
+        long currentTime = System.currentTimeMillis();
+        LogUtils.d("timerWork init startTime :"  + startTime);
+        if (startTime == 0 || (currentTime - startTime > 0 &&  currentTime -  startTime < timeSpace)) {
+            if (startTime == 0) {//记录开始时间
+                startTime =   System.currentTimeMillis();
+                sharedPreferencesUtil.putLong("startWorkTime" + "_" + examId, startTime);
+                residueTime = timeSpace;
+            } else {
+                residueTime = timeSpace - (currentTime - startTime);
+            }
+            //继续作业
+            LogUtils.d("timerWork init continue ....");
+            startTimerTask();
+        } else {
+            //作业到时间  自动提交
+            LogUtils.d("timerWork init submit ....");
+           isAutoSubmit  = true;
+        }
+    }
+
+    /**
+     * 开始计时任务
+     */
+    private synchronized void startTimerTask () {
+        timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+                .start(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer times) {
+
+                        if ( residueTime < 1000) {
+                            residueTime = 0;
+                            autoSubmitHomeWork();
+                            timedTask.stop();
+                        } else {
+                            residueTime -= 1000;
+                        }
+                        refreshTime(residueTime);
+                    }
+                });
+    }
+
+
+    /**
+     * 时间到了自动提交任务
+     */
+    private void autoSubmitHomeWork () {
+        //是否要提示：
+        getUpLoadInfo();
     }
 
     @Override
@@ -637,14 +720,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
             return;
         }
-
-        timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
-                .start(new Action1<Integer>() {
-                    @Override
-                    public void call(Integer times) {
-                        refreshTime();
-                    }
-                });
+        if (!isTimerWork) {
+            timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+                    .start(new Action1<Integer>() {
+                        @Override
+                        public void call(Integer times) {
+                            refreshTime();
+                        }
+                    });
+        }
     }
 
     private void refreshTime() {
@@ -652,6 +736,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
+    private void refreshTime(long time) {
+        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(time) + ")");
+    }
 
     /**
      * 设置选择题的结果界面
@@ -989,12 +1076,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
 
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）
-        DataCacheUtils.putObject(this, examId + "_" + position + "_bytes_list", bytesList);
-        DataCacheUtils.putObject(this, examId + "_" + position + "_caogao_bytes_list", cgBytes);
+        DataCacheUtils.putObject(WriteHomeWorkActivity.this, examId + "_" + position + "_bytes_list", bytesList);
+        DataCacheUtils.putObject(WriteHomeWorkActivity.this, examId + "_" + position + "_caogao_bytes_list", cgBytes);
         //保存待上传图片，用于上传
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
         getSpUtil().setDataList(examId + "_" + position + "_judge_list", judgeAnswerList);
+
 
 
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
@@ -1103,7 +1191,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
      */
     public void upLoadPic(STSbean stSbean) {
 
-
         String endpoint = Commons.ENDPOINT;
 
 
@@ -1128,7 +1215,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
         Observable.create(new Observable.OnSubscribe<Object>() {
             @Override
             public void call(Subscriber<? super Object> subscriber) {
-
 
                 for (int i = 0; i < homeWorkPageSize; i++) {
 
@@ -1258,6 +1344,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                     @Override
                     public void onNext(Object o) {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
                     }
                 });
 
@@ -1268,7 +1358,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 将上传信息提交给服务器
      */
     private void writeInfoToS() {
-
         String content = new Gson().toJson(homeWorkResultbeanList);
 
         NetWorkManager.postReply(SpUtils.getUserId() + "", content)
@@ -1665,8 +1754,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (!mIsFinish)
+        if (!mIsFinish) {
             tvSaveHomework.callOnClick();
+        }
+        if (isTimerWork) {
+           saveLastHomeWorkData(showHomeWorkPosition, false);
+        }
     }
 
     @Override

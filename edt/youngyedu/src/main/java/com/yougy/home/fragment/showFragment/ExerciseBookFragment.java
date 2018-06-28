@@ -60,6 +60,8 @@ public class ExerciseBookFragment extends BFragment {
     ArrayList<HomeworkSummary> waitForCheckList = new ArrayList<HomeworkSummary>();
     ArrayList<HomeworkSummary> checkedList = new ArrayList<HomeworkSummary>();
 
+    private boolean currentIsHomework = true;//家庭作业
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -158,6 +160,8 @@ public class ExerciseBookFragment extends BFragment {
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
                         intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
                         intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
+                        //传参是否定时作业
+//                        intent.putExtra("isTimerWork",true);
                         startActivity(intent);
                         break;
                 }
@@ -246,6 +250,17 @@ public class ExerciseBookFragment extends BFragment {
                 if (message.getAttachment() instanceof NeedRefreshHomeworkAttachment){
                     refreshData();
                 }
+            }
+        });
+
+        //课堂作业和家庭作业切换
+        binding.enterSwitchWorkMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //直接设置刷新适配器数据
+                binding.enterSwitchWorkMode.setText("进入家庭作业");
+                currentIsHomework = !currentIsHomework;
+                refreshData();
             }
         });
         return binding.getRoot();
