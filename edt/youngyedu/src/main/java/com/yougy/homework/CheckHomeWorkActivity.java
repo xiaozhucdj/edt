@@ -616,25 +616,27 @@ public class CheckHomeWorkActivity extends BaseActivity {
     }
 
     private void saveCheckData() {
-        if (bytesList.size() == 0) {
-            return;
-        }
-        if (pathList.size() == 0) {
-            return;
-        }
-        //保存笔记
-        bytesList.set(currentShowReplyPageIndex, mNbvAnswerBoard.bitmap2Bytes());
-        //保存图片
-//        pathList.set(currentShowReplyPageIndex, saveBitmapToFile(saveScreenBitmap(), examId + "_" + questionReplyDetail.getReplyId() + "_" + currentShowReplyPageIndex));
-        String fileName = pathList.get(currentShowReplyPageIndex);
-        if (fileName.contains("/")) {
-            fileName = fileName.substring(fileName.lastIndexOf("/"));
-        }
-        String filePath = saveBitmapToFile(saveScreenBitmap(), fileName);
-        pathList.set(currentShowReplyPageIndex, filePath);
-        //清除当前页面笔记
-        mNbvAnswerBoard.clearAll();
+        synchronized (this) {
 
+            if (bytesList.size() == 0) {
+                return;
+            }
+            if (pathList.size() == 0) {
+                return;
+            }
+            //保存笔记
+            bytesList.set(currentShowReplyPageIndex, mNbvAnswerBoard.bitmap2Bytes());
+            //保存图片
+//        pathList.set(currentShowReplyPageIndex, saveBitmapToFile(saveScreenBitmap(), examId + "_" + questionReplyDetail.getReplyId() + "_" + currentShowReplyPageIndex));
+            String fileName = pathList.get(currentShowReplyPageIndex);
+            if (fileName.contains("/")) {
+                fileName = fileName.substring(fileName.lastIndexOf("/"));
+            }
+            String filePath = saveBitmapToFile(saveScreenBitmap(), fileName);
+            pathList.set(currentShowReplyPageIndex, filePath);
+            //清除当前页面笔记
+            mNbvAnswerBoard.clearAll();
+        }
     }
 
     //展示之前保存的笔记数据
