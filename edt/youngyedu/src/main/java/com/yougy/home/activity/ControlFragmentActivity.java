@@ -157,7 +157,11 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     private BFragment mFragment;
     private TextBookFragment mTextBookFragment;
     private HandleOnyxReaderFragment mHandleOnyxReader;
-
+    private ExerciseBookFragment mExerciseBookFragment;
+    /**
+     * 跳转至笔记本界面
+     */
+    private NoteBookFragment mNoteBookFragment;
     private void toTextBookFragment() {
         //跳转判断条件 根据服务器接口定义
         LogUtils.i("mBookId===" + mBookId);
@@ -210,11 +214,6 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         }
     }
 
-    /**
-     * 跳转至笔记本界面
-     */
-    private NoteBookFragment mNoteBookFragment;
-
     private void toNoteBookFragment() {
         if (mNoteId > 0 || mNoteMark > 0) {
             File file;
@@ -247,18 +246,13 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
                 ft.hide(mFragment);
             }
 
-          if (mExerciseBookFragment != null) {
-                ft.hide(mExerciseBookFragment);
-            }
+//          if (mExerciseBookFragment != null) {
+//                ft.hide(mExerciseBookFragment);
+//            }
             mFragment = mNoteBookFragment;
             ft.commit();
         }
     }
-
-    /**
-     * 跳转至作业界面
-     */
-    private ExerciseBookFragment mExerciseBookFragment;
 
     private void toExerciseBookFragment() {
         FragmentManager fm = getSupportFragmentManager();
@@ -270,9 +264,10 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         } else {
             ft.show(mExerciseBookFragment);
         }
-        if (mFragment != null) {
+        if (mFragment != null && !(mFragment instanceof ExerciseBookFragment)) {
             ft.hide(mFragment);
         }
+        mFragment = mExerciseBookFragment;
         ft.commit();
     }
 
