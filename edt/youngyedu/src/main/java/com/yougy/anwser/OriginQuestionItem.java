@@ -92,10 +92,17 @@ public class OriginQuestionItem {
                         } else if (questionUrl.endsWith(".pdf")) {
                             if ("ATCH/PDF_COLOR".equals(format)) {
                                 questionContent = new Content_new<String>(Content_new.Type.PDF, 1, questionUrl, questionTypeString);
-//                            questionContent = new Content_new<String>(Content_new.Type.PDF , 1 , "http://ocghxr9lf.bkt.clouddn.com/2.pdf" , questionTypeString);
                                 //暂时只取第一个值,其他值忽略
                                 break;
                             }
+
+                            if ("ATCH/PDF".equals(format)) {
+                                if (questionContent == null) {
+                                    questionContent = new Content_new<String>(Content_new.Type.PDF, 1, questionUrl, questionTypeString);
+                                    //暂时只取第一个值,其他值忽略
+                                }
+                            }
+
                         }
                     }
                 } else if (format.equals("TEXT")) {
@@ -152,6 +159,11 @@ public class OriginQuestionItem {
                                 answerContent = new Content_new<String>(Content_new.Type.PDF, 1, answerUrl, answerType);
                                 //暂时只取第一个值,其他值忽略
                                 break;
+                            }
+                            if ("ATCH/PDF".equals(format)) {
+                                if (answerContent == null) {
+                                    answerContent = new Content_new<String>(Content_new.Type.PDF, 1, answerUrl, answerType);
+                                }
                             }
                         }
                     }
@@ -222,6 +234,12 @@ public class OriginQuestionItem {
                                     analysisContent = new Content_new(Content_new.Type.PDF, 1, analysisUrl, null);
                                     //暂时只取第一个值,其他值忽略
                                     break;
+                                }
+                                if ("ATCH/PDF".equals(notationFormat)) {
+                                    if (analysisContent == null) {
+                                        analysisContent = new Content_new(Content_new.Type.PDF, 1, analysisUrl, null);
+                                        //暂时只取第一个值,其他值忽略
+                                    }
                                 }
                             }
                         }
