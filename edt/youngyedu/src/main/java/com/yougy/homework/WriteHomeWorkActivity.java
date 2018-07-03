@@ -595,7 +595,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 bytesList.set(saveQuestionPage, tmpBytes1);
             }
             //是否是选择题。都需要截屏保存图片
-            pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
+            pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
         }
 
         mNbvAnswerBoard.clearAll();
@@ -1069,7 +1069,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
         }
         //是否是选择题。都需要截屏保存图片
-        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + position + "_" + saveQuestionPage));
+        pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap(), examId + "_" + position + "_" + saveQuestionPage));
         if (clear) {
             mNbvAnswerBoard.clearAll();
         }
@@ -1277,6 +1277,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
                         homeWorkResultbean.setTxtContent(tmpJudgeAnswerList.size() > 0 ? tmpJudgeAnswerList : tmpCheckedAnswerList);
+                        homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
 
@@ -1294,7 +1295,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setExamId(Integer.parseInt(examId));
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
-
+                        homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
                     }
