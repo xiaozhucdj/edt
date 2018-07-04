@@ -1453,7 +1453,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            bitmap.recycle();
+//            bitmap.recycle();
         }
         return f.getAbsolutePath();
     }
