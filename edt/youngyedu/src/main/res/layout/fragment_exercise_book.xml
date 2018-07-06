@@ -61,9 +61,8 @@
             >
             <LinearLayout
                 android:id="@+id/doing_homework_btn"
-                android:layout_width="0px"
+                android:layout_width="150px"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:background="@drawable/btn_bg_selector_white_blue"
@@ -90,9 +89,8 @@
                 android:background="@color/black"/>
             <LinearLayout
                 android:id="@+id/wait_for_check_btn"
-                android:layout_width="0px"
+                android:layout_width="150px"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:background="@drawable/btn_bg_selector_white_blue"
@@ -119,9 +117,8 @@
                 android:background="@color/black"/>
             <LinearLayout
                 android:id="@+id/has_checked_btn"
-                android:layout_width="0px"
+                android:layout_width="150px"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:background="@drawable/btn_bg_selector_white_blue"
@@ -142,6 +139,20 @@
                     android:visibility="gone"
                     />
             </LinearLayout>
+            <View
+                android:layout_width="2px"
+                android:layout_height="match_parent"
+                android:background="@color/black"/>
+
+            <TextView
+                android:id="@+id/toggle_homework"
+                android:layout_width="200px"
+                android:layout_height="60px"
+                android:gravity="center"
+                android:layout_marginLeft="260px"
+                android:textColor="@color/background_black"
+                android:textSize="28px"
+                android:text="进入课堂作业"/>
         </LinearLayout>
         <View android:layout_width="match_parent" android:layout_height="2px" android:background="@color/black"
             android:layout_below="@id/status_switch_bar"/>

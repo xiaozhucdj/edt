@@ -1,7 +1,6 @@
 package com.yougy.homework;
 
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +36,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
     ArrayList<QuestionReplySummary> allReplyList = new ArrayList<QuestionReplySummary>();
     QuestionReplyDetail data;
     int examId;
-
+    private boolean isScoring;
     int currentShowQuestionPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
     private String questionType;
@@ -51,6 +50,12 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        isScoring = getIntent().getBooleanExtra("isScoring", false);
+        if (isScoring) {
+            binding.scoreLayout.setVisibility(View.VISIBLE);
+        } else {
+            binding.scoreLayout.setVisibility(View.GONE);
+        }
         binding.titleTv.setText(getIntent().getStringExtra("examName"));
         examId = getIntent().getIntExtra("examId" , -1);
         currentShow = getIntent().getParcelableExtra("toShow");
@@ -133,6 +138,10 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
                                 binding.scoreIconImv.setImageResource(R.drawable.icon_half_correct_1);
                                 break;
                         }
+                        if (isScoring){
+                            binding.textScoreDesc.setText(" " + currentShow.getReplyScore() + "分");
+                        }
+
                         if (data.getParsedReplyCommentList().size() == 0){
                             binding.showCommentBtn.setVisibility(View.GONE);
                         }

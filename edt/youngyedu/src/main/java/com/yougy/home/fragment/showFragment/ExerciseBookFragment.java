@@ -27,7 +27,6 @@ import com.yougy.homework.CheckedHomeworkOverviewActivity;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
-import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.mistake_note.BookStructureActivity;
 import com.yougy.message.YXClient;
@@ -144,6 +143,8 @@ public class ExerciseBookFragment extends BFragment {
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                             intent.putExtra("examId", holder.getData().getExam());
                             intent.putExtra("examName", holder.getData().getExtra().getName());
+                            //是否为计分作业
+//                            intent.putExtra("isScoring", true);
                             startActivity(intent);
                         }
                         break;
@@ -171,7 +172,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 currentStatus = STATUS.DOING;
-                binding.mainRecyclerview.setCurrentPage(1);
+                binding.mainRecyclerview.setCurrentPage(0);
                 binding.mainRecyclerview.notifyDataSetChanged();
                 binding.doingHomeworkBtn.setSelected(true);
                 binding.waitForCheckBtn.setSelected(false);
@@ -183,7 +184,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 currentStatus = STATUS.WAIT_FOR_CHECK;
-                binding.mainRecyclerview.setCurrentPage(1);
+                binding.mainRecyclerview.setCurrentPage(0);
                 binding.mainRecyclerview.notifyDataSetChanged();
                 binding.doingHomeworkBtn.setSelected(false);
                 binding.waitForCheckBtn.setSelected(true);
@@ -195,7 +196,7 @@ public class ExerciseBookFragment extends BFragment {
             @Override
             public void onClick(View v) {
                 currentStatus = STATUS.CHECKED;
-                binding.mainRecyclerview.setCurrentPage(1);
+                binding.mainRecyclerview.setCurrentPage(0);
                 binding.mainRecyclerview.notifyDataSetChanged();
                 binding.doingHomeworkBtn.setSelected(false);
                 binding.waitForCheckBtn.setSelected(false);
@@ -254,15 +255,20 @@ public class ExerciseBookFragment extends BFragment {
         });
 
         //课堂作业和家庭作业切换
-//        binding.enterSwitchWorkMode.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //直接设置刷新适配器数据
-//                binding.enterSwitchWorkMode.setText("进入家庭作业");
-//                currentIsHomework = !currentIsHomework;
-//                refreshData();
-//            }
-//        });
+        binding.toggleHomework.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //直接设置刷新适配器数据
+                if (currentIsHomework) {
+                    binding.toggleHomework.setText("进入家庭作业");
+                    currentIsHomework = false;
+                } else {
+                    binding.toggleHomework.setText("进入课堂作业");
+                    currentIsHomework = true;
+                }
+                refreshData();
+            }
+        });
         return binding.getRoot();
     }
 
@@ -355,7 +361,7 @@ public class ExerciseBookFragment extends BFragment {
                                 }
                             }
                         }
-                        binding.mainRecyclerview.setCurrentPage(1);
+                        binding.mainRecyclerview.setCurrentPage(0);
                         binding.mainRecyclerview.notifyDataSetChanged();
                         switch (currentStatus){
                             case CHECKED:

@@ -33,6 +33,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
     final static String CLUE_SEND_REPLY = "sendReply";
     final static String CLUE_HOMEWORK_REMIND = "remindDoHomework";
     final static String CLUE_NEED_REFRESH_HOMEWORK = "needRefreshHomework";
+    final static String CLUE_SEAT_HOMEWORK = "seatHomework";
 
 
     // 根据解析到的消息类型，确定附件对象类型
@@ -71,6 +72,9 @@ public class CustomAttachParser implements MsgAttachmentParser {
                     break;
                 case CLUE_NEED_REFRESH_HOMEWORK:
                     attachment = new NeedRefreshHomeworkAttachment(clue , version);
+                    break;
+                case CLUE_SEAT_HOMEWORK:
+                    attachment = new SeatWorkAttachment(clue , version);
                     break;
             }
             if (attachment != null) {

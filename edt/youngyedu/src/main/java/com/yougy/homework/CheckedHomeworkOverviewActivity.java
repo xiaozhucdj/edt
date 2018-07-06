@@ -29,6 +29,8 @@ import rx.functions.Action1;
  * Created by FH on 2017/11/6.
  * <p>
  * 单个已批改作业整体概览界面,统计正确率,每道题的对错,等等
+ *
+ * modify by zhangyc on 2018/0704  添加计分作业显示逻辑
  */
 
 public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
@@ -36,6 +38,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     ArrayList<QuestionReplySummary> replyList = new ArrayList<QuestionReplySummary>();
     int examId;
     String examName;
+
+    private boolean isScoring = false;// 是否计分作业
 
     @Override
     protected void setContentView() {
@@ -52,13 +56,14 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             finish();
         }
         examName = getIntent().getStringExtra("examName");
+        isScoring = getIntent().getBooleanExtra("isScoring", false);
         binding.titleTv.setText(examName);
     }
 
     @Override
     protected void initLayout() {
-        binding.mainRecyclerview.setMaxItemNumInOnePage(36);
-        binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6) {
+        binding.mainRecyclerview.setMaxItemNumInOnePage(30);
+        binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 5) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -90,6 +95,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 intent.putExtra("toShow", holder.getData());
                 intent.putExtra("examId", examId);
                 intent.putParcelableArrayListExtra("all", replyList);
+                intent.putExtra("isScoring", isScoring);
                 startActivity(intent);
             }
         });
@@ -128,15 +134,30 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
      * 更新圆形进度条的文字
      */
     private void refreshCircleProgressBar() {
-        float f = 0;
-        for (QuestionReplySummary reply : replyList) {
-            if (reply.getReplyScore() == 100) {
-                f++;
+        if (isScoring) {
+            int score = 0;
+            for (QuestionReplySummary reply : replyList) {
+                score += reply.getReplyScore();
             }
+            binding.circleProgressBar.setProgress(Integer.valueOf(SizeUtil.doScale(score, 0)));
+            binding.circleProgressBar.setIsDrawCenterText(false);
+            binding.textScore.setText(String.valueOf(score));
+            binding.centerTextLayout.setVisibility(View.VISIBLE);
+//            binding.circleProgressBar.setText(SizeUtil.doScale(score, 0) + "%");
+        } else { //不计分作业
+            float f = 0;
+            for (QuestionReplySummary reply : replyList) {
+                if (reply.getReplyScore() == 100) {
+                    f++;
+                }
+            }
+            f = f * 100 / replyList.size();
+            binding.circleProgressBar.setProgress(Integer.valueOf(SizeUtil.doScale(f, 0)));
+            binding.circleProgressBar.setText(SizeUtil.doScale(f, 0) + "%");
+            binding.circleProgressBar.setIsDrawCenterText(true);
+            binding.centerTextLayout.setVisibility(View.GONE);
         }
-        f = f * 100 / replyList.size();
-        binding.circleProgressBar.setProgress(Integer.valueOf(SizeUtil.doScale(f, 0)));
-        binding.circleProgressBar.setText(SizeUtil.doScale(f, 0) + "%");
+
     }
 
     @Override
@@ -164,6 +185,12 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 itemBinding.icon.setBackgroundResource(R.drawable.icon_correct);
             } else {
                 itemBinding.icon.setBackgroundResource(R.drawable.icon_half_correct);
+            }
+            if (isScoring) {//计分作业
+                itemBinding.scoreText.setText(data.getReplyScore() + "分");
+                itemBinding.scoreText.setVisibility(View.VISIBLE);
+            } else{
+                itemBinding.scoreText.setVisibility(View.GONE);
             }
             return this;
         }

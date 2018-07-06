@@ -65,6 +65,30 @@
                 android:layout_height="28px"
                 android:layout_marginLeft="21px"
                 />
+
+            <LinearLayout
+                android:id="@+id/score_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10px"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/background_black"
+                    android:textSize="24px"
+                    android:text="得分 : "/>
+
+                <TextView
+                    android:id="@+id/text_score_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/background_black"
+                    android:textSize="24px"
+                    android:text="10 分"/>
+            </LinearLayout>
+
+
             <!--占位符-->
             <View
                 android:layout_width="0dp"

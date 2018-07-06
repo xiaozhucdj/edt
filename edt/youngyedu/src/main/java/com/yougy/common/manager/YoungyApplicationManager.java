@@ -27,6 +27,8 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.UIUtils;
+import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.AskQuestionAttachment;
@@ -34,6 +36,7 @@ import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
+import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.order.LockerActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
@@ -238,6 +241,19 @@ public class YoungyApplicationManager extends LitePalApplication {
                             newIntent.putExtra("examId", ((RetryAskQuestionAttachment) message.getAttachment()).examId);
                             startActivity(newIntent);
                         }
+                    } else if (message.getAttachment() instanceof SeatWorkAttachment) {
+                        //判断是否在写作业界面
+                        if (UIUtils.getTopActivityName(getApplicationContext()).contains("WriteHomeWorkActivity")) {
+                            return;
+                        }
+                        SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
+                        Intent intent = new Intent(getApplicationContext(), WriteHomeWorkActivity.class);
+                        intent.putExtra("examId", attachment.examId);
+                        intent.putExtra("examName", attachment.examName);
+                        intent.putExtra("mHomewrokId", attachment.mHomewrokId);
+                        //传参是否定时作业
+//                        intent.putExtra("isTimerWork",true);
+                        startActivity(intent);
                     }
                 }
             });

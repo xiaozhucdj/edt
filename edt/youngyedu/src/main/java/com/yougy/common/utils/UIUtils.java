@@ -1,5 +1,7 @@
 package com.yougy.common.utils;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -7,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
@@ -21,6 +24,7 @@ import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.view.Toaster;
 import com.zhy.autolayout.utils.AutoUtils;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -447,4 +451,15 @@ public class UIUtils {
             }
         }
     }
+
+    public static String getTopActivityName(Context context) {
+        ActivityManager manager = ((ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE));
+        ActivityManager.RunningTaskInfo runningTaskInfo = manager.getRunningTasks(1).get(0);
+        String topActivityName = "";
+        if (runningTaskInfo!=null) {
+            topActivityName = runningTaskInfo.topActivity.getClassName();
+        }
+        return topActivityName;
+    }
+
 }
