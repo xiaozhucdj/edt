@@ -256,7 +256,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     Intent intent = new Intent(WriteHomeWorkActivity.this, WriteHomeWorkActivity.class);
                     intent.putExtra("examId", attachment.examId);
                     intent.putExtra("examName", attachment.examName);
-                    intent.putExtra("mHomewrokId", attachment.mHomewrokId);
                     //传参是否定时作业
 //                        intent.putExtra("isTimerWork",true);
                     startActivity(intent);
@@ -1397,21 +1396,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
 
                         onBackPressed();
-
-//                        NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
-//                            @Override
-//                            public void call(Object o) {
-//
-////                                YoungyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
-//                                onBackPressed();
-//                            }
-//                        }, new Action1<Throwable>() {
-//                            @Override
-//                            public void call(Throwable throwable) {
-//                                throwable.printStackTrace();
-//                                onBackPressed();
-//                            }
-//                        });
 
                     }
                 }, new Action1<Throwable>() {
