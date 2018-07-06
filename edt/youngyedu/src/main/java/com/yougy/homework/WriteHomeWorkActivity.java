@@ -1,12 +1,11 @@
 package com.yougy.homework;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -33,6 +32,7 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -50,7 +50,6 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
-import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
@@ -61,6 +60,8 @@ import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.message.ListUtil;
+import com.yougy.message.YXClient;
+import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
@@ -238,6 +239,31 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (isTimerWork) {
             judgeWorkIsEnd();
         }
+        initYXMsgListener();
+    }
+
+    /**
+     * 教师端布置作业消息通知  跳转作业界面
+     */
+    private void initYXMsgListener () {
+        YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                if (message.getAttachment() instanceof SeatWorkAttachment){
+                    SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
+                    //启动新的Activity  保存当前
+                    saveLastHomeWorkData(showHomeWorkPosition, false);
+                    Intent intent = new Intent(WriteHomeWorkActivity.this, WriteHomeWorkActivity.class);
+                    intent.putExtra("examId", attachment.examId);
+                    intent.putExtra("examName", attachment.examName);
+                    intent.putExtra("mHomewrokId", attachment.mHomewrokId);
+                    //传参是否定时作业
+//                        intent.putExtra("isTimerWork",true);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
     }
 
 
