@@ -14,6 +14,15 @@ public class HomeWorkResultbean {
     private List<String> txtContent;
     private ArrayList<STSResultbean> picContent;
     private String useTime;
+    private String replyCreateTime;
+
+    public String getReplyCreateTime() {
+        return replyCreateTime;
+    }
+
+    public void setReplyCreateTime(String replyCreateTime) {
+        this.replyCreateTime = replyCreateTime;
+    }
 
     public List<String> getTxtContent() {
         return txtContent;
