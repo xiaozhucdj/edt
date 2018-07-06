@@ -7,6 +7,7 @@ import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.global.Commons;
+import com.yougy.common.new_network.NetConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class QuestionReplyDetail {
 
 
     private List<Content_new> parsedReplyContentList = new ArrayList<Content_new>();
-    private List<String> parsedReplyCommentList = new ArrayList<String>();
+    private List<Content_new> parsedReplyCommentList = new ArrayList<Content_new>();
     private ParsedQuestionItem parsedQuestionItem;
 
     public String getReplyStatus() {
@@ -176,11 +177,11 @@ public class QuestionReplyDetail {
         return this;
     }
 
-    public List<String> getParsedReplyCommentList() {
+    public List<Content_new> getParsedReplyCommentList() {
         return parsedReplyCommentList;
     }
 
-    public QuestionReplyDetail setParsedReplyCommentList(List<String> parsedReplyCommentList) {
+    public QuestionReplyDetail setParsedReplyCommentList(List<Content_new> parsedReplyCommentList) {
         this.parsedReplyCommentList = parsedReplyCommentList;
         return this;
     }
@@ -250,12 +251,56 @@ public class QuestionReplyDetail {
             }
         }
 
-        for (LinkedTreeMap linkedTreeMap : replyComment) {
+       /* for (LinkedTreeMap linkedTreeMap : replyComment) {
             String commentStr = (String) linkedTreeMap.get("value");
             if (!TextUtils.isEmpty(commentStr)){
                 parsedReplyCommentList.add(commentStr);
             }
+        }*/
+
+        for (LinkedTreeMap linkedTreeMap : replyComment) {
+            String format = (String) linkedTreeMap.get("format");
+            if (format.startsWith("ATCH/")) {
+                if (linkedTreeMap.get("remote") != null
+                        && !TextUtils.isEmpty((String) linkedTreeMap.get("remote"))) {
+                    String url = "http://" + linkedTreeMap.get("bucket") + Commons.ANSWER_PIC_HOST + linkedTreeMap.get("remote");
+                    if (url.endsWith(".gif")
+                            || url.endsWith(".jpg")
+                            || url.endsWith(".png")
+                            ) {
+                        parsedReplyCommentList.add(
+                                new Content_new(Content_new.Type.IMG_URL
+                                        , ((Double) linkedTreeMap.get("version"))
+                                        , url
+                                        , null)
+                        );
+                    } else if (url.endsWith(".htm")) {
+                        parsedReplyCommentList.add(
+                                new Content_new(Content_new.Type.HTML_URL
+                                        , ((Double) linkedTreeMap.get("version"))
+                                        , url
+                                        , null)
+                        );
+                    } else if (url.endsWith(".pdf")) {
+                        if ("ATCH/PDF_COLOR".equals(format)) {
+                            parsedReplyCommentList.add(
+                                    new Content_new(Content_new.Type.PDF
+                                            , ((Double) linkedTreeMap.get("version"))
+                                            , url
+                                            , null)
+                            );
+                        }
+                    }
+                }
+            } else if (format.equals("TEXT")) {
+                parsedReplyCommentList.add(
+                        new Content_new(Content_new.Type.TEXT
+                                , ((Double) linkedTreeMap.get("version"))
+                                , ((String) linkedTreeMap.get("value"))
+                                , null));
+            }
         }
+
 
         parsedQuestionItem = replyItemContent.parseQuestion();
     }

@@ -304,7 +304,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         }
     }
     public void showComment(View view){
-        String commentStr = "";
+        /*String commentStr = "";
         for (String comment : data.getParsedReplyCommentList()) {
             if (!TextUtils.isEmpty(comment)){
                 commentStr+=comment;
@@ -313,7 +313,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         if (!TextUtils.isEmpty(commentStr)){
             binding.commentTv.setText(commentStr);
             binding.commentDialog.setVisibility(View.VISIBLE);
-        }
+        }*/
     }
 
     public void dismissComment(View view){

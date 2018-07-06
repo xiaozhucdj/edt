@@ -90,21 +90,11 @@
             android:orientation="horizontal">
 
 
-            <RelativeLayout
-                android:id="@+id/rl_answer"
+            <com.yougy.anwser.WriteableContentDisplayer
+                android:id="@+id/wcd_content_displayer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="match_parent" />
 
-                >
-                android:layout_marginLeft="60px"
-                android:layout_marginRight="60px"
-
-                <com.yougy.anwser.ContentDisplayer
-                    android:id="@+id/content_displayer"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </RelativeLayout>
 
         </RelativeLayout>
     </LinearLayout>

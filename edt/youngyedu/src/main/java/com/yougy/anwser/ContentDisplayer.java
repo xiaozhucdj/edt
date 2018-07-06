@@ -350,7 +350,7 @@ public class ContentDisplayer extends RelativeLayout {
                         needRefresh = false;
                     }
                 }
-            }).into(pdfImageView).toPage(subPageIndex);
+            }).into(pdfImageView,true).toPage(subPageIndex);
         } catch (PlideException e) {
             e.printStackTrace();
             setHintText("题目加载失败:" + e.getMessage() + ",点击重新加载...");

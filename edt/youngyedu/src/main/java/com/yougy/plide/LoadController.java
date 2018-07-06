@@ -128,7 +128,7 @@ public class LoadController implements ReaderContract.ReaderView{
     protected LoadController doLoadMainLogic(String url , LoadListener loadListener , Context context){
         LogUtils.e("FHHHH" , "doLoadMainLogic url = " + url + " loadListener " + loadListener + " context " + context + " threadId " + Thread.currentThread().getId());
         LogUtils.e("FHHHH" , "-----------------------------!!!!!!!!!!!!!!---------------setImgview Null!!!!!!!");
-        mImgView.setImageBitmap(null);
+//        mImgView.setImageBitmap(null);
         this.mContext = context;
         mUrl = url;
         if (loadListener != null){

@@ -65,7 +65,7 @@ import rx.Observable;
  */
 public final class NetWorkManager {
 
-    private static final int HTTP_CONNECTION_TIMEOUT =15 * 1000;
+    private static final int HTTP_CONNECTION_TIMEOUT = 15 * 1000;
 
     private ServerApi mServerApi;
 
@@ -202,12 +202,14 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
     public Observable<Object> updateToken(String userId) {
         LogUtils.e("FH", "!!!!!调用ServerApi更新云信token:updateToken");
         return getServerApi().updateToken(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
     public static Observable<List<DownloadInfo>> downloadBook(String userId, String bookId) {
         LogUtils.e("FH", "!!!!!调用ServerApi下载图书:downloadBook");
         return getInstance().getServerApi().downloadBook(userId, bookId)
@@ -340,9 +342,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Pair<Integer , List<OrderSummary>>> queryMyOrderList(String orderOwner , Integer ps ,Integer pn) {
+    public static Observable<Pair<Integer, List<OrderSummary>>> queryMyOrderList(String orderOwner, Integer ps, Integer pn) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单");
-        return getInstance().getServerApi().queryOrderSole(orderOwner , ps , pn)
+        return getInstance().getServerApi().queryOrderSole(orderOwner, ps, pn)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult_new(loadingProgressDialog));
     }
@@ -403,14 +405,14 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Student>> login(NewLoginReq req){
+    public static Observable<List<Student>> login(NewLoginReq req) {
         return getInstance(false).getServerApi().login(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(null));
     }
 
     public static Observable<List<Student>> login(String userName, String userPassword, String userToken, String deviceId, String userId) {
-        return getInstance(false).getServerApi().login(userName,userPassword,userToken,deviceId,userId)
+        return getInstance(false).getServerApi().login(userName, userPassword, userToken, deviceId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(null));
     }
@@ -460,7 +462,7 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> unbindDevice(NewUnBindDeviceReq unBindDeviceReq){
+    public static Observable<Object> unbindDevice(NewUnBindDeviceReq unBindDeviceReq) {
         LogUtils.e("FH", "!!!!!调用ServerApi解绑设备:unbindDevice");
         return getInstance().getServerApi().unbindDevice(unBindDeviceReq)
                 .compose(RxSchedulersHelper.io_main())
@@ -491,65 +493,49 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<STSbean> postCommentRequest(String replyId) {
-        return getInstance().getServerApi().postCommentRequest(replyId)
+    public static Observable<STSbean> postCommentRequest(String replyId, String userId) {
+        return getInstance().getServerApi().postCommentRequest(replyId, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
 
-    public static Observable<List<NoteInfo>> queryNote(NewQueryNoteReq req){
+    public static Observable<List<NoteInfo>> queryNote(NewQueryNoteReq req) {
         return getInstance().getServerApi().queryNote(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
 
-    public static Observable<Object> deleteNote(NewDeleteNoteReq req){
+    public static Observable<Object> deleteNote(NewDeleteNoteReq req) {
         return getInstance().getServerApi().deleteNote(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<PromotionResult>> queryPromotion(PromotionReq req){
+    public static Observable<List<PromotionResult>> queryPromotion(PromotionReq req) {
         return getInstance().getServerApi().queryPromotion(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<InsertNoteId>> insertAllNote(NewInsertAllNoteReq req){
+    public static Observable<List<InsertNoteId>> insertAllNote(NewInsertAllNoteReq req) {
         return getInstance().getServerApi().insertAllNoteApi(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> updateNote(NewUpdateNoteReq req){
+    public static Observable<Object> updateNote(NewUpdateNoteReq req) {
         return getInstance().getServerApi().updateNote(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<com.yougy.init.bean.BookInfo>> getBookShelf(NewBookShelfReq req){
+    public static Observable<List<com.yougy.init.bean.BookInfo>> getBookShelf(NewBookShelfReq req) {
         return getInstance().getServerApi().getBookShelf(req)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -592,13 +578,13 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
     public static Observable<List<BookInfo>> promoteBook(Integer userId, int bookId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取推荐书列表:promoteBook");
         return getInstance().getServerApi().promoteBook(userId, bookId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
-
 
 
 }

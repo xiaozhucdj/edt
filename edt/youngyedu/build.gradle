@@ -132,7 +132,7 @@ dependencies {
     compile 'com.badoo.mobile:android-weak-handler:1.1'
     compile 'com.aliyun.dpa:oss-android-sdk:2.4.3'
     //FH's tools kit
-    compile 'com.frank:etude:1.2.2'
+    compile 'com.frank:etude:1.2.2.1'
     compile 'com.github.anrwatchdog:anrwatchdog:1.3.0'
 
 
