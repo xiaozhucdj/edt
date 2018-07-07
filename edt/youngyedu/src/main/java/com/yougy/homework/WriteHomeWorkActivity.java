@@ -256,7 +256,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     Intent intent = new Intent(WriteHomeWorkActivity.this, WriteHomeWorkActivity.class);
                     intent.putExtra("examId", attachment.examId);
                     intent.putExtra("examName", attachment.examName);
-                    intent.putExtra("mHomewrokId", attachment.mHomewrokId);
                     //传参是否定时作业
 //                        intent.putExtra("isTimerWork",true);
                     startActivity(intent);

@@ -250,7 +250,6 @@ public class YoungyApplicationManager extends LitePalApplication {
                         Intent intent = new Intent(getApplicationContext(), WriteHomeWorkActivity.class);
                         intent.putExtra("examId", attachment.examId);
                         intent.putExtra("examName", attachment.examName);
-                        intent.putExtra("mHomewrokId", attachment.mHomewrokId);
                         //传参是否定时作业
 //                        intent.putExtra("isTimerWork",true);
                         startActivity(intent);
