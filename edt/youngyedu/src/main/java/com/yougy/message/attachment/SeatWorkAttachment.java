@@ -4,31 +4,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @author: zhang yc
- * @create date: 2018/7/2 11:22  课堂作业
- * @class desc:
- * @modifier:
- * @modify date: 2018/7/2 11:22
- * @modify desc:
+ * Created by Administrator on 2018/7/6.
  */
-public class SeatWorkAttachment extends CustomAttachment{
-    final String KEY_EXAM_ID = "examId";
-    final String KEY_EXAM_NAME = "examName";
-    final String KEY_ISTIMER_WORK = "isTimerWork";
 
-    public String examName;
-    public String examId;
-    public boolean isTimerWork;
+public class SeatWorkAttachment extends CustomAttachment {
+    public String examId , examName;
+    public boolean isTimeWork;
+
+    final String KEY_EXAM_ID = "examID";
+    final String KEY_EXAM_NAME = "examName";
+    final String KEY_IS_TIME_LIMITED_WORK = "isTimeLimitedWork";
 
     public SeatWorkAttachment(String clue , double version) {
         super(clue , version);
     }
-
-    public SeatWorkAttachment(String examName, String examId, String mHomewrokId, boolean isTimerWork) {
-        super(CustomAttachParser.CLUE_SEAT_HOMEWORK , 0.1);
-        this.examName = examName;
+    public SeatWorkAttachment(String examId , String examName , boolean isTimeWork) {
+        super(CustomAttachParser.CLUE_SEND_SEATWORK , 1);
         this.examId = examId;
-        this.isTimerWork = isTimerWork;
+        this.examName = examName;
+        this.isTimeWork = isTimeWork;
     }
 
     /**
@@ -36,11 +30,11 @@ public class SeatWorkAttachment extends CustomAttachment{
      * @param data
      */
     @Override
-    protected void parseData(JSONObject data) throws JSONException{
+    protected void parseData(JSONObject data) throws JSONException {
         JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
-        examName = introJsonObj.getString(KEY_EXAM_NAME);
         examId = introJsonObj.getString(KEY_EXAM_ID);
-        isTimerWork = introJsonObj.getBoolean(KEY_ISTIMER_WORK);
+        examName = introJsonObj.getString(KEY_EXAM_NAME);
+        isTimeWork = introJsonObj.getBoolean(KEY_IS_TIME_LIMITED_WORK);
     }
 
     /**
@@ -52,9 +46,9 @@ public class SeatWorkAttachment extends CustomAttachment{
         JSONObject returnJsonObj = new JSONObject();
         JSONObject introJsonObj = new JSONObject();
         try {
-            introJsonObj.put(KEY_EXAM_NAME , examName);
             introJsonObj.put(KEY_EXAM_ID , examId);
-            introJsonObj.put(KEY_ISTIMER_WORK, isTimerWork);
+            introJsonObj.put(KEY_EXAM_NAME , examName);
+            introJsonObj.put(KEY_IS_TIME_LIMITED_WORK , isTimeWork);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
         }
         catch (JSONException e) {

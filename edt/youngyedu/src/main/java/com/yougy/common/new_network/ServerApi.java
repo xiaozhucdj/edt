@@ -399,7 +399,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postCommentRequest"})
-    Observable<BaseResult<STSbean>> postCommentRequest(@Field("replyId") String replyId);
+    Observable<BaseResult<STSbean>> postCommentRequest(@Field("replyId") String replyId, @Field("userId") String userId);
 
     /**
      * 作业评定(结束某个学生的作业,其实就是调了这个接口就会将这个学生这次考试的错题写到错题本里去,不调就不写)

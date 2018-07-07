@@ -5,10 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,14 +29,15 @@ import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.frank.etude.pageBtnBar.PageBtnBar;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
-import com.yougy.anwser.ContentDisplayer;
+import com.google.gson.Gson;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
+import com.yougy.anwser.WriteableContentDisplayer;
+import com.yougy.anwser.WriteableContentDisplayerAdapter;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.popupwindow.PopupMenuManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
@@ -46,10 +47,8 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplyDetail;
-import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomLinearLayoutManager;
-import com.yougy.view.NoteBookView2;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
@@ -89,14 +88,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
     TextView questionBodyBtn;
     @BindView(R.id.analysis_btn)
     TextView analysisBtn;
-    @BindView(R.id.rl_answer)
-    RelativeLayout rlAnswer;
     @BindView(R.id.img_btn_right)
     ImageButton btnRight;
 
 
-    @BindView(R.id.content_displayer)
-    ContentDisplayer contentDisplayer;
+    @BindView(R.id.wcd_content_displayer)
+    WriteableContentDisplayer wcdContentDisplayer;
 
 
     @BindView(R.id.ll_homework_check_option)
@@ -126,7 +123,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     private CustomLinearLayoutManager linearLayoutManager;
 
-    private NoteBookView2 mNbvAnswerBoard;
 
     //模拟一共有多少页
     private int pageSize = 0;
@@ -176,28 +172,32 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void initLayout() {
-        //新建写字板，并添加到界面上
-        rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        wcdContentDisplayer.setContentAdapter(new WriteableContentDisplayerAdapter() {
             @Override
-            public void onGlobalLayout() {
-                rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                mNbvAnswerBoard = new NoteBookView2(CheckHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
-                rlAnswer.addView(mNbvAnswerBoard);
+            public void afterPageCountChanged(String typeKey) {
+                if ((typeKey.equals("question") && questionBodyBtn.isSelected())
+                        || (typeKey.equals("analysis") && analysisBtn.isSelected())) {
+                    pageBtnBar.refreshPageBar();
+                }
             }
-        });
-        contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper() {
+
             @Override
-            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
-                if (typeKey.equals("reply")) {
-                    currentShowReplyPageIndex = selectPageIndex;
-                } else if (typeKey.equals("analysis")) {
-                    currentShowAnalysisPageIndex = selectPageIndex;
-                } else {
-                    currentShowReplyPageIndex = selectPageIndex;
+            public void beforeToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
+
+                //当切换题目时（update新数据）框架会将fromTypeKey置空，将fromPageIndex置为-1，这里这么处理是为了第一次调用topage时（第一次进入题目）不触发保存的逻辑。
+                if (!TextUtils.isEmpty(fromTypeKey) && "question".equals(fromTypeKey)) {
+                    //保存没触发前的界面数据
+                    saveCheckData(fromPageIndex);
+                }
+            }
+
+            @Override
+            public void afterToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
+
+                if (!TextUtils.isEmpty(toTypeKey) && "question".equals(toTypeKey)) {
+                    getShowCheckDate();
                 }
 
-                pageBtnBar.setCurrentSelectPageIndex(selectPageIndex);
-                pageBtnBar.refreshPageBar();
             }
         });
 
@@ -205,14 +205,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
             @Override
             public int getPageBtnCount() {
                 if (questionBodyBtn.isSelected()) {
-
-                    if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
-                        return contentDisplayer.getmContentAdaper().getPageCount("question");
-                    } else {
-                        return contentDisplayer.getmContentAdaper().getPageCount("reply");
-                    }
+                    return wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
                 } else if (analysisBtn.isSelected()) {
-                    return contentDisplayer.getmContentAdaper().getPageCount("analysis");
+                    return wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("analysis");
                 }
                 return 0;
             }
@@ -220,42 +215,31 @@ public class CheckHomeWorkActivity extends BaseActivity {
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
 
-                if (mNbvAnswerBoard != null && mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
-                    mNbvAnswerBoard.leaveScribbleMode(true);
-                }
+                myLeaveScribbleMode();
 
                 if (questionBodyBtn.isSelected()) {
 
-                    //保存没触发前的界面数据
-                    saveCheckData();
-
                     currentShowReplyPageIndex = btnIndex;
-                    if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
-                        contentDisplayer.getmContentAdaper().toPage("question", currentShowReplyPageIndex, false, false);
-                    } else {
-                        contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false, false);
-                    }
-                    getShowCheckDate();
-
+                    wcdContentDisplayer.toPage("question", currentShowReplyPageIndex, true);
 
                 } else if (analysisBtn.isSelected()) {
                     currentShowAnalysisPageIndex = btnIndex;
-                    contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
+                    wcdContentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
                 }
             }
 
         });
 
-        contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
+        wcdContentDisplayer.setmStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
             @Override
-            public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
-                if (questionBodyBtn.isSelected()) {
+            public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
+                /*if (questionBodyBtn.isSelected()) {
                     int replyScore = -1;
                     if (replyScoreList.size() != 0) {
                         replyScore = replyScoreList.get(currentShowQuestionIndex);
                     }
                     if (replyScore == -1) {//没批
-                        if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
+                        if (newStatus == WriteableContentDisplayer.LOADING_STATUS.SUCCESS) {
                             mNbvAnswerBoard.setVisibility(View.VISIBLE);
                         } else {
                             mNbvAnswerBoard.setVisibility(View.GONE);
@@ -266,9 +250,25 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     }
                 } else {
                     mNbvAnswerBoard.setVisibility(View.GONE);
+                }*/
+
+                if (newStatus == WriteableContentDisplayer.LOADING_STATUS.ERROR) {
+                    wcdContentDisplayer.setHintText(errorMsg);
+                } else {
+                    wcdContentDisplayer.setHintText(null);
                 }
             }
         });
+    }
+
+    private void myLeaveScribbleMode() {
+        if (wcdContentDisplayer.getLayer1() != null && wcdContentDisplayer.getLayer1().getVisibility() == View.VISIBLE) {
+            wcdContentDisplayer.getLayer1().leaveScribbleMode(true);
+        }
+        if (wcdContentDisplayer.getLayer2() != null && wcdContentDisplayer.getLayer2().getVisibility() == View.VISIBLE) {
+            wcdContentDisplayer.getLayer2().leaveScribbleMode(true);
+        }
+
     }
 
     @Override
@@ -345,24 +345,20 @@ public class CheckHomeWorkActivity extends BaseActivity {
 //            contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(questionReplyDetail.getParsedQuestionItem().answerContentList));
         } else {
             replyList = (ArrayList<Content_new>) questionReplyDetail.getParsedReplyContentList();
-            contentDisplayer.getmContentAdaper().setSubText(null);
+//            contentDisplayer.getmContentAdaper().setSubText(null);
         }
-        contentDisplayer.getmContentAdaper().updateDataList("reply", replyList);
-        contentDisplayer.getmContentAdaper().updateDataList("analysis", questionReplyDetail.getParsedQuestionItem().analysisContentList);
-        contentDisplayer.getmContentAdaper().updateDataList("question", questionReplyDetail.getParsedQuestionItem().questionContentList);
 
+        pageBtnBar.setCurrentSelectPageIndex(-1);
+        questionBodyBtn.setSelected(true);
+        analysisBtn.setSelected(false);
         currentShowReplyPageIndex = 0;
         currentShowAnalysisPageIndex = 0;
-
-        questionBodyBtn.setSelected(false);
-        onClick(findViewById(R.id.question_body_btn));
 
         int replyScore = replyScoreList.get(currentShowQuestionIndex);
         switch (replyScore) {
             case -1://说明未批改
                 llHomeWorkCheckOption.setVisibility(View.VISIBLE);
                 llCheckAgain.setVisibility(View.GONE);
-                mNbvAnswerBoard.setVisibility(View.VISIBLE);
 
                 break;
             case 0://判错
@@ -371,7 +367,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 ivCheckResult.setImageResource(R.drawable.img_cuowu);
 //                tvCheckResult.setText("错误");
                 tvCheckResult.setText("");
-                mNbvAnswerBoard.setVisibility(View.GONE);
 
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
@@ -386,7 +381,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 ivCheckResult.setImageResource(R.drawable.img_bandui);
 //                tvCheckResult.setText("50%");
                 tvCheckResult.setText("");
-                mNbvAnswerBoard.setVisibility(View.GONE);
 
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
@@ -401,7 +395,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 ivCheckResult.setImageResource(R.drawable.img_zhengque);
                 tvCheckResult.setText("");
 //                tvCheckResult.setText("正确");
-                mNbvAnswerBoard.setVisibility(View.GONE);
 
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
@@ -411,6 +404,16 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 break;
         }
+        setWcdToQuestionMode();
+
+        wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
+        wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
+        } else {
+            wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
+        }
+        wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, replyList);
 
 
         //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
@@ -444,9 +447,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             @Override
             public void onItemClick1(int position) {
 
-                if (mNbvAnswerBoard != null) {
-                    mNbvAnswerBoard.leaveScribbleMode(true);
-                }
+                myLeaveScribbleMode();
 
                 changeHomeWorkCorner(position);
                 refreshLastAndNextQuestionBtns();
@@ -472,9 +473,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (mNbvAnswerBoard != null) {
-            mNbvAnswerBoard.leaveScribbleMode(true);
-        }
+        myLeaveScribbleMode();
         super.onBackPressed();
     }
 
@@ -482,10 +481,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change})
     public void onClick(View view) {
 
-        if (mNbvAnswerBoard != null) {
-            mNbvAnswerBoard.leaveScribbleMode(true);
-        }
-        mNbvAnswerBoard.invalidate();
+        myLeaveScribbleMode();
         switch (view.getId()) {
             case R.id.tv_last_homework:
 
@@ -504,7 +500,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             case R.id.tv_homework_error:
                 score = 0;
                 //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData();
+                saveCheckData(currentShowReplyPageIndex);
 
                 //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                 replyScoreList.set(currentShowQuestionIndex, score);
@@ -515,7 +511,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             case R.id.tv_homework_half_right:
                 score = 50;
                 //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData();
+                saveCheckData(currentShowReplyPageIndex);
 
                 //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                 replyScoreList.set(currentShowQuestionIndex, score);
@@ -525,7 +521,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             case R.id.tv_homework_right:
                 score = 100;
                 //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData();
+                saveCheckData(currentShowReplyPageIndex);
 
                 //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                 replyScoreList.set(currentShowQuestionIndex, score);
@@ -538,30 +534,22 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 //学生答案
                 if (!questionBodyBtn.isSelected()) {
                     questionBodyBtn.setSelected(true);
-                    if (llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
-                        mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                    } else {
-                        mNbvAnswerBoard.setVisibility(View.GONE);
-                    }
-
                     analysisBtn.setSelected(false);
-                    if (contentDisplayer.getmContentAdaper().getPageCount("reply") == 0) {
-                        contentDisplayer.getmContentAdaper().toPage("question", currentShowReplyPageIndex, false, false);
-                    } else {
-                        contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false, false);
-                    }
-                    getShowCheckDate();
+                    setWcdToQuestionMode();
+                    wcdContentDisplayer.toPage("question", currentShowReplyPageIndex, true);
+                    pageBtnBar.setCurrentSelectPageIndex(currentShowReplyPageIndex);
+                    pageBtnBar.refreshPageBar();
                 }
                 break;
             case R.id.analysis_btn:
-                //保存没触发前的界面数据
-                saveCheckData();
                 //解析
-                if (questionBodyBtn.isSelected()) {
-                    questionBodyBtn.setSelected(false);
-                    mNbvAnswerBoard.setVisibility(View.GONE);
+                if (!analysisBtn.isSelected()) {
                     analysisBtn.setSelected(true);
-                    contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
+                    questionBodyBtn.setSelected(false);
+                    setWcdToAnalysisMode();
+                    wcdContentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
+                    pageBtnBar.setCurrentSelectPageIndex(currentShowAnalysisPageIndex);
+                    pageBtnBar.refreshPageBar();
                 }
                 break;
             case R.id.img_btn_right:
@@ -597,7 +585,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 //点击从新对该题进行批改
                 llHomeWorkCheckOption.setVisibility(View.VISIBLE);
                 llCheckAgain.setVisibility(View.GONE);
-                mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                wcdContentDisplayer.getLayer2().setIntercept(false);
 
                 replyScoreList.set(currentShowQuestionIndex, -1);
                /* //yuanye : start   解决 重新批改后无法手写
@@ -615,9 +603,26 @@ public class CheckHomeWorkActivity extends BaseActivity {
         }
     }
 
-    private void saveCheckData() {
-        synchronized (this) {
+    private void setWcdToQuestionMode() {
+        wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
+        wcdContentDisplayer.getLayer1().setIntercept(true);
+        if (llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
+            wcdContentDisplayer.getLayer2().setIntercept(false);
 
+        } else {
+            wcdContentDisplayer.getLayer2().setIntercept(true);
+        }
+    }
+
+    private void setWcdToAnalysisMode() {
+        wcdContentDisplayer.getLayer2().setIntercept(true);
+        wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+    }
+
+
+    private void saveCheckData(int index) {
+
+        synchronized (this) {
             if (bytesList.size() == 0) {
                 return;
             }
@@ -625,17 +630,16 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 return;
             }
             //保存笔记
-            bytesList.set(currentShowReplyPageIndex, mNbvAnswerBoard.bitmap2Bytes());
+            bytesList.set(index, wcdContentDisplayer.getLayer2().bitmap2Bytes());
             //保存图片
-//        pathList.set(currentShowReplyPageIndex, saveBitmapToFile(saveScreenBitmap(), examId + "_" + questionReplyDetail.getReplyId() + "_" + currentShowReplyPageIndex));
-            String fileName = pathList.get(currentShowReplyPageIndex);
+            String fileName = pathList.get(index);
             if (fileName.contains("/")) {
                 fileName = fileName.substring(fileName.lastIndexOf("/"));
             }
-            String filePath = saveBitmapToFile(saveScreenBitmap(), fileName);
-            pathList.set(currentShowReplyPageIndex, filePath);
+            String filePath = saveBitmapToFile(wcdContentDisplayer.getLayer2().getBitmap(), fileName);
+            pathList.set(index, filePath);
             //清除当前页面笔记
-            mNbvAnswerBoard.clearAll();
+            wcdContentDisplayer.getLayer2().clearAll();
         }
     }
 
@@ -644,24 +648,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
         if (bytesList.size() > currentShowReplyPageIndex && currentShowReplyPageIndex >= 0) {
             byte[] tmpBytes = bytesList.get(currentShowReplyPageIndex);
             if (tmpBytes != null) {
-                mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
+                wcdContentDisplayer.getLayer2().drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
             }
         }
-    }
-
-
-    /**
-     * 截取手写板上的笔记包括底部题目
-     *
-     * @return 截取的图片bitmap
-     */
-    private Bitmap saveScreenBitmap() {
-        rlAnswer.setDrawingCacheEnabled(true);
-        Bitmap tBitmap = rlAnswer.getDrawingCache();
-        // 拷贝图片，否则在setDrawingCacheEnabled(false)以后该图片会被释放掉
-        tBitmap = tBitmap.createBitmap(tBitmap);
-        rlAnswer.setDrawingCacheEnabled(false);
-        return tBitmap;
     }
 
 
@@ -794,7 +783,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         showNoNetDialog();
 
-        NetWorkManager.postCommentRequest(questionReplyDetail.getReplyId() + "")
+        NetWorkManager.postCommentRequest(questionReplyDetail.getReplyId() + "", SpUtils.getUserId() + "")
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
@@ -887,7 +876,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     } else {
                         STSResultbean stsResultbean = new STSResultbean();
                         stsResultbean.setBucket(stSbean.getBucketName());
-                        stsResultbean.setRemote(null);
+                        stsResultbean.setRemote("");
                         stsResultbean.setSize(0);
                         stsResultbeanArrayList.add(stsResultbean);
                     }
@@ -948,9 +937,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
      */
     private void writeInfoToS() {
 
-//        String content = new Gson().toJson(stsResultbeanArrayList);
+        String content = new Gson().toJson(stsResultbeanArrayList);
         //教师批改直接使用oss覆盖上传，不需要上传content了
-        String content = "";
+//        String content = "";
 
         NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "")
                 .subscribe(new Action1<Object>() {
@@ -1045,7 +1034,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         stsResultbeanArrayList.clear();
         bytesList.clear();
         pathList.clear();
-        mNbvAnswerBoard.clearAll();
+        wcdContentDisplayer.getLayer2().clearAll();
         questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
         refreshQuestion();
 
@@ -1086,15 +1075,14 @@ public class CheckHomeWorkActivity extends BaseActivity {
         }
 
 
-        mNbvAnswerBoard.recycle();
-        mNbvAnswerBoard = null;
+        wcdContentDisplayer.getLayer2().recycle();
         bytesList = null;
         pathList = null;
         stsResultbeanArrayList = null;
         mQuestionReplyDetails = null;
         replyScoreList = null;
         Glide.get(this).clearMemory();
-        contentDisplayer.clearPdfCache();
+        wcdContentDisplayer.clearCache();
         Runtime.getRuntime().gc();
     }
 

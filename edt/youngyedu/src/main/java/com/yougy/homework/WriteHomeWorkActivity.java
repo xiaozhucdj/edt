@@ -1397,21 +1397,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         onBackPressed();
 
-//                        NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
-//                            @Override
-//                            public void call(Object o) {
-//
-////                                YoungyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
-//                                onBackPressed();
-//                            }
-//                        }, new Action1<Throwable>() {
-//                            @Override
-//                            public void call(Throwable throwable) {
-//                                throwable.printStackTrace();
-//                                onBackPressed();
-//                            }
-//                        });
-
                     }
                 }, new Action1<Throwable>() {
                     @Override
