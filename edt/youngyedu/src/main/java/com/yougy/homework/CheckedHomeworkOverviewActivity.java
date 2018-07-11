@@ -90,13 +90,20 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 MyHolder holder = (MyHolder) vh;
-                Intent intent = new Intent(CheckedHomeworkOverviewActivity.this, CheckedHomeworkDetailActivity.class);
+                Intent /*intent = new Intent(CheckedHomeworkOverviewActivity.this, CheckedHomeworkDetailActivity.class);
                 intent.putExtra("examName", examName);
                 intent.putExtra("toShow", holder.getData());
                 intent.putExtra("examId", examId);
                 intent.putParcelableArrayListExtra("all", replyList);
                 intent.putExtra("isScoring", isScoring);
+                startActivity(intent);*/
+
+                intent = new Intent(CheckedHomeworkOverviewActivity.this , CheckHomeWorkActivity.class);
+                intent.putExtra("examId" , examId);
+                intent.putExtra("toShowPosition", holder.getPosition());
+                intent.putExtra("isScoring", isScoring);
                 startActivity(intent);
+
             }
         });
     }
