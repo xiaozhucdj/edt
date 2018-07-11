@@ -77,12 +77,12 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
+            android:layout_marginTop="1px"
             android:layout_weight="1">
             <com.yougy.anwser.ContentDisplayer
                 android:id="@+id/content_displayer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="1px"
                 />
         </RelativeLayout>
 
