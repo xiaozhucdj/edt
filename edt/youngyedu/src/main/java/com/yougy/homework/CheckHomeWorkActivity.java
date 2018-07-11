@@ -79,7 +79,7 @@ import static com.yougy.anwser.Content_new.Type.IMG_URL;
 public class CheckHomeWorkActivity extends BaseActivity {
 
     private int examId, studentId, toShowPosition;
-    private boolean isScoring;
+    private boolean isScoring, isStudentLook;
     private String studentName;
     @BindView(R.id.rcv_all_question_page)
     RecyclerView mAllQuestionPageView;
@@ -169,6 +169,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         examId = getIntent().getIntExtra("examId", -1);
         toShowPosition = getIntent().getIntExtra("toShowPosition", 0);
         isScoring = getIntent().getBooleanExtra("isScoring", false);
+        isStudentLook = getIntent().getBooleanExtra("isStudentLook", false);
 
         studentName = SpUtils.getAccountName();
         titleTextview.setText(studentName);
@@ -381,7 +382,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
                 } else {
-                    ivCheckChange.setVisibility(View.VISIBLE);
+                    if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                    } else {
+                        ivCheckChange.setVisibility(View.VISIBLE);
+                    }
                 }
 
                 break;
@@ -395,7 +400,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
                 } else {
-                    ivCheckChange.setVisibility(View.VISIBLE);
+                    if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                    } else {
+                        ivCheckChange.setVisibility(View.VISIBLE);
+                    }
                 }
 
                 break;
@@ -409,7 +418,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
                 } else {
-                    ivCheckChange.setVisibility(View.VISIBLE);
+                    if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                    } else {
+                        ivCheckChange.setVisibility(View.VISIBLE);
+                    }
                 }
 
                 break;

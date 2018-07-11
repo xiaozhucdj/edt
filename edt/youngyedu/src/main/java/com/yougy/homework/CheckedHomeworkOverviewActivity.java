@@ -102,6 +102,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 intent.putExtra("examId" , examId);
                 intent.putExtra("toShowPosition", holder.getPosition());
                 intent.putExtra("isScoring", isScoring);
+                intent.putExtra("isStudentLook", true);
                 startActivity(intent);
 
             }
