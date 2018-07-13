@@ -66,6 +66,12 @@ public class HomeworkSummary {
         private String book;
         private String cursor;
         private String useTime;
+        private String lifeTime; //定时作业
+        private float accuracy;//正确率
+        private int totalPoints;//学生总得分
+        private int examTotalPoints;//作业总分值
+        private String typeCode;// 自评 互评等作业状态
+
 
         public String getBook() {
             return book;
@@ -121,6 +127,46 @@ public class HomeworkSummary {
 
         public void setUseTime(String useTime) {
             this.useTime = useTime;
+        }
+
+        public String getLifeTime() {
+            return lifeTime;
+        }
+
+        public void setLifeTime(String lifeTime) {
+            this.lifeTime = lifeTime;
+        }
+
+        public float getAccuracy() {
+            return accuracy;
+        }
+
+        public void setAccuracy(float accuracy) {
+            this.accuracy = accuracy;
+        }
+
+        public int getTotalPoints() {
+            return totalPoints;
+        }
+
+        public void setTotalPoints(int totalPoints) {
+            this.totalPoints = totalPoints;
+        }
+
+        public int getExamTotalPoints() {
+            return examTotalPoints;
+        }
+
+        public void setExamTotalPoints(int examTotalPoints) {
+            this.examTotalPoints = examTotalPoints;
+        }
+
+        public String getTypeCode() {
+            return typeCode;
+        }
+
+        public void setTypeCode(String typeCode) {
+            this.typeCode = typeCode;
         }
     }
 }
