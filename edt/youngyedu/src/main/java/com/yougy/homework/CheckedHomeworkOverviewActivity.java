@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -40,6 +41,9 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     String examName;
 
     private boolean isScoring = false;// 是否计分作业
+    private int examTotalPoints ;//exam 总分
+    private int totalScore ;//得分
+    private float mAccuracy; //正确率
 
     @Override
     protected void setContentView() {
@@ -57,7 +61,11 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         }
         examName = getIntent().getStringExtra("examName");
         isScoring = getIntent().getBooleanExtra("isScoring", false);
+        examTotalPoints = getIntent().getIntExtra("getExamTotalPoints", 0);
+        totalScore = getIntent().getIntExtra("getTotalPoints", 0);
+        mAccuracy = getIntent().getFloatExtra("getAccuracy", 0);
         binding.titleTv.setText(examName);
+        refreshCircleProgressBar();
     }
 
     @Override
@@ -125,9 +133,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                             allUseTime += detailUseTime;
                         }
                         binding.timeTv.setText(DateUtils.converLongTimeToString(allUseTime * 1000));
-
-
-                        refreshCircleProgressBar();
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -143,27 +148,15 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
      */
     private void refreshCircleProgressBar() {
         if (isScoring) {
-            int score = 0;
-            for (QuestionReplySummary reply : replyList) {
-                score += reply.getReplyScore();
-            }
-            binding.circleProgressBar.setProgress(Integer.valueOf(SizeUtil.doScale(score, 0)));
+            binding.textScoreTitle.setText("分数");
+            binding.circleProgressBar.setProgress(totalScore * 100 / examTotalPoints);
             binding.circleProgressBar.setIsDrawCenterText(false);
-            binding.textScore.setText(String.valueOf(score));
-            binding.centerTextLayout.setVisibility(View.VISIBLE);
-//            binding.circleProgressBar.setText(SizeUtil.doScale(score, 0) + "%");
+            binding.textScore.setText(String.valueOf(totalScore));
         } else { //不计分作业
-            float f = 0;
-            for (QuestionReplySummary reply : replyList) {
-                if (reply.getReplyScore() == 100) {
-                    f++;
-                }
-            }
-            f = f * 100 / replyList.size();
-            binding.circleProgressBar.setProgress(Integer.valueOf(SizeUtil.doScale(f, 0)));
-            binding.circleProgressBar.setText(SizeUtil.doScale(f, 0) + "%");
-            binding.circleProgressBar.setIsDrawCenterText(true);
-            binding.centerTextLayout.setVisibility(View.GONE);
+            binding.textScoreTitle.setText("正确率");
+            binding.circleProgressBar.setProgress((int) (mAccuracy * 100));
+            binding.textScore.setText((int)(mAccuracy * 100) + "%");
+            binding.circleProgressBar.setIsDrawCenterText(false);
         }
 
     }
@@ -198,7 +191,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 itemBinding.scoreText.setText(data.getReplyScore() + "分");
                 itemBinding.scoreText.setVisibility(View.VISIBLE);
             } else{
-                itemBinding.scoreText.setVisibility(View.GONE);
+//                itemBinding.scoreText.setVisibility(View.GONE);
             }
             return this;
         }
