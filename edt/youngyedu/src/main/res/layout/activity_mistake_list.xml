@@ -97,7 +97,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8px"
                 android:layout_marginRight="8px"
-                android:background="@drawable/shape_rounded_rectangle_black_border">
+                android:background="@drawable/shape_rounded_rectangle_transparent_border">
 
             </RelativeLayout>
         </RelativeLayout>
