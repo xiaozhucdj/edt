@@ -184,8 +184,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> postReply(String userId, String itemId, String examId, String picContent, String txtContent, String replyUseTime) {
-        return getInstance().getServerApi().postReply(userId, itemId, examId, picContent, txtContent, replyUseTime)
+    public static Observable<Object> postReply(String userId, String itemId, String examId, String picContent, String txtContent, String replyUseTime,String replyCreateTime) {
+        return getInstance().getServerApi().postReply(userId, itemId, examId, picContent, txtContent, replyUseTime,replyCreateTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

@@ -76,7 +76,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"} , values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
-            , @Field("examId") String examId, @Field("picContent") String picContent, @Field("txtContent") String txtContent , @Field("replyUseTime") String replyUseTime);
+            , @Field("examId") String examId, @Field("picContent") String picContent, @Field("txtContent") String txtContent , @Field("replyUseTime") String replyUseTime,@Field("replyCreateTime") String replyCreateTime);
 /**
      *  解答上传（多题，作业）
      */
