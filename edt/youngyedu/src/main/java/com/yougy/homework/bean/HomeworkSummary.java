@@ -65,6 +65,7 @@ public class HomeworkSummary {
         private String statusCode;
         private String book;
         private String cursor;
+        private String useTime;
 
         public String getBook() {
             return book;
@@ -112,6 +113,14 @@ public class HomeworkSummary {
 
         public void setStatusCode(String statusCode) {
             this.statusCode = statusCode;
+        }
+
+        public String getUseTime() {
+            return useTime;
+        }
+
+        public void setUseTime(String useTime) {
+            this.useTime = useTime;
         }
     }
 }

@@ -83,9 +83,13 @@ public class ExerciseBookFragment extends BFragment {
             public void onBindViewHolder(MyHolder holder, int position) {
                 switch (currentStatus) {
                     case DOING:
-                        holder.binding.statusTv.setText("作\n答\n中");
-                        holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
-                        holder.setData(doingList.get(position));
+                        HomeworkSummary doingHomeworkSummary = doingList.get(position);
+                        if (!StringUtils.isEmpty(doingHomeworkSummary.getExtra().getUseTime())) {
+                            holder.binding.statusTv.setText("定\n\n时");
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
+                        }
+//                        holder.binding.statusTv.setText("作\n答\n中");
+                        holder.setData(doingHomeworkSummary);
                         break;
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);

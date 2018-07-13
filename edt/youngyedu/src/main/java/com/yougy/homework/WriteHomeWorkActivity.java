@@ -1,7 +1,6 @@
 package com.yougy.homework;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,7 +31,6 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -61,7 +59,7 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
-import com.yougy.message.attachment.SeatWorkAttachment;
+import com.yougy.message.attachment.ReceiveWorkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
@@ -239,32 +237,26 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (isTimerWork) {
             judgeWorkIsEnd();
         }
-        initYXMsgListener();
+        initReceiveHomeworkMsg();
     }
 
     /**
-     * 教师端布置作业消息通知  跳转作业界面
+     * 收作业消息
      */
-    private void initYXMsgListener () {
-        YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
-            @Override
-            public void onNewMessage(IMMessage message) {
-                if (message.getAttachment() instanceof SeatWorkAttachment){
-                    SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
-                    //启动新的Activity  保存当前
-                    saveLastHomeWorkData(showHomeWorkPosition, false);
-                    Intent intent = new Intent(WriteHomeWorkActivity.this, WriteHomeWorkActivity.class);
-                    intent.putExtra("examId", attachment.examId);
-                    intent.putExtra("examName", attachment.examName);
-                    //传参是否定时作业
-//                        intent.putExtra("isTimerWork",true);
-                    startActivity(intent);
-                    finish();
+    private void initReceiveHomeworkMsg () {
+        YXClient.getInstance().with(getApplication()).addOnNewCommandCustomMsgListener(message -> {
+            if (message.getAttachment() instanceof ReceiveWorkAttachment){
+                ReceiveWorkAttachment receiveWorkAttachment = (ReceiveWorkAttachment) message.getAttachment();
+                if (examId.equals(receiveWorkAttachment.examId)){
+                    LogUtils.w("teacher receive homework , auto submit.");
+                    tvSubmitHomeWork.callOnClick();
+                } else {
+                    LogUtils.w("current examId is not receive examId. not submit.");
                 }
             }
         });
-    }
 
+    }
 
     @Override
     protected void onResume() {
@@ -896,7 +888,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (showHomeWorkPosition < homeWorkPageSize - 1) {
                     showHomeWorkPosition++;
                     COMEIN_HOMEWORK_PAGE_MODE = 2;
-                    homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
+                    if (homeWorkPageNumAdapter!=null && homeWorkPageNumAdapter.onItemClickListener!= null) {
+                        homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
+                    }
                 } else {
                     //如果已经是最后一题，那么不在跳转。直接打开暂存成功弹窗
                     saveLastHomeWorkData(showHomeWorkPosition, false);

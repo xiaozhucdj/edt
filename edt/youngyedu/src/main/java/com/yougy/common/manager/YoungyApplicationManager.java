@@ -243,16 +243,13 @@ public class YoungyApplicationManager extends LitePalApplication {
                         }
                     } else if (message.getAttachment() instanceof SeatWorkAttachment) {
                         //判断是否在写作业界面
-                        if (UIUtils.getTopActivityName(getApplicationContext()).contains("WriteHomeWorkActivity")) {
-                            return;
-                        }
                         SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
                         Intent intent = new Intent(getApplicationContext(), WriteHomeWorkActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("examId", attachment.examId);
                         intent.putExtra("examName", attachment.examName);
-                        intent.putExtra("isTimerWork" , attachment.isTimeWork);
                         //传参是否定时作业
-//                        intent.putExtra("isTimerWork",true);
+                        intent.putExtra("isTimerWork" , attachment.isTimeWork);
                         startActivity(intent);
                     }
                 }

@@ -77,6 +77,9 @@ public class CustomAttachParser implements MsgAttachmentParser {
                 case CLUE_SEND_SEATWORK:
                     attachment = new SeatWorkAttachment(clue , version);
                     break;
+                case CLUE_END_SEATWORK:
+                    attachment = new ReceiveWorkAttachment(clue, version);
+                    break;
             }
             if (attachment != null) {
                 attachment.fromJson(object);
