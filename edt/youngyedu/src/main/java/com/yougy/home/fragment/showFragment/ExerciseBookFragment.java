@@ -59,7 +59,7 @@ public class ExerciseBookFragment extends BFragment {
     ArrayList<HomeworkSummary> waitForCheckList = new ArrayList<HomeworkSummary>();
     ArrayList<HomeworkSummary> checkedList = new ArrayList<HomeworkSummary>();
 
-    private boolean currentIsHomework = true;//家庭作业
+//    private boolean currentIsHomework = true;//家庭作业    学生端不分
 
     @Nullable
     @Override
@@ -84,35 +84,52 @@ public class ExerciseBookFragment extends BFragment {
                 switch (currentStatus) {
                     case DOING:
                         HomeworkSummary doingHomeworkSummary = doingList.get(position);
-                        if (!StringUtils.isEmpty(doingHomeworkSummary.getExtra().getUseTime())) {
+                        if (!StringUtils.isEmpty(doingHomeworkSummary.getExtra().getLifeTime())) {
                             holder.binding.statusTv.setText("定\n\n时");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
+                            holder.binding.textLifetime.setText("计时：" + doingHomeworkSummary.getExtra().getLifeTime());
+                            holder.binding.textLifetime.setVisibility(View.VISIBLE);
                         }
 //                        holder.binding.statusTv.setText("作\n答\n中");
                         holder.setData(doingHomeworkSummary);
                         break;
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);
-                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())){
+                        if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
                             holder.binding.statusTv.setText("自\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
-                            holder.setData(waitForCheckList.get(position));
+                        } else if ("II55".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
+                            holder.binding.statusTv.setText("互\n\n评");
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
                         }
                         else {
-                            holder.binding.statusTv.setText("待\n批\n改");
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
-                            holder.setData(waitForCheckList.get(position));
+                            holder.binding.statusTv.setVisibility(View.GONE);
+//                            holder.binding.statusTv.setText("待\n批\n改");
+//                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
                         }
+                        holder.setData(waitForCheckList.get(position));
                         break;
                     case CHECKED:
                         HomeworkSummary checkedHomeworkSummary = checkedList.get(position);
-                        if (checkedHomeworkSummary.getExtra().getStatusCode().equals("IH51")){
-                            holder.binding.statusTv.setText("未\n提\n交");
+                        HomeworkSummary.ExtraBean extraBean = checkedHomeworkSummary.getExtra();
+                        if (extraBean.getExamTotalPoints() != 0) {
+                            //计分作业
+                            holder.binding.textRateScore.setText("分数：" + extraBean.getTotalPoints());
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
+                            holder.binding.statusTv.setText("计\n\n分");
+                        } else {
+                            holder.binding.statusTv.setVisibility(View.GONE);
+                            holder.binding.textRateScore.setText("正确率：" + (int)(extraBean.getAccuracy() * 100) + "%");
                         }
-                        else if (checkedHomeworkSummary.getExtra().getStatusCode().equals("IH05")){
-                            holder.binding.statusTv.setText("已\n批\n改");
-                        }
-                        holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
+                        holder.binding.textRateScore.setVisibility(View.VISIBLE);
+//
+//                        if (checkedHomeworkSummary.getExtra().getStatusCode().equals("IH51")){
+//                            holder.binding.statusTv.setText("未\n提\n交");
+//                        }
+//                        else if (checkedHomeworkSummary.getExtra().getStatusCode().equals("IH05")){
+//                            holder.binding.statusTv.setText("已\n批\n改");
+//                        }
+//                        holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
                         holder.setData(checkedHomeworkSummary);
                         break;
                 }
@@ -147,8 +164,13 @@ public class ExerciseBookFragment extends BFragment {
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                             intent.putExtra("examId", holder.getData().getExam());
                             intent.putExtra("examName", holder.getData().getExtra().getName());
-                            //是否为计分作业
-//                            intent.putExtra("isScoring", true);
+                            if (holder.getData().getExtra().getExamTotalPoints() != 0) {
+                                //是否为计分作业
+                                intent.putExtra("isScoring", true);
+                            }
+                            intent.putExtra("getExamTotalPoints", holder.getData().getExtra().getExamTotalPoints());
+                            intent.putExtra("getTotalPoints", holder.getData().getExtra().getTotalPoints());
+                            intent.putExtra("getAccuracy", holder.getData().getExtra().getAccuracy());
                             startActivity(intent);
                         }
                         break;
@@ -259,7 +281,7 @@ public class ExerciseBookFragment extends BFragment {
         });
 
         //课堂作业和家庭作业切换
-        binding.toggleHomework.setOnClickListener(new View.OnClickListener() {
+       /* binding.toggleHomework.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //直接设置刷新适配器数据
@@ -272,7 +294,7 @@ public class ExerciseBookFragment extends BFragment {
                 }
                 refreshData();
             }
-        });
+        });*/
         return binding.getRoot();
     }
 

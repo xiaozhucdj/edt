@@ -56,5 +56,29 @@
             android:layout_marginBottom="33px"
             android:layout_marginTop="-3px"
             />
+
+        <TextView
+            android:id="@+id/text_lifetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/time_tv"
+            android:layout_marginTop="80px"
+            android:layout_marginLeft="30px"
+            android:textSize="20px"
+            android:textColor="@color/black"
+            android:text="计时: 15分钟"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/text_rate_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="50px"
+            android:textSize="22px"
+            android:textColor="@color/black"
+            android:text="正确率：70%"
+            android:visibility="gone"/>
     </RelativeLayout>
 </layout>

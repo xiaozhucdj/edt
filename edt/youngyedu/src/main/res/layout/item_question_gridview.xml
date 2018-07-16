@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="194px"
+        android:layout_width="wrap_content"
         android:layout_height="124px"
         >
         <TextView
@@ -30,10 +30,10 @@
             android:id="@+id/score_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="95px"
+            android:layout_marginLeft="100px"
             android:layout_centerVertical="true"
             android:textColor="@color/background_black"
-            android:textSize="24px"
+            android:textSize="20px"
             android:text="10分"
             android:visibility="gone"/>
 

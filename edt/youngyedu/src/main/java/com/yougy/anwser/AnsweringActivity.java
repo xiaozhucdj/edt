@@ -473,7 +473,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         //刷新最后没有保存的数据
         bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
-        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+        pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
         mNbvAnswerBoard.clearAll();
     }
 
@@ -531,7 +531,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
                         }
                         //是否是选择题。都需要截屏保存图片
-                        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+                        pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
                     }
 
 
@@ -1000,7 +1000,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         String picContent = new Gson().toJson(stsResultbeanArrayList);
         String txtContent = new Gson().toJson(checkedAnswerList);
 
-        NetWorkManager.postReply(SpUtils.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
+        NetWorkManager.postReply(SpUtils.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill),DateUtils.converLongTimeToString(System.currentTimeMillis()))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {

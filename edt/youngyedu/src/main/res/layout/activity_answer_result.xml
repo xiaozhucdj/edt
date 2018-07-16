@@ -91,7 +91,7 @@
                 />
         </LinearLayout>
 
-        <com.yougy.anwser.ContentDisplayer
+        <com.yougy.anwser.WriteableContentDisplayer
             android:id="@+id/content_displayer"
             android:layout_width="match_parent"
             android:layout_height="0px"
