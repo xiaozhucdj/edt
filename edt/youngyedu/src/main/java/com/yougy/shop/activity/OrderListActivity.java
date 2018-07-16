@@ -11,11 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.message.ListUtil;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityShopOrderListBinding;
@@ -41,7 +44,7 @@ public class OrderListActivity extends ShopBaseActivity {
     ArrayList<OrderSummary> orderList = new ArrayList<OrderSummary>();
     int totalCount = 0;
     final int ITEM_NUM_PER_PAGE = 3;
-    ArrayList<String> selectedOrderIdList = new ArrayList<String>();
+    ArrayList<OrderSummary> selectedOrderSummaryList = new ArrayList<OrderSummary>();
 
     @Override
     public void init() {
@@ -60,11 +63,14 @@ public class OrderListActivity extends ShopBaseActivity {
                 holder.itemBinding.checkbox.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (v.isSelected()){
-                            selectedOrderIdList.remove(holder.getData().orderId);
-                        }
-                        else {
-                            selectedOrderIdList.add(holder.getData().orderId);
+                        ListUtil.conditionalRemove(selectedOrderSummaryList, new ListUtil.ConditionJudger<OrderSummary>() {
+                            @Override
+                            public boolean isMatchCondition(OrderSummary nodeInList) {
+                                return nodeInList.getOrderId().equals(holder.getData().getOrderId());
+                            }
+                        });
+                        if (!v.isSelected()){
+                            selectedOrderSummaryList.add(holder.getData());
                         }
                         v.setSelected(!v.isSelected());
                         binding.selectAllCheckbox.setSelected(isAllSelected());
@@ -73,28 +79,48 @@ public class OrderListActivity extends ShopBaseActivity {
                 holder.itemBinding.cancleBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        cancelOrder(holder.orderSummary.orderId);
+                        cancelOrder(holder.orderSummary.getOrderId());
                     }
                 });
                 holder.itemBinding.payBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
-                        intent.putExtra("orderId", holder.getData().orderId);
+                        intent.putExtra("orderId", holder.getData().getOrderId());
                         startActivity(intent);
                     }
                 });
                 holder.itemBinding.deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        new ConfirmDialog(OrderListActivity.this, "您确定要删除这本书吗?", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                NetWorkManager.removeOrder(holder.orderSummary.getOrderId() , String.valueOf(SpUtils.getUserId()))
+                                        .compose(bindToLifecycle()).subscribe(new Action1<Object>() {
+                                    @Override
+                                    public void call(Object o) {
+                                        ToastUtil.showCustomToast(getApplicationContext() , "删除成功");
+                                        selectedOrderSummaryList.remove(holder.orderSummary.getOrderId());
+                                        refreshData(binding.pageBtnBar.getCurrentSelectPageIndex());
+                                    }
+                                }, new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        throwable.printStackTrace();
+                                        ToastUtil.showCustomToast(getApplicationContext() , "删除失败");
+                                    }
+                                });
+                            }
+                        } , "确定").show();
                     }
                 });
                 holder.itemBinding.getRoot().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
-                        intent.putExtra("orderId", holder.getData().orderId);
+                        intent.putExtra("orderId", holder.getData().getOrderId());
                         intent.putExtra("showSuccessDialog" , false);
                         startActivity(intent);
                     }
@@ -127,17 +153,17 @@ public class OrderListActivity extends ShopBaseActivity {
         binding.selectAllCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.isSelected()){
-                    for (OrderSummary orderSummary : orderList){
-                        selectedOrderIdList.remove(orderSummary.orderId);
-                    }
-                }
-                else {
-                    for (OrderSummary orderSummary :
-                            orderList) {
-                        if (!selectedOrderIdList.contains(orderSummary.orderId)){
-                            selectedOrderIdList.add(orderSummary.orderId);
+                for (OrderSummary orderSummary : orderList){
+                    ListUtil.conditionalRemove(selectedOrderSummaryList, new ListUtil.ConditionJudger<OrderSummary>() {
+                        @Override
+                        public boolean isMatchCondition(OrderSummary nodeInList) {
+                            return orderSummary.getOrderId().equals(nodeInList.getOrderId());
                         }
+                    });
+                }
+                if (!v.isSelected()){
+                    for (OrderSummary orderSummary : orderList) {
+                        selectedOrderSummaryList.add(orderSummary);
                     }
                 }
                 binding.mainRecyclerview.getAdapter().notifyDataSetChanged();
@@ -147,7 +173,40 @@ public class OrderListActivity extends ShopBaseActivity {
         binding.deleteSelectedOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String orderIdStr = "[";
+                for (OrderSummary orderSummary : selectedOrderSummaryList) {
+                    if (!orderSummary.getOrderStatus().equals("交易成功")) {
+                        orderIdStr = orderIdStr + "\"" + orderSummary.getOrderId() + "\",";
+                    }
+                }
+                if (orderIdStr.equals("[")){
+                    ToastUtil.showCustomToast(getApplicationContext() , "没有可以删除的订单");
+                }
+                else {
+                    orderIdStr = orderIdStr.substring(0, orderIdStr.length() - 1) + "]";
+                    String finalOrderIdStr = orderIdStr;
+                    new ConfirmDialog(OrderListActivity.this, "您确定要删除这些订单吗?", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            NetWorkManager.removeOrder(finalOrderIdStr, String.valueOf(SpUtils.getUserId()))
+                                    .compose(bindToLifecycle()).subscribe(new Action1<Object>() {
+                                @Override
+                                public void call(Object o) {
+                                    ToastUtil.showCustomToast(getApplicationContext(), "删除成功");
+                                    selectedOrderSummaryList.clear();
+                                    refreshData(binding.pageBtnBar.getCurrentSelectPageIndex());
+                                }
+                            }, new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+                                    throwable.printStackTrace();
+                                    ToastUtil.showCustomToast(getApplicationContext(), "删除失败");
+                                }
+                            });
+                        }
+                    } , "确定").show();
+                }
             }
         });
         binding.deleteSelectedOrderBtn.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -277,7 +336,12 @@ public class OrderListActivity extends ShopBaseActivity {
             return false;
         }
         for (OrderSummary orderSummary : orderList) {
-            if (!selectedOrderIdList.contains(orderSummary.orderId)){
+            if (!ListUtil.conditionalContains(selectedOrderSummaryList, new ListUtil.ConditionJudger<OrderSummary>() {
+                @Override
+                public boolean isMatchCondition(OrderSummary nodeInList) {
+                    return nodeInList.getOrderId().equals(orderSummary.getOrderId());
+                }
+            })){
                 return false;
             }
         }
@@ -293,11 +357,16 @@ public class OrderListActivity extends ShopBaseActivity {
         }
         public void setData(OrderSummary data){
             orderSummary = data;
-            itemBinding.orderNumTv.setText("订单编号 : " + orderSummary.orderId);
-//            itemBinding.order.setText("订单金额 : ￥" + orderSummary.orderAmount);
-            itemBinding.orderTimeTv.setText("下单时间 : " + orderSummary.orderCreateTime);
-            itemBinding.orderStatusTv.setText(orderSummary.orderStatus);
-            if (orderSummary.orderStatus.equals("待支付")){
+            itemBinding.orderNumTv.setText("订单编号 : " + orderSummary.getOrderId());
+            itemBinding.orderTimeTv.setText("下单时间 : " + orderSummary.getOrderCreateTime());
+            itemBinding.orderStatusTv.setText(orderSummary.getOrderStatus());
+            if (orderSummary.getOrderStatus().equals("交易成功")){
+                itemBinding.deleteBtn.setVisibility(GONE);
+            }
+            else {
+                itemBinding.deleteBtn.setVisibility(VISIBLE);
+            }
+            if (orderSummary.getOrderStatus().equals("待支付")){
                 itemBinding.cancleBtn.setVisibility(VISIBLE);
                 itemBinding.payBtn.setVisibility(VISIBLE);
             }
@@ -305,7 +374,23 @@ public class OrderListActivity extends ShopBaseActivity {
                 itemBinding.cancleBtn.setVisibility(GONE);
                 itemBinding.payBtn.setVisibility(GONE);
             }
-            itemBinding.checkbox.setSelected(selectedOrderIdList.contains(data.orderId));
+            itemBinding.checkbox.setSelected(ListUtil.conditionalContains(selectedOrderSummaryList, new ListUtil.ConditionJudger<OrderSummary>() {
+                @Override
+                public boolean isMatchCondition(OrderSummary nodeInList) {
+                    return nodeInList.getOrderId().equals(orderSummary.getOrderId());
+                }
+            }));
+            int totalBookCount = 0;
+            for (OrderSummary.OrderInfoBean orderInfoBean : orderSummary.getOrderInfo()) {
+                totalBookCount = totalBookCount + orderInfoBean.getBookCount();
+            }
+            itemBinding.bookCountTv.setText("共" + totalBookCount + "本");
+            itemBinding.bookNameTv.setText(orderSummary.getOrderInfo().get(0).getBookInfo().getBookTitle());
+            itemBinding.orderTotalPriceTv.setText("总额 : " + orderSummary.getOrderAmount() + "元");
+            itemBinding.orderFinalPriceTv.setText("应付 : " + (orderSummary.getOrderAmount() - orderSummary.getOrderDeduction()) + "元");
+            Glide.with(OrderListActivity.this)
+                    .load(orderSummary.getOrderInfo().get(0).getBookInfo().getBookCoverS())
+                    .into(itemBinding.bookCoverImv);
         }
         public OrderSummary getData(){
             return orderSummary;

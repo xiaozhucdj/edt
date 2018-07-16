@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,6 +17,8 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.plide.pipe.Pipe;
 import com.yougy.view.NoteBookView2;
+
+import org.litepal.util.LogUtil;
 
 import java.util.concurrent.ExecutionException;
 
@@ -122,7 +125,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
      */
     public void setContentAdapter(WriteableContentDisplayerAdapter adapter){
         if  (adapter == null){
-            LogUtils.e("不能把WriteableContentDisplayerAdapter 设置为null");
+            LogUtils.e("FH-----不能把WriteableContentDisplayerAdapter 设置为null");
             return;
         }
         //adapter和WCD是双向绑定的,因此设置新adapter的时候需要先剪断之前adapter对本WCD的绑定
@@ -196,6 +199,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
      *                 如果为false,每次都重新下载网络源数据的数据进行展示,速度会比使用缓存更慢,但是会保证永远使用网络的最新数据.
      */
     public void toPage(String typeKey, int pageIndex, boolean useCache) {
+        LogUtils.e("FH-----toPage方法被调用 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
         //保存之前的toPage参数,以传入beforeToPage
         final String fromTypeKey = getCurrentTypeKey();
         final int fromPageIndex = getCurrentPageIndex();
@@ -205,12 +209,13 @@ public class WriteableContentDisplayer extends RelativeLayout{
         currentIfUseCache = useCache;
         //检测mAdapter非空
         if (mAdapter == null){
-            LogUtils.e("toPage失败,没有绑定WriteableContentDisplayerAdapter");
+            LogUtils.e("FH-----toPage失败,没有绑定WriteableContentDisplayerAdapter");
         }
         //构建toPage请求,并push进toPage请求管道
-        toPagePipe.push(new Ball(true){
+        Ball ball = new Ball(true){
             @Override
             public void run() throws InterruptedException {
+                LogUtils.e("FH-----toPage ball 开始执行, ball="  + this.toString());
                 inserCheckPoint();
                 //线程同步状态量
                 boolean[] needWait = new boolean[]{true , true , true , true};
@@ -220,9 +225,9 @@ public class WriteableContentDisplayer extends RelativeLayout{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        LogUtils.e("执行beforeToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("FH-----执行beforeToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         mAdapter.beforeToPage(fromTypeKey , fromPageIndex , typeKey , pageIndex);
-                        LogUtils.e("执行beforeToPage--结束 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("FH-----执行beforeToPage--结束 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         synchronized (needWait){
                             needWait[0] = false;
                             needWait.notify();
@@ -280,9 +285,9 @@ public class WriteableContentDisplayer extends RelativeLayout{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        LogUtils.e("执行afterToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("FH-----执行afterToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         mAdapter.afterToPage(fromTypeKey , fromPageIndex , typeKey , pageIndex);
-                        LogUtils.e("执行afterToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("FH-----执行afterToPage--结束 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         synchronized (needWait){
                             needWait[0] = false;
                             needWait.notify();
@@ -296,7 +301,9 @@ public class WriteableContentDisplayer extends RelativeLayout{
                     }
                 }
             }
-        });
+        };
+        LogUtils.e("FH-----toPage ball被push ball=" + ball.toString() + " typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+        toPagePipe.push(ball);
     }
 
     /**

@@ -85,17 +85,17 @@ public abstract class WriteableContentDisplayerAdapter {
     public void updateDataList(String typeKey, int layerIndex, List<Content_new> contentList) throws UnSupportedDataException {
         //typeKey非空检查
         if (typeKey == null) {
-            LogUtils.e("updateData错误!typeKey不能为空");
+            LogUtils.e("FH-----updateData错误!typeKey不能为空");
             return;
         }
         //设置数据层数检查
         if (layerIndex >= 3) {
-            LogUtils.e("updateData错误!layerIndex >= 3");
+            LogUtils.e("FH-----updateData错误!layerIndex >= 3");
             return;
         }
         //设置数据非空检查
         if (contentList == null || contentList.size() == 0) {
-            LogUtils.e("updateData错误!update的数据list为null");
+            LogUtils.e("FH-----updateData错误!update的数据list为null");
             return;
         }
         if (layerIndex == 0) {
@@ -135,12 +135,12 @@ public abstract class WriteableContentDisplayerAdapter {
     public void deleteDataList(String typeKey, int layerIndex) {
         //typeKey非空检查
         if (typeKey == null) {
-            LogUtils.e("deleteDataList!typeKey不能为空");
+            LogUtils.e("FH-----deleteDataList!typeKey不能为空");
             return;
         }
         //设置数据层数检查
         if (layerIndex >= 3) {
-            LogUtils.e("deleteDataList!layerIndex >= 3");
+            LogUtils.e("FH-----deleteDataList!layerIndex >= 3");
             return;
         }
         if (layerIndex == 0) {
@@ -181,7 +181,7 @@ public abstract class WriteableContentDisplayerAdapter {
     public int getPageCountBaseOnBaseLayer(String typeKey) {
         //typeKey非空检查
         if (typeKey == null) {
-            LogUtils.e("getPageCountBaseOnBaseLayer失败!typeKey不能为空");
+            LogUtils.e("FH-----getPageCountBaseOnBaseLayer失败!typeKey不能为空");
             return 0;
         }
         List<Content_new>[] conteLists = dataMap.get(typeKey);
@@ -209,7 +209,7 @@ public abstract class WriteableContentDisplayerAdapter {
     public int getLayerPageCount(String typeKey , int layerIndex) {
         //typeKey非空检查
         if (typeKey == null) {
-            LogUtils.e("getPageCountBaseOnBaseLayer失败!typeKey不能为空");
+            LogUtils.e("FH-----getPageCountBaseOnBaseLayer失败!typeKey不能为空");
             return 0;
         }
         List<Content_new>[] conteLists = dataMap.get(typeKey);
