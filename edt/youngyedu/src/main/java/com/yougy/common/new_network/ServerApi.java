@@ -224,6 +224,14 @@ public interface ServerApi {
     Observable<BaseResult<Object>> removeCart(@Body RemoveRequestObj removeRequestObj);
 
     /**
+     * 删除订单(可批量)
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"removeOrder"})
+    Observable<BaseResult<Object>> removeOrder(@Field("orderId") String orderId , @Field("orderOwner") String orderOwner);
+
+    /**
      * 获取订单树,包括订单的拆分的子订单信息
      */
     @FormUrlEncoded
@@ -232,12 +240,13 @@ public interface ServerApi {
     Observable<BaseResult<List<OrderDetailBean>>> queryOrderTree(@Field("orderId") String orderId);
 
     /**
-     * 获取我的订单列表,不包含子订单信息
+     * 获取我的订单列表
      */
     @FormUrlEncoded
     @POST("bookStore")
-    @DefaultField(keys = {"m" , "orderParent"}, values = {"queryOrderSole" , "0"})
-    Observable<BaseResult<List<OrderSummary>>> queryOrderSole(@Field("orderOwner") String orderOwner , @Field("ps") Integer ps , @Field("pn") Integer pn);
+    @DefaultField(keys = {"m" , "orderParent"}, values = {"queryOrderAbbr" , "0"})
+    Observable<BaseResult<List<OrderSummary>>> queryOrderAbbr(@Field("orderOwner") String orderOwner
+            , @Field("ps") Integer ps , @Field("pn") Integer pn , @Field("orderCreateTime") String orderCreateTime);
 
     /**
      * 订单结算,获取支付二维码
@@ -370,10 +379,19 @@ public interface ServerApi {
 
 
     ///////////////////////////////书城//////////////////////////////////////
+    @FormUrlEncoded
     @POST("bookStore")
-    Observable<BaseResult<List<CategoryInfo>>> queryBookCategory(@Body BookStoreCategoryReq req);
+    @DefaultField(keys = {"m"}, values = {"queryBookCategoryPlus"})
+    Observable<BaseResult<List<CategoryInfo>>> queryBookCategory();
+    @FormUrlEncoded
     @POST("bookStore")
-    Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Body BookStoreQueryBookInfoReq req);
+    @DefaultField(keys = {"m"}, values = {"queryBook"})
+    Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Field("bookId") Integer bookId
+            , @Field("bookCategory") Integer bookCategory, @Field("bookCategoryMatch") Integer bookCategoryMatch
+            , @Field("userId") Integer userId, @Field("bookVersion") Integer bookVersion
+            , @Field("bookTitle") String bookTitle , @Field("bookTitleMatch") String bookTitleMatch
+            , @Field("ps") Integer ps , @Field("pn") Integer pn);
+
     @POST("bookStore")
     Observable<BaseResult<List<BookInfo>>> queryBookShopHomeInfo(@Body BookStoreHomeReq req);
 

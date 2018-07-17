@@ -1,5 +1,6 @@
 package com.yougy.common.new_network;
 
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.WindowManager;
 
@@ -335,6 +336,13 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<Object> removeOrder(String orderId , String orderOwner) {
+        LogUtils.e("FH", "!!!!!调用ServerApi删除订单:removeOrder");
+        return getInstance().getServerApi().removeOrder(orderId , orderOwner)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
     public static Observable<List<OrderDetailBean>> queryOrderTree(String orderId) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询订单树,包含分拆的子订单");
         return getInstance().getServerApi().queryOrderTree(orderId)
@@ -342,9 +350,10 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Pair<Integer, List<OrderSummary>>> queryMyOrderList(String orderOwner, Integer ps, Integer pn) {
+    public static Observable<Pair<Integer, List<OrderSummary>>> queryMyOrderList(String orderOwner
+            , Integer ps, Integer pn) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单");
-        return getInstance().getServerApi().queryOrderSole(orderOwner, ps, pn)
+        return getInstance().getServerApi().queryOrderAbbr(orderOwner, ps, pn , "{\"order\":\"DESC\"}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult_new(loadingProgressDialog));
     }
@@ -419,9 +428,22 @@ public final class NetWorkManager {
 
     /**
      * 根据类别获取图书信息
+     * add by jiangliang
+     *
+     * modified by FH
+     * 此处原先的用法是req里如果有不使用的字段,则默认传-1或者"",但是这会导致服务器返回的数据为null
+     * 因此改成不使用的字段,直接不传这个字段至服务器
      */
     public static Observable<BaseResult<List<BookInfo>>> queryBookInfo(BookStoreQueryBookInfoReq req) {
-        return getInstance().getServerApi().queryBookInfo(req)
+        return getInstance().getServerApi().queryBookInfo(req.getBookId() == -1 ? null : req.getBookId()
+                , req.getBookCategory() == -1 ? null : req.getBookCategory()
+                , req.getBookCategoryMatch() == -1 ? null : req.getBookCategoryMatch()
+                , req.getUserId() == -1 ? null : req.getUserId()
+                , req.getBookVersion() == -1 ? null : req.getBookVersion()
+                , TextUtils.isEmpty(req.getBookTitle()) ? null : req.getBookTitle()
+                , TextUtils.isEmpty(req.getBookTitleMatch()) ? null : req.getBookTitleMatch()
+                , req.getPs() == -1 ? null : req.getPs()
+                , req.getPn() == -1 ? null : req.getPn())
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.dismissDialog(loadingProgressDialog))
                 ;
@@ -541,8 +563,8 @@ public final class NetWorkManager {
     /**
      * 图书分类查询
      */
-    public static Observable<List<CategoryInfo>> queryBookCategoryInfo(BookStoreCategoryReq req) {
-        return getInstance().getServerApi().queryBookCategory(req)
+    public static Observable<List<CategoryInfo>> queryBookCategoryInfo() {
+        return getInstance().getServerApi().queryBookCategory()
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

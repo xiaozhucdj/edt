@@ -156,7 +156,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取分类数据
      */
     private Observable<List<CategoryInfo>> getCategoryInfo() {
-        return NetWorkManager.queryBookCategoryInfo(new BookStoreCategoryReq());
+        return NetWorkManager.queryBookCategoryInfo();
     }
 
     private void handleHomeInfo(List<BookInfo> bookInfos) {

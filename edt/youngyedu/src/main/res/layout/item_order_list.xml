@@ -17,7 +17,7 @@
             android:layout_height="20px"
             android:layout_marginLeft="20px"
             android:background="@drawable/btn_check_select"
-            android:layout_marginTop="15px"
+            android:layout_marginTop="16px"
             />
         <TextView
             android:id="@+id/order_num_tv"
