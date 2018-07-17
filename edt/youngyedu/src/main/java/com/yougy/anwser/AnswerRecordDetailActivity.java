@@ -11,10 +11,13 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerRecordDetailBinding;
+
+import org.litepal.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,7 @@ import rx.functions.Action1;
  * 学生问答记录某一条记录的详情界面
  */
 
-public class AnswerRecordDetailActivity extends BaseActivity{
+public class AnswerRecordDetailActivity extends BaseActivity {
     ActivityAnswerRecordDetailBinding binding;
     ParsedQuestionItem parsedQuestionItem;
     int examId;
@@ -38,7 +41,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
 
     @Override
     protected void setContentView() {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_answer_record_detail , null , false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answer_record_detail, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
@@ -46,18 +49,19 @@ public class AnswerRecordDetailActivity extends BaseActivity{
     @Override
     protected void init() {
         examId = getIntent().getIntExtra("examId", -1);
-        if (examId == -1 ) {
+        if (examId == -1) {
             ToastUtil.showCustomToast(getApplicationContext(), "exam获取失败!");
             return;
         }
         parsedQuestionItem = getIntent().getParcelableExtra("question");
         String status = getIntent().getStringExtra("status");
-        if ("批改中".equals(status)){
+        if ("批改中".equals(status)) {
             binding.statusHintTv.setVisibility(View.VISIBLE);
-        }
-        else if ("已批改".equals(status)){
+        } else if ("已批改".equals(status)) {
             binding.buttomBtn.setVisibility(View.VISIBLE);
         }
+        LogUtils.e(tag, "init question : " + parsedQuestionItem.questionContentList);
+        LogUtils.e(tag, "init analysis : " + parsedQuestionItem.analysisContentList);
         binding.titleTv.setText(getIntent().getStringExtra("bookName") + "问答");
         binding.startTimeTv.setText("问答开始时间:" + getIntent().getStringExtra("startTime"));
         binding.questionTypeTextview.setText(parsedQuestionItem.questionContentList.get(0).getExtraData().toString());
@@ -65,116 +69,99 @@ public class AnswerRecordDetailActivity extends BaseActivity{
 
     @Override
     protected void initLayout() {
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
+        binding.contentDisplayer.setContentAdapter(new WriteableContentDisplayerAdapter() {
             @Override
-            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
-                if (typeKey.equals("reply")) {
-                    currentShowReplyPageIndex = selectPageIndex;
-                } else if (typeKey.equals("analysis")) {
-                    currentShowAnalysisPageIndex = selectPageIndex;
-                }
+            public void afterPageCountChanged(String typeKey) {
                 refreshPageBtns();
+            }
+
+            @Override
+            public void beforeToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
+
+            }
+
+            @Override
+            public void afterToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
+
             }
         });
         binding.questionBodyBtn.setSelected(true);
-        binding.questionBodyBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //题干
-                if (!binding.questionBodyBtn.isSelected()) {
-                    binding.questionBodyBtn.setSelected(true);
-                    binding.answerAnalysisBtn.setSelected(false);
-                    binding.contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false);
-                }
+        binding.questionBodyBtn.setOnClickListener(v -> {
+            //题干
+            if (!binding.questionBodyBtn.isSelected()) {
+                binding.contentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
+                binding.questionBodyBtn.setSelected(true);
+                binding.answerAnalysisBtn.setSelected(false);
+                binding.contentDisplayer.toPage("question", currentShowReplyPageIndex, false);
             }
         });
-        binding.answerAnalysisBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //解答
-                if (binding.questionBodyBtn.isSelected()) {
-                    binding.questionBodyBtn.setSelected(false);
-                    binding.answerAnalysisBtn.setSelected(true);
-                    binding.contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
-                }
+        binding.answerAnalysisBtn.setOnClickListener(v -> {
+            //解答
+            if (binding.questionBodyBtn.isSelected()) {
+                binding.contentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+                binding.questionBodyBtn.setSelected(false);
+                binding.answerAnalysisBtn.setSelected(true);
+                binding.contentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
             }
         });
-        binding.lastPageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //上一页
-                if (binding.questionBodyBtn.isSelected()) {
-                    currentShowReplyPageIndex--;
-                    binding.contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false);
-                } else if (binding.answerAnalysisBtn.isSelected()) {
-                    currentShowAnalysisPageIndex--;
-                    binding.contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
-                }
+        binding.lastPageBtn.setOnClickListener(v -> {
+            //上一页
+            if (binding.questionBodyBtn.isSelected()) {
+                currentShowReplyPageIndex--;
+                binding.contentDisplayer.toPage("question", currentShowReplyPageIndex, false);
+            } else if (binding.answerAnalysisBtn.isSelected()) {
+                currentShowAnalysisPageIndex--;
+                binding.contentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
             }
         });
-        binding.nextPageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //下一页
-                if (binding.questionBodyBtn.isSelected()) {
-                    currentShowReplyPageIndex++;
-                    binding.contentDisplayer.getmContentAdaper().toPage("reply", currentShowReplyPageIndex, false);
-                } else if (binding.answerAnalysisBtn.isSelected()) {
-                    currentShowAnalysisPageIndex++;
-                    binding.contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
-                }
+        binding.nextPageBtn.setOnClickListener(v -> {
+            //下一页
+            if (binding.questionBodyBtn.isSelected()) {
+                currentShowReplyPageIndex++;
+                binding.contentDisplayer.toPage("question", currentShowReplyPageIndex, false);
+            } else if (binding.answerAnalysisBtn.isSelected()) {
+                currentShowAnalysisPageIndex++;
+                binding.contentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
             }
         });
     }
 
     @Override
     protected void loadData() {
-        binding.contentDisplayer.getmContentAdaper().updateDataList("analysis" , parsedQuestionItem.analysisContentList);
-        NetWorkManager
-                .queryReply(examId, SpUtils.getUserId() , null)
-//                .queryReply("238")//TODO 测试用,删掉
-                .subscribe(new Action1<List<QuestionReplySummary>>() {
-                               @Override
-                               public void call(List<QuestionReplySummary> studentReplies) {
-                                   //可能会有多个回答,取最后一个,并解析
-                                   QuestionReplySummary studentReply = studentReplies.get(studentReplies.size() - 1);
-                                   if (studentReply.getReplyScore() == 100){
-//                                       binding.buttomText.setText("正确");
-                                       binding.buttomText.setText("");
-                                       binding.buttomIcon.setImageResource(R.drawable.img_zhengque);
-                                   }
-                                   else if (studentReply.getReplyScore() == 0){
-//                                       binding.buttomText.setText("错误");
-                                       binding.buttomText.setText("");
-                                       binding.buttomIcon.setImageResource(R.drawable.img_cuowu);
-                                   }
-                                   else {
-//                                       binding.buttomText.setText("50%");
-                                       binding.buttomText.setText("");
-                                       binding.buttomIcon.setImageResource(R.drawable.img_bandui);
-                                   }
-                                   binding.contentDisplayer.getmContentAdaper().updateDataList("reply"
-                                           , ListUtil.conditionalSubList(studentReply.getParsedContentList(), new ListUtil.ConditionJudger<Content_new>() {
-                                               @Override
-                                               public boolean isMatchCondition(Content_new nodeInList) {
-                                                   return nodeInList.getType() == Content_new.Type.IMG_URL;
-                                               }
-                                           }));
-                                   currentShowReplyPageIndex = 0;
-                                   currentShowAnalysisPageIndex = 0;
+        NetWorkManager.queryReplyDetail(examId, null, SpUtils.getUserId() + "")
+                .subscribe(questionReplyDetails -> {
+                    QuestionReplyDetail questionReplyDetail = questionReplyDetails.get(questionReplyDetails.size() - 1);
+                    int replyScore = questionReplyDetail.getReplyScore();
+                    binding.buttomText.setText("");
+                    switch (replyScore) {
+                        case 100:
+                            binding.buttomIcon.setImageResource(R.drawable.img_zhengque);
+                            break;
+                        case 0:
+                            binding.buttomIcon.setImageResource(R.drawable.img_cuowu);
+                            break;
+                        default:
+                            binding.buttomIcon.setImageResource(R.drawable.img_bandui);
+                            break;
+                    }
+                    binding.contentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
+                    binding.contentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
 
-                                   binding.contentDisplayer.getmContentAdaper().toPage("reply" , 0 , false);
-                                   refreshPageBtns();
-                                   binding.spendTimeTv.setText("用时 : " + studentReply.getReplyUseTime());
-                               }
-                           }
-                        , new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                LogUtils.e("FH", "刷新答题情况失败" + throwable.getMessage());
-                                throwable.printStackTrace();
-                            }
-                        });
+                    if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
+                        binding.contentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
+                    } else {
+                        binding.contentDisplayer.getContentAdapter().deleteDataList("question", 2);
+                    }
+
+                    binding.contentDisplayer.getContentAdapter().updateDataList("question", 1, questionReplyDetail.getParsedReplyContentList());
+                    currentShowReplyPageIndex = 0;
+                    currentShowAnalysisPageIndex = 0;
+                    binding.contentDisplayer.toPage("question", 0, false);
+                    refreshPageBtns();
+                    binding.spendTimeTv.setText("用时 : " + questionReplyDetail.getReplyUseTime());
+                    binding.contentDisplayer.getLayer1().setIntercept(true);
+                    binding.contentDisplayer.getLayer2().setIntercept(true);
+                });
     }
 
     public void refreshPageBtns() {
@@ -184,7 +171,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
             } else {
                 binding.lastPageBtn.setVisibility(View.VISIBLE);
             }
-            if ((currentShowReplyPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("reply")) {
+            if ((currentShowReplyPageIndex + 1) >= binding.contentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("reply")) {
                 binding.nextPageBtn.setVisibility(View.INVISIBLE);
             } else {
                 binding.nextPageBtn.setVisibility(View.VISIBLE);
@@ -195,7 +182,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
             } else {
                 binding.lastPageBtn.setVisibility(View.VISIBLE);
             }
-            if ((currentShowAnalysisPageIndex + 1) >= binding.contentDisplayer.getmContentAdaper().getPageCount("analysis")) {
+            if ((currentShowAnalysisPageIndex + 1) >= binding.contentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("analysis")) {
                 binding.nextPageBtn.setVisibility(View.INVISIBLE);
             } else {
                 binding.nextPageBtn.setVisibility(View.VISIBLE);
@@ -207,7 +194,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
     protected void refreshView() {
     }
 
-    public void back(View view){
+    public void back(View view) {
         onBackPressed();
     }
 
@@ -215,7 +202,7 @@ public class AnswerRecordDetailActivity extends BaseActivity{
     protected void onDestroy() {
         super.onDestroy();
         Glide.get(this).clearMemory();
-        binding.contentDisplayer.clearPdfCache();
+        binding.contentDisplayer.clearCache();
         Runtime.getRuntime().gc();
     }
 }

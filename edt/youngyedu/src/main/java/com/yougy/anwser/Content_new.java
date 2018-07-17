@@ -80,4 +80,14 @@ public class Content_new<E> implements Parcelable {
             return new Content_new[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Content_new{" +
+                "version=" + version +
+                ", type=" + type +
+                ", content='" + content + '\'' +
+                ", extraData=" + extraData +
+                '}';
+    }
 }
