@@ -90,7 +90,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     @BindView(R.id.analysis_btn)
     TextView analysisBtn;
     @BindView(R.id.img_btn_right)
-    ImageButton btnRight;
+    ImageView btnRight;
 
 
     @BindView(R.id.wcd_content_displayer)
@@ -326,8 +326,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     }
                 });
 
-        btnRight.setVisibility(View.VISIBLE);
-        btnRight.setImageResource(R.drawable.icon_gengduo);
+//        btnRight.setVisibility(View.VISIBLE);
+//        btnRight.setImageResource(R.drawable.icon_gengduo);
 
     }
 
@@ -501,11 +501,14 @@ public class CheckHomeWorkActivity extends BaseActivity {
     }
 
     @OnClick({R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_homework_error, R.id.tv_homework_half_right, R.id.tv_homework_right,
-            R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change})
+            R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change, R.id.image_refresh})
     public void onClick(View view) {
 
         myLeaveScribbleMode();
         switch (view.getId()) {
+            case R.id.image_refresh:
+                loadData();
+                break;
             case R.id.tv_last_homework:
 
                 //不提交批改数据，直接跳转到上一题

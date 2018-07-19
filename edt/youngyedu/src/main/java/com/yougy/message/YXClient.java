@@ -54,6 +54,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.attachment.CustomAttachParser;
@@ -65,6 +66,7 @@ import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.ReplyAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
+import com.yougy.message.attachment.SubmitHomeworkAttachment;
 import com.yougy.message.attachment.WendaQuestionAddAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -989,6 +991,40 @@ public class YXClient {
                 break;
             case Team:
                 message = MessageBuilder.createCustomMessage(id, SessionTypeEnum.Team, "[自定义消息]", new ReplyAttachment(replyId, examId));
+                break;
+            default:
+                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
+                return null;
+        }
+        CustomMessageConfig config = new CustomMessageConfig();
+        config.enableRoaming = true;
+        message.setConfig(config);
+        if (requestCallback != null) {
+            NIMClient.getService(MsgService.class).sendMessage(message, true).setCallback(requestCallback);
+        } else {
+            NIMClient.getService(MsgService.class).sendMessage(message, true);
+        }
+        return message;
+    }
+
+    /**
+     * 发送提交作业消息给教师端
+     * @param examId
+     * @param typeEnum
+     * @param studentId
+     * @param studentName
+     * @param requestCallback
+     * @return
+     */
+    public IMMessage sendSubmitHomeworkMsg(int examId, SessionTypeEnum typeEnum
+            , int studentId, String studentName, RequestCallback<Void> requestCallback) {
+        final IMMessage message;
+        switch (typeEnum) {
+            case P2P:
+                message = MessageBuilder.createCustomMessage(String.valueOf(studentId), SessionTypeEnum.P2P, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId));
+                break;
+            case Team:
+                message = MessageBuilder.createCustomMessage(String.valueOf(studentId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);

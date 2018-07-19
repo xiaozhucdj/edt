@@ -5,12 +5,11 @@
     </data>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="134px"
         android:background="@drawable/shape_rectangle_black_border"
-        android:layout_marginTop="26px"
         android:layout_marginLeft="20px"
         android:layout_marginRight="20px"
-        >
+        android:layout_marginTop="20px">
         <TextView
             android:id="@+id/status_tv"
             android:layout_width="36px"
@@ -31,7 +30,7 @@
             android:textSize="24px"
             android:textColor="@color/black"
             android:layout_toRightOf="@id/status_tv"
-            android:layout_marginTop="25px"
+            android:layout_marginTop="30px"
             android:layout_marginLeft="27px"
             />
         <TextView
@@ -39,9 +38,9 @@
             android:layout_width="20px"
             android:layout_height="20px"
             android:background="@drawable/icon_clock"
-            android:layout_alignLeft="@id/homework_name_tv"
-            android:layout_below="@id/homework_name_tv"
-            android:layout_marginTop="27px"
+            android:layout_alignLeft="@+id/homework_name_tv"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10px"
             />
         <TextView
             android:id="@+id/time_tv"
@@ -53,7 +52,6 @@
             android:layout_alignTop="@id/clock_icon_tv"
             android:layout_toRightOf="@id/clock_icon_tv"
             android:layout_marginLeft="10px"
-            android:layout_marginBottom="33px"
             android:layout_marginTop="-3px"
             />
 

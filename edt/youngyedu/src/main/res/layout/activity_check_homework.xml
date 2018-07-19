@@ -5,7 +5,50 @@
     android:orientation="vertical">
 
     <!-- 标题-->
-    <include layout="@layout/commcon_title_layout" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="65px">
+
+        <ImageView
+            android:id="@+id/btn_left"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:background="@null"
+            android:onClick="onBack"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30px"
+            android:src="@drawable/icon_fanhui" />
+
+        <ImageView
+            android:id="@+id/image_refresh"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_toRightOf="@+id/btn_left"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30px"
+            android:src="@drawable/icon_shuaxin" />
+
+        <ImageView
+            android:id="@+id/img_btn_right"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30px"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:onClick="toCart"
+            android:src="@drawable/icon_gengduo" />
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/book_details_text"
+            android:textColor="@color/black"
+            android:textSize="30px" />
+    </RelativeLayout>
 
 
     <LinearLayout
@@ -197,7 +240,7 @@
         <LinearLayout
             android:id="@+id/ll_control_bottom"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 

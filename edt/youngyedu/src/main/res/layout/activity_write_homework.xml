@@ -5,7 +5,51 @@
     android:orientation="vertical">
 
     <!-- 标题-->
-    <include layout="@layout/commcon_title_layout" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="65px">
+
+        <ImageButton
+            android:id="@+id/btn_left"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:background="@drawable/icon_fanhui"
+            android:onClick="onBack"
+            android:layout_marginLeft="30px"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null" />
+
+        <ImageView
+            android:id="@+id/image_refresh"
+            android:layout_width="32px"
+            android:layout_height="30px"
+            android:layout_marginLeft="30px"
+            android:layout_toRightOf="@+id/btn_left"
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_shuaxin"
+            android:onClick="back"
+            />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/book_details_text"
+            android:textColor="@color/black"
+            android:textSize="28px" />
+
+        <TextView
+            android:id="@+id/tv_title_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="时间：00:00:00"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30px"
+            android:textSize="24px" />
+    </RelativeLayout>
 
 
     <View

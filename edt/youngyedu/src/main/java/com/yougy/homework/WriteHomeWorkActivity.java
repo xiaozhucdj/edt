@@ -31,6 +31,8 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -48,6 +50,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
@@ -109,6 +112,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
     TextView tvSubmitHomeWork;
+    @BindView(R.id.tv_title_time)
+    TextView tvSubmitTime;
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.tv_add_page)
@@ -141,6 +146,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RadioButton rbRight;
     @BindView(R.id.tv_homework_position)
     TextView tvHomeWorkPosition;
+    @BindView(R.id.image_refresh)
+    ImageView imageRefresh;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -210,7 +217,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private Boolean btnLocked = false;
 
     private boolean isTimerWork = false; //是否定时作业
-    private int timeSpace = 10000;  // 定时时间
+    private long timeSpace = -1;  // 定时时间
     private long startTime = 0;// 开始时间
     private long residueTime; //剩余时间
     private boolean isAutoSubmit = false; //是否到时间自动提交
@@ -235,6 +242,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         isTimerWork = getIntent().getBooleanExtra("isTimerWork", false);
         if (isTimerWork) {
+            timeSpace =  FormatUtils.timeStrToLongMisencod(getIntent().getStringExtra("lifeTime"));
+            if (timeSpace <= 0) {
+                LogUtils.e("lifeTime is 0, ERROR return.");
+                finish();
+                return;
+            }
             judgeWorkIsEnd();
         }
         initReceiveHomeworkMsg();
@@ -324,6 +337,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
      */
     private void autoSubmitHomeWork () {
         //是否要提示：
+        ToastUtil.showCustomToast(getApplicationContext(), "定时时间到，作业将自动提交！");
         getUpLoadInfo();
     }
 
@@ -339,7 +353,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         });
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
-        findViewById(R.id.img_btn_right).setVisibility(View.GONE);
+//        findViewById(R.id.img_btn_right).setVisibility(View.GONE);
 
         /*mNbvAnswerBoard.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -397,6 +411,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
             }
         });
+
+        imageRefresh.setOnClickListener(v -> loadData());
     }
 
     @Override
@@ -750,11 +766,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
-        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
+        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(spentTimeMill) + ")");
     }
 
     private void refreshTime(long time) {
-        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(time) + ")");
+        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(time) + ")");
     }
 
     /**
@@ -1388,7 +1404,25 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             timedTask.stop();
                         }
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
+                        //发送消息
+                        YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId), SessionTypeEnum.P2P, SpUtils.getAccountId(), SpUtils.getAccountName()
+                        ,new RequestCallback<Void>(){
 
+                                    @Override
+                                    public void onSuccess(Void param) {
+                                        LogUtils.d("提交消息通知教师成功！");
+                                    }
+
+                                    @Override
+                                    public void onFailed(int code) {
+                                        LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                    }
+
+                                    @Override
+                                    public void onException(Throwable exception) {
+                                        LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                    }
+                                });
                         onBackPressed();
 
                     }

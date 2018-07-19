@@ -124,6 +124,16 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
+    Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail_New(
+            @Field("homeworkId") Integer homeworkId , @Field("examTypeCode") String type , @Field("needRefresh") Boolean needRefresh
+            ,@Field("statusCode") String statusCode);
+
+    /**
+     * 作业本内容作业(考试)列表接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
     Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(
             @Field("homeworkId") Integer homeworkId , @Field("examTypeCode") String type , @Field("needRefresh") Boolean needRefresh);
 

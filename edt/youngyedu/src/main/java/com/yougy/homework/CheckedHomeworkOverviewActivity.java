@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
@@ -19,11 +21,13 @@ import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.message.SizeUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityCheckedHomeworkDetailBinding;
+import com.yougy.ui.activity.databinding.ItemQuestionGridview2Binding;
 import com.yougy.ui.activity.databinding.ItemQuestionGridviewBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.OnClick;
 import rx.functions.Action1;
 
 /**
@@ -70,8 +74,12 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     @Override
     protected void initLayout() {
-        binding.mainRecyclerview.setMaxItemNumInOnePage(30);
-        binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 5) {
+        if (isScoring) {
+            binding.mainRecyclerview.setMaxItemNumInOnePage(30);
+        } else {
+            binding.mainRecyclerview.setMaxItemNumInOnePage(42);
+        }
+        binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -80,12 +88,23 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         binding.mainRecyclerview.setAdapter(new PageableRecyclerView.Adapter<MyHolder>() {
             @Override
             public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new MyHolder(DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.item_question_gridview, parent, false));
+                //计分
+                ItemQuestionGridviewBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()),R.layout.item_question_gridview, parent, false);
+                //不计分
+                ItemQuestionGridview2Binding binding2 = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()),R.layout.item_question_gridview2, parent, false);
+                if (isScoring) {
+                    return new MyHolder(binding);
+                }
+                return  new MyHolder(binding2);
             }
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
-                holder.itemBinding.textview.setText("" + (position + 1));
+                if (isScoring) {
+                    holder.itemBinding.textview.setText("" + (position + 1));
+                } else {
+                    holder.itemBinding2.textview.setText("" + (position + 1));
+                }
                 holder.setData(replyList.get(position));
             }
 
@@ -124,6 +143,19 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     @Override
                     public void call(List<QuestionReplySummary> replySummaries) {
                         replyList.clear();
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
+                        replyList.addAll(replySummaries);
                         replyList.addAll(replySummaries);
                         binding.mainRecyclerview.notifyDataSetChanged();
                         binding.questionNumTv.setText("习题数量 : " + replyList.size());
@@ -169,37 +201,55 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         finish();
     }
 
+    @OnClick({R.id.image_refresh})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.image_refresh:
+                loadData();
+                break;
+        }
+    }
+
     private class MyHolder extends RecyclerView.ViewHolder {
         private ItemQuestionGridviewBinding itemBinding;
+        private ItemQuestionGridview2Binding itemBinding2;
         private QuestionReplySummary data;
 
         public MyHolder(ItemQuestionGridviewBinding binding) {
             super(binding.getRoot());
-            this.itemBinding = binding;
+            this.itemBinding = binding;//计分
+        }
+
+        public MyHolder(ItemQuestionGridview2Binding binding) {
+            super(binding.getRoot());
+            this.itemBinding2 = binding;
         }
 
         public MyHolder setData(QuestionReplySummary data) {
             this.data = data;
-            if (data.getReplyScore() == 0) {
-                itemBinding.icon.setBackgroundResource(R.drawable.icon_wrong);
-            } else if (data.getReplyScore() == 100) {
-                itemBinding.icon.setBackgroundResource(R.drawable.icon_correct);
+            if (isScoring) {
+                if (data.getReplyScore() == 0) {
+                    itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_cuowu);
+                } else if (data.getReplyScore() == 100) {
+                    itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_zhengque);
+                } else {
+                    itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_bandui);
+                }
             } else {
-                itemBinding.icon.setBackgroundResource(R.drawable.icon_half_correct);
+                if (data.getReplyScore() == 0) {
+                    itemBinding2.icon.setBackgroundResource(R.drawable.img_cuowu_2);
+                } else if (data.getReplyScore() == 100) {
+                    itemBinding2.icon.setBackgroundResource(R.drawable.img_zhengque_2);
+                } else {
+                    itemBinding2.icon.setBackgroundResource(R.drawable.img_bandui_2);
+                }
             }
+
             if (isScoring) {//计分作业
                 itemBinding.scoreText.setText(data.getReplyScore() + "分");
-                itemBinding.scoreText.setVisibility(View.VISIBLE);
-            } else{
-//                itemBinding.scoreText.setVisibility(View.GONE);
             }
             return this;
         }
-
-        public ItemQuestionGridviewBinding getItemBinding() {
-            return itemBinding;
-        }
-
         public QuestionReplySummary getData() {
             return data;
         }

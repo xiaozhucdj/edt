@@ -225,6 +225,13 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_New(Integer homeworkId,String examTypeCode, String statusCode) {
+        LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail_New");
+        return getInstance().getServerApi().queryHomeworkBookDetail_New(homeworkId, examTypeCode, true, statusCode)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
         return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "II02", true)

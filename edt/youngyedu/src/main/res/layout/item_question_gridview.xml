@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="124px"
+        android:layout_width="96px"
+        android:layout_height="184px"
         >
         <TextView
-            android:id="@+id/textview"
-            android:layout_width="82px"
-            android:layout_height="82px"
-            android:background="@drawable/shape_circle_white_black"
+            android:id="@+id/score_text"
+            android:layout_width="86px"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_centerVertical="true"
-            android:text="1"
+            android:text="10分"
             android:textSize="24px"
             android:textColor="@color/black"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="64px"
             />
         <TextView
             android:id="@+id/icon"
-            android:layout_width="38px"
-            android:layout_height="38px"
-            android:background="@drawable/icon_correct"
+            android:layout_width="96px"
+            android:layout_height="86px"
+            android:background="@drawable/img_fenzhi_zhengque"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="50px"
-            android:layout_marginRight="26px"
-            android:layout_marginBottom="20px"
+            android:layout_marginBottom="30px"
             />
 
         <TextView
-            android:id="@+id/score_text"
-            android:layout_width="wrap_content"
+            android:id="@+id/textview"
+            android:layout_width="86px"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100px"
-            android:layout_centerVertical="true"
             android:textColor="@color/background_black"
-            android:textSize="20px"
-            android:text="10分"
-            android:visibility="gone"/>
+            android:gravity="center"
+            android:layout_marginTop="20px"
+            android:textSize="30px"
+            android:text="1"
+            android:visibility="visible"/>
 
     </RelativeLayout>
 </layout>

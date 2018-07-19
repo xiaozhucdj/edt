@@ -21,7 +21,7 @@ public class ReceiveWorkAttachment extends CustomAttachment {
     }
 
     public ReceiveWorkAttachment(String examId, String examName) {
-        super(CustomAttachParser.CLUE_SEND_SEATWORK , 1);
+        super(CustomAttachParser.CLUE_END_SEATWORK , 1);
         this.examId = examId;
         this.examName = examName;
     }
