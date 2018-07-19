@@ -318,7 +318,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .start(new Action1<Integer>() {
                     @Override
                     public void call(Integer times) {
-
                         if ( residueTime < 1000) {
                             residueTime = 0;
                             autoSubmitHomeWork();
@@ -766,11 +765,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
-        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(spentTimeMill) + ")");
+        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(spentTimeMill));
     }
 
     private void refreshTime(long time) {
-        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(time) + ")");
+        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(time));
     }
 
     /**

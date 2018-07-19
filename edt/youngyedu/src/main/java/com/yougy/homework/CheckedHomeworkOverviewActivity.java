@@ -48,6 +48,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     private int examTotalPoints ;//exam 总分
     private int totalScore ;//得分
     private float mAccuracy; //正确率
+    private int itemCount;//总题数
+    private int correctCount;//正确的题目
 
     @Override
     protected void setContentView() {
@@ -68,6 +70,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         examTotalPoints = getIntent().getIntExtra("getExamTotalPoints", 0);
         totalScore = getIntent().getIntExtra("getTotalPoints", 0);
         mAccuracy = getIntent().getFloatExtra("getAccuracy", 0);
+        itemCount = getIntent().getIntExtra("getItemCount", 0 );
+        correctCount = getIntent().getIntExtra("getCorrectCount", 0 );
         binding.titleTv.setText(examName);
         refreshCircleProgressBar();
     }
@@ -144,19 +148,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     public void call(List<QuestionReplySummary> replySummaries) {
                         replyList.clear();
                         replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
-                        replyList.addAll(replySummaries);
                         binding.mainRecyclerview.notifyDataSetChanged();
                         binding.questionNumTv.setText("习题数量 : " + replyList.size());
                         long allUseTime = 0;
@@ -187,7 +178,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         } else { //不计分作业
             binding.textScoreTitle.setText("正确率");
             binding.circleProgressBar.setProgress((int) (mAccuracy * 100));
-            binding.textScore.setText((int)(mAccuracy * 100) + "%");
+            binding.textScore.setText(correctCount + "/" + itemCount);
             binding.circleProgressBar.setIsDrawCenterText(false);
         }
 

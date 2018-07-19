@@ -84,15 +84,21 @@ public class ExerciseBookFragment extends BFragment {
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
+
                 switch (currentStatus) {
                     case DOING:
                         HomeworkSummary doingHomeworkSummary = doingList.get(position);
                         if (!StringUtils.isEmpty(doingHomeworkSummary.getExtra().getLifeTime())) {
                             holder.binding.statusTv.setText("定\n\n时");
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
-                            holder.binding.textLifetime.setText("计时：" + doingHomeworkSummary.getExtra().getLifeTime());
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
+                            holder.binding.statusTv.setVisibility(View.VISIBLE);
+                            holder.binding.textLifetime.setText("限时：" + doingHomeworkSummary.getExtra().getLifeTime());
                             holder.binding.textLifetime.setVisibility(View.VISIBLE);
+                        } else {
+                            holder.binding.statusTv.setVisibility(View.GONE);
+                            holder.binding.textLifetime.setVisibility(View.GONE);
                         }
+                        holder.binding.textRateScore.setVisibility(View.GONE);
                         holder.setData(doingHomeworkSummary);
                         break;
                     case WAIT_FOR_CHECK:
@@ -100,13 +106,17 @@ public class ExerciseBookFragment extends BFragment {
                         if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
                             holder.binding.statusTv.setText("自\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
+                            holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else if ("II55".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
                             holder.binding.statusTv.setText("互\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
+                            holder.binding.statusTv.setVisibility(View.VISIBLE);
                         }
                         else {
                             holder.binding.statusTv.setVisibility(View.GONE);
                         }
+                        holder.binding.textLifetime.setVisibility(View.GONE);
+                        holder.binding.textRateScore.setVisibility(View.GONE);
                         holder.setData(waitForCheckList.get(position));
                         break;
                     case CHECKED:
@@ -115,12 +125,14 @@ public class ExerciseBookFragment extends BFragment {
                         if (extraBean.getExamTotalPoints() != 0) {
                             //计分作业
                             holder.binding.textRateScore.setText("分数：" + extraBean.getTotalPoints());
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_gray);
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setText("计\n\n分");
+                            holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else {
                             holder.binding.statusTv.setVisibility(View.GONE);
-                            holder.binding.textRateScore.setText("正确率：" + (int)(extraBean.getAccuracy() * 100) + "%");
+                            holder.binding.textRateScore.setText("正确率：" + extraBean.getCorrectCount() + "/" + extraBean.getItemCount());
                         }
+                        holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.VISIBLE);
                         holder.setData(checkedHomeworkSummary);
                         break;
@@ -159,9 +171,12 @@ public class ExerciseBookFragment extends BFragment {
                             if (holder.getData().getExtra().getExamTotalPoints() != 0) {
                                 //是否为计分作业
                                 intent.putExtra("isScoring", true);
+                                intent.putExtra("getExamTotalPoints", holder.getData().getExtra().getExamTotalPoints());
+                                intent.putExtra("getTotalPoints", holder.getData().getExtra().getTotalPoints());
+                            } else {
+                                intent.putExtra("getItemCount", holder.getData().getExtra().getItemCount());
+                                intent.putExtra("getCorrectCount", holder.getData().getExtra().getCorrectCount());
                             }
-                            intent.putExtra("getExamTotalPoints", holder.getData().getExtra().getExamTotalPoints());
-                            intent.putExtra("getTotalPoints", holder.getData().getExtra().getTotalPoints());
                             intent.putExtra("getAccuracy", holder.getData().getExtra().getAccuracy());
                             startActivity(intent);
                         }
@@ -275,21 +290,7 @@ public class ExerciseBookFragment extends BFragment {
             }
         });
 
-        //课堂作业和家庭作业切换
-       /* binding.toggleHomework.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //直接设置刷新适配器数据
-                if (currentIsHomework) {
-                    binding.toggleHomework.setText("进入家庭作业");
-                    currentIsHomework = false;
-                } else {
-                    binding.toggleHomework.setText("进入课堂作业");
-                    currentIsHomework = true;
-                }
-                refreshData();
-            }
-        });*/
+
         return binding.getRoot();
     }
 
@@ -330,11 +331,11 @@ public class ExerciseBookFragment extends BFragment {
         if (mControlActivity.mBookId <= 0){
             binding.switch2bookBtn.setEnabled(false);
         }
-  // 待服务器调试   正确率显示   数据刷新IH 参数
+        // IH01  不显示
         String statusCode = "IH01";
         switch (currentStatus) {
             case DOING:
-                statusCode = "[\"IH01\",\"IH02\"]";
+                statusCode = "IH02";
                 break;
             case WAIT_FOR_CHECK:
                 statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
@@ -354,20 +355,20 @@ public class ExerciseBookFragment extends BFragment {
                         switch (currentStatus) {
                             case DOING:
                                 doingList.clear();
-                                for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
-                                    if ("IH01".equals(homeworkSummary.getExtra().getStatusCode())) {
-                                        //如果作业开始时间已经早于现在的时间,说明作业已经开始了,
-                                        //但是如果此时这个作业的状态还是IH01未开始,则调一次刷新接口刷新整个作业本,这样这个作业的状态就可以更正了.
-                                        long startTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getStartTime() , "yyyy-MM-dd HH:mm:ss");
-                                        long currentTime = System.currentTimeMillis();
-                                        if (startTime < currentTime){
-                                            LogUtils.e("ERROR retry, 考试状态不对,刷新考试列表.");
-                                            ToastUtil.showCustomToast(getActivity() , "发现有考试状态不对,刷新考试列表");
-                                            refreshData();
-                                            return;
-                                        }
-                                    }
-                                }
+//                                for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
+//                                    if ("IH01".equals(homeworkSummary.getExtra().getStatusCode())) {
+//                                        //如果作业开始时间已经早于现在的时间,说明作业已经开始了,
+//                                        //但是如果此时这个作业的状态还是IH01未开始,则调一次刷新接口刷新整个作业本,这样这个作业的状态就可以更正了.
+//                                        long startTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getStartTime() , "yyyy-MM-dd HH:mm:ss");
+//                                        long currentTime = System.currentTimeMillis();
+//                                        if (startTime < currentTime){
+//                                            LogUtils.e("ERROR retry, 考试状态不对,刷新考试列表.");
+//                                            ToastUtil.showCustomToast(getActivity() , "发现有考试状态不对,刷新考试列表");
+//                                            refreshData();
+//                                            return;
+//                                        }
+//                                    }
+//                                }
                                 doingList.addAll(homeworkSummaryList);
                                 if (doingList.size() == 0){
                                     binding.emptyHintLayout.setVisibility(View.VISIBLE);
@@ -405,83 +406,6 @@ public class ExerciseBookFragment extends BFragment {
 
                     binding.mainRecyclerview.setCurrentPage(0);
                     binding.mainRecyclerview.notifyDataSetChanged();
-
-                        /*if (homeworkBookDetails.size() > 0) {
-                            checkedList.clear();
-                            waitForCheckList.clear();
-                            doingList.clear();
-                            //作业状态码:
-                            //未开始(IH01),作答中(IH02),未批改(IH03),批改中(IH04),已批改(IH05),未提交(IH51)
-                            List<HomeworkSummary> homeworkSummaryList = homeworkBookDetails.get(0).getHomeworkContent();
-                            for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
-                                String statusCode = homeworkSummary.getExtra().getStatusCode();
-                                if ("IH01".equals(statusCode)) {
-                                    //如果作业开始时间已经早于现在的时间,说明作业已经开始了,
-                                    //但是如果此时这个作业的状态还是IH01未开始,则调一次刷新接口刷新整个作业本,这样这个作业的状态就可以更正了.
-                                    long startTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getStartTime(), "yyyy-MM-dd HH:mm:ss");
-                                    long endTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getEndTime(), "yyyy-MM-dd HH:mm:ss");
-                                    long currentTime = System.currentTimeMillis();
-                                    if (startTime < currentTime) {
-                                        LogUtils.e("FH", "发现有作业状态不对,刷新作业列表" +
-                                                " 作业id: " + homeworkSummary.getExam()
-                                                + " 作业状态 : " + statusCode
-                                                + " startTime : " + homeworkSummary.getExtra().getStartTime()
-                                                + " endTime : " + homeworkSummary.getExtra().getEndTime()
-                                                + "currentTime" + System.currentTimeMillis());
-                                        ToastUtil.showCustomToast(ExerciseBookFragment.this.getActivity(), "发现有考试状态不对,刷新考试列表");
-                                        NetWorkManager.refreshHomeworkBook(mControlActivity.mHomewrokId)
-                                                .subscribe(new Action1<Object>() {
-                                                    @Override
-                                                    public void call(Object o) {
-                                                        //刷新成功后再次调用查询接口查询新的作业本数据
-                                                        refreshData();
-                                                    }
-                                                }, new Action1<Throwable>() {
-                                                    @Override
-                                                    public void call(Throwable throwable) {
-                                                        throwable.printStackTrace();
-                                                    }
-                                                });
-                                        return;
-                                    }
-                                } else if ("IH02".equals(statusCode)) {//作答中
-                                    doingList.add(homeworkSummary);
-                                } else if ("IH03".equals(statusCode) || "IH04".equals(statusCode) //未批改,批改中都算待批改
-                                        || "IH52".equals(statusCode)) {//自评中也算待批改
-                                    waitForCheckList.add(homeworkSummary);
-                                } else if ("IH05".equals(statusCode) || "IH51".equals(statusCode)) {//已批改,未提交都算已批改
-                                    checkedList.add(homeworkSummary);
-                                }
-                            }
-                        }
-                        binding.mainRecyclerview.setCurrentPage(0);
-                        binding.mainRecyclerview.notifyDataSetChanged();
-                        switch (currentStatus) {
-                            case CHECKED:
-                                if (checkedList.size() == 0) {
-                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
-                                    binding.emptyHintTv.setText("您还没有已批改的作业哦");
-                                } else {
-                                    binding.emptyHintLayout.setVisibility(View.GONE);
-                                }
-                                break;
-                            case DOING:
-                                if (doingList.size() == 0) {
-                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
-                                    binding.emptyHintTv.setText("您已经完成所有作业啦! 继续努力!");
-                                } else {
-                                    binding.emptyHintLayout.setVisibility(View.GONE);
-                                }
-                                break;
-                            case WAIT_FOR_CHECK:
-                                if (waitForCheckList.size() == 0) {
-                                    binding.emptyHintLayout.setVisibility(View.VISIBLE);
-                                    binding.emptyHintTv.setText("您还没有待批改的作业哦");
-                                } else {
-                                    binding.emptyHintLayout.setVisibility(View.GONE);
-                                }
-                                break;
-                        }*/
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -505,7 +429,15 @@ public class ExerciseBookFragment extends BFragment {
         public void setData(HomeworkSummary data) {
             this.data = data;
             binding.homeworkNameTv.setText(data.getExtra().getName());
-            binding.timeTv.setText("时间:" + data.getExtra().getStartTime()+ "~" + data.getExtra().getEndTime());
+            if (!StringUtils.isEmpty(data.getExtra().getStartTime()) && !StringUtils.isEmpty(data.getExtra().getEndTime())) {
+                binding.timeTv.setText("时间:" + data.getExtra().getStartTime()+ "~" + data.getExtra().getEndTime());
+                binding.timeTv.setVisibility(View.VISIBLE);
+            } else if (!StringUtils.isEmpty(data.getExtra().getStartTime())){
+                binding.timeTv.setText("时间:" + data.getExtra().getStartTime());
+                binding.timeTv.setVisibility(View.VISIBLE);
+            } else {
+                binding.timeTv.setVisibility(View.GONE);
+            }
         }
 
         public HomeworkSummary getData() {

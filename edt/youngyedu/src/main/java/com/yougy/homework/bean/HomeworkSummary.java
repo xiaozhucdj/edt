@@ -71,7 +71,8 @@ public class HomeworkSummary {
         private int totalPoints;//学生总得分
         private int examTotalPoints;//作业总分值
         private String typeCode;// 自评 互评等作业状态
-
+        private int itemCount;//考试题总数
+        private int correctCount;//正确的题目
 
         public String getBook() {
             return book;
@@ -167,6 +168,22 @@ public class HomeworkSummary {
 
         public void setTypeCode(String typeCode) {
             this.typeCode = typeCode;
+        }
+
+        public int getItemCount() {
+            return itemCount;
+        }
+
+        public void setItemCount(int itemCount) {
+            this.itemCount = itemCount;
+        }
+
+        public int getCorrectCount() {
+            return correctCount;
+        }
+
+        public void setCorrectCount(int correctCount) {
+            this.correctCount = correctCount;
         }
     }
 }

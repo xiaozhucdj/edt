@@ -14,10 +14,8 @@
             android:id="@+id/status_tv"
             android:layout_width="36px"
             android:layout_height="82px"
-            android:background="@drawable/img_homework_status_bg_blue"
             android:textSize="16px"
             android:textColor="@color/white"
-            android:text="作\n业\n中"
             android:paddingTop="7px"
             android:paddingLeft="8px"
             android:textStyle="bold"
@@ -49,8 +47,8 @@
             android:textSize="20px"
             android:textColor="@color/black"
             android:text="时间 : xxxxxxxxxxxx"
-            android:layout_alignTop="@id/clock_icon_tv"
-            android:layout_toRightOf="@id/clock_icon_tv"
+            android:layout_toRightOf="@+id/clock_icon_tv"
+            android:layout_alignTop="@+id/clock_icon_tv"
             android:layout_marginLeft="10px"
             android:layout_marginTop="-3px"
             />
@@ -60,12 +58,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/time_tv"
-            android:layout_marginTop="80px"
-            android:layout_marginLeft="30px"
+            android:layout_alignTop="@+id/clock_icon_tv"
+            android:layout_marginLeft="50px"
             android:textSize="20px"
             android:textColor="@color/black"
-            android:text="计时: 15分钟"
-            android:visibility="gone"/>
+            android:text="限时: 15分钟"
+            android:visibility="visible"/>
 
         <TextView
             android:id="@+id/text_rate_score"

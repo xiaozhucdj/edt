@@ -9,11 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="65px">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_left"
-            android:layout_width="40px"
-            android:layout_height="40px"
-            android:background="@drawable/icon_fanhui"
+            android:layout_width="30px"
+            android:layout_height="30px"
+            android:src="@drawable/le_btn_back_new_selector"
+            android:scaleType="centerInside"
             android:onClick="onBack"
             android:layout_marginLeft="30px"
             android:layout_centerVertical="true"
