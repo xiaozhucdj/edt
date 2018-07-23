@@ -414,7 +414,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         currentShowReplyPageIndex = 0;
         currentShowAnalysisPageIndex = 0;
 
-        Integer itemWeight = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+        Integer itemWeight = questionReplyDetail.getReplyItemWeight();
         //不是记分题
         if (itemWeight == null) {
 
@@ -666,7 +666,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_homework_half_right:
-                Integer itemWeight = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+                Integer itemWeight = questionReplyDetail.getReplyItemWeight();
                 //如果分数为null，那么为不计分题
                 if (itemWeight == null) {
 
@@ -688,11 +688,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     replyScoreList.set(currentShowQuestionIndex, score);
 
                     llScoreControl.setVisibility(View.VISIBLE);
+                    tvSetScore.setText("请选择分值（您设置的总分值为%" + questionReplyDetail.getReplyItemWeight() + "分）");
                     wcdContentDisplayer.getLayer2().setIntercept(true);
                 }
                 break;
             case R.id.tv_homework_right:
-                itemWeight = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+                itemWeight = questionReplyDetail.getReplyItemWeight();
                 //如果分数为null，那么为不计分题
                 if (itemWeight == null) {
                     score = 100;
@@ -837,9 +838,10 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 break;
         }
     }
+
     private void setScore(int teacherScore) {
 
-        int grossScroe = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+        int grossScroe = questionReplyDetail.getReplyItemWeight();
 
         String scoreStr = tvGiveScore.getText().toString();
         int lastScore = 0;

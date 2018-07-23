@@ -50,11 +50,19 @@ public class QuestionReplyDetail {
     private List<LinkedTreeMap> replyContent;
     private List<LinkedTreeMap> replyComment;
     private OriginQuestionItem replyItemContent;
+    private Integer replyItemWeight;
 
 
     private List<Content_new> parsedReplyContentList = new ArrayList<Content_new>();
     private List<Content_new> parsedReplyCommentList = new ArrayList<Content_new>();
     private ParsedQuestionItem parsedQuestionItem;
+    public Integer getReplyItemWeight() {
+        return replyItemWeight;
+    }
+
+    public void setReplyItemWeight(Integer replyItemWeight) {
+        this.replyItemWeight = replyItemWeight;
+    }
 
     public String getReplyStatus() {
         return replyStatus;
