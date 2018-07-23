@@ -184,18 +184,18 @@ public class HomeworkDetail {
              * paperId : 499
              */
 
-            private int paperItemWeight;
+            private Integer paperItemWeight;
             private int paperItem;
             private Object paperItemRank;
             private int paperId;
             private List<OriginQuestionItem> paperItemContent;
             private List<ParsedQuestionItem> parsedQuestionItemList = new ArrayList<ParsedQuestionItem>();
 
-            public int getPaperItemWeight() {
+            public Integer getPaperItemWeight() {
                 return paperItemWeight;
             }
 
-            public void setPaperItemWeight(int paperItemWeight) {
+            public void setPaperItemWeight(Integer paperItemWeight) {
                 this.paperItemWeight = paperItemWeight;
             }
 
