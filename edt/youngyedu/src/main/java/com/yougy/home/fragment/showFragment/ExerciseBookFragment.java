@@ -105,11 +105,11 @@ public class ExerciseBookFragment extends BFragment {
                         HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);
                         if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
                             holder.binding.statusTv.setText("自\n\n评");
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else if ("II55".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
                             holder.binding.statusTv.setText("互\n\n评");
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_blue);
+                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                         }
                         else {

@@ -54,6 +54,7 @@ import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -241,7 +242,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         tvTitle.setText(examName);
 
         isTimerWork = getIntent().getBooleanExtra("isTimerWork", false);
-        if (isTimerWork) {
+        if (isTimerWork && !StringUtils.isEmpty(getIntent().getStringExtra("lifeTime"))) {
             timeSpace =  FormatUtils.timeStrToLongMisencod(getIntent().getStringExtra("lifeTime"));
             if (timeSpace <= 0) {
                 LogUtils.e("lifeTime is 0, ERROR return.");
