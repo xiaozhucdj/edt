@@ -18,10 +18,17 @@ import static android.R.attr.format;
  */
 public class OriginQuestionItem {
     private int itemId;
+    private Integer replyItemWeight;
     private List<Object> answer;
     private List<Object> notation;
     private List<Object> question;
+    public Integer getReplyItemWeight() {
+        return replyItemWeight;
+    }
 
+    public void setReplyItemWeight(Integer replyItemWeight) {
+        this.replyItemWeight = replyItemWeight;
+    }
     public int getItemId() {
         return itemId;
     }

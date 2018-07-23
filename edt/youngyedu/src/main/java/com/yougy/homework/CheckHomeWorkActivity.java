@@ -9,9 +9,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -121,6 +121,21 @@ public class CheckHomeWorkActivity extends BaseActivity {
     ImageView nextHomeworkIcon;
     @BindView(R.id.page_btn_bar)
     PageBtnBar pageBtnBar;
+    @BindView(R.id.ll_score_control)
+    LinearLayout llScoreControl;
+    @BindView(R.id.tv_set_score)
+    TextView tvSetScore;
+    @BindView(R.id.tv_give_score)
+    TextView tvGiveScore;
+    //用于回显客观题学生答案UI
+    @BindView(R.id.rcv_chooese_item)
+    RecyclerView rcvChooese;
+    @BindView(R.id.ll_chooese_item)
+    LinearLayout llChooeseItem;
+    @BindView(R.id.rb_error)
+    RadioButton rbError;
+    @BindView(R.id.rb_right)
+    RadioButton rbRight;
 
     private CustomLinearLayoutManager linearLayoutManager;
 
@@ -162,6 +177,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     //获取给学生评判的分数。其中-1表示还没判分，数值用来判断展示已批改还是未批改。选择自动判断也是通过该数值。
     private List<Integer> replyScoreList = new ArrayList<>();
+    //学生作业客观题结果存放集合（ABCD ture false）
+    private List<Content_new> textReplyList = new ArrayList<>();
 
     @Override
     public void init() {
@@ -226,6 +243,38 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     currentShowReplyPageIndex = btnIndex;
                     wcdContentDisplayer.toPage("question", currentShowReplyPageIndex, true);
+
+                    //展示客观题reply中的学生答案（ABCD true false）
+                    String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+                    if ("选择".equals(questionType)) {
+
+                        rcvChooese.setVisibility(View.VISIBLE);
+                        llChooeseItem.setVisibility(View.GONE);
+
+                        //刷新当前选择结果的reciv
+                        if (rcvChooese.getAdapter() != null) {
+                            rcvChooese.getAdapter().notifyDataSetChanged();
+                        }
+
+//                        textReplyListaaaaaaaa
+
+                    } else if ("判断".equals(questionType)) {
+                        rcvChooese.setVisibility(View.GONE);
+                        llChooeseItem.setVisibility(View.VISIBLE);
+                        if (textReplyList.size() > 0) {
+                            String replyResult = textReplyList.get(0).getValue();
+                            if ("true".equals(replyResult)) {
+                                rbRight.setChecked(true);
+                                rbError.setChecked(false);
+                            } else {
+                                rbRight.setChecked(false);
+                                rbError.setChecked(true);
+                            }
+                        }
+                    } else {
+                        rcvChooese.setVisibility(View.GONE);
+                        llChooeseItem.setVisibility(View.GONE);
+                    }
 
                 } else if (analysisBtn.isSelected()) {
                     currentShowAnalysisPageIndex = btnIndex;
@@ -365,14 +414,81 @@ public class CheckHomeWorkActivity extends BaseActivity {
         currentShowReplyPageIndex = 0;
         currentShowAnalysisPageIndex = 0;
 
-        int replyScore = replyScoreList.get(currentShowQuestionIndex);
-        switch (replyScore) {
-            case -1://说明未批改
+        Integer itemWeight = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+        //不是记分题
+        if (itemWeight == null) {
+
+            int replyScore = replyScoreList.get(currentShowQuestionIndex);
+            switch (replyScore) {
+                case -1://说明未批改
+                    llHomeWorkCheckOption.setVisibility(View.VISIBLE);
+                    llCheckAgain.setVisibility(View.GONE);
+
+                    break;
+                case 0://判错
+                    llHomeWorkCheckOption.setVisibility(View.GONE);
+                    llCheckAgain.setVisibility(View.VISIBLE);
+                    ivCheckResult.setImageResource(R.drawable.img_cuowu);
+//                tvCheckResult.setText("错误");
+                    tvCheckResult.setText("");
+
+                    if ("选择".equals(questionType) || "判断".equals(questionType)) {
+                        ivCheckChange.setVisibility(View.GONE);
+                    } else {
+                        if (isStudentLook) {
+                            ivCheckChange.setVisibility(View.GONE);
+                        } else {
+                            ivCheckChange.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    break;
+                case 50://判半对
+                    llHomeWorkCheckOption.setVisibility(View.GONE);
+                    llCheckAgain.setVisibility(View.VISIBLE);
+                    ivCheckResult.setImageResource(R.drawable.img_bandui);
+//                tvCheckResult.setText("50%");
+                    tvCheckResult.setText("");
+
+                    if ("选择".equals(questionType) || "判断".equals(questionType)) {
+                        ivCheckChange.setVisibility(View.GONE);
+                    } else {
+                        if (isStudentLook) {
+                            ivCheckChange.setVisibility(View.GONE);
+                        } else {
+                            ivCheckChange.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    break;
+                case 100://判对
+                    llHomeWorkCheckOption.setVisibility(View.GONE);
+                    llCheckAgain.setVisibility(View.VISIBLE);
+                    ivCheckResult.setImageResource(R.drawable.img_zhengque);
+                    tvCheckResult.setText("");
+//                tvCheckResult.setText("正确");
+
+                    if ("选择".equals(questionType) || "判断".equals(questionType)) {
+                        ivCheckChange.setVisibility(View.GONE);
+                    } else {
+                        if (isStudentLook) {
+                            ivCheckChange.setVisibility(View.GONE);
+                        } else {
+                            ivCheckChange.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    break;
+            }
+        } else {
+            //记分题
+            int replyScore = replyScoreList.get(currentShowQuestionIndex);
+            //未批改
+            if (replyScore == -1) {
                 llHomeWorkCheckOption.setVisibility(View.VISIBLE);
                 llCheckAgain.setVisibility(View.GONE);
 
-                break;
-            case 0://判错
+            } else if (replyScore == 0) {
+                //错误
                 llHomeWorkCheckOption.setVisibility(View.GONE);
                 llCheckAgain.setVisibility(View.VISIBLE);
                 ivCheckResult.setImageResource(R.drawable.img_cuowu);
@@ -388,47 +504,47 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         ivCheckChange.setVisibility(View.VISIBLE);
                     }
                 }
-
-                break;
-            case 50://判半对
-                llHomeWorkCheckOption.setVisibility(View.GONE);
-                llCheckAgain.setVisibility(View.VISIBLE);
-                ivCheckResult.setImageResource(R.drawable.img_bandui);
-//                tvCheckResult.setText("50%");
-                tvCheckResult.setText("");
-
-                if ("选择".equals(questionType) || "判断".equals(questionType)) {
-                    ivCheckChange.setVisibility(View.GONE);
-                } else {
-                    if (isStudentLook) {
-                        ivCheckChange.setVisibility(View.GONE);
-                    } else {
-                        ivCheckChange.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                break;
-            case 100://判对
-                llHomeWorkCheckOption.setVisibility(View.GONE);
-                llCheckAgain.setVisibility(View.VISIBLE);
-                ivCheckResult.setImageResource(R.drawable.img_zhengque);
-                tvCheckResult.setText("");
+            } else {
+                //满分
+                if (itemWeight == replyScore) {
+                    llHomeWorkCheckOption.setVisibility(View.GONE);
+                    llCheckAgain.setVisibility(View.VISIBLE);
+                    ivCheckResult.setImageResource(R.drawable.img_zhengque);
+                    tvCheckResult.setText("");
 //                tvCheckResult.setText("正确");
 
-                if ("选择".equals(questionType) || "判断".equals(questionType)) {
-                    ivCheckChange.setVisibility(View.GONE);
-                } else {
-                    if (isStudentLook) {
+                    if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
                     } else {
-                        ivCheckChange.setVisibility(View.VISIBLE);
+                        if (isStudentLook) {
+                            ivCheckChange.setVisibility(View.GONE);
+                        } else {
+                            ivCheckChange.setVisibility(View.VISIBLE);
+                        }
+                    }
+                } else {
+                    //半对
+                    llHomeWorkCheckOption.setVisibility(View.GONE);
+                    llCheckAgain.setVisibility(View.VISIBLE);
+                    ivCheckResult.setImageResource(R.drawable.img_bandui);
+                    tvCheckResult.setText("（" + replyScore + "）");
+
+                    if ("选择".equals(questionType) || "判断".equals(questionType)) {
+                        ivCheckChange.setVisibility(View.GONE);
+                    } else {
+                        if (isStudentLook) {
+                            ivCheckChange.setVisibility(View.GONE);
+                        } else {
+                            ivCheckChange.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
-
-                break;
+            }
         }
+
         setWcdToQuestionMode();
 
+        /***********填充所有需要展示的3层数据资源 start***************/
         wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
         wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
         if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
@@ -436,11 +552,16 @@ public class CheckHomeWorkActivity extends BaseActivity {
         } else {
             wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
         }
-        wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, replyList);
 
 
-        //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
+        //拆分出学生答案中的轨迹图片和TEXT（因为客观题有ABCD ture false）
+        List<Content_new> imgReplyList = new ArrayList<>();
+        //先清空集合数据（避免其他题目数据传入）
+        textReplyList.clear();
+
+
         List<Content_new> content_news = questionReplyDetail.getParsedReplyContentList();
+
         int needSaveSize = content_news.size();
 
         for (int i = 0; i < needSaveSize; i++) {
@@ -448,14 +569,22 @@ public class CheckHomeWorkActivity extends BaseActivity {
             Content_new content_new = content_news.get(i);
 
             if (content_new.getType() == IMG_URL) {
+                imgReplyList.add(content_new);
 
+                //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
                 String picPath = content_new.getValue();
                 String picName = picPath.substring(picPath.lastIndexOf("/") + 1);
                 pathList.add(picName);
-            }
+                bytesList.add(null);
+            } else if (content_new.getType() == Content_new.Type.TEXT) {
+                textReplyList.add(content_new);
 
-            bytesList.add(null);
+            }
         }
+
+        //设置学生答案的轨迹图
+        wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
+        /***********填充所有需要展示的3层数据资源 end***************/
     }
 
     private void setPageNumberView() {
@@ -501,7 +630,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
     }
 
     @OnClick({R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_homework_error, R.id.tv_homework_half_right, R.id.tv_homework_right,
-            R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change, R.id.image_refresh})
+            R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change, R.id.image_refresh, R.id.close_btn,
+            R.id.tv_score_0, R.id.tv_score_1, R.id.tv_score_2, R.id.tv_score_3, R.id.tv_score_4, R.id.tv_score_5, R.id.tv_score_6,
+            R.id.tv_score_7, R.id.tv_score_8, R.id.tv_score_9, R.id.tv_score_clear, R.id.tv_score_confirm})
     public void onClick(View view) {
 
         myLeaveScribbleMode();
@@ -535,17 +666,39 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_homework_half_right:
-                score = 50;
-                //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData(currentShowReplyPageIndex);
+                Integer itemWeight = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+                //如果分数为null，那么为不计分题
+                if (itemWeight == null) {
 
-                //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
-                replyScoreList.set(currentShowQuestionIndex, score);
+                    score = 50;
+                    //保存没触发前的界面数据,并提交批改数据到服务器
+                    saveCheckData(currentShowReplyPageIndex);
 
-                getUpLoadInfo();
+                    //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
+                    replyScoreList.set(currentShowQuestionIndex, score);
+
+                    getUpLoadInfo();
+
+                } else {
+                    // 这里记得一定要先保存页面数据后在展示打分ui saveCheckData(currentShowReplyPageIndex);
+                    //保存没触发前的界面数据,并提交批改数据到服务器
+                    saveCheckData(currentShowReplyPageIndex);
+
+                    //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
+                    replyScoreList.set(currentShowQuestionIndex, score);
+
+                    llScoreControl.setVisibility(View.VISIBLE);
+                    wcdContentDisplayer.getLayer2().setIntercept(true);
+                }
                 break;
             case R.id.tv_homework_right:
-                score = 100;
+                itemWeight = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+                //如果分数为null，那么为不计分题
+                if (itemWeight == null) {
+                    score = 100;
+                } else {
+                    score = itemWeight;
+                }
                 //保存没触发前的界面数据,并提交批改数据到服务器
                 saveCheckData(currentShowReplyPageIndex);
 
@@ -601,7 +754,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         long detailUseTime = DateUtils.transformToTime(detail.getReplyUseTime());
                         allUseTime += detailUseTime;
                     }
-                    PopupMenuManager.initPupopWindow(this, btnRight, "正确：" + rightCount, "错误：" + wrongCount, "用时：" + DateUtils.converLongTimeToString(allUseTime * 1000), "正确率：" + rightCount * 100 / pageSize + "%");
+                    if (pageSize != 0)
+                        PopupMenuManager.initPupopWindow(this, btnRight, "正确：" + rightCount, "错误：" + wrongCount, "用时：" + DateUtils.converLongTimeToString(allUseTime * 1000), "正确率：" + rightCount * 100 / pageSize + "%");
                 }
                 break;
 
@@ -625,9 +779,93 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 //yuanye : end*/
                 break;
+            case R.id.close_btn:
+                llScoreControl.setVisibility(View.GONE);
+                wcdContentDisplayer.getLayer2().setIntercept(false);
+                break;
+            case R.id.tv_score_0:
+                setScore(0);
+                break;
+            case R.id.tv_score_1:
+                setScore(1);
+                break;
+            case R.id.tv_score_2:
+                setScore(2);
+                break;
+            case R.id.tv_score_3:
+                setScore(3);
+                break;
+            case R.id.tv_score_4:
+                setScore(4);
+                break;
+            case R.id.tv_score_5:
+                setScore(5);
+                break;
+            case R.id.tv_score_6:
+                setScore(6);
+                break;
+            case R.id.tv_score_7:
+                setScore(7);
+                break;
+            case R.id.tv_score_8:
+                setScore(8);
+                break;
+            case R.id.tv_score_9:
+                setScore(9);
+                break;
+            case R.id.tv_score_clear:
+                tvGiveScore.setText("");
+                break;
+            case R.id.tv_score_confirm:
+                String scoreStr = tvGiveScore.getText().toString();
+                int giveScore = 0;
+                try {
+                    giveScore = Integer.parseInt(scoreStr);
+                } catch (Exception e) {
+                }
+                if (giveScore == 0) {
+                    ToastUtil.showCustomToast(this, "没有设置分数");
+                    return;
+                }
+                llScoreControl.setVisibility(View.GONE);
+                tvGiveScore.setText("");
 
+                //设置分数提交到服务器
+                score = giveScore;
+                getUpLoadInfo();
+
+                break;
         }
     }
+    private void setScore(int teacherScore) {
+
+        int grossScroe = questionReplyDetail.getReplyItemContent().getReplyItemWeight();
+
+        String scoreStr = tvGiveScore.getText().toString();
+        int lastScore = 0;
+        try {
+            lastScore = Integer.parseInt(scoreStr);
+        } catch (Exception e) {
+        }
+        if (lastScore == 0) {
+            if (teacherScore == 0) {
+                ToastUtil.showCustomToast(this, "不能设置为0分");
+                return;
+            }
+            if (teacherScore >= grossScroe) {
+                ToastUtil.showCustomToast(this, "不能设置大于或等于满分");
+                return;
+            }
+            tvGiveScore.setText(teacherScore + "");
+        } else {
+            if (lastScore * 10 + teacherScore >= grossScroe) {
+                ToastUtil.showCustomToast(this, "不能设置大于或等于满分");
+                return;
+            }
+            tvGiveScore.setText(lastScore * 10 + teacherScore + "");
+        }
+    }
+
 
     private void setWcdToQuestionMode() {
         wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
