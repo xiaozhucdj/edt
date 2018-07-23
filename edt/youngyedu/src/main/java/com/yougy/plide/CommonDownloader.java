@@ -25,7 +25,7 @@ import rx.functions.Action1;
  * Created by FH on 2018/1/12.
  */
 
-public class CommonDownloader implements Downloader{
+public class CommonDownloader extends Downloader{
     private DownloadRetrofitApi retrofitApi;
 
     public CommonDownloader() {
@@ -72,7 +72,7 @@ public class CommonDownloader implements Downloader{
 
 
     @Override
-    public void download(String url, String saveFilePath, DownloadListener downloadListener , Ball ball) throws InterruptedException {
+    public void forceDownload(String url, String saveFilePath, DownloadListener downloadListener , Ball ball) throws InterruptedException{
         ball.inserCheckPoint();
         retrofitApi.downloadFile(url).subscribe(new Action1<ResponseBody>() {
             @Override
@@ -152,4 +152,26 @@ public class CommonDownloader implements Downloader{
             }
         });
     }
+
+    @Override
+    public void download(String url, boolean mUseCache , DownloadListener downloadListener , Ball ball) throws InterruptedException {
+        if (url.startsWith("/")) { //TODO 可替换成正则
+            downloadListener.onDownloadStart(url, url);
+            downloadListener.onDownloadProgressChanged(url, url, 100);
+            downloadListener.onDownloadFinished(url, url , true);
+        }
+        else if (url.startsWith("http://")) { //TODO 可替换成正则
+            if (mUseCache){
+                File file = new File(getSavePath(url));
+                if (file.exists()){
+                    downloadListener.onDownloadStart(url, getSavePath(url));
+                    downloadListener.onDownloadProgressChanged(url, getSavePath(url), 100);
+                    downloadListener.onDownloadFinished(url, getSavePath(url) , true);
+                    return;
+                }
+            }
+            forceDownload(url, getSavePath(url), downloadListener, ball);
+        }
+    }
+
 }

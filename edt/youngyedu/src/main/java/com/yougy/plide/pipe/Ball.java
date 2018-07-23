@@ -6,47 +6,48 @@ import android.os.Bundle;
  * Created by FH on 2018/1/11.
  */
 
-public class Ball {
-    private boolean isCancled = false;
+public abstract class Ball {
+    private boolean isCanceld = false;
     private Bundle data;
     private long timeStamp;
-    private boolean mCancleOthers;
+    private boolean mCancelOthers;
+
     public Ball(boolean cancleOthers) {
         timeStamp = System.currentTimeMillis();
-        mCancleOthers = cancleOthers;
+        mCancelOthers = cancleOthers;
     }
 
-    public boolean isCancled() {
-        return isCancled;
+    public boolean isCanceld() {
+        return isCanceld;
     }
 
     public Bundle getData() {
         return data;
     }
 
-    public void cancle(){
-        this.isCancled = true;
-    }
-
     public void setData(Bundle data) {
         this.data = data;
     }
 
+    public void cancel(){
+        this.isCanceld = true;
+    }
+
     public void inserCheckPoint() throws InterruptedException {
-        if (isCancled){
-            throw new InterruptedException("Ball---检查点被触发!这个ball已经被cancle!");
+        if (isCanceld){
+            throw new InterruptedException("Ball---检查点被触发!这个ball已经被cancel!");
         }
     }
 
-    public void run() throws InterruptedException {
+    public abstract void run() throws InterruptedException;
 
-    }
+    public abstract void onCancelled();
 
     public long getTimeStamp() {
         return timeStamp;
     }
 
-    public boolean needCancleOthers() {
-        return mCancleOthers;
+    public boolean needCancelOthers() {
+        return mCancelOthers;
     }
 }

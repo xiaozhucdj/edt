@@ -125,10 +125,9 @@ public class LoadController implements ReaderContract.ReaderView{
         });
     }
 
-    protected LoadController doLoadMainLogic(String url , LoadListener loadListener , Context context){
-        LogUtils.e("FHHHH" , "doLoadMainLogic url = " + url + " loadListener " + loadListener + " context " + context + " threadId " + Thread.currentThread().getId());
-        LogUtils.e("FHHHH" , "-----------------------------!!!!!!!!!!!!!!---------------setImgview Null!!!!!!!");
-//        mImgView.setImageBitmap(null);
+    protected LoadController doLoadMainLogic(String url , LoadListener loadListener , Context context , boolean forceBaseWidth){
+          LogUtils.e("FHHHH" , "doLoadMainLogic url = " + url + " loadListener " + loadListener + " context " + context + " threadId " + Thread.currentThread().getId());
+          LogUtils.e("FHHHH" , "-----------------------------!!!!!!!!!!!!!!---------------setImgview Null!!!!!!!");
         this.mContext = context;
         mUrl = url;
         if (loadListener != null){
@@ -137,21 +136,21 @@ public class LoadController implements ReaderContract.ReaderView{
         download(url , new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String savePath) {
-                LogUtils.e ("FHHHH" , "onDownloadStart url = " + url + " savePath " + savePath + " threadId " + Thread.currentThread().getId());
+                  LogUtils.e("FHHHH" , "onDownloadStart url = " + url + " savePath " + savePath + " threadId " + Thread.currentThread().getId());
                 setCurrentStatus(PDF_STATUS.DOWNLOADING , null);
                 callLoadListener(0);
             }
 
             @Override
             public void onDownloadProgressChanged(String url, String savePath, float progress) {
-                LogUtils.e ("FHHHH" , "onDownloadProgressChanged url = " + url + " savePath " + savePath + " progress "  + progress
+                  LogUtils.e("FHHHH" , "onDownloadProgressChanged url = " + url + " savePath " + savePath + " progress "  + progress
                         + " threadId " + Thread.currentThread().getId());
                 callLoadListener(progress);
             }
 
             @Override
             public void onDownloadStop(String url, String savePath, int errorCode, String reason) {
-                LogUtils.e ("FHHHH" , "onDownloadStop url = " + url + " savePath " + savePath + " errorCode " + errorCode + " reason " + reason
+                  LogUtils.e("FHHHH" , "onDownloadStop url = " + url + " savePath " + savePath + " errorCode " + errorCode + " reason " + reason
                         + " threadId " + Thread.currentThread().getId());
                 if (errorCode == -1){
                     setCurrentStatus(PDF_STATUS.EMPTY , null);
@@ -165,11 +164,11 @@ public class LoadController implements ReaderContract.ReaderView{
 
             @Override
             public void onDownloadFinished(String url, String savePath , boolean noNeedToDownload) {
-                LogUtils.e ("FHHHH" , "onDownloadFinished url = " + url + " savePath " + savePath + " noNeedToDownload " + noNeedToDownload
+                  LogUtils.e("FHHHH" , "onDownloadFinished url = " + url + " savePath " + savePath + " noNeedToDownload " + noNeedToDownload
                         + " threadId " + Thread.currentThread().getId());
                 synchronized (currentStatusLock){
                     if (mSavePath != null && mSavePath.equals(savePath) && noNeedToDownload){
-                        LogUtils.e ("FHHHH" , "onDownloadFinished 需要下载的文件内容没有变化,并且已经加载了该pdf,不再发起load请求..."
+                          LogUtils.e("FHHHH" , "onDownloadFinished 需要下载的文件内容没有变化,并且已经加载了该pdf,不再发起load请求..."
                                 + "url = " + url + " savePath " + savePath + " noNeedToDownload " + noNeedToDownload
                                 + " threadId " + Thread.currentThread().getId());
                         setCurrentStatus(PDF_STATUS.LOADED , getReaderPresenter().getReader().getDocumentPath());
@@ -181,19 +180,25 @@ public class LoadController implements ReaderContract.ReaderView{
                 loadPdfPipe.push(new Ball(false){
                     @Override
                     public void run() throws InterruptedException {
-                        LogUtils.e ("FHHHH" , "run--load pdf savePath " + savePath
+                          LogUtils.e("FHHHH" , "run--load pdf savePath " + savePath
                                 + " threadId" + Thread.currentThread().getId());
                         setCurrentStatus(PDF_STATUS.LOADING , null);
                         callLoadListener(100);
                         getReaderPresenter().close();
                         Runtime.getRuntime().gc();
                         abandonReaderPresenter();
+
                         getReaderPresenter().openDocument(savePath , null);
-                        LogUtils.e ("FHHHH" , "load命令完成,等待回调中断 savePath " + savePath
+                          LogUtils.e("FHHHH" , "load命令完成,等待回调中断 savePath " + savePath
                                 + " threadId" + Thread.currentThread().getId());
                         while (true){
                             Thread.sleep(1000*999);
                         }
+                    }
+
+                    @Override
+                    public void onCancelled() {
+
                     }
                 });
             }
@@ -207,30 +212,35 @@ public class LoadController implements ReaderContract.ReaderView{
             @Override
             public void run() throws InterruptedException {
                 synchronized (currentStatusLock){
-                    LogUtils.e ("FHHHHH" , "topage run--- pageIndex " + pageIndex
+                      LogUtils.e("FHHHHH" , "topage run--- pageIndex " + pageIndex
                             + " currentStatus " + currentStatus + " mSavePath " + mSavePath
                             + " currentUrl " + currentUrl
                             + " threadId " + Thread.currentThread().getId());
                     while (currentStatus != PDF_STATUS.LOADED
                             || TextUtils.isEmpty(mSavePath)
                             || !mSavePath.equals(getSavePath(currentUrl))){
-                        LogUtils.e ("FHHHH" , "toPage run---wait pageIndex " + pageIndex
+                          LogUtils.e("FHHHH" , "toPage run---wait pageIndex " + pageIndex
                                 + " threadId : " + Thread.currentThread().getId());
                         currentStatusLock.wait();
-                        LogUtils.e ("FHHHH" , "toPage run---wait end pageIndex " + pageIndex
+                          LogUtils.e("FHHHH" , "toPage run---wait end pageIndex " + pageIndex
                                 + " threadId " + Thread.currentThread().getId());
                     }
-                    LogUtils.e ("FHHHH" , "toPage run---正式开始 pageIndex " + pageIndex
+                      LogUtils.e("FHHHH" , "toPage run---正式开始 pageIndex " + pageIndex
                             + " threadId " + Thread.currentThread().getId());
                     setCurrentStatus(PDF_STATUS.LOADING , null);
                     callLoadListener(100);
                     getReaderPresenter().gotoPage(pageIndex);
-                    LogUtils.e ("FHHHH" , "topage run---gotoPage命令完成 , 等待完成中断... pageIndex " + pageIndex
+                      LogUtils.e("FHHHH" , "topage run---gotoPage命令完成 , 等待完成中断... pageIndex " + pageIndex
                             + " threadId " + Thread.currentThread().getId());
                     while (true){
                         Thread.sleep(1000*999);
                     }
                 }
+            }
+
+            @Override
+            public void onCancelled() {
+
             }
         });
     }
@@ -258,13 +268,23 @@ public class LoadController implements ReaderContract.ReaderView{
                     downloadListener.onDownloadProgressChanged(url, url, 100);
                     downloadListener.onDownloadFinished(url, url , true);
                 }
+
+                @Override
+                public void onCancelled() {
+
+                }
             });
         }
         else if (url.startsWith("http://")) { //TODO 可替换成正则
             downloadPipe.push(new Ball(true) {
                 @Override
                 public void run() throws InterruptedException {
-                    downloader.download(url, getSavePath(url), downloadListener, this);
+                    downloader.forceDownload(url, getSavePath(url), downloadListener, this);
+                }
+
+                @Override
+                public void onCancelled() {
+
                 }
             });
         }
@@ -278,7 +298,8 @@ public class LoadController implements ReaderContract.ReaderView{
     @Override
     public void updatePage(int page, Bitmap bitmap) {
         lv("updatePage page=" + page + "  bitmap=" + bitmap + " threadId : " + Thread.currentThread().getId());
-//        save(bitmap);
+        lv("____________________________________!!!!!!!!!!!!!!!!!!!_______________________________" + bitmap
+                + " recycle " + bitmap.isRecycled());
         mImgView.setImageBitmap(bitmap);
         toPagePipe.cancleCurrentBall();
         synchronized (currentStatusLock){
@@ -288,29 +309,6 @@ public class LoadController implements ReaderContract.ReaderView{
         callLoadListener(100);
     }
 
-//    public void save(Bitmap btImage){
-//        FileOutputStream out = null;
-//        try {
-//            String path = Environment.getExternalStorageDirectory().getPath() + "/" + System.currentTimeMillis() + ".jpg";
-//            lv("___________保存的__sd___下_______________________" + path);
-//            File file = FileUtils.ifNotExistCreateFile(path);
-//            out = new FileOutputStream(file);
-//            btImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            if (out != null){
-//                out.flush();
-//                out.close();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        Toast.makeText(mContext ,"保存已经至"+Environment.getExternalStorageDirectory()+"下", Toast.LENGTH_SHORT).show();
-//    }
     @Override
     public View getContentView() {
         lv("getContentView");

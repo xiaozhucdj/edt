@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,8 +16,6 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.plide.pipe.Pipe;
 import com.yougy.view.NoteBookView2;
-
-import org.litepal.util.LogUtil;
 
 import java.util.concurrent.ExecutionException;
 
@@ -125,7 +122,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
      */
     public void setContentAdapter(WriteableContentDisplayerAdapter adapter){
         if  (adapter == null){
-            LogUtils.e("FH-----不能把WriteableContentDisplayerAdapter 设置为null");
+            LogUtils.e("不能把WriteableContentDisplayerAdapter 设置为null");
             return;
         }
         //adapter和WCD是双向绑定的,因此设置新adapter的时候需要先剪断之前adapter对本WCD的绑定
@@ -151,7 +148,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
      * 设置状态变化监听器
      * @param mStatusChangeListener 为null时设置无效
      */
-    public void setmStatusChangeListener(StatusChangeListener mStatusChangeListener) {
+    public void setStatusChangeListener(StatusChangeListener mStatusChangeListener) {
         if (mStatusChangeListener != null){
             this.mStatusChangeListener = mStatusChangeListener;
         }
@@ -199,7 +196,6 @@ public class WriteableContentDisplayer extends RelativeLayout{
      *                 如果为false,每次都重新下载网络源数据的数据进行展示,速度会比使用缓存更慢,但是会保证永远使用网络的最新数据.
      */
     public void toPage(String typeKey, int pageIndex, boolean useCache) {
-        LogUtils.e("FH-----toPage方法被调用 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
         //保存之前的toPage参数,以传入beforeToPage
         final String fromTypeKey = getCurrentTypeKey();
         final int fromPageIndex = getCurrentPageIndex();
@@ -209,13 +205,12 @@ public class WriteableContentDisplayer extends RelativeLayout{
         currentIfUseCache = useCache;
         //检测mAdapter非空
         if (mAdapter == null){
-            LogUtils.e("FH-----toPage失败,没有绑定WriteableContentDisplayerAdapter");
+            LogUtils.e("toPage失败,没有绑定WriteableContentDisplayerAdapter");
         }
         //构建toPage请求,并push进toPage请求管道
-        Ball ball = new Ball(true){
+        toPagePipe.push(new Ball(true){
             @Override
             public void run() throws InterruptedException {
-                LogUtils.e("FH-----toPage ball 开始执行, ball="  + this.toString());
                 inserCheckPoint();
                 //线程同步状态量
                 boolean[] needWait = new boolean[]{true , true , true , true};
@@ -225,9 +220,9 @@ public class WriteableContentDisplayer extends RelativeLayout{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        LogUtils.e("FH-----执行beforeToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("执行beforeToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         mAdapter.beforeToPage(fromTypeKey , fromPageIndex , typeKey , pageIndex);
-                        LogUtils.e("FH-----执行beforeToPage--结束 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("执行beforeToPage--结束 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         synchronized (needWait){
                             needWait[0] = false;
                             needWait.notify();
@@ -236,8 +231,13 @@ public class WriteableContentDisplayer extends RelativeLayout{
                 });
                 //然后等待beforeToPage执行完后继续toPage管道线程.
                 synchronized (needWait){
-                    if (needWait[0] == true){
-                        needWait.wait();
+                    while (needWait[0] == true){
+                        try {
+                            needWait.wait();
+                        }
+                        catch (InterruptedException e){
+
+                        }
                     }
                 }
                 inserCheckPoint();
@@ -254,18 +254,22 @@ public class WriteableContentDisplayer extends RelativeLayout{
                     needWait[2] = true;//true表示layer2的内容加载逻辑未执行完,还需等待,为false表示layer2的内容已经加载完(或加载失败),无需再等待
                     needWait[3] = true;//整体toPage请求是否成功
                     //分别异步加载3个layer层
+                    LogUtils.e("FH!!!! 开始加载三个图层");
                     showLayer0Content(typeKey , pageIndex , useCache , needWait);
                     showLayer1Content(typeKey , pageIndex , useCache , needWait);
                     showLayer2Content(typeKey , pageIndex , useCache , needWait);
                     //如果3层全部报告无需等待,则toPage管道线程继续,否则toPage管道线程一直等待.
-                    while (true){
-                        synchronized (needWait){
-                            if (needWait[0] == false && needWait[1] == false && needWait[2] == false){
-                                break;
+                    synchronized (needWait) {
+                        while (needWait[0] != false || needWait[1] != false || needWait[2] != false) {
+                            try {
+                                needWait.wait();
                             }
-                            needWait.wait();
+                            catch (InterruptedException e){
+
+                            }
                         }
                     }
+                    LogUtils.e("FH!!!! 三个图层加载完毕");
                     inserCheckPoint();
                     if (needWait[3] == true){
                         //如果3层全部成功,则提示listener成功.
@@ -285,9 +289,9 @@ public class WriteableContentDisplayer extends RelativeLayout{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        LogUtils.e("FH-----执行afterToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("执行afterToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         mAdapter.afterToPage(fromTypeKey , fromPageIndex , typeKey , pageIndex);
-                        LogUtils.e("FH-----执行afterToPage--结束 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
+                        LogUtils.e("执行afterToPage--开始 typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
                         synchronized (needWait){
                             needWait[0] = false;
                             needWait.notify();
@@ -296,14 +300,22 @@ public class WriteableContentDisplayer extends RelativeLayout{
                 });
                 //然后等待afterToPag执行完后继续toPage管道线程.
                 synchronized (needWait){
-                    if (needWait[0] == true){
-                        needWait.wait();
+                    while (needWait[0] == true){
+                        try {
+                            needWait.wait();
+                        }
+                        catch (InterruptedException e){
+
+                        }
                     }
                 }
             }
-        };
-        LogUtils.e("FH-----toPage ball被push ball=" + ball.toString() + " typeKey=" + typeKey + " pageIndex=" + pageIndex + " useCache=" + useCache);
-        toPagePipe.push(ball);
+
+            @Override
+            public void onCancelled() {
+
+            }
+        });
     }
 
     /**
@@ -464,6 +476,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
             new Thread(){
                 @Override
                 public void run() {
+                    LogUtils.e("FH!!!!showlayer1Content start!");
                     try {
                         //尝试下载content内的数据,Glide的get是同步方法,只要返回就是成功,错误会报异常
                         GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) Glide.with(getContext())
@@ -518,6 +531,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
                             needWait.notify();
                         }
                     }
+                    LogUtils.e("FH!!!!showlayer1Content end!");
                 }
             }.start();
         }
@@ -563,6 +577,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
             new Thread(){
                 @Override
                 public void run() {
+                    LogUtils.e("FH!!!!showlayer2Content start!");
                     try {
                         //尝试下载content内的数据,Glide的get是同步方法,只要返回就是成功,错误会报异常
                         GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) Glide.with(getContext())
@@ -617,6 +632,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
                             needWait.notify();
                         }
                     }
+                    LogUtils.e("FH!!!!showlayer2Content end!");
                 }
             }.start();
         }

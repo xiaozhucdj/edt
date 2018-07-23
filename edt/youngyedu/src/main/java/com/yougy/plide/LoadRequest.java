@@ -16,18 +16,19 @@ public class LoadRequest {
         mContext = context;
     }
 
-    public LoadController into(ImageView imageView,boolean forceBaseWidth) throws PlideException{
+    public LoadController into(ImageView imageView , boolean forceBaseWidth) throws PlideException{
         if(imageView == null){
             throw new PlideException("Plide---into() error! into imageview 为空!");
         }
         return LoadController.getLoadController(imageView)
-                .doLoadMainLogic(url , mLoadListener , mContext);
+                .doLoadMainLogic(url , mLoadListener , mContext , forceBaseWidth);
     }
 
     public LoadRequest setLoadListener(LoadListener listener){
         mLoadListener = listener;
         return this;
     }
+
     public LoadRequest useCache(boolean useCache){
         //TODO 未实现方法
         return this;

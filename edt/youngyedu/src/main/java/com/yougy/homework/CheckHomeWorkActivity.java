@@ -235,7 +235,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         });
 
-        wcdContentDisplayer.setmStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
+        wcdContentDisplayer.setStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
             @Override
             public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
                 /*if (questionBodyBtn.isSelected()) {
