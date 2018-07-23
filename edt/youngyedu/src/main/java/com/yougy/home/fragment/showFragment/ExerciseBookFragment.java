@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -103,11 +102,13 @@ public class ExerciseBookFragment extends BFragment {
                         break;
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);
-                        if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
+                        if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
                             holder.binding.statusTv.setText("自\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
-                        } else if ("II55".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
+                        } else if ("II55".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                || "II58".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
                             holder.binding.statusTv.setText("互\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
@@ -183,7 +184,11 @@ public class ExerciseBookFragment extends BFragment {
                         break;
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = holder.getData();
-                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())){
+                        //服务器IH 状态不正确
+                        if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                || "II55".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                || "II58".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
                             intent = new Intent(getActivity() , CheckHomeWorkActivity.class);
                             intent.putExtra("examId" , uncheckedHomeworkSummary.getExam());
                             startActivity(intent);
