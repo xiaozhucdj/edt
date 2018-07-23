@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 
+
 /**
  * Created by FH on 2018/1/9.
  */
@@ -52,4 +53,5 @@ public class Plide{
             }
         }
     }
+
 }

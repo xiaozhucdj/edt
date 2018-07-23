@@ -22,10 +22,9 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.plide.LoadController;
-import com.yougy.plide.LoadListener;
-import com.yougy.plide.Plide;
+import com.yougy.plide.Plide2;
 import com.yougy.plide.PlideException;
+import com.yougy.plide.PlideLoadListener;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.plide.pipe.Pipe;
 import com.yougy.view.ContentPdfImageView;
@@ -53,7 +52,8 @@ public class ContentDisplayerV2 extends RelativeLayout{
         NO_SPECIFIED_CONTENT , //根据给定的条件找不到指定的content显示
         DOWNLOAD_ERROR , //下载失败
         LOAD_ERROR, //加载失败
-        USER_CANCLE //用户取消
+        USER_CANCLE, //用户取消
+        UNKNOWN //未知错误
     }
 
     //提供数据的adapter
@@ -173,7 +173,7 @@ public class ContentDisplayerV2 extends RelativeLayout{
      */
     public void clearPdfCache(){
         if (pdfImageView != null){
-            Plide.clearCache(pdfImageView);
+            Plide2.getInstance().clearCache(pdfImageView);
         }
     }
 
@@ -258,6 +258,11 @@ public class ContentDisplayerV2 extends RelativeLayout{
                         }
                     }
                 }
+            }
+
+            @Override
+            public void onCancelled() {
+
             }
         });
     }
@@ -526,10 +531,9 @@ public class ContentDisplayerV2 extends RelativeLayout{
      * @param typeKey 发起showContent命令的原始typeKey参数
      * @param originPageIndex 发起showContent命令的原始originPageIndex参数
      * @param specificListener 发起showContent命令的原始specificListener参数,可能为null
-     * @throws InterruptedException 检测到中断,可能是其他toPage请求中断了当前toPage请求.
      */
     private void setPdf(Content_new  content , int subPageIndex , boolean useCache , Ball ball
-            , String typeKey , int originPageIndex , StatusChangeListener specificListener) throws InterruptedException {
+            , String typeKey , int originPageIndex , StatusChangeListener specificListener){
         String url;
         //获取正确的不带页码的pdf的url地址
         if (content.getValue().endsWith("##")){
@@ -538,92 +542,81 @@ public class ContentDisplayerV2 extends RelativeLayout{
         else {
             url = content.getValue();
         }
-        try {
-            //同步状态变量,-999表示还未加载完成
-            int result[] = new int[]{-999};
-            //开始加载pdf
-            LoadController loadController = Plide.with(getContext())
-                    .load(url)
-                    .useCache(useCache)
-                    .setLoadListener(new LoadListener() {
-                @Override
-                public void onLoadStatusChanged(LoadController.PDF_STATUS newStatus, float downloadProgress , int totalPage) {
-                    switch (newStatus){
-                        case DOWNLOADING:
-                            //通知DOWNLOADING
-                            callOnStatusChangedListener(specificListener , LOADING_STATUS.DOWNLOADING , typeKey , originPageIndex , url , null , null);
-                            break;
-                        case ERROR:
-                            //根据下载进度区分是通知listener下载错误还是加载错误
-                            if (downloadProgress == 100){
-                                callOnStatusChangedListener(specificListener , LOADING_STATUS.ERROR , typeKey , originPageIndex , url , ERROR_TYPE.LOAD_ERROR, "加载pdf文档错误");
-                            }
-                            else {
-                                callOnStatusChangedListener(specificListener , LOADING_STATUS.ERROR , typeKey , originPageIndex , url , ERROR_TYPE.DOWNLOAD_ERROR , "下载pdf文档错误");
-                            }
-                            //通知错误,-1是加载pdf遇到错误
-                            synchronized (result){
-                                result[0] = -1;
-                                result.notify();
-                            }
-                            break;
-                        case LOADING:
-                            //通知LOADING
-                            callOnStatusChangedListener(specificListener , LOADING_STATUS.LOADING , typeKey , originPageIndex , url , null , null);
-                            break;
-                        case LOADED:
-                            synchronized (result){
-                                //由于opendocummen成功和pdf topage成功时都会走到这里.所以用状态量做区分
-                                if (result[0] == -999){
-                                    //如果-999代表是opendocummen成功,通知继续进行pdf,topage
-                                    result[0] = 0;
-                                    result.notify();
-                                    //更新页码
-                                    content.setValue(url + "**" + totalPage + "##");
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (mContentAdaper != null){
-                                                mContentAdaper.afterPageCountChanged(typeKey);
-                                            }
+        //开始加载pdf
+        Plide2.with(getContext())
+                .load(url)
+                .setUseCache(useCache)
+                .setLoadListener(new PlideLoadListener() {
+                    @Override
+                    public void onLoadStatusChanged(STATUS newStatus, String url, int toPageIndex, int totalPageCount , ERROR_TYPE errorType, String errorMsg) {
+                        switch (newStatus) {
+                            case DOWNLOADING:
+                                //通知DOWNLOADING
+                                callOnStatusChangedListener(specificListener, LOADING_STATUS.DOWNLOADING, typeKey, originPageIndex, url, null, null);
+                                break;
+                            case DOWNLOAD_SUCCESS:
+                                break;
+                            case OPEN_DOCUMENT_ING:
+                                //通知LOADING
+                                callOnStatusChangedListener(specificListener, LOADING_STATUS.LOADING, typeKey, originPageIndex, url, null, null);
+                                break;
+                            case OPEN_DOCUMENT_SUCCESS:
+                                //更新页码
+                                content.setValue(url + "**" + totalPageCount + "##");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mContentAdaper != null) {
+                                            mContentAdaper.afterPageCountChanged(typeKey);
                                         }
-                                    });
+                                    }
+                                });
+                                break;
+                            case TO_PAGE_ING:
+                                //通知LOADING
+                                callOnStatusChangedListener(specificListener, LOADING_STATUS.LOADING, typeKey, originPageIndex, url, null, null);
+                                break;
+                            case TO_PAGE_SUCCESS:
+                                webview.setVisibility(GONE);
+                                mainTextView.setVisibility(GONE);
+                                picImageView.setVisibility(GONE);
+                                pdfImageView.setVisibility(VISIBLE);
+                                callOnStatusChangedListener(specificListener, LOADING_STATUS.SUCCESS, typeKey, originPageIndex, url, null, null);
+                                break;
+                            case ERROR:
+                                switch (errorType) {
+                                    case DOWNLOAD_ERROR:
+                                        callOnStatusChangedListener(specificListener, LOADING_STATUS.ERROR
+                                                , typeKey, originPageIndex, url
+                                                , ContentDisplayerV2.ERROR_TYPE.DOWNLOAD_ERROR, "下载pdf文档错误");
+                                        break;
+                                    case OPEN_DOCUMENT_ERROR:
+                                        callOnStatusChangedListener(specificListener, LOADING_STATUS.ERROR
+                                                , typeKey, originPageIndex, url
+                                                , ContentDisplayerV2.ERROR_TYPE.LOAD_ERROR, "开启pdf文档错误");
+                                        break;
+                                    case TO_PAGE_ERROR:
+                                        callOnStatusChangedListener(specificListener, LOADING_STATUS.ERROR
+                                                , typeKey, originPageIndex, url
+                                                , ContentDisplayerV2.ERROR_TYPE.LOAD_ERROR, "切换至pdf文档指定页错误");
+                                        break;
+                                    case USER_CANCLE:
+                                        callOnStatusChangedListener(specificListener, LOADING_STATUS.ERROR
+                                                , typeKey, originPageIndex, url
+                                                , ContentDisplayerV2.ERROR_TYPE.USER_CANCLE, "用户取消加载");
+                                        break;
+                                    case UNKNOWN:
+                                        callOnStatusChangedListener(specificListener, LOADING_STATUS.ERROR
+                                                , typeKey, originPageIndex, url
+                                                , ContentDisplayerV2.ERROR_TYPE.UNKNOWN, "未知错误");
+                                        break;
                                 }
-                                else {
-                                    //如果不是-999代表是pdf topage成功,直接通知listener加载完成
-                                    webview.setVisibility(GONE);
-                                    mainTextView.setVisibility(GONE);
-                                    picImageView.setVisibility(GONE);
-                                    pdfImageView.setVisibility(VISIBLE);
-                                    callOnStatusChangedListener(specificListener , LOADING_STATUS.SUCCESS , typeKey , originPageIndex , url , null , null);
-                                }
-                            }
-                            break;
-                        case EMPTY:
-                            //未知错误
-                            callOnStatusChangedListener(specificListener , LOADING_STATUS.ERROR , typeKey , originPageIndex , url , ERROR_TYPE.LOAD_ERROR, "未知错误:Plide加载器空闲");
-                            synchronized (result){
-                                result[0] = -1;
-                                result.notify();
-                            }
-                            break;
+                                break;
+                        }
                     }
-                }
-            }).into(pdfImageView , false);
-            //等待opendocument完成后再继续pdf topage.
-            synchronized (result){
-                if (result[0] == -999){
-                    result.wait();
-                }
-            }
-            if (result[0] == 0){
-                ball.inserCheckPoint();
-                loadController.toPage(subPageIndex);
-            }
-        } catch (PlideException e) {
-            e.printStackTrace();
-            callOnStatusChangedListener(specificListener , LOADING_STATUS.ERROR , typeKey , originPageIndex , url , ERROR_TYPE.LOAD_ERROR, "加载pdf文档错误");
-        }
+                })
+                .into(pdfImageView, null)
+                .toPage(subPageIndex, null);
     }
 
     /**
@@ -679,42 +672,12 @@ public class ContentDisplayerV2 extends RelativeLayout{
                     content.getValue().lastIndexOf("**") + 2, content.getValue().lastIndexOf("##")));
         }
         try {
-            //同步状态量-999代表未完成获取
-            int totalCountPageCount[] = new int[]{-999};
-            Plide.with(getContext())
+            return Plide2.with(getContext())
                     .load(content.getValue())
-                    .useCache(useCache)
-                    .setLoadListener(new LoadListener() {
-                @Override
-                public void onLoadStatusChanged(LoadController.PDF_STATUS newStatus, float downloadProgress, int totalPage) {
-                    if (newStatus == LoadController.PDF_STATUS.ERROR){
-                        synchronized (totalCountPageCount){
-                            //-1表示获取失败
-                            totalCountPageCount[0] = -1;
-                            totalCountPageCount.notify();
-                        }
-                    }
-                    if (newStatus == LoadController.PDF_STATUS.LOADED){
-                        synchronized (totalCountPageCount){
-                            //获取成功直接把获取到的页码值作为状态量返回
-                            totalCountPageCount[0] = totalPage;
-                            totalCountPageCount.notify();
-                        }
-                    }
-                }
-            }).into(pdfImageView , false);
-            //获取完成之前等待
-            synchronized (totalCountPageCount){
-                if (totalCountPageCount[0] == -999){
-                    totalCountPageCount.wait();
-                }
-            }
-            //直接把状态量返回,成功是页码值,获取失败是-1
-            return totalCountPageCount[0];
+                    .setUseCache(useCache)
+                    .into_sync(pdfImageView)
+                    .getPdfPageCount_sync();
         } catch (PlideException e) {
-            e.printStackTrace();
-            return -1;
-        } catch (InterruptedException e) {
             e.printStackTrace();
             return -1;
         }
