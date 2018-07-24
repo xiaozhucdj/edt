@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.NetWorkManager;

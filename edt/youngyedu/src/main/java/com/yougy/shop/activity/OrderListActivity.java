@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;

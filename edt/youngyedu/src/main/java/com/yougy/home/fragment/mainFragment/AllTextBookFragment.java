@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.frank.etude.pageBtnBar.PageBtnBar;
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBar;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;

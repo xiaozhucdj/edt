@@ -177,7 +177,7 @@
                     android:background="@color/black" />
             </RelativeLayout>
         </RelativeLayout>
-        <com.frank.etude.pageBtnBar.PageBtnBar
+        <com.frank.etude.pageable.PageBtnBar
             android:id="@+id/page_btn_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

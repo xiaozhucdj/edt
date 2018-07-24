@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;

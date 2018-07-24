@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.anwser.BaseResult;
 import com.yougy.common.new_network.BookStoreQueryBookInfoReq;
 import com.yougy.common.new_network.NetWorkManager;

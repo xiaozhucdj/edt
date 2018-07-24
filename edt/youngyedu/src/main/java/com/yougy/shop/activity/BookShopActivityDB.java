@@ -18,7 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.anwser.BaseResult;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;

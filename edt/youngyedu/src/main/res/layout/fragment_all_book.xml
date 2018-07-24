@@ -133,7 +133,7 @@
         android:layout_below="@+id/ll_term"
         android:background="@color/black" />
 
-    <com.frank.etude.pageBtnBar.PageBtnBar
+    <com.frank.etude.pageable.PageBtnBar
         android:id="@+id/btn_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
