@@ -684,9 +684,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     //保存没触发前的界面数据,并提交批改数据到服务器
                     saveCheckData(currentShowReplyPageIndex);
 
-                    //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
-                    replyScoreList.set(currentShowQuestionIndex, score);
-
                     llScoreControl.setVisibility(View.VISIBLE);
                     tvSetScore.setText("请选择分值（您设置的总分值为%" + questionReplyDetail.getReplyItemWeight() + "分）");
                     wcdContentDisplayer.getLayer2().setIntercept(true);
@@ -833,6 +830,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 //设置分数提交到服务器
                 score = giveScore;
+                //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
+                replyScoreList.set(currentShowQuestionIndex, score);
                 getUpLoadInfo();
 
                 break;
