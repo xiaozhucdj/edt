@@ -250,6 +250,8 @@ public class YoungyApplicationManager extends LitePalApplication {
                         intent.putExtra("examName", attachment.examName);
                         //传参是否定时作业
                         intent.putExtra("isTimerWork" , attachment.isTimeWork);
+                        intent.putExtra("lifeTime" , attachment.lifeTime);
+                        intent.putExtra("teacherID" , attachment.teacherId);
                         startActivity(intent);
                     }
                 }

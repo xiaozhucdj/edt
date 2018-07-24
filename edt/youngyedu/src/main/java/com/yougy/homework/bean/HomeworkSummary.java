@@ -73,6 +73,7 @@ public class HomeworkSummary {
         private String typeCode;// 自评 互评等作业状态
         private int itemCount;//考试题总数
         private int correctCount;//正确的题目
+        private int examSponsor;//teacher id
 
         public String getBook() {
             return book;
@@ -184,6 +185,14 @@ public class HomeworkSummary {
 
         public void setCorrectCount(int correctCount) {
             this.correctCount = correctCount;
+        }
+
+        public int getExamSponsor() {
+            return examSponsor;
+        }
+
+        public void setExamSponsor(int exmaSponsor) {
+            this.examSponsor = exmaSponsor;
         }
     }
 }

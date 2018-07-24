@@ -223,6 +223,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private long residueTime; //剩余时间
     private boolean isAutoSubmit = false; //是否到时间自动提交
 
+    private int teacherId;//教师Id
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_homework);
@@ -251,6 +253,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
             judgeWorkIsEnd();
         }
+        teacherId = getIntent().getIntExtra("teacherID", 0);
         initReceiveHomeworkMsg();
     }
 
@@ -1408,24 +1411,26 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
                         //发送消息
-                        YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId), SessionTypeEnum.P2P, SpUtils.getAccountId(), SpUtils.getAccountName()
-                                , new RequestCallback<Void>() {
+                        if (teacherId != 0) {
+                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId), SessionTypeEnum.P2P, SpUtils.getAccountId(), SpUtils.getAccountName()
+                                    , teacherId, new RequestCallback<Void>() {
 
-                                    @Override
-                                    public void onSuccess(Void param) {
-                                        LogUtils.d("提交消息通知教师成功！");
-                                    }
+                                        @Override
+                                        public void onSuccess(Void param) {
+                                            LogUtils.d("提交消息通知教师成功！");
+                                        }
 
-                                    @Override
-                                    public void onFailed(int code) {
-                                        LogUtils.d("提交消息通知教师失败！ code = " + code);
-                                    }
+                                        @Override
+                                        public void onFailed(int code) {
+                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                        }
 
-                                    @Override
-                                    public void onException(Throwable exception) {
-                                        LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
-                                    }
-                                });
+                                        @Override
+                                        public void onException(Throwable exception) {
+                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                        }
+                                    });
+                        }
                         onBackPressed();
 
                     }

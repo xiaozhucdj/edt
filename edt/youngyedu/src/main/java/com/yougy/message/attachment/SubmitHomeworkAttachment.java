@@ -17,9 +17,9 @@ public class SubmitHomeworkAttachment extends CustomAttachment{
     public String studentName;
     public int examId;
 
-    private final String KEY_STUDENT_ID = "student_id";
-    private final String KEY_STUDENT_NAME = "student_name";
-    private final String KEY_EXAM_ID = "key_exam_id";
+    private final String KEY_STUDENT_ID = "studentId";
+    private final String KEY_STUDENT_NAME = "studentName";
+    private final String KEY_EXAM_ID = "keyExamId";
 
     public SubmitHomeworkAttachment(String clue , double version) {
         super(clue , version);

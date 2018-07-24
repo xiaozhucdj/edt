@@ -30,6 +30,8 @@ import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBar;
 import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.google.gson.Gson;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
@@ -47,6 +49,7 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -180,6 +183,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     //学生作业客观题结果存放集合（ABCD ture false）
     private List<Content_new> textReplyList = new ArrayList<>();
 
+    private int teacherId;
+
     @Override
     public void init() {
         studentId = SpUtils.getUserId();
@@ -189,6 +194,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         isStudentLook = getIntent().getBooleanExtra("isStudentLook", false);
 
         studentName = SpUtils.getAccountName();
+        teacherId = getIntent().getIntExtra("teacherID", 0);
         titleTextview.setText(studentName);
     }
 
@@ -1279,6 +1285,25 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     public void call(Object o) {
                         ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
                         back();
+                        if (teacherId != 0) {
+                            YXClient.getInstance().sendSubmitHomeworkMsg(examId, SessionTypeEnum.P2P, studentId, studentName,
+                                    teacherId, new RequestCallback<Void>() {
+                                        @Override
+                                        public void onSuccess(Void param) {
+                                            LogUtils.v("自评发送消息成功 ！");
+                                        }
+
+                                        @Override
+                                        public void onFailed(int code) {
+                                            LogUtils.v("自评发送消息失败 ！code = " + code);
+                                        }
+
+                                        @Override
+                                        public void onException(Throwable exception) {
+                                            LogUtils.v("自评发送消息异常 ！" + exception.getMessage());
+                                        }
+                                    });
+                        }
 
                     }
                 }, new Action1<Throwable>() {

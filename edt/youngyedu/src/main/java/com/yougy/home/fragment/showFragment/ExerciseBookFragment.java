@@ -102,8 +102,10 @@ public class ExerciseBookFragment extends BFragment {
                         break;
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);
-                        if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
+                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())||
+                                ("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                    && ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                        || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())))){
                             holder.binding.statusTv.setText("自\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
@@ -184,13 +186,15 @@ public class ExerciseBookFragment extends BFragment {
                         break;
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = holder.getData();
-                        //服务器IH 状态不正确
-                        if ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                || "II55".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                || "II58".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())){
+                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())||
+                                ("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                        && ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                        || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                        || "II55".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                        || "II58".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())))){
                             intent = new Intent(getActivity() , CheckHomeWorkActivity.class);
                             intent.putExtra("examId" , uncheckedHomeworkSummary.getExam());
+                            intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                             startActivity(intent);
                         }
                         break;
@@ -203,6 +207,7 @@ public class ExerciseBookFragment extends BFragment {
                         if (!StringUtils.isEmpty(((MyHolder) vh).getData().getExtra().getLifeTime())) {
                             intent.putExtra("isTimerWork", true);
                             intent.putExtra("lifeTime", ((MyHolder) vh).getData().getExtra().getLifeTime());
+                            intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                         }
                         startActivity(intent);
                         break;

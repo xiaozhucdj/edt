@@ -10,19 +10,25 @@ import org.json.JSONObject;
 public class SeatWorkAttachment extends CustomAttachment {
     public String examId , examName;
     public boolean isTimeWork;
+    public String lifeTime;
+    public int teacherId;
 
     final String KEY_EXAM_ID = "examID";
     final String KEY_EXAM_NAME = "examName";
     final String KEY_IS_TIME_LIMITED_WORK = "isTimeLimitedWork";
+    final String KEY_IS_TIME_LIFETIEM = "isLifeTime";
+    final String KEY_TEACHERID = "teacherId";
 
     public SeatWorkAttachment(String clue , double version) {
         super(clue , version);
     }
-    public SeatWorkAttachment(String examId , String examName , boolean isTimeWork) {
+    public SeatWorkAttachment(String examId , String examName , boolean isTimeWork, String lifeTime, int teacherId) {
         super(CustomAttachParser.CLUE_SEND_SEATWORK , 1);
         this.examId = examId;
         this.examName = examName;
         this.isTimeWork = isTimeWork;
+        this.lifeTime = lifeTime;
+        this.teacherId = teacherId;
     }
 
     /**
@@ -35,6 +41,8 @@ public class SeatWorkAttachment extends CustomAttachment {
         examId = introJsonObj.getString(KEY_EXAM_ID);
         examName = introJsonObj.getString(KEY_EXAM_NAME);
         isTimeWork = introJsonObj.getBoolean(KEY_IS_TIME_LIMITED_WORK);
+        lifeTime = introJsonObj.getString(KEY_IS_TIME_LIFETIEM);
+        teacherId = introJsonObj.getInt(KEY_TEACHERID);
     }
 
     /**
@@ -49,6 +57,8 @@ public class SeatWorkAttachment extends CustomAttachment {
             introJsonObj.put(KEY_EXAM_ID , examId);
             introJsonObj.put(KEY_EXAM_NAME , examName);
             introJsonObj.put(KEY_IS_TIME_LIMITED_WORK , isTimeWork);
+            introJsonObj.put(KEY_IS_TIME_LIFETIEM , lifeTime);
+            introJsonObj.put(KEY_TEACHERID , teacherId);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
         }
         catch (JSONException e) {
