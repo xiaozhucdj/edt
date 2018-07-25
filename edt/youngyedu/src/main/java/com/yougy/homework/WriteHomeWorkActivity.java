@@ -774,11 +774,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
-        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(spentTimeMill));
+        tvSubmitTime.setText("时间：" + DateUtils.converLongTimeToString(spentTimeMill));
     }
 
     private void refreshTime(long time) {
-        tvSubmitTime.setText("时间:\t" + DateUtils.converLongTimeToString(time));
+        tvSubmitTime.setText("时间：" + DateUtils.converLongTimeToString(time));
     }
 
     /**
@@ -1130,9 +1130,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
             refreshTime();
         }
 
-        String textInfo = tvSubmitHomeWork.getText().toString();
-        if (textInfo.contains("(") && textInfo.contains(")")) {
-            getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
+        String textInfo = tvSubmitTime.getText().toString();
+        if (textInfo.startsWith("时间：")) {
+            getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(3));
         }
 
         if (clear) {
