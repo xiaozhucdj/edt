@@ -73,6 +73,8 @@ import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -115,6 +117,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     TextView tvSubmitHomeWork;
     @BindView(R.id.tv_title_time)
     TextView tvSubmitTime;
+    @BindView(R.id.tv_title_timing)
+    TextView tvTiming;
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.tv_add_page)
@@ -222,6 +226,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private long startTime = 0;// 开始时间
     private long residueTime; //剩余时间
     private boolean isAutoSubmit = false; //是否到时间自动提交
+    private TimedTask timingTask;//定时作业定时器
 
     private int teacherId;//教师Id
 
@@ -254,6 +259,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
             judgeWorkIsEnd();
         }
         teacherId = getIntent().getIntExtra("teacherID", 0);
+
+        if (isTimerWork) {
+            tvSubmitTime.setVisibility(View.INVISIBLE);
+            tvTiming.setVisibility(View.VISIBLE);
+        } else {
+            tvSubmitTime.setVisibility(View.VISIBLE);
+            tvTiming.setVisibility(View.INVISIBLE);
+        }
+
         initReceiveHomeworkMsg();
     }
 
@@ -318,14 +332,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 开始计时任务
      */
     private synchronized void startTimerTask() {
-        timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+        timingTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
                 .start(new Action1<Integer>() {
                     @Override
                     public void call(Integer times) {
                         if (residueTime < 1000) {
                             residueTime = 0;
                             autoSubmitHomeWork();
-                            timedTask.stop();
+                            timingTask.stop();
                         } else {
                             residueTime -= 1000;
                         }
@@ -341,6 +355,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void autoSubmitHomeWork() {
         //是否要提示：
         ToastUtil.showCustomToast(getApplicationContext(), "定时时间到，作业将自动提交！");
+        saveLastHomeWorkData(showHomeWorkPosition, false);
         getUpLoadInfo();
     }
 
@@ -761,15 +776,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
             return;
         }
-        if (!isTimerWork) {
-            timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
-                    .start(new Action1<Integer>() {
-                        @Override
-                        public void call(Integer times) {
-                            refreshTime();
-                        }
-                    });
-        }
+        timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+                .start(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer times) {
+                        refreshTime();
+                    }
+                });
     }
 
     private void refreshTime() {
@@ -778,7 +791,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     }
 
     private void refreshTime(long time) {
-        tvSubmitTime.setText("时间：" + DateUtils.converLongTimeToString(time));
+        tvTiming.setText("时间：" + DateUtils.converLongTimeToString(time));
     }
 
     /**
@@ -1409,6 +1422,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (timedTask != null) {
                             timedTask.stop();
                         }
+                        if (timingTask != null) {
+                            timingTask.stop();
+                        }
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
                         //发送消息
                         if (teacherId != 0) {
@@ -1764,6 +1780,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             timedTask.stop();
         }
         timedTask = null;
+
+        if (timingTask != null) {
+            timingTask.stop();
+        }
+        timingTask = null;
 
         if (bytesList != null) {
             pathList.clear();
