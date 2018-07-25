@@ -73,8 +73,6 @@ import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -384,7 +382,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         });*/
 
-        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper() {
+        ContentDisplayer.ContentAdapter contentAdapter = new ContentDisplayer.ContentAdapter() {
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
                 super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
@@ -412,7 +410,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
             }
         };
-        contentDisplayer.setmContentAdaper(contentAdaper);
+        contentDisplayer.setmContentAdapter(contentAdapter);
 
 
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
@@ -525,7 +523,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 parsedQuestionItem = parsedQuestionItemList.get(0);
                 questionList = parsedQuestionItem.questionContentList;
-                contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
+                contentDisplayer.getmContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
 
 
                 //判断是否之前有笔记
@@ -661,9 +659,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         //将本页设置为选中页
         saveQuestionPage = position;
 
-        if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
+        if (position < contentDisplayer.getmContentAdapter().getPageCount("question")) {
             //切换当前题目的分页
-            contentDisplayer.getmContentAdaper().toPage("question", position, false);
+            contentDisplayer.getmContentAdapter().toPage("question", position, false);
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
@@ -995,7 +993,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_add_page:
                 if (btnLocked == false) {
                     btnLocked = true;
-                    if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") >= 5) {
+                    if (questionPageSize - contentDisplayer.getmContentAdapter().getPageCount("question") >= 5) {
                         ToastUtil.showCustomToast(this, "最多只能加5张纸");
                         btnLocked = false;
                         return;

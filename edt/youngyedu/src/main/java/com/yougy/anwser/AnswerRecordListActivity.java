@@ -69,12 +69,12 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                 HomeworkDetail homeworkDetail = homeworkDetailList.get(btnIndex);
                 ParsedQuestionItem parsedQuestionItem = homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0);
 
-                binding.contentDisplayer.getmContentAdaper().updateDataList("question"
+                binding.contentDisplayer.getmContentAdapter().updateDataList("question"
                         ,parsedQuestionItem.questionContentList);
                 String subText = "        题型 : " + parsedQuestionItem.questionContentList.get(0).getExtraData()
                         + "        提问时间 : " + homeworkDetail.getExamCreateTime();
-                binding.contentDisplayer.getmContentAdaper().setSubText(subText);
-                binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , true);
+                binding.contentDisplayer.getmContentAdapter().setSubText(subText);
+                binding.contentDisplayer.getmContentAdapter().toPage("question" , 0 , true);
                 switch (homeworkDetail.getExamStatusCode()){
                     case "IH01":
                         binding.statusTv.setText("未\n开\n始");
@@ -118,7 +118,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                 }
             }
         });
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
+        binding.contentDisplayer.setmContentAdapter(new ContentDisplayer.ContentAdapter(){
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
 

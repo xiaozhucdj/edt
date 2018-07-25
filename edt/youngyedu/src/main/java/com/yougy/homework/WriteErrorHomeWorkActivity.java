@@ -187,7 +187,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 ivZpResult.setVisibility(View.GONE);
                 break;
         }
-        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper() {
+        ContentDisplayer.ContentAdapter contentAdapter = new ContentDisplayer.ContentAdapter() {
 
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
@@ -212,7 +212,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
             }
         };
-        contentDisplayer.setmContentAdaper(contentAdaper);
+        contentDisplayer.setmContentAdapter(contentAdapter);
 
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
@@ -259,7 +259,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             return;
         }
         questionList = questionItem.questionContentList;
-        contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
+        contentDisplayer.getmContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
             questionPageSize = questionList.size();
@@ -311,9 +311,9 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     saveQuestionPage = position;
 
 
-                    if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
+                    if (position < contentDisplayer.getmContentAdapter().getPageCount("question")) {
                         //切换当前题目的分页
-                        contentDisplayer.getmContentAdaper().toPage("question", position, false);
+                        contentDisplayer.getmContentAdapter().toPage("question", position, false);
                         contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
@@ -492,7 +492,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
-                if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                if (questionPageSize - contentDisplayer.getmContentAdapter().getPageCount("question") > 5) {
                     ToastUtil.showCustomToast(this, "最多只能加5张纸");
                     return;
                 }

@@ -59,7 +59,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
                 refreshViewSafe();
             }
         });
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper() {
+        binding.contentDisplayer.setmContentAdapter(new ContentDisplayer.ContentAdapter() {
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
                 LogUtils.e("FH", "===================onPageInfoChanged");
@@ -72,9 +72,9 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
             @Override
             public int getPageBtnCount() {
                 if (binding.writedQuestionBtn.isSelected()) {
-                    return binding.contentDisplayer.getmContentAdaper().getPageCount("question");
+                    return binding.contentDisplayer.getmContentAdapter().getPageCount("question");
                 } else if (binding.answerAnalysisBtn.isSelected()) {
-                    return binding.contentDisplayer.getmContentAdaper().getPageCount("analysis");
+                    return binding.contentDisplayer.getmContentAdapter().getPageCount("analysis");
                 }
                 return 0;
             }
@@ -84,10 +84,10 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
 
                 if (binding.writedQuestionBtn.isSelected()) {
                     currentShowWriteImgPageIndex = btnIndex;
-                    binding.contentDisplayer.getmContentAdaper().toPage("question", btnIndex, false);
+                    binding.contentDisplayer.getmContentAdapter().toPage("question", btnIndex, false);
                 } else if (binding.answerAnalysisBtn.isSelected()) {
                     currentShowAnalysisPageIndex = btnIndex;
-                    binding.contentDisplayer.getmContentAdaper().toPage("analysis", btnIndex, true);
+                    binding.contentDisplayer.getmContentAdapter().toPage("analysis", btnIndex, true);
                 }
             }
 
@@ -117,10 +117,10 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
     @Override
     protected void loadData() {
         binding.writedQuestionBtn.setSelected(true);
-        binding.contentDisplayer.getmContentAdaper().updateDataList("question", writeContentList);
-        binding.contentDisplayer.getmContentAdaper().updateDataList("analysis", questionItem.analysisContentList);
+        binding.contentDisplayer.getmContentAdapter().updateDataList("question", writeContentList);
+        binding.contentDisplayer.getmContentAdapter().updateDataList("analysis", questionItem.analysisContentList);
         if (questionType.equals("选择")) {
-            binding.contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(questionItem.answerContentList));
+            binding.contentDisplayer.getmContentAdapter().setSubText(RxResultHelper.parseAnswerList(questionItem.answerContentList));
         }
         if (!TextUtils.isEmpty(bookTitle)) {
             binding.subTitleTv.setText(" - " + bookTitle);
@@ -131,9 +131,9 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
     @Override
     protected void refreshView() {
         if (binding.writedQuestionBtn.isSelected()) {
-            binding.contentDisplayer.getmContentAdaper().toPage("question", currentShowWriteImgPageIndex, false);
+            binding.contentDisplayer.getmContentAdapter().toPage("question", currentShowWriteImgPageIndex, false);
         } else if (binding.answerAnalysisBtn.isSelected()) {
-            binding.contentDisplayer.getmContentAdaper().toPage("analysis", currentShowAnalysisPageIndex, true);
+            binding.contentDisplayer.getmContentAdapter().toPage("analysis", currentShowAnalysisPageIndex, true);
         }
     }
 

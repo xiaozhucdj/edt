@@ -25,10 +25,8 @@ import com.bumptech.glide.request.target.Target;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.plide.LoadController;
-import com.yougy.plide.LoadListener;
-import com.yougy.plide.Plide;
-import com.yougy.plide.PlideException;
+import com.yougy.plide.Plide2;
+import com.yougy.plide.PlideLoadListener;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -45,7 +43,7 @@ public class ContentDisplayer extends RelativeLayout {
     }
 
     //提供数据的adapter
-    private ContentAdaper mContentAdaper;
+    private ContentAdapter mContentAdapter;
 
     //以下三个为主显示控件,同时只有一个可以显示,其余的隐藏
     //展示网页用的webview
@@ -86,19 +84,19 @@ public class ContentDisplayer extends RelativeLayout {
      * 获取为本ContentDisplayer提供数据的adapter,可能为空
      * @return
      */
-    public ContentAdaper getmContentAdaper() {
-        return mContentAdaper;
+    public ContentAdapter getmContentAdapter() {
+        return mContentAdapter;
     }
 
     /**
      * 设置为本ContentDisplayer提供数据的adapter
      * @param adaper
      */
-    public void setmContentAdaper(ContentAdaper adaper) {
-        if (mContentAdaper != null){
-            mContentAdaper.setmContentDisplayer(null);
+    public void setmContentAdapter(ContentAdapter adaper) {
+        if (mContentAdapter != null){
+            mContentAdapter.setmContentDisplayer(null);
         }
-        mContentAdaper = adaper;
+        mContentAdapter = adaper;
         adaper.setmContentDisplayer(this);
     }
 
@@ -156,7 +154,7 @@ public class ContentDisplayer extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 if (needRefresh){
-                    mContentAdaper.refresh();
+                    mContentAdapter.refresh();
                 }
                 else if (mOnClickListener != null){
                     mOnClickListener.onClick(v);
@@ -283,52 +281,54 @@ public class ContentDisplayer extends RelativeLayout {
 
     public void clearPdfCache(){
         if (pdfImageView != null){
-            Plide.clearCache(pdfImageView);
+            Plide2.getInstance().clearCache(pdfImageView);
         }
     }
-    private void setPdf(Content_new content , int contentIndex , int subPageIndex , String typeKey){
+
+    private void setPdf(Content_new content, int contentIndex, int subPageIndex, String typeKey) {
         webview.setVisibility(GONE);
         mainTextView.setVisibility(GONE);
         picImageView.setVisibility(GONE);
         pdfImageView.setVisibility(VISIBLE);
-        try {
-            String url = content.getValue();
-            if (url.endsWith("##")){
-                url = url.substring(0 , url.lastIndexOf("**"));
-            }
-            Plide.with(getContext()).load(url).setLoadListener(new LoadListener() {
-                @Override
-                public void onLoadStatusChanged(LoadController.PDF_STATUS newStatus, float downloadProgress , int totalPage) {
-                    LogUtils.e("FH" , "onLoadStatusChanged newStatus = " + newStatus + " downloadProgress = " + downloadProgress
-                            + " totalPage = " + totalPage
-                            + " threadId = " + Thread.currentThread().getId());
-                    if (newStatus == LoadController.PDF_STATUS.ERROR){
-                        setHintText("题目加载失败"  + ",点击重新加载...");
-                        needRefresh = true;
-                        callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
-                    }
-                    else if (newStatus == LoadController.PDF_STATUS.LOADED){
-                        if (!content.getValue().endsWith("##")){
-                            content.setValue(content.getValue() + "**" + totalPage + "##");
-                            if (typeKey.equals(mContentAdaper.getCurrentShowTypeKey())){
-                                mContentAdaper.onPageInfoChanged(typeKey , mContentAdaper.getPageCount(typeKey) , mContentAdaper.getCurrentSelectPageIndex());
+        String url = content.getValue();
+        if (url.endsWith("##")) {
+            url = url.substring(0, url.lastIndexOf("**"));
+        }
+        Plide2.with(getContext()).load(url).setLoadListener(new PlideLoadListener() {
+            @Override
+            public void onLoadStatusChanged(STATUS newStatus, String url, int toPageIndex, int totalPageCount, ERROR_TYPE errorType, String errorMsg) {
+                switch (newStatus) {
+                    case DOWNLOADING:
+                        setHintText("正在下载....");
+                        needRefresh = false;
+                        break;
+                    case DOWNLOAD_SUCCESS:
+                        break;
+                    case OPEN_DOCUMENT_ING:
+                        setHintText("正在加载....");
+                        needRefresh = false;
+                        break;
+                    case OPEN_DOCUMENT_SUCCESS:
+                        //更新页码
+                        if (!content.getValue().endsWith("##")) {
+                            content.setValue(content.getValue() + "**" + totalPageCount + "##");
+                            if (typeKey.equals(mContentAdapter.getCurrentShowTypeKey())) {
+                                mContentAdapter.onPageInfoChanged(typeKey, mContentAdapter.getPageCount(typeKey), mContentAdapter.getCurrentSelectPageIndex());
                             }
-                        }
-                        else {
+                        } else {
                             String value = content.getValue();
-                            String contentPageStr = value.substring(value.lastIndexOf("**") + 2 , value.lastIndexOf("##"));
+                            String contentPageStr = value.substring(value.lastIndexOf("**") + 2, value.lastIndexOf("##"));
                             try {
-                                if (Integer.parseInt(contentPageStr) != totalPage){
-                                    content.setValue(value.substring(0 , value.lastIndexOf("**") - 1) + "**" + totalPage + "##");
-                                    if (typeKey.equals(mContentAdaper.getCurrentShowTypeKey())) {
-                                        mContentAdaper.onPageInfoChanged(typeKey, mContentAdaper.getPageCount(typeKey), mContentAdaper.getCurrentSelectPageIndex());
+                                if (Integer.parseInt(contentPageStr) != totalPageCount) {
+                                    content.setValue(value.substring(0, value.lastIndexOf("**") - 1) + "**" + totalPageCount + "##");
+                                    if (typeKey.equals(mContentAdapter.getCurrentShowTypeKey())) {
+                                        mContentAdapter.onPageInfoChanged(typeKey, mContentAdapter.getPageCount(typeKey), mContentAdapter.getCurrentSelectPageIndex());
                                     }
                                 }
-                            }
-                            catch (NumberFormatException e){
-                                content.setValue(value.substring(0 , value.lastIndexOf("**") - 1));
-                                if (typeKey.equals(mContentAdaper.getCurrentShowTypeKey())) {
-                                    mContentAdaper.onPageInfoChanged(typeKey, mContentAdaper.getPageCount(typeKey), mContentAdaper.getCurrentSelectPageIndex());
+                            } catch (NumberFormatException e) {
+                                content.setValue(value.substring(0, value.lastIndexOf("**") - 1));
+                                if (typeKey.equals(mContentAdapter.getCurrentShowTypeKey())) {
+                                    mContentAdapter.onPageInfoChanged(typeKey, mContentAdapter.getPageCount(typeKey), mContentAdapter.getCurrentSelectPageIndex());
                                 }
                                 callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
                             }
@@ -336,26 +336,26 @@ public class ContentDisplayer extends RelativeLayout {
                         setHintText(null);
                         callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                         needRefresh = false;
-                    }
-                    else if (newStatus == LoadController.PDF_STATUS.DOWNLOADING){
-                        setHintText("正在下载....");
-                        needRefresh = false;
-                    }
-                    else if (newStatus == LoadController.PDF_STATUS.LOADING){
+                        break;
+                    case TO_PAGE_ING:
                         setHintText("正在加载....");
                         needRefresh = false;
-                    }
-                    else if (newStatus == LoadController.PDF_STATUS.EMPTY){
-                        setHintText("无加载请求...");
+                        break;
+                    case TO_PAGE_SUCCESS:
+                        setHintText(null);
+                        callOnLoadingStatusChangedListener(LOADING_STATUS.SUCCESS);
                         needRefresh = false;
-                    }
+                        break;
+                    case ERROR:
+                        setHintText("题目加载失败" + ",点击重新加载...");
+                        needRefresh = true;
+                        callOnLoadingStatusChangedListener(LOADING_STATUS.ERROR);
+                        break;
                 }
-            }).into(pdfImageView,true).toPage(subPageIndex);
-        } catch (PlideException e) {
-            e.printStackTrace();
-            setHintText("题目加载失败:" + e.getMessage() + ",点击重新加载...");
-            needRefresh = true;
-        }
+            }
+        })
+                .into(pdfImageView, null)
+                .toPage(subPageIndex, null);
         needRefresh = false;
     }
 
@@ -373,7 +373,7 @@ public class ContentDisplayer extends RelativeLayout {
         getLayoutParams().height = height;
     }
 
-    public static class ContentAdaper {
+    public static class ContentAdapter {
         private ContentDisplayer mContentDisplayer;
 
         private HashMap<String , ArrayList<Content_new>> dataMap = new HashMap<String, ArrayList<Content_new>>();
