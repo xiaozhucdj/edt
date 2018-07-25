@@ -354,7 +354,7 @@ public class ExerciseBookFragment extends BFragment {
                 statusCode = "[\"IH05\",\"IH51\"]";
                 break;
         }
-        String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\"]";
+        String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
         NetWorkManager.queryHomeworkBookDetail_New(mControlActivity.mHomewrokId, examTypeCode,statusCode)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
