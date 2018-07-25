@@ -1,6 +1,7 @@
 package com.yougy.homework;
 
 import android.content.DialogInterface;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +34,7 @@ import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.yougy.anwser.Content_new;
+import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
 import com.yougy.anwser.WriteableContentDisplayer;
@@ -49,12 +51,16 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
+import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
+import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
+import com.zhy.autolayout.utils.AutoUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -82,7 +88,7 @@ import static com.yougy.anwser.Content_new.Type.IMG_URL;
 public class CheckHomeWorkActivity extends BaseActivity {
 
     private int examId, studentId, toShowPosition;
-    private boolean isScoring, isStudentLook;
+    private boolean isCheckOver, isStudentLook;
     private String studentName;
     @BindView(R.id.rcv_all_question_page)
     RecyclerView mAllQuestionPageView;
@@ -190,7 +196,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         studentId = SpUtils.getUserId();
         examId = getIntent().getIntExtra("examId", -1);
         toShowPosition = getIntent().getIntExtra("toShowPosition", 0);
-        isScoring = getIntent().getBooleanExtra("isScoring", false);
+        isCheckOver = getIntent().getBooleanExtra("isCheckOver", false);
         isStudentLook = getIntent().getBooleanExtra("isStudentLook", false);
 
         studentName = SpUtils.getAccountName();
@@ -257,12 +263,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         rcvChooese.setVisibility(View.VISIBLE);
                         llChooeseItem.setVisibility(View.GONE);
 
+                        setChooeseResult();
                         //刷新当前选择结果的reciv
                         if (rcvChooese.getAdapter() != null) {
                             rcvChooese.getAdapter().notifyDataSetChanged();
                         }
-
-//                        textReplyListaaaaaaaa
 
                     } else if ("判断".equals(questionType)) {
                         rcvChooese.setVisibility(View.GONE);
@@ -320,6 +325,120 @@ public class CheckHomeWorkActivity extends BaseActivity {
             }
         });
     }
+
+
+    /**
+     * 设置选择题的结果界面
+     */
+    private void setChooeseResult() {
+
+        //清理掉其他题中的作业结果。
+//        checkedAnswerList.clear();
+        List<ParsedQuestionItem.Answer> chooeseAnswerList = questionReplyDetail.getParsedQuestionItem().answerList;
+
+
+        rcvChooese.setAdapter(new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(CheckHomeWorkActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
+                AutoUtils.auto(view);
+                AnswerItemHolder holder = new AnswerItemHolder(view);
+
+                holder.setChooeseStyle(chooeseAnswerList.size());
+
+                return holder;
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ParsedQuestionItem.Answer answer = chooeseAnswerList.get(position);
+                ((AnswerItemHolder) holder).setAnswer(answer);
+            }
+
+            @Override
+            public int getItemCount() {
+                if (chooeseAnswerList != null) {
+                    return chooeseAnswerList.size();
+                } else {
+                    return 0;
+                }
+            }
+        });
+        CustomGridLayoutManager gridLayoutManager = new CustomGridLayoutManager(this, chooeseAnswerList.size());
+        gridLayoutManager.setScrollEnabled(false);
+        rcvChooese.setLayoutManager(gridLayoutManager);
+
+    }
+
+    public class AnswerItemHolder extends RecyclerView.ViewHolder {
+        ItemAnswerChooseGridviewBinding itemBinding;
+        ParsedQuestionItem.Answer answer;
+
+        public AnswerItemHolder(View itemView) {
+            super(itemView);
+            itemBinding = DataBindingUtil.bind(itemView);
+        }
+
+        public AnswerItemHolder setAnswer(ParsedQuestionItem.Answer answer) {
+            this.answer = answer;
+            if (answer instanceof ParsedQuestionItem.TextAnswer) {
+                itemBinding.textview.setText(((ParsedQuestionItem.TextAnswer) answer).text);
+
+
+                //选择题选择的结果
+                ArrayList<String> checkedAnswerList = new ArrayList<String>();
+
+                for(int i= 0 ;i <textReplyList.size();i++){
+
+                    String replyResult = textReplyList.get(i).getValue();
+                    checkedAnswerList.add(replyResult);
+                }
+
+                if (ListUtil.conditionalContains(checkedAnswerList, new ListUtil.ConditionJudger<String>() {
+                    @Override
+                    public boolean isMatchCondition(String nodeInList) {
+                        return nodeInList.equals(((ParsedQuestionItem.TextAnswer) answer).text);
+                    }
+                })) {
+                    itemBinding.checkbox.setSelected(true);
+                    itemBinding.textview.setSelected(true);
+                } else {
+                    itemBinding.textview.setSelected(false);
+                    itemBinding.checkbox.setSelected(false);
+                }
+            } else {
+                itemBinding.textview.setText("格式错误");
+                itemBinding.checkbox.setSelected(false);
+            }
+            return this;
+        }
+
+        public void setChooeseStyle(int size) {
+            int rid;
+            switch (size) {
+                case 2:
+                    rid = R.drawable.btn_check_liangdaan;
+                    break;
+                case 3:
+                    rid = R.drawable.btn_check_sandaan;
+                    break;
+                case 4:
+                    rid = R.drawable.btn_check_sidaan;
+                    break;
+                case 5:
+                    rid = R.drawable.btn_check_wudaan;
+                    break;
+                default:
+                    rid = R.drawable.btn_check_liudaan;
+                    break;
+            }
+            itemBinding.checkbox.setBackgroundResource(rid);
+        }
+    }
+
+
+
+
 
     private void myLeaveScribbleMode() {
         if (wcdContentDisplayer.getLayer1() != null && wcdContentDisplayer.getLayer1().getVisibility() == View.VISIBLE) {
@@ -393,25 +512,18 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     private void refreshQuestion() {
         String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
-        ArrayList<Content_new> replyList;
-        if ("选择".equals(questionType) || "判断".equals(questionType)) {
-            //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
-            autoToNextQuestion();
-            return;
 
+        //是否是批改完毕，查看已批改
+        if (isCheckOver) {
+            //查看已批改情况下，客观题不自动跳过
+        }else{
+            //自评情况下，客观题自动跳过
+            if ("选择".equals(questionType) || "判断".equals(questionType)) {
+                //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
+                autoToNextQuestion();
+                return;
 
-            //展示当前选择或者判断题在界面上。
-
-//            replyList = ListUtil.conditionalSubList(questionReplyDetail.getParsedReplyContentList(), new ListUtil.ConditionJudger<Content_new>() {
-//                @Override
-//                public boolean isMatchCondition(Content_new nodeInList) {
-//                    return nodeInList.getType() != Content_new.Type.TEXT;
-//                }
-//            });
-//            contentDisplayer.getmContentAdaper().setSubText(RxResultHelper.parseAnswerList(questionReplyDetail.getParsedQuestionItem().answerContentList));
-        } else {
-            replyList = (ArrayList<Content_new>) questionReplyDetail.getParsedReplyContentList();
-//            contentDisplayer.getmContentAdaper().setSubText(null);
+            }
         }
 
         pageBtnBar.setCurrentSelectPageIndex(-1);
@@ -916,7 +1028,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     //展示之前保存的笔记数据
     private void getShowCheckDate() {
-        if (bytesList.size() > currentShowReplyPageIndex && currentShowReplyPageIndex >= 0) {
+        if (bytesList != null && bytesList.size() > currentShowReplyPageIndex && currentShowReplyPageIndex >= 0) {
             byte[] tmpBytes = bytesList.get(currentShowReplyPageIndex);
             if (tmpBytes != null) {
                 wcdContentDisplayer.getLayer2().drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
