@@ -92,7 +92,6 @@ import rx.schedulers.Schedulers;
 import static com.yougy.common.utils.SharedPreferencesUtil.getSpUtil;
 
 /**
- * Created by cdj
  * 写作业界面
  */
 public class WriteHomeWorkActivity extends BaseActivity {

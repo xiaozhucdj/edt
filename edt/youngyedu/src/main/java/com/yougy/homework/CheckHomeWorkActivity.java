@@ -219,7 +219,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             public void beforeToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
 
                 //当切换题目时（update新数据）框架会将fromTypeKey置空，将fromPageIndex置为-1，这里这么处理是为了第一次调用topage时（第一次进入题目）不触发保存的逻辑。
-                if (!TextUtils.isEmpty(fromTypeKey) && "question".equals(fromTypeKey)) {
+                if (!TextUtils.isEmpty(fromTypeKey) && "question".equals(fromTypeKey) && !isCheckOver) {
                     //保存没触发前的界面数据
                     saveCheckData(fromPageIndex);
                 }
@@ -228,7 +228,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             @Override
             public void afterToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
 
-                if (!TextUtils.isEmpty(toTypeKey) && "question".equals(toTypeKey)) {
+                if (!TextUtils.isEmpty(toTypeKey) && "question".equals(toTypeKey) && !isCheckOver) {
                     getShowCheckDate();
                 }
 
@@ -372,7 +372,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 //选择题选择的结果
                 ArrayList<String> checkedAnswerList = new ArrayList<String>();
 
-                for(int i= 0 ;i <textReplyList.size();i++){
+                for (int i = 0; i < textReplyList.size(); i++) {
 
                     String replyResult = textReplyList.get(i).getValue();
                     checkedAnswerList.add(replyResult);
@@ -496,7 +496,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         //是否是批改完毕，查看已批改
         if (isCheckOver) {
             //查看已批改情况下，客观题不自动跳过
-        }else{
+        } else {
             //自评情况下，客观题自动跳过
             if ("选择".equals(questionType) || "判断".equals(questionType)) {
                 //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
@@ -967,7 +967,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
 
     private void setWcdToQuestionMode() {
-        wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
+        String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+        //如果是客观题，那么基准层为question层，客观题不能加页，所以最多学生答题层和题目层页数相同。避免查看客观题时页数显示不全
+        if ("选择".equals(questionType) || "判断".equals(questionType)) {
+            wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+        } else {
+            wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
+        }
         wcdContentDisplayer.getLayer1().setIntercept(true);
         if (llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
             wcdContentDisplayer.getLayer2().setIntercept(false);
