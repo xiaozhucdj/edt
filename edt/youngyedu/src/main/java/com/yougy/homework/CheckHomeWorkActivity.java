@@ -282,6 +282,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
                                 rbError.setChecked(true);
                             }
                         }
+                        rbRight.setClickable(false);
+                        rbError.setClickable(false);
                     } else {
                         rcvChooese.setVisibility(View.GONE);
                         llChooeseItem.setVisibility(View.GONE);
@@ -298,24 +300,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
         wcdContentDisplayer.setStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
             @Override
             public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
-                /*if (questionBodyBtn.isSelected()) {
-                    int replyScore = -1;
-                    if (replyScoreList.size() != 0) {
-                        replyScore = replyScoreList.get(currentShowQuestionIndex);
-                    }
-                    if (replyScore == -1) {//没批
-                        if (newStatus == WriteableContentDisplayer.LOADING_STATUS.SUCCESS) {
-                            mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                        } else {
-                            mNbvAnswerBoard.setVisibility(View.GONE);
-                        }
-
-                    } else {//批了
-                        mNbvAnswerBoard.setVisibility(View.GONE);
-                    }
-                } else {
-                    mNbvAnswerBoard.setVisibility(View.GONE);
-                }*/
 
                 if (newStatus == WriteableContentDisplayer.LOADING_STATUS.ERROR) {
                     wcdContentDisplayer.setHintText(errorMsg);
@@ -435,10 +419,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
             itemBinding.checkbox.setBackgroundResource(rid);
         }
     }
-
-
-
-
 
     private void myLeaveScribbleMode() {
         if (wcdContentDisplayer.getLayer1() != null && wcdContentDisplayer.getLayer1().getVisibility() == View.VISIBLE) {
@@ -686,7 +666,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
             Content_new content_new = content_news.get(i);
 
-            if (content_new.getType() == IMG_URL) {
+            if (content_new.getType() == Content_new.Type.IMG_URL) {
                 imgReplyList.add(content_new);
 
                 //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
