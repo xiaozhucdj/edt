@@ -172,15 +172,6 @@ public interface ServerApi {
             , @Field("examStartTime") String examStartTime);
 
     /**
-     * 查询问答
-     */
-    @FormUrlEncoded
-    @POST("classRoom")
-    @DefaultField(keys = {"m" , "examTypeCode"}, values = {"queryExam" , "II01"})
-    Observable<BaseResult<List<HomeworkDetail>>> queryAnswer(@Field("classId") String classId
-            , @Field("book") String bookId , @Field("cursor") Integer cursor);
-
-    /**
      * 查询解答摘要
      */
     @FormUrlEncoded
