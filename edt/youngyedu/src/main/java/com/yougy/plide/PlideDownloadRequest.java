@@ -96,6 +96,6 @@ public class PlideDownloadRequest extends PlideRequest{
 
     @Override
     public String toString() {
-        return "PlideDownloadRequest@" + Integer.toHexString(hashCode());
+        return "PlideDownloadRequest@" + Integer.toHexString(hashCode()) + " url=" + mUrl;
     }
 }

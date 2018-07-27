@@ -967,13 +967,17 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
 
     private void setWcdToQuestionMode() {
-        String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
-        //如果是客观题，那么基准层为question层，客观题不能加页，所以最多学生答题层和题目层页数相同。避免查看客观题时页数显示不全
-        if ("选择".equals(questionType) || "判断".equals(questionType)) {
+        int layer0Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 0);
+        int layer1Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 1);
+
+        //根据第0层和第1层集合大小调整基准层。
+        if (layer0Size > layer1Size) {
             wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
         } else {
             wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
         }
+
+
         wcdContentDisplayer.getLayer1().setIntercept(true);
         if (llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
             wcdContentDisplayer.getLayer2().setIntercept(false);

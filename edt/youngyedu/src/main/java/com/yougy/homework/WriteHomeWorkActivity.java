@@ -275,9 +275,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
         YXClient.getInstance().with(getApplication()).addOnNewCommandCustomMsgListener(message -> {
             if (message.getAttachment() instanceof ReceiveWorkAttachment) {
                 ReceiveWorkAttachment receiveWorkAttachment = (ReceiveWorkAttachment) message.getAttachment();
+                LogUtils.d("examId = " + examId + "   receiveWorkAttachment.examId = " + receiveWorkAttachment.examId);
                 if (examId.equals(receiveWorkAttachment.examId)) {
                     LogUtils.w("teacher receive homework , auto submit.");
-                    tvSubmitHomeWork.callOnClick();
+                    autoSubmitHomeWork();
                 } else {
                     LogUtils.w("current examId is not receive examId. not submit.");
                 }
@@ -351,7 +352,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
      */
     private void autoSubmitHomeWork() {
         //是否要提示：
-        ToastUtil.showCustomToast(getApplicationContext(), "定时时间到，作业将自动提交！");
+//        ToastUtil.showCustomToast(getApplicationContext(), "定时时间到，作业将自动提交！");
         saveLastHomeWorkData(showHomeWorkPosition, false);
         getUpLoadInfo();
     }
@@ -415,6 +416,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
+                if (questionList == null) {
+                    return;
+                }
+
                 if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
@@ -1820,7 +1825,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         if (!mIsFinish) {
-            tvSaveHomework.callOnClick();
+            //tvSaveHomework.callOnClick();
         }
         if (isTimerWork) {
             saveLastHomeWorkData(showHomeWorkPosition, false);
