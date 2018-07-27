@@ -77,6 +77,6 @@ public class PlideToPageRequest extends PlideRequest {
 
     @Override
     public String toString() {
-        return "PlideToPageRequest@" + Integer.toHexString(hashCode()) + "&toPageIndex=" + mToPageIndex;
+        return "PlideToPageRequest@" + Integer.toHexString(hashCode()) + " url=" + mUrl + " toPageIndex=" + mToPageIndex;
     }
 }

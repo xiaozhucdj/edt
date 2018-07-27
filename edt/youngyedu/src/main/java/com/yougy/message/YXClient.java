@@ -63,6 +63,7 @@ import com.yougy.message.attachment.HomeworkRemindAttachment;
 import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
+import com.yougy.message.attachment.ReceiveWorkAttachment;
 import com.yougy.message.attachment.ReplyAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
@@ -162,6 +163,7 @@ public class YXClient {
                             || newMessage.getAttachment() instanceof RetryAskQuestionAttachment
                             || newMessage.getAttachment() instanceof NeedRefreshHomeworkAttachment
                             || newMessage.getAttachment() instanceof SeatWorkAttachment
+                            || newMessage.getAttachment() instanceof ReceiveWorkAttachment
                             ) {
                         //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {

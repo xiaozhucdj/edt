@@ -63,6 +63,6 @@ public class PlideOpenDocumentRequest extends PlideRequest {
     }
     @Override
     public String toString() {
-        return "PlideOpenDocumentRequest@" + Integer.toHexString(hashCode());
+        return "PlideOpenDocumentRequest@" + Integer.toHexString(hashCode()) + " url=" + mUrl;
     }
 }
