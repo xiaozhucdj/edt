@@ -415,6 +415,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
+                if (questionList == null) {
+                    return;
+                }
+
                 if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
@@ -1820,7 +1824,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         if (!mIsFinish) {
-            tvSaveHomework.callOnClick();
+            //tvSaveHomework.callOnClick();
         }
         if (isTimerWork) {
             saveLastHomeWorkData(showHomeWorkPosition, false);
