@@ -46,9 +46,9 @@ public class Commons {
 
                 case 2:// 预发布环境
                     NEW_URL = "https://api.schoolpad.cn/";
-                    ENDPOINT = "http://oss-cn-shanghai.aliyuncs.com";
-                    ANSWER_PIC_HOST = ".oss-cn-shanghai.aliyuncs.com/";
-                    BUCKET_NAME = "b00k";
+                    ENDPOINT = "http://oss-cn-beijing.aliyuncs.com";
+                    ANSWER_PIC_HOST = ".oss-cn-beijing.aliyuncs.com/";
+                    BUCKET_NAME = "pre-b00k";
                     YUNXING_APP_KEY = "dfc509a65dca2b658b7cf8e825df9cd6";
                     break;
                 default:
