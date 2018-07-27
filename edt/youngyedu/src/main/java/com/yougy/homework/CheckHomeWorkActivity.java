@@ -255,43 +255,50 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     currentShowReplyPageIndex = btnIndex;
                     wcdContentDisplayer.toPage("question", currentShowReplyPageIndex, true);
+                    //选择判断只在第一页显示结果
+                    if (btnIndex == 0) {
+                        //展示客观题reply中的学生答案（ABCD true false）
+                        String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+                        if ("选择".equals(questionType)) {
 
-                    //展示客观题reply中的学生答案（ABCD true false）
-                    String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
-                    if ("选择".equals(questionType)) {
+                            rcvChooese.setVisibility(View.VISIBLE);
+                            llChooeseItem.setVisibility(View.GONE);
 
-                        rcvChooese.setVisibility(View.VISIBLE);
-                        llChooeseItem.setVisibility(View.GONE);
-
-                        setChooeseResult();
-                        //刷新当前选择结果的reciv
-                        if (rcvChooese.getAdapter() != null) {
-                            rcvChooese.getAdapter().notifyDataSetChanged();
-                        }
-
-                    } else if ("判断".equals(questionType)) {
-                        rcvChooese.setVisibility(View.GONE);
-                        llChooeseItem.setVisibility(View.VISIBLE);
-                        if (textReplyList.size() > 0) {
-                            String replyResult = textReplyList.get(0).getValue();
-                            if ("true".equals(replyResult)) {
-                                rbRight.setChecked(true);
-                                rbError.setChecked(false);
-                            } else {
-                                rbRight.setChecked(false);
-                                rbError.setChecked(true);
+                            setChooeseResult();
+                            //刷新当前选择结果的reciv
+                            if (rcvChooese.getAdapter() != null) {
+                                rcvChooese.getAdapter().notifyDataSetChanged();
                             }
+
+                        } else if ("判断".equals(questionType)) {
+                            rcvChooese.setVisibility(View.GONE);
+                            llChooeseItem.setVisibility(View.VISIBLE);
+                            if (textReplyList.size() > 0) {
+                                String replyResult = textReplyList.get(0).getValue();
+                                if ("true".equals(replyResult)) {
+                                    rbRight.setChecked(true);
+                                    rbError.setChecked(false);
+                                } else {
+                                    rbRight.setChecked(false);
+                                    rbError.setChecked(true);
+                                }
+                            }
+                            rbRight.setClickable(false);
+                            rbError.setClickable(false);
+                        } else {
+                            rcvChooese.setVisibility(View.GONE);
+                            llChooeseItem.setVisibility(View.GONE);
                         }
-                        rbRight.setClickable(false);
-                        rbError.setClickable(false);
                     } else {
                         rcvChooese.setVisibility(View.GONE);
                         llChooeseItem.setVisibility(View.GONE);
                     }
-
                 } else if (analysisBtn.isSelected()) {
                     currentShowAnalysisPageIndex = btnIndex;
                     wcdContentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
+
+                    rcvChooese.setVisibility(View.GONE);
+                    llChooeseItem.setVisibility(View.GONE);
                 }
             }
 
@@ -683,6 +690,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
         //设置学生答案的轨迹图
         wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
         /***********填充所有需要展示的3层数据资源 end***************/
+
+        pageBtnBar.refreshPageBar();
     }
 
     private void setPageNumberView() {
