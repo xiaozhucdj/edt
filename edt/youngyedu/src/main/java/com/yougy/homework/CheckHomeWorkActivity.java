@@ -232,6 +232,29 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     getShowCheckDate();
                 }
 
+                if (questionBodyBtn.isSelected()){
+                    int layer0Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 0);
+                    int layer1Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 1);
+                    //根据第0层和第1层集合大小调整基准层。
+                    if (layer0Size > layer1Size && wcdContentDisplayer.getContentAdapter().getPageCountBaseLayerIndex() !=  0) {
+                        wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+
+                        int newPageCount = wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
+                        //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
+                        if (newPageCount > pathList.size()) {
+                            //需要添加的页码数目。
+                            int newAddPageNum = newPageCount - pathList.size();
+
+                            for (int i = 0; i < newAddPageNum; i++) {
+                                bytesList.add(null);
+                                pathList.add(null);
+                            }
+                        }
+
+                        pageBtnBar.refreshPageBar();
+                    }
+                }
+
             }
         });
 
@@ -428,10 +451,10 @@ public class CheckHomeWorkActivity extends BaseActivity {
     }
 
     private void myLeaveScribbleMode() {
-        if (wcdContentDisplayer.getLayer1() != null && wcdContentDisplayer.getLayer1().getVisibility() == View.VISIBLE) {
+        if (wcdContentDisplayer.getLayer1() != null) {
             wcdContentDisplayer.getLayer1().leaveScribbleMode(true);
         }
-        if (wcdContentDisplayer.getLayer2() != null && wcdContentDisplayer.getLayer2().getVisibility() == View.VISIBLE) {
+        if (wcdContentDisplayer.getLayer2() != null) {
             wcdContentDisplayer.getLayer2().leaveScribbleMode(true);
         }
 
@@ -650,14 +673,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
         setWcdToQuestionMode();
 
         /***********填充所有需要展示的3层数据资源 start***************/
-        wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
-        wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
-        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
-        } else {
-            wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
-        }
-
 
         //拆分出学生答案中的轨迹图片和TEXT（因为客观题有ABCD ture false）
         List<Content_new> imgReplyList = new ArrayList<>();
@@ -687,8 +702,32 @@ public class CheckHomeWorkActivity extends BaseActivity {
             }
         }
 
-        //设置学生答案的轨迹图
-        wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
+        wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
+        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
+        } else {
+            wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
+        }
+        if (imgReplyList.size() == 0){
+            wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+            wcdContentDisplayer.getContentAdapter().deleteDataList("question" , 1);
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+            int newPageCount = wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
+            //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
+            if (newPageCount > pathList.size()) {
+                //需要添加的页码数目。
+                int newAddPageNum = newPageCount - pathList.size();
+
+                for (int i = 0; i < newAddPageNum; i++) {
+                    bytesList.add(null);
+                    pathList.add(null);
+                }
+            }
+        }
+        else {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
+        }
         /***********填充所有需要展示的3层数据资源 end***************/
 
         pageBtnBar.refreshPageBar();
@@ -1015,8 +1054,10 @@ public class CheckHomeWorkActivity extends BaseActivity {
             bytesList.set(index, wcdContentDisplayer.getLayer2().bitmap2Bytes());
             //保存图片
             String fileName = pathList.get(index);
-            if (fileName.contains("/")) {
+            if (!TextUtils.isEmpty(fileName) && fileName.contains("/")) {
                 fileName = fileName.substring(fileName.lastIndexOf("/"));
+            } else {
+                fileName = System.currentTimeMillis() + ".png";
             }
             String filePath = saveBitmapToFile(wcdContentDisplayer.getLayer2().getBitmap(), fileName);
             pathList.set(index, filePath);
