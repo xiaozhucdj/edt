@@ -1,8 +1,10 @@
 package com.yougy.anwser;
 
 import android.databinding.DataBindingUtil;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.yougy.common.activity.BaseActivity;
@@ -16,6 +18,9 @@ import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerRecordDetailBinding;
+import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
+import com.yougy.view.CustomGridLayoutManager;
+import com.zhy.autolayout.utils.AutoUtils;
 
 import org.litepal.util.LogUtil;
 
@@ -33,7 +38,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
     ActivityAnswerRecordDetailBinding binding;
     ParsedQuestionItem parsedQuestionItem;
     int examId;
-
+    private List<Content_new> textReplyList = new ArrayList<>();
     //当前展示的学生答案的页码(从0开始)
     private int currentShowReplyPageIndex = 0;
     //当前展示的解析的页码(从0开始)
@@ -41,10 +46,79 @@ public class AnswerRecordDetailActivity extends BaseActivity {
 
     @Override
     protected void setContentView() {
+        LogUtils.e(tag,"setContentView............");
         binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answer_record_detail, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
+
+    private void showJudgeOrSelect(){
+        String questionType = (String) parsedQuestionItem.questionContentList.get(0).getExtraData();
+        if ("选择".equals(questionType)) {
+            binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+            binding.llChooeseItem.setVisibility(View.GONE);
+            setChooeseResult();
+            //刷新当前选择结果的reciv
+            if (binding.rcvChooeseItem.getAdapter() != null) {
+                binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
+            }
+        } else if ("判断".equals(questionType)) {
+            binding.rcvChooeseItem.setVisibility(View.GONE);
+            binding.llChooeseItem.setVisibility(View.VISIBLE);
+            if (textReplyList.size() > 0) {
+                String replyResult = textReplyList.get(0).getValue();
+                if ("true".equals(replyResult)) {
+                    binding.rbRight.setChecked(true);
+                    binding.rbError.setChecked(false);
+                } else {
+                    binding.rbRight.setChecked(false);
+                    binding.rbError.setChecked(true);
+                }
+            }
+            binding.rbRight.setClickable(false);
+            binding.rbError.setClickable(false);
+        } else {
+            binding.rcvChooeseItem.setVisibility(View.GONE);
+            binding.llChooeseItem.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 设置选择题的结果界面
+     */
+    private void setChooeseResult() {
+        List<ParsedQuestionItem.Answer> chooeseAnswerList = parsedQuestionItem.answerList;
+
+        binding.rcvChooeseItem.setAdapter(new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(AnswerRecordDetailActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
+                AutoUtils.auto(view);
+                AnswerItemHolder holder = new AnswerItemHolder(view,textReplyList);
+                holder.setChooeseStyle(chooeseAnswerList.size());
+                return holder;
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ParsedQuestionItem.Answer answer = chooeseAnswerList.get(position);
+                ((AnswerItemHolder) holder).setAnswer(answer);
+            }
+
+            @Override
+            public int getItemCount() {
+                if (chooeseAnswerList != null) {
+                    return chooeseAnswerList.size();
+                } else {
+                    return 0;
+                }
+            }
+        });
+        CustomGridLayoutManager gridLayoutManager = new CustomGridLayoutManager(this, chooeseAnswerList.size());
+        gridLayoutManager.setScrollEnabled(false);
+        binding.rcvChooeseItem.setLayoutManager(gridLayoutManager);
+    }
+
 
     @Override
     protected void init() {
@@ -89,6 +163,11 @@ public class AnswerRecordDetailActivity extends BaseActivity {
         binding.questionBodyBtn.setOnClickListener(v -> {
             //题干
             if (!binding.questionBodyBtn.isSelected()) {
+                binding.questionTypeTextview.setText("题目类型 : " + parsedQuestionItem.questionContentList.get(0).getExtraData());
+                binding.startTimeTv.setVisibility(View.VISIBLE);
+                binding.spendTimeTv.setVisibility(View.VISIBLE);
+                binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+                binding.llChooeseItem.setVisibility(View.VISIBLE);
                 binding.contentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
                 binding.questionBodyBtn.setSelected(true);
                 binding.answerAnalysisBtn.setSelected(false);
@@ -98,6 +177,11 @@ public class AnswerRecordDetailActivity extends BaseActivity {
         binding.answerAnalysisBtn.setOnClickListener(v -> {
             //解答
             if (binding.questionBodyBtn.isSelected()) {
+                binding.questionTypeTextview.setText("解析");
+                binding.startTimeTv.setVisibility(View.GONE);
+                binding.spendTimeTv.setVisibility(View.GONE);
+                binding.rcvChooeseItem.setVisibility(View.GONE);
+                binding.llChooeseItem.setVisibility(View.GONE);
                 binding.contentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
                 binding.questionBodyBtn.setSelected(false);
                 binding.answerAnalysisBtn.setSelected(true);
@@ -131,6 +215,15 @@ public class AnswerRecordDetailActivity extends BaseActivity {
         NetWorkManager.queryReplyDetail(examId, null, SpUtils.getUserId() + "")
                 .subscribe(questionReplyDetails -> {
                     QuestionReplyDetail questionReplyDetail = questionReplyDetails.get(questionReplyDetails.size() - 1);
+                    textReplyList.clear();
+                    List<Content_new> contentList = questionReplyDetail.getParsedReplyContentList();
+                    for (Content_new contentNew : contentList) {
+                        LogUtils.e(tag,"content new type is : " + contentNew.getType()+",value is : " + contentNew.getValue());
+                        if (contentNew.getType() == Content_new.Type.TEXT) {
+                            textReplyList.add(contentNew);
+                        }
+                    }
+                    showJudgeOrSelect();
                     int replyScore = questionReplyDetail.getReplyScore();
                     binding.buttomText.setText("");
                     switch (replyScore) {

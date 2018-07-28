@@ -64,7 +64,7 @@ public class AnswerResultActivity extends BaseActivity {
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(AnswerResultActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
                 AutoUtils.auto(view);
-                AnswerItemHolder holder = new AnswerItemHolder(view);
+                AnswerItemHolder holder = new AnswerItemHolder(view,textReplyList);
                 holder.setChooeseStyle(chooeseAnswerList.size());
                 return holder;
             }
@@ -89,65 +89,7 @@ public class AnswerResultActivity extends BaseActivity {
         binding.rcvChooeseItem.setLayoutManager(gridLayoutManager);
     }
 
-    public class AnswerItemHolder extends RecyclerView.ViewHolder {
-        ItemAnswerChooseGridviewBinding itemBinding;
-        ParsedQuestionItem.Answer answer;
 
-        AnswerItemHolder(View itemView) {
-            super(itemView);
-            itemBinding = DataBindingUtil.bind(itemView);
-        }
-
-        public AnswerItemHolder setAnswer(ParsedQuestionItem.Answer answer) {
-            this.answer = answer;
-            if (answer instanceof ParsedQuestionItem.TextAnswer) {
-                itemBinding.textview.setText(((ParsedQuestionItem.TextAnswer) answer).text);
-                //选择题选择的结果
-                ArrayList<String> checkedAnswerList = new ArrayList<String>();
-                LogUtils.e(tag,"text reply list's size is : " + textReplyList.size());
-                for (int i = 0; i < textReplyList.size(); i++) {
-                    String replyResult = textReplyList.get(i).getValue();
-                    LogUtils.e(tag,"text reply result is : " + replyResult);
-                    checkedAnswerList.add(replyResult);
-                }
-                if (ListUtil.conditionalContains(checkedAnswerList, nodeInList -> nodeInList.equals(((ParsedQuestionItem.TextAnswer) answer).text))) {
-                    LogUtils.e(tag,"selected true .............. ");
-                    itemBinding.checkbox.setSelected(true);
-                    itemBinding.textview.setSelected(true);
-                } else {
-                    LogUtils.e(tag,"selected false .............. ");
-                    itemBinding.textview.setSelected(false);
-                    itemBinding.checkbox.setSelected(false);
-                }
-            } else {
-                itemBinding.textview.setText("格式错误");
-                itemBinding.checkbox.setSelected(false);
-            }
-            return this;
-        }
-
-        private void setChooeseStyle(int size) {
-            int rid;
-            switch (size) {
-                case 2:
-                    rid = R.drawable.btn_check_liangdaan;
-                    break;
-                case 3:
-                    rid = R.drawable.btn_check_sandaan;
-                    break;
-                case 4:
-                    rid = R.drawable.btn_check_sidaan;
-                    break;
-                case 5:
-                    rid = R.drawable.btn_check_wudaan;
-                    break;
-                default:
-                    rid = R.drawable.btn_check_liudaan;
-                    break;
-            }
-            itemBinding.checkbox.setBackgroundResource(rid);
-        }
-    }
 
     @Override
     protected void init() {
@@ -164,7 +106,6 @@ public class AnswerResultActivity extends BaseActivity {
             return;
         }
         parsedQuestionItem = (ParsedQuestionItem) question;
-        List<Content_new> anserList = parsedQuestionItem.answerContentList;
         questionType = (String) parsedQuestionItem.questionContentList.get(0).getExtraData();
     }
 
