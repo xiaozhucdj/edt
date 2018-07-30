@@ -232,11 +232,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     getShowCheckDate();
                 }
 
-                if (questionBodyBtn.isSelected()){
+                if (questionBodyBtn.isSelected()) {
                     int layer0Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 0);
                     int layer1Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 1);
                     //根据第0层和第1层集合大小调整基准层。
-                    if (layer0Size > layer1Size && wcdContentDisplayer.getContentAdapter().getPageCountBaseLayerIndex() !=  0) {
+                    if (layer0Size > layer1Size && wcdContentDisplayer.getContentAdapter().getPageCountBaseLayerIndex() != 0) {
                         wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
 
                         int newPageCount = wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
@@ -708,9 +708,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
         } else {
             wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
         }
-        if (imgReplyList.size() == 0){
+        if (imgReplyList.size() == 0) {
             wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
-            wcdContentDisplayer.getContentAdapter().deleteDataList("question" , 1);
+            wcdContentDisplayer.getContentAdapter().deleteDataList("question", 1);
             wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
             int newPageCount = wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
             //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
@@ -723,8 +723,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     pathList.add(null);
                 }
             }
-        }
-        else {
+        } else {
             wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
             wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
         }
@@ -826,6 +825,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     getUpLoadInfo();
 
                 } else {
+                    if (itemWeight == 1) {
+                        ToastUtil.showCustomToast(CheckHomeWorkActivity.this, "满分为1分的题型，不可以批改为半对");
+                        return;
+                    }
+
+
                     // 这里记得一定要先保存页面数据后在展示打分ui saveCheckData(currentShowReplyPageIndex);
                     //保存没触发前的界面数据,并提交批改数据到服务器
                     saveCheckData(currentShowReplyPageIndex);
