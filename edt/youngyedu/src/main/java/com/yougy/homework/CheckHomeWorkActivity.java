@@ -187,6 +187,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private List<Content_new> textReplyList = new ArrayList<>();
 
     private int teacherId;
+    //浏览模式，默认为false。点击上一题下一题时先置为true，当题目pdf、学生回答轨迹、教师批改轨迹加载完毕后需要设回false。点击判断对错半对设置为false。
+    private boolean isBrowse = false;
 
     @Override
     public void init() {
@@ -519,17 +521,23 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     private void refreshQuestion() {
         String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+        //浏览模式，需要展示客观题
+        if (isBrowse) {
 
-        //是否是批改完毕，查看已批改
-        if (isCheckOver) {
-            //查看已批改情况下，客观题不自动跳过
-        } else {
-            //自评情况下，客观题自动跳过
-            if ("选择".equals(questionType) || "判断".equals(questionType)) {
-                //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
-                autoToNextQuestion();
-                return;
+        }
+        //非浏览模式，也就是判题模式，是不需要展示客观题的
+        else {
+            //是否是批改完毕，查看已批改
+            if (isCheckOver) {
+                //查看已批改情况下，客观题不自动跳过
+            } else {
+                //自评情况下，客观题自动跳过
+                if ("选择".equals(questionType) || "判断".equals(questionType)) {
+                    //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
+                    autoToNextQuestion();
+                    return;
 
+                }
             }
         }
 
@@ -726,7 +734,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
         }
         /***********填充所有需要展示的3层数据资源 end***************/
 
-        pageBtnBar.refreshPageBar();
+        //所有数据展示完毕将浏览模式置为false，当再次点击上一题，下一题时，会继续置为true；
+        isBrowse = false;
     }
 
     private void setPageNumberView() {
@@ -783,7 +792,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 loadData();
                 break;
             case R.id.tv_last_homework:
-
+                isBrowse = true;
                 //不提交批改数据，直接跳转到上一题
                 if (currentShowQuestionIndex > 0) {
                     currentShowQuestionIndex--;
@@ -794,9 +803,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_next_homework:
+                isBrowse = true;
                 autoToNextQuestion();
                 break;
             case R.id.tv_homework_error:
+                isBrowse = false;
                 score = 0;
                 //保存没触发前的界面数据,并提交批改数据到服务器
                 saveCheckData(currentShowReplyPageIndex);
@@ -808,6 +819,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_homework_half_right:
+                isBrowse = false;
                 Integer itemWeight = questionReplyDetail.getReplyItemWeight();
                 //如果分数为null，那么为不计分题
                 if (itemWeight == null) {
@@ -838,6 +850,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_homework_right:
+                isBrowse = false;
                 itemWeight = questionReplyDetail.getReplyItemWeight();
                 //如果分数为null，那么为不计分题
                 if (itemWeight == null) {
@@ -1283,7 +1296,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     String picPath = pathList.get(j);
 
-                    if (picPath.contains("/")) {
+                    if (!TextUtils.isEmpty(picPath) && picPath.contains("/")) {
 
 
                         String picName = picPath.substring(picPath.lastIndexOf("/"));
@@ -1361,6 +1374,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         if (loadingProgressDialog != null) {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
@@ -1416,6 +1430,14 @@ public class CheckHomeWorkActivity extends BaseActivity {
             pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
 
         } else {
+
+            //如果是查看已批改或者是浏览模式，那么不执行closehomework逻辑
+            if (isCheckOver) {
+                return;
+            }
+            if (isBrowse) {
+                return;
+            }
 
             //是否有未批改的作业
             if (replyScoreList.contains(-1)) {
