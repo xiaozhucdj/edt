@@ -76,14 +76,8 @@ public class ContentDisplayerV2 extends RelativeLayout{
     //屏幕是否可以上下滚动的状态变量
     private boolean scrollEnable = false;
 
-    //默认的clickOrHintLayer层的点击监听器,如果没有设置自定义的点击监听器,则默认使用本监听器.
-    private OnClickListener mOnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //默认点击监听器逻辑是直接刷新当前内容
-            refresh();
-        }
-    };
+    //clickOrHintLayer层的点击监听器,默认为null
+    private OnClickListener mOnClickListener = null;
 
     //默认的状态监听器,负责处理错误和提示性文字.
     //如果没有设置自定义的状态监听器,则默认使用本监听器.
@@ -344,7 +338,17 @@ public class ContentDisplayerV2 extends RelativeLayout{
         clickOrHintLayer.setTextSize(TypedValue.COMPLEX_UNIT_SP , 20);
         mainTextView.setTextColor(Color.BLACK);
         clickOrHintLayer.setGravity(Gravity.CENTER);
-        clickOrHintLayer.setOnClickListener(mOnClickListener);
+        clickOrHintLayer.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnClickListener == null){
+                    refresh();
+                }
+                else {
+                    mOnClickListener.onClick(v);
+                }
+            }
+        });
         params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.MATCH_PARENT);
         addView(clickOrHintLayer, params);
     }
