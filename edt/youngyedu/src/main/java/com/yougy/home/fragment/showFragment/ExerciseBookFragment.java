@@ -207,8 +207,8 @@ public class ExerciseBookFragment extends BFragment {
                         if (!StringUtils.isEmpty(((MyHolder) vh).getData().getExtra().getLifeTime())) {
                             intent.putExtra("isTimerWork", true);
                             intent.putExtra("lifeTime", ((MyHolder) vh).getData().getExtra().getLifeTime());
-                            intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                         }
+                        intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                         startActivity(intent);
                         break;
                 }
