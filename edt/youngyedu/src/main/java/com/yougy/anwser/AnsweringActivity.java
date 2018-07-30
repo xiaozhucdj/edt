@@ -264,7 +264,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
 
-        binding.contentDisplayer.setmContentAdapter(new ContentDisplayer.ContentAdapter() {
+        binding.contentDisplayer.setContentAdapter(new ContentDisplayer.ContentAdapter() {
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
                 super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
@@ -387,7 +387,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_add_page:
                 binding.tvAddPage.setEnabled(false);
-                if (questionPageSize - binding.contentDisplayer.getmContentAdapter().getPageCount("question") > 5) {
+                if (questionPageSize - binding.contentDisplayer.getContentAdapter().getPageCount("question") > 5) {
                     ToastUtil.showCustomToast(this, "最多只能加5张纸");
                     binding.tvAddPage.setEnabled(true);
                     return;
@@ -485,7 +485,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         questionList = questionItem.questionContentList;
         binding.questionTypeTextview.setText("题目类型 : " + questionItem.questionContentList.get(0).getExtraData());
-        binding.contentDisplayer.getmContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
+        binding.contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
             questionPageSize = questionList.size();
@@ -541,9 +541,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     saveQuestionPage = position;
 
 
-                    if (position < binding.contentDisplayer.getmContentAdapter().getPageCount("question")) {
+                    if (position < binding.contentDisplayer.getContentAdapter().getPageCount("question")) {
                         //切换当前题目的分页
-                        binding.contentDisplayer.getmContentAdapter().toPage("question", position, false);
+                        binding.contentDisplayer.getContentAdapter().toPage("question", position, false);
                         binding.contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
