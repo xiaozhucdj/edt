@@ -257,6 +257,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         teacherId = getIntent().getIntExtra("teacherID", 0);
 
+        LogUtils.d("homework isTimerWork = " + isTimerWork);
         if (isTimerWork) {
             tvSubmitTime.setVisibility(View.INVISIBLE);
             tvTiming.setVisibility(View.VISIBLE);
@@ -1874,5 +1875,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
         }
+    }
+
+    public String getExam_id  () {
+        return examId;
     }
 }
