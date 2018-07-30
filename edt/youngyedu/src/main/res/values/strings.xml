@@ -33,7 +33,7 @@
     <string name="text_staticLoading">正在加载数据....</string>
     <string name="text_connect_timeout">网络请求超时 ,刷新试试</string>
     <string name="text_error">服务器错误</string>
-    <string name="text_no_netWork">没有链接网络</string>
+    <string name="text_no_netWork">没有连接网络</string>
     <string name="text_empty">没有内容</string>
     <string name="loading_study_data">正在准备学习资料，请耐心等待。。。</string>
     <string name="student_name">姓名</string>
@@ -87,7 +87,7 @@
     <string name="record_of_search">搜索历史</string>
     <string name="clear_record">清空历史记录</string>
 
-    <string name="jump_to_net">当前没有网络,是否链接网络?</string>
+    <string name="jump_to_net">当前没有网络,是否连接网络?</string>
     <string name="delete_note_fail">删除笔记失败</string>
     <string name="updata_note_fail">更新笔记失败</string>
     <string name="note_name_null">请填写笔记昵称</string>
