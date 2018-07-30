@@ -684,6 +684,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      */
     public void showDirectory() {
         if (mRlDirectory.getVisibility() == View.VISIBLE) {
+            mRlDirectory.setVisibility(View.GONE);
             return;
         }
 
