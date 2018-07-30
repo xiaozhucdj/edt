@@ -409,6 +409,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     binding.llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
 
                     if (binding.rlCaogaoBox.getChildCount() > 0) {
                         binding.rlCaogaoBox.removeView(mCaogaoNoteBoard);
@@ -417,6 +418,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 } else {
                     binding.tvCaogaoText.setText("扔掉\n草稿纸");
                     binding.llCaogaoControl.setVisibility(View.VISIBLE);
+                    mNbvAnswerBoard.setIntercept(true);
 
                     if (binding.rlCaogaoBox.getChildCount() == 0) {
                         binding.rlCaogaoBox.addView(mCaogaoNoteBoard);
@@ -437,6 +439,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     binding.tvCaogaoText.setText("草稿纸");
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     binding.llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
                 }
 
                 break;
@@ -523,6 +526,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             binding.tvCaogaoText.setText("草稿纸");
                             mCaogaoNoteBoard.clearAll();
                             binding.llCaogaoControl.setVisibility(View.GONE);
+                            mNbvAnswerBoard.setIntercept(false);
                         }
 
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记

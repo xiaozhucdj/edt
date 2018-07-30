@@ -295,6 +295,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                             tvCaogaoText.setText("草稿纸");
                             mCaogaoNoteBoard.clearAll();
                             llCaogaoControl.setVisibility(View.GONE);
+                            mNbvAnswerBoard.setIntercept(false);
                         }
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                         if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
@@ -514,6 +515,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
                         rlCaogaoBox.removeView(mCaogaoNoteBoard);
@@ -522,6 +524,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 } else {
                     tvCaogaoText.setText("扔掉\n草稿纸");
                     llCaogaoControl.setVisibility(View.VISIBLE);
+                    mNbvAnswerBoard.setIntercept(true);
 
                     if (rlCaogaoBox.getChildCount() == 0) {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
@@ -542,6 +545,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     tvCaogaoText.setText("草稿纸");
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
                 }
 
                 break;

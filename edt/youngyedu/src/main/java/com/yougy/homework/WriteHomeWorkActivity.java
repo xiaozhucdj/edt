@@ -644,6 +644,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 tvCaogaoText.setText("草稿纸");
                 llCaogaoControl.setVisibility(View.GONE);
+                mNbvAnswerBoard.setIntercept(false);
             }
             mCaogaoNoteBoard.clearAll();
 
@@ -1030,6 +1031,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
                         rlCaogaoBox.removeView(mCaogaoNoteBoard);
@@ -1038,6 +1040,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     tvCaogaoText.setText("扔掉\n草稿纸");
                     llCaogaoControl.setVisibility(View.VISIBLE);
+                    mNbvAnswerBoard.setIntercept(true);
 
                     if (rlCaogaoBox.getChildCount() == 0) {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
@@ -1060,6 +1063,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     //TDO
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
                 }
                 break;
 
@@ -1117,6 +1121,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             tvCaogaoText.setText("草稿纸");
             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
             llCaogaoControl.setVisibility(View.GONE);
+            mNbvAnswerBoard.setIntercept(false);
         }
         mCaogaoNoteBoard.clearAll();
 
