@@ -77,9 +77,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-import static com.yougy.anwser.Content_new.Type.IMG_URL;
-
-
 /**
  * Created by Administrator on 2017/10/16.
  * 批改作业界面
@@ -889,11 +886,28 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     int rightCount = 0;
                     int wrongCount = 0;
-                    for (Integer i : replyScoreList) {
-                        if (i == 100) {
-                            rightCount++;
-                        } else if (i == 0 || i == 50) {
-                            wrongCount++;
+
+                    for (int i = 0; i < replyScoreList.size(); i++) {
+
+                        //原始分数
+                        Integer originalItemWight = mQuestionReplyDetails.get(i).getReplyItemWeight();
+                        //批改给的分数
+                        Integer replyItemWight = replyScoreList.get(i);
+
+                        if (originalItemWight == null) {
+                            //不计分题
+                            if (replyItemWight == 100) {
+                                rightCount++;
+                            } else if (replyItemWight == 0 || replyItemWight == 50) {
+                                wrongCount++;
+                            }
+                        } else {
+                            //记分题
+                            if (replyItemWight == originalItemWight) {
+                                rightCount++;
+                            } else if (replyItemWight >= 0 && replyItemWight < originalItemWight) {
+                                wrongCount++;
+                            }
                         }
                     }
 
