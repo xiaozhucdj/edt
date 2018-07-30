@@ -244,6 +244,14 @@ public class YoungyApplicationManager extends LitePalApplication {
                     } else if (message.getAttachment() instanceof SeatWorkAttachment) {
                         //判断是否在写作业界面
                         SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
+                        if (BaseActivity.getForegroundActivity() instanceof  WriteHomeWorkActivity) {
+                            //当前在写作业界面  examId 判断
+                            WriteHomeWorkActivity writeHomeWorkActivity = (WriteHomeWorkActivity) BaseActivity.getForegroundActivity();
+                            if (writeHomeWorkActivity.getExam_id().equals(attachment.examId)) {
+                                //当前显示在前端  作业仍然未提交
+                                return;
+                            }
+                        }
                         Intent intent = new Intent(getApplicationContext(), WriteHomeWorkActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("examId", attachment.examId);
