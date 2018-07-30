@@ -411,7 +411,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
             }
         };
-        contentDisplayer.setmContentAdapter(contentAdapter);
+        contentDisplayer.setContentAdapter(contentAdapter);
 
 
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
@@ -528,7 +528,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 parsedQuestionItem = parsedQuestionItemList.get(0);
                 questionList = parsedQuestionItem.questionContentList;
-                contentDisplayer.getmContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
+                contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
 
 
                 //判断是否之前有笔记
@@ -664,9 +664,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         //将本页设置为选中页
         saveQuestionPage = position;
 
-        if (position < contentDisplayer.getmContentAdapter().getPageCount("question")) {
+        if (position < contentDisplayer.getContentAdapter().getPageCount("question")) {
             //切换当前题目的分页
-            contentDisplayer.getmContentAdapter().toPage("question", position, false);
+            contentDisplayer.getContentAdapter().toPage("question", position, false);
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
@@ -998,7 +998,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_add_page:
                 if (btnLocked == false) {
                     btnLocked = true;
-                    if (questionPageSize - contentDisplayer.getmContentAdapter().getPageCount("question") >= 5) {
+                    if (questionPageSize - contentDisplayer.getContentAdapter().getPageCount("question") >= 5) {
                         ToastUtil.showCustomToast(this, "最多只能加5张纸");
                         btnLocked = false;
                         return;

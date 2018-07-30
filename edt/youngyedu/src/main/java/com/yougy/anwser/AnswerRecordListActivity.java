@@ -68,13 +68,10 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
                 HomeworkDetail homeworkDetail = homeworkDetailList.get(btnIndex);
                 ParsedQuestionItem parsedQuestionItem = homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0);
-
-                binding.contentDisplayer.getmContentAdapter().updateDataList("question"
-                        ,parsedQuestionItem.questionContentList);
                 String subText = "        题型 : " + parsedQuestionItem.questionContentList.get(0).getExtraData()
                         + "        提问时间 : " + homeworkDetail.getExamCreateTime();
-                binding.contentDisplayer.getmContentAdapter().setSubText(subText);
-                binding.contentDisplayer.getmContentAdapter().toPage("question" , 0 , true);
+                binding.contentDisplayer.getContentAdapter().setSubText(subText);
+                binding.contentDisplayer.getContentAdapter().toPage("question" + btnIndex, 0 , true);
                 switch (homeworkDetail.getExamStatusCode()){
                     case "IH01":
                         binding.statusTv.setText("未\n开\n始");
@@ -118,7 +115,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                 }
             }
         });
-        binding.contentDisplayer.setmContentAdapter(new ContentDisplayer.ContentAdapter(){
+        binding.contentDisplayer.setContentAdapter(new ContentDisplayer.ContentAdapter(){
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
 
@@ -198,7 +195,12 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                 @Override
                 public void call(List<HomeworkDetail> homeworkDetails) {
                     homeworkDetailList.clear();
-                    homeworkDetailList.addAll(homeworkDetails);
+                    for (int i = 0; i < homeworkDetails.size(); i++) {
+                        HomeworkDetail homeworkDetail = homeworkDetails.get(i);
+                        ParsedQuestionItem parsedQuestionItem = homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0);
+                        binding.contentDisplayer.getContentAdapter().updateDataList("question" + i , parsedQuestionItem.questionContentList);
+                        homeworkDetailList.add(homeworkDetail);
+                    }
                     binding.pageBtnBar.refreshPageBar();
                 }
             }, new Action1<Throwable>() {

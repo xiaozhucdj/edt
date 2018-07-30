@@ -22,7 +22,14 @@ public class PlideOpenDocumentRequest extends PlideRequest {
                 callListeners(PlideLoadListener.STATUS.OPEN_DOCUMENT_ING , mUrl , -999 , -999 , null , null);
             }
         });
+        getProcessor().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mImageView.setImageBitmap(null);
+            }
+        });
         getProcessor().getPresenter().close(getProcessor());
+
 //        if (closeLastResult.getResultCode() == -1){
 //            getProcessor().runOnUiThread(new Runnable() {
 //                @Override

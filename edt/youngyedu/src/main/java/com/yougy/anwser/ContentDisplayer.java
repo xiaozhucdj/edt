@@ -84,7 +84,7 @@ public class ContentDisplayer extends RelativeLayout {
      * 获取为本ContentDisplayer提供数据的adapter,可能为空
      * @return
      */
-    public ContentAdapter getmContentAdapter() {
+    public ContentAdapter getContentAdapter() {
         return mContentAdapter;
     }
 
@@ -92,7 +92,7 @@ public class ContentDisplayer extends RelativeLayout {
      * 设置为本ContentDisplayer提供数据的adapter
      * @param adaper
      */
-    public void setmContentAdapter(ContentAdapter adaper) {
+    public void setContentAdapter(ContentAdapter adaper) {
         if (mContentAdapter != null){
             mContentAdapter.setmContentDisplayer(null);
         }
