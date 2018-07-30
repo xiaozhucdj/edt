@@ -1026,9 +1026,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         if (timedTask != null) {
                             timedTask.stop();
                         }
-                        Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
+                        Intent intent = new Intent(AnsweringActivity.this, AnswerRecordDetailActivity.class);
                         intent.putExtra("question", questionItem);
-                        intent.putExtra("replyId" , String.valueOf((int) d));
+                        intent.putExtra("examId" , examId);
                         startActivity(intent);
                         myFinish();
                     }
