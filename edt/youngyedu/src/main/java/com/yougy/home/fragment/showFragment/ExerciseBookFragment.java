@@ -88,7 +88,7 @@ public class ExerciseBookFragment extends BFragment {
                     case DOING:
                         HomeworkSummary doingHomeworkSummary = doingList.get(position);
                         if (!StringUtils.isEmpty(doingHomeworkSummary.getExtra().getLifeTime())) {
-                            holder.binding.statusTv.setText("定\n\n时");
+                            holder.binding.statusTv.setText("限\n\n时");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                             holder.binding.textLifetime.setText("限时：" + doingHomeworkSummary.getExtra().getLifeTime());
@@ -343,18 +343,20 @@ public class ExerciseBookFragment extends BFragment {
         }
         // IH01  不显示
         String statusCode = "IH01";
+        String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
         switch (currentStatus) {
             case DOING:
                 statusCode = "IH02";
                 break;
             case WAIT_FOR_CHECK:
-                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+//                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+                statusCode = "[\"IH03\",\"IH52\"]";
+                examTypeCode = "[\"II54\",\"II55\",\"II57\",\"II58\"]";
                 break;
             case CHECKED:
                 statusCode = "[\"IH05\",\"IH51\"]";
                 break;
         }
-        String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
         NetWorkManager.queryHomeworkBookDetail_New(mControlActivity.mHomewrokId, examTypeCode,statusCode)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override
