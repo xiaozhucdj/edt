@@ -626,7 +626,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 llCheckAgain.setVisibility(View.VISIBLE);
                 ivCheckResult.setImageResource(R.drawable.img_cuowu);
 //                tvCheckResult.setText("错误");
-                tvCheckResult.setText("");
+                tvCheckResult.setText("（" + replyScore + "）");
 
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
@@ -643,8 +643,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_zhengque);
-                    tvCheckResult.setText("");
-//                tvCheckResult.setText("正确");
+                    tvCheckResult.setText("（" + replyScore + "）");
+                    //                tvCheckResult.setText("正确");
 
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
