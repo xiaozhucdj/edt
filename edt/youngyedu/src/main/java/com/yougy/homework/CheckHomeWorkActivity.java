@@ -845,7 +845,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     saveCheckData(currentShowReplyPageIndex);
 
                     llScoreControl.setVisibility(View.VISIBLE);
-                    tvSetScore.setText("请选择分值（您设置的总分值为" + questionReplyDetail.getReplyItemWeight() + "分）");
+                    tvSetScore.setText("请选择分值（您设置的该题分值为" + questionReplyDetail.getReplyItemWeight() + "分）");
                     wcdContentDisplayer.getLayer2().setIntercept(true);
                 }
                 break;
