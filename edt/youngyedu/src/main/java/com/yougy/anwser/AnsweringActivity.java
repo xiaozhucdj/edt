@@ -380,9 +380,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_clear_write:
 
-//                mNbvAnswerBoard.clearAll();
-
-                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
+                mNbvAnswerBoard.clearAll();
+//                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
 
                 break;
             case R.id.tv_add_page:
@@ -893,39 +892,45 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 for (int i = 0; i < pathList.size(); i++) {
 
                     String picPath = pathList.get(i);
-                    if (picPath == null) {
-                        continue;
+
+                    if (!TextUtils.isEmpty(picPath) && picPath.contains("/")) {
+
+                        String picName = picPath.substring(picPath.lastIndexOf("/"));
+
+                        // 构造上传请求
+                        PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                        try {
+                            PutObjectResult putResult = oss.putObject(put);
+                            LogUtils.e("PutObject", "UploadSuccess");
+                            LogUtils.e("ETag", putResult.getETag());
+                            LogUtils.e("RequestId", putResult.getRequestId());
+                        } catch (ClientException e) {
+                            // 本地异常如网络异常等
+                            e.printStackTrace();
+                        } catch (ServiceException e) {
+                            // 服务异常
+                            LogUtils.e("RequestId", e.getRequestId());
+                            LogUtils.e("ErrorCode", e.getErrorCode());
+                            LogUtils.e("HostId", e.getHostId());
+                            LogUtils.e("RawMessage", e.getRawMessage());
+                        }
+
+                        STSResultbean stsResultbean = new STSResultbean();
+                        stsResultbean.setBucket(stSbean.getBucketName());
+                        stsResultbean.setRemote(stSbean.getPath() + picName);
+                        File picFile = new File(picPath);
+                        stsResultbean.setSize(picFile.length());
+                        stsResultbeanArrayList.add(stsResultbean);
+                        //上传后清理掉本地图片文件
+                        picFile.delete();
+
+                    } else {
+                        STSResultbean stsResultbean = new STSResultbean();
+                        stsResultbean.setBucket(stSbean.getBucketName());
+                        stsResultbean.setRemote("");
+                        stsResultbean.setSize(0);
+                        stsResultbeanArrayList.add(stsResultbean);
                     }
-                    String picName = picPath.substring(picPath.lastIndexOf("/"));
-
-
-                    // 构造上传请求
-                    PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
-                    try {
-                        PutObjectResult putResult = oss.putObject(put);
-                        LogUtils.e("PutObject", "UploadSuccess");
-                        LogUtils.e("ETag", putResult.getETag());
-                        LogUtils.e("RequestId", putResult.getRequestId());
-                    } catch (ClientException e) {
-                        // 本地异常如网络异常等
-                        e.printStackTrace();
-                    } catch (ServiceException e) {
-                        // 服务异常
-                        LogUtils.e("RequestId", e.getRequestId());
-                        LogUtils.e("ErrorCode", e.getErrorCode());
-                        LogUtils.e("HostId", e.getHostId());
-                        LogUtils.e("RawMessage", e.getRawMessage());
-                    }
-
-                    STSResultbean stsResultbean = new STSResultbean();
-                    stsResultbean.setBucket(stSbean.getBucketName());
-                    stsResultbean.setRemote(stSbean.getPath() + picName);
-                    File picFile = new File(picPath);
-                    stsResultbean.setSize(picFile.length());
-                    stsResultbeanArrayList.add(stsResultbean);
-                    //上传后清理掉本地图片文件
-                    picFile.delete();
-
                 }
 
 
@@ -1004,7 +1009,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         String picContent = new Gson().toJson(stsResultbeanArrayList);
         String txtContent = new Gson().toJson(checkedAnswerList);
 
-        NetWorkManager.postReply(SpUtils.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill),DateUtils.converLongTimeToString(System.currentTimeMillis()))
+        NetWorkManager.postReply(SpUtils.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill), DateUtils.converLongTimeToString(System.currentTimeMillis()))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
@@ -1032,7 +1037,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         }
                         Intent intent = new Intent(AnsweringActivity.this, AnswerRecordDetailActivity.class);
                         intent.putExtra("question", questionItem);
-                        intent.putExtra("examId" , examId);
+                        intent.putExtra("examId", examId);
                         startActivity(intent);
                         myFinish();
                     }

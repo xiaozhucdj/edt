@@ -1290,40 +1290,45 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                             String picPath = tmpPathList.get(j);
 
-                            if (TextUtils.isEmpty(picPath)) {
-                                continue;
+
+                            if (!TextUtils.isEmpty(picPath) && picPath.contains("/")) {
+
+                                String picName = picPath.substring(picPath.lastIndexOf("/"));
+
+
+                                // 构造上传请求
+                                PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                                try {
+                                    PutObjectResult putResult = oss.putObject(put);
+                                    LogUtils.e("PutObject", "UploadSuccess");
+                                    LogUtils.e("ETag", putResult.getETag());
+                                    LogUtils.e("RequestId", putResult.getRequestId());
+                                } catch (ClientException e) {
+                                    // 本地异常如网络异常等
+                                    e.printStackTrace();
+                                } catch (ServiceException e) {
+                                    // 服务异常
+                                    LogUtils.e("RequestId", e.getRequestId());
+                                    LogUtils.e("ErrorCode", e.getErrorCode());
+                                    LogUtils.e("HostId", e.getHostId());
+                                    LogUtils.e("RawMessage", e.getRawMessage());
+                                }
+
+                                STSResultbean stsResultbean = new STSResultbean();
+                                stsResultbean.setBucket(stSbean.getBucketName());
+                                stsResultbean.setRemote(stSbean.getPath() + picName);
+                                File picFile = new File(picPath);
+                                stsResultbean.setSize(picFile.length());
+                                stsResultbeanArrayList.add(stsResultbean);
+                                //上传后清理掉本地图片文件
+                                picFile.delete();
+                            } else {
+                                STSResultbean stsResultbean = new STSResultbean();
+                                stsResultbean.setBucket(stSbean.getBucketName());
+                                stsResultbean.setRemote("");
+                                stsResultbean.setSize(0);
+                                stsResultbeanArrayList.add(stsResultbean);
                             }
-
-
-                            String picName = picPath.substring(picPath.lastIndexOf("/"));
-
-
-                            // 构造上传请求
-                            PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
-                            try {
-                                PutObjectResult putResult = oss.putObject(put);
-                                LogUtils.e("PutObject", "UploadSuccess");
-                                LogUtils.e("ETag", putResult.getETag());
-                                LogUtils.e("RequestId", putResult.getRequestId());
-                            } catch (ClientException e) {
-                                // 本地异常如网络异常等
-                                e.printStackTrace();
-                            } catch (ServiceException e) {
-                                // 服务异常
-                                LogUtils.e("RequestId", e.getRequestId());
-                                LogUtils.e("ErrorCode", e.getErrorCode());
-                                LogUtils.e("HostId", e.getHostId());
-                                LogUtils.e("RawMessage", e.getRawMessage());
-                            }
-
-                            STSResultbean stsResultbean = new STSResultbean();
-                            stsResultbean.setBucket(stSbean.getBucketName());
-                            stsResultbean.setRemote(stSbean.getPath() + picName);
-                            File picFile = new File(picPath);
-                            stsResultbean.setSize(picFile.length());
-                            stsResultbeanArrayList.add(stsResultbean);
-                            //上传后清理掉本地图片文件
-                            picFile.delete();
 
                         }
                         tmpPathList.clear();
@@ -1382,7 +1387,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.show();
                             loadingProgressDialog.setTitle("答案上传中...");
                         }
-
                     }
 
                     @Override
@@ -1391,14 +1395,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
-
-
                         writeInfoToS();
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         if (loadingProgressDialog != null) {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
@@ -1413,7 +1415,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                     }
                 });
-
     }
 
 
@@ -1466,7 +1467,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             String errorCode = ((ApiException) throwable).getCode();
                             if (errorCode.equals("400")) {
 
-                                HintDialog hintDialog = new HintDialog(getBaseContext(), "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
+                                HintDialog hintDialog = new HintDialog(WriteHomeWorkActivity.this, "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
                                         onBackPressed();
@@ -1882,7 +1883,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
     }
 
-    public String getExam_id  () {
+    public String getExam_id() {
         return examId;
     }
 }
