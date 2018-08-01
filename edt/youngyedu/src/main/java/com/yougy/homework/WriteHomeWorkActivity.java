@@ -150,6 +150,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     TextView tvHomeWorkPosition;
     @BindView(R.id.image_refresh)
     ImageView imageRefresh;
+    @BindView(R.id.btn_left)
+    ImageView mImageViewBack;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -226,6 +228,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private TimedTask timingTask;//定时作业定时器
 
     private int teacherId;//教师Id
+    private boolean mIsOnClass = false;//是否课堂作业
+    private boolean mIsSubmit = false;//是否点击提交课堂作业
 
     @Override
     protected void setContentView() {
@@ -256,16 +260,24 @@ public class WriteHomeWorkActivity extends BaseActivity {
             judgeWorkIsEnd();
         }
         teacherId = getIntent().getIntExtra("teacherID", 0);
-
-        LogUtils.d("homework isTimerWork = " + isTimerWork);
-        if (isTimerWork) {
-            tvSubmitTime.setVisibility(View.INVISIBLE);
-            tvTiming.setVisibility(View.VISIBLE);
-        } else {
-            tvSubmitTime.setVisibility(View.VISIBLE);
-            tvTiming.setVisibility(View.INVISIBLE);
+        mIsOnClass = getIntent().getBooleanExtra("isOnClass", false);
+        if (mIsOnClass) {
+            tvSaveHomework.setVisibility(View.GONE);
+//            mImageViewBack.setVisibility(View.GONE);   待需求确认
         }
-
+        LogUtils.d("homework isTimerWork = " + isTimerWork);
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            tvSubmitTime.setVisibility(View.INVISIBLE);
+            tvTiming.setVisibility(View.INVISIBLE);
+        } else {
+            if (isTimerWork) {
+                tvSubmitTime.setVisibility(View.INVISIBLE);
+                tvTiming.setVisibility(View.VISIBLE);
+            } else {
+                tvSubmitTime.setVisibility(View.VISIBLE);
+                tvTiming.setVisibility(View.INVISIBLE);
+            }
+        }
         initReceiveHomeworkMsg();
     }
 
@@ -877,6 +889,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+//        if(mIsOnClass && !mIsSubmit) {
+//            // 课堂作业，只能点击提交返回   == 待需求确认
+//            return;
+//        }
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
@@ -988,7 +1004,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         fullScreenHintDialog.dismiss();
                         // 去提交
                         getUpLoadInfo();
-
+                        mIsSubmit = true;
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
                 fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
