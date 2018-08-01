@@ -695,11 +695,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (rcvChooese.getAdapter() != null) {
                     rcvChooese.getAdapter().notifyDataSetChanged();
                 }
-                if (saveQuestionPage == 0) {
-                    rcvChooese.setVisibility(View.VISIBLE);
-                } else {
-                    rcvChooese.setVisibility(View.GONE);
-                }
+//                if (saveQuestionPage == 0) {
+//                    rcvChooese.setVisibility(View.VISIBLE);
+//                } else {
+//                    rcvChooese.setVisibility(View.GONE);
+//                }
 
             } else if ("判断".equals(questionList.get(0).getExtraData())) {
 
@@ -728,11 +728,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     rbError.setChecked(false);
                 }
 
-                if (saveQuestionPage == 0) {
-                    llChooeseItem.setVisibility(View.VISIBLE);
-                } else {
-                    llChooeseItem.setVisibility(View.GONE);
-                }
+//                if (saveQuestionPage == 0) {
+//                    llChooeseItem.setVisibility(View.VISIBLE);
+//                } else {
+//                    llChooeseItem.setVisibility(View.GONE);
+//                }
 
             } else {
                 if (!isAddAnswerBoard) {
