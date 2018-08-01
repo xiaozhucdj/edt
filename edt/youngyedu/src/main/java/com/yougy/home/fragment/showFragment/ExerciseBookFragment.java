@@ -200,15 +200,25 @@ public class ExerciseBookFragment extends BFragment {
                         break;
                     case DOING:
                         intent = new Intent(getActivity(), WriteHomeWorkActivity.class);
+                        HomeworkSummary.ExtraBean extraBean = ((MyHolder) vh).getData().getExtra();
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
                         intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
-                        intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
+                        intent.putExtra("examName", extraBean.getName());
                         //传参是否定时作业
-                        if (!StringUtils.isEmpty(((MyHolder) vh).getData().getExtra().getLifeTime())) {
+                        if (!StringUtils.isEmpty(extraBean.getLifeTime())) {
                             intent.putExtra("isTimerWork", true);
-                            intent.putExtra("lifeTime", ((MyHolder) vh).getData().getExtra().getLifeTime());
+                            intent.putExtra("lifeTime", extraBean.getLifeTime());
                         }
-                        intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
+
+                        String typeCode = extraBean.getTypeCode();
+                        if ("II02".equals(typeCode) || "II54".equals(typeCode) || "II55".equals(typeCode)
+                                || "II56".equals(typeCode) || "II61".equals(typeCode)) {
+                            //课堂作业
+                            intent.putExtra("isOnClass", true);
+                        } else {
+                            intent.putExtra("isOnClass", false);
+                        }
+                        intent.putExtra("teacherID", extraBean.getExamSponsor());
                         startActivity(intent);
                         break;
                 }
