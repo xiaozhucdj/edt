@@ -626,7 +626,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 llCheckAgain.setVisibility(View.VISIBLE);
                 ivCheckResult.setImageResource(R.drawable.img_cuowu);
 //                tvCheckResult.setText("错误");
-                tvCheckResult.setText("");
+                tvCheckResult.setText("（" + replyScore + "分）");
 
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
@@ -643,8 +643,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_zhengque);
-                    tvCheckResult.setText("");
-//                tvCheckResult.setText("正确");
+                    tvCheckResult.setText("（" + replyScore + "分）");
+                    //                tvCheckResult.setText("正确");
 
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
@@ -660,7 +660,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_bandui);
-                    tvCheckResult.setText("（" + replyScore + "）");
+                    tvCheckResult.setText("（" + replyScore + "分）");
 
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
@@ -845,7 +845,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     saveCheckData(currentShowReplyPageIndex);
 
                     llScoreControl.setVisibility(View.VISIBLE);
-                    tvSetScore.setText("请选择分值（您设置的总分值为" + questionReplyDetail.getReplyItemWeight() + "分）");
+                    tvSetScore.setText("请选择分值（您设置的该题分值为" + questionReplyDetail.getReplyItemWeight() + "分）");
                     wcdContentDisplayer.getLayer2().setIntercept(true);
                 }
                 break;

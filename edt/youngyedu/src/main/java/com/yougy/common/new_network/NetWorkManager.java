@@ -76,7 +76,7 @@ public final class NetWorkManager {
 
     private NetWorkManager() {
         // 配置日志输出，因为Retrofit2不支持输出日志，只能用OkHttp来输出
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        MyHttpLoggingInterceptor interceptor = new MyHttpLoggingInterceptor();
         if (BuildConfig.DEBUG) {
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         } else {

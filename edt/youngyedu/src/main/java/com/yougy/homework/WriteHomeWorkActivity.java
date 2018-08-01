@@ -354,6 +354,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void autoSubmitHomeWork() {
         //是否要提示：
 //        ToastUtil.showCustomToast(getApplicationContext(), "定时时间到，作业将自动提交！");
+        mNbvAnswerBoard.setIntercept(true);
+        invalidate();
         saveLastHomeWorkData(showHomeWorkPosition, false);
         getUpLoadInfo();
     }
