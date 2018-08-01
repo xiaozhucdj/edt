@@ -7,7 +7,6 @@ import com.yougy.anwser.Content_new;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.global.Commons;
-import com.yougy.common.new_network.NetConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -248,6 +247,8 @@ public class QuestionReplyDetail {
                             );
                         }
                     }
+                }else{
+                    parsedReplyContentList.add(null);
                 }
             }
             else if (format.equals("TEXT")){
@@ -299,6 +300,8 @@ public class QuestionReplyDetail {
                             );
                         }
                     }
+                }else{
+                    parsedReplyCommentList.add(null);
                 }
             } else if (format.equals("TEXT")) {
                 parsedReplyCommentList.add(

@@ -199,9 +199,9 @@ public class QuestionReplySummary implements Parcelable {
                 String contentText = "" + contentTreeMap.get("value");
                 content = new Content_new(Content_new.Type.TEXT , version , contentText , null);;
             }
-            if (content != null){
+//            if (content != null){
                 parsedContentList.add(content);
-            }
+//            }
         }
         return this;
     }

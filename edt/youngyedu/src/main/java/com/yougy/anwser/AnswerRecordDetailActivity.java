@@ -44,13 +44,13 @@ public class AnswerRecordDetailActivity extends BaseActivity {
 
     @Override
     protected void setContentView() {
-        LogUtils.e(tag,"setContentView............");
+        LogUtils.e(tag, "setContentView............");
         binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answer_record_detail, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
 
-    private void showJudgeOrSelect(){
+    private void showJudgeOrSelect() {
         String questionType = (String) parsedQuestionItem.questionContentList.get(0).getExtraData();
         if ("选择".equals(questionType)) {
             binding.rcvChooeseItem.setVisibility(View.VISIBLE);
@@ -92,7 +92,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(AnswerRecordDetailActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
                 AutoUtils.auto(view);
-                AnswerItemHolder holder = new AnswerItemHolder(view,textReplyList);
+                AnswerItemHolder holder = new AnswerItemHolder(view, textReplyList);
                 holder.setChooeseStyle(chooeseAnswerList.size());
                 return holder;
             }
@@ -135,7 +135,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
             binding.buttomBtn.setVisibility(View.VISIBLE);
             binding.buttomIcon.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(status)){
+        if (TextUtils.isEmpty(status)) {
             binding.buttomBtn.setVisibility(View.VISIBLE);
             binding.buttomText.setVisibility(View.VISIBLE);
             binding.buttomBtn.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +147,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
         }
 
         String bookName = getIntent().getStringExtra("bookName");
-        binding.titleTv.setText(bookName == null ? "问答结果" : (bookName +  "问答"));
+        binding.titleTv.setText(bookName == null ? "问答结果" : (bookName + "问答"));
 
         String startTimeStr = getIntent().getStringExtra("startTime");
         binding.startTimeTv.setText(startTimeStr == null ? "" : "问答开始时间:" + startTimeStr);
@@ -185,7 +185,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
             @Override
             public void afterPageCountChanged(String typeKey) {
                 if ((binding.questionBodyBtn.isSelected() && typeKey.equals("question"))
-                        || (binding.answerAnalysisBtn.isSelected() && typeKey.equals("analysis"))){
+                        || (binding.answerAnalysisBtn.isSelected() && typeKey.equals("analysis"))) {
                     binding.pageBtnBar.refreshPageBar();
                 }
             }
@@ -197,7 +197,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
 
             @Override
             public void afterToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
-                if (toTypeKey.equals("question")){
+                if (toTypeKey.equals("question")) {
                     if (correctBaseLayerIndex(binding.contentDisplayer.getContentAdapter().getLayerPageCount("question", 0)
                             , binding.contentDisplayer.getContentAdapter().getLayerPageCount("question", 1))) {
                         binding.pageBtnBar.refreshPageBar();
@@ -216,10 +216,10 @@ public class AnswerRecordDetailActivity extends BaseActivity {
                 binding.startTimeTv.setVisibility(View.VISIBLE);
                 binding.spendTimeTv.setVisibility(View.VISIBLE);
                 binding.pageBtnBar.setCurrentSelectPageIndex(currentShowReplyPageIndex);
-                correctBaseLayerIndex(binding.contentDisplayer.getContentAdapter().getLayerPageCount("question" , 0)
-                        , binding.contentDisplayer.getContentAdapter().getLayerPageCount("question" , 1));
+                correctBaseLayerIndex(binding.contentDisplayer.getContentAdapter().getLayerPageCount("question", 0)
+                        , binding.contentDisplayer.getContentAdapter().getLayerPageCount("question", 1));
                 binding.pageBtnBar.refreshPageBar();
-                if (currentShowReplyPageIndex != -1){
+                if (currentShowReplyPageIndex != -1) {
                     binding.contentDisplayer.toPage("question", currentShowReplyPageIndex, true);
                 }
             }
@@ -238,7 +238,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
                 binding.contentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
                 binding.pageBtnBar.setCurrentSelectPageIndex(currentShowAnalysisPageIndex);
                 binding.pageBtnBar.refreshPageBar();
-                if (currentShowAnalysisPageIndex != -1){
+                if (currentShowAnalysisPageIndex != -1) {
                     binding.contentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
                 }
             }
@@ -257,11 +257,14 @@ public class AnswerRecordDetailActivity extends BaseActivity {
                         List<Content_new> originContentList = questionReplyDetail.getParsedReplyContentList();
                         List<Content_new> imageContentList = new ArrayList<Content_new>();
                         for (Content_new contentNew : originContentList) {
-                            if (contentNew.getType() == Content_new.Type.TEXT) {
-                                textReplyList.add(contentNew);
-                            }
-                            else {
-                                imageContentList.add(contentNew);
+                            if (contentNew != null) {
+                                if (contentNew.getType() == Content_new.Type.TEXT) {
+                                    textReplyList.add(contentNew);
+                                } else {
+                                    imageContentList.add(contentNew);
+                                }
+                            } else {
+                                imageContentList.add(null);
                             }
                         }
                         AnswerRecordDetailActivity.this.showJudgeOrSelect();
@@ -287,8 +290,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
                         binding.contentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
                         if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
                             binding.contentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
-                        }
-                        else {
+                        } else {
                             binding.contentDisplayer.getContentAdapter().deleteDataList("question", 2);
                         }
                         binding.contentDisplayer.getContentAdapter().updateDataList("question", 1, imageContentList);
@@ -305,12 +307,11 @@ public class AnswerRecordDetailActivity extends BaseActivity {
      * 校正基准层,本来应该以第1层作为基准层,但是考虑到第1层有的时候可能不如第0层页数多,此时需要校正基准层为第0层.
      * 如果校正了基准层为第0层,则返回true,否则返回false.
      */
-    private boolean correctBaseLayerIndex(int layer0PageCount , int layer1PageCount){
-        if (layer0PageCount > layer1PageCount){
+    private boolean correctBaseLayerIndex(int layer0PageCount, int layer1PageCount) {
+        if (layer0PageCount > layer1PageCount) {
             binding.contentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
             return true;
-        }
-        else {
+        } else {
             binding.contentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
             return false;
         }

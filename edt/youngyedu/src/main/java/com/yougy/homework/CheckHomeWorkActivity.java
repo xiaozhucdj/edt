@@ -693,17 +693,24 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
             Content_new content_new = content_news.get(i);
 
-            if (content_new.getType() == Content_new.Type.IMG_URL) {
-                imgReplyList.add(content_new);
+            if (content_new != null) {
 
-                //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
-                String picPath = content_new.getValue();
-                String picName = picPath.substring(picPath.lastIndexOf("/") + 1);
-                pathList.add(picName);
+                if (content_new.getType() == Content_new.Type.IMG_URL) {
+                    imgReplyList.add(content_new);
+
+                    //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
+                    String picPath = content_new.getValue();
+                    String picName = picPath.substring(picPath.lastIndexOf("/") + 1);
+                    pathList.add(picName);
+                    bytesList.add(null);
+                } else if (content_new.getType() == Content_new.Type.TEXT) {
+                    textReplyList.add(content_new);
+
+                }
+            } else {
+                imgReplyList.add(null);
+                pathList.add(null);
                 bytesList.add(null);
-            } else if (content_new.getType() == Content_new.Type.TEXT) {
-                textReplyList.add(content_new);
-
             }
         }
 
