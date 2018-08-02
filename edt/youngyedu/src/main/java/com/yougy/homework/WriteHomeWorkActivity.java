@@ -632,8 +632,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             homeWorkPageNumAdapter.onItemClickListener.onItemClick1(0);
 
         }
-        //触发一下点击事件。默认隐藏所有题目
-        onClick(findViewById(R.id.ll_chooese_homework));
+
+        if (allHomeWorkPage.getVisibility() == View.VISIBLE) {
+            //触发一下点击事件。默认隐藏所有题目
+            onClick(findViewById(R.id.ll_chooese_homework));
+        }
     }
 
     public void clickPageBtn(int position) {
