@@ -24,6 +24,7 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.init.bean.Student;
+import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
@@ -293,6 +294,18 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"createOrder"})
     Observable<BaseResult<List<OrderIdObj>>> createOrder(@Body CreateOrderRequestObj createOrderRequestObj);
 
+    /**
+     * 订单查重
+     */
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"allowOrder"})
+    Observable<BaseResult<Object>> allowOrder(@Body AllowOrderRequestObj allowOrderRequestObj);
+//    /**
+//     *
+//     */
+//    @POST("bookStore")
+//    @DefaultField(keys = {"m" , "orderStatusCode"}, values = {"allowOrder" , "[\"BH02\",\"BH03\",\"BH05\"]"})
+//    Observable<BaseResult<BaseResult<Object>>> allowOrder(@Field("orderOwner") String orderOwner, @Field("data") String data);
 
     /**
      * 删除单个收藏夹
