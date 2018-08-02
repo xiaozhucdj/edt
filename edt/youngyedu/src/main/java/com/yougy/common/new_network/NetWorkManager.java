@@ -396,15 +396,6 @@ public final class NetWorkManager {
 
     public static Observable<Object> allowOrder(AllowOrderRequestObj allowOrderRequestObj) {
         LogUtils.e("FH", "!!!!!调用ServerApi做订单查重:allowOrder");
-//        String dataStr = "[";
-//        for (int i = 0; i < bookIdList.size(); i++) {
-//            String bookId = bookIdList.get(i);
-//            dataStr = dataStr + "{\"bookId\":" + bookId + "}";
-//            if (i != (bookIdList.size() - 1)){
-//                dataStr = dataStr + ",";
-//            }
-//        }
-//        dataStr = dataStr + "]";
         return getInstance().getServerApi().allowOrder(allowOrderRequestObj)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));

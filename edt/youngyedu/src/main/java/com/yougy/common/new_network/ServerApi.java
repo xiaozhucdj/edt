@@ -300,13 +300,6 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"allowOrder"})
     Observable<BaseResult<Object>> allowOrder(@Body AllowOrderRequestObj allowOrderRequestObj);
-//    /**
-//     *
-//     */
-//    @POST("bookStore")
-//    @DefaultField(keys = {"m" , "orderStatusCode"}, values = {"allowOrder" , "[\"BH02\",\"BH03\",\"BH05\"]"})
-//    Observable<BaseResult<BaseResult<Object>>> allowOrder(@Field("orderOwner") String orderOwner, @Field("data") String data);
-
     /**
      * 删除单个收藏夹
      *

@@ -291,7 +291,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         }, new Action1<Throwable>() {
                             @Override
                             public void call(Throwable throwable) {
-                                ToastUtil.showCustomToast(getApplicationContext() , "下单失败 : 订单查重失败 : " + throwable.getMessage());
+                                ToastUtil.showCustomToast(getApplicationContext() , "下单失败:订单查重失败!本次订单中您有已经购买过的图书,因此无法下单" + throwable.getMessage());
                                 throwable.printStackTrace();
                             }
                         });
