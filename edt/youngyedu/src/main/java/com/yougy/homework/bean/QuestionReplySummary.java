@@ -43,6 +43,7 @@ public class QuestionReplySummary implements Parcelable {
     private int replyId;
     private int replyCommentator;
     private int replyScore;
+    private int replyItemWeight;
     private String replyCreatorName;
     private String replyCommentTime;
     private String replyCreateTime;
@@ -163,6 +164,14 @@ public class QuestionReplySummary implements Parcelable {
         this.parsedContentList = parsedContentList;
     }
 
+    public int getReplyItemWeight() {
+        return replyItemWeight;
+    }
+
+    public void setReplyItemWeight(int replyItemWeight) {
+        this.replyItemWeight = replyItemWeight;
+    }
+
     public QuestionReplySummary parsedContent(){
         parsedContentList.clear();
         for (Object obj : replyContent) {
@@ -190,9 +199,9 @@ public class QuestionReplySummary implements Parcelable {
                 String contentText = "" + contentTreeMap.get("value");
                 content = new Content_new(Content_new.Type.TEXT , version , contentText , null);;
             }
-            if (content != null){
+//            if (content != null){
                 parsedContentList.add(content);
-            }
+//            }
         }
         return this;
     }
@@ -214,6 +223,7 @@ public class QuestionReplySummary implements Parcelable {
         dest.writeInt(this.replyId);
         dest.writeInt(this.replyCommentator);
         dest.writeInt(this.replyScore);
+        dest.writeInt(this.replyItemWeight);
         dest.writeString(this.replyCreatorName);
         dest.writeString(this.replyCommentTime);
         dest.writeString(this.replyCreateTime);
@@ -234,6 +244,7 @@ public class QuestionReplySummary implements Parcelable {
         this.replyId = in.readInt();
         this.replyCommentator = in.readInt();
         this.replyScore = in.readInt();
+        this.replyItemWeight = in.readInt();
         this.replyCreatorName = in.readString();
         this.replyCommentTime = in.readString();
         this.replyCreateTime = in.readString();

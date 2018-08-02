@@ -150,6 +150,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     TextView tvHomeWorkPosition;
     @BindView(R.id.image_refresh)
     ImageView imageRefresh;
+    @BindView(R.id.btn_left)
+    ImageView mImageViewBack;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -226,6 +228,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private TimedTask timingTask;//定时作业定时器
 
     private int teacherId;//教师Id
+    private boolean mIsOnClass = false;//是否课堂作业
+    private boolean mIsSubmit = false;//是否点击提交课堂作业
 
     @Override
     protected void setContentView() {
@@ -256,15 +260,24 @@ public class WriteHomeWorkActivity extends BaseActivity {
             judgeWorkIsEnd();
         }
         teacherId = getIntent().getIntExtra("teacherID", 0);
-
-        if (isTimerWork) {
-            tvSubmitTime.setVisibility(View.INVISIBLE);
-            tvTiming.setVisibility(View.VISIBLE);
-        } else {
-            tvSubmitTime.setVisibility(View.VISIBLE);
-            tvTiming.setVisibility(View.INVISIBLE);
+        mIsOnClass = getIntent().getBooleanExtra("isOnClass", false);
+        if (mIsOnClass) {
+            tvSaveHomework.setVisibility(View.GONE);
+//            mImageViewBack.setVisibility(View.GONE);   待需求确认
         }
-
+        LogUtils.d("homework isTimerWork = " + isTimerWork);
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            tvSubmitTime.setVisibility(View.INVISIBLE);
+            tvTiming.setVisibility(View.INVISIBLE);
+        } else {
+            if (isTimerWork) {
+                tvSubmitTime.setVisibility(View.INVISIBLE);
+                tvTiming.setVisibility(View.VISIBLE);
+            } else {
+                tvSubmitTime.setVisibility(View.VISIBLE);
+                tvTiming.setVisibility(View.INVISIBLE);
+            }
+        }
         initReceiveHomeworkMsg();
     }
 
@@ -353,6 +366,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private void autoSubmitHomeWork() {
         //是否要提示：
 //        ToastUtil.showCustomToast(getApplicationContext(), "定时时间到，作业将自动提交！");
+        mNbvAnswerBoard.setIntercept(true);
+        invalidate();
         saveLastHomeWorkData(showHomeWorkPosition, false);
         getUpLoadInfo();
     }
@@ -410,7 +425,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
             }
         };
-        contentDisplayer.setmContentAdapter(contentAdapter);
+        contentDisplayer.setContentAdapter(contentAdapter);
 
 
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
@@ -527,7 +542,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 parsedQuestionItem = parsedQuestionItemList.get(0);
                 questionList = parsedQuestionItem.questionContentList;
-                contentDisplayer.getmContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
+                contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
 
 
                 //判断是否之前有笔记
@@ -643,6 +658,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 tvCaogaoText.setText("草稿纸");
                 llCaogaoControl.setVisibility(View.GONE);
+                mNbvAnswerBoard.setIntercept(false);
             }
             mCaogaoNoteBoard.clearAll();
 
@@ -663,9 +679,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         //将本页设置为选中页
         saveQuestionPage = position;
 
-        if (position < contentDisplayer.getmContentAdapter().getPageCount("question")) {
+        if (position < contentDisplayer.getContentAdapter().getPageCount("question")) {
             //切换当前题目的分页
-            contentDisplayer.getmContentAdapter().toPage("question", position, false);
+            contentDisplayer.getContentAdapter().toPage("question", position, false);
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
@@ -691,11 +707,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (rcvChooese.getAdapter() != null) {
                     rcvChooese.getAdapter().notifyDataSetChanged();
                 }
-                if (saveQuestionPage == 0) {
-                    rcvChooese.setVisibility(View.VISIBLE);
-                } else {
-                    rcvChooese.setVisibility(View.GONE);
-                }
+//                if (saveQuestionPage == 0) {
+//                    rcvChooese.setVisibility(View.VISIBLE);
+//                } else {
+//                    rcvChooese.setVisibility(View.GONE);
+//                }
 
             } else if ("判断".equals(questionList.get(0).getExtraData())) {
 
@@ -724,11 +740,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     rbError.setChecked(false);
                 }
 
-                if (saveQuestionPage == 0) {
-                    llChooeseItem.setVisibility(View.VISIBLE);
-                } else {
-                    llChooeseItem.setVisibility(View.GONE);
-                }
+//                if (saveQuestionPage == 0) {
+//                    llChooeseItem.setVisibility(View.VISIBLE);
+//                } else {
+//                    llChooeseItem.setVisibility(View.GONE);
+//                }
 
             } else {
                 if (!isAddAnswerBoard) {
@@ -873,6 +889,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+//        if(mIsOnClass && !mIsSubmit) {
+//            // 课堂作业，只能点击提交返回   == 待需求确认
+//            return;
+//        }
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
@@ -984,7 +1004,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         fullScreenHintDialog.dismiss();
                         // 去提交
                         getUpLoadInfo();
-
+                        mIsSubmit = true;
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
                 fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
@@ -997,7 +1017,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_add_page:
                 if (btnLocked == false) {
                     btnLocked = true;
-                    if (questionPageSize - contentDisplayer.getmContentAdapter().getPageCount("question") >= 5) {
+                    if (questionPageSize - contentDisplayer.getContentAdapter().getPageCount("question") >= 5) {
                         ToastUtil.showCustomToast(this, "最多只能加5张纸");
                         btnLocked = false;
                         return;
@@ -1029,6 +1049,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
                         rlCaogaoBox.removeView(mCaogaoNoteBoard);
@@ -1037,6 +1058,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     tvCaogaoText.setText("扔掉\n草稿纸");
                     llCaogaoControl.setVisibility(View.VISIBLE);
+                    mNbvAnswerBoard.setIntercept(true);
 
                     if (rlCaogaoBox.getChildCount() == 0) {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
@@ -1059,6 +1081,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     //TDO
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
                 }
                 break;
 
@@ -1116,6 +1139,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             tvCaogaoText.setText("草稿纸");
             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
             llCaogaoControl.setVisibility(View.GONE);
+            mNbvAnswerBoard.setIntercept(false);
         }
         mCaogaoNoteBoard.clearAll();
 
@@ -1284,40 +1308,45 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                             String picPath = tmpPathList.get(j);
 
-                            if (TextUtils.isEmpty(picPath)) {
-                                continue;
+
+                            if (!TextUtils.isEmpty(picPath) && picPath.contains("/")) {
+
+                                String picName = picPath.substring(picPath.lastIndexOf("/"));
+
+
+                                // 构造上传请求
+                                PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                                try {
+                                    PutObjectResult putResult = oss.putObject(put);
+                                    LogUtils.e("PutObject", "UploadSuccess");
+                                    LogUtils.e("ETag", putResult.getETag());
+                                    LogUtils.e("RequestId", putResult.getRequestId());
+                                } catch (ClientException e) {
+                                    // 本地异常如网络异常等
+                                    e.printStackTrace();
+                                } catch (ServiceException e) {
+                                    // 服务异常
+                                    LogUtils.e("RequestId", e.getRequestId());
+                                    LogUtils.e("ErrorCode", e.getErrorCode());
+                                    LogUtils.e("HostId", e.getHostId());
+                                    LogUtils.e("RawMessage", e.getRawMessage());
+                                }
+
+                                STSResultbean stsResultbean = new STSResultbean();
+                                stsResultbean.setBucket(stSbean.getBucketName());
+                                stsResultbean.setRemote(stSbean.getPath() + picName);
+                                File picFile = new File(picPath);
+                                stsResultbean.setSize(picFile.length());
+                                stsResultbeanArrayList.add(stsResultbean);
+                                //上传后清理掉本地图片文件
+                                picFile.delete();
+                            } else {
+                                STSResultbean stsResultbean = new STSResultbean();
+                                stsResultbean.setBucket(stSbean.getBucketName());
+                                stsResultbean.setRemote("");
+                                stsResultbean.setSize(0);
+                                stsResultbeanArrayList.add(stsResultbean);
                             }
-
-
-                            String picName = picPath.substring(picPath.lastIndexOf("/"));
-
-
-                            // 构造上传请求
-                            PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
-                            try {
-                                PutObjectResult putResult = oss.putObject(put);
-                                LogUtils.e("PutObject", "UploadSuccess");
-                                LogUtils.e("ETag", putResult.getETag());
-                                LogUtils.e("RequestId", putResult.getRequestId());
-                            } catch (ClientException e) {
-                                // 本地异常如网络异常等
-                                e.printStackTrace();
-                            } catch (ServiceException e) {
-                                // 服务异常
-                                LogUtils.e("RequestId", e.getRequestId());
-                                LogUtils.e("ErrorCode", e.getErrorCode());
-                                LogUtils.e("HostId", e.getHostId());
-                                LogUtils.e("RawMessage", e.getRawMessage());
-                            }
-
-                            STSResultbean stsResultbean = new STSResultbean();
-                            stsResultbean.setBucket(stSbean.getBucketName());
-                            stsResultbean.setRemote(stSbean.getPath() + picName);
-                            File picFile = new File(picPath);
-                            stsResultbean.setSize(picFile.length());
-                            stsResultbeanArrayList.add(stsResultbean);
-                            //上传后清理掉本地图片文件
-                            picFile.delete();
 
                         }
                         tmpPathList.clear();
@@ -1376,7 +1405,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.show();
                             loadingProgressDialog.setTitle("答案上传中...");
                         }
-
                     }
 
                     @Override
@@ -1385,14 +1413,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
-
-
                         writeInfoToS();
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         if (loadingProgressDialog != null) {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
@@ -1407,7 +1433,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                     }
                 });
-
     }
 
 
@@ -1460,7 +1485,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             String errorCode = ((ApiException) throwable).getCode();
                             if (errorCode.equals("400")) {
 
-                                HintDialog hintDialog = new HintDialog(getBaseContext(), "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
+                                HintDialog hintDialog = new HintDialog(WriteHomeWorkActivity.this, "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
                                         onBackPressed();
@@ -1874,5 +1899,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
         }
+    }
+
+    public String getExam_id() {
+        return examId;
     }
 }

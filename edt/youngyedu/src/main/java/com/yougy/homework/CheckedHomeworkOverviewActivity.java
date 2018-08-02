@@ -7,18 +7,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
-import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.QuestionReplySummary;
-import com.yougy.message.SizeUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityCheckedHomeworkDetailBinding;
 import com.yougy.ui.activity.databinding.ItemQuestionGridview2Binding;
@@ -221,10 +217,13 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             if (isScoring) {
                 if (data.getReplyScore() == 0) {
                     itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_cuowu);
-                } else if (data.getReplyScore() == 100) {
-                    itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_zhengque);
-                } else {
-                    itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_bandui);
+                }
+                else {
+                    if (data.getReplyScore() == data.getReplyItemWeight()) {
+                        itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_zhengque);
+                    } else {
+                        itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_bandui);
+                    }
                 }
             } else {
                 if (data.getReplyScore() == 0) {

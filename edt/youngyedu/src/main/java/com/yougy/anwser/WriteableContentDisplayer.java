@@ -442,7 +442,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
         Content_new content = mAdapter.getContent(typeKey , pageIndex , 1);
         if (content == null){
             //查找不到content的情况下
-            if (mAdapter.getPageCountBaseLayerIndex() != 1){
+//            if (mAdapter.getPageCountBaseLayerIndex() != 1){
                 //如果不是基准层,则清空layer1,显示透明,然后通知layer1加载完成
                 runOnUiThread(new Runnable() {
                     @Override
@@ -459,17 +459,17 @@ public class WriteableContentDisplayer extends RelativeLayout{
                         }
                     }
                 });
-            }
-            else {
-                //如果是基准层,则整体加载失败,并通知layer1加载完成
-                LogUtils.e("FH-----layer1 出错 没有可显示的内容,并且layer1是基准层 无法显示 typeKey=" + typeKey + " pageIndex=" + pageIndex
-                        + " useCache=" + useCache);
-                synchronized (needWait){
-                    needWait[1] = false;
-                    needWait[3] = false;
-                    needWait.notify();
-                }
-            }
+//            }
+//            else {
+//                //如果是基准层,则整体加载失败,并通知layer1加载完成
+//                LogUtils.e("FH-----layer1 出错 没有可显示的内容,并且layer1是基准层 无法显示 typeKey=" + typeKey + " pageIndex=" + pageIndex
+//                        + " useCache=" + useCache);
+//                synchronized (needWait){
+//                    needWait[1] = false;
+//                    needWait[3] = false;
+//                    needWait.notify();
+//                }
+//            }
         }
         else {
             //如果能查找到要显示的content
@@ -543,7 +543,7 @@ public class WriteableContentDisplayer extends RelativeLayout{
         Content_new content = mAdapter.getContent(typeKey , pageIndex , 2);
         if (content == null){
             //查找不到content的情况下
-            if (mAdapter.getPageCountBaseLayerIndex() != 2){
+//            if (mAdapter.getPageCountBaseLayerIndex() != 2){
                 //如果不是基准层,则清空layer2,显示透明,然后通知layer2加载完成
                 runOnUiThread(new Runnable() {
                     @Override
@@ -560,17 +560,17 @@ public class WriteableContentDisplayer extends RelativeLayout{
                         }
                     }
                 });
-            }
-            else {
-                //如果是基准层,则整体加载失败,并通知layer2加载完成
-                LogUtils.e("FH-----layer2 出错 没有可显示的内容,并且layer2是基准层 无法显示 typeKey=" + typeKey + " pageIndex=" + pageIndex
-                        + " useCache=" + useCache);
-                synchronized (needWait){
-                    needWait[2] = false;
-                    needWait[3] = false;
-                    needWait.notify();
-                }
-            }
+//            }
+//            else {
+//                //如果是基准层,则整体加载失败,并通知layer2加载完成
+//                LogUtils.e("FH-----layer2 出错 没有可显示的内容,并且layer2是基准层 无法显示 typeKey=" + typeKey + " pageIndex=" + pageIndex
+//                        + " useCache=" + useCache);
+//                synchronized (needWait){
+//                    needWait[2] = false;
+//                    needWait[3] = false;
+//                    needWait.notify();
+//                }
+//            }
         }
         else {
             //如果能查找到要显示的content

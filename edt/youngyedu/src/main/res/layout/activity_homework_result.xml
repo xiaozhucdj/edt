@@ -145,7 +145,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg_selector_white_blue"
                 android:gravity="center"
-                android:text="解析"
+                android:text="解答"
                 android:textColor="@drawable/btn_text_color_selector_black_white"
                 android:textSize="24px" />
         </LinearLayout>

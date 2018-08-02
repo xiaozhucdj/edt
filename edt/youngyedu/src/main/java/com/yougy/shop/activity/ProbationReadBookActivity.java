@@ -59,7 +59,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     ImageButton mImgbtnAddCar;
     @BindView(R.id.imgbtn_favor)
     ImageButton mImgbtnFavor;
-    @BindView(R.id.buy_btn)
+    @BindView(R.id.btn_buy)
     Button mBtnBuy;
     @BindView(R.id.img_pageBack)
     ImageView mImgPageBack;
@@ -177,7 +177,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 });
     }
 
-    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, R.id.buy_btn})
+    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, R.id.btn_buy})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgbtn_back:
@@ -247,7 +247,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                             }
                         });
                 break;
-            case R.id.buy_btn:
+            case R.id.btn_buy:
                 if (mBookInfo.isBookInShelf()) {
                     showCenterDetermineDialog(R.string.books_already_buy);
                     return;

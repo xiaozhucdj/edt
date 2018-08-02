@@ -160,7 +160,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                 startActivity(intent);
             }
         });
-        binding.contentDisplayer.setmContentAdapter(new ContentDisplayer.ContentAdapter(){
+        binding.contentDisplayer.setContentAdapter(new ContentDisplayer.ContentAdapter(){
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
                 super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
@@ -169,7 +169,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
     }
 
     public void refreshItem(ParsedQuestionItem item){
-        binding.contentDisplayer.getmContentAdapter().updateDataList("question" , item.questionContentList);
+        binding.contentDisplayer.getContentAdapter().updateDataList("question" , item.questionContentList);
         String subTextStr = "        题目类型 : " + item.questionContentList.get(0).getExtraData();
         for (MistakeSummary mistakeSummary : mistakeSummaryList) {
             if (item.itemId.equals("" + mistakeSummary.getItem())){
@@ -177,8 +177,8 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                 break;
             }
         }
-        binding.contentDisplayer.getmContentAdapter().setSubText(subTextStr);
-        binding.contentDisplayer.getmContentAdapter().toPage("question" , 0 , true);
+        binding.contentDisplayer.getContentAdapter().setSubText(subTextStr);
+        binding.contentDisplayer.getContentAdapter().toPage("question" , 0 , true);
     }
 
 

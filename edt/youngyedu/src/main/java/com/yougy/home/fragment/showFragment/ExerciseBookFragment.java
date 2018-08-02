@@ -88,7 +88,7 @@ public class ExerciseBookFragment extends BFragment {
                     case DOING:
                         HomeworkSummary doingHomeworkSummary = doingList.get(position);
                         if (!StringUtils.isEmpty(doingHomeworkSummary.getExtra().getLifeTime())) {
-                            holder.binding.statusTv.setText("定\n\n时");
+                            holder.binding.statusTv.setText("限\n\n时");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                             holder.binding.textLifetime.setText("限时：" + doingHomeworkSummary.getExtra().getLifeTime());
@@ -200,15 +200,25 @@ public class ExerciseBookFragment extends BFragment {
                         break;
                     case DOING:
                         intent = new Intent(getActivity(), WriteHomeWorkActivity.class);
+                        HomeworkSummary.ExtraBean extraBean = ((MyHolder) vh).getData().getExtra();
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
                         intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
-                        intent.putExtra("examName", ((MyHolder) vh).getData().getExtra().getName());
+                        intent.putExtra("examName", extraBean.getName());
                         //传参是否定时作业
-                        if (!StringUtils.isEmpty(((MyHolder) vh).getData().getExtra().getLifeTime())) {
+                        if (!StringUtils.isEmpty(extraBean.getLifeTime())) {
                             intent.putExtra("isTimerWork", true);
-                            intent.putExtra("lifeTime", ((MyHolder) vh).getData().getExtra().getLifeTime());
-                            intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
+                            intent.putExtra("lifeTime", extraBean.getLifeTime());
                         }
+
+                        String typeCode = extraBean.getTypeCode();
+                        if ("II02".equals(typeCode) || "II54".equals(typeCode) || "II55".equals(typeCode)
+                                || "II56".equals(typeCode) || "II61".equals(typeCode)) {
+                            //课堂作业
+                            intent.putExtra("isOnClass", true);
+                        } else {
+                            intent.putExtra("isOnClass", false);
+                        }
+                        intent.putExtra("teacherID", extraBean.getExamSponsor());
                         startActivity(intent);
                         break;
                 }
@@ -343,18 +353,20 @@ public class ExerciseBookFragment extends BFragment {
         }
         // IH01  不显示
         String statusCode = "IH01";
+        String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
         switch (currentStatus) {
             case DOING:
                 statusCode = "IH02";
                 break;
             case WAIT_FOR_CHECK:
-                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+//                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+                statusCode = "[\"IH03\",\"IH52\"]";
+                examTypeCode = "[\"II54\",\"II55\",\"II57\",\"II58\"]";
                 break;
             case CHECKED:
                 statusCode = "[\"IH05\",\"IH51\"]";
                 break;
         }
-        String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
         NetWorkManager.queryHomeworkBookDetail_New(mControlActivity.mHomewrokId, examTypeCode,statusCode)
                 .subscribe(new Action1<List<HomeworkBookDetail>>() {
                     @Override

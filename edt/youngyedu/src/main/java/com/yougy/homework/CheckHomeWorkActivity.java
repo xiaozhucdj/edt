@@ -77,9 +77,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-import static com.yougy.anwser.Content_new.Type.IMG_URL;
-
-
 /**
  * Created by Administrator on 2017/10/16.
  * 批改作业界面
@@ -190,6 +187,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private List<Content_new> textReplyList = new ArrayList<>();
 
     private int teacherId;
+    //浏览模式，默认为false。点击上一题下一题时先置为true，当题目pdf、学生回答轨迹、教师批改轨迹加载完毕后需要设回false。点击判断对错半对设置为false。
+    private boolean isBrowse = false;
 
     @Override
     public void init() {
@@ -232,6 +231,68 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     getShowCheckDate();
                 }
 
+                if (questionBodyBtn.isSelected()) {
+                    int layer0Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 0);
+                    int layer1Size = wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 1);
+                    //根据第0层和第1层集合大小调整基准层。
+                    if (layer0Size > layer1Size && wcdContentDisplayer.getContentAdapter().getPageCountBaseLayerIndex() != 0) {
+                        wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+
+                        int newPageCount = wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
+                        //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
+                        if (newPageCount > pathList.size()) {
+                            //需要添加的页码数目。
+                            int newAddPageNum = newPageCount - pathList.size();
+
+                            for (int i = 0; i < newAddPageNum; i++) {
+                                bytesList.add(null);
+                                pathList.add(null);
+                            }
+                        }
+
+                        pageBtnBar.refreshPageBar();
+                    }
+                }
+                if (questionBodyBtn.isSelected()) {
+
+                    //展示客观题reply中的学生答案（ABCD true false）
+                    String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+                    if ("选择".equals(questionType)) {
+
+                        rcvChooese.setVisibility(View.VISIBLE);
+                        llChooeseItem.setVisibility(View.GONE);
+
+                        setChooeseResult();
+                        //刷新当前选择结果的reciv
+                        if (rcvChooese.getAdapter() != null) {
+                            rcvChooese.getAdapter().notifyDataSetChanged();
+                        }
+
+                    } else if ("判断".equals(questionType)) {
+                        rcvChooese.setVisibility(View.GONE);
+                        llChooeseItem.setVisibility(View.VISIBLE);
+                        if (textReplyList.size() > 0) {
+                            String replyResult = textReplyList.get(0).getValue();
+                            if ("true".equals(replyResult)) {
+                                rbRight.setChecked(true);
+                                rbError.setChecked(false);
+                            } else {
+                                rbRight.setChecked(false);
+                                rbError.setChecked(true);
+                            }
+                        }
+                        rbRight.setClickable(false);
+                        rbError.setClickable(false);
+                    } else {
+                        rcvChooese.setVisibility(View.GONE);
+                        llChooeseItem.setVisibility(View.GONE);
+                    }
+                } else if (analysisBtn.isSelected()) {
+
+                    rcvChooese.setVisibility(View.GONE);
+                    llChooeseItem.setVisibility(View.GONE);
+                }
+
             }
         });
 
@@ -255,50 +316,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     currentShowReplyPageIndex = btnIndex;
                     wcdContentDisplayer.toPage("question", currentShowReplyPageIndex, true);
-                    //选择判断只在第一页显示结果
-                    if (btnIndex == 0) {
-                        //展示客观题reply中的学生答案（ABCD true false）
-                        String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
-                        if ("选择".equals(questionType)) {
-
-                            rcvChooese.setVisibility(View.VISIBLE);
-                            llChooeseItem.setVisibility(View.GONE);
-
-                            setChooeseResult();
-                            //刷新当前选择结果的reciv
-                            if (rcvChooese.getAdapter() != null) {
-                                rcvChooese.getAdapter().notifyDataSetChanged();
-                            }
-
-                        } else if ("判断".equals(questionType)) {
-                            rcvChooese.setVisibility(View.GONE);
-                            llChooeseItem.setVisibility(View.VISIBLE);
-                            if (textReplyList.size() > 0) {
-                                String replyResult = textReplyList.get(0).getValue();
-                                if ("true".equals(replyResult)) {
-                                    rbRight.setChecked(true);
-                                    rbError.setChecked(false);
-                                } else {
-                                    rbRight.setChecked(false);
-                                    rbError.setChecked(true);
-                                }
-                            }
-                            rbRight.setClickable(false);
-                            rbError.setClickable(false);
-                        } else {
-                            rcvChooese.setVisibility(View.GONE);
-                            llChooeseItem.setVisibility(View.GONE);
-                        }
-                    } else {
-                        rcvChooese.setVisibility(View.GONE);
-                        llChooeseItem.setVisibility(View.GONE);
-                    }
                 } else if (analysisBtn.isSelected()) {
                     currentShowAnalysisPageIndex = btnIndex;
                     wcdContentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
-
-                    rcvChooese.setVisibility(View.GONE);
-                    llChooeseItem.setVisibility(View.GONE);
                 }
             }
 
@@ -428,10 +448,10 @@ public class CheckHomeWorkActivity extends BaseActivity {
     }
 
     private void myLeaveScribbleMode() {
-        if (wcdContentDisplayer.getLayer1() != null && wcdContentDisplayer.getLayer1().getVisibility() == View.VISIBLE) {
+        if (wcdContentDisplayer.getLayer1() != null) {
             wcdContentDisplayer.getLayer1().leaveScribbleMode(true);
         }
-        if (wcdContentDisplayer.getLayer2() != null && wcdContentDisplayer.getLayer2().getVisibility() == View.VISIBLE) {
+        if (wcdContentDisplayer.getLayer2() != null) {
             wcdContentDisplayer.getLayer2().leaveScribbleMode(true);
         }
 
@@ -499,17 +519,23 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     private void refreshQuestion() {
         String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+        //浏览模式，需要展示客观题
+        if (isBrowse) {
 
-        //是否是批改完毕，查看已批改
-        if (isCheckOver) {
-            //查看已批改情况下，客观题不自动跳过
-        } else {
-            //自评情况下，客观题自动跳过
-            if ("选择".equals(questionType) || "判断".equals(questionType)) {
-                //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
-                autoToNextQuestion();
-                return;
+        }
+        //非浏览模式，也就是判题模式，是不需要展示客观题的
+        else {
+            //是否是批改完毕，查看已批改
+            if (isCheckOver) {
+                //查看已批改情况下，客观题不自动跳过
+            } else {
+                //自评情况下，客观题自动跳过
+                if ("选择".equals(questionType) || "判断".equals(questionType)) {
+                    //  如果是选择或者判断题，那么直接跳转到下一题 （即：不在展示服务器自动批改的题目）
+                    autoToNextQuestion();
+                    return;
 
+                }
             }
         }
 
@@ -598,7 +624,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 llCheckAgain.setVisibility(View.VISIBLE);
                 ivCheckResult.setImageResource(R.drawable.img_cuowu);
 //                tvCheckResult.setText("错误");
-                tvCheckResult.setText("");
+                tvCheckResult.setText("（" + replyScore + "分）");
 
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
@@ -615,8 +641,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_zhengque);
-                    tvCheckResult.setText("");
-//                tvCheckResult.setText("正确");
+                    tvCheckResult.setText("（" + replyScore + "分）");
+                    //                tvCheckResult.setText("正确");
 
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
@@ -632,7 +658,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_bandui);
-                    tvCheckResult.setText("（" + replyScore + "）");
+                    tvCheckResult.setText("（" + replyScore + "分）");
 
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
@@ -650,14 +676,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
         setWcdToQuestionMode();
 
         /***********填充所有需要展示的3层数据资源 start***************/
-        wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
-        wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
-        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
-        } else {
-            wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
-        }
-
 
         //拆分出学生答案中的轨迹图片和TEXT（因为客观题有ABCD ture false）
         List<Content_new> imgReplyList = new ArrayList<>();
@@ -673,25 +691,56 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
             Content_new content_new = content_news.get(i);
 
-            if (content_new.getType() == Content_new.Type.IMG_URL) {
-                imgReplyList.add(content_new);
+            if (content_new != null) {
 
-                //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
-                String picPath = content_new.getValue();
-                String picName = picPath.substring(picPath.lastIndexOf("/") + 1);
-                pathList.add(picName);
+                if (content_new.getType() == Content_new.Type.IMG_URL) {
+                    imgReplyList.add(content_new);
+
+                    //初始化保存的笔记，图片地址数据。方便之后的覆盖填充
+                    String picPath = content_new.getValue();
+                    String picName = picPath.substring(picPath.lastIndexOf("/") + 1);
+                    pathList.add(picName);
+                    bytesList.add(null);
+                } else if (content_new.getType() == Content_new.Type.TEXT) {
+                    textReplyList.add(content_new);
+
+                }
+            } else {
+                imgReplyList.add(null);
+                pathList.add(null);
                 bytesList.add(null);
-            } else if (content_new.getType() == Content_new.Type.TEXT) {
-                textReplyList.add(content_new);
-
             }
         }
 
-        //设置学生答案的轨迹图
-        wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
+        wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
+        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
+        } else {
+            wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
+        }
+        if (imgReplyList.size() == 0) {
+            wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+            wcdContentDisplayer.getContentAdapter().deleteDataList("question", 1);
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+            int newPageCount = wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
+            //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
+            if (newPageCount > pathList.size()) {
+                //需要添加的页码数目。
+                int newAddPageNum = newPageCount - pathList.size();
+
+                for (int i = 0; i < newAddPageNum; i++) {
+                    bytesList.add(null);
+                    pathList.add(null);
+                }
+            }
+        } else {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
+        }
         /***********填充所有需要展示的3层数据资源 end***************/
 
-        pageBtnBar.refreshPageBar();
+        //所有数据展示完毕将浏览模式置为false，当再次点击上一题，下一题时，会继续置为true；
+        isBrowse = false;
     }
 
     private void setPageNumberView() {
@@ -748,7 +797,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 loadData();
                 break;
             case R.id.tv_last_homework:
-
+                isBrowse = true;
                 //不提交批改数据，直接跳转到上一题
                 if (currentShowQuestionIndex > 0) {
                     currentShowQuestionIndex--;
@@ -759,9 +808,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_next_homework:
+                isBrowse = true;
                 autoToNextQuestion();
                 break;
             case R.id.tv_homework_error:
+                isBrowse = false;
                 score = 0;
                 //保存没触发前的界面数据,并提交批改数据到服务器
                 saveCheckData(currentShowReplyPageIndex);
@@ -773,6 +824,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_homework_half_right:
+                isBrowse = false;
                 Integer itemWeight = questionReplyDetail.getReplyItemWeight();
                 //如果分数为null，那么为不计分题
                 if (itemWeight == null) {
@@ -787,16 +839,23 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     getUpLoadInfo();
 
                 } else {
+                    if (itemWeight == 1) {
+                        ToastUtil.showCustomToast(CheckHomeWorkActivity.this, "满分为1分的题型，不可以批改为半对");
+                        return;
+                    }
+
+
                     // 这里记得一定要先保存页面数据后在展示打分ui saveCheckData(currentShowReplyPageIndex);
                     //保存没触发前的界面数据,并提交批改数据到服务器
                     saveCheckData(currentShowReplyPageIndex);
 
                     llScoreControl.setVisibility(View.VISIBLE);
-                    tvSetScore.setText("请选择分值（您设置的总分值为%" + questionReplyDetail.getReplyItemWeight() + "分）");
+                    tvSetScore.setText("请选择分值（您设置的该题分值为" + questionReplyDetail.getReplyItemWeight() + "分）");
                     wcdContentDisplayer.getLayer2().setIntercept(true);
                 }
                 break;
             case R.id.tv_homework_right:
+                isBrowse = false;
                 itemWeight = questionReplyDetail.getReplyItemWeight();
                 //如果分数为null，那么为不计分题
                 if (itemWeight == null) {
@@ -845,11 +904,28 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     int rightCount = 0;
                     int wrongCount = 0;
-                    for (Integer i : replyScoreList) {
-                        if (i == 100) {
-                            rightCount++;
-                        } else if (i == 0 || i == 50) {
-                            wrongCount++;
+
+                    for (int i = 0; i < replyScoreList.size(); i++) {
+
+                        //原始分数
+                        Integer originalItemWight = mQuestionReplyDetails.get(i).getReplyItemWeight();
+                        //批改给的分数
+                        Integer replyItemWight = replyScoreList.get(i);
+
+                        if (originalItemWight == null) {
+                            //不计分题
+                            if (replyItemWight == 100) {
+                                rightCount++;
+                            } else if (replyItemWight == 0 || replyItemWight == 50) {
+                                wrongCount++;
+                            }
+                        } else {
+                            //记分题
+                            if (replyItemWight == originalItemWight) {
+                                rightCount++;
+                            } else if (replyItemWight >= 0 && replyItemWight < originalItemWight) {
+                                wrongCount++;
+                            }
                         }
                     }
 
@@ -1015,8 +1091,10 @@ public class CheckHomeWorkActivity extends BaseActivity {
             bytesList.set(index, wcdContentDisplayer.getLayer2().bitmap2Bytes());
             //保存图片
             String fileName = pathList.get(index);
-            if (fileName.contains("/")) {
+            if (!TextUtils.isEmpty(fileName) && fileName.contains("/")) {
                 fileName = fileName.substring(fileName.lastIndexOf("/"));
+            } else {
+                fileName = System.currentTimeMillis() + ".png";
             }
             String filePath = saveBitmapToFile(wcdContentDisplayer.getLayer2().getBitmap(), fileName);
             pathList.set(index, filePath);
@@ -1223,7 +1301,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     String picPath = pathList.get(j);
 
-                    if (picPath.contains("/")) {
+                    if (!TextUtils.isEmpty(picPath) && picPath.contains("/")) {
 
 
                         String picName = picPath.substring(picPath.lastIndexOf("/"));
@@ -1301,6 +1379,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         if (loadingProgressDialog != null) {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
@@ -1356,6 +1435,14 @@ public class CheckHomeWorkActivity extends BaseActivity {
             pageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
 
         } else {
+
+            //如果是查看已批改或者是浏览模式，那么不执行closehomework逻辑
+            if (isCheckOver) {
+                return;
+            }
+            if (isBrowse) {
+                return;
+            }
 
             //是否有未批改的作业
             if (replyScoreList.contains(-1)) {

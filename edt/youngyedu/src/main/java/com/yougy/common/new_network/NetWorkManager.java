@@ -76,7 +76,7 @@ public final class NetWorkManager {
 
     private NetWorkManager() {
         // 配置日志输出，因为Retrofit2不支持输出日志，只能用OkHttp来输出
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        MyHttpLoggingInterceptor interceptor = new MyHttpLoggingInterceptor();
         if (BuildConfig.DEBUG) {
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         } else {
@@ -101,9 +101,9 @@ public final class NetWorkManager {
                 newBuilder.header("Accept", "application/json");
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
                 newBuilder.addHeader("X-Device-Model", SystemUtils.getDeviceModel());
-                if (Commons.isRelase) {
+//                if (Commons.isRelase) {
                     newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
-                }
+//                }
 
                 Request request = newBuilder.build();
                 return chain.proceed(request);

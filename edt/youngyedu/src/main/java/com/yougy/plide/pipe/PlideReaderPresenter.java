@@ -344,6 +344,7 @@ public class PlideReaderPresenter{
 //    }
 
     public Result close(PlideRequestProcessor processor) throws InterruptedException {
+
         Result result = new Result();
         result.setResultCode(-999);
         if (reader.getDocument() == null){

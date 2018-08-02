@@ -1,6 +1,7 @@
 package com.yougy.plide;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -32,11 +33,12 @@ public class PlideToPageRequest extends PlideRequest {
             getProcessor().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        saveBitmap2Local(result.data , "/sdcard/teacher/temp/" + System.currentTimeMillis() + ".png");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        saveBitmap2Local(result.data , "/sdcard/teacher/temp/" + System.currentTimeMillis() + ".png");
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+                    Log.v("FHHH" , "bitmap!" + result.data + result.data.isRecycled());
                     mImageView.setImageBitmap(result.data);
                     callListeners(PlideLoadListener.STATUS.TO_PAGE_SUCCESS , mUrl , mToPageIndex , -999, null , null);
                 }
