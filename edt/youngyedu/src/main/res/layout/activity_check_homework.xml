@@ -579,7 +579,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:src="@drawable/img_zhengque" />
+                        android:src="@drawable/img_zhengque_2" />
 
 
                 </LinearLayout>
@@ -603,7 +603,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:src="@drawable/img_bandui" />
+                        android:src="@drawable/img_bandui_2" />
 
                 </LinearLayout>
 
@@ -626,7 +626,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:src="@drawable/img_cuowu" />
+                        android:src="@drawable/img_cuowu_2" />
 
                 </LinearLayout>
 
