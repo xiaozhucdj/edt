@@ -203,6 +203,7 @@ public class ExerciseBookFragment extends BFragment {
                         HomeworkSummary.ExtraBean extraBean = ((MyHolder) vh).getData().getExtra();
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
                         intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
+                        intent.putExtra("typeCode", extraBean.getTypeCode());
                         intent.putExtra("examName", extraBean.getName());
                         //传参是否定时作业
                         if (!StringUtils.isEmpty(extraBean.getLifeTime())) {
