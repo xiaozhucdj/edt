@@ -10,18 +10,31 @@ import org.json.JSONObject;
 public class HomeworkRemindAttachment extends CustomAttachment{
     final String KEY_EXAM_ID = "examId";
     final String KEY_EXAM_NAME = "examName";
+    final String KEY_EXAM_TIMEWORK = "isTimerWork";
+    final String KEY_EXAM_LIFTTIME = "lifetime";
+    final String KEY_EXAM_TEACHERID = "teacherId";
+    final String KEY_EXAM_TYPECODE = "typeCode";
 
     public String examName;
     public String examId;
+    public boolean isTimeWork;
+    public String lifeTime;
+    public int teacherId;
+    public String examOccasion;
 
     public HomeworkRemindAttachment(String clue , double version) {
         super(clue , version);
     }
 
-    public HomeworkRemindAttachment(String examName, String examId) {
+    public HomeworkRemindAttachment(String examName, String examId, boolean isTimeWork, String lifeTime, int teacherId
+            ,String typeCode) {
         super(CustomAttachParser.CLUE_HOMEWORK_REMIND , 0.1);
         this.examName = examName;
         this.examId = examId;
+        this.isTimeWork = isTimeWork;
+        this.lifeTime = lifeTime;
+        this.teacherId = teacherId;
+        this.examOccasion = typeCode;
     }
 
     /**
@@ -33,6 +46,10 @@ public class HomeworkRemindAttachment extends CustomAttachment{
         JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
         examName = introJsonObj.getString(KEY_EXAM_NAME);
         examId = introJsonObj.getString(KEY_EXAM_ID);
+        isTimeWork = introJsonObj.getBoolean(KEY_EXAM_TIMEWORK);
+        lifeTime = introJsonObj.getString(KEY_EXAM_LIFTTIME);
+        teacherId = introJsonObj.getInt(KEY_EXAM_TEACHERID);
+        examOccasion = introJsonObj.getString(KEY_EXAM_TYPECODE);
     }
 
     /**
@@ -46,6 +63,10 @@ public class HomeworkRemindAttachment extends CustomAttachment{
         try {
             introJsonObj.put(KEY_EXAM_NAME , examName);
             introJsonObj.put(KEY_EXAM_ID , examId);
+            introJsonObj.put(KEY_EXAM_TIMEWORK, isTimeWork);
+            introJsonObj.put(KEY_EXAM_LIFTTIME, lifeTime);
+            introJsonObj.put(KEY_EXAM_TEACHERID, teacherId);
+            introJsonObj.put(KEY_EXAM_TYPECODE, examOccasion);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
         }
         catch (JSONException e) {

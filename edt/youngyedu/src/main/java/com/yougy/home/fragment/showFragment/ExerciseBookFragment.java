@@ -164,10 +164,10 @@ public class ExerciseBookFragment extends BFragment {
                 MyHolder holder = (MyHolder) vh;
                 switch (currentStatus) {
                     case CHECKED:
-                        if (holder.getData().getExtra().getStatusCode().equals("IH51")){
+                       /* if (holder.getData().getExtra().getStatusCode().equals("IH51")){
                             ToastUtil.showCustomToast(getActivity() , "本次作业您未提交,无法查看");
-                        }
-                        else if (holder.getData().getExtra().getStatusCode().equals("IH05")){
+                        }*/
+                        if (holder.getData().getExtra().getStatusCode().equals("IH05")){
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                             intent.putExtra("examId", holder.getData().getExam());
                             intent.putExtra("examName", holder.getData().getExtra().getName());
@@ -356,7 +356,7 @@ public class ExerciseBookFragment extends BFragment {
         String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
         switch (currentStatus) {
             case DOING:
-                statusCode = "IH02";
+                statusCode = "[\"IH02\",\"IH51\"]";
                 break;
             case WAIT_FOR_CHECK:
 //                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
@@ -364,7 +364,7 @@ public class ExerciseBookFragment extends BFragment {
                 examTypeCode = "[\"II54\",\"II55\",\"II57\",\"II58\"]";
                 break;
             case CHECKED:
-                statusCode = "[\"IH05\",\"IH51\"]";
+                statusCode = "IH05";
                 break;
         }
         NetWorkManager.queryHomeworkBookDetail_New(mControlActivity.mHomewrokId, examTypeCode,statusCode)
@@ -477,13 +477,6 @@ public class ExerciseBookFragment extends BFragment {
     public void setActivity(ControlFragmentActivity activity) {
         mControlActivity = activity;
     }
-
- /*   public void aaaa() {
-        int id1 = mControlActivity.mHomewrokId;
-        int id2 = mControlActivity.mNoteId;
-        int id3 = mControlActivity.mBookId;
-    }
-*/
 
     @Override
     public void onUiDetermineListener() {
