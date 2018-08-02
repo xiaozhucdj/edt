@@ -184,7 +184,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                         SpUtils.newOrderCountPlusOne();
                     }
                 }, throwable -> {
-                    showCenterDetermineDialog(R.string.books_request_order_fail);
+                    UIUtils.showToastSafe(R.string.books_request_order_fail);
                     LogUtils.e("FH", "下单失败");
                     throwable.printStackTrace();
                 });
@@ -192,18 +192,18 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
     public void addFavor(View view) {
         if (mBookInfo.isBookInFavor()) {
-            showCenterDetermineDialog(R.string.books_already_add_collection);
+            UIUtils.showToastSafe(R.string.books_already_add_collection);
         } else {
             if (NetUtils.isNetConnected()) {
                 NetWorkManager.appendFavor(SpUtils.getUserId(), mBookInfo.getBookId())
                         .subscribe(o -> {
                             LogUtils.e("FH", "添加到收藏夹成功");
-                            showCenterDetermineDialog(R.string.books_add_collection_success);
+                            UIUtils.showToastSafe(R.string.books_add_collection_success);
                             mBookInfo.setBookInFavor(true);
                             setBtnFavorState();
                         }, throwable -> {
                             LogUtils.e("FH", "添加到收藏夹失败");
-                            showCenterDetermineDialog(R.string.books_add_collection_fail);
+                            UIUtils.showToastSafe(R.string.books_add_collection_fail);
                             throwable.printStackTrace();
                         });
             } else {
@@ -224,7 +224,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
     public void addCart(View view) {
         if (mBookInfo.isBookInCart()) {
-            showCenterDetermineDialog(R.string.books_already_add_car_2);
+            UIUtils.showToastSafe(R.string.books_already_add_car_2);
         } else if (mBookInfo.isBookInShelf()) {
             showReaderForPackage();
         } else {
@@ -232,12 +232,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             if (NetUtils.isNetConnected()) {
                 NetWorkManager.appendCart(SpUtils.getUserId(), mBookInfo.getBookId())
                         .subscribe(o -> {
-                            showCenterDetermineDialog(R.string.books_add_car_success);
+                            UIUtils.showToastSafe(R.string.books_add_car_success);
                             mBookInfo.setBookInCart(true);
                             setBtnCarState();
                             refreshCartCount();
                         }, throwable -> {
-                            showCenterDetermineDialog(R.string.books_add_car_fail);
+                            UIUtils.showToastSafe(R.string.books_add_car_fail);
                             LogUtils.e("FH", "加入购物车失败");
                             throwable.printStackTrace();
                         });
@@ -612,7 +612,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     }, throwable -> {
                         LogUtils.e("FH", "获取推荐图书信息失败");
                         throwable.printStackTrace();
-                        showCenterDetermineDialog(R.string.books_request_recommended_fail);
+                        UIUtils.showToastSafe(R.string.books_request_recommended_fail);
                     });
         }
     }
