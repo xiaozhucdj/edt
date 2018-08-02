@@ -33,6 +33,7 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.init.bean.Student;
+import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
@@ -50,6 +51,7 @@ import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -388,6 +390,13 @@ public final class NetWorkManager {
     public static Observable<List<OrderIdObj>> createOrder(CreateOrderRequestObj createOrderRequestObj) {
         LogUtils.e("FH", "!!!!!调用ServerApi创建订单:createOrder");
         return getInstance().getServerApi().createOrder(createOrderRequestObj)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<Object> allowOrder(AllowOrderRequestObj allowOrderRequestObj) {
+        LogUtils.e("FH", "!!!!!调用ServerApi做订单查重:allowOrder");
+        return getInstance().getServerApi().allowOrder(allowOrderRequestObj)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

@@ -19,7 +19,9 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.homework.PageableRecyclerView;
+import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.bean.BookIdObj;
 import com.yougy.shop.bean.CartItem;
@@ -200,28 +202,43 @@ public class ShopCartActivity extends ShopBaseActivity {
                 return;
             }
         }
-        //新建订单
-        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), new ArrayList<BookIdObj>() {
+        List<BookIdObj> bookIdList = new ArrayList<BookIdObj>() {
             {
                 for (CartItem cartItem : checkedCartItemList) {
                     add(new BookIdObj(cartItem.bookId));
                 }
             }
-        })).subscribe(new Action1<List<OrderIdObj>>() {
+        };
+        //新建订单
+        NetWorkManager.allowOrder(new AllowOrderRequestObj(SpUtils.getUserId() , bookIdList))
+                .subscribe(new Action1<Object>() {
                     @Override
-                    public void call(List<OrderIdObj> orders) {
-                        OrderIdObj orderIdObj = orders.get(0);
-                        Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
-                        intent.putExtra("orderId", orderIdObj.getOrderId());
-                        startActivity(intent);
-                        finish();
-                        SpUtils.newOrderCountPlusOne();
+                    public void call(Object o) {
+                        LogUtils.v("订单查重成功,未查到重复订单");
+                        //新建订单
+                        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList)).subscribe(new Action1<List<OrderIdObj>>() {
+                            @Override
+                            public void call(List<OrderIdObj> orders) {
+                                OrderIdObj orderIdObj = orders.get(0);
+                                Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
+                                intent.putExtra("orderId", orderIdObj.getOrderId());
+                                startActivity(intent);
+                                finish();
+                                SpUtils.newOrderCountPlusOne();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                showCenterDetermineDialog(R.string.get_order_fail);
+                                LogUtils.e("FH", "生成订单失败");
+                                throwable.printStackTrace();
+                            }
+                        });
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        showCenterDetermineDialog(R.string.get_order_fail);
-                        LogUtils.e("FH", "生成订单失败");
+                        ToastUtil.showCustomToast(getApplicationContext() , "下单失败:订单查重失败!本次订单中您有已经购买过的图书,因此无法下单" + throwable.getMessage());
                         throwable.printStackTrace();
                     }
                 });

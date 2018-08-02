@@ -31,12 +31,18 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.fragment.showFragment.ExerciseBookFragment;
 import com.yougy.homework.WriteHomeWorkActivity;
+import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.MyEdittext;
 import com.yougy.message.SizeUtil;
@@ -53,6 +59,8 @@ import com.zhy.autolayout.utils.AutoUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/3/22.
@@ -426,10 +434,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                             spannableString.setSpan(new ClickableSpan() {
                                 @Override
                                 public void onClick(View widget) {
-                                    Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
-                                    intent.putExtra("examId", attachment.examId);
-                                    intent.putExtra("examName" , attachment.examName);
-                                    startActivity(intent);
+                                    jumpHomework(attachment);
                                 }
                             }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                             spannableStringBuilder.append(spannableString);
@@ -532,10 +537,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                         spannableString.setSpan(new ClickableSpan() {
                             @Override
                             public void onClick(View widget) {
-                                Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
-                                intent.putExtra("examId", attachment.examId);
-                                intent.putExtra("examName" , attachment.examName);
-                                startActivity(intent);
+                                jumpHomework(attachment);
                             }
                         }, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         spannableStringBuilder.append(spannableString);
@@ -551,6 +553,44 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
             }
             return convertView;
         }
+    }
+
+    /**
+     * 判断此消息提醒的作业是否已经提交，若未完成，则打开作业
+     * @param attachment
+     */
+    private void jumpHomework (HomeworkRemindAttachment attachment) {
+        if (attachment == null) {
+            return;
+        }
+        NetWorkManager.queryReply(Integer.parseInt(attachment.examId), SpUtils.getUserId(), null).subscribe(new Action1<List<QuestionReplySummary>>() {
+            @Override
+            public void call(List<QuestionReplySummary> questionReplySummaries) {
+                LogUtils.d("questionReplySummaries size = " + questionReplySummaries.size());
+                if (questionReplySummaries.size() == 0) {
+                    Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
+                    intent.putExtra("examId", attachment.examId);
+                    intent.putExtra("examName" , attachment.examName);
+                    intent.putExtra("isTimerWork", attachment.isTimeWork);
+                    intent.putExtra("lifeTime", attachment.lifeTime);
+                    if ("onClass".equals(attachment.examOccasion)) {
+                        intent.putExtra("isOnClass", true);
+                    } else {
+                        intent.putExtra("isOnClass", false);
+                    }
+                    intent.putExtra("teacherID", attachment.teacherId);
+                    startActivity(intent);
+                } else {
+                    ToastUtil.showCustomToast(ChattingActivity.this, "作业已经提交！");
+                }
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+
+                LogUtils.d("questionReplySummaries size = " + throwable.getMessage());
+            }
+        });
     }
 
 
