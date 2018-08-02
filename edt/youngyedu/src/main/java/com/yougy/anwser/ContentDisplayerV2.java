@@ -342,7 +342,7 @@ public class ContentDisplayerV2 extends RelativeLayout{
             @Override
             public void onClick(View v) {
                 if (mOnClickListener == null){
-                    refresh();
+//                    refresh();
                 }
                 else {
                     mOnClickListener.onClick(v);
