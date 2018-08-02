@@ -149,7 +149,7 @@ public class OrderDetailActivity extends ShopBaseActivity {
                             binding.orderStatusTv.setText(orderStatus);
                         }
                         parseData(mTopOrderDetail);
-                        binding.mainRecyclerview.setCurrentPage(1);
+                        binding.mainRecyclerview.setCurrentPage(0);
                         binding.mainRecyclerview.notifyDataSetChanged();
                         binding.bookNumTv.setText(mTopOrderDetail.orderInfo.size() + "件商品");
                         binding.orderTotalPriceTv.setText("总计 : ￥" + (mTopOrderDetail.orderAmount + mTopOrderDetail.orderDeduction));
