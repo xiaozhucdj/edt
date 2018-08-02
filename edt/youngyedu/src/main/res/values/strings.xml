@@ -64,7 +64,8 @@
     <string name="school_version">学校版本</string>
     <string name="subject_text">科目 ：</string>
     <string name="version_text">版本 ：</string>
-    <string name="no_result_text">找到0本图书，请检查输入的关键词是否有误，或者重新调整关键词</string>
+    <!--<string name="no_result_text">找到0本图书，请检查输入的关键词是否有误，或者重新调整关键词</string>-->
+    <string name="no_result_text">没有对应的图书</string>
     <string name="favorite">收藏夹</string>
     <string name="cart">购物车</string>
     <string name="select_all">全选</string>
