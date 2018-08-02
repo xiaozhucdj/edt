@@ -1366,9 +1366,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                         //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
                         if (isStudentCheck) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId() + "");
+                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
                         } else {
-                            homeWorkResultbean.setReplyCommentator(teacherId + "");
+                            homeWorkResultbean.setReplyCommentator(teacherId);
                         }
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
@@ -1394,9 +1394,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
                         //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
                         if (isStudentCheck) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId() + "");
+                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
                         } else {
-                            homeWorkResultbean.setReplyCommentator(teacherId + "");
+                            homeWorkResultbean.setReplyCommentator(teacherId);
                         }
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
