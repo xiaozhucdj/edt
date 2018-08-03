@@ -137,7 +137,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                 FileUtils.makeParentsDir(logFile);
                 YoungyUncaughtExceptionHandler handler = new YoungyUncaughtExceptionHandler(logFile);
                 Thread.setDefaultUncaughtExceptionHandler(handler);
-            }
+          }
 
 
             OkHttpClient client = new OkHttpClient.Builder()

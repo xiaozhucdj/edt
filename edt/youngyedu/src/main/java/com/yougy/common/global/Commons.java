@@ -1,6 +1,5 @@
 package com.yougy.common.global;
 
-
 /**
  * Created by jiangliang on 2016/10/8.
  */
