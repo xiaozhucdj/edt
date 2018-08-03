@@ -468,11 +468,23 @@ public class ExerciseBookFragment extends BFragment {
         public void setData(HomeworkSummary data) {
             this.data = data;
             binding.homeworkNameTv.setText(data.getExtra().getName());
-            if (!StringUtils.isEmpty(data.getExtra().getStartTime()) && !StringUtils.isEmpty(data.getExtra().getEndTime())) {
-                binding.timeTv.setText("时间:" + data.getExtra().getStartTime()+ "~" + data.getExtra().getEndTime());
+            String startTime = data.getExtra().getStartTime();
+            String endTime = data.getExtra().getEndTime();
+            if (!StringUtils.isEmpty(startTime) && !StringUtils.isEmpty(endTime)) {
+                if (startTime.length() >= 16) {
+                    startTime = startTime.substring(0, 16);
+                }
+                if (endTime.length() >= 16) {
+                    endTime = endTime.substring(0, 16);
+                }
+                binding.timeTv.setText("时间:" + startTime+ "~" + endTime);
                 binding.timeTv.setVisibility(View.VISIBLE);
             } else if (!StringUtils.isEmpty(data.getExtra().getStartTime())){
-                binding.timeTv.setText("时间:" + data.getExtra().getStartTime());
+                if (data.getExtra().getStartTime().length() < 16) {
+                    binding.timeTv.setText("时间:" + data.getExtra().getStartTime());
+                } else {
+                    binding.timeTv.setText("时间:" + data.getExtra().getStartTime().substring(0, 16));
+                }
                 binding.timeTv.setVisibility(View.VISIBLE);
             } else {
                 binding.timeTv.setVisibility(View.GONE);

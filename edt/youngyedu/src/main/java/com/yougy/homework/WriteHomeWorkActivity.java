@@ -544,8 +544,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 parsedQuestionItem = parsedQuestionItemList.get(0);
                 questionList = parsedQuestionItem.questionContentList;
-                contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
-
 
                 //判断是否之前有笔记
                 questionPageSize = bytesList.size() >= questionList.size() ? bytesList.size() : questionList.size();
@@ -556,11 +554,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     isAddAnswerBoard = false;
                 }
 
-
-                //取题目的第一页纸展示
                 if (questionList != null && questionList.size() > 0) {
-                    //这里先添加第一题题目的分页手写笔记，方便后期修改
-
                     if (bytesList.size() > 0) {
 
                     } else {
@@ -581,6 +575,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             pathList.add(null);
                         }
                     }
+                }
+                contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
+
+                //取题目的第一页纸展示
+                if (questionList != null && questionList.size() > 0) {
                     isFirstComeInQuestion = true;
                     if (btnLocked == false) {
                         btnLocked = true;
