@@ -291,6 +291,36 @@ public class UIUtils {
     }
 
 
+
+
+
+    /**
+     * 对toast的简易封装。线程安全，可以在非UI线程调用。
+     * @param resId    Toast内容的资源id
+     */
+    public static void showToastSafe(final int resId) {
+        if (Process.myTid() == getMainThreadId()) {
+            // 调用在UI线程
+            if (BaseActivity.getForegroundActivity() != null) {
+                Toaster.showDefaultToast(BaseActivity.getForegroundActivity(), resId, Toast.LENGTH_SHORT);
+            }
+        } else {
+            // 调用在非UI线程
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    if (BaseActivity.getForegroundActivity() != null) {
+                        Toaster.showDefaultToast(BaseActivity.getForegroundActivity(), resId, Toast.LENGTH_SHORT);
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+
     /**
      * 对toast的简易封装。线程安全，可以在非UI线程调用。
      *

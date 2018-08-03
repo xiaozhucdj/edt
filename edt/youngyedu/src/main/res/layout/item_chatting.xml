@@ -106,8 +106,8 @@
         <!--右头像-->
         <ImageView
             android:id="@+id/right_avatar_imv"
-            android:layout_width="76px"
-            android:layout_height="76px"
+            android:layout_width="74px"
+            android:layout_height="74px"
             android:layout_alignParentRight="true"
             android:layout_below="@id/time_tv"
             android:layout_marginTop="30px"

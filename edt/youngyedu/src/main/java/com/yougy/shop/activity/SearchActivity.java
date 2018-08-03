@@ -222,20 +222,17 @@ public class SearchActivity extends ShopBaseActivity {
         }
         for (final CategoryInfo item : childs) {
             View layout = View.inflate(this, R.layout.text_view, null);
-            final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
+            final TextView tv = layout.findViewById(R.id.text_tv);
             String display = item.getCategoryDisplay();
             if (display.length() > 4) {
                 display = display.substring(0, 4);
             }
             tv.setText(display);
-            tv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SearchActivity.this.resetVersionTv();
-                    mVersion = item.getCategoryDisplay();
-                    tv.setSelected(true);
-                    preChoosedBookVersion = item.getCategoryId();
-                }
+            tv.setOnClickListener(v -> {
+                SearchActivity.this.resetVersionTv();
+                mVersion = item.getCategoryDisplay();
+                tv.setSelected(true);
+                preChoosedBookVersion = item.getCategoryId();
             });
             binding.versionWrap.addView(layout);
         }
@@ -270,6 +267,7 @@ public class SearchActivity extends ShopBaseActivity {
 
     private void refreshResultView(List<BookInfo> bookInfos) {
         if (bookInfos == null || bookInfos.size() == 0) {
+            binding.noResultRemind.setText(getString(R.string.no_result_text,bookTitle));
             binding.noResult.setVisibility(View.VISIBLE);
             binding.resultRecycler.setVisibility(View.GONE);
         } else {

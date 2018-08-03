@@ -211,7 +211,7 @@
                     android:layout_marginTop="22px"
                     android:background="@null"
                     android:scaleType="fitXY"
-                    android:src="@drawable/icon_student_122px" />
+                    />
 
                 <TextView
                     android:visibility="gone"

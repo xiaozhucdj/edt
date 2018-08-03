@@ -30,6 +30,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
@@ -350,7 +351,14 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 chattingItembinding.rightMessageBodyLayout.setVisibility(View.VISIBLE);
                 chattingItembinding.rightMessageStatusTv.setVisibility(View.VISIBLE);
                 //显示头像
-                chattingItembinding.rightAvatarImv.setImageResource(R.drawable.icon_student_medium);
+                switch (SpUtils.getSex()){
+                    case "女":
+                        chattingItembinding.rightAvatarImv.setImageResource(R.drawable.icon_avatar_student_famale_74px);
+                        break;
+                    case "男":
+                        chattingItembinding.rightAvatarImv.setImageResource(R.drawable.icon_avatar_student_male_74px);
+                        break;
+                }
                 switch (imMessage.getStatus()){
                     case sending:
                         chattingItembinding.rightMessageStatusTv.setText("正在发送...");
@@ -456,7 +464,16 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 chattingItembinding.rightMessageBodyLayout.setVisibility(View.GONE);
                 chattingItembinding.rightMessageStatusTv.setVisibility(View.GONE);
                 //显示头像
-                chattingItembinding.leftAvatarImv.setImageResource(R.drawable.icon_teacher_medium);
+                GenderEnum userGender = YXClient.getInstance().getUserGenderByID(id);
+                if (userGender == null){
+                    chattingItembinding.leftAvatarImv.setImageBitmap(null);
+                }
+                else if (userGender == GenderEnum.MALE){
+                    chattingItembinding.leftAvatarImv.setImageResource(R.drawable.icon_avatar_teacher_male_76px);
+                }
+                else {
+                    chattingItembinding.leftAvatarImv.setImageResource(R.drawable.icon_avatar_teacher_famale_74px);
+                }
                 switch (imMessage.getStatus()){
                     case sending:
                         chattingItembinding.leftMessageStatusTv.setText("正在接收...");
@@ -573,6 +590,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     intent.putExtra("examName" , attachment.examName);
                     intent.putExtra("isTimerWork", attachment.isTimeWork);
                     intent.putExtra("lifeTime", attachment.lifeTime);
+                    intent.putExtra("isStudentCheck", attachment.isStudentCheck);
                     if ("onClass".equals(attachment.examOccasion)) {
                         intent.putExtra("isOnClass", true);
                     } else {
