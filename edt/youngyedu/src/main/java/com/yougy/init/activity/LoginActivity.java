@@ -161,7 +161,6 @@ public class LoginActivity extends BaseActivity {
                         new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用学生账号登录").show();
                     } else {
                         LogUtils.e("FH", "登录成功,弹出信息确认dialog");
-                        SpUtils.saveStudent(student);
                         confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this, student);
                         confirmUserInfoDialog.show();
                     }
