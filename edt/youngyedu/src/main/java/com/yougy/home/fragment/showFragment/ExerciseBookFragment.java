@@ -469,10 +469,10 @@ public class ExerciseBookFragment extends BFragment {
             this.data = data;
             binding.homeworkNameTv.setText(data.getExtra().getName());
             if (!StringUtils.isEmpty(data.getExtra().getStartTime()) && !StringUtils.isEmpty(data.getExtra().getEndTime())) {
-                binding.timeTv.setText("时间:" + data.getExtra().getStartTime()+ "~" + data.getExtra().getEndTime());
+                binding.timeTv.setText("时间:" + data.getExtra().getStartTime().substring(0, 16)+ "~" + data.getExtra().getEndTime().substring(0, 16));
                 binding.timeTv.setVisibility(View.VISIBLE);
             } else if (!StringUtils.isEmpty(data.getExtra().getStartTime())){
-                binding.timeTv.setText("时间:" + data.getExtra().getStartTime());
+                binding.timeTv.setText("时间:" + data.getExtra().getStartTime().substring(0, 16));
                 binding.timeTv.setVisibility(View.VISIBLE);
             } else {
                 binding.timeTv.setVisibility(View.GONE);
