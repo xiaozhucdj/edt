@@ -126,9 +126,9 @@ public class LocalLockActivity extends BaseActivity {
 
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
-            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_man));
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_male_160px));
         } else {
-            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_famale_162px));
         }
 
 

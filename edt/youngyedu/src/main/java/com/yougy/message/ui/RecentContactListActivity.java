@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.HomeworkRemindAttachment;
@@ -166,7 +167,16 @@ public class RecentContactListActivity extends MessageBaseActivity {
                 case P2P:
                     String userName = YXClient.getInstance().getUserNameByID(contact.getContactId());
                     binding.contactNameTv.setText(TextUtils.isEmpty(userName) ? contact.getContactId() : userName);
-                    binding.avatarImv.setImageResource(R.drawable.icon_teacher_medium);
+                    GenderEnum userGender = YXClient.getInstance().getUserGenderByID(contact.getContactId());
+                    if (userGender == null){
+                        binding.avatarImv.setImageBitmap(null);
+                    }
+                    else if(userGender == GenderEnum.MALE){
+                        binding.avatarImv.setImageResource(R.drawable.icon_avatar_teacher_male_76px);
+                    }
+                    else {
+                        binding.avatarImv.setImageResource(R.drawable.icon_avatar_teacher_famale_74px);
+                    }
                     break;
                 case Team:
                     String teamName = YXClient.getInstance().getTeamNameByID(contact.getContactId());

@@ -305,9 +305,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
-            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_male_120px));
         } else {
-            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_woman));
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_famale_122px));
         }
         mTvTextBook.callOnClick();
         setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
