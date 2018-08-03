@@ -103,7 +103,8 @@ public class ExerciseBookFragment extends BFragment {
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);
                         if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())||
-                                ("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                (("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                        || "IH04".equals(uncheckedHomeworkSummary.getExtra().getStatusCode()) )
                                     && ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
                                         || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())))){
                             holder.binding.statusTv.setText("自\n\n评");
@@ -164,10 +165,10 @@ public class ExerciseBookFragment extends BFragment {
                 MyHolder holder = (MyHolder) vh;
                 switch (currentStatus) {
                     case CHECKED:
-                        if (holder.getData().getExtra().getStatusCode().equals("IH51")){
+                       /* if (holder.getData().getExtra().getStatusCode().equals("IH51")){
                             ToastUtil.showCustomToast(getActivity() , "本次作业您未提交,无法查看");
-                        }
-                        else if (holder.getData().getExtra().getStatusCode().equals("IH05")){
+                        }*/
+                        if (holder.getData().getExtra().getStatusCode().equals("IH05")){
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                             intent.putExtra("examId", holder.getData().getExam());
                             intent.putExtra("examName", holder.getData().getExtra().getName());
@@ -203,13 +204,13 @@ public class ExerciseBookFragment extends BFragment {
                         HomeworkSummary.ExtraBean extraBean = ((MyHolder) vh).getData().getExtra();
                         intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
                         intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
+
                         intent.putExtra("examName", extraBean.getName());
                         //传参是否定时作业
                         if (!StringUtils.isEmpty(extraBean.getLifeTime())) {
                             intent.putExtra("isTimerWork", true);
                             intent.putExtra("lifeTime", extraBean.getLifeTime());
                         }
-
                         String typeCode = extraBean.getTypeCode();
                         if ("II02".equals(typeCode) || "II54".equals(typeCode) || "II55".equals(typeCode)
                                 || "II56".equals(typeCode) || "II61".equals(typeCode)) {
@@ -217,6 +218,10 @@ public class ExerciseBookFragment extends BFragment {
                             intent.putExtra("isOnClass", true);
                         } else {
                             intent.putExtra("isOnClass", false);
+                        }
+                        if ("II02".equals(typeCode) || "II54".equals(typeCode) || "II55".equals(typeCode)
+                                || "II56".equals(typeCode) || "IH52".equals(extraBean.getStatusCode())) {
+                            intent.putExtra("isStudentCheck", true);
                         }
                         intent.putExtra("teacherID", extraBean.getExamSponsor());
                         startActivity(intent);
@@ -356,15 +361,15 @@ public class ExerciseBookFragment extends BFragment {
         String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
         switch (currentStatus) {
             case DOING:
-                statusCode = "IH02";
+                statusCode = "[\"IH02\",\"IH51\"]";
                 break;
             case WAIT_FOR_CHECK:
-//                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
-                statusCode = "[\"IH03\",\"IH52\"]";
-                examTypeCode = "[\"II54\",\"II55\",\"II57\",\"II58\"]";
+                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+//                statusCode = "[\"IH03\",\"IH52\"]";
+//                examTypeCode = "[\"II54\",\"II55\",\"II57\",\"II58\"]";
                 break;
             case CHECKED:
-                statusCode = "[\"IH05\",\"IH51\"]";
+                statusCode = "IH05";
                 break;
         }
         NetWorkManager.queryHomeworkBookDetail_New(mControlActivity.mHomewrokId, examTypeCode,statusCode)
@@ -402,7 +407,19 @@ public class ExerciseBookFragment extends BFragment {
                                 break;
                             case WAIT_FOR_CHECK:
                                 waitForCheckList.clear();
-                                waitForCheckList.addAll(homeworkSummaryList);
+                                for (HomeworkSummary h : homeworkSummaryList) {
+                                    if ("IH52".equals(h.getExtra().getStatusCode())) {
+                                        waitForCheckList.add(h);
+                                    } else {
+                                       if ("II54".equals(h.getExtra().getTypeCode())
+                                               || "II55".equals(h.getExtra().getTypeCode())
+                                               || "II57".equals(h.getExtra().getTypeCode())
+                                               || "II58".equals(h.getExtra().getTypeCode())) {
+                                           waitForCheckList.add(h);
+                                       }
+                                    }
+                                }
+//                                waitForCheckList.addAll(homeworkSummaryList);
                                 if (waitForCheckList.size() == 0){
                                     binding.emptyHintLayout.setVisibility(View.VISIBLE);
                                     binding.emptyHintTv.setText("您还没有待批改的作业哦");
@@ -477,13 +494,6 @@ public class ExerciseBookFragment extends BFragment {
     public void setActivity(ControlFragmentActivity activity) {
         mControlActivity = activity;
     }
-
- /*   public void aaaa() {
-        int id1 = mControlActivity.mHomewrokId;
-        int id2 = mControlActivity.mNoteId;
-        int id3 = mControlActivity.mBookId;
-    }
-*/
 
     @Override
     public void onUiDetermineListener() {

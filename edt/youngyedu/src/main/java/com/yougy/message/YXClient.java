@@ -46,6 +46,7 @@ import com.netease.nimlib.sdk.team.model.MemberChangeAttachment;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
+import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
@@ -97,6 +98,7 @@ public class YXClient {
     static public final String USER_NAME = "user_name";
     static public final String USER_AVATAR = "user_avatar";
     static public final String LAST_UPDATE = "last_update";
+    static public final String USER_GENDER = "user_gender";
     static public final String TEAM = "team";
     static public final String IS_FETCHING = "is_fetching";
 
@@ -861,7 +863,7 @@ public class YXClient {
      * 通过用户id获取用户资料bundle
      *
      * @param id 用户id
-     * @return 获取的bundle内容可以见 {@link YXClient#makeUserInfoBundle(String, String, String)}
+     * @return 获取的bundle内容可以见 {@link YXClient#makeUserInfoBundle(String, String, String, GenderEnum)}
      * 如果之前没有获取过该用户的info,会立刻返回null,并且向sdk查询最新的用户info,异步查询的结果通过onUserInfoChangedListener通知.
      * 可以通过{@link ListenerManager#addOnUserInfoChangeListener(OnThingsChangedListener)}绑定监听器
      */
@@ -898,6 +900,21 @@ public class YXClient {
         Bundle bundle = getUserInfo(id);
         if (bundle != null) {
             return bundle.getString(USER_AVATAR);
+        }
+        return null;
+    }
+
+    /**
+     * 通过用户id获取用户性别
+     *
+     * @param id 用户id
+     * @return 如果之前没有获取过该用户的性别, 会立刻返回null, 并且向sdk查询最新的info, 异步查询的结果通过onUserInfoChangedListener通知.
+     * 可以通过{@link ListenerManager#addOnUserInfoChangeListener(OnThingsChangedListener)}绑定监听器
+     */
+    public GenderEnum getUserGenderByID(String id) {
+        Bundle bundle = getUserInfo(id);
+        if (bundle != null) {
+            return (GenderEnum) bundle.getSerializable(USER_GENDER);
         }
         return null;
     }
@@ -1408,10 +1425,10 @@ public class YXClient {
             if (nimUserInfo != null) {
                 if (bundle != null) {
                     boolean isFetching = bundle.getBoolean(IS_FETCHING);
-                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar());
+                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar() , nimUserInfo.getGenderEnum());
                     bundle.putBoolean(IS_FETCHING, isFetching);
                 } else {
-                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar());
+                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar() , nimUserInfo.getGenderEnum());
                 }
                 userInfoMap.put(id, bundle);
                 lv("从sdk载入用户资料成功,id=" + id + " userName=" + nimUserInfo.getName() + " userAvatarPath=" + nimUserInfo.getAvatar());
@@ -1429,8 +1446,9 @@ public class YXClient {
             public void onSuccess(List<NimUserInfo> param) {
                 String userName = param.get(0).getName();
                 String userAvatarPath = param.get(0).getAvatar();
-                lv("后台网络更新用户资料成功,id=" + id + " userName=" + userName + " userAvatarPath=" + userAvatarPath);
-                Bundle tempBundle = makeUserInfoBundle(id, userName, userAvatarPath);
+                GenderEnum userGender = param.get(0).getGenderEnum();
+                lv("后台网络更新用户资料成功,id=" + id + " userName=" + userName + " userAvatarPath=" + userAvatarPath + " userGender=" + userGender);
+                Bundle tempBundle = makeUserInfoBundle(id, userName, userAvatarPath , userGender);
                 userInfoMap.put(id, tempBundle);
                 for (OnThingsChangedListener<Bundle> listener : onUserInfoChangeListeners) {
                     listener.onThingChanged(tempBundle, ALL);
@@ -1494,18 +1512,21 @@ public class YXClient {
      * @param id         用户id
      * @param userName   用户名称
      * @param avatarPath 用户头像路径
+     * @param userGender 用户性别
      * @return 用户资料bundle, 其中包含
      * <p>用户id,使用bundle.getString({@link YXClient#ID})
      * <p>用户名称 使用bundle.getString({@link YXClient#USER_NAME})
      * <p>用户头像路径 使用bundle.getString({@link YXClient#USER_AVATAR})
+     * <p>用户性别 使用bundle.getSerializable({@link YXClient#USER_GENDER})
      * <p>该条用户资料最后更新时间戳 使用bundle.getLong({@link YXClient#LAST_UPDATE})获取
      */
-    private Bundle makeUserInfoBundle(String id, String userName, String avatarPath) {
+    private Bundle makeUserInfoBundle(String id, String userName, String avatarPath , GenderEnum userGender) {
         Bundle bundle = new Bundle();
         bundle.putString(ID, id);
         bundle.putString(USER_NAME, userName);
         bundle.putString(USER_AVATAR, avatarPath);
         bundle.putLong(LAST_UPDATE, System.currentTimeMillis());
+        bundle.putSerializable(USER_GENDER , userGender);
         return bundle;
     }
 
@@ -1513,7 +1534,7 @@ public class YXClient {
         Bundle bundle = userInfoMap.get(id);
         if (isFetching) {
             if (bundle == null) {
-                bundle = makeUserInfoBundle(null, null, null);
+                bundle = makeUserInfoBundle(null, null, null , null);
                 userInfoMap.put(id, bundle);
             }
             bundle.putBoolean(IS_FETCHING, isFetching);
@@ -1738,7 +1759,7 @@ public class YXClient {
          * 添加用户资料变化监听器,
          *
          * @param listener 目前监听器通知的内容类型为ALL.通知列表中只有一个变动后的用户资料Bundle
-         *                 具体内容可以见{@link YXClient#makeUserInfoBundle(String, String, String)}
+         *                 具体内容可以见{@link YXClient#makeUserInfoBundle(String, String, String, GenderEnum)}
          */
         public void addOnUserInfoChangeListener(OnThingsChangedListener<Bundle> listener) {
             onUserInfoChangeListeners.add(listener);
