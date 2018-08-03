@@ -12,23 +12,27 @@ public class SeatWorkAttachment extends CustomAttachment {
     public boolean isTimeWork;
     public String lifeTime;
     public int teacherId;
+    public boolean isStudentCheck;//是否自评
 
     final String KEY_EXAM_ID = "examID";
     final String KEY_EXAM_NAME = "examName";
     final String KEY_IS_TIME_LIMITED_WORK = "isTimeLimitedWork";
     final String KEY_IS_TIME_LIFETIEM = "isLifeTime";
     final String KEY_TEACHERID = "teacherId";
+    final String KEY_IS_STUDENTCHECK = "isStudentCheck";
 
     public SeatWorkAttachment(String clue , double version) {
         super(clue , version);
     }
-    public SeatWorkAttachment(String examId , String examName , boolean isTimeWork, String lifeTime, int teacherId) {
+    public SeatWorkAttachment(String examId , String examName , boolean isTimeWork, String lifeTime, int teacherId
+                , boolean isStudentCheck) {
         super(CustomAttachParser.CLUE_SEND_SEATWORK , 1);
         this.examId = examId;
         this.examName = examName;
         this.isTimeWork = isTimeWork;
         this.lifeTime = lifeTime;
         this.teacherId = teacherId;
+        this.isStudentCheck = isStudentCheck;
     }
 
     /**
@@ -43,6 +47,7 @@ public class SeatWorkAttachment extends CustomAttachment {
         isTimeWork = introJsonObj.getBoolean(KEY_IS_TIME_LIMITED_WORK);
         lifeTime = introJsonObj.getString(KEY_IS_TIME_LIFETIEM);
         teacherId = introJsonObj.getInt(KEY_TEACHERID);
+        isStudentCheck = introJsonObj.getBoolean(KEY_IS_STUDENTCHECK);
     }
 
     /**
@@ -59,6 +64,7 @@ public class SeatWorkAttachment extends CustomAttachment {
             introJsonObj.put(KEY_IS_TIME_LIMITED_WORK , isTimeWork);
             introJsonObj.put(KEY_IS_TIME_LIFETIEM , lifeTime);
             introJsonObj.put(KEY_TEACHERID , teacherId);
+            introJsonObj.put(KEY_IS_STUDENTCHECK,isStudentCheck);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
         }
         catch (JSONException e) {

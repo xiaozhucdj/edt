@@ -590,6 +590,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     intent.putExtra("examName" , attachment.examName);
                     intent.putExtra("isTimerWork", attachment.isTimeWork);
                     intent.putExtra("lifeTime", attachment.lifeTime);
+                    intent.putExtra("isStudentCheck", attachment.isStudentCheck);
                     if ("onClass".equals(attachment.examOccasion)) {
                         intent.putExtra("isOnClass", true);
                     } else {
