@@ -14,6 +14,7 @@ public class HomeworkRemindAttachment extends CustomAttachment{
     final String KEY_EXAM_LIFTTIME = "lifetime";
     final String KEY_EXAM_TEACHERID = "teacherId";
     final String KEY_EXAM_TYPECODE = "typeCode";
+    final String KEY_IS_STUDENTCHECK = "isStudentCheck";
 
     public String examName;
     public String examId;
@@ -21,13 +22,14 @@ public class HomeworkRemindAttachment extends CustomAttachment{
     public String lifeTime;
     public int teacherId;
     public String examOccasion;
+    public boolean isStudentCheck;//是否自评
 
     public HomeworkRemindAttachment(String clue , double version) {
         super(clue , version);
     }
 
     public HomeworkRemindAttachment(String examName, String examId, boolean isTimeWork, String lifeTime, int teacherId
-            ,String typeCode) {
+            ,String typeCode, boolean isStudentCheck) {
         super(CustomAttachParser.CLUE_HOMEWORK_REMIND , 0.1);
         this.examName = examName;
         this.examId = examId;
@@ -35,6 +37,7 @@ public class HomeworkRemindAttachment extends CustomAttachment{
         this.lifeTime = lifeTime;
         this.teacherId = teacherId;
         this.examOccasion = typeCode;
+        this.isStudentCheck = isStudentCheck;
     }
 
     /**
@@ -50,6 +53,7 @@ public class HomeworkRemindAttachment extends CustomAttachment{
         lifeTime = introJsonObj.getString(KEY_EXAM_LIFTTIME);
         teacherId = introJsonObj.getInt(KEY_EXAM_TEACHERID);
         examOccasion = introJsonObj.getString(KEY_EXAM_TYPECODE);
+        isStudentCheck = introJsonObj.getBoolean(KEY_IS_STUDENTCHECK);
     }
 
     /**
@@ -67,6 +71,7 @@ public class HomeworkRemindAttachment extends CustomAttachment{
             introJsonObj.put(KEY_EXAM_LIFTTIME, lifeTime);
             introJsonObj.put(KEY_EXAM_TEACHERID, teacherId);
             introJsonObj.put(KEY_EXAM_TYPECODE, examOccasion);
+            introJsonObj.put(KEY_IS_STUDENTCHECK,isStudentCheck);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
         }
         catch (JSONException e) {

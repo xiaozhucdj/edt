@@ -261,6 +261,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                         intent.putExtra("lifeTime" , attachment.lifeTime);
                         intent.putExtra("teacherID" , attachment.teacherId);
                         intent.putExtra("isOnClass", true);
+                        intent.putExtra("isStudentCheck", attachment.isStudentCheck);
                         startActivity(intent);
                     }
                 }
