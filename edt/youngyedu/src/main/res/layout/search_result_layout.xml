@@ -59,57 +59,10 @@
             android:layout_below="@+id/top_layout"
             android:background="@color/text_color_black" />
 
-        <!--<TextView-->
-            <!--android:id="@+id/no_result"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/horizontail_line"-->
-            <!--android:layout_marginTop="320px"-->
-            <!--android:gravity="center_horizontal"-->
-            <!--android:text="@string/no_result_text"-->
-            <!--android:textColor="@color/black"-->
-            <!--android:textSize="24px"-->
-            <!--android:visibility="gone" />-->
-        <LinearLayout
+        <include
             android:id="@+id/no_result"
-            android:layout_width="600px"
-            android:layout_height="180px"
-            android:layout_below="@id/horizontail_line"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="200px"
-            android:background="@drawable/img_search_error_gb"
-            android:orientation="vertical"
-            android:paddingLeft="21px"
-            android:paddingRight="21px"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/no_result_remind"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20px"
-                android:singleLine="true"
-                android:text="@string/no_result_text"
-                android:textColor="@color/text_color_black"
-                android:textSize="26px" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30px"
-                android:text="1.看看输入的文字是否有错误"
-                android:textColor="@color/text_color_black"
-                android:textSize="24px" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10px"
-                android:text="2.调整关键字"
-                android:textColor="@color/text_color_black"
-                android:textSize="24px" />
-
-        </LinearLayout>
+            layout="@layout/no_result_layout"
+            />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/result_recycler"

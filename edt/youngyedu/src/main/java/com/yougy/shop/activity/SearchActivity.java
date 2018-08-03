@@ -267,24 +267,27 @@ public class SearchActivity extends ShopBaseActivity {
 
     private void refreshResultView(List<BookInfo> bookInfos) {
         if (bookInfos == null || bookInfos.size() == 0) {
-            binding.noResultRemind.setText(getString(R.string.no_result_text,bookTitle));
-            binding.noResult.setVisibility(View.VISIBLE);
+            binding.noResult.noResultRemind.setText(isSearch ? getString(R.string.no_search_result_text, bookTitle) : getString(R.string.no_filtrate_result_text));
+            binding.noResult.noResultRemind.setVisibility(View.VISIBLE);
             binding.resultRecycler.setVisibility(View.GONE);
         } else {
             mBookInfos.clear();
             mBookInfos.addAll(bookInfos);
             binding.resultRecycler.setVisibility(View.VISIBLE);
-            binding.noResult.setVisibility(View.GONE);
+            binding.noResult.noResultRemind.setVisibility(View.GONE);
             mAdapter.notifyDataSetChanged();
             binding.pageBtnBar.refreshPageBar();
         }
     }
+
+    private boolean isSearch = true;
 
     public void back(View view) {
         finish();
     }
 
     private void search() {
+
         if (!mHistoryRecords.contains(bookTitle)) {
             if (mHistoryRecords.contains(UIUtils.getContext().getResources().getString(R.string.no_history_record))) {
                 mHistoryRecords.clear();
@@ -293,6 +296,7 @@ public class SearchActivity extends ShopBaseActivity {
             SpUtils.putHistoryRecord(mHistoryRecords);
         }
         if (!TextUtils.isEmpty(bookTitle)) {
+            isSearch = true;
             binding.searchKey.setText(bookTitle);
             reset(binding.resetTv);
             bookVersion = -1;
@@ -384,6 +388,7 @@ public class SearchActivity extends ShopBaseActivity {
         bookCategory = preChoosedBookCategory;
         bookCategoryMatch = preChoosedBookCategoryMatch;
         binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        isSearch = false;
         queryBookBaseOnFiltration(1);
     }
 

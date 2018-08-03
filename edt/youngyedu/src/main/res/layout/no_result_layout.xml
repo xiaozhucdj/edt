@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/no_result_remind"
+            android:layout_width="600px"
+            android:layout_height="200px"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200px"
+            android:background="@drawable/img_search_error_gb"
+            android:gravity="center"
+            android:paddingLeft="50px"
+            android:paddingRight="50px"
+            android:textColor="#666666"
+            android:textSize="24px" />
+    </LinearLayout>
+</layout>

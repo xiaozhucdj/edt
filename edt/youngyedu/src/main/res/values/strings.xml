@@ -66,7 +66,8 @@
     <string name="version_text">版本 ：</string>
     <!--<string name="no_result_text">找到0本图书，请检查输入的关键词是否有误，或者重新调整关键词</string>-->
     <!--<string name="no_result_text">没有对应的图书</string>-->
-    <string name="no_result_text">很抱歉，没搜索到与\"%1$s\"相关的书</string>
+    <string name="no_search_result_text">抱歉！没有找到与“（%1$s）”相关的图书，请重新调整关键词。</string>
+    <string name="no_filtrate_result_text">抱歉！此类图书暂未上架，敬请期待！</string>
     <string name="favorite">收藏夹</string>
     <string name="cart">购物车</string>
     <string name="select_all">全选</string>
