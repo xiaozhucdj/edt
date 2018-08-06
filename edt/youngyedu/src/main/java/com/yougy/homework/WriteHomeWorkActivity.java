@@ -441,7 +441,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
                     if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
-                        mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                        imageRefresh.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                            }
+                        }, 300);
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
