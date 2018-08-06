@@ -188,11 +188,17 @@ public class ExerciseBookFragment extends BFragment {
                     case WAIT_FOR_CHECK:
                         HomeworkSummary uncheckedHomeworkSummary = holder.getData();
                         if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())||
-                                ("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                (
+                                        ("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                        || "IH04".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                                        )
                                         && ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                        || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                        || "II55".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                        || "II58".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())))){
+                                                || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                                || "II55".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                                || "II58".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
+                                            )
+                                )
+                                ){
                             intent = new Intent(getActivity() , CheckHomeWorkActivity.class);
                             intent.putExtra("examId" , uncheckedHomeworkSummary.getExam());
                             intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
