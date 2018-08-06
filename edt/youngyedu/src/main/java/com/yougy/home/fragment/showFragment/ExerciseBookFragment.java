@@ -225,8 +225,8 @@ public class ExerciseBookFragment extends BFragment {
                         } else {
                             intent.putExtra("isOnClass", false);
                         }
-                        if ("II02".equals(typeCode) || "II54".equals(typeCode) || "II55".equals(typeCode)
-                                || "II56".equals(typeCode) || "IH52".equals(extraBean.getStatusCode())) {
+                        //TODO  互评逻辑暂时未加
+                        if ("II54".equals(typeCode) || "II57".equals(typeCode) || "IH52".equals(extraBean.getStatusCode())) {
                             intent.putExtra("isStudentCheck", true);
                         }
                         intent.putExtra("teacherID", extraBean.getExamSponsor());
