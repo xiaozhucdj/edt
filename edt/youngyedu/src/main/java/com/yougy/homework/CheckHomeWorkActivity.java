@@ -1384,6 +1384,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
+                        new HintDialog(CheckHomeWorkActivity.this, "批改轨迹上传oss失败，请退出后重新批改", "确定", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                onBackPressed();
+                            }
+                        }).show();
                     }
 
                     @Override

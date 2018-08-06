@@ -1448,7 +1448,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
-                        new HintDialog(WriteHomeWorkActivity.this, "作业轨迹上传oss失败", "确定", new DialogInterface.OnDismissListener() {
+                        new HintDialog(WriteHomeWorkActivity.this, "作业轨迹上传oss失败，请退出后重新操作", "确定", new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
                                 onBackPressed();
