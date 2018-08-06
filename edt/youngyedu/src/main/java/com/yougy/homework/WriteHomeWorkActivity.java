@@ -15,6 +15,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -146,6 +147,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RadioButton rbError;
     @BindView(R.id.rb_right)
     RadioButton rbRight;
+    @BindView(R.id.rg_judge)
+    RadioGroup rgJudge;
     @BindView(R.id.tv_homework_position)
     TextView tvHomeWorkPosition;
     @BindView(R.id.image_refresh)
@@ -441,7 +444,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
                     if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
-                        mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                        imageRefresh.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                            }
+                        }, 300);
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
@@ -742,6 +750,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     rbRight.setChecked(false);
                     rbError.setChecked(false);
+                    rgJudge.clearCheck();
                 }
 
 //                if (saveQuestionPage == 0) {
@@ -1439,6 +1448,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
+                        new HintDialog(WriteHomeWorkActivity.this, "作业轨迹上传oss失败，请退出后重新操作", "确定", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                onBackPressed();
+                            }
+                        }).show();
                     }
 
                     @Override
@@ -1501,7 +1516,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             String errorCode = ((ApiException) throwable).getCode();
                             if (errorCode.equals("400")) {
 
-                                HintDialog hintDialog = new HintDialog(WriteHomeWorkActivity.this, "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
+                                HintDialog hintDialog = new HintDialog(WriteHomeWorkActivity.this, "该作业已经完成提交", "确定", new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
                                         onBackPressed();
