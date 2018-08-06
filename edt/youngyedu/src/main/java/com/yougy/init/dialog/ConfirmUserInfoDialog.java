@@ -88,18 +88,20 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         binding.confirmBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                SpUtils.saveStudent(student);
-                File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
-                if (!file.exists()) {
-                    ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));
+                if (!Commons.isRelase){
+                    SpUtils.saveStudent(student);
+                    File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
+                    if (!file.exists()) {
+                        ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));
+                    }
+                    LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
+                    binding.confirmBtn.setVisibility(View.GONE);
+                    binding.cancleBtn.setVisibility(View.GONE);
+                    binding.localPwdHintTv.setVisibility(View.VISIBLE);
+                    binding.startUseBtn.setVisibility(View.VISIBLE);
+                    binding.titleTv.setText("恭喜,用户与设备绑定成功");
+                    SpUtils.setLocalLockPwd("123456");
                 }
-                LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
-                binding.confirmBtn.setVisibility(View.GONE);
-                binding.cancleBtn.setVisibility(View.GONE);
-                binding.localPwdHintTv.setVisibility(View.VISIBLE);
-                binding.startUseBtn.setVisibility(View.VISIBLE);
-                binding.titleTv.setText("恭喜,用户与设备绑定成功");
-                SpUtils.setLocalLockPwd("123456");
                 return false;
             }
         });
