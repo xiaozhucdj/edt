@@ -96,6 +96,9 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     ANRWatchDog anrWatchDog = new ANRWatchDog(9000);
 
+    private long lastReceiverTime;
+    private String lastExamId;//上次收到作业的时间，主要解决待机重启后，短时间内收到多条相同布置的作业的消息的过滤判断
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -251,7 +254,16 @@ public class YoungyApplicationManager extends LitePalApplication {
                                 //当前显示在前端  作业仍然未提交
                                 return;
                             }
+                        } else {
+                            if (System.currentTimeMillis() - lastReceiverTime < 50
+                                    && attachment.examId != null && attachment.examId.equals(lastExamId)) {
+                                lastExamId = attachment.examId;
+                                lastReceiverTime = System.currentTimeMillis();
+                                return;
+                            }
                         }
+                        lastExamId = attachment.examId;
+                        lastReceiverTime = System.currentTimeMillis();
                         Intent intent = new Intent(getApplicationContext(), WriteHomeWorkActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("examId", attachment.examId);
