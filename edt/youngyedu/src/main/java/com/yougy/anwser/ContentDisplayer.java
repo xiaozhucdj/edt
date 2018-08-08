@@ -33,6 +33,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+
 /**
  * Created by FH on 2017/8/24.
  */
@@ -172,21 +176,26 @@ public class ContentDisplayer extends RelativeLayout {
         subTextview.setTextSize(unit , size);
     }
     public void setHintText(String hintText){
-        if (TextUtils.isEmpty(hintText)){
-            if (scrollEnable){
-                clickOrHintlayer.setText("");
-                clickOrHintlayer.setVisibility(GONE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (TextUtils.isEmpty(hintText)){
+                    if (scrollEnable){
+                        clickOrHintlayer.setText("");
+                        clickOrHintlayer.setVisibility(GONE);
+                    }
+                    else {
+                        clickOrHintlayer.setBackgroundColor(Color.TRANSPARENT);
+                        clickOrHintlayer.setText("");
+                    }
+                }
+                else {
+                    clickOrHintlayer.setVisibility(VISIBLE);
+                    clickOrHintlayer.setBackgroundColor(Color.WHITE);
+                    clickOrHintlayer.setText(hintText);
+                }
             }
-            else {
-                clickOrHintlayer.setBackgroundColor(Color.TRANSPARENT);
-                clickOrHintlayer.setText("");
-            }
-        }
-        else {
-            clickOrHintlayer.setVisibility(VISIBLE);
-            clickOrHintlayer.setBackgroundColor(Color.WHITE);
-            clickOrHintlayer.setText(hintText);
-        }
+        });
     }
 
     @Override
@@ -639,11 +648,35 @@ public class ContentDisplayer extends RelativeLayout {
     }
 
     public void callOnLoadingStatusChangedListener(LOADING_STATUS loadingStatus){
-        if (mOnLoadingStatusChangedListener != null){
-            mOnLoadingStatusChangedListener.onLoadingStatusChanged(loadingStatus);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mOnLoadingStatusChangedListener != null){
+                    mOnLoadingStatusChangedListener.onLoadingStatusChanged(loadingStatus);
+                }
+            }
+        });
     }
     public interface OnLoadingStatusChangedListener{
         public void onLoadingStatusChanged(LOADING_STATUS loadingStatus);
     }
+    /**
+     * 在主线程中执行代码
+     * @param runnable
+     */
+    protected static void runOnUiThread(Runnable runnable){
+        Observable.empty()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onCompleted() {
+                        runnable.run();
+                    }
+                    @Override
+                    public void onError(Throwable e) {}
+                    @Override
+                    public void onNext(Object o) {}
+                });
+    }
 }
+

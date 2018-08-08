@@ -1,6 +1,8 @@
 package com.yougy.plide;
 
+import com.yougy.common.new_network.RxSchedulersHelper;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.plide.pipe.Ball;
 import com.yougy.ui.activity.BuildConfig;
 
@@ -19,7 +21,9 @@ import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by FH on 2018/1/12.
@@ -71,6 +75,44 @@ public class CommonDownloader extends Downloader{
     }
 
 
+    public long getRemoteFileSize(String url){
+        Result<Long> result = new Result<Long>();
+        result.resultCode = -999;
+        retrofitApi.downloadFile(url)
+                .compose(RxSchedulersHelper.io_main())
+                .subscribe(new Action1<ResponseBody>() {
+                    @Override
+                    public void call(ResponseBody responseBody) {
+                        synchronized (result){
+                            result.resultCode = 0;
+                            result.setData(responseBody.contentLength());
+                            result.notify();
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        synchronized (result){
+                            result.resultCode = -1;
+                            result.setData(-1l);
+                            result.notify();
+                        }
+                    }
+                });
+        synchronized (result){
+            if (result.resultCode == -999){
+                try {
+                    result.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    result.resultCode = -1;
+                    result.setData(-1l);
+                }
+            }
+        }
+        return result.data;
+    }
     @Override
     public void forceDownload(String url, String saveFilePath, DownloadListener downloadListener , Ball ball) throws InterruptedException{
         ball.inserCheckPoint();
@@ -87,6 +129,15 @@ public class CommonDownloader extends Downloader{
                     if (saveFile.length() == filesize){
                         downloadListener.onDownloadFinished(url , saveFilePath , true);
                         return;
+                    }
+                    else {
+                        saveFile.delete();
+                        try {
+                            saveFile.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            saveFile = null;
+                        }
                     }
                 }
                 else {
@@ -155,20 +206,44 @@ public class CommonDownloader extends Downloader{
 
     @Override
     public void download(String url, boolean mUseCache , DownloadListener downloadListener , Ball ball) throws InterruptedException {
+        LogUtils.e("commonDownloader : start download url=" + url + " useCache=" + mUseCache);
         if (url.startsWith("/")) { //TODO 可替换成正则
+            LogUtils.e("commonDownloader : url=" + url + " 是本地地址,直接通知下载完毕");
             downloadListener.onDownloadStart(url, url);
             downloadListener.onDownloadProgressChanged(url, url, 100);
             downloadListener.onDownloadFinished(url, url , true);
         }
         else if (url.startsWith("http://")) { //TODO 可替换成正则
+            LogUtils.e("commonDownloader : url=" + url + " 是网络地址");
             if (mUseCache){
                 File file = new File(getSavePath(url));
                 if (file.exists()){
-                    downloadListener.onDownloadStart(url, getSavePath(url));
-                    downloadListener.onDownloadProgressChanged(url, getSavePath(url), 100);
-                    downloadListener.onDownloadFinished(url, getSavePath(url) , true);
-                    return;
+                    LogUtils.e("commonDownloader : url=" + url + " 由于要求使用缓存,开始验证缓存文件大小是否与服务器上一致");
+                    long size = getRemoteFileSize(url);
+                    if (size == -1){
+                        LogUtils.e("commonDownloader : url=" + url + " 无法获取服务器文件大小,通知错误信息");
+                        downloadListener.onDownloadStart(url , getSavePath(url));
+                        downloadListener.onDownloadStop(url , getSavePath(url), -2 , "获取要下载的文件大小失败");
+                        return;
+                    }
+                    else if (size == file.length()){
+                        LogUtils.e("commonDownloader : url=" + url + " 由于要求使用缓存并且缓存文件大小与服务器一致,直接通知下载完成");
+                        downloadListener.onDownloadStart(url , getSavePath(url));
+                        downloadListener.onDownloadProgressChanged(url, getSavePath(url), 100);
+                        downloadListener.onDownloadFinished(url, getSavePath(url), true);
+                        return;
+                    }
+                    else {
+                        LogUtils.e("commonDownloader : url=" + url + " 由于要求使用缓存,但是缓存文件的大小与服务器不一致." +
+                                "本地文件大小=" + file.length() + " 服务器文件大小=" + size + ",转入真实下载流程");
+                    }
                 }
+                else {
+                    LogUtils.e("commonDownloader : url=" + url + " 由于要求使用缓存,但是缓存文件不存在,转入真实下载流程");
+                }
+            }
+            else {
+                LogUtils.e("commonDownloader : url=" + url + " 由于要求不使用缓存,转入真实下载流程");
             }
             forceDownload(url, getSavePath(url), downloadListener, ball);
         }
