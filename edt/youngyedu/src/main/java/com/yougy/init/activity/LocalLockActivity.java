@@ -12,6 +12,7 @@ import android.view.View;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.service.DownloadService;
@@ -123,6 +124,9 @@ public class LocalLockActivity extends BaseActivity {
         binding.schoolTv.setText("学校 : " + student.getSchoolName());
         binding.classTv.setText("班级 : " + student.getClassName());
         binding.numTv.setText("编号 : " + student.getUserNum());
+        if(!Commons.isRelase){
+            binding.localLockEdittext.setText("123456");
+        }
 
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {

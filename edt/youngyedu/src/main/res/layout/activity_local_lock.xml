@@ -123,7 +123,6 @@
             android:inputType="textPassword"
             android:padding="18px"
             android:singleLine="true"
-            android:text="123456"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textSize="24px"
