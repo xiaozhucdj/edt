@@ -1451,7 +1451,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         new HintDialog(WriteHomeWorkActivity.this, "作业轨迹上传oss失败，请退出后重新操作", "确定", new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-                                onBackPressed();
+                                finish();
                             }
                         }).show();
                     }
@@ -1519,7 +1519,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                 HintDialog hintDialog = new HintDialog(WriteHomeWorkActivity.this, "该作业已经完成提交", "确定", new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
-                                        onBackPressed();
+                                        finish();
                                     }
                                 });
                                 hintDialog.show();
