@@ -52,6 +52,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -169,6 +170,14 @@ public class YXClient {
                             ) {
                         //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
+                            if (newMessage.getAttachment() instanceof SeatWorkAttachment) {
+                                SeatWorkAttachment seatWorkAttachment = (SeatWorkAttachment) newMessage.getAttachment();
+                                LogUtils.d("assignment homework : attachment.sendDate = " + seatWorkAttachment.sendDate);
+                                if (!FormatUtils.isToday(seatWorkAttachment.sendDate)) {
+                                    LogUtils.w("assignment homework : not today message, return.");
+                                    continue;
+                                }
+                            }
                             listener.onNewMessage(newMessage);
                         }
                         continue;
