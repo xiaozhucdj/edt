@@ -30,6 +30,7 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.init.activity.LocalLockActivity;
+import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.EndQuestionAttachment;
@@ -50,6 +51,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -207,13 +211,31 @@ public class YoungyApplicationManager extends LitePalApplication {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment) {
-                        Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
-                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
-                        newIntent.putExtra("from", ((AskQuestionAttachment) message.getAttachment()).from);
-                        newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
-                        startActivity(newIntent);
-
+                        Calendar now = Calendar.getInstance();
+                        Calendar messageTime = Calendar.getInstance();
+                        messageTime.setTime(new Date(message.getTime()));
+                        if  ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))){
+                            int examId = ((AskQuestionAttachment) message.getAttachment()).examID;
+                            if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
+                                @Override
+                                public boolean isMatchCondition(Integer nodeInList) {
+                                    return nodeInList.intValue() == examId;
+                                }
+                            })){
+                                LogUtils.e("FHHHHH------------3");
+                                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
+                                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                                newIntent.putExtra("from", ((AskQuestionAttachment) message.getAttachment()).from);
+                                newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
+                                startActivity(newIntent);
+                                AnsweringActivity.handledExamIdList.add(examId);
+                            }
+                            else {
+                                LogUtils.e("FHHHHH------------4");
+                            }
+                        }
                     } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         rxBus.send(message);
                     } else if (message.getAttachment() instanceof OverallLockAttachment) {
@@ -236,13 +258,30 @@ public class YoungyApplicationManager extends LitePalApplication {
                             EventBus.getDefault().post(baseEvent);
                         }
                     } else if (message.getAttachment() instanceof RetryAskQuestionAttachment) {
-                        if (AnsweringActivity.lastExamId != ((RetryAskQuestionAttachment) message.getAttachment()).examId) {
-                            Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
-                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
-                            newIntent.putExtra("from", ((RetryAskQuestionAttachment) message.getAttachment()).userId + "");
-                            newIntent.putExtra("examId", ((RetryAskQuestionAttachment) message.getAttachment()).examId);
-                            startActivity(newIntent);
+                        Calendar now = Calendar.getInstance();
+                        Calendar messageTime = Calendar.getInstance();
+                        messageTime.setTime(new Date(message.getTime()));
+                        if  ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))){
+                            int examId = ((RetryAskQuestionAttachment) message.getAttachment()).examId;
+                            if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
+                                @Override
+                                public boolean isMatchCondition(Integer nodeInList) {
+                                    return nodeInList.intValue() == examId;
+                                }
+                            })){
+                                LogUtils.e("FHHHHH------------1");
+                                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
+                                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
+                                newIntent.putExtra("from", ((RetryAskQuestionAttachment) message.getAttachment()).userId + "");
+                                newIntent.putExtra("examId", examId);
+                                startActivity(newIntent);
+                                AnsweringActivity.handledExamIdList.add(examId);
+                            }
+                            else {
+                                LogUtils.e("FHHHHH------------2");
+                            }
                         }
                     } else if (message.getAttachment() instanceof SeatWorkAttachment) {
                         //判断是否在写作业界面
