@@ -478,7 +478,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                             new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialog) {
-                                    back();
+                                    finish();
                                 }
                             }).show();
                             return;
@@ -1387,7 +1387,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         new HintDialog(CheckHomeWorkActivity.this, "批改轨迹上传oss失败，请退出后重新批改", "确定", new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-                                onBackPressed();
+                                finish();
                             }
                         }).show();
                     }
