@@ -1029,7 +1029,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         fullScreenHintDialog.dismiss();
                         // 去提交
                         getUpLoadInfo();
-                        mIsSubmit = true;
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
                 fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
@@ -1517,6 +1516,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                         }
                                     });
                         }
+                        mIsSubmit = true;
                         onBackPressed();
 
                     }
