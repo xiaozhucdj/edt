@@ -270,7 +270,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         mIsOnClass = getIntent().getBooleanExtra("isOnClass", false);
         if (mIsOnClass) {
             tvSaveHomework.setVisibility(View.GONE);
-//            mImageViewBack.setVisibility(View.GONE);   待需求确认
+            mImageViewBack.setVisibility(View.GONE);
         }
         LogUtils.d("homework isTimerWork = " + isTimerWork);
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
@@ -914,10 +914,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-//        if(mIsOnClass && !mIsSubmit) {
-//            // 课堂作业，只能点击提交返回   == 待需求确认
-//            return;
-//        }
+        if(mIsOnClass && !mIsSubmit) {
+            // 课堂作业，只能点击提交返回   == 待需求确认
+            return;
+        }
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
