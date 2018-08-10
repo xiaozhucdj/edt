@@ -809,7 +809,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 break;
             case R.id.tv_next_homework:
                 isBrowse = true;
-                autoToNextQuestion();
+                if (!"完成批改".equals(nextHomeworkText.getText())) {
+                    autoToNextQuestion();
+                } else {
+                    //手动执行closehomework接口
+                    closeHomework();
+                }
                 break;
             case R.id.tv_homework_error:
                 isBrowse = false;
@@ -1618,7 +1623,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 //            nextHomeworkBtn.setBackgroundColor(getResources().getColor(R.color.gray_999999));
 //            nextHomeworkText.setVisibility(View.GONE);
             nextHomeworkIcon.setVisibility(View.GONE);
-            nextHomeworkText.setVisibility(View.GONE);
+            nextHomeworkText.setVisibility(View.VISIBLE);
             nextHomeworkText.setText("完成批改");
         }
     }
