@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -234,6 +235,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private int teacherId;//教师Id
     private boolean mIsOnClass = false;//是否课堂作业
     private boolean mIsSubmit = false;//是否点击提交课堂作业
+    private YXClient.OnMessageListener receiverMsg;
 
     @Override
     protected void setContentView() {
@@ -268,7 +270,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         mIsOnClass = getIntent().getBooleanExtra("isOnClass", false);
         if (mIsOnClass) {
             tvSaveHomework.setVisibility(View.GONE);
-//            mImageViewBack.setVisibility(View.GONE);   待需求确认
+            mImageViewBack.setVisibility(View.GONE);
         }
         LogUtils.d("homework isTimerWork = " + isTimerWork);
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
@@ -290,19 +292,29 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 收作业消息
      */
     private void initReceiveHomeworkMsg() {
-        YXClient.getInstance().with(getApplication()).addOnNewCommandCustomMsgListener(message -> {
+        receiverMsg = message -> {
             if (message.getAttachment() instanceof ReceiveWorkAttachment) {
                 ReceiveWorkAttachment receiveWorkAttachment = (ReceiveWorkAttachment) message.getAttachment();
                 LogUtils.d("examId = " + examId + "   receiveWorkAttachment.examId = " + receiveWorkAttachment.examId);
                 if (examId.equals(receiveWorkAttachment.examId)) {
                     LogUtils.w("teacher receive homework , auto submit.");
-                    autoSubmitHomeWork();
+                    WriteHomeWorkActivity.this.autoSubmitHomeWork();
                 } else {
                     LogUtils.w("current examId is not receive examId. not submit.");
                 }
             }
-        });
+        };
+        YXClient.getInstance().with(getApplication()).addOnNewCommandCustomMsgListener(receiverMsg);
 
+    }
+
+    /**
+     * 移除消息
+     */
+    private void removeReceiveHomeworkMsg() {
+        if (receiverMsg != null) {
+            YXClient.getInstance().with(getApplication()).removeOnNewCommandCustomMsgListener(receiverMsg);
+        }
     }
 
     @Override
@@ -902,10 +914,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-//        if(mIsOnClass && !mIsSubmit) {
-//            // 课堂作业，只能点击提交返回   == 待需求确认
-//            return;
-//        }
+        if(mIsOnClass && !mIsSubmit) {
+            // 课堂作业，只能点击提交返回   == 待需求确认
+            return;
+        }
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
@@ -1017,7 +1029,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         fullScreenHintDialog.dismiss();
                         // 去提交
                         getUpLoadInfo();
-                        mIsSubmit = true;
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
                 fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
@@ -1505,6 +1516,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                         }
                                     });
                         }
+                        mIsSubmit = true;
                         onBackPressed();
 
                     }
@@ -1880,6 +1892,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        removeReceiveHomeworkMsg();
         if (!mIsFinish) {
             //tvSaveHomework.callOnClick();
         }
