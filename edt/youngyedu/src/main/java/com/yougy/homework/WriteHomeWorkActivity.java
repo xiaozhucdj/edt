@@ -34,7 +34,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -456,12 +455,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
                     if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
-                        imageRefresh.postDelayed(new Runnable() {
+
+                        tvTitle.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                                onClick(tvTitle);
                             }
-                        }, 300);
+                        }, 800);
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
@@ -914,7 +915,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(mIsOnClass && !mIsSubmit) {
+        if (mIsOnClass && !mIsSubmit) {
             // 课堂作业，只能点击提交返回   == 待需求确认
             return;
         }
@@ -929,7 +930,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     }
 
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
-            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right})
+            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title})
     public void onClick(View view) {
 
         if (mNbvAnswerBoard != null) {
@@ -942,6 +943,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         switch (view.getId()) {
 
+            case R.id.tv_title:
+                break;
             case R.id.btn_left:
                 mIsFinish = true;
                 finish();
