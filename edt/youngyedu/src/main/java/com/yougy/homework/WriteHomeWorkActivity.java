@@ -34,7 +34,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
@@ -54,6 +53,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.OnClickFastListener;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
@@ -217,8 +217,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private boolean isFirstComeInHomeWork;
     //是否第一次自动点击进入某一题的第一页
     private boolean isFirstComeInQuestion;
-    //作业中某一题所有结果（图片，文本），统计上传数据到集合中，方便将该信息提交到服务器
-    ArrayList<HomeWorkResultbean> homeWorkResultbeanList = new ArrayList<>();
 
     //某一题的分页中选中页码用来设置选择背景色。
     private int chooesePoint = 0;
@@ -456,12 +454,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
                     if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
-                        imageRefresh.postDelayed(new Runnable() {
+
+                        tvTitle.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                                onClick(tvTitle);
                             }
-                        }, 300);
+                        }, 800);
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
@@ -914,7 +914,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(mIsOnClass && !mIsSubmit) {
+        if (mIsOnClass && !mIsSubmit) {
             // 课堂作业，只能点击提交返回   == 待需求确认
             return;
         }
@@ -929,7 +929,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     }
 
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
-            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right})
+            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title})
     public void onClick(View view) {
 
         if (mNbvAnswerBoard != null) {
@@ -942,6 +942,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         switch (view.getId()) {
 
+            case R.id.tv_title:
+                break;
             case R.id.btn_left:
                 mIsFinish = true;
                 finish();
@@ -1023,9 +1025,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
                     }
-                }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
+                }, false).setBtn2("确认提交", new OnClickFastListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onFastClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
                         // 去提交
                         getUpLoadInfo();
@@ -1315,7 +1318,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
         OSSLog.enableLog();
         OSS oss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, credentialProvider, conf);
 
-
+        //作业中某一题所有结果（图片，文本），统计上传数据到集合中，方便将该信息提交到服务器
+        ArrayList<HomeWorkResultbean> homeWorkResultbeanList = new ArrayList<>();
         Observable.create(new Observable.OnSubscribe<Object>() {
             @Override
             public void call(Subscriber<? super Object> subscriber) {
@@ -1449,7 +1453,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
-                        writeInfoToS();
+                        writeInfoToS(homeWorkResultbeanList);
                     }
 
                     @Override
@@ -1481,8 +1485,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
     /**
      * 将上传信息提交给服务器
      */
-    private void writeInfoToS() {
+    private void writeInfoToS(ArrayList<HomeWorkResultbean> homeWorkResultbeanList) {
         String content = new Gson().toJson(homeWorkResultbeanList);
+
+        if (homeWorkResultbeanList != null) {
+            homeWorkResultbeanList.clear();
+        }
+        homeWorkResultbeanList = null;
 
         NetWorkManager.postReply(SpUtils.getUserId() + "", content)
                 .subscribe(new Action1<Object>() {
@@ -1866,12 +1875,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
             cgBytes.clear();
         }
         cgBytes = null;
-
-        if (homeWorkResultbeanList != null) {
-            homeWorkResultbeanList.clear();
-        }
-        homeWorkResultbeanList = null;
-
 
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.recycle();
