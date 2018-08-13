@@ -189,6 +189,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private int teacherId;
     //浏览模式，默认为false。点击上一题下一题时先置为true，当题目pdf、学生回答轨迹、教师批改轨迹加载完毕后需要设回false。点击判断对错半对设置为false。
     private boolean isBrowse = false;
+    //教师端是否是重批模式
+    private boolean isCheckChange = false;
 
     @Override
     public void init() {
@@ -947,6 +949,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
 
             case R.id.iv_check_change:
+                isCheckChange  = true;
 
                 //点击从新对该题进行批改
                 llHomeWorkCheckOption.setVisibility(View.VISIBLE);
@@ -1423,6 +1426,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         stsResultbeanArrayList.clear();
                         bytesList.clear();
                         pathList.clear();
+
+                        //重批模式下批改完一题需要调用一次关闭作业用来进入错题本，且提交后就不为重批模式
+                        if (isCheckChange) {
+                            closeHomework();
+                            isCheckChange = false;
+                        }
 
                         autoToNextQuestion();
                     }
