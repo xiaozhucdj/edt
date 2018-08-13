@@ -814,8 +814,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 if (!"完成批改".equals(nextHomeworkText.getText())) {
                     autoToNextQuestion();
                 } else {
-                    //手动执行closehomework接口
-                    closeHomework();
+                    //手动执行closehomework接口(这里复用autoToNextQuestion方法，需要将isBrowse置为false)，这里为了可调用到循环逻辑。
+                    isBrowse = false;
+                    autoToNextQuestion();
                 }
                 break;
             case R.id.tv_homework_error:
@@ -1466,26 +1467,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
             //是否有未批改的作业
             if (replyScoreList.contains(-1)) {
-
-                /*new ConfirmDialog(CheckHomeWorkActivity.this, null, "检测到有作业未批改，是否继续批改？", "继续批改", "直接提交",
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                int position = replyScoreList.indexOf(-1);
-                                pageNumAdapter.onItemClickListener.onItemClick1(position);
-
-                            }
-                        }, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        closeHomework();
-                    }
-                }).show();*/
-
                 //按产品需求调整对于作业批改调整需求为循环批改，作业中有题没有批改会一直弹窗提示批改。
 
                 new HintDialog(CheckHomeWorkActivity.this, "检测到有作业未批改，请继续批改？", "确定", new DialogInterface.OnDismissListener() {
