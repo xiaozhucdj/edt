@@ -714,9 +714,17 @@ public class CheckHomeWorkActivity extends BaseActivity {
             }
         }
 
+        //add by FH
+        //bug1244中发现replyComment中有时也会有TEXT类型的内容为""的Content,推断是pc端批改导致的,因此在这里要过滤一下,只使用IMG类型的Content
+        List<Content_new> replyCommentList = new ArrayList<Content_new>();
+        for (Content_new originReplyComment : questionReplyDetail.getParsedReplyCommentList()) {
+            if(originReplyComment.getType() == Content_new.Type.IMG_URL){
+                replyCommentList.add(originReplyComment);
+            }
+        }
         wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
-        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
+        if (replyCommentList.size() != 0) {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, replyCommentList);
         } else {
             wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
         }
