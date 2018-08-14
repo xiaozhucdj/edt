@@ -1,6 +1,7 @@
 package com.yougy.common.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
@@ -12,6 +13,7 @@ import android.view.View;
 import com.onyx.android.sdk.device.Device;
 import com.onyx.android.sdk.utils.ReflectUtil;
 import com.yougy.init.bean.Student;
+import com.yougy.ui.activity.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -115,13 +117,22 @@ public class DeviceScreensaverUtils {
         return newBM;
     }
 
+
     public static void setDeviceBg() {
-//        String path = "data/local/assets/standby1.png";
-////        String path =   "/data/local/assets/images/standby1.png" ;
-//        File bitmapFile = new File(path);
-//        bitmapFile.setReadable(true, false);
-//        bitmapFile.setWritable(true, false);
-//        Bitmap bmp= BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.img_device_bg);
-//        saveBitmapFile(bmp, bitmapFile,true);
+        String path1 = "data/local/assets/images/standby-1.png";
+        String path2 = "data/local/assets/images/standby-2.png";
+        String path3 = "data/local/assets/images/standby-3.png";
+        setBgList(path1);
+        setBgList(path2);
+        setBgList(path3);
     }
+
+    private static void  setBgList(String path){
+        File bitmapFile = new File(path);
+        bitmapFile.setReadable(true, false);
+        bitmapFile.setWritable(true, false);
+        Bitmap bmp = BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.img_device_bg);
+        saveBitmapFile(bmp, bitmapFile, true);
+    }
+
 }

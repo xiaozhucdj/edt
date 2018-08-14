@@ -975,6 +975,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         if (!isStScreensaver){
             DeviceScreensaverUtils.setScreensaver();
+            DeviceScreensaverUtils.setDeviceBg();
             isStScreensaver = true;
         }
         initSysIcon();
