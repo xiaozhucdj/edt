@@ -1463,7 +1463,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                         //重批模式下批改完一题需要调用一次关闭作业用来进入错题本，且提交后就不为重批模式
                         if (isCheckChange) {
-                            closeHomework();
+                            closeQuestion();
                             isCheckChange = false;
                         }
 
@@ -1516,6 +1516,25 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 closeHomework();
             }
         }
+    }
+
+    /**
+     * 重批模式下，调用关闭作业用来告诉服务器该种情况下只将错题入错题本，而不是真正关闭作业
+     */
+    private void closeQuestion() {
+        NetWorkManager.closeHomework(examId, null, studentId + "")
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        ToastUtil.showCustomToast(getBaseContext(), "该题目重批完毕");
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        ToastUtil.showCustomToast(getBaseContext(), "该题目重批错误了");
+                    }
+                });
     }
 
     /**
