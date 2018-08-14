@@ -1188,7 +1188,7 @@ public class YXClient {
 
         LogUtils.e("yuanye YX调用。。。。。");
 
-        final int MAX_RETRY_TIMES = 3;
+        final int MAX_RETRY_TIMES = 1;
         //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
         RecursiveLooper.recursiveRun(MAX_RETRY_TIMES, new RecursiveLooper.RecursiveLoopRunnable() {
             boolean localTokenWrong = false;
