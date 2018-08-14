@@ -35,6 +35,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.DeviceScreensaverUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -162,6 +163,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView imgSextIcon;
     private long mLastTime;
     private TextView testVersion;
+    private boolean isStScreensaver;
 
 
     /***************************************************************************/
@@ -970,6 +972,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (!isStScreensaver){
+            DeviceScreensaverUtils.setScreensaver();
+            isStScreensaver = true;
+        }
         initSysIcon();
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override

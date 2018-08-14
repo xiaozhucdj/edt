@@ -19,6 +19,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.DeviceScreensaverUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -252,6 +253,10 @@ public class SettingMainActivity extends BaseActivity {
                     FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
                     showCenterDetermineDialog(R.string.unbind_success);
                     YXClient.getInstance().logout();
+                    DeviceScreensaverUtils.setScreensaver();
+
+
+
                 }, throwable -> {
                     showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
                 });
