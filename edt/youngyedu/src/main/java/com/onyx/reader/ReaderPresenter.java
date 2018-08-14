@@ -167,7 +167,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
         int imageGamma = 200; // imageGamma works only when textGamma is not set
         int textGamma = 200; // text gamma works for PDF texts
         int glyphEmbolden = 0; // ranges from [0, 5], 0 means no embolden, 5 is max embolden
-        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(150, 100, 190, 0);
+        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(100, 100, 150, 0);
         getReader().submitRequest(getContext(), gammaRequest, new BaseCallback() {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
