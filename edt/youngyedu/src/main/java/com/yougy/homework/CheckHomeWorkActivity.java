@@ -189,6 +189,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private int teacherId;
     //浏览模式，默认为false。点击上一题下一题时先置为true，当题目pdf、学生回答轨迹、教师批改轨迹加载完毕后需要设回false。点击判断对错半对设置为false。
     private boolean isBrowse = false;
+    //教师端是否是重批模式
+    private boolean isCheckChange = false;
 
     @Override
     public void init() {
@@ -478,7 +480,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                             new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialog) {
-                                    back();
+                                    finish();
                                 }
                             }).show();
                             return;
@@ -712,9 +714,17 @@ public class CheckHomeWorkActivity extends BaseActivity {
             }
         }
 
+        //add by FH
+        //bug1244中发现replyComment中有时也会有TEXT类型的内容为""的Content,推断是pc端批改导致的,因此在这里要过滤一下,只使用IMG类型的Content
+        List<Content_new> replyCommentList = new ArrayList<Content_new>();
+        for (Content_new originReplyComment : questionReplyDetail.getParsedReplyCommentList()) {
+            if(originReplyComment.getType() == Content_new.Type.IMG_URL){
+                replyCommentList.add(originReplyComment);
+            }
+        }
         wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
-        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
+        if (replyCommentList.size() != 0) {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, replyCommentList);
         } else {
             wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
         }
@@ -809,18 +819,24 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 break;
             case R.id.tv_next_homework:
                 isBrowse = true;
-                autoToNextQuestion();
+                if (!"完成批改".equals(nextHomeworkText.getText())) {
+                    autoToNextQuestion();
+                } else {
+                    //手动执行closehomework接口(这里复用autoToNextQuestion方法，需要将isBrowse置为false)，这里为了可调用到循环逻辑。
+                    isBrowse = false;
+                    autoToNextQuestion();
+                }
                 break;
             case R.id.tv_homework_error:
                 isBrowse = false;
                 score = 0;
-                //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData(currentShowReplyPageIndex);
-
                 //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                 replyScoreList.set(currentShowQuestionIndex, score);
 
-                getUpLoadInfo();
+                //保存没触发前的界面数据,并提交批改数据到服务器
+//                saveCheckData(currentShowReplyPageIndex);
+//                getUpLoadInfo();
+                saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
 
                 break;
             case R.id.tv_homework_half_right:
@@ -830,13 +846,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 if (itemWeight == null) {
 
                     score = 50;
-                    //保存没触发前的界面数据,并提交批改数据到服务器
-                    saveCheckData(currentShowReplyPageIndex);
-
                     //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                     replyScoreList.set(currentShowQuestionIndex, score);
 
-                    getUpLoadInfo();
+                    //保存没触发前的界面数据,并提交批改数据到服务器
+//                    saveCheckData(currentShowReplyPageIndex);
+//                    getUpLoadInfo();
+                    saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
 
                 } else {
                     if (itemWeight == 1) {
@@ -863,13 +879,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 } else {
                     score = itemWeight;
                 }
-                //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData(currentShowReplyPageIndex);
-
                 //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                 replyScoreList.set(currentShowQuestionIndex, score);
 
-                getUpLoadInfo();
+                //保存没触发前的界面数据,并提交批改数据到服务器
+//                saveCheckData(currentShowReplyPageIndex);
+//                getUpLoadInfo();
+                saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
                 break;
 
 
@@ -942,6 +958,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
 
             case R.id.iv_check_change:
+                isCheckChange  = true;
 
                 //点击从新对该题进行批改
                 llHomeWorkCheckOption.setVisibility(View.VISIBLE);
@@ -1100,6 +1117,31 @@ public class CheckHomeWorkActivity extends BaseActivity {
             pathList.set(index, filePath);
             //清除当前页面笔记
             wcdContentDisplayer.getLayer2().clearAll();
+        }
+    }
+    private void saveCheckDataAndgetUpLoadInfo(int index) {
+
+        synchronized (this) {
+            if (bytesList.size() == 0) {
+                return;
+            }
+            if (pathList.size() == 0) {
+                return;
+            }
+            //保存笔记
+            bytesList.set(index, wcdContentDisplayer.getLayer2().bitmap2Bytes());
+            //保存图片
+            String fileName = pathList.get(index);
+            if (!TextUtils.isEmpty(fileName) && fileName.contains("/")) {
+                fileName = fileName.substring(fileName.lastIndexOf("/"));
+            } else {
+                fileName = System.currentTimeMillis() + ".png";
+            }
+            String filePath = saveBitmapToFile(wcdContentDisplayer.getLayer2().getBitmap(), fileName);
+            pathList.set(index, filePath);
+            //清除当前页面笔记
+            wcdContentDisplayer.getLayer2().clearAll();
+            getUpLoadInfo();
         }
     }
 
@@ -1387,7 +1429,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         new HintDialog(CheckHomeWorkActivity.this, "批改轨迹上传oss失败，请退出后重新批改", "确定", new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-                                onBackPressed();
+                                finish();
                             }
                         }).show();
                     }
@@ -1418,6 +1460,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         stsResultbeanArrayList.clear();
                         bytesList.clear();
                         pathList.clear();
+
+                        //重批模式下批改完一题需要调用一次关闭作业用来进入错题本，且提交后就不为重批模式
+                        if (isCheckChange) {
+                            closeQuestion();
+                            isCheckChange = false;
+                        }
 
                         autoToNextQuestion();
                     }
@@ -1452,26 +1500,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
             //是否有未批改的作业
             if (replyScoreList.contains(-1)) {
-
-                /*new ConfirmDialog(CheckHomeWorkActivity.this, null, "检测到有作业未批改，是否继续批改？", "继续批改", "直接提交",
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                int position = replyScoreList.indexOf(-1);
-                                pageNumAdapter.onItemClickListener.onItemClick1(position);
-
-                            }
-                        }, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        closeHomework();
-                    }
-                }).show();*/
-
                 //按产品需求调整对于作业批改调整需求为循环批改，作业中有题没有批改会一直弹窗提示批改。
 
                 new HintDialog(CheckHomeWorkActivity.this, "检测到有作业未批改，请继续批改？", "确定", new DialogInterface.OnDismissListener() {
@@ -1488,6 +1516,25 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 closeHomework();
             }
         }
+    }
+
+    /**
+     * 重批模式下，调用关闭作业用来告诉服务器该种情况下只将错题入错题本，而不是真正关闭作业
+     */
+    private void closeQuestion() {
+        NetWorkManager.closeHomework(examId, null, studentId + "")
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        ToastUtil.showCustomToast(getBaseContext(), "该题目重批完毕");
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        ToastUtil.showCustomToast(getBaseContext(), "该题目重批错误了");
+                    }
+                });
     }
 
     /**
@@ -1618,7 +1665,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 //            nextHomeworkBtn.setBackgroundColor(getResources().getColor(R.color.gray_999999));
 //            nextHomeworkText.setVisibility(View.GONE);
             nextHomeworkIcon.setVisibility(View.GONE);
-            nextHomeworkText.setVisibility(View.GONE);
+            nextHomeworkText.setVisibility(View.VISIBLE);
             nextHomeworkText.setText("完成批改");
         }
     }

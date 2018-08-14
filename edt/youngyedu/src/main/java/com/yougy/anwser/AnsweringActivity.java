@@ -87,7 +87,7 @@ import static com.yougy.common.eventbus.EventBusConstant.EVENT_LOCKER_ACTIVITY_P
  */
 
 public class AnsweringActivity extends AnswerBaseActivity {
-    public static int lastExamId;
+    public static ArrayList<Integer> handledExamIdList = new ArrayList<Integer>();
     ActivityAnsweringBinding binding;
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -176,7 +176,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
-        lastExamId = examId;
     }
 
     @Override
