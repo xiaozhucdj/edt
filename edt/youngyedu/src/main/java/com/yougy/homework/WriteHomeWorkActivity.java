@@ -1062,9 +1062,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (allHomeWorkPage.getVisibility() == View.GONE) {
                     allHomeWorkPage.setVisibility(View.VISIBLE);
                     ivChooeseTag.setImageResource(R.drawable.img_timu_up);
+                    mNbvAnswerBoard.setIntercept(true);
                 } else {
                     allHomeWorkPage.setVisibility(View.GONE);
                     ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+
+                    tvTitle.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mNbvAnswerBoard.setIntercept(false);
+                        }
+                    }, 800);
                 }
 
                 break;
