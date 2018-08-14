@@ -794,12 +794,18 @@ public class CheckHomeWorkActivity extends BaseActivity {
         myLeaveScribbleMode();
         super.onBackPressed();
     }
-
+    private static long lastClickTime;
     @OnClick({R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_homework_error, R.id.tv_homework_half_right, R.id.tv_homework_right,
             R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change, R.id.image_refresh, R.id.close_btn,
             R.id.tv_score_0, R.id.tv_score_1, R.id.tv_score_2, R.id.tv_score_3, R.id.tv_score_4, R.id.tv_score_5, R.id.tv_score_6,
             R.id.tv_score_7, R.id.tv_score_8, R.id.tv_score_9, R.id.tv_score_clear, R.id.tv_score_confirm})
     public void onClick(View view) {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 1000) {
+            return ;
+        }
+        lastClickTime = time;
 
         myLeaveScribbleMode();
         switch (view.getId()) {
