@@ -1,6 +1,7 @@
 package com.yougy.common.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
@@ -12,6 +13,7 @@ import android.view.View;
 import com.onyx.android.sdk.device.Device;
 import com.onyx.android.sdk.utils.ReflectUtil;
 import com.yougy.init.bean.Student;
+import com.yougy.ui.activity.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -42,7 +44,21 @@ public class DeviceScreensaverUtils {
 //            Bitmap bitmap = BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.yuanye);
             String strInfos = "班级 :" + student.getClassName()+ "\n姓名 :" + student.getUserRealName()+"同学";
             Bitmap bitmap = getNewBitMap(strInfos);
-            saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
+            int i = 0 ;
+            try {
+                saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
+            } catch (IOException e) {
+                e.printStackTrace();
+                bitmapFile.delete();
+                if (i<2){
+                    try {
+                        saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    i++ ;
+                }
+            }
         }
     }
 
@@ -60,7 +76,7 @@ public class DeviceScreensaverUtils {
         return newBitmap;
     }
 
-    private static void saveBitmapFile(Bitmap bitmap, File file, boolean isDevice) {
+    private static void saveBitmapFile(Bitmap bitmap, File file, boolean isDevice) throws IOException {
         int startX = 0;
         int startY = 0;
         int orientation = 0;
@@ -73,8 +89,6 @@ public class DeviceScreensaverUtils {
             }
         }
 
-
-        try {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
             bos.flush();
@@ -84,11 +98,6 @@ public class DeviceScreensaverUtils {
             Method sMethodSetInfoShowConfig = ReflectUtil.getMethodSafely(cls, "setInfoShowConfig", int.class, int.class, int.class);
             ReflectUtil.invokeMethodSafely(sMethodSetInfoShowConfig, null, orientation, startX, startY);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            file.delete();
-            saveBitmapFile(bitmap, file,isDevice);
-        }
     }
 
     private static Bitmap rotateBitmap(Bitmap origin) {
@@ -115,13 +124,36 @@ public class DeviceScreensaverUtils {
         return newBM;
     }
 
+
     public static void setDeviceBg() {
-//        String path = "data/local/assets/standby1.png";
-////        String path =   "/data/local/assets/images/standby1.png" ;
-//        File bitmapFile = new File(path);
-//        bitmapFile.setReadable(true, false);
-//        bitmapFile.setWritable(true, false);
-//        Bitmap bmp= BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.img_device_bg);
-//        saveBitmapFile(bmp, bitmapFile,true);
+        String path1 = "data/local/assets/images/standby-1.png";
+        String path2 = "data/local/assets/images/standby-2.png";
+        String path3 = "data/local/assets/images/standby-3.png";
+        setBgList(path1);
+        setBgList(path2);
+        setBgList(path3);
     }
+
+    private static void  setBgList(String path){
+        File bitmapFile = new File(path);
+        bitmapFile.setReadable(true, false);
+        bitmapFile.setWritable(true, false);
+        Bitmap bmp = BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.img_device_bg);
+        int i = 0 ;
+        try {
+            saveBitmapFile(bmp, bitmapFile, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            bitmapFile.delete();
+            if (i<2){
+                try {
+                    saveBitmapFile(bmp, bitmapFile, true);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                i++ ;
+            }
+        }
+    }
+
 }

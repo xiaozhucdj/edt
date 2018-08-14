@@ -1,5 +1,6 @@
 package com.yougy.shop.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ import com.yougy.view.decoration.SpaceItemDecoration;
 import org.litepal.util.LogUtil;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,6 +118,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
                 guidebookSelected();
             } else {
                 extrabookSelected();
+            }
+        },throwable -> {
+            if (throwable instanceof UnknownHostException) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("网络访问失败，请检查路由器是否正确连接！");
+                builder.setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
+                builder.setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
+                builder.show();
             }
         });
     }
