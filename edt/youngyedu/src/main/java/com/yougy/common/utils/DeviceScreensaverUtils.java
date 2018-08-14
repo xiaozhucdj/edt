@@ -44,7 +44,21 @@ public class DeviceScreensaverUtils {
 //            Bitmap bitmap = BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.yuanye);
             String strInfos = "班级 :" + student.getClassName()+ "\n姓名 :" + student.getUserRealName()+"同学";
             Bitmap bitmap = getNewBitMap(strInfos);
-            saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
+            int i = 0 ;
+            try {
+                saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
+            } catch (IOException e) {
+                e.printStackTrace();
+                bitmapFile.delete();
+                if (i<2){
+                    try {
+                        saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    i++ ;
+                }
+            }
         }
     }
 
@@ -62,7 +76,7 @@ public class DeviceScreensaverUtils {
         return newBitmap;
     }
 
-    private static void saveBitmapFile(Bitmap bitmap, File file, boolean isDevice) {
+    private static void saveBitmapFile(Bitmap bitmap, File file, boolean isDevice) throws IOException {
         int startX = 0;
         int startY = 0;
         int orientation = 0;
@@ -75,8 +89,6 @@ public class DeviceScreensaverUtils {
             }
         }
 
-
-        try {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
             bos.flush();
@@ -86,11 +98,6 @@ public class DeviceScreensaverUtils {
             Method sMethodSetInfoShowConfig = ReflectUtil.getMethodSafely(cls, "setInfoShowConfig", int.class, int.class, int.class);
             ReflectUtil.invokeMethodSafely(sMethodSetInfoShowConfig, null, orientation, startX, startY);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            file.delete();
-            saveBitmapFile(bitmap, file,isDevice);
-        }
     }
 
     private static Bitmap rotateBitmap(Bitmap origin) {
@@ -132,7 +139,21 @@ public class DeviceScreensaverUtils {
         bitmapFile.setReadable(true, false);
         bitmapFile.setWritable(true, false);
         Bitmap bmp = BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.img_device_bg);
-        saveBitmapFile(bmp, bitmapFile, true);
+        int i = 0 ;
+        try {
+            saveBitmapFile(bmp, bitmapFile, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            bitmapFile.delete();
+            if (i<2){
+                try {
+                    saveBitmapFile(bmp, bitmapFile, true);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                i++ ;
+            }
+        }
     }
 
 }
