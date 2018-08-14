@@ -1849,7 +1849,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        removeReceiveHomeworkMsg();
         if (examPaperContentList != null) {
             examPaperContentList.clear();
         }
@@ -1914,7 +1914,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        removeReceiveHomeworkMsg();
         if (!mIsFinish) {
             //tvSaveHomework.callOnClick();
         }

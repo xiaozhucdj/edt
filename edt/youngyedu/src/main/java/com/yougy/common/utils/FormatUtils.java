@@ -92,10 +92,14 @@ public class FormatUtils {
 
     /**
      * 将 string time 转换成 毫秒值
-     * @param time
+     * @param time  hh:mm:ss
      * @return
      */
     public static long timeStrToLongMisencod (String time) {
+        if (StringUtils.isEmpty(time)) {
+            LogUtils.e("timeStrToLongMisencod time is NULL, ERROR return.");
+            return 0;
+        }
         long t = 0;
         String[] times = time.split(":");
         if (times!=null && times.length == 3) {
