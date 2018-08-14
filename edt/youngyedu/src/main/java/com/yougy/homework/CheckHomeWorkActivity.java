@@ -830,13 +830,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
             case R.id.tv_homework_error:
                 isBrowse = false;
                 score = 0;
-                //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData(currentShowReplyPageIndex);
-
                 //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                 replyScoreList.set(currentShowQuestionIndex, score);
 
-                getUpLoadInfo();
+                //保存没触发前的界面数据,并提交批改数据到服务器
+//                saveCheckData(currentShowReplyPageIndex);
+//                getUpLoadInfo();
+                saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
 
                 break;
             case R.id.tv_homework_half_right:
@@ -846,13 +846,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 if (itemWeight == null) {
 
                     score = 50;
-                    //保存没触发前的界面数据,并提交批改数据到服务器
-                    saveCheckData(currentShowReplyPageIndex);
-
                     //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                     replyScoreList.set(currentShowQuestionIndex, score);
 
-                    getUpLoadInfo();
+                    //保存没触发前的界面数据,并提交批改数据到服务器
+//                    saveCheckData(currentShowReplyPageIndex);
+//                    getUpLoadInfo();
+                    saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
 
                 } else {
                     if (itemWeight == 1) {
@@ -879,13 +879,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 } else {
                     score = itemWeight;
                 }
-                //保存没触发前的界面数据,并提交批改数据到服务器
-                saveCheckData(currentShowReplyPageIndex);
-
                 //设置分数集合中的批改分数，返回上一题时，能够查看到之前是批改后的数据
                 replyScoreList.set(currentShowQuestionIndex, score);
 
-                getUpLoadInfo();
+                //保存没触发前的界面数据,并提交批改数据到服务器
+//                saveCheckData(currentShowReplyPageIndex);
+//                getUpLoadInfo();
+                saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
                 break;
 
 
@@ -1117,6 +1117,31 @@ public class CheckHomeWorkActivity extends BaseActivity {
             pathList.set(index, filePath);
             //清除当前页面笔记
             wcdContentDisplayer.getLayer2().clearAll();
+        }
+    }
+    private void saveCheckDataAndgetUpLoadInfo(int index) {
+
+        synchronized (this) {
+            if (bytesList.size() == 0) {
+                return;
+            }
+            if (pathList.size() == 0) {
+                return;
+            }
+            //保存笔记
+            bytesList.set(index, wcdContentDisplayer.getLayer2().bitmap2Bytes());
+            //保存图片
+            String fileName = pathList.get(index);
+            if (!TextUtils.isEmpty(fileName) && fileName.contains("/")) {
+                fileName = fileName.substring(fileName.lastIndexOf("/"));
+            } else {
+                fileName = System.currentTimeMillis() + ".png";
+            }
+            String filePath = saveBitmapToFile(wcdContentDisplayer.getLayer2().getBitmap(), fileName);
+            pathList.set(index, filePath);
+            //清除当前页面笔记
+            wcdContentDisplayer.getLayer2().clearAll();
+            getUpLoadInfo();
         }
     }
 
