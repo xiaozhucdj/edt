@@ -142,6 +142,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
     RadioButton rbError;
     @BindView(R.id.rb_right)
     RadioButton rbRight;
+    @BindView(R.id.show_comment_btn)
+    TextView showCommentBtn;
+    @BindView(R.id.comment_tv)
+    TextView commentTv;
+    @BindView(R.id.comment_dialog)
+    RelativeLayout commentDialog;
 
     private CustomLinearLayoutManager linearLayoutManager;
 
@@ -185,6 +191,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private List<Integer> replyScoreList = new ArrayList<>();
     //学生作业客观题结果存放集合（ABCD ture false）
     private List<Content_new> textReplyList = new ArrayList<>();
+    //存放教师批注
+    private List<Content_new> textCommentList = new ArrayList<>();
 
     private int teacherId;
     //浏览模式，默认为false。点击上一题下一题时先置为true，当题目pdf、学生回答轨迹、教师批改轨迹加载完毕后需要设回false。点击判断对错半对设置为false。
@@ -714,17 +722,53 @@ public class CheckHomeWorkActivity extends BaseActivity {
             }
         }
 
-        //add by FH
-        //bug1244中发现replyComment中有时也会有TEXT类型的内容为""的Content,推断是pc端批改导致的,因此在这里要过滤一下,只使用IMG类型的Content
-        List<Content_new> replyCommentList = new ArrayList<Content_new>();
-        for (Content_new originReplyComment : questionReplyDetail.getParsedReplyCommentList()) {
-            if(originReplyComment.getType() == Content_new.Type.IMG_URL){
-                replyCommentList.add(originReplyComment);
+        //拆分出教师批改结果里的批注和批改轨迹
+        List<Content_new> imgCommentList = new ArrayList<>();
+        //先清空集合数据（避免其他题目数据传入）
+        textCommentList.clear();
+
+        List<Content_new> replyCommentList = questionReplyDetail.getParsedReplyCommentList();
+        for (int i = 0; i < replyCommentList.size(); i++) {
+
+            Content_new content_new = replyCommentList.get(i);
+            if (content_new != null) {
+                if (content_new.getType() == Content_new.Type.IMG_URL) {
+                    imgCommentList.add(content_new);
+                } else if (content_new.getType() == Content_new.Type.TEXT) {
+                    textCommentList.add(content_new);
+                }
+            } else {
+                imgCommentList.add(null);
             }
         }
+
+
+        //根据获取的结果，是否展示出显示批注按钮
+        if (textCommentList.size() > 0) {
+            String commentStr = "";
+            for (int i = 0; i < textCommentList.size(); i++) {
+                Content_new textComment = textCommentList.get(i);
+
+                String value = textComment.getValue();
+                if (!TextUtils.isEmpty(value)) {
+                    commentStr += value;
+                }
+            }
+
+            if (!TextUtils.isEmpty(commentStr)) {
+                commentTv.setText(commentStr);
+                showCommentBtn.setVisibility(View.VISIBLE);
+            } else {
+                showCommentBtn.setVisibility(View.GONE);
+            }
+        } else {
+            showCommentBtn.setVisibility(View.GONE);
+        }
+
+
         wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
-        if (replyCommentList.size() != 0) {
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, replyCommentList);
+        if (imgCommentList.size() != 0) {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, imgCommentList);
         } else {
             wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
         }
@@ -794,16 +838,18 @@ public class CheckHomeWorkActivity extends BaseActivity {
         myLeaveScribbleMode();
         super.onBackPressed();
     }
+
     private static long lastClickTime;
+
     @OnClick({R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_homework_error, R.id.tv_homework_half_right, R.id.tv_homework_right,
-            R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change, R.id.image_refresh, R.id.close_btn,
+            R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change, R.id.image_refresh, R.id.close_btn, R.id.show_comment_btn, R.id.tv_comment_cancle,
             R.id.tv_score_0, R.id.tv_score_1, R.id.tv_score_2, R.id.tv_score_3, R.id.tv_score_4, R.id.tv_score_5, R.id.tv_score_6,
             R.id.tv_score_7, R.id.tv_score_8, R.id.tv_score_9, R.id.tv_score_clear, R.id.tv_score_confirm})
     public void onClick(View view) {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
         if (0 < timeD && timeD < 1000) {
-            return ;
+            return;
         }
         lastClickTime = time;
 
@@ -964,7 +1010,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
 
             case R.id.iv_check_change:
-                isCheckChange  = true;
+                isCheckChange = true;
 
                 //点击从新对该题进行批改
                 llHomeWorkCheckOption.setVisibility(View.VISIBLE);
@@ -1040,6 +1086,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 replyScoreList.set(currentShowQuestionIndex, score);
                 getUpLoadInfo();
 
+                break;
+            case R.id.show_comment_btn:
+                commentDialog.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tv_comment_cancle:
+                commentDialog.setVisibility(View.GONE);
                 break;
         }
     }
@@ -1125,6 +1177,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             wcdContentDisplayer.getLayer2().clearAll();
         }
     }
+
     private void saveCheckDataAndgetUpLoadInfo(int index) {
 
         synchronized (this) {

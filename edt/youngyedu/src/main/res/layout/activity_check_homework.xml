@@ -105,6 +105,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <RelativeLayout
+                android:id="@+id/comment_dialog"
+                android:layout_width="640px"
+                android:layout_height="660px"
+                android:layout_centerInParent="true"
+                android:background="@drawable/img_bg_bianqian"
+                android:padding="20px"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_comment_cancle"
+                    android:layout_width="20px"
+                    android:layout_height="20px"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30px"
+                    android:layout_marginTop="20px"
+                    android:background="@drawable/img_quxiao" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30px"
+                    android:layout_marginTop="20px"
+                    android:text="批注"
+                    android:textColor="@color/black"
+                    android:textSize="24px" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2px"
+                    android:layout_marginTop="60px"
+                    android:background="@color/black" />
+
+                <TextView
+                    android:id="@+id/comment_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="30px"
+                    android:layout_marginRight="30px"
+                    android:layout_marginTop="80px"
+                    android:textColor="@color/black"
+                    android:textSize="22px" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
@@ -158,8 +202,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
 
 
             <RelativeLayout
@@ -676,6 +720,18 @@
                     android:text="重新批改"
                     android:textColor="@color/white"
                     android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/show_comment_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="50dp"
+                    android:text="查看批注"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <!--android:textColor="@drawable/answer_detail_btn_text_color_selector"-->
