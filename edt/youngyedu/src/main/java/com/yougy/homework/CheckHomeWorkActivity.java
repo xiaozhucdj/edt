@@ -876,6 +876,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 } else {
                     //手动执行closehomework接口(这里复用autoToNextQuestion方法，需要将isBrowse置为false)，这里为了可调用到循环逻辑。
                     isBrowse = false;
+                    isCheckOver = false;
                     autoToNextQuestion();
                 }
                 break;
