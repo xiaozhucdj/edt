@@ -951,9 +951,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
         super.onBackPressed();
     }
 
+    private static long lastClickTime;
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
             R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title})
     public void onClick(View view) {
+
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 1000) {
+            return;
+        }
+        lastClickTime = time;
 
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
