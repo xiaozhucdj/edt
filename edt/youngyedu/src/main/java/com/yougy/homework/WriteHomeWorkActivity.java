@@ -34,7 +34,10 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 import com.yougy.anwser.ContentDisplayer;
+import com.yougy.anwser.ContentDisplayerAdapterV2;
+import com.yougy.anwser.ContentDisplayerV2;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
 import com.yougy.anwser.ParsedQuestionItem;
@@ -109,7 +112,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @BindView(R.id.ll_chooese_item)
     LinearLayout llChooeseItem;
     @BindView(R.id.content_displayer)
-    ContentDisplayer contentDisplayer;
+    ContentDisplayerV2 contentDisplayer;
     @BindView(R.id.rl_answer)
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
@@ -346,7 +349,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
             //继续作业
             LogUtils.d("timerWork init continue ....");
-            startTimerTask();
+//            startTimerTask();
         } else {
             //作业到时间  自动提交
             LogUtils.d("timerWork init submit ....");
@@ -412,10 +415,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         });*/
 
-        ContentDisplayer.ContentAdapter contentAdapter = new ContentDisplayer.ContentAdapter() {
+        ContentDisplayerAdapterV2 contentAdapter = new ContentDisplayerAdapterV2() {
             @Override
-            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
-                super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
+            public void afterPageCountChanged(String typeKey) {
+                int newPageCount = getPageCount(typeKey);
+
 
                 //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
                 if (newPageCount > questionPageSize) {
@@ -439,35 +443,54 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 }
             }
+
         };
         contentDisplayer.setContentAdapter(contentAdapter);
 
-
-        contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
+        contentDisplayer.setLoadingStatusListener(new ContentDisplayerV2.StatusChangeListener() {
             @Override
-            public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
+            public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
                 if (questionList == null) {
                     return;
                 }
 
+                switch (newStatus) {
+                    case DOWNLOADING:
+                        contentDisplayer.setHintText("下载中");
+                        break;
+                    case LOADING:
+                        contentDisplayer.setHintText("加载中");
+                        break;
+                    case ERROR:
+                        contentDisplayer.setHintText("加载错误，请刷新");
+                        break;
+                    case SUCCESS:
+                        contentDisplayer.setHintText(null);//设置为null该view会gone
+                        break;
+                }
+
+
                 if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
-                    if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
+                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS) {
 
-                        tvTitle.postDelayed(new Runnable() {
+                        UIUtils.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mNbvAnswerBoard.setVisibility(View.VISIBLE);
-                                onClick(tvTitle);
+                                if (mNbvAnswerBoard != null) {
+                                    mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                                    onClick(tvTitle);
+                                }
                             }
-                        }, 800);
+                        }, 600);
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
                 }
             }
         });
+
 
         imageRefresh.setOnClickListener(v -> loadData());
     }
@@ -616,7 +639,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
 
                 startTimeMill = System.currentTimeMillis() - alreadyUseTime;
-                startClock();
+//                startClock();
 
                 homeWorkPageNumAdapter.notifyDataSetChanged();
                 refreshLastAndNextQuestionBtns();
@@ -705,7 +728,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         if (position < contentDisplayer.getContentAdapter().getPageCount("question")) {
             //切换当前题目的分页
-            contentDisplayer.getContentAdapter().toPage("question", position, false);
+            contentDisplayer.toPage("question", position, false, null);
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
@@ -982,8 +1005,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     saveLastHomeWorkData(showHomeWorkPosition, false);
                 }
                 // 这里需要跳转到暂存成功的弹窗界面
-                if (mNbvAnswerBoard!=null){
-                    mNbvAnswerBoard .setIntercept(true);
+                if (mNbvAnswerBoard != null) {
+                    mNbvAnswerBoard.setIntercept(true);
                 }
                 FullScreenHintDialog fullScreenHintDialog = new FullScreenHintDialog(this, "");
                 fullScreenHintDialog.setIconResId(R.drawable.icon_correct).setContentText("暂存成功").setBtn1("继续作答", new DialogInterface.OnClickListener() {
@@ -993,11 +1016,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         UIUtils.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (mNbvAnswerBoard!=null){
-                                    mNbvAnswerBoard .setIntercept(false);
+                                if (mNbvAnswerBoard != null) {
+                                    mNbvAnswerBoard.setIntercept(false);
                                 }
                             }
-                        },600) ;
+                        }, 600);
                     }
                 }, false).setBtn2("返回作业", new DialogInterface.OnClickListener() {
                     @Override
@@ -1078,12 +1101,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     allHomeWorkPage.setVisibility(View.GONE);
                     ivChooeseTag.setImageResource(R.drawable.img_timu_down);
 
-                    tvTitle.postDelayed(new Runnable() {
+                    UIUtils.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mNbvAnswerBoard.setIntercept(false);
+                            if (mNbvAnswerBoard != null) {
+                                mNbvAnswerBoard.setIntercept(false);
+                            }
                         }
-                    }, 800);
+                    }, 600);
                 }
 
                 break;

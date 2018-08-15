@@ -190,7 +190,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.yougy.anwser.ContentDisplayer
+                <com.yougy.anwser.ContentDisplayerV2
                     android:id="@+id/content_displayer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
