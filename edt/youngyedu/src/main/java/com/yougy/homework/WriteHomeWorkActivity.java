@@ -349,7 +349,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
             //继续作业
             LogUtils.d("timerWork init continue ....");
-//            startTimerTask();
+            startTimerTask();
         } else {
             //作业到时间  自动提交
             LogUtils.d("timerWork init submit ....");
@@ -639,7 +639,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
 
                 startTimeMill = System.currentTimeMillis() - alreadyUseTime;
-//                startClock();
+                startClock();
 
                 homeWorkPageNumAdapter.notifyDataSetChanged();
                 refreshLastAndNextQuestionBtns();
