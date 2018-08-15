@@ -887,8 +887,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 replyScoreList.set(currentShowQuestionIndex, score);
 
                 //保存没触发前的界面数据,并提交批改数据到服务器
-//                saveCheckData(currentShowReplyPageIndex);
-//                getUpLoadInfo();
                 saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
 
                 break;
@@ -903,8 +901,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     replyScoreList.set(currentShowQuestionIndex, score);
 
                     //保存没触发前的界面数据,并提交批改数据到服务器
-//                    saveCheckData(currentShowReplyPageIndex);
-//                    getUpLoadInfo();
                     saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
 
                 } else {
@@ -936,8 +932,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 replyScoreList.set(currentShowQuestionIndex, score);
 
                 //保存没触发前的界面数据,并提交批改数据到服务器
-//                saveCheckData(currentShowReplyPageIndex);
-//                getUpLoadInfo();
                 saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
                 break;
 
@@ -1019,16 +1013,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 wcdContentDisplayer.getLayer2().setIntercept(false);
 
                 replyScoreList.set(currentShowQuestionIndex, -1);
-               /* //yuanye : start   解决 重新批改后无法手写
-                questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
-                questionReplyDetail.setReplyScore(-1);
-
-                replyScoreList.clear();
-                for (int i = 0; i < pageSize; i++) {
-                    replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
-                }
-
-                //yuanye : end*/
                 break;
             case R.id.close_btn:
                 llScoreControl.setVisibility(View.GONE);
@@ -1507,8 +1491,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private void writeInfoToS() {
 
         String content = new Gson().toJson(stsResultbeanArrayList);
-        //教师批改直接使用oss覆盖上传，不需要上传content了
-//        String content = "";
 
         NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "")
                 .subscribe(new Action1<Object>() {
@@ -1640,8 +1622,10 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     //提交完毕后刷新底部题目角标
     private void changeHomeWorkCorner(int position) {
+        if (position >= mQuestionReplyDetails.size()) {
+            return;
+        }
         currentShowQuestionIndex = position;
-
         score = -1;
         stsResultbeanArrayList.clear();
         bytesList.clear();
