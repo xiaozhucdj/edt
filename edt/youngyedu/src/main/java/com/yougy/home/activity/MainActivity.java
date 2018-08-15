@@ -30,6 +30,7 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
+import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.service.DownloadService;
@@ -974,9 +975,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onStart();
 
         if (!isStScreensaver){
-            DeviceScreensaverUtils.setScreensaver();
-            DeviceScreensaverUtils.setDeviceBg();
-            isStScreensaver = true;
+            ThreadManager.getSinglePool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    DeviceScreensaverUtils.setScreensaver();
+                    DeviceScreensaverUtils.setDeviceBg();
+                    isStScreensaver = true;
+                }
+            });
         }
         initSysIcon();
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
