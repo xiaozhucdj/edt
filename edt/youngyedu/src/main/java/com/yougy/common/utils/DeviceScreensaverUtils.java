@@ -50,6 +50,11 @@ public class DeviceScreensaverUtils {
             } catch (IOException e) {
                 e.printStackTrace();
                 bitmapFile.delete();
+                try {
+                    bitmapFile.createNewFile();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
                 if (i<2){
                     try {
                         saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
@@ -129,9 +134,11 @@ public class DeviceScreensaverUtils {
         String path1 = "data/local/assets/images/standby-1.png";
         String path2 = "data/local/assets/images/standby-2.png";
         String path3 = "data/local/assets/images/standby-3.png";
+        String path4=  "data/local/assets/images/shutdown.png";
         setBgList(path1);
         setBgList(path2);
         setBgList(path3);
+        setBgList(path4);
     }
 
     private static void  setBgList(String path){
@@ -145,6 +152,11 @@ public class DeviceScreensaverUtils {
         } catch (IOException e) {
             e.printStackTrace();
             bitmapFile.delete();
+            try {
+                bitmapFile.createNewFile();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             if (i<2){
                 try {
                     saveBitmapFile(bmp, bitmapFile, true);
