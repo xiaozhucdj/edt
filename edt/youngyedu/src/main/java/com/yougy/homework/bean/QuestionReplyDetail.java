@@ -50,7 +50,7 @@ public class QuestionReplyDetail {
     private List<LinkedTreeMap> replyComment;
     private OriginQuestionItem replyItemContent;
     private Integer replyItemWeight;
-
+    private MistakeSummary homeworkExcerpt;
 
     private List<Content_new> parsedReplyContentList = new ArrayList<Content_new>();
     private List<Content_new> parsedReplyCommentList = new ArrayList<Content_new>();
@@ -61,6 +61,14 @@ public class QuestionReplyDetail {
 
     public void setReplyItemWeight(Integer replyItemWeight) {
         this.replyItemWeight = replyItemWeight;
+    }
+
+    public MistakeSummary getHomeworkExcerpt() {
+        return homeworkExcerpt;
+    }
+
+    public void setHomeworkExcerpt(MistakeSummary homeworkExcerpt) {
+        this.homeworkExcerpt = homeworkExcerpt;
     }
 
     public String getReplyStatus() {
