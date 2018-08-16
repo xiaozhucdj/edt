@@ -979,7 +979,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 @Override
                 public void run() {
                     DeviceScreensaverUtils.setScreensaver();
-                    DeviceScreensaverUtils.setDeviceBg();
+//                    DeviceScreensaverUtils.setDeviceBg();
                     isStScreensaver = true;
                 }
             });
