@@ -1,24 +1,35 @@
 package com.yougy.homework.mistake_note;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapter;
-import com.yougy.anwser.ContentDisplayer;
+import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.anwser.WriteableContentDisplayer;
+import com.yougy.anwser.WriteableContentDisplayerAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
-import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.MistakeSummary;
+import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.message.ListUtil;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeListBinding;
+import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
+import com.yougy.view.CustomGridLayoutManager;
+import com.yougy.view.dialog.HintDialog;
+import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +41,31 @@ import rx.functions.Action1;
  * 错题列表界面
  */
 
-public class MistakeListActivity extends HomeworkBaseActivity{
+public class MistakeListActivity extends HomeworkBaseActivity {
     ActivityMistakeListBinding binding;
     ArrayList<MistakeSummary> mistakeSummaryList = new ArrayList<MistakeSummary>();
     ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
-    BookInfo.BookContentsBean.NodesBean topNode , currentNode;
+    BookInfo.BookContentsBean.NodesBean topNode, currentNode;
     ArrayList<BookInfo.BookContentsBean.NodesBean> nodeTree = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
-    int homeworkId;
+    private int homeworkId;
+    //当前学生作业中的所有错题数据集合（提出了我已学会的）
+    private List<QuestionReplyDetail> mQuestionReplyDetails = new ArrayList<>();
+    //模拟一共有多少题
+    private int pageSize = 0;
+    //当前展示的题目编号（展示的第几题）从0开始。
+    private int currentShowQuestionIndex = 0;
+    //当前展示学生的题目
+    private QuestionReplyDetail questionReplyDetail;
+    //当前展示的学生答案的页码(从0开始)
+    private int currentShowReplyPageIndex = 0;
+    //学生作业客观题结果存放集合（ABCD ture false）
+    private List<Content_new> textReplyList = new ArrayList<>();
+    //存放教师批注
+    private List<Content_new> textCommentList = new ArrayList<>();
+
     @Override
     protected void setContentView() {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.activity_mistake_list , null , false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.activity_mistake_list, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
@@ -49,35 +75,6 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-//                //自评界面我已学会按钮点击后,会发消息通知本界面移除错题
-//                if (o instanceof String && ((String) o).startsWith("removeMistakeItem:")){
-//                    String[] tempStrs = ((String) o).split(":");
-//                    if (tempStrs.length == 2){
-//                        int removeItemId = Integer.parseInt(tempStrs[1]);
-//                        ListUtil.conditionalRemove(mistakeSummaryList, new ListUtil.ConditionJudger<MistakeSummary>() {
-//                            @Override
-//                            public boolean isMatchCondition(MistakeSummary nodeInList) {
-//                                return nodeInList.getItem() == removeItemId;
-//                            }
-//                        });
-//                        loadData();
-//                    }
-//                }
-//                //自评界面自评按钮点击后,会通知本界面更新原来的上次自评结果字段
-//                if (o instanceof String && ((String) o).startsWith("lastScoreChanged:")){
-//                    String[] tempStrs = ((String) o).split(":");
-//                    if (tempStrs.length == 3){
-//                        int itemId = Integer.parseInt(tempStrs[1]);
-//                        int lastScore = Integer.parseInt(tempStrs[2]);
-//                        for (MistakeSummary mistakeSummary :
-//                                mistakeSummaryList) {
-//                            if (mistakeSummary.getItem() == itemId){
-//                                mistakeSummary.getExtra().setLastScore(lastScore);
-//                            }
-//                        }
-//                        loadData();
-//                    }
-//                }
             }
         }));
         super.handleEvent();
@@ -89,32 +86,128 @@ public class MistakeListActivity extends HomeworkBaseActivity{
         setNeedRecieveEventAfterOnStop(true);
         topNode = getIntent().getParcelableExtra("topNode");
         currentNode = getIntent().getParcelableExtra("currentNode");
-        homeworkId = getIntent().getIntExtra("homeworkId" , -1);
-        //找到当前章节的层级结构并显示
-        if (findCurrentNode(topNode , currentNode)){
+        homeworkId = getIntent().getIntExtra("homeworkId", -1);
+
+        if (currentNode != null) {
+            binding.tvTitle.setText(currentNode.getName());
+        } else {
+            binding.tvTitle.setText("错题本");
+        }
+
+
+        /*//找到当前章节的层级结构并显示
+        if (findCurrentNode(topNode, currentNode)) {
             String currentPostionText = "";
-            for (int i = nodeTree.size() - 1 ; i >=0 ; i--){
+            for (int i = nodeTree.size() - 1; i >= 0; i--) {
                 currentPostionText = currentPostionText + nodeTree.get(i).getName();
-                if (i != 0){
+                if (i != 0) {
                     currentPostionText = currentPostionText + "  >>  ";
                 }
             }
             binding.currentPositionTextview.setText(currentPostionText);
-        }
+        }*/
+
+
+        binding.wcdContentDisplayer.setContentAdapter(new WriteableContentDisplayerAdapter() {
+            @Override
+            public void afterPageCountChanged(String typeKey) {
+
+                binding.pageBtnBar.refreshPageBar();
+            }
+
+            @Override
+            public void beforeToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
+
+            }
+
+            @Override
+            public void afterToPage(String fromTypeKey, int fromPageIndex, String toTypeKey, int toPageIndex) {
+
+                int layer0Size = binding.wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 0);
+                int layer1Size = binding.wcdContentDisplayer.getContentAdapter().getLayerPageCount("question", 1);
+                //根据第0层和第1层集合大小调整基准层。
+                if (layer0Size > layer1Size && binding.wcdContentDisplayer.getContentAdapter().getPageCountBaseLayerIndex() != 0) {
+                    binding.wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+
+                    binding.pageBtnBar.refreshPageBar();
+                }
+
+
+                //展示客观题reply中的学生答案（ABCD true false）
+                String questionType = (String) questionReplyDetail.getParsedQuestionItem().questionContentList.get(0).getExtraData();
+                if ("选择".equals(questionType)) {
+
+                    binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+                    binding.llChooeseItem.setVisibility(View.GONE);
+
+                    setChooeseResult();
+                    //刷新当前选择结果的reciv
+                    if (binding.rcvChooeseItem.getAdapter() != null) {
+                        binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
+                    }
+                } else if ("判断".equals(questionType)) {
+                    binding.rcvChooeseItem.setVisibility(View.GONE);
+                    binding.llChooeseItem.setVisibility(View.VISIBLE);
+                    if (textReplyList.size() > 0) {
+                        String replyResult = textReplyList.get(0).getValue();
+                        if ("true".equals(replyResult)) {
+                            binding.rbRight.setChecked(true);
+                            binding.rbError.setChecked(false);
+                        } else {
+                            binding.rbRight.setChecked(false);
+                            binding.rbError.setChecked(true);
+                        }
+                    }
+                    binding.rbRight.setClickable(false);
+                    binding.rbError.setClickable(false);
+                } else {
+                    binding.rcvChooeseItem.setVisibility(View.GONE);
+                    binding.llChooeseItem.setVisibility(View.GONE);
+                }
+
+
+            }
+        });
+
+        binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getApplicationContext()) {
+            @Override
+            public int getPageBtnCount() {
+                return binding.wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
+            }
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
+                currentShowReplyPageIndex = btnIndex;
+                binding.wcdContentDisplayer.toPage("question", currentShowReplyPageIndex, true);
+            }
+
+        });
+
+        binding.wcdContentDisplayer.setStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
+            @Override
+            public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
+
+                if (newStatus == WriteableContentDisplayer.LOADING_STATUS.ERROR) {
+                    binding.wcdContentDisplayer.setHintText(errorMsg);
+                } else {
+                    binding.wcdContentDisplayer.setHintText(null);
+                }
+            }
+        });
+
+
     }
 
-    private boolean findCurrentNode(BookInfo.BookContentsBean.NodesBean from , BookInfo.BookContentsBean.NodesBean tofind){
-        if (from.getId() == tofind.getId()){
+    private boolean findCurrentNode(BookInfo.BookContentsBean.NodesBean from, BookInfo.BookContentsBean.NodesBean tofind) {
+        if (from.getId() == tofind.getId()) {
             nodeTree.add(from);
             return true;
-        }
-        else {
-            if (from.getNodes() == null || from.getNodes().size() == 0){
+        } else {
+            if (from.getNodes() == null || from.getNodes().size() == 0) {
                 return false;
-            }
-            else {
-                for (BookInfo.BookContentsBean.NodesBean child : from.getNodes()){
-                    if (findCurrentNode(child , tofind)){
+            } else {
+                for (BookInfo.BookContentsBean.NodesBean child : from.getNodes()) {
+                    if (findCurrentNode(child, tofind)) {
                         nodeTree.add(from);
                         return true;
                     }
@@ -126,149 +219,469 @@ public class MistakeListActivity extends HomeworkBaseActivity{
 
     @Override
     protected void initLayout() {
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getApplicationContext()) {
-            @Override
-            public int getPageBtnCount() {
-                return questionList.size();
-            }
-
-            @Override
-            public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
-                ParsedQuestionItem item = questionList.get(btnIndex);
-                refreshItem(item);
-            }
-        });
-        binding.startPracticeBtn.setOnClickListener(new View.OnClickListener() {
+        /*binding.startPracticeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParsedQuestionItem clickItem = questionList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
-                Intent intent = new Intent(getApplicationContext() , WriteErrorHomeWorkActivity.class);
-                intent.putExtra("QUESTION_ITEMID" , clickItem.itemId);
-                intent.putExtra("HOMEWORKID" , homeworkId);
-                intent.putExtra("BOOKTITLE" , getIntent().getStringExtra("bookTitle"));
+                Intent intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
+                intent.putExtra("QUESTION_ITEMID", clickItem.itemId);
+                intent.putExtra("HOMEWORKID", homeworkId);
+                intent.putExtra("BOOKTITLE", getIntent().getStringExtra("bookTitle"));
                 for (MistakeSummary mistakeSummary : mistakeSummaryList) {
-                    if (mistakeSummary.getItem() == Integer.parseInt(clickItem.itemId)){
-                        intent.putExtra("LASTSCORE" , mistakeSummary.getExtra().getLastScore());
+                    if (mistakeSummary.getItem() == Integer.parseInt(clickItem.itemId)) {
+                        intent.putExtra("LASTSCORE", mistakeSummary.getExtra().getLastScore());
                     }
                 }
                 startActivity(intent);
             }
-        });
-        binding.contentDisplayer.setContentAdapter(new ContentDisplayer.ContentAdapter(){
-            @Override
-            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
-                super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
-            }
-        });
+        });*/
     }
 
-    public void refreshItem(ParsedQuestionItem item){
-        binding.contentDisplayer.getContentAdapter().updateDataList("question" , item.questionContentList);
+    /*public void refreshItem(ParsedQuestionItem item) {
+        binding.contentDisplayer.getContentAdapter().updateDataList("question", item.questionContentList);
         String subTextStr = "        题目类型 : " + item.questionContentList.get(0).getExtraData();
         for (MistakeSummary mistakeSummary : mistakeSummaryList) {
-            if (item.itemId.equals("" + mistakeSummary.getItem())){
+            if (item.itemId.equals("" + mistakeSummary.getItem())) {
                 subTextStr = subTextStr + "         来自于 : " + mistakeSummary.getExtra().getName();
                 break;
             }
         }
         binding.contentDisplayer.getContentAdapter().setSubText(subTextStr);
-        binding.contentDisplayer.getContentAdapter().toPage("question" , 0 , true);
-    }
+        binding.contentDisplayer.getContentAdapter().toPage("question", 0, true);
+    }*/
 
 
     @Override
     protected void loadData() {
+        refreshUI();
     }
 
     @Override
     protected void refreshView() {
     }
 
-    private void refreshUI(){
-        if (homeworkId == -1){
-            ToastUtil.showCustomToast(getApplicationContext() , "homeworkId 为空");
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_node:
+                break;
+            case R.id.tv_last_homework:
+                //不提交批改数据，直接跳转到上一题
+                if (currentShowQuestionIndex > 0) {
+                    currentShowQuestionIndex--;
+                    binding.wcdContentDisplayer.getLayer2().clearAll();
+                    questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                    refreshQuestion();
+
+                } else {
+                    ToastUtil.showCustomToast(getBaseContext(), "已经是第一题了");
+                }
+                break;
+            case R.id.tv_next_homework:
+
+                if (currentShowQuestionIndex < pageSize - 1) {
+
+                    currentShowQuestionIndex++;
+                    binding.wcdContentDisplayer.getLayer2().clearAll();
+                    questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                    refreshQuestion();
+                } else {
+                    ToastUtil.showCustomToast(getBaseContext(), "已经是最后一题了");
+                }
+                break;
+            case R.id.ll_chooese_homework:
+                break;
+            case R.id.start_practice_btn:
+
+                Intent intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
+                intent.putExtra("QUESTION_ITEMID", questionReplyDetail.getHomeworkExcerpt().getItem());
+                intent.putExtra("HOMEWORKID", homeworkId);
+                intent.putExtra("BOOKTITLE", getIntent().getStringExtra("bookTitle"));
+                intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
+
+                startActivity(intent);
+
+                break;
+            case R.id.show_comment_btn:
+                binding.commentDialog.setVisibility(View.VISIBLE);
+                break;
+            case R.id.image_refresh:
+                refreshUI();
+                break;
+            case R.id.back_btn:
+                onBackPressed();
+                break;
+            case R.id.tv_comment_cancle:
+                binding.commentDialog.setVisibility(View.GONE);
+                break;
+        }
+
+    }
+
+    private void refreshUI() {
+        if (homeworkId == -1) {
+            ToastUtil.showCustomToast(getApplicationContext(), "homeworkId 为空");
             finish();
             return;
         }
-        NetWorkManager.queryHomeworkBookDetail(homeworkId)
-                .subscribe(new Action1<List<HomeworkBookDetail>>() {
+
+        NetWorkManager.queryHomeworkExcerptWithReply(29, currentNode != null ? currentNode.getId() : null)
+                .compose(bindToLifecycle())
+                .subscribe(new Action1<List<QuestionReplyDetail>>() {
                     @Override
-                    public void call(List<HomeworkBookDetail> homeworkBookDetails) {
-                        mistakeSummaryList.clear();
-                        if (homeworkBookDetails != null && homeworkBookDetails.size() != 0
-                                && homeworkBookDetails.get(0).getHomeworkExcerpt() != null
-                                && homeworkBookDetails.get(0).getHomeworkExcerpt().size() != 0){
-                            for (MistakeSummary mistakeSummary : homeworkBookDetails.get(0).getHomeworkExcerpt()) {
-                                //被标记为"我已学会"的错题不算作错题,排除
-                                if (!mistakeSummary.getExtra().isDeleted()){
-                                    if (mistakeSummary.getExtra().getCursor() == currentNode.getId()) {
-                                        mistakeSummaryList.add(mistakeSummary);
-                                    }
-                                }
+                    public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                        mQuestionReplyDetails.clear();
+
+                        for (int i = 0; i < questionReplyDetails.size(); i++) {
+
+                            QuestionReplyDetail questionReplyDetail = questionReplyDetails.get(i);
+                            MistakeSummary homeworkExcerpt = questionReplyDetail.getHomeworkExcerpt();
+                            //被标记为"我已学会"的错题不算作错题,排除
+                            if (!homeworkExcerpt.getExtra().isDeleted()) {
+                                mQuestionReplyDetails.add(questionReplyDetail);
                             }
                         }
-                        if (mistakeSummaryList == null || mistakeSummaryList.size() == 0){
+                        questionReplyDetails.clear();
+
+                        pageSize = mQuestionReplyDetails.size();
+
+                        if (pageSize == 0) {
                             binding.noResultTextview.setVisibility(View.VISIBLE);
-                            binding.pageBtnBar.setVisibility(View.GONE);
                             binding.questionLayout.setVisibility(View.GONE);
-                            return;
+                        } else {
+                            binding.noResultTextview.setVisibility(View.GONE);
+                            binding.questionLayout.setVisibility(View.VISIBLE);
+
+
+                            // TODO: 2018/8/16
+//                            setPageNumberView();
+                            questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+
+                            refreshQuestion();
                         }
-                        binding.noResultTextview.setVisibility(View.GONE);
-                        binding.questionLayout.setVisibility(View.VISIBLE);
-                        binding.pageBtnBar.setVisibility(View.VISIBLE);
-                        //根据传进来的错题的id的list拼接请求查询错题详情的list
-                        String itemIdStr = "";
-                        for (int i = 0; i < mistakeSummaryList.size() ; i++) {
-                            if (i == 0){
-                                itemIdStr = itemIdStr + "[";
-                            }
-                            itemIdStr = itemIdStr + mistakeSummaryList.get(i).getItem();
-                            if(i == mistakeSummaryList.size() - 1){
-                                itemIdStr = itemIdStr + "]";
-                            }
-                            else {
-                                itemIdStr = itemIdStr + ",";
-                            }
-                        }
-                        NetWorkManager.queryQuestionItemList(null , null , itemIdStr , null).subscribe(new Action1<List<ParsedQuestionItem>>() {
-                            @Override
-                            public void call(List<ParsedQuestionItem> parsedQuestionItems) {
-                                questionList.clear();
-                                questionList.addAll(parsedQuestionItems);
-                                binding.pageBtnBar.refreshPageBar();
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                throwable.printStackTrace();
-                            }
-                        });
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        new HintDialog(getBaseContext(), "获取数据失败", "返回", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finish();
+                            }
+                        }).show();
                     }
                 });
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshUI();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (mQuestionReplyDetails != null) {
+            mQuestionReplyDetails.clear();
+        }
+        binding.wcdContentDisplayer.getLayer2().recycle();
+        mQuestionReplyDetails = null;
         Glide.get(this).clearMemory();
-        binding.contentDisplayer.clearPdfCache();
+        binding.wcdContentDisplayer.clearCache();
         Runtime.getRuntime().gc();
+
+
     }
+
+    /**
+     * add by FH
+     * 刷新上一题下一题按钮的UI,如果已经是第一题或者最后一题了,就置灰按钮
+     */
+    public void refreshLastAndNextQuestionBtns() {
+
+        binding.tvHomeworkPosition.setText("(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
+
+        if (currentShowQuestionIndex > 0) {
+            binding.lastHomeworkText.setVisibility(View.VISIBLE);
+            binding.lastHomeworkIcon.setVisibility(View.VISIBLE);
+        } else {
+            binding.lastHomeworkText.setVisibility(View.GONE);
+            binding.lastHomeworkIcon.setVisibility(View.GONE);
+        }
+        if (currentShowQuestionIndex < pageSize - 1) {
+            binding.nextHomeworkIcon.setVisibility(View.VISIBLE);
+            binding.nextHomeworkText.setVisibility(View.VISIBLE);
+//            binding.nextHomeworkText.setText("下一题");
+        } else {
+            binding.nextHomeworkIcon.setVisibility(View.GONE);
+            binding.nextHomeworkText.setVisibility(View.GONE);
+//            binding.nextHomeworkText.setText("下一题");
+        }
+    }
+
+    private void refreshQuestion() {
+
+        binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        currentShowReplyPageIndex = 0;
+
+        Integer itemWeight = questionReplyDetail.getReplyItemWeight();
+        //不是记分题
+        if (itemWeight == null) {
+
+            binding.tvCheckScore.setVisibility(View.GONE);
+            int replyScore = questionReplyDetail.getReplyScore();
+            switch (replyScore) {
+                case -1://说明未批改
+                    //异常情况（进入错题笨了，就不可能未批改）
+                    break;
+                case 0://判错
+                    binding.ivCheckResult.setImageResource(R.drawable.img_cuowu);
+                    break;
+                case 50://判半对
+                    binding.ivCheckResult.setImageResource(R.drawable.img_bandui);
+                    break;
+                case 100://判对
+                    binding.ivCheckResult.setImageResource(R.drawable.img_zhengque);
+
+                    break;
+            }
+        } else {
+            binding.tvCheckScore.setVisibility(View.VISIBLE);
+
+            //记分题
+            int replyScore = questionReplyDetail.getReplyScore();
+            //未批改
+            if (replyScore == -1) {
+                //异常情况（进入错题笨了，就不可能未批改）
+
+            } else if (replyScore == 0) {
+                //错误
+                binding.ivCheckResult.setImageResource(R.drawable.img_cuowu);
+//                tvCheckResult.setText("错误");
+                binding.tvCheckScore.setText("（" + replyScore + "分）");
+            } else {
+                //满分
+                if (itemWeight == replyScore) {
+                    binding.ivCheckResult.setImageResource(R.drawable.img_zhengque);
+                    binding.tvCheckScore.setText("（" + replyScore + "分）");
+                } else {
+                    //半对
+                    binding.ivCheckResult.setImageResource(R.drawable.img_bandui);
+                    binding.tvCheckScore.setText("（" + replyScore + "分）");
+                }
+            }
+        }
+        binding.tvMistakeFrom.setText("来源于：" + questionReplyDetail.getHomeworkExcerpt().getExtra().getName());
+
+        binding.wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
+        binding.wcdContentDisplayer.getLayer1().setIntercept(true);
+        binding.wcdContentDisplayer.getLayer2().setIntercept(true);
+
+        /***********填充所有需要展示的3层数据资源 start***************/
+
+        //拆分出学生答案中的轨迹图片和TEXT（因为客观题有ABCD ture false）
+        List<Content_new> imgReplyList = new ArrayList<>();
+        //先清空集合数据（避免其他题目数据传入）
+        textReplyList.clear();
+
+
+        List<Content_new> content_news = questionReplyDetail.getParsedReplyContentList();
+
+        int needSaveSize = content_news.size();
+
+        for (int i = 0; i < needSaveSize; i++) {
+
+            Content_new content_new = content_news.get(i);
+
+            if (content_new != null) {
+                if (content_new.getType() == Content_new.Type.IMG_URL) {
+                    imgReplyList.add(content_new);
+                } else if (content_new.getType() == Content_new.Type.TEXT) {
+                    textReplyList.add(content_new);
+                }
+            } else {
+                imgReplyList.add(null);
+            }
+        }
+
+
+        //拆分出教师批改结果里的批注和批改轨迹
+        List<Content_new> imgCommentList = new ArrayList<>();
+        //先清空集合数据（避免其他题目数据传入）
+        textCommentList.clear();
+
+        List<Content_new> replyCommentList = questionReplyDetail.getParsedReplyCommentList();
+        for (int i = 0; i < replyCommentList.size(); i++) {
+
+            Content_new content_new = replyCommentList.get(i);
+            if (content_new != null) {
+                if (content_new.getType() == Content_new.Type.IMG_URL) {
+                    imgCommentList.add(content_new);
+                } else if (content_new.getType() == Content_new.Type.TEXT) {
+                    textCommentList.add(content_new);
+                }
+            } else {
+                imgCommentList.add(null);
+            }
+        }
+
+        //根据获取的结果，是否展示出显示批注按钮
+        if (textCommentList.size() > 0) {
+            String commentStr = "";
+            for (int i = 0; i < textCommentList.size(); i++) {
+                Content_new textComment = textCommentList.get(i);
+
+                String value = textComment.getValue();
+                if (!TextUtils.isEmpty(value)) {
+                    commentStr += value;
+                }
+            }
+
+            if (!TextUtils.isEmpty(commentStr)) {
+                binding.commentTv.setText(commentStr);
+                binding.showCommentBtn.setVisibility(View.VISIBLE);
+            } else {
+                binding.showCommentBtn.setVisibility(View.GONE);
+            }
+        } else {
+            binding.showCommentBtn.setVisibility(View.GONE);
+        }
+
+
+        binding.wcdContentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
+        if (imgCommentList.size() != 0) {
+            binding.wcdContentDisplayer.getContentAdapter().updateDataList("question", 2, imgCommentList);
+        } else {
+            binding.wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
+        }
+        if (imgReplyList.size() == 0) {
+            binding.wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
+            binding.wcdContentDisplayer.getContentAdapter().deleteDataList("question", 1);
+            binding.wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+            int newPageCount = binding.wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
+        } else {
+            binding.wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+            binding.wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
+        }
+
+        /***********填充所有需要展示的3层数据资源 end***************/
+
+        refreshLastAndNextQuestionBtns();
+    }
+
+
+    /**
+     * 设置选择题的结果界面
+     */
+    private void setChooeseResult() {
+
+        //清理掉其他题中的作业结果。
+//        checkedAnswerList.clear();
+        List<ParsedQuestionItem.Answer> chooeseAnswerList = questionReplyDetail.getParsedQuestionItem().answerList;
+
+
+        binding.rcvChooeseItem.setAdapter(new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(MistakeListActivity.this).inflate(R.layout.item_answer_choose_gridview, parent, false);
+                AutoUtils.auto(view);
+                AnswerItemHolder holder = new AnswerItemHolder(view);
+
+                holder.setChooeseStyle(chooeseAnswerList.size());
+
+                return holder;
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ParsedQuestionItem.Answer answer = chooeseAnswerList.get(position);
+                ((AnswerItemHolder) holder).setAnswer(answer);
+            }
+
+            @Override
+            public int getItemCount() {
+                if (chooeseAnswerList != null) {
+                    return chooeseAnswerList.size();
+                } else {
+                    return 0;
+                }
+            }
+        });
+        CustomGridLayoutManager gridLayoutManager = new CustomGridLayoutManager(this, chooeseAnswerList.size());
+        gridLayoutManager.setScrollEnabled(false);
+        binding.rcvChooeseItem.setLayoutManager(gridLayoutManager);
+
+    }
+
+    public class AnswerItemHolder extends RecyclerView.ViewHolder {
+        ItemAnswerChooseGridviewBinding itemBinding;
+        ParsedQuestionItem.Answer answer;
+
+        public AnswerItemHolder(View itemView) {
+            super(itemView);
+            itemBinding = DataBindingUtil.bind(itemView);
+        }
+
+        public AnswerItemHolder setAnswer(ParsedQuestionItem.Answer answer) {
+            this.answer = answer;
+            if (answer instanceof ParsedQuestionItem.TextAnswer) {
+                itemBinding.textview.setText(((ParsedQuestionItem.TextAnswer) answer).text);
+
+
+                //选择题选择的结果
+                ArrayList<String> checkedAnswerList = new ArrayList<String>();
+
+                for (int i = 0; i < textReplyList.size(); i++) {
+
+                    String replyResult = textReplyList.get(i).getValue();
+                    checkedAnswerList.add(replyResult);
+                }
+
+                if (ListUtil.conditionalContains(checkedAnswerList, new ListUtil.ConditionJudger<String>() {
+                    @Override
+                    public boolean isMatchCondition(String nodeInList) {
+                        return nodeInList.equals(((ParsedQuestionItem.TextAnswer) answer).text);
+                    }
+                })) {
+                    itemBinding.checkbox.setSelected(true);
+                    itemBinding.textview.setSelected(true);
+                } else {
+                    itemBinding.textview.setSelected(false);
+                    itemBinding.checkbox.setSelected(false);
+                }
+            } else {
+                itemBinding.textview.setText("格式错误");
+                itemBinding.checkbox.setSelected(false);
+            }
+            return this;
+        }
+
+        public void setChooeseStyle(int size) {
+            int rid;
+            switch (size) {
+                case 2:
+                    rid = R.drawable.btn_check_liangdaan;
+                    break;
+                case 3:
+                    rid = R.drawable.btn_check_sandaan;
+                    break;
+                case 4:
+                    rid = R.drawable.btn_check_sidaan;
+                    break;
+                case 5:
+                    rid = R.drawable.btn_check_wudaan;
+                    break;
+                default:
+                    rid = R.drawable.btn_check_liudaan;
+                    break;
+            }
+            itemBinding.checkbox.setBackgroundResource(rid);
+        }
+    }
+
+
 }

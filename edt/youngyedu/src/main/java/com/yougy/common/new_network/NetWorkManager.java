@@ -241,6 +241,16 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+
+    public static Observable<List<QuestionReplyDetail>> queryHomeworkExcerptWithReply(Integer homeworkId,Integer examFitCourseBookCursor) {
+        LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
+        return getInstance().getServerApi().queryHomeworkExcerptWithReply(homeworkId, examFitCourseBookCursor)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+                .compose(RxResultHelper.parseReplyDetail());
+    }
+
+
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
         return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "[\"II01\",\"II51\",\"II52\",\"II53\",\"II61\"]", true)
