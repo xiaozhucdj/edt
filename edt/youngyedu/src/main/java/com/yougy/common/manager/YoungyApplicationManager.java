@@ -41,6 +41,7 @@ import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.order.LockerActivity;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
+import com.zhy.http.okhttp.BuildConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePal;
@@ -138,7 +139,7 @@ public class YoungyApplicationManager extends LitePalApplication {
             //创建试读PDF 文件夹
             FileUtils.createDirs(FileUtils.getProbationBookFilesDir());
 
-            if (isRelase) {
+            if (!BuildConfig.DEBUG) {
                 //处理异常
                 String logFile = FileUtils.getLogFilesDir() + DateUtils.getCurrentTimeSimpleYearMonthDayString() + "/" + "Error_Log.txt";
                 FileUtils.makeParentsDir(logFile);
@@ -346,7 +347,7 @@ public class YoungyApplicationManager extends LitePalApplication {
             });*/
         }
 //        checkAnr();
-        LogUtils.setOpenLog(!isRelase);
+        LogUtils.setOpenLog(BuildConfig.DEBUG);
     }
 
     private void checkAnr() {
