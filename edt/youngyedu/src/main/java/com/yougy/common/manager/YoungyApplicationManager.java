@@ -27,7 +27,6 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.ListUtil;
@@ -39,9 +38,9 @@ import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.order.LockerActivity;
+import com.yougy.ui.activity.BuildConfig;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
-import com.zhy.http.okhttp.BuildConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePal;
@@ -54,13 +53,11 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.OkHttpClient;
 
-import static com.yougy.common.global.Commons.isRelase;
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
 import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
