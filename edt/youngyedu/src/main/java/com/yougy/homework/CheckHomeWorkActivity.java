@@ -1714,9 +1714,17 @@ public class CheckHomeWorkActivity extends BaseActivity {
         } else {
 //            nextHomeworkBtn.setBackgroundColor(getResources().getColor(R.color.gray_999999));
 //            nextHomeworkText.setVisibility(View.GONE);
-            nextHomeworkIcon.setVisibility(View.GONE);
-            nextHomeworkText.setVisibility(View.VISIBLE);
-            nextHomeworkText.setText("完成批改");
+            if (isCheckOver) {
+                nextHomeworkIcon.setVisibility(View.GONE);
+                nextHomeworkText.setVisibility(View.GONE);
+
+            } else {
+                nextHomeworkIcon.setVisibility(View.GONE);
+                nextHomeworkText.setVisibility(View.VISIBLE);
+                nextHomeworkText.setText("完成批改");
+            }
+
+
         }
     }
 
