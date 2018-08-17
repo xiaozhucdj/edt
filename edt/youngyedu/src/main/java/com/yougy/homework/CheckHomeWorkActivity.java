@@ -1550,7 +1550,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
             if (replyScoreList.contains(-1)) {
                 //按产品需求调整对于作业批改调整需求为循环批改，作业中有题没有批改会一直弹窗提示批改。
 
-                new HintDialog(CheckHomeWorkActivity.this, "检测到有作业未批改，请继续批改？", "确定", new DialogInterface.OnDismissListener() {
+                new HintDialog(CheckHomeWorkActivity.this, "检测到有作业未批改，请继续批改", "确定", new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         dialog.dismiss();
