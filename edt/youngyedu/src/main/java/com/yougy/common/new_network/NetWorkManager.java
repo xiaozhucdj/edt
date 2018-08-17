@@ -12,7 +12,6 @@ import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.model.Version;
-import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
@@ -51,7 +50,6 @@ import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -302,18 +300,18 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> deleteMistake(Integer homeworkId, String itemId) {
+    public static Observable<Object> deleteMistake(Integer homeworkId, String replyId) {
         LogUtils.e("FH", "!!!!!调用ServerApi移除错题(标记为删除):deleteMistake");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
-                , "{\"item\":" + itemId + ",\"extra\":{\"deleted\":true}}")
+                , "{\"reply\":" + replyId + ",\"extra\":{\"deleted\":true}}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> setMistakeLastScore(Integer homeworkId, String itemId, int score) {
+    public static Observable<Object> setMistakeLastScore(Integer homeworkId, String replyId, int score) {
         LogUtils.e("FH", "!!!!!调用ServerApi设置错题上次自评结果:setMistakeLastScore");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
-                , "{\"item\":" + itemId + ",\"extra\":{\"lastScore\":" + score + "}}")
+                , "{\"reply\":" + replyId + ",\"extra\":{\"lastScore\":" + score + "}}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

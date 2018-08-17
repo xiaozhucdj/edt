@@ -3,6 +3,9 @@
 
     <data>
 
+        <variable
+            name="myOnClick"
+            type="android.view.View.OnClickListener" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,7 +26,7 @@
                 android:id="@+id/back_btn"
                 android:layout_width="30px"
                 android:layout_height="30px"
-                android:onClick="onClick"
+                android:onClick="@{myOnClick}"
                 android:src="@drawable/le_btn_back_new_selector" />
 
             <ImageView
@@ -34,7 +37,7 @@
                 android:layout_marginLeft="30px"
                 android:layout_toRightOf="@+id/back_btn"
                 android:contentDescription="@null"
-                android:onClick="onClick"
+                android:onClick="@{myOnClick}"
                 android:src="@drawable/icon_shuaxin" />
 
             <TextView
@@ -53,7 +56,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
-                android:onClick="onClick"
+                android:onClick="@{myOnClick}"
                 android:text="错题章节"
                 android:textColor="@color/shop_text_black_333333"
                 android:textSize="28px" />
@@ -87,165 +90,175 @@
             android:background="@color/black" />-->
 
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/ll_control_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp">
-
-
-            <LinearLayout
-                android:id="@+id/ll_chooese_homework"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:onClick="onClick"
-                android:orientation="horizontal">
-
-
-                <TextView
-                    android:id="@+id/tv_homework_position"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center_vertical"
-                    android:text="(x/x)"
-                    android:textColor="@color/black"
-                    android:textSize="24sp" />
-
-                <ImageView
-                    android:id="@+id/iv_chooese_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/img_timu_down" />
-            </LinearLayout>
-
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20px"
-                android:layout_marginRight="20px">
-
-                <LinearLayout
-                    android:id="@+id/tv_last_homework"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:onClick="onClick"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/last_homework_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/img_shangyige" />
-
-                    <TextView
-                        android:id="@+id/last_homework_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10px"
-                        android:gravity="center_vertical"
-                        android:text="上一题"
-                        android:textColor="@color/black"
-                        android:textSize="24sp" />
-
-                </LinearLayout>
+                android:layout_height="60px"
+                >
 
 
                 <LinearLayout
-                    android:id="@+id/tv_next_homework"
+                    android:id="@+id/ll_chooese_homework"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
                     android:gravity="center"
-                    android:onClick="onClick"
+                    android:onClick="@{myOnClick}"
                     android:orientation="horizontal">
 
 
                     <TextView
-                        android:id="@+id/next_homework_text"
+                        android:id="@+id/tv_homework_position"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
                         android:gravity="center_vertical"
-                        android:text="下一题"
+                        android:text="(x/x)"
                         android:textColor="@color/black"
                         android:textSize="24sp" />
 
                     <ImageView
-                        android:id="@+id/next_homework_icon"
+                        android:id="@+id/iv_chooese_tag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10px"
-                        android:src="@drawable/img_xiayige" />
+                        android:src="@drawable/img_timu_down" />
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="20px"
+                    android:layout_marginRight="20px">
+
+                    <LinearLayout
+                        android:id="@+id/tv_last_homework"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:onClick="@{myOnClick}"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/last_homework_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/img_shangyige" />
+
+                        <TextView
+                            android:id="@+id/last_homework_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10px"
+                            android:gravity="center_vertical"
+                            android:text="上一题"
+                            android:textColor="@color/black"
+                            android:textSize="24sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/tv_next_homework"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center"
+                        android:onClick="@{myOnClick}"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/next_homework_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="下一题"
+                            android:textColor="@color/black"
+                            android:textSize="24sp" />
+
+                        <ImageView
+                            android:id="@+id/next_homework_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10px"
+                            android:src="@drawable/img_xiayige" />
+                    </LinearLayout>
+
+                </RelativeLayout>
 
             </RelativeLayout>
 
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:background="@color/black" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_mistake_from"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_margin="5dp"
-                android:layout_weight="3"
-                android:text="来源于：%s"
-                android:textColor="@color/black"
-                android:textSize="24sp" />
-
             <View
-                android:layout_width="2px"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="2px"
                 android:background="@color/black" />
 
-
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="2">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_mistake_from"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="批改结果："
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="3"
+                    android:text="来源于：%s"
                     android:textColor="@color/black"
                     android:textSize="24sp" />
 
-                <ImageView
-                    android:id="@+id/iv_check_result"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/img_cuowu" />
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/black" />
 
-                <TextView
-                    android:id="@+id/tv_check_score"
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="(分数)"
-                    android:textColor="@color/black"
-                    android:textSize="24sp" />
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="2">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="批改结果："
+                        android:textColor="@color/black"
+                        android:textSize="24sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_check_result"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/img_cuowu" />
+
+                    <TextView
+                        android:id="@+id/tv_check_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="(分数)"
+                        android:textColor="@color/black"
+                        android:textSize="24sp" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
-
-
         </LinearLayout>
 
         <View
@@ -287,7 +300,7 @@
                         android:layout_marginRight="30px"
                         android:layout_marginTop="20px"
                         android:background="@drawable/img_quxiao"
-                        android:onClick="onClick" />
+                        android:onClick="@{myOnClick}" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -347,7 +360,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:button="@drawable/rb_result_selector"
-                        android:onClick="onClick"
+                        android:onClick="@{myOnClick}"
                         android:text=" 错误（x）"
                         android:textSize="28px" />
 
@@ -357,7 +370,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="200dp"
                         android:button="@drawable/rb_result_selector"
-                        android:onClick="onClick"
+                        android:onClick="@{myOnClick}"
                         android:text=" 正确（√）"
                         android:textSize="28px" />
                 </RadioGroup>
@@ -378,8 +391,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-
                 android:background="@drawable/bmp_bg_blue"
+                android:onClick="@{myOnClick}"
                 android:orientation="horizontal"
                 android:paddingBottom="16px"
                 android:paddingTop="16px">
@@ -389,8 +402,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:gravity="top"
-                    android:onClick="onClick"
                     android:text="开始练习"
                     android:textColor="@color/white"
                     android:textSize="24sp" />
@@ -402,7 +413,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="50dp"
-                    android:onClick="onClick"
+                    android:onClick="@{myOnClick}"
                     android:text="查看批注"
                     android:textColor="@color/white"
                     android:textSize="24sp" />

@@ -47,7 +47,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
     ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
     BookInfo.BookContentsBean.NodesBean topNode, currentNode;
     ArrayList<BookInfo.BookContentsBean.NodesBean> nodeTree = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
-    private int homeworkId;
+    private int homeworkId, bookId;
     //当前学生作业中的所有错题数据集合（提出了我已学会的）
     private List<QuestionReplyDetail> mQuestionReplyDetails = new ArrayList<>();
     //模拟一共有多少题
@@ -87,6 +87,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
         topNode = getIntent().getParcelableExtra("topNode");
         currentNode = getIntent().getParcelableExtra("currentNode");
         homeworkId = getIntent().getIntExtra("homeworkId", -1);
+        bookId = getIntent().getIntExtra("bookId", -1);
 
         if (currentNode != null) {
             binding.tvTitle.setText(currentNode.getName());
@@ -219,6 +220,15 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
     @Override
     protected void initLayout() {
+
+        binding.setMyOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myOnClick(view);
+            }
+        });
+
+
         /*binding.startPracticeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,7 +263,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
     @Override
     protected void loadData() {
-        refreshUI();
+
     }
 
     @Override
@@ -261,9 +271,21 @@ public class MistakeListActivity extends HomeworkBaseActivity {
     }
 
 
-    public void onClick(View view) {
+    public void myOnClick(View view) {
         switch (view.getId()) {
             case R.id.tv_node:
+
+
+                if (bookId == -1 || bookId == 0) {
+                    ToastUtil.showCustomToast(getApplicationContext(), "该学科还没有教材");
+                    return;
+                }
+
+                Intent intent = new Intent(MistakeListActivity.this, BookStructureActivity.class);
+                intent.putExtra("homeworkId", homeworkId);
+                intent.putExtra("bookId", bookId);
+                startActivity(intent);
+                finish();
                 break;
             case R.id.tv_last_homework:
                 //不提交批改数据，直接跳转到上一题
@@ -291,13 +313,15 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 break;
             case R.id.ll_chooese_homework:
                 break;
-            case R.id.start_practice_btn:
+            case R.id.ll_control_bottom:
 
-                Intent intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
-                intent.putExtra("QUESTION_ITEMID", questionReplyDetail.getHomeworkExcerpt().getItem());
+                intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
                 intent.putExtra("HOMEWORKID", homeworkId);
-                intent.putExtra("BOOKTITLE", getIntent().getStringExtra("bookTitle"));
+                intent.putExtra("BOOKTITLE", getIntent().getStringExtra("booktitle"));
+
+                intent.putExtra("PARSEDQUESTIONITEM", questionReplyDetail.getParsedQuestionItem());
                 intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
+                intent.putExtra("REPLYID", questionReplyDetail.getReplyId());
 
                 startActivity(intent);
 
@@ -317,6 +341,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
         }
 
     }
+
 
     private void refreshUI() {
         if (homeworkId == -1) {
@@ -348,9 +373,11 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                         if (pageSize == 0) {
                             binding.noResultTextview.setVisibility(View.VISIBLE);
                             binding.questionLayout.setVisibility(View.GONE);
+                            binding.llControlTop.setVisibility(View.GONE);
                         } else {
                             binding.noResultTextview.setVisibility(View.GONE);
                             binding.questionLayout.setVisibility(View.VISIBLE);
+                            binding.llControlTop.setVisibility(View.VISIBLE);
 
 
                             // TODO: 2018/8/16
@@ -379,6 +406,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        refreshUI();
     }
 
     @Override

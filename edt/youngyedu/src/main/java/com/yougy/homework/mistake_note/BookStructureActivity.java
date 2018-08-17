@@ -44,22 +44,24 @@ public class BookStructureActivity extends HomeworkBaseActivity {
     int bookId;
     int homeworkId;
     String bookTitle;
+
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this)
-                , R.layout.activity_mistake_note_book_structure , null , false);
+                , R.layout.activity_mistake_note_book_structure, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
+
     @Override
     protected void init() {
         setNeedRecieveEventAfterOnStop(true);
-        bookId = getIntent().getIntExtra("bookId" , -1);
-        if (bookId == -1 || bookId == 0){
-            ToastUtil.showCustomToast(getApplicationContext() , "该学科还没有教材");
+        bookId = getIntent().getIntExtra("bookId", -1);
+        if (bookId == -1 || bookId == 0) {
+            ToastUtil.showCustomToast(getApplicationContext(), "该学科还没有教材");
             finish();
         }
-        homeworkId = getIntent().getIntExtra("homeworkId" , -1);
+        homeworkId = getIntent().getIntExtra("homeworkId", -1);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class BookStructureActivity extends HomeworkBaseActivity {
 
     @Override
     protected void initLayout() {
-        binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext() , 2){
+        binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -95,24 +97,23 @@ public class BookStructureActivity extends HomeworkBaseActivity {
             @Override
             public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 ListView listView = new ListView(getApplicationContext());
-                RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(430 , 1020);
+                RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(430, 1020);
                 params.leftMargin = 25;
                 params.rightMargin = 25;
                 params.topMargin = 30;
                 listView.setLayoutParams(params);
                 listView.setDividerHeight(2);
                 listView.setBackgroundResource(R.drawable.shape_rounded_rectangle_black_border);
-                ItemBookTopChapterBinding headViewBinding = DataBindingUtil.inflate(LayoutInflater.from(BookStructureActivity.this) , R.layout.item_book_top_chapter , null , false);
+                ItemBookTopChapterBinding headViewBinding = DataBindingUtil.inflate(LayoutInflater.from(BookStructureActivity.this), R.layout.item_book_top_chapter, null, false);
                 listView.addHeaderView(headViewBinding.getRoot());
                 listView.setAdapter(new MyAdapter());
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         BookInfo.BookContentsBean.NodesBean node;
-                        if (position == 0){
+                        if (position == 0) {
                             node = ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).fatherNode;
-                        }
-                        else {
+                        } else {
                             node = ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).nodeList.get(position - 1);
                         }
                         ArrayList<MistakeSummary> subMistakeList = ListUtil.conditionalSubList(mistakeList, new ListUtil.ConditionJudger<MistakeSummary>() {
@@ -121,18 +122,20 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                                 return nodeInList.getExtra().getCursor() == node.getId();
                             }
                         });
-                        Intent intent = new Intent(getApplicationContext() , MistakeListActivity.class);
-                        intent.putExtra("topNode" , ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).fatherNode);
-                        intent.putExtra("currentNode" , node);
-                        intent.putExtra("homeworkId" , homeworkId);
-                        intent.putExtra("bookTitle" , bookTitle);
-                        if (subMistakeList.size() > 0){
-                            intent.putParcelableArrayListExtra("mistakeList" , subMistakeList);
+                        Intent intent = new Intent(getApplicationContext(), MistakeListActivity.class);
+                        intent.putExtra("topNode", ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).fatherNode);
+                        intent.putExtra("currentNode", node);
+                        intent.putExtra("homeworkId", homeworkId);
+                        intent.putExtra("bookTitle", bookTitle);
+                        intent.putExtra("bookId", bookId);
+                        if (subMistakeList.size() > 0) {
+                            intent.putParcelableArrayListExtra("mistakeList", subMistakeList);
                         }
                         startActivity(intent);
+                        finish();
                     }
                 });
-                return new MyHolder(listView , headViewBinding);
+                return new MyHolder(listView, headViewBinding);
             }
 
             @Override
@@ -143,10 +146,9 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                     public boolean isMatchCondition(MistakeSummary nodeInList) {
                         return nodeInList.getExtra().getCursor() == bookStructureNodeList.get(position).getId();
                     }
-                })){
+                })) {
                     holder.headViewBinding.redDot.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     holder.headViewBinding.redDot.setVisibility(View.GONE);
                 }
                 ((MyAdapter) ((HeaderViewListAdapter) holder.listview.getAdapter()).getWrappedAdapter()).setFatherNode(bookStructureNodeList.get(position));
@@ -159,20 +161,21 @@ public class BookStructureActivity extends HomeworkBaseActivity {
         });
         binding.mainRecyclerview.notifyDataSetChanged();
     }
+
     @Override
     protected void loadData() {
-        if (bookId == -1){
-            ToastUtil.showCustomToast(getApplicationContext() , "bookId 为空");
+        if (bookId == -1) {
+            ToastUtil.showCustomToast(getApplicationContext(), "bookId 为空");
             finish();
             return;
         }
         bookStructureNodeList.clear();
         //先获取图书章节信息
-        NetWorkManager.queryBook(bookId + "" , null)
+        NetWorkManager.queryBook(bookId + "", null)
                 .subscribe(new Action1<List<BookInfo>>() {
                     @Override
                     public void call(List<BookInfo> bookInfoList) {
-                        if (bookInfoList.size() > 0){
+                        if (bookInfoList.size() > 0) {
                             bookTitle = bookInfoList.get(0).getBookTitle();
                             bookStructureNodeList.addAll(bookInfoList.get(0).getBookContents().getNodes());
                             binding.mainRecyclerview.notifyDataSetChanged();
@@ -186,9 +189,9 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                 });
     }
 
-    private void getMistakes(){
-        if (homeworkId == -1){
-            ToastUtil.showCustomToast(getApplicationContext() , "homeworkId 为空");
+    private void getMistakes() {
+        if (homeworkId == -1) {
+            ToastUtil.showCustomToast(getApplicationContext(), "homeworkId 为空");
             finish();
             return;
         }
@@ -198,12 +201,12 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                     public void call(List<HomeworkBookDetail> homeworkBookDetails) {
                         if (homeworkBookDetails != null && homeworkBookDetails.size() != 0
                                 && homeworkBookDetails.get(0).getHomeworkExcerpt() != null
-                                && homeworkBookDetails.get(0).getHomeworkExcerpt().size() != 0){
+                                && homeworkBookDetails.get(0).getHomeworkExcerpt().size() != 0) {
                             mistakeList.clear();
                             for (MistakeSummary mistakeSummary : homeworkBookDetails.get(0).getHomeworkExcerpt()) {
                                 //被标记为"我已学会"的错题不算作错题,排除
-                                if (!mistakeSummary.getExtra().isDeleted()){
-                                 mistakeList.add(mistakeSummary);
+                                if (!mistakeSummary.getExtra().isDeleted()) {
+                                    mistakeList.add(mistakeSummary);
                                 }
                             }
                             binding.mainRecyclerview.notifyDataSetChanged();
@@ -222,15 +225,16 @@ public class BookStructureActivity extends HomeworkBaseActivity {
 
     }
 
-    public void back(View view){
+    public void back(View view) {
         onBackPressed();
     }
 
 
-    private class MyHolder extends RecyclerView.ViewHolder{
+    private class MyHolder extends RecyclerView.ViewHolder {
         ListView listview;
         ItemBookTopChapterBinding headViewBinding;
-        public MyHolder(ListView listview , ItemBookTopChapterBinding headViewBinding) {
+
+        public MyHolder(ListView listview, ItemBookTopChapterBinding headViewBinding) {
             super(listview);
             this.listview = listview;
             this.headViewBinding = headViewBinding;
@@ -240,10 +244,11 @@ public class BookStructureActivity extends HomeworkBaseActivity {
     private class MyAdapter extends BaseAdapter {
         private BookInfo.BookContentsBean.NodesBean fatherNode;
         private List<BookInfo.BookContentsBean.NodesBean> nodeList = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
-        public void setFatherNode(BookInfo.BookContentsBean.NodesBean fatherNode){
+
+        public void setFatherNode(BookInfo.BookContentsBean.NodesBean fatherNode) {
             this.fatherNode = fatherNode;
             nodeList.clear();
-            if (fatherNode .getNodes()!= null && fatherNode .getNodes().size() != 0){
+            if (fatherNode.getNodes() != null && fatherNode.getNodes().size() != 0) {
                 for (BookInfo.BookContentsBean.NodesBean node : fatherNode.getNodes()) {
                     addNode(node);
                 }
@@ -251,18 +256,19 @@ public class BookStructureActivity extends HomeworkBaseActivity {
             notifyDataSetChanged();
         }
 
-        private void addNode(BookInfo.BookContentsBean.NodesBean node){
+        private void addNode(BookInfo.BookContentsBean.NodesBean node) {
             nodeList.add(node);
-            if (node.getNodes() != null && node.getNodes().size() != 0){
+            if (node.getNodes() != null && node.getNodes().size() != 0) {
                 for (BookInfo.BookContentsBean.NodesBean childNode : node.getNodes()) {
                     addNode(childNode);
                 }
             }
         }
 
-        public BookInfo.BookContentsBean.NodesBean getFatherNode(){
+        public BookInfo.BookContentsBean.NodesBean getFatherNode() {
             return fatherNode;
         }
+
         @Override
         public int getCount() {
             return nodeList.size();
@@ -281,8 +287,8 @@ public class BookStructureActivity extends HomeworkBaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ItemBookChapterBinding bookChapterBinding;
-            if (convertView == null){
-                bookChapterBinding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()) , R.layout.item_book_chapter , parent, false);
+            if (convertView == null) {
+                bookChapterBinding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.item_book_chapter, parent, false);
                 convertView = bookChapterBinding.getRoot();
                 convertView.setTag(bookChapterBinding);
             }
@@ -294,22 +300,20 @@ public class BookStructureActivity extends HomeworkBaseActivity {
                 public boolean isMatchCondition(MistakeSummary nodeInList) {
                     return nodeInList.getExtra().getCursor() == node.getId();
                 }
-            })){
+            })) {
                 bookChapterBinding.redDot.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 bookChapterBinding.redDot.setVisibility(View.GONE);
             }
-            if (node.getLevel() == 2){
-                convertView.setPadding(20 , 0 , 0 , 0);
-                bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 24);
+            if (node.getLevel() == 2) {
+                convertView.setPadding(20, 0, 0, 0);
+                bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX, 24);
                 bookChapterBinding.textview.setMaxWidth(340);
                 bookChapterBinding.getRoot().getLayoutParams().height = 60;
                 bookChapterBinding.arrowImg.setVisibility(View.VISIBLE);
-            }
-            else if (node.getLevel() == 3){
-                convertView.setPadding(55 , 0 , 0 , 0);
-                bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 20);
+            } else if (node.getLevel() == 3) {
+                convertView.setPadding(55, 0, 0, 0);
+                bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX, 20);
                 bookChapterBinding.textview.setMaxWidth(320);
                 bookChapterBinding.getRoot().getLayoutParams().height = 44;
                 bookChapterBinding.arrowImg.setVisibility(View.GONE);

@@ -23,7 +23,6 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
-import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -125,11 +124,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     //是否第一次自动点击进入第一页
     private boolean isFirstComeInQuestion;
 
-    private String itemId;
     private int homeworkId;
     private int lastScore;
     private String bookTitle;
-    private ParsedQuestionItem questionItem;
+    private ParsedQuestionItem parsedQuestionItem;
 
     @Override
     protected void setContentView() {
@@ -138,14 +136,12 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        itemId = getIntent().getStringExtra("QUESTION_ITEMID");
         homeworkId = getIntent().getIntExtra("HOMEWORKID", -1);
-        lastScore = getIntent().getIntExtra("LASTSCORE", -1);
         bookTitle = getIntent().getStringExtra("BOOKTITLE");
-        if (TextUtils.isEmpty(itemId)) {
-            ToastUtil.showCustomToast(getApplicationContext(), "itemId 为空");
-            return;
-        }
+        lastScore = getIntent().getIntExtra("LASTSCORE", -1);
+
+        parsedQuestionItem = (ParsedQuestionItem) getIntent().getParcelableExtra("PARSEDQUESTIONITEM");
+
     }
 
 
@@ -161,6 +157,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             public void onGlobalLayout() {
                 rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 mNbvAnswerBoard = new NoteBookView2(WriteErrorHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+                fillData();
 
             }
         });
@@ -233,7 +230,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        showNoNetDialog();
+        /*showNoNetDialog();
         NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
@@ -249,16 +246,17 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
                     }
-                });
+                });*/
+
     }
 
     //填充数据
     private void fillData() {
-        if (questionItem == null) {
+        if (parsedQuestionItem == null) {
             ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
             return;
         }
-        questionList = questionItem.questionContentList;
+        questionList = parsedQuestionItem.questionContentList;
         contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
@@ -333,7 +331,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                             //选择题不能加页
                             tvAddPage.setVisibility(View.GONE);
                             tvClearWrite.setVisibility(View.GONE);
-                            chooeseAnswerList = questionItem.answerList;
+                            chooeseAnswerList = parsedQuestionItem.answerList;
 
                             setChooeseResult();
 
@@ -557,10 +555,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     private void gotoMistakeGradeActivity() {
         //TODO 此处跳转到错题判断界面
         Intent intent = new Intent(getApplicationContext(), MistakeGradeActivity.class);
-        intent.putStringArrayListExtra("writeImgList", pathList);
-        intent.putExtra("questionItem", questionItem);
-        intent.putExtra("homeworkId", homeworkId);
-        intent.putExtra("bookTitle", bookTitle);
+        intent.putStringArrayListExtra("WRITEIMGLIST", pathList);
+        intent.putExtra("PARSEDQUESTIONITEM", parsedQuestionItem);
+        intent.putExtra("HOMEWORKID", homeworkId);
+        intent.putExtra("BOOKTITLE", bookTitle);
+        intent.putExtra("REPLYID", getIntent().getIntExtra("REPLYID", -1));
         startActivity(intent);
         finish();
     }
