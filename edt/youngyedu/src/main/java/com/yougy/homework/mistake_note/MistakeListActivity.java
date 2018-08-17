@@ -43,8 +43,6 @@ import rx.functions.Action1;
 
 public class MistakeListActivity extends HomeworkBaseActivity {
     ActivityMistakeListBinding binding;
-    ArrayList<MistakeSummary> mistakeSummaryList = new ArrayList<MistakeSummary>();
-    ArrayList<ParsedQuestionItem> questionList = new ArrayList<ParsedQuestionItem>();
     BookInfo.BookContentsBean.NodesBean topNode, currentNode;
     ArrayList<BookInfo.BookContentsBean.NodesBean> nodeTree = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
     private int homeworkId, bookId;
@@ -227,39 +225,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 myOnClick(view);
             }
         });
-
-
-        /*binding.startPracticeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParsedQuestionItem clickItem = questionList.get(binding.pageBtnBar.getCurrentSelectPageIndex());
-                Intent intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
-                intent.putExtra("QUESTION_ITEMID", clickItem.itemId);
-                intent.putExtra("HOMEWORKID", homeworkId);
-                intent.putExtra("BOOKTITLE", getIntent().getStringExtra("bookTitle"));
-                for (MistakeSummary mistakeSummary : mistakeSummaryList) {
-                    if (mistakeSummary.getItem() == Integer.parseInt(clickItem.itemId)) {
-                        intent.putExtra("LASTSCORE", mistakeSummary.getExtra().getLastScore());
-                    }
-                }
-                startActivity(intent);
-            }
-        });*/
     }
-
-    /*public void refreshItem(ParsedQuestionItem item) {
-        binding.contentDisplayer.getContentAdapter().updateDataList("question", item.questionContentList);
-        String subTextStr = "        题目类型 : " + item.questionContentList.get(0).getExtraData();
-        for (MistakeSummary mistakeSummary : mistakeSummaryList) {
-            if (item.itemId.equals("" + mistakeSummary.getItem())) {
-                subTextStr = subTextStr + "         来自于 : " + mistakeSummary.getExtra().getName();
-                break;
-            }
-        }
-        binding.contentDisplayer.getContentAdapter().setSubText(subTextStr);
-        binding.contentDisplayer.getContentAdapter().toPage("question", 0, true);
-    }*/
-
 
     @Override
     protected void loadData() {
@@ -275,7 +241,6 @@ public class MistakeListActivity extends HomeworkBaseActivity {
         switch (view.getId()) {
             case R.id.tv_node:
 
-
                 if (bookId == -1 || bookId == 0) {
                     ToastUtil.showCustomToast(getApplicationContext(), "该学科还没有教材");
                     return;
@@ -288,6 +253,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 finish();
                 break;
             case R.id.tv_last_homework:
+
                 //不提交批改数据，直接跳转到上一题
                 if (currentShowQuestionIndex > 0) {
                     currentShowQuestionIndex--;
@@ -312,6 +278,16 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 }
                 break;
             case R.id.ll_chooese_homework:
+                if (binding.rcvAllHomeworkPage.getVisibility() == View.GONE) {
+
+                    binding.rcvAllHomeworkPage.setVisibility(View.VISIBLE);
+                    binding.ivChooeseTag.setImageResource(R.drawable.img_timu_up);
+                } else {
+                    binding.rcvAllHomeworkPage.setVisibility(View.GONE);
+                    binding.ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+                }
+
+
                 break;
             case R.id.ll_control_bottom:
 
@@ -323,8 +299,8 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
                 intent.putExtra("REPLYID", questionReplyDetail.getReplyId());
 
-                intent.putExtra("REPLYITEMWEIGHT",questionReplyDetail.getReplyItemWeight());
-                intent.putExtra("REPLYSCORE",questionReplyDetail.getReplyScore());
+                intent.putExtra("REPLYITEMWEIGHT", questionReplyDetail.getReplyItemWeight());
+                intent.putExtra("REPLYSCORE", questionReplyDetail.getReplyScore());
 
                 startActivity(intent);
 
@@ -455,6 +431,10 @@ public class MistakeListActivity extends HomeworkBaseActivity {
     }
 
     private void refreshQuestion() {
+
+        if (binding.commentDialog.getVisibility() == View.VISIBLE) {
+            binding.commentDialog.setVisibility(View.GONE);
+        }
 
         binding.pageBtnBar.setCurrentSelectPageIndex(-1);
         currentShowReplyPageIndex = 0;
