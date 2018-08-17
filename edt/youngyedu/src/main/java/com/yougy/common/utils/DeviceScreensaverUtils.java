@@ -35,34 +35,22 @@ public class DeviceScreensaverUtils {
         Student student = SpUtils.getStudent();
         String path = "data/local/assets/info.png";
         File bitmapFile = new File(path);
-
+        bitmapFile.delete();
+        try {
+            bitmapFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         bitmapFile.setReadable(true, false);
         bitmapFile.setWritable(true, false);
 
         if (bitmapFile.exists()) {
-            System.out.println("文件存在");
-//            Bitmap bitmap = BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.yuanye);
-            String strInfos = "班级 :" + student.getClassName()+ "\n姓名 :" + student.getUserRealName()+"同学";
+            String strInfos = "班级 :" + student.getClassName() + "\n姓名 :" + student.getUserRealName() + "同学";
             Bitmap bitmap = getNewBitMap(strInfos);
-            int i = 0 ;
             try {
-                saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
+                saveBitmapFile(rotateBitmap(bitmap), bitmapFile, false);
             } catch (IOException e) {
                 e.printStackTrace();
-                bitmapFile.delete();
-                try {
-                    bitmapFile.createNewFile();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                if (i<2){
-                    try {
-                        saveBitmapFile(rotateBitmap(bitmap), bitmapFile,false);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    i++ ;
-                }
             }
         }
     }
@@ -94,14 +82,14 @@ public class DeviceScreensaverUtils {
             }
         }
 
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-            bos.flush();
-            bos.close();
-            Device.currentDevice().setInfoShowConfig(0, startX, startY);
-            Class<View> cls = View.class;
-            Method sMethodSetInfoShowConfig = ReflectUtil.getMethodSafely(cls, "setInfoShowConfig", int.class, int.class, int.class);
-            ReflectUtil.invokeMethodSafely(sMethodSetInfoShowConfig, null, orientation, startX, startY);
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        bos.flush();
+        bos.close();
+        Device.currentDevice().setInfoShowConfig(0, startX, startY);
+        Class<View> cls = View.class;
+        Method sMethodSetInfoShowConfig = ReflectUtil.getMethodSafely(cls, "setInfoShowConfig", int.class, int.class, int.class);
+        ReflectUtil.invokeMethodSafely(sMethodSetInfoShowConfig, null, orientation, startX, startY);
 
     }
 
@@ -131,40 +119,33 @@ public class DeviceScreensaverUtils {
 
 
     public static void setDeviceBg() {
+        FileUtils.createDirs("data/local/assets/images") ;
         String path1 = "data/local/assets/images/standby-1.png";
         String path2 = "data/local/assets/images/standby-2.png";
         String path3 = "data/local/assets/images/standby-3.png";
-        String path4=  "data/local/assets/images/shutdown.png";
+        String path4 = "data/local/assets/images/shutdown.png";
         setBgList(path1);
         setBgList(path2);
         setBgList(path3);
         setBgList(path4);
     }
 
-    private static void  setBgList(String path){
+    private static void setBgList(String path) {
         File bitmapFile = new File(path);
+        bitmapFile.delete();
+        try {
+            bitmapFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         bitmapFile.setReadable(true, false);
         bitmapFile.setWritable(true, false);
+
         Bitmap bmp = BitmapFactory.decodeResource(UIUtils.getResources(), R.drawable.img_device_bg);
-        int i = 0 ;
         try {
             saveBitmapFile(bmp, bitmapFile, true);
         } catch (IOException e) {
             e.printStackTrace();
-            bitmapFile.delete();
-            try {
-                bitmapFile.createNewFile();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            if (i<2){
-                try {
-                    saveBitmapFile(bmp, bitmapFile, true);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                i++ ;
-            }
         }
     }
 
