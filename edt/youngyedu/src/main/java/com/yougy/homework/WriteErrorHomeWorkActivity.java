@@ -57,8 +57,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @BindView(R.id.iv_chooese_tag)
     ImageView ivChooeseTag;
-    @BindView(R.id.rcv_all_homework_page)
-    RecyclerView allHomeWorkPage;
     @BindView(R.id.rcv_all_question_page)
     RecyclerView allQuestionPage;
     @BindView(R.id.rcv_chooese_item)
