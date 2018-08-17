@@ -1160,8 +1160,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     }
                 })) {
                     itemBinding.checkbox.setSelected(true);
+                    itemBinding.textview.setSelected(true);
                 } else {
                     itemBinding.checkbox.setSelected(false);
+                    itemBinding.textview.setSelected(false);
                 }
             } else {
                 itemBinding.textview.setText("格式错误");
