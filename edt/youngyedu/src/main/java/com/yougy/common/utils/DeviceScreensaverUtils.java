@@ -45,7 +45,13 @@ public class DeviceScreensaverUtils {
         bitmapFile.setWritable(true, false);
 
         if (bitmapFile.exists()) {
-            String strInfos = "班级 :" + student.getClassName() + "\n姓名 :" + student.getUserRealName() + "同学";
+            String strInfos  ;
+            if (!StringUtils.isEmpty(student.getUserRealName())){
+                strInfos    = "班级 :" + student.getClassName() + "\n姓名 :" + student.getUserRealName() + "同学";
+            }else{
+                strInfos    = "班级 :" + student.getClassName() + "\n姓名 :" + student.getUserRealName() ;
+            }
+
             Bitmap bitmap = getNewBitMap(strInfos);
             try {
                 saveBitmapFile(rotateBitmap(bitmap), bitmapFile, false);
