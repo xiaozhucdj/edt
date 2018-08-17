@@ -576,11 +576,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
                     } else {
-                        if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                        /*if (isStudentLook) {
                             ivCheckChange.setVisibility(View.GONE);
                         } else {
                             ivCheckChange.setVisibility(View.VISIBLE);
-                        }
+                        }*/
                     }
 
                     break;
@@ -594,11 +595,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
                     } else {
-                        if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                        /*if (isStudentLook) {
                             ivCheckChange.setVisibility(View.GONE);
                         } else {
                             ivCheckChange.setVisibility(View.VISIBLE);
-                        }
+                        }*/
                     }
 
                     break;
@@ -612,11 +614,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
                     } else {
-                        if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                        /*if (isStudentLook) {
                             ivCheckChange.setVisibility(View.GONE);
                         } else {
                             ivCheckChange.setVisibility(View.VISIBLE);
-                        }
+                        }*/
                     }
                     break;
             }
@@ -639,11 +642,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 if ("选择".equals(questionType) || "判断".equals(questionType)) {
                     ivCheckChange.setVisibility(View.GONE);
                 } else {
-                    if (isStudentLook) {
-                        ivCheckChange.setVisibility(View.GONE);
-                    } else {
-                        ivCheckChange.setVisibility(View.VISIBLE);
-                    }
+                    ivCheckChange.setVisibility(View.GONE);
+                        /*if (isStudentLook) {
+                            ivCheckChange.setVisibility(View.GONE);
+                        } else {
+                            ivCheckChange.setVisibility(View.VISIBLE);
+                        }*/
                 }
             } else {
                 //满分
@@ -657,11 +661,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
                     } else {
-                        if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                        /*if (isStudentLook) {
                             ivCheckChange.setVisibility(View.GONE);
                         } else {
                             ivCheckChange.setVisibility(View.VISIBLE);
-                        }
+                        }*/
                     }
                 } else {
                     //半对
@@ -673,11 +678,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     if ("选择".equals(questionType) || "判断".equals(questionType)) {
                         ivCheckChange.setVisibility(View.GONE);
                     } else {
-                        if (isStudentLook) {
+                        ivCheckChange.setVisibility(View.GONE);
+                        /*if (isStudentLook) {
                             ivCheckChange.setVisibility(View.GONE);
                         } else {
                             ivCheckChange.setVisibility(View.VISIBLE);
-                        }
+                        }*/
                     }
                 }
             }
