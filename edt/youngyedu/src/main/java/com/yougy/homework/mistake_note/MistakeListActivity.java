@@ -323,6 +323,9 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
                 intent.putExtra("REPLYID", questionReplyDetail.getReplyId());
 
+                intent.putExtra("REPLYITEMWEIGHT",questionReplyDetail.getReplyItemWeight());
+                intent.putExtra("REPLYSCORE",questionReplyDetail.getReplyScore());
+
                 startActivity(intent);
 
                 break;
@@ -489,7 +492,6 @@ public class MistakeListActivity extends HomeworkBaseActivity {
             } else if (replyScore == 0) {
                 //错误
                 binding.ivCheckResult.setImageResource(R.drawable.img_cuowu);
-//                tvCheckResult.setText("错误");
                 binding.tvCheckScore.setText("（" + replyScore + "分）");
             } else {
                 //满分

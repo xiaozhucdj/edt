@@ -48,7 +48,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import rx.functions.Action1;
 
 /**
  * Created by cdj
@@ -89,6 +88,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     RelativeLayout rlCaogaoBox;
     @BindView(R.id.sub_title_tv)
     TextView subTitleTv;
+    @BindView(R.id.tv_check_score)
+    TextView tvCheckScore;
+    @BindView(R.id.iv_check_result)
+    ImageView ivCheckResult;
 
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -125,9 +128,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     private boolean isFirstComeInQuestion;
 
     private int homeworkId;
-    private int lastScore;
+    private int lastScore, replyScore;
     private String bookTitle;
     private ParsedQuestionItem parsedQuestionItem;
+    private Integer itemWeight;
 
     @Override
     protected void setContentView() {
@@ -139,6 +143,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         homeworkId = getIntent().getIntExtra("HOMEWORKID", -1);
         bookTitle = getIntent().getStringExtra("BOOKTITLE");
         lastScore = getIntent().getIntExtra("LASTSCORE", -1);
+        replyScore = getIntent().getIntExtra("REPLYSCORE", -1);
+        itemWeight = (Integer) getIntent().getSerializableExtra("REPLYITEMWEIGHT");
 
         parsedQuestionItem = (ParsedQuestionItem) getIntent().getParcelableExtra("PARSEDQUESTIONITEM");
 
@@ -401,6 +407,53 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
             isFirstComeInQuestion = true;
             questionPageNumAdapter.onItemClickListener.onItemClick1(0);
+
+
+            //不是记分题
+            if (itemWeight == null) {
+
+                tvCheckScore.setVisibility(View.GONE);
+                switch (replyScore) {
+                    case -1://说明未批改
+                        //异常情况（进入错题笨了，就不可能未批改）
+                        break;
+                    case 0://判错
+                        ivCheckResult.setImageResource(R.drawable.img_cuowu);
+                        break;
+                    case 50://判半对
+                        ivCheckResult.setImageResource(R.drawable.img_bandui);
+                        break;
+                    case 100://判对
+                        ivCheckResult.setImageResource(R.drawable.img_zhengque);
+
+                        break;
+                }
+            } else {
+                tvCheckScore.setVisibility(View.VISIBLE);
+
+                //记分题
+                //未批改
+                if (replyScore == -1) {
+                    //异常情况（进入错题笨了，就不可能未批改）
+
+                } else if (replyScore == 0) {
+                    //错误
+                    ivCheckResult.setImageResource(R.drawable.img_cuowu);
+                    tvCheckScore.setText("（" + replyScore + "分）");
+                } else {
+                    //满分
+                    if (itemWeight == replyScore) {
+                        ivCheckResult.setImageResource(R.drawable.img_zhengque);
+                        tvCheckScore.setText("（" + replyScore + "分）");
+                    } else {
+                        //半对
+                        ivCheckResult.setImageResource(R.drawable.img_bandui);
+                        tvCheckScore.setText("（" + replyScore + "分）");
+                    }
+                }
+            }
+
+
         } else {
             ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
         }

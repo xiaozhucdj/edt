@@ -211,7 +211,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="20px"
                     android:layout_marginTop="8dp"
                     android:layout_weight="3"
                     android:text="来源于：%s"
@@ -228,7 +228,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="20px"
                     android:layout_marginTop="8dp"
                     android:layout_weight="2">
 
