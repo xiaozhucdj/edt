@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapter;
@@ -18,6 +19,7 @@ import com.yougy.anwser.WriteableContentDisplayerAdapter;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.bean.MistakeSummary;
@@ -34,6 +36,8 @@ import com.zhy.autolayout.utils.AutoUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.functions.Action1;
 
 /**
@@ -60,6 +64,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
     private List<Content_new> textReplyList = new ArrayList<>();
     //存放教师批注
     private List<Content_new> textCommentList = new ArrayList<>();
+    private HomeWorkPageNumAdapter homeWorkPageNumAdapter;
 
     @Override
     protected void setContentView() {
@@ -258,8 +263,8 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 if (currentShowQuestionIndex > 0) {
                     currentShowQuestionIndex--;
                     binding.wcdContentDisplayer.getLayer2().clearAll();
-                    questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
-                    refreshQuestion();
+
+                    homeWorkPageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
 
                 } else {
                     ToastUtil.showCustomToast(getBaseContext(), "已经是第一题了");
@@ -271,8 +276,8 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
                     currentShowQuestionIndex++;
                     binding.wcdContentDisplayer.getLayer2().clearAll();
-                    questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
-                    refreshQuestion();
+
+                    homeWorkPageNumAdapter.onItemClickListener.onItemClick1(currentShowQuestionIndex);
                 } else {
                     ToastUtil.showCustomToast(getBaseContext(), "已经是最后一题了");
                 }
@@ -358,9 +363,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                             binding.questionLayout.setVisibility(View.VISIBLE);
                             binding.llControlTop.setVisibility(View.VISIBLE);
 
-
-                            // TODO: 2018/8/16
-//                            setPageNumberView();
+                            setHomeWorkNumberView();
                             questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
 
                             refreshQuestion();
@@ -422,11 +425,9 @@ public class MistakeListActivity extends HomeworkBaseActivity {
         if (currentShowQuestionIndex < pageSize - 1) {
             binding.nextHomeworkIcon.setVisibility(View.VISIBLE);
             binding.nextHomeworkText.setVisibility(View.VISIBLE);
-//            binding.nextHomeworkText.setText("下一题");
         } else {
             binding.nextHomeworkIcon.setVisibility(View.GONE);
             binding.nextHomeworkText.setVisibility(View.GONE);
-//            binding.nextHomeworkText.setText("下一题");
         }
     }
 
@@ -693,5 +694,88 @@ public class MistakeListActivity extends HomeworkBaseActivity {
         }
     }
 
+    private void setHomeWorkNumberView() {
+
+        homeWorkPageNumAdapter = new HomeWorkPageNumAdapter();
+        CustomGridLayoutManager gridLayoutManager = new CustomGridLayoutManager(this, 8);
+        gridLayoutManager.setScrollEnabled(false);
+        binding.rcvAllHomeworkPage.setLayoutManager(gridLayoutManager);
+        binding.rcvAllHomeworkPage.setAdapter(homeWorkPageNumAdapter);
+
+        homeWorkPageNumAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick1(int position) {
+
+                currentShowQuestionIndex = position;
+
+                if (binding.rcvAllHomeworkPage.getVisibility() == View.VISIBLE) {
+                    binding.rcvAllHomeworkPage.setVisibility(View.GONE);
+                    binding.ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+                }
+
+                questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                refreshQuestion();
+
+                homeWorkPageNumAdapter.notifyDataSetChanged();
+
+            }
+        });
+
+    }
+
+
+    /*顶部页面的adapter相关*/
+    class HomeWorkPageNumViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_page_id)
+        TextView mTvPageId;
+
+
+        public HomeWorkPageNumViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+
+    }
+
+    class HomeWorkPageNumAdapter extends RecyclerView.Adapter<HomeWorkPageNumViewHolder> {
+
+        OnItemClickListener onItemClickListener;
+
+        public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+            this.onItemClickListener = onItemClickListener;
+        }
+
+        @Override
+        public HomeWorkPageNumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_page_check_homework, parent, false);
+            return new HomeWorkPageNumViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(HomeWorkPageNumViewHolder holder, final int position) {
+
+            holder.mTvPageId.setText((position + 1) + "");
+            if (position == currentShowQuestionIndex) {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_cuowu);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                holder.mTvPageId.setBackgroundResource(R.drawable.img_timu_chooese);
+                holder.mTvPageId.setTextColor(getResources().getColor(R.color.black));
+            }
+
+            holder.mTvPageId.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick1(position);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return pageSize;
+        }
+    }
 
 }
