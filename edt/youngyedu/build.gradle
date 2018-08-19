@@ -32,9 +32,9 @@ android {
         applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
-        versionName "2.2.9"
+        versionName "2.2.0"
         multiDexEnabled true
-        versionCode 9
+        versionCode 10
 
 //        ndk {
 //            // 设置支持的SO库架构

@@ -68,7 +68,7 @@ import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENT
  */
 public class YoungyApplicationManager extends LitePalApplication {
 
-    private final int REQUEST_TIME =15* 1000;
+    private final int REQUEST_TIME = 15 * 1000;
     public static final boolean DEBUG = true;
 
     private static Context instance;
@@ -142,7 +142,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                 FileUtils.makeParentsDir(logFile);
                 YoungyUncaughtExceptionHandler handler = new YoungyUncaughtExceptionHandler(logFile);
                 Thread.setDefaultUncaughtExceptionHandler(handler);
-          }
+            }
 
 
             OkHttpClient client = new OkHttpClient.Builder()
@@ -212,15 +212,15 @@ public class YoungyApplicationManager extends LitePalApplication {
                         Calendar now = Calendar.getInstance();
                         Calendar messageTime = Calendar.getInstance();
                         messageTime.setTime(new Date(message.getTime()));
-                        if  ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))){
+                        if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
                             int examId = ((AskQuestionAttachment) message.getAttachment()).examID;
                             if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
                                 @Override
                                 public boolean isMatchCondition(Integer nodeInList) {
                                     return nodeInList.intValue() == examId;
                                 }
-                            })){
+                            })) {
                                 LogUtils.e("FHHHHH------------3");
                                 Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                                 newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -229,8 +229,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                                 newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
                                 startActivity(newIntent);
                                 AnsweringActivity.handledExamIdList.add(examId);
-                            }
-                            else {
+                            } else {
                                 LogUtils.e("FHHHHH------------4");
                             }
                         }
@@ -259,15 +258,15 @@ public class YoungyApplicationManager extends LitePalApplication {
                         Calendar now = Calendar.getInstance();
                         Calendar messageTime = Calendar.getInstance();
                         messageTime.setTime(new Date(message.getTime()));
-                        if  ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))){
+                        if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
                             int examId = ((RetryAskQuestionAttachment) message.getAttachment()).examId;
                             if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
                                 @Override
                                 public boolean isMatchCondition(Integer nodeInList) {
                                     return nodeInList.intValue() == examId;
                                 }
-                            })){
+                            })) {
                                 LogUtils.e("FHHHHH------------1");
                                 Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
                                 newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -276,15 +275,14 @@ public class YoungyApplicationManager extends LitePalApplication {
                                 newIntent.putExtra("examId", examId);
                                 startActivity(newIntent);
                                 AnsweringActivity.handledExamIdList.add(examId);
-                            }
-                            else {
+                            } else {
                                 LogUtils.e("FHHHHH------------2");
                             }
                         }
                     } else if (message.getAttachment() instanceof SeatWorkAttachment) {
                         //判断是否在写作业界面
                         SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
-                        if (BaseActivity.getForegroundActivity() instanceof  WriteHomeWorkActivity) {
+                        if (BaseActivity.getForegroundActivity() instanceof WriteHomeWorkActivity) {
                             //当前在写作业界面  examId 判断
                             WriteHomeWorkActivity writeHomeWorkActivity = (WriteHomeWorkActivity) BaseActivity.getForegroundActivity();
                             if (writeHomeWorkActivity.getExam_id().equals(attachment.examId)) {
@@ -306,9 +304,9 @@ public class YoungyApplicationManager extends LitePalApplication {
                         intent.putExtra("examId", attachment.examId);
                         intent.putExtra("examName", attachment.examName);
                         //传参是否定时作业
-                        intent.putExtra("isTimerWork" , attachment.isTimeWork);
-                        intent.putExtra("lifeTime" , attachment.lifeTime);
-                        intent.putExtra("teacherID" , attachment.teacherId);
+                        intent.putExtra("isTimerWork", attachment.isTimeWork);
+                        intent.putExtra("lifeTime", attachment.lifeTime);
+                        intent.putExtra("teacherID", attachment.teacherId);
                         intent.putExtra("isOnClass", true);
                         intent.putExtra("isStudentCheck", attachment.isStudentCheck);
                         startActivity(intent);
