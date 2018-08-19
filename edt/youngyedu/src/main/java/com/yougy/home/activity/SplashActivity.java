@@ -68,15 +68,15 @@ public class SplashActivity extends BaseActivity {
         tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
 
-        if (!SpUtils.getDeviceScreen()){
-            ThreadManager.getSinglePool().execute(new Runnable() {
-                @Override
-                public void run() {
-                    DeviceScreensaverUtils.setDeviceBg();
-                    SpUtils.setDeviceScreen();
-                }
-            });
-        }
+//        if (!SpUtils.getDeviceScreen()){
+//            ThreadManager.getSinglePool().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    DeviceScreensaverUtils.setDeviceBg();
+//                    SpUtils.setDeviceScreen();
+//                }
+//            });
+//        }
     }
 
     @Override
