@@ -47,9 +47,9 @@ public class DeviceScreensaverUtils {
         if (bitmapFile.exists()) {
             String strInfos  ;
             if (!StringUtils.isEmpty(student.getUserRealName())){
-                strInfos    = "班级 :" + student.getClassName() + "\n姓名 :" + student.getUserRealName() + "同学";
+                strInfos    = student.getClassName() + student.getUserRealName() + "同学";
             }else{
-                strInfos    = "班级 :" + student.getClassName() + "\n姓名 :" + student.getUserRealName() ;
+                strInfos    = "未登录" ;
             }
 
             Bitmap bitmap = getNewBitMap(strInfos);
@@ -67,7 +67,7 @@ public class DeviceScreensaverUtils {
         canvas.drawBitmap(newBitmap, 0, 0, null);
         TextPaint textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(36.0F);
+        textPaint.setTextSize(30.0F);
         textPaint.setTypeface(Typeface.DEFAULT_BOLD);
         StaticLayout sl = new StaticLayout(text, textPaint, newBitmap.getWidth() - 8, Layout.Alignment.ALIGN_NORMAL, 1.0f, 10.0f, false);
 //        canvas.translate(6, 40);
@@ -84,7 +84,7 @@ public class DeviceScreensaverUtils {
             if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
                 startY = 560;
             } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
-                startX = 800;
+                startX = 950;
             }
         }
 
