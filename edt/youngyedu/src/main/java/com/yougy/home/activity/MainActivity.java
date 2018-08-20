@@ -981,6 +981,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     DeviceScreensaverUtils.setScreensaver();
 //                    DeviceScreensaverUtils.setDeviceBg();
                     isStScreensaver = true;
+                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
                 }
             });
         }
