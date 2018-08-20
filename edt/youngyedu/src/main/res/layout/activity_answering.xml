@@ -116,8 +116,8 @@
 
                     <com.yougy.anwser.ContentDisplayer
                         android:id="@+id/content_displayer"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_width="960px"
+                        android:layout_height="920px" />
 
                     <!-- android:layout_marginTop="15px"
                      android:paddingLeft="5px"
