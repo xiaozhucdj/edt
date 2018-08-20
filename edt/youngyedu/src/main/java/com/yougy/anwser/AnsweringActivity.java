@@ -11,8 +11,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
@@ -48,9 +48,9 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.EndQuestionAttachment;
-import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
@@ -252,14 +252,16 @@ public class AnsweringActivity extends AnswerBaseActivity {
         //新建写字板，并添加到界面上
 
 
-        binding.rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        /*binding.rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 binding.rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this, binding.rlAnswer.getMeasuredWidth(), binding.rlAnswer.getMeasuredHeight());
+                mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this, 960, 920);
 
             }
-        });
+        });*/
+
+        mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this);
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
 
@@ -596,7 +598,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                         } else {
                             if (!isAddAnswerBoard) {
-                                binding.rlAnswer.addView(mNbvAnswerBoard);
+                                RelativeLayout.LayoutParams layer1LayoutParam = new RelativeLayout.LayoutParams(960, 920);
+                                binding.rlAnswer.addView(mNbvAnswerBoard, layer1LayoutParam);
                                 isAddAnswerBoard = true;
                             }
                             binding.rcvChooeseItem.setVisibility(View.GONE);

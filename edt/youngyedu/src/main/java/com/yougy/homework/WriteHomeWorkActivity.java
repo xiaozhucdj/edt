@@ -394,13 +394,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void initLayout() {
         //新建写字板，并添加到界面上
-        rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        /*findViewById(R.id.ll_content_displayer).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                mNbvAnswerBoard = new NoteBookView2(WriteHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+                findViewById(R.id.ll_content_displayer).getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
             }
-        });
+        });*/
+
+        mNbvAnswerBoard = new NoteBookView2(WriteHomeWorkActivity.this);
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
 //        findViewById(R.id.img_btn_right).setVisibility(View.GONE);
@@ -797,7 +799,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
             } else {
                 if (!isAddAnswerBoard) {
-                    rlAnswer.addView(mNbvAnswerBoard);
+                    RelativeLayout.LayoutParams layer1LayoutParam = new RelativeLayout.LayoutParams(960, 920);
+                    rlAnswer.addView(mNbvAnswerBoard, layer1LayoutParam);
                     isAddAnswerBoard = true;
                 }
                 llChooeseItem.setVisibility(View.GONE);
