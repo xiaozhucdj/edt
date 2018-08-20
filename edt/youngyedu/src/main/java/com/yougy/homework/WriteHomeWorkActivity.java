@@ -237,6 +237,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private boolean mIsOnClass = false;//是否课堂作业
     private boolean mIsSubmit = false;//是否点击提交课堂作业
     private YXClient.OnMessageListener receiverMsg;
+    private boolean isUpload = false;
 
     @Override
     protected void setContentView() {
@@ -1324,7 +1325,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
     /**
      * 获取oss上传所需信息
      */
-    private void getUpLoadInfo() {
+    private synchronized void getUpLoadInfo() {
+
+        if (isUpload) {
+            return;
+        }
+        isUpload = true;
+
         showNoNetDialog();
         NetWorkManager.queryReplyRequest(SpUtils.getUserId() + "")
                 .subscribe(new Action1<STSbean>() {
@@ -1341,6 +1348,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        isUpload = false;
                     }
                 });
 
@@ -1407,12 +1415,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                 } catch (ClientException e) {
                                     // 本地异常如网络异常等
                                     e.printStackTrace();
+                                    isUpload = false;
                                 } catch (ServiceException e) {
                                     // 服务异常
                                     LogUtils.e("RequestId", e.getRequestId());
                                     LogUtils.e("ErrorCode", e.getErrorCode());
                                     LogUtils.e("HostId", e.getHostId());
                                     LogUtils.e("RawMessage", e.getRawMessage());
+                                    isUpload = false;
                                 }
 
                                 STSResultbean stsResultbean = new STSResultbean();
@@ -1514,6 +1524,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        isUpload = false;
                         if (loadingProgressDialog != null) {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
@@ -1587,6 +1598,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        isUpload = false;
                         throwable.printStackTrace();
                         if (throwable instanceof ApiException) {
                             String errorCode = ((ApiException) throwable).getCode();
