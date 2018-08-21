@@ -18,7 +18,7 @@ public class CartItem extends com.yougy.common.model.BookInfo implements Parcela
     private double bookSpotPrice;
 
     public double getBookSpotPrice() {
-        return SizeUtil.doScale_double(bookSpotPrice , 2 , BigDecimal.ROUND_UP);
+        return SizeUtil.doScale_double(bookSpotPrice , 2 , BigDecimal.ROUND_HALF_UP);
     }
 
     public void setBookSpotPrice(double bookSpotPrice) {

@@ -60,7 +60,7 @@
             android:layout_height="160px"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="150px"
-            android:src="@drawable/icon_student_large" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -123,7 +123,6 @@
             android:inputType="textPassword"
             android:padding="18px"
             android:singleLine="true"
-            android:text="123456"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textSize="24px"

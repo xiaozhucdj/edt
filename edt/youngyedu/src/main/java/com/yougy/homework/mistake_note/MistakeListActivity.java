@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;
@@ -160,7 +160,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                 startActivity(intent);
             }
         });
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper(){
+        binding.contentDisplayer.setContentAdapter(new ContentDisplayer.ContentAdapter(){
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
                 super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
@@ -169,7 +169,7 @@ public class MistakeListActivity extends HomeworkBaseActivity{
     }
 
     public void refreshItem(ParsedQuestionItem item){
-        binding.contentDisplayer.getmContentAdaper().updateDataList("question" , item.questionContentList);
+        binding.contentDisplayer.getContentAdapter().updateDataList("question" , item.questionContentList);
         String subTextStr = "        题目类型 : " + item.questionContentList.get(0).getExtraData();
         for (MistakeSummary mistakeSummary : mistakeSummaryList) {
             if (item.itemId.equals("" + mistakeSummary.getItem())){
@@ -177,8 +177,8 @@ public class MistakeListActivity extends HomeworkBaseActivity{
                 break;
             }
         }
-        binding.contentDisplayer.getmContentAdaper().setSubText(subTextStr);
-        binding.contentDisplayer.getmContentAdaper().toPage("question" , 0 , true);
+        binding.contentDisplayer.getContentAdapter().setSubText(subTextStr);
+        binding.contentDisplayer.getContentAdapter().toPage("question" , 0 , true);
     }
 
 

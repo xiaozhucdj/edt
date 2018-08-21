@@ -61,4 +61,37 @@ public class BookStoreQueryBookInfoReq extends NewBaseReq{
     public void setPn(int pn) {
         this.pn = pn;
     }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public int getBookCategory() {
+        return bookCategory;
+    }
+
+    public int getBookCategoryMatch() {
+        return bookCategoryMatch;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public int getBookVersion() {
+        return bookVersion;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public int getPs() {
+        return ps;
+    }
+
+    public int getPn() {
+        return pn;
+    }
+
 }

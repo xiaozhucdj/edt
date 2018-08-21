@@ -14,6 +14,25 @@ public class HomeWorkResultbean {
     private List<String> txtContent;
     private ArrayList<STSResultbean> picContent;
     private String useTime;
+    private String replyCreateTime;
+    private int replyCommentator;
+
+    //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂不传
+    public int getReplyCommentator() {
+        return replyCommentator;
+    }
+
+    public void setReplyCommentator(int replyCommentator) {
+        this.replyCommentator = replyCommentator;
+    }
+
+    public String getReplyCreateTime() {
+        return replyCreateTime;
+    }
+
+    public void setReplyCreateTime(String replyCreateTime) {
+        this.replyCreateTime = replyCreateTime;
+    }
 
     public List<String> getTxtContent() {
         return txtContent;

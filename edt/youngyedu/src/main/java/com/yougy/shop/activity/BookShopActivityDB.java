@@ -1,5 +1,6 @@
 package com.yougy.shop.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.anwser.BaseResult;
 import com.yougy.common.bean.Result;
 import com.yougy.common.manager.NewProtocolManager;
@@ -51,6 +52,7 @@ import com.yougy.view.decoration.SpaceItemDecoration;
 import org.litepal.util.LogUtil;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +119,20 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             } else {
                 extrabookSelected();
             }
+        },throwable -> {
+            if (throwable instanceof UnknownHostException) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("网络访问失败，请检查路由器是否正确连接！");
+                builder.setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
+                builder.setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
+                builder.show();
+            }
         });
     }
 
@@ -156,7 +172,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
      * 获取分类数据
      */
     private Observable<List<CategoryInfo>> getCategoryInfo() {
-        return NetWorkManager.queryBookCategoryInfo(new BookStoreCategoryReq());
+        return NetWorkManager.queryBookCategoryInfo();
     }
 
     private void handleHomeInfo(List<BookInfo> bookInfos) {

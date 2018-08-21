@@ -11,8 +11,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
@@ -48,9 +48,9 @@ import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.EndQuestionAttachment;
-import com.yougy.message.ListUtil;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnsweringBinding;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
@@ -87,7 +87,7 @@ import static com.yougy.common.eventbus.EventBusConstant.EVENT_LOCKER_ACTIVITY_P
  */
 
 public class AnsweringActivity extends AnswerBaseActivity {
-    public static int lastExamId;
+    public static ArrayList<Integer> handledExamIdList = new ArrayList<Integer>();
     ActivityAnsweringBinding binding;
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -176,7 +176,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
-        lastExamId = examId;
     }
 
     @Override
@@ -253,18 +252,20 @@ public class AnsweringActivity extends AnswerBaseActivity {
         //新建写字板，并添加到界面上
 
 
-        binding.rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        /*binding.rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 binding.rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this, binding.rlAnswer.getMeasuredWidth(), binding.rlAnswer.getMeasuredHeight());
+                mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this, 960, 920);
 
             }
-        });
+        });*/
+
+        mNbvAnswerBoard = new NoteBookView2(AnsweringActivity.this);
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
 
-        binding.contentDisplayer.setmContentAdaper(new ContentDisplayer.ContentAdaper() {
+        binding.contentDisplayer.setContentAdapter(new ContentDisplayer.ContentAdapter() {
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
                 super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
@@ -380,14 +381,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_clear_write:
 
-//                mNbvAnswerBoard.clearAll();
-
-                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
+                mNbvAnswerBoard.clearAll();
+//                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
 
                 break;
             case R.id.tv_add_page:
                 binding.tvAddPage.setEnabled(false);
-                if (questionPageSize - binding.contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                if (questionPageSize - binding.contentDisplayer.getContentAdapter().getPageCount("question") > 5) {
                     ToastUtil.showCustomToast(this, "最多只能加5张纸");
                     binding.tvAddPage.setEnabled(true);
                     return;
@@ -409,6 +409,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     binding.llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
 
                     if (binding.rlCaogaoBox.getChildCount() > 0) {
                         binding.rlCaogaoBox.removeView(mCaogaoNoteBoard);
@@ -417,6 +418,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 } else {
                     binding.tvCaogaoText.setText("扔掉\n草稿纸");
                     binding.llCaogaoControl.setVisibility(View.VISIBLE);
+                    mNbvAnswerBoard.setIntercept(true);
 
                     if (binding.rlCaogaoBox.getChildCount() == 0) {
                         binding.rlCaogaoBox.addView(mCaogaoNoteBoard);
@@ -437,6 +439,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     binding.tvCaogaoText.setText("草稿纸");
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     binding.llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
                 }
 
                 break;
@@ -473,7 +476,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         //刷新最后没有保存的数据
         bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
-        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+        pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
         mNbvAnswerBoard.clearAll();
     }
 
@@ -485,7 +488,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         questionList = questionItem.questionContentList;
         binding.questionTypeTextview.setText("题目类型 : " + questionItem.questionContentList.get(0).getExtraData());
-        binding.contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
+        binding.contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
             questionPageSize = questionList.size();
@@ -523,6 +526,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             binding.tvCaogaoText.setText("草稿纸");
                             mCaogaoNoteBoard.clearAll();
                             binding.llCaogaoControl.setVisibility(View.GONE);
+                            mNbvAnswerBoard.setIntercept(false);
                         }
 
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
@@ -531,7 +535,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
                         }
                         //是否是选择题。都需要截屏保存图片
-                        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap()));
+                        pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
                     }
 
 
@@ -541,9 +545,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     saveQuestionPage = position;
 
 
-                    if (position < binding.contentDisplayer.getmContentAdaper().getPageCount("question")) {
+                    if (position < binding.contentDisplayer.getContentAdapter().getPageCount("question")) {
                         //切换当前题目的分页
-                        binding.contentDisplayer.getmContentAdaper().toPage("question", position, false);
+                        binding.contentDisplayer.getContentAdapter().toPage("question", position, false);
                         binding.contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
@@ -569,11 +573,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             if (binding.rcvChooeseItem.getAdapter() != null) {
                                 binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
                             }
-                            if (saveQuestionPage == 0) {
-                                binding.rcvChooeseItem.setVisibility(View.VISIBLE);
-                            } else {
-                                binding.rcvChooeseItem.setVisibility(View.GONE);
-                            }
+//                            if (saveQuestionPage == 0) {
+//                                binding.rcvChooeseItem.setVisibility(View.VISIBLE);
+//                            } else {
+//                                binding.rcvChooeseItem.setVisibility(View.GONE);
+//                            }
                         } else if ("判断".equals(questionList.get(0).getExtraData())) {
 
                             if (isAddAnswerBoard) {
@@ -586,15 +590,16 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             binding.tvAddPage.setVisibility(View.GONE);
                             binding.tvClearWrite.setVisibility(View.GONE);
 
-                            if (saveQuestionPage == 0) {
-                                binding.llChooeseItem.setVisibility(View.VISIBLE);
-                            } else {
-                                binding.llChooeseItem.setVisibility(View.GONE);
-                            }
+//                            if (saveQuestionPage == 0) {
+//                                binding.llChooeseItem.setVisibility(View.VISIBLE);
+//                            } else {
+//                                binding.llChooeseItem.setVisibility(View.GONE);
+//                            }
 
                         } else {
                             if (!isAddAnswerBoard) {
-                                binding.rlAnswer.addView(mNbvAnswerBoard);
+                                RelativeLayout.LayoutParams layer1LayoutParam = new RelativeLayout.LayoutParams(960, 920);
+                                binding.rlAnswer.addView(mNbvAnswerBoard, layer1LayoutParam);
                                 isAddAnswerBoard = true;
                             }
                             binding.rcvChooeseItem.setVisibility(View.GONE);
@@ -889,39 +894,45 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 for (int i = 0; i < pathList.size(); i++) {
 
                     String picPath = pathList.get(i);
-                    if (picPath == null) {
-                        continue;
+
+                    if (!TextUtils.isEmpty(picPath) && picPath.contains("/")) {
+
+                        String picName = picPath.substring(picPath.lastIndexOf("/"));
+
+                        // 构造上传请求
+                        PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                        try {
+                            PutObjectResult putResult = oss.putObject(put);
+                            LogUtils.e("PutObject", "UploadSuccess");
+                            LogUtils.e("ETag", putResult.getETag());
+                            LogUtils.e("RequestId", putResult.getRequestId());
+                        } catch (ClientException e) {
+                            // 本地异常如网络异常等
+                            e.printStackTrace();
+                        } catch (ServiceException e) {
+                            // 服务异常
+                            LogUtils.e("RequestId", e.getRequestId());
+                            LogUtils.e("ErrorCode", e.getErrorCode());
+                            LogUtils.e("HostId", e.getHostId());
+                            LogUtils.e("RawMessage", e.getRawMessage());
+                        }
+
+                        STSResultbean stsResultbean = new STSResultbean();
+                        stsResultbean.setBucket(stSbean.getBucketName());
+                        stsResultbean.setRemote(stSbean.getPath() + picName);
+                        File picFile = new File(picPath);
+                        stsResultbean.setSize(picFile.length());
+                        stsResultbeanArrayList.add(stsResultbean);
+                        //上传后清理掉本地图片文件
+                        picFile.delete();
+
+                    } else {
+                        STSResultbean stsResultbean = new STSResultbean();
+                        stsResultbean.setBucket(stSbean.getBucketName());
+                        stsResultbean.setRemote("");
+                        stsResultbean.setSize(0);
+                        stsResultbeanArrayList.add(stsResultbean);
                     }
-                    String picName = picPath.substring(picPath.lastIndexOf("/"));
-
-
-                    // 构造上传请求
-                    PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
-                    try {
-                        PutObjectResult putResult = oss.putObject(put);
-                        LogUtils.e("PutObject", "UploadSuccess");
-                        LogUtils.e("ETag", putResult.getETag());
-                        LogUtils.e("RequestId", putResult.getRequestId());
-                    } catch (ClientException e) {
-                        // 本地异常如网络异常等
-                        e.printStackTrace();
-                    } catch (ServiceException e) {
-                        // 服务异常
-                        LogUtils.e("RequestId", e.getRequestId());
-                        LogUtils.e("ErrorCode", e.getErrorCode());
-                        LogUtils.e("HostId", e.getHostId());
-                        LogUtils.e("RawMessage", e.getRawMessage());
-                    }
-
-                    STSResultbean stsResultbean = new STSResultbean();
-                    stsResultbean.setBucket(stSbean.getBucketName());
-                    stsResultbean.setRemote(stSbean.getPath() + picName);
-                    File picFile = new File(picPath);
-                    stsResultbean.setSize(picFile.length());
-                    stsResultbeanArrayList.add(stsResultbean);
-                    //上传后清理掉本地图片文件
-                    picFile.delete();
-
                 }
 
 
@@ -1000,7 +1011,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         String picContent = new Gson().toJson(stsResultbeanArrayList);
         String txtContent = new Gson().toJson(checkedAnswerList);
 
-        NetWorkManager.postReply(SpUtils.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill))
+        NetWorkManager.postReply(SpUtils.getUserId() + "", itemId, examId + "", picContent, txtContent, DateUtils.converLongTimeToString(System.currentTimeMillis() - startTimeMill), DateUtils.converLongTimeToString(System.currentTimeMillis()))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
@@ -1026,9 +1037,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         if (timedTask != null) {
                             timedTask.stop();
                         }
-                        Intent intent = new Intent(AnsweringActivity.this, AnswerResultActivity.class);
+                        Intent intent = new Intent(AnsweringActivity.this, AnswerRecordDetailActivity.class);
                         intent.putExtra("question", questionItem);
-                        intent.putExtra("replyId" , String.valueOf((int) d));
+                        intent.putExtra("examId", examId);
                         startActivity(intent);
                         myFinish();
                     }

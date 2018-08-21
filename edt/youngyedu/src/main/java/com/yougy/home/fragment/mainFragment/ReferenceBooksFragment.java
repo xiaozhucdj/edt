@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.frank.etude.pageBtnBar.PageBtnBar;
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBar;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.activity.BaseActivity;

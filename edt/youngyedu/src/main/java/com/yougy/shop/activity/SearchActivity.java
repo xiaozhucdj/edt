@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.anwser.BaseResult;
 import com.yougy.common.new_network.BookStoreQueryBookInfoReq;
 import com.yougy.common.new_network.NetWorkManager;
@@ -222,20 +222,17 @@ public class SearchActivity extends ShopBaseActivity {
         }
         for (final CategoryInfo item : childs) {
             View layout = View.inflate(this, R.layout.text_view, null);
-            final TextView tv = (TextView) layout.findViewById(R.id.text_tv);
+            final TextView tv = layout.findViewById(R.id.text_tv);
             String display = item.getCategoryDisplay();
             if (display.length() > 4) {
                 display = display.substring(0, 4);
             }
             tv.setText(display);
-            tv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SearchActivity.this.resetVersionTv();
-                    mVersion = item.getCategoryDisplay();
-                    tv.setSelected(true);
-                    preChoosedBookVersion = item.getCategoryId();
-                }
+            tv.setOnClickListener(v -> {
+                SearchActivity.this.resetVersionTv();
+                mVersion = item.getCategoryDisplay();
+                tv.setSelected(true);
+                preChoosedBookVersion = item.getCategoryId();
             });
             binding.versionWrap.addView(layout);
         }
@@ -270,23 +267,27 @@ public class SearchActivity extends ShopBaseActivity {
 
     private void refreshResultView(List<BookInfo> bookInfos) {
         if (bookInfos == null || bookInfos.size() == 0) {
-            binding.noResult.setVisibility(View.VISIBLE);
+            binding.noResult.noResultRemind.setText(isSearch ? getString(R.string.no_search_result_text, bookTitle) : getString(R.string.no_filtrate_result_text));
+            binding.noResult.noResultRemind.setVisibility(View.VISIBLE);
             binding.resultRecycler.setVisibility(View.GONE);
         } else {
             mBookInfos.clear();
             mBookInfos.addAll(bookInfos);
             binding.resultRecycler.setVisibility(View.VISIBLE);
-            binding.noResult.setVisibility(View.GONE);
+            binding.noResult.noResultRemind.setVisibility(View.GONE);
             mAdapter.notifyDataSetChanged();
             binding.pageBtnBar.refreshPageBar();
         }
     }
+
+    private boolean isSearch = true;
 
     public void back(View view) {
         finish();
     }
 
     private void search() {
+
         if (!mHistoryRecords.contains(bookTitle)) {
             if (mHistoryRecords.contains(UIUtils.getContext().getResources().getString(R.string.no_history_record))) {
                 mHistoryRecords.clear();
@@ -295,6 +296,7 @@ public class SearchActivity extends ShopBaseActivity {
             SpUtils.putHistoryRecord(mHistoryRecords);
         }
         if (!TextUtils.isEmpty(bookTitle)) {
+            isSearch = true;
             binding.searchKey.setText(bookTitle);
             reset(binding.resetTv);
             bookVersion = -1;
@@ -386,6 +388,7 @@ public class SearchActivity extends ShopBaseActivity {
         bookCategory = preChoosedBookCategory;
         bookCategoryMatch = preChoosedBookCategoryMatch;
         binding.pageBtnBar.setCurrentSelectPageIndex(-1);
+        isSearch = false;
         queryBookBaseOnFiltration(1);
     }
 

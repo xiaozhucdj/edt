@@ -269,16 +269,21 @@
 
                     <TextView
                         android:id="@+id/empty_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="600px"
+                        android:layout_height="200px"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="200px"
+                        android:visibility="gone"
+                        android:background="@drawable/img_search_error_gb"
+                        android:text="@string/no_filtrate_result_text"
                         android:gravity="center"
-                        android:text="没有可用数据。。。"
-                        android:textColor="@color/text_color_black"
-                        android:textSize="@dimen/twenty_four_px"
-                        android:visibility="gone" />
+                        android:paddingLeft="50px"
+                        android:paddingRight="50px"
+                        android:textColor="#666666"
+                        android:textSize="24px" />
                 </FrameLayout>
 
-                <com.frank.etude.pageBtnBar.PageBtnBar
+                <com.frank.etude.pageable.PageBtnBar
                     android:id="@+id/page_btn_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

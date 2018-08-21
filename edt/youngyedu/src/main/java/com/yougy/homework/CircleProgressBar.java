@@ -127,29 +127,40 @@ public class CircleProgressBar extends View{
         //再画实际进度圆弧
         canvas.drawArc(oval , 360-(progress*360/100) , progress*360/100 , false , getPaint(0xff2bc5c5 , Paint.Style.STROKE , lineWidth , 0));
 
-        //写字
-        StringBuilder sb = new StringBuilder(text);
-        int maxTextLength = 10;
-        //如果字符数多于10个,则截断并添加省略号
-        if (sb.length() > maxTextLength){
-            sb.delete(maxTextLength , sb.length());
-            sb.append("...");
-        }
-        //
-        if (sb.length() < maxTextLength){
-            int tempInt = (maxTextLength-sb.length());
-            for (int i = 0 ; i < tempInt ; i++){
-                sb.insert(0 , " ");
-                sb.append(" ");
+        if (isDrawCenterText) {
+            //写字
+            StringBuilder sb = new StringBuilder(text);
+            int maxTextLength = 10;
+            //如果字符数多于10个,则截断并添加省略号
+            if (sb.length() > maxTextLength){
+                sb.delete(maxTextLength , sb.length());
+                sb.append("...");
             }
+            //
+            if (sb.length() < maxTextLength){
+                int tempInt = (maxTextLength-sb.length());
+                for (int i = 0 ; i < tempInt ; i++){
+                    sb.insert(0 , " ");
+                    sb.append(" ");
+                }
+            }
+            //写上方文字
+            float textSizeAbove = 120*scale;
+            canvas.drawText(sb.toString() , mWidth/2 - 320*scale , mHeight/2 - 80*scale ,
+                    getPaint(Color.BLACK , Paint.Style.FILL, 0 , textSizeAbove));
+            //写下方文字
+            float textSizeBelow = 195*scale;
+            canvas.drawText("正确率" , mWidth/2 - 290*scale , mHeight/2 + 200*scale ,
+                    getPaint(Color.BLACK , Paint.Style.FILL, 0 , textSizeBelow));
         }
-        //写上方文字
-        float textSizeAbove = 120*scale;
-        canvas.drawText(sb.toString() , mWidth/2 - 320*scale , mHeight/2 - 80*scale ,
-                getPaint(Color.BLACK , Paint.Style.FILL, 0 , textSizeAbove));
-        //写下方文字
-        float textSizeBelow = 195*scale;
-        canvas.drawText("正确率" , mWidth/2 - 290*scale , mHeight/2 + 200*scale ,
-                getPaint(Color.BLACK , Paint.Style.FILL, 0 , textSizeBelow));
+    }
+
+    private boolean isDrawCenterText = true;//默认正确率
+    /**
+     *  是否要自己写字   正确率
+     * @param isDraw
+     */
+    public void setIsDrawCenterText (boolean isDraw) {
+        isDrawCenterText = isDraw;
     }
 }

@@ -34,6 +34,7 @@ import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.message.SizeUtil;
+import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.bean.BookIdObj;
 import com.yougy.shop.bean.BookInfo;
@@ -172,38 +173,51 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                 add(new BookIdObj(mBookInfo.getBookId()));
             }
         };
-        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList))
-                .subscribe(new Action1<List<OrderIdObj>>() {
+        NetWorkManager.allowOrder(new AllowOrderRequestObj(SpUtils.getUserId() , bookIdList))
+                .subscribe(new Action1<Object>() {
                     @Override
-                    public void call(List<OrderIdObj> orderIdObjList) {
-                        OrderIdObj orderIdObj = orderIdObjList.get(0);
-                        Intent intent = new Intent(ShopBookDetailsActivity.this.getApplicationContext(), OrderDetailActivity.class);
-                        intent.putExtra("orderId", orderIdObj.getOrderId());
-                        startActivity(intent);
-                        finish();
-                        SpUtils.newOrderCountPlusOne();
+                    public void call(Object o) {
+                        LogUtils.v("订单查重成功,未查到重复订单");
+                        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList))
+                                .subscribe(new Action1<List<OrderIdObj>>() {
+                                    @Override
+                                    public void call(List<OrderIdObj> orderIdObjList) {
+                                        OrderIdObj orderIdObj = orderIdObjList.get(0);
+                                        Intent intent = new Intent(ShopBookDetailsActivity.this.getApplicationContext(), OrderDetailActivity.class);
+                                        intent.putExtra("orderId", orderIdObj.getOrderId());
+                                        startActivity(intent);
+                                        finish();
+                                        SpUtils.newOrderCountPlusOne();
+                                    }
+                                }, throwable -> {
+                                    UIUtils.showToastSafe(R.string.books_request_order_fail);
+                                    LogUtils.e("FH", "下单失败");
+                                    throwable.printStackTrace();
+                                });
                     }
-                }, throwable -> {
-                    showCenterDetermineDialog(R.string.books_request_order_fail);
-                    LogUtils.e("FH", "下单失败");
-                    throwable.printStackTrace();
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        ToastUtil.showCustomToast(getApplicationContext() , "下单失败!\r\n无法购买之前已经下过单的图书");
+                        throwable.printStackTrace();
+                    }
                 });
     }
 
     public void addFavor(View view) {
         if (mBookInfo.isBookInFavor()) {
-            showCenterDetermineDialog(R.string.books_already_add_collection);
+            UIUtils.showToastSafe(R.string.books_already_add_collection);
         } else {
             if (NetUtils.isNetConnected()) {
                 NetWorkManager.appendFavor(SpUtils.getUserId(), mBookInfo.getBookId())
                         .subscribe(o -> {
                             LogUtils.e("FH", "添加到收藏夹成功");
-                            showCenterDetermineDialog(R.string.books_add_collection_success);
+                            UIUtils.showToastSafe(R.string.books_add_collection_success);
                             mBookInfo.setBookInFavor(true);
                             setBtnFavorState();
                         }, throwable -> {
                             LogUtils.e("FH", "添加到收藏夹失败");
-                            showCenterDetermineDialog(R.string.books_add_collection_fail);
+                            UIUtils.showToastSafe(R.string.books_add_collection_fail);
                             throwable.printStackTrace();
                         });
             } else {
@@ -224,7 +238,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
     public void addCart(View view) {
         if (mBookInfo.isBookInCart()) {
-            showCenterDetermineDialog(R.string.books_already_add_car_2);
+            UIUtils.showToastSafe(R.string.books_already_add_car_2);
         } else if (mBookInfo.isBookInShelf()) {
             showReaderForPackage();
         } else {
@@ -232,12 +246,12 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             if (NetUtils.isNetConnected()) {
                 NetWorkManager.appendCart(SpUtils.getUserId(), mBookInfo.getBookId())
                         .subscribe(o -> {
-                            showCenterDetermineDialog(R.string.books_add_car_success);
+                            UIUtils.showToastSafe(R.string.books_add_car_success);
                             mBookInfo.setBookInCart(true);
                             setBtnCarState();
                             refreshCartCount();
                         }, throwable -> {
-                            showCenterDetermineDialog(R.string.books_add_car_fail);
+                            UIUtils.showToastSafe(R.string.books_add_car_fail);
                             LogUtils.e("FH", "加入购物车失败");
                             throwable.printStackTrace();
                         });
@@ -612,7 +626,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     }, throwable -> {
                         LogUtils.e("FH", "获取推荐图书信息失败");
                         throwable.printStackTrace();
-                        showCenterDetermineDialog(R.string.books_request_recommended_fail);
+                        UIUtils.showToastSafe(R.string.books_request_recommended_fail);
                     });
         }
     }
@@ -652,7 +666,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         NetWorkManager.addBookToBookcase(mBookInfo.getBookId() ,SpUtils.getUserId()).subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
-                UIUtils.showToastSafe("添加图书成功");
+//                UIUtils.showToastSafe("添加图书成功");
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
                 EventBus.getDefault().post(baseEvent);
 

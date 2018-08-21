@@ -82,6 +82,29 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                 confirm();
             }
         });
+        // add by FH
+        //后门!!长按确定按钮可以无视是否已绑定的检查,直接跳过绑定流程登录账号,此处用于测试时登录已绑定的账号验证问题用
+        //可能会造成数据错误,因此请尽量做读的操作,不要做写的操作.例如可以看作业但不要写作业等等.
+        binding.confirmBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!Commons.isRelase){
+                    SpUtils.saveStudent(student);
+                    File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
+                    if (!file.exists()) {
+                        ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));
+                    }
+                    LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
+                    binding.confirmBtn.setVisibility(View.GONE);
+                    binding.cancleBtn.setVisibility(View.GONE);
+                    binding.localPwdHintTv.setVisibility(View.VISIBLE);
+                    binding.startUseBtn.setVisibility(View.VISIBLE);
+                    binding.titleTv.setText("恭喜,用户与设备绑定成功");
+                    SpUtils.setLocalLockPwd("123456");
+                }
+                return false;
+            }
+        });
         binding.startUseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,23 +127,29 @@ public class ConfirmUserInfoDialog extends BaseDialog {
         deviceReq.setDeviceId(Commons.UUID);
         deviceReq.setUserId(student.getUserId());
         NetWorkManager.bindDevice(student.getUserId(), Commons.UUID)
-                .subscribe(o -> {
-                    LogUtils.e("FH", "绑定成功");
-                    SpUtils.saveStudent(student);
-                    File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
-                    if (!file.exists()) {
-                        ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        LogUtils.e("FH", "绑定成功");
+                        SpUtils.saveStudent(student);
+                        File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
+                        if (!file.exists()) {
+                            ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));
+                        }
+                        LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
+                        binding.confirmBtn.setVisibility(View.GONE);
+                        binding.cancleBtn.setVisibility(View.GONE);
+                        binding.localPwdHintTv.setVisibility(View.VISIBLE);
+                        binding.startUseBtn.setVisibility(View.VISIBLE);
+                        binding.titleTv.setText("恭喜,用户与设备绑定成功");
+                        SpUtils.setLocalLockPwd("123456");
                     }
-                    LogUtils.e("FH", "云信SDK登录成功 , 重置本机锁密码并提示");
-                    binding.confirmBtn.setVisibility(View.GONE);
-                    binding.cancleBtn.setVisibility(View.GONE);
-                    binding.localPwdHintTv.setVisibility(View.VISIBLE);
-                    binding.startUseBtn.setVisibility(View.VISIBLE);
-                    binding.titleTv.setText("恭喜,用户与设备绑定成功");
-                    SpUtils.setLocalLockPwd("123456");
-                }, throwable -> {
-                    ConfirmUserInfoDialog.this.dismiss();
-                    new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        ConfirmUserInfoDialog.this.dismiss();
+                        new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
+                    }
                 });
     }
 

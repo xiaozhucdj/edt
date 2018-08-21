@@ -134,7 +134,9 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
-                holder.headView.setText(bookStructureNodeList.get(position).getName());
+                BookInfo.BookContentsBean.NodesBean nodesBean = bookStructureNodeList.get(position);
+                ArrayList<Integer> idsInThisNode = examNumSumMap.get(String.valueOf(nodesBean.getId()));
+                holder.headView.setText(nodesBean.getName() + "(" + (idsInThisNode == null ? "0" : idsInThisNode.size()) + ")");
                 ((MyAdapter) ((HeaderViewListAdapter) holder.listview.getAdapter()).getWrappedAdapter()).setFatherNode(bookStructureNodeList.get(position));
             }
 
@@ -272,14 +274,9 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
             }
             bookChapterBinding = (ItemBookChapterBinding) convertView.getTag();
             BookInfo.BookContentsBean.NodesBean node = nodeList.get(position);
-            bookChapterBinding.textview.setText(node.getName());
             ArrayList<Integer> list = examNumSumMap.get(String.valueOf(node.getId()));
-            if (list != null && list.size() != 0){
-                bookChapterBinding.redDot.setVisibility(View.VISIBLE);
-            }
-            else {
-                bookChapterBinding.redDot.setVisibility(View.GONE);
-            }
+            bookChapterBinding.textview.setText(node.getName() + "(" + (list == null ? "0" : list.size()) + ")");
+            bookChapterBinding.redDot.setVisibility(View.GONE);
             if (node.getLevel() == 2){
                 convertView.setPadding(20 , 0 , 0 , 0);
                 bookChapterBinding.textview.setTextSize(TypedValue.COMPLEX_UNIT_PX , 24);

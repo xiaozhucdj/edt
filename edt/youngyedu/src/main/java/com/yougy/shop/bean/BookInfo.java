@@ -66,7 +66,7 @@ public class BookInfo implements Parcelable{
 
 
     public double getBookSpotPrice() {
-        return SizeUtil.doScale_double(bookSpotPrice , 2 , BigDecimal.ROUND_UP);
+        return SizeUtil.doScale_double(bookSpotPrice , 2 , BigDecimal.ROUND_HALF_UP);
     }
 
     public void setBookSpotPrice(double bookSpotPrice) {

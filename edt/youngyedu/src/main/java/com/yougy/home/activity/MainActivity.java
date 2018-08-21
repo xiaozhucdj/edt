@@ -30,11 +30,13 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
+import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.DeviceScreensaverUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -162,6 +164,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView imgSextIcon;
     private long mLastTime;
     private TextView testVersion;
+    private boolean isStScreensaver;
 
 
     /***************************************************************************/
@@ -305,9 +308,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
-            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_man));
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_male_120px));
         } else {
-            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.img_student_woman));
+            imgSextIcon.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_famale_122px));
         }
         mTvTextBook.callOnClick();
         setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
@@ -322,14 +325,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        long currentTime = System.currentTimeMillis();
+   /*     long currentTime = System.currentTimeMillis();
         if (mLastTime > 0 && SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
             if (currentTime - mLastTime < 1000) {
                 UIUtils.showToastSafe("操作过快");
                 return;
             }
         }
-        mLastTime = currentTime;
+        mLastTime = currentTime;*/
 
         int clickedViewId = v.getId();
         setSysTime();
@@ -970,6 +973,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (!isStScreensaver){
+            ThreadManager.getSinglePool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    DeviceScreensaverUtils.setScreensaver();
+//                    DeviceScreensaverUtils.setDeviceBg();
+                    isStScreensaver = true;
+                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                }
+            });
+        }
         initSysIcon();
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override

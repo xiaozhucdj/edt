@@ -14,11 +14,13 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
+import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.DeviceScreensaverUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -162,9 +164,9 @@ public class SettingMainActivity extends BaseActivity {
         binding.numTv.setText("编号 : " + student.getUserNum());
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {
-            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_man));
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_male_160px));
         } else {
-            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.img_160px_student_woman));
+            binding.avatarImv.setImageDrawable(UIUtils.getDrawable(R.drawable.icon_avatar_student_famale_162px));
         }
         initSysIcon();
         binding.avatarImv.setOnLongClickListener(v -> {
@@ -252,6 +254,12 @@ public class SettingMainActivity extends BaseActivity {
                     FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
                     showCenterDetermineDialog(R.string.unbind_success);
                     YXClient.getInstance().logout();
+                    ThreadManager.getSinglePool().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            DeviceScreensaverUtils.setScreensaver();
+                        }
+                    });
                 }, throwable -> {
                     showTagCancelAndDetermineDialog(R.string.unbind_fail, mTagUnbindFail);
                 });

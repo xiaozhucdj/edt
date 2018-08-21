@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
+import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.message.ListUtil;
@@ -249,7 +250,16 @@ public class ContactListActivity extends MessageBaseActivity{
             String id = idList.get(position);
             ItemContactListBinding binding = (ItemContactListBinding) convertView.getTag();
             binding.memberNameTv.setText(YXClient.getInstance().getUserNameByID(id));
-            binding.avatarImv.setImageResource(R.drawable.icon_teacher_medium);
+            GenderEnum userGender = YXClient.getInstance().getUserGenderByID(id);
+            if (userGender == null){
+                binding.avatarImv.setImageBitmap(null);
+            }
+            else if(userGender == GenderEnum.MALE){
+                binding.avatarImv.setImageResource(R.drawable.icon_avatar_teacher_male_76px);
+            }
+            else {
+                binding.avatarImv.setImageResource(R.drawable.icon_avatar_teacher_famale_74px);
+            }
             boolean hasChoosed = ListUtil.conditionalContains(hasChoosedIdList, new ListUtil.ConditionJudger<String>() {
                 @Override
                 public boolean isMatchCondition(String nodeInList) {

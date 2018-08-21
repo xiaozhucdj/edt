@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">student2.2.1</string>
+    <string name="app_name">student2.0.0</string>
     <string name="give_up_paper">确定扔掉这张纸吗？</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
@@ -33,7 +33,7 @@
     <string name="text_staticLoading">正在加载数据....</string>
     <string name="text_connect_timeout">网络请求超时 ,刷新试试</string>
     <string name="text_error">服务器错误</string>
-    <string name="text_no_netWork">没有链接网络</string>
+    <string name="text_no_netWork">没有连接网络</string>
     <string name="text_empty">没有内容</string>
     <string name="loading_study_data">正在准备学习资料，请耐心等待。。。</string>
     <string name="student_name">姓名</string>
@@ -64,7 +64,10 @@
     <string name="school_version">学校版本</string>
     <string name="subject_text">科目 ：</string>
     <string name="version_text">版本 ：</string>
-    <string name="no_result_text">找到0本图书，请检查输入的关键词是否有误，或者重新调整关键词</string>
+    <!--<string name="no_result_text">找到0本图书，请检查输入的关键词是否有误，或者重新调整关键词</string>-->
+    <!--<string name="no_result_text">没有对应的图书</string>-->
+    <string name="no_search_result_text">抱歉！没有找到与“（%1$s）”相关的图书，请重新调整关键词。</string>
+    <string name="no_filtrate_result_text">抱歉！此类图书暂未上架，敬请期待！</string>
     <string name="favorite">收藏夹</string>
     <string name="cart">购物车</string>
     <string name="select_all">全选</string>
@@ -87,7 +90,7 @@
     <string name="record_of_search">搜索历史</string>
     <string name="clear_record">清空历史记录</string>
 
-    <string name="jump_to_net">当前没有网络,是否链接网络?</string>
+    <string name="jump_to_net">当前没有网络,是否连接网络?</string>
     <string name="delete_note_fail">删除笔记失败</string>
     <string name="updata_note_fail">更新笔记失败</string>
     <string name="note_name_null">请填写笔记昵称</string>

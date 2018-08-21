@@ -24,7 +24,9 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.bean.BookIdObj;
 import com.yougy.shop.bean.BookInfo;
@@ -59,7 +61,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     ImageButton mImgbtnAddCar;
     @BindView(R.id.imgbtn_favor)
     ImageButton mImgbtnFavor;
-    @BindView(R.id.buy_btn)
+    @BindView(R.id.btn_buy)
     Button mBtnBuy;
     @BindView(R.id.img_pageBack)
     ImageView mImgPageBack;
@@ -177,7 +179,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 });
     }
 
-    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, R.id.buy_btn})
+    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, R.id.btn_buy})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgbtn_back:
@@ -247,7 +249,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                             }
                         });
                 break;
-            case R.id.buy_btn:
+            case R.id.btn_buy:
                 if (mBookInfo.isBookInShelf()) {
                     showCenterDetermineDialog(R.string.books_already_buy);
                     return;
@@ -262,21 +264,34 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         add(new BookIdObj(mBookInfo.getBookId()));
                     }
                 };
-                NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList))
-                        .subscribe(new Action1<List<OrderIdObj>>() {
+                NetWorkManager.allowOrder(new AllowOrderRequestObj(SpUtils.getUserId() , bookIdList))
+                        .subscribe(new Action1<Object>() {
                             @Override
-                            public void call(List<OrderIdObj> orderIdObjs) {
-                                OrderIdObj orderIdObj = orderIdObjs.get(0);
-                                Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
-                                intent.putExtra("orderId", orderIdObj.getOrderId());
-                                startActivity(intent);
-                                SpUtils.newOrderCountPlusOne();
+                            public void call(Object o) {
+                                LogUtils.v("订单查重成功,未查到重复订单");
+                                NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList))
+                                        .subscribe(new Action1<List<OrderIdObj>>() {
+                                            @Override
+                                            public void call(List<OrderIdObj> orderIdObjs) {
+                                                OrderIdObj orderIdObj = orderIdObjs.get(0);
+                                                Intent intent = new Intent(getApplicationContext(), OrderDetailActivity.class);
+                                                intent.putExtra("orderId", orderIdObj.getOrderId());
+                                                startActivity(intent);
+                                                SpUtils.newOrderCountPlusOne();
+                                            }
+                                        }, new Action1<Throwable>() {
+                                            @Override
+                                            public void call(Throwable throwable) {
+                                                showCenterDetermineDialog(R.string.get_order_fail);
+                                                LogUtils.e("FH", "下单失败");
+                                                throwable.printStackTrace();
+                                            }
+                                        });
                             }
                         }, new Action1<Throwable>() {
                             @Override
                             public void call(Throwable throwable) {
-                                showCenterDetermineDialog(R.string.get_order_fail);
-                                LogUtils.e("FH", "下单失败");
+                                ToastUtil.showCustomToast(getApplicationContext() , "下单失败!\r\n无法购买之前已经下过单的图书");
                                 throwable.printStackTrace();
                             }
                         });

@@ -156,14 +156,16 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         }
 
         //新建写字板，并添加到界面上
-        rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        /*rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 mNbvAnswerBoard = new NoteBookView2(WriteErrorHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
 
             }
-        });
+        });*/
+
+        mNbvAnswerBoard = new NoteBookView2(WriteErrorHomeWorkActivity.this);
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
         switch (lastScore) {
@@ -187,7 +189,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 ivZpResult.setVisibility(View.GONE);
                 break;
         }
-        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper() {
+        ContentDisplayer.ContentAdapter contentAdapter = new ContentDisplayer.ContentAdapter() {
 
             @Override
             public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
@@ -212,7 +214,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
             }
         };
-        contentDisplayer.setmContentAdaper(contentAdaper);
+        contentDisplayer.setContentAdapter(contentAdapter);
 
         contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
             @Override
@@ -259,7 +261,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             return;
         }
         questionList = questionItem.questionContentList;
-        contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
+        contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
             questionPageSize = questionList.size();
@@ -295,6 +297,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                             tvCaogaoText.setText("草稿纸");
                             mCaogaoNoteBoard.clearAll();
                             llCaogaoControl.setVisibility(View.GONE);
+                            mNbvAnswerBoard.setIntercept(false);
                         }
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                         if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
@@ -311,9 +314,9 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     saveQuestionPage = position;
 
 
-                    if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
+                    if (position < contentDisplayer.getContentAdapter().getPageCount("question")) {
                         //切换当前题目的分页
-                        contentDisplayer.getmContentAdaper().toPage("question", position, false);
+                        contentDisplayer.getContentAdapter().toPage("question", position, false);
                         contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
@@ -356,7 +359,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
                         } else {
                             if (!isAddAnswerBoard) {
-                                rlAnswer.addView(mNbvAnswerBoard);
+                                RelativeLayout.LayoutParams layer1LayoutParam = new RelativeLayout.LayoutParams(960, 920);
+                                rlAnswer.addView(mNbvAnswerBoard, layer1LayoutParam);
                                 isAddAnswerBoard = true;
                             }
                             rcvChooese.setVisibility(View.GONE);
@@ -492,7 +496,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 mNbvAnswerBoard.clearAll();
                 break;
             case R.id.tv_add_page:
-                if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") > 5) {
+                if (questionPageSize - contentDisplayer.getContentAdapter().getPageCount("question") > 5) {
                     ToastUtil.showCustomToast(this, "最多只能加5张纸");
                     return;
                 }
@@ -514,6 +518,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
                         rlCaogaoBox.removeView(mCaogaoNoteBoard);
@@ -522,6 +527,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 } else {
                     tvCaogaoText.setText("扔掉\n草稿纸");
                     llCaogaoControl.setVisibility(View.VISIBLE);
+                    mNbvAnswerBoard.setIntercept(true);
 
                     if (rlCaogaoBox.getChildCount() == 0) {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
@@ -542,6 +548,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     tvCaogaoText.setText("草稿纸");
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
                 }
 
                 break;

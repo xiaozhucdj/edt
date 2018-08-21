@@ -10,12 +10,13 @@
         <RelativeLayout
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="65px"
             android:paddingTop="16px"
             android:paddingLeft="30px"
             android:paddingRight="30px"
             android:paddingBottom="16px"
             >
+
             <ImageView
                 android:id="@+id/back_btn"
                 android:layout_width="30px"
@@ -23,40 +24,85 @@
                 android:src="@drawable/le_btn_back_new_selector"
                 android:onClick="back"
                 />
+
+            <ImageView
+                android:id="@+id/image_refresh"
+                android:layout_width="32px"
+                android:layout_height="30px"
+                android:layout_marginLeft="30px"
+                android:layout_toRightOf="@+id/back_btn"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_shuaxin"
+                android:onClick="back"
+                />
+
             <TextView
                 android:id="@+id/title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text=""
+                android:text="title"
                 android:textColor="@color/shop_text_black_333333"
-                android:textSize="28px"
+                android:textSize="30px"
                 />
         </RelativeLayout>
         <View android:layout_width="match_parent" android:layout_height="2px" android:background="@color/black"
-            android:layout_marginTop="76px"/>
+            android:layout_marginTop="65px"/>
         <TextView
             android:id="@+id/question_num_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22px"
+            android:textSize="24px"
             android:text="习题数量 : xx"
             android:textColor="@color/black"
             android:layout_marginLeft="60px"
-            android:layout_marginTop="156px"
+            android:layout_marginTop="146px"
             />
-        <com.yougy.homework.CircleProgressBar
-            android:id="@+id/circleProgressBar"
+        <RelativeLayout
+            android:id="@+id/layout_circleProgressBar"
             android:layout_width="222px"
             android:layout_height="222px"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="136px"
-            />
+            android:layout_marginTop="86px">
+            <com.yougy.homework.CircleProgressBar
+                android:id="@+id/circleProgressBar"
+                android:layout_width="222px"
+                android:layout_height="222px"
+                />
+            <LinearLayout
+                android:id="@+id/centerText_layout"
+                android:layout_width="130px"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/background_black"
+                    android:textSize="36px"
+                    android:text="98"/>
+
+                <TextView
+                    android:id="@+id/text_score_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="10px"
+                    android:textColor="@color/background_black"
+                    android:textSize="36px"
+                    android:text="分数"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/time_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22px"
+            android:textSize="24px"
             android:text="xx:xx:xx"
             android:textColor="@color/black"
             android:layout_alignParentRight="true"
@@ -71,15 +117,15 @@
             android:layout_alignTop="@id/time_tv"
             android:layout_toLeftOf="@id/time_tv"
             android:layout_marginRight="15px"
-            android:layout_marginTop="3px"
+            android:layout_marginTop="6px"
             />
         <com.yougy.homework.PageableRecyclerView
             android:id="@+id/main_recyclerview"
-            android:layout_width="match_parent"
+            android:layout_width="900px"
             android:layout_height="match_parent"
-            android:layout_marginBottom="30px"
-            android:layout_below="@id/circleProgressBar"
-            android:layout_marginTop="20px"
+            android:layout_marginBottom="16px"
+            android:layout_below="@id/layout_circleProgressBar"
+            android:layout_marginLeft="50px"
             />
     </RelativeLayout>
 </layout>

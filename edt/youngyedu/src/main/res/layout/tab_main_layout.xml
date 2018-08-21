@@ -75,7 +75,7 @@
                     android:layout_marginTop="47dp"
                     android:background="@null"
                     android:scaleType="fitXY"
-                    android:src="@drawable/icon_student_120px" />
+                    />
 
                 <TextView
                     android:id="@+id/tv_className"

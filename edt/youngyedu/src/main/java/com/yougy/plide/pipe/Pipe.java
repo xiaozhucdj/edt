@@ -19,31 +19,35 @@ public class Pipe {
 
     public void push(Ball ball){
         synchronized (ballList){
+            if (beenRecycled){
+                ball.onCancelled();
+                return;
+            }
             if (lastRunBall != null && lastRunBall.getTimeStamp() > ball.getTimeStamp()){
+                ball.onCancelled();
                 return;
             }
             for (int i = 0; i < ballList.size() ; ) {
                 Ball ballInList = ballList.get(i);
                 if (ballInList.getTimeStamp() > ball.getTimeStamp()){
-                    if (ballInList.needCancleOthers()){
+                    if (ballInList.needCancelOthers()){
+                        ball.onCancelled();
                         return;
                     }
                     else {
                         ballList.add(i , ball);
                         ballList.notify();
-                        if (ball.needCancleOthers()){
-                            mThread.cancleCurrentBall();
-                        }
-                        else {
-                            ballList.notify();
+                        if (ball.needCancelOthers()){
+                            mThread.cancelCurrentBall();
                         }
                         ball = null;
                         break;
                     }
                 }
                 else {
-                    if (ball.needCancleOthers()){
+                    if (ball.needCancelOthers()){
                         ballList.remove(ballInList);
+                        ballInList.onCancelled();
                     }
                     else {
                         i++;
@@ -53,11 +57,8 @@ public class Pipe {
             if (ball != null){
                 ballList.add(ball);
                 ballList.notify();
-                if (ball.needCancleOthers()){
-                    mThread.cancleCurrentBall();
-                }
-                else {
-                    ballList.notify();
+                if (ball.needCancelOthers()){
+                    mThread.cancelCurrentBall();
                 }
             }
         }
@@ -75,21 +76,27 @@ public class Pipe {
     }
 
     public void recycle(){
-        beenRecycled = true;
-        mThread.cancleCurrentBall();
-        mThread = null;
+        synchronized (ballList){
+            beenRecycled = true;
+            Ball ball;
+            while ((ball = pop()) != null){
+                ball.onCancelled();
+            }
+            mThread.cancelCurrentBall();
+            mThread = null;
+        }
     }
 
     public void cancleCurrentBall(){
-        mThread.cancleCurrentBall();
+        mThread.cancelCurrentBall();
     }
 
-    private class MyThread extends Thread {
+    private class MyThread extends Thread{
         private Ball currentBall;
 
-        public void cancleCurrentBall(){
+        public void cancelCurrentBall(){
             try {
-                currentBall.cancle();
+                currentBall.cancel();
                 mThread.interrupt();
             }
             catch (NullPointerException e){
@@ -123,9 +130,15 @@ public class Pipe {
                         if (beenRecycled){
                             return;
                         }
-                        currentBall.run();
+                        if (currentBall.isCanceld()){
+                            currentBall.onCancelled();
+                        }
+                        else {
+                            currentBall.run();
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                        currentBall.onCancelled();
                         if (beenRecycled){
                             return;
                         }

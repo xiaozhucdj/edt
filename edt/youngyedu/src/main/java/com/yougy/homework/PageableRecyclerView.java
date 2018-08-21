@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.frank.etude.pageBtnBar.PageBtnBar;
-import com.frank.etude.pageBtnBar.PageBtnBarAdapter;
+import com.frank.etude.pageable.PageBtnBar;
+import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.ui.activity.R;
 
 /**

@@ -464,4 +464,14 @@ public class SpUtils {
         return v ;
     }
 
+    //锁屏相关,此处order=命令
+    public static void setDeviceScreen() {
+        sp.edit().putBoolean("devicescreen", true).apply();
+    }
+
+    //锁屏相关,此处order=命令
+    public static boolean getDeviceScreen() {
+        return sp.getBoolean("devicescreen", false);
+    }
+
 }

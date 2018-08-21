@@ -89,5 +89,32 @@ public class FormatUtils {
         }
         return b;
     }
+
+    /**
+     * 将 string time 转换成 毫秒值
+     * @param time  hh:mm:ss
+     * @return
+     */
+    public static long timeStrToLongMisencod (String time) {
+        if (StringUtils.isEmpty(time)) {
+            LogUtils.e("timeStrToLongMisencod time is NULL, ERROR return.");
+            return 0;
+        }
+        long t = 0;
+        String[] times = time.split(":");
+        if (times!=null && times.length == 3) {
+            if (Integer.parseInt(times[0]) != 0) {
+                t = Integer.parseInt(times[0]) * 60 * 60 * 1000 + t;
+            }
+            if (Integer.parseInt(times[1]) != 0) {
+                t = Integer.parseInt(times[1])  * 60 * 1000 + t;
+            }
+            if (Integer.parseInt(times[2]) != 0) {
+                t = Integer.parseInt(times[2])  * 1000 + t;
+            }
+        }
+
+        return  t;
+    }
 }
 

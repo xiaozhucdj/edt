@@ -15,6 +15,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,7 +32,12 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 import com.yougy.anwser.ContentDisplayer;
+import com.yougy.anwser.ContentDisplayerAdapterV2;
+import com.yougy.anwser.ContentDisplayerV2;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.HomeWorkResultbean;
 import com.yougy.anwser.ParsedQuestionItem;
@@ -48,9 +54,12 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.OnClickFastListener;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -58,6 +67,8 @@ import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.message.ListUtil;
+import com.yougy.message.YXClient;
+import com.yougy.message.attachment.ReceiveWorkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
@@ -86,7 +97,6 @@ import rx.schedulers.Schedulers;
 import static com.yougy.common.utils.SharedPreferencesUtil.getSpUtil;
 
 /**
- * Created by cdj
  * 写作业界面
  */
 public class WriteHomeWorkActivity extends BaseActivity {
@@ -102,11 +112,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @BindView(R.id.ll_chooese_item)
     LinearLayout llChooeseItem;
     @BindView(R.id.content_displayer)
-    ContentDisplayer contentDisplayer;
+    ContentDisplayerV2 contentDisplayer;
     @BindView(R.id.rl_answer)
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
     TextView tvSubmitHomeWork;
+    @BindView(R.id.tv_title_time)
+    TextView tvSubmitTime;
+    @BindView(R.id.tv_title_timing)
+    TextView tvTiming;
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.tv_add_page)
@@ -137,8 +151,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
     RadioButton rbError;
     @BindView(R.id.rb_right)
     RadioButton rbRight;
+    @BindView(R.id.rg_judge)
+    RadioGroup rgJudge;
     @BindView(R.id.tv_homework_position)
     TextView tvHomeWorkPosition;
+    @BindView(R.id.image_refresh)
+    ImageView imageRefresh;
+    @BindView(R.id.btn_left)
+    ImageView mImageViewBack;
 
     //作业回答手写板
     private NoteBookView2 mNbvAnswerBoard;
@@ -184,6 +204,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private int saveQuestionPage = 0;
 
     private String examName;
+    private boolean isStudentCheck;
     private String examId = "550";
     //是否添加了手写板
     private boolean isAddAnswerBoard;
@@ -199,13 +220,24 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private boolean isFirstComeInHomeWork;
     //是否第一次自动点击进入某一题的第一页
     private boolean isFirstComeInQuestion;
-    //作业中某一题所有结果（图片，文本），统计上传数据到集合中，方便将该信息提交到服务器
-    ArrayList<HomeWorkResultbean> homeWorkResultbeanList = new ArrayList<>();
 
     //某一题的分页中选中页码用来设置选择背景色。
     private int chooesePoint = 0;
 
     private Boolean btnLocked = false;
+
+    private boolean isTimerWork = false; //是否定时作业
+    private long timeSpace = -1;  // 定时时间
+    private long startTime = 0;// 开始时间
+    private long residueTime; //剩余时间
+    private boolean isAutoSubmit = false; //是否到时间自动提交
+    private TimedTask timingTask;//定时作业定时器
+
+    private int teacherId;//教师Id
+    private boolean mIsOnClass = false;//是否课堂作业
+    private boolean mIsSubmit = false;//是否点击提交课堂作业
+    private YXClient.OnMessageListener receiverMsg;
+    private boolean isUpload = false;
 
     @Override
     protected void setContentView() {
@@ -216,7 +248,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void init() {
 
         examId = getIntent().getStringExtra("examId");
-
+        isStudentCheck = getIntent().getBooleanExtra("isStudentCheck", false);
         if (TextUtils.isEmpty(examId)) {
             ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
             mIsFinish = true;
@@ -225,21 +257,155 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         examName = getIntent().getStringExtra("examName");
         tvTitle.setText(examName);
+
+        isTimerWork = getIntent().getBooleanExtra("isTimerWork", false);
+        if (isTimerWork && !StringUtils.isEmpty(getIntent().getStringExtra("lifeTime"))) {
+            timeSpace = FormatUtils.timeStrToLongMisencod(getIntent().getStringExtra("lifeTime"));
+            if (timeSpace <= 0) {
+                LogUtils.e("lifeTime is 0, ERROR return.");
+                finish();
+                return;
+            }
+            judgeWorkIsEnd();
+        }
+        teacherId = getIntent().getIntExtra("teacherID", 0);
+        mIsOnClass = getIntent().getBooleanExtra("isOnClass", false);
+        if (mIsOnClass) {
+            tvSaveHomework.setVisibility(View.GONE);
+            mImageViewBack.setVisibility(View.GONE);
+        }
+        LogUtils.d("homework isTimerWork = " + isTimerWork);
+        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            tvSubmitTime.setVisibility(View.INVISIBLE);
+            tvTiming.setVisibility(View.INVISIBLE);
+        } else {
+            if (isTimerWork) {
+                tvSubmitTime.setVisibility(View.INVISIBLE);
+                tvTiming.setVisibility(View.VISIBLE);
+            } else {
+                tvSubmitTime.setVisibility(View.VISIBLE);
+                tvTiming.setVisibility(View.INVISIBLE);
+            }
+        }
+        initReceiveHomeworkMsg();
+    }
+
+    /**
+     * 收作业消息
+     */
+    private void initReceiveHomeworkMsg() {
+        receiverMsg = message -> {
+            if (message.getAttachment() instanceof ReceiveWorkAttachment) {
+                ReceiveWorkAttachment receiveWorkAttachment = (ReceiveWorkAttachment) message.getAttachment();
+                LogUtils.d("examId = " + examId + "   receiveWorkAttachment.examId = " + receiveWorkAttachment.examId);
+                if (examId.equals(receiveWorkAttachment.examId)) {
+                    LogUtils.w("teacher receive homework , auto submit.");
+                    WriteHomeWorkActivity.this.autoSubmitHomeWork();
+                } else {
+                    LogUtils.w("current examId is not receive examId. not submit.");
+                }
+            }
+        };
+        YXClient.getInstance().with(getApplication()).addOnNewCommandCustomMsgListener(receiverMsg);
+
+    }
+
+    /**
+     * 移除消息
+     */
+    private void removeReceiveHomeworkMsg() {
+        if (receiverMsg != null) {
+            YXClient.getInstance().with(getApplication()).removeOnNewCommandCustomMsgListener(receiverMsg);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isAutoSubmit) {
+            YoungyApplicationManager.getMainThreadHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    autoSubmitHomeWork();
+                }
+            }, 2500);
+        }
+    }
+
+    /**
+     * 判断定时作业是否到时间  未到时间继续 到时间自动提交作业
+     */
+    private void judgeWorkIsEnd() {
+        SharedPreferencesUtil sharedPreferencesUtil = SharedPreferencesUtil.getSpUtil();
+        startTime = sharedPreferencesUtil.getLong("startWorkTime" + "_" + examId, 0);
+        long currentTime = System.currentTimeMillis();
+        LogUtils.d("timerWork init startTime :" + startTime);
+        if (startTime == 0 || (currentTime - startTime > 0 && currentTime - startTime < timeSpace)) {
+            if (startTime == 0) {//记录开始时间
+                startTime = System.currentTimeMillis();
+                sharedPreferencesUtil.putLong("startWorkTime" + "_" + examId, startTime);
+                residueTime = timeSpace;
+            } else {
+                residueTime = timeSpace - (currentTime - startTime);
+            }
+            //继续作业
+            LogUtils.d("timerWork init continue ....");
+            startTimerTask();
+        } else {
+            //作业到时间  自动提交
+            LogUtils.d("timerWork init submit ....");
+            isAutoSubmit = true;
+        }
+    }
+
+    /**
+     * 开始计时任务
+     */
+    private synchronized void startTimerTask() {
+        timingTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
+                .start(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer times) {
+                        if (residueTime < 1000) {
+                            residueTime = 0;
+                            autoSubmitHomeWork();
+                            timingTask.stop();
+                        } else {
+                            residueTime -= 1000;
+                        }
+                        refreshTime(residueTime);
+                    }
+                });
+    }
+
+
+    /**
+     * 时间到了自动提交任务
+     */
+    private void autoSubmitHomeWork() {
+        //是否要提示：
+//        ToastUtil.showCustomToast(getApplicationContext(), "定时时间到，作业将自动提交！");
+        mNbvAnswerBoard.setIntercept(true);
+        invalidate();
+        saveLastHomeWorkData(showHomeWorkPosition, false);
+        getUpLoadInfo();
     }
 
     @Override
     protected void initLayout() {
         //新建写字板，并添加到界面上
-        rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        /*findViewById(R.id.ll_content_displayer).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                mNbvAnswerBoard = new NoteBookView2(WriteHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+                findViewById(R.id.ll_content_displayer).getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
             }
-        });
+        });*/
+
+        mNbvAnswerBoard = new NoteBookView2(WriteHomeWorkActivity.this);
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
-        findViewById(R.id.img_btn_right).setVisibility(View.GONE);
+//        findViewById(R.id.img_btn_right).setVisibility(View.GONE);
 
         /*mNbvAnswerBoard.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -252,10 +418,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             }
         });*/
 
-        ContentDisplayer.ContentAdaper contentAdaper = new ContentDisplayer.ContentAdaper() {
+        ContentDisplayerAdapterV2 contentAdapter = new ContentDisplayerAdapterV2() {
             @Override
-            public void onPageInfoChanged(String typeKey, int newPageCount, int selectPageIndex) {
-                super.onPageInfoChanged(typeKey, newPageCount, selectPageIndex);
+            public void afterPageCountChanged(String typeKey) {
+                int newPageCount = getPageCount(typeKey);
+
 
                 //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
                 if (newPageCount > questionPageSize) {
@@ -279,24 +446,56 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 }
             }
+
         };
-        contentDisplayer.setmContentAdaper(contentAdaper);
+        contentDisplayer.setContentAdapter(contentAdapter);
 
-
-        contentDisplayer.setOnLoadingStatusChangedListener(new ContentDisplayer.OnLoadingStatusChangedListener() {
+        contentDisplayer.setLoadingStatusListener(new ContentDisplayerV2.StatusChangeListener() {
             @Override
-            public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
+            public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
+                if (questionList == null) {
+                    return;
+                }
+
+                switch (newStatus) {
+                    case DOWNLOADING:
+                        contentDisplayer.setHintText("下载中");
+                        break;
+                    case LOADING:
+                        contentDisplayer.setHintText("加载中");
+                        break;
+                    case ERROR:
+                        contentDisplayer.setHintText("加载错误，请刷新");
+                        break;
+                    case SUCCESS:
+                        contentDisplayer.setHintText(null);//设置为null该view会gone
+                        break;
+                }
+
+
                 if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
-                    if (loadingStatus == ContentDisplayer.LOADING_STATUS.SUCCESS) {
-                        mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS) {
+
+                        UIUtils.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mNbvAnswerBoard != null) {
+                                    mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                                    onClick(tvTitle);
+                                }
+                            }
+                        }, 600);
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
                 }
             }
         });
+
+
+        imageRefresh.setOnClickListener(v -> loadData());
     }
 
     @Override
@@ -391,8 +590,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 parsedQuestionItem = parsedQuestionItemList.get(0);
                 questionList = parsedQuestionItem.questionContentList;
-                contentDisplayer.getmContentAdaper().updateDataList("question", (ArrayList<Content_new>) questionList);
-
 
                 //判断是否之前有笔记
                 questionPageSize = bytesList.size() >= questionList.size() ? bytesList.size() : questionList.size();
@@ -403,11 +600,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     isAddAnswerBoard = false;
                 }
 
-
-                //取题目的第一页纸展示
                 if (questionList != null && questionList.size() > 0) {
-                    //这里先添加第一题题目的分页手写笔记，方便后期修改
-
                     if (bytesList.size() > 0) {
 
                     } else {
@@ -428,6 +621,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             pathList.add(null);
                         }
                     }
+                }
+                contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
+
+                //取题目的第一页纸展示
+                if (questionList != null && questionList.size() > 0) {
                     isFirstComeInQuestion = true;
                     if (btnLocked == false) {
                         btnLocked = true;
@@ -448,6 +646,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 homeWorkPageNumAdapter.notifyDataSetChanged();
                 refreshLastAndNextQuestionBtns();
+                if (examPaperContent.getPaperItemWeight() == null) {
+                    tvHomeWorkPosition.setText((showHomeWorkPosition + 1) + "/" + homeWorkPageSize);
+                } else {
+                    tvHomeWorkPosition.setText((showHomeWorkPosition + 1) + "/" + homeWorkPageSize + "(" + examPaperContent.getPaperItemWeight() + "分)");
+                }
             }
         });
 
@@ -476,8 +679,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
             homeWorkPageNumAdapter.onItemClickListener.onItemClick1(0);
 
         }
-        //触发一下点击事件。默认隐藏所有题目
-        onClick(findViewById(R.id.ll_chooese_homework));
+
+        if (allHomeWorkPage.getVisibility() == View.VISIBLE) {
+            //触发一下点击事件。默认隐藏所有题目
+            onClick(findViewById(R.id.ll_chooese_homework));
+        }
     }
 
     public void clickPageBtn(int position) {
@@ -502,6 +708,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 tvCaogaoText.setText("草稿纸");
                 llCaogaoControl.setVisibility(View.GONE);
+                mNbvAnswerBoard.setIntercept(false);
             }
             mCaogaoNoteBoard.clearAll();
 
@@ -512,7 +719,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 bytesList.set(saveQuestionPage, tmpBytes1);
             }
             //是否是选择题。都需要截屏保存图片
-            pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
+            pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap(), examId + "_" + showHomeWorkPosition + "_" + saveQuestionPage));
         }
 
         mNbvAnswerBoard.clearAll();
@@ -522,9 +729,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
         //将本页设置为选中页
         saveQuestionPage = position;
 
-        if (position < contentDisplayer.getmContentAdaper().getPageCount("question")) {
+        if (position < contentDisplayer.getContentAdapter().getPageCount("question")) {
             //切换当前题目的分页
-            contentDisplayer.getmContentAdaper().toPage("question", position, false);
+            contentDisplayer.toPage("question", position, false, null);
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
@@ -550,11 +757,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (rcvChooese.getAdapter() != null) {
                     rcvChooese.getAdapter().notifyDataSetChanged();
                 }
-                if (saveQuestionPage == 0) {
-                    rcvChooese.setVisibility(View.VISIBLE);
-                } else {
-                    rcvChooese.setVisibility(View.GONE);
-                }
+//                if (saveQuestionPage == 0) {
+//                    rcvChooese.setVisibility(View.VISIBLE);
+//                } else {
+//                    rcvChooese.setVisibility(View.GONE);
+//                }
 
             } else if ("判断".equals(questionList.get(0).getExtraData())) {
 
@@ -581,17 +788,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     rbRight.setChecked(false);
                     rbError.setChecked(false);
+                    rgJudge.clearCheck();
                 }
 
-                if (saveQuestionPage == 0) {
-                    llChooeseItem.setVisibility(View.VISIBLE);
-                } else {
-                    llChooeseItem.setVisibility(View.GONE);
-                }
+//                if (saveQuestionPage == 0) {
+//                    llChooeseItem.setVisibility(View.VISIBLE);
+//                } else {
+//                    llChooeseItem.setVisibility(View.GONE);
+//                }
 
             } else {
                 if (!isAddAnswerBoard) {
-                    rlAnswer.addView(mNbvAnswerBoard);
+                    RelativeLayout.LayoutParams layer1LayoutParam = new RelativeLayout.LayoutParams(960, 920);
+                    rlAnswer.addView(mNbvAnswerBoard, layer1LayoutParam);
                     isAddAnswerBoard = true;
                 }
                 llChooeseItem.setVisibility(View.GONE);
@@ -637,7 +846,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
             return;
         }
-
         timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
                 .start(new Action1<Integer>() {
                     @Override
@@ -649,9 +857,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private void refreshTime() {
         long spentTimeMill = System.currentTimeMillis() - startTimeMill;
-        tvSubmitHomeWork.setText("提交(时间 " + DateUtils.converLongTimeToString(spentTimeMill) + ")");
+        tvSubmitTime.setText("时间：" + DateUtils.converLongTimeToString(spentTimeMill));
     }
 
+    private void refreshTime(long time) {
+        tvTiming.setText("时间：" + DateUtils.converLongTimeToString(time));
+    }
 
     /**
      * 设置选择题的结果界面
@@ -730,6 +941,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if (mIsOnClass && !mIsSubmit) {
+            // 课堂作业，只能点击提交返回   == 待需求确认
+            return;
+        }
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
@@ -740,9 +955,17 @@ public class WriteHomeWorkActivity extends BaseActivity {
         super.onBackPressed();
     }
 
+    private static long lastClickTime;
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
-            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right})
+            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title})
     public void onClick(View view) {
+
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 1000) {
+            return;
+        }
+        lastClickTime = time;
 
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
@@ -754,6 +977,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         switch (view.getId()) {
 
+            case R.id.tv_title:
+                break;
             case R.id.btn_left:
                 mIsFinish = true;
                 finish();
@@ -784,17 +1009,33 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (showHomeWorkPosition < homeWorkPageSize - 1) {
                     showHomeWorkPosition++;
                     COMEIN_HOMEWORK_PAGE_MODE = 2;
-                    homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
+                    if (homeWorkPageNumAdapter != null && homeWorkPageNumAdapter.onItemClickListener != null) {
+                        homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
+                    }
                 } else {
                     //如果已经是最后一题，那么不在跳转。直接打开暂存成功弹窗
                     saveLastHomeWorkData(showHomeWorkPosition, false);
                 }
                 // 这里需要跳转到暂存成功的弹窗界面
+                if (mNbvAnswerBoard != null) {
+                    mNbvAnswerBoard.setVisibility(View.GONE);
+                }
                 FullScreenHintDialog fullScreenHintDialog = new FullScreenHintDialog(this, "");
                 fullScreenHintDialog.setIconResId(R.drawable.icon_correct).setContentText("暂存成功").setBtn1("继续作答", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
+
+                        UIUtils.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mNbvAnswerBoard != null) {
+                                    mNbvAnswerBoard.setVisibility(View.VISIBLE);
+                                    WriteHomeWorkActivity.this.onClick(tvTitle);
+                                }
+                            }
+                        }, 600);
+
                     }
                 }, false).setBtn2("返回作业", new DialogInterface.OnClickListener() {
                     @Override
@@ -833,13 +1074,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
                     }
-                }, false).setBtn2("确认提交", new DialogInterface.OnClickListener() {
+                }, false).setBtn2("确认提交", new OnClickFastListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onFastClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
                         // 去提交
                         getUpLoadInfo();
-
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
                 fullScreenHintDialog.setBtn1Style(R.drawable.bind_confirm_btn_bg, R.color.white);
@@ -852,7 +1093,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_add_page:
                 if (btnLocked == false) {
                     btnLocked = true;
-                    if (questionPageSize - contentDisplayer.getmContentAdaper().getPageCount("question") >= 5) {
+                    if (questionPageSize - contentDisplayer.getContentAdapter().getPageCount("question") >= 5) {
                         ToastUtil.showCustomToast(this, "最多只能加5张纸");
                         btnLocked = false;
                         return;
@@ -870,9 +1111,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 if (allHomeWorkPage.getVisibility() == View.GONE) {
                     allHomeWorkPage.setVisibility(View.VISIBLE);
                     ivChooeseTag.setImageResource(R.drawable.img_timu_up);
+                    mNbvAnswerBoard.setIntercept(true);
                 } else {
                     allHomeWorkPage.setVisibility(View.GONE);
                     ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+
+                    UIUtils.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mNbvAnswerBoard != null) {
+                                mNbvAnswerBoard.setIntercept(false);
+                            }
+                        }
+                    }, 600);
                 }
 
                 break;
@@ -884,6 +1135,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     cgBytes.set(saveQuestionPage, null);
                     mCaogaoNoteBoard.clearAll();
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
 
                     if (rlCaogaoBox.getChildCount() > 0) {
                         rlCaogaoBox.removeView(mCaogaoNoteBoard);
@@ -892,6 +1144,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 } else {
                     tvCaogaoText.setText("扔掉\n草稿纸");
                     llCaogaoControl.setVisibility(View.VISIBLE);
+                    mNbvAnswerBoard.setIntercept(true);
 
                     if (rlCaogaoBox.getChildCount() == 0) {
                         rlCaogaoBox.addView(mCaogaoNoteBoard);
@@ -914,6 +1167,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     //TDO
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
+                    mNbvAnswerBoard.setIntercept(false);
                 }
                 break;
 
@@ -940,7 +1194,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 刷新上一题下一题按钮的UI,如果已经是第一题或者最后一题了,就置灰按钮
      */
     public void refreshLastAndNextQuestionBtns() {
-        tvHomeWorkPosition.setText("选择题目(" + (showHomeWorkPosition + 1) + "/" + homeWorkPageSize + ")");
 
         if (showHomeWorkPosition > 0) {
             lastQuestionBtn.setVisibility(View.VISIBLE);
@@ -972,6 +1225,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             tvCaogaoText.setText("草稿纸");
             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
             llCaogaoControl.setVisibility(View.GONE);
+            mNbvAnswerBoard.setIntercept(false);
         }
         mCaogaoNoteBoard.clearAll();
 
@@ -982,15 +1236,15 @@ public class WriteHomeWorkActivity extends BaseActivity {
             bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
         }
         //是否是选择题。都需要截屏保存图片
-        pathList.set(saveQuestionPage, saveBitmapToFile(saveScreenBitmap(), examId + "_" + position + "_" + saveQuestionPage));
+        pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap(), examId + "_" + position + "_" + saveQuestionPage));
         if (clear) {
             mNbvAnswerBoard.clearAll();
         }
 
 
         //保存手写笔记，用于回显（1，暂存时，2，题目切换时）
-        DataCacheUtils.putObject(this, examId + "_" + position + "_bytes_list", bytesList);
-        DataCacheUtils.putObject(this, examId + "_" + position + "_caogao_bytes_list", cgBytes);
+        DataCacheUtils.putObject(WriteHomeWorkActivity.this, examId + "_" + position + "_bytes_list", bytesList);
+        DataCacheUtils.putObject(WriteHomeWorkActivity.this, examId + "_" + position + "_caogao_bytes_list", cgBytes);
         //保存待上传图片，用于上传
         getSpUtil().setDataList(examId + "_" + position + "_path_list", pathList);
         getSpUtil().setDataList(examId + "_" + position + "_chooese_list", checkedAnswerList);
@@ -1001,9 +1255,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
             refreshTime();
         }
 
-        String textInfo = tvSubmitHomeWork.getText().toString();
-        if (textInfo.contains("(") && textInfo.contains(")")) {
-            getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(textInfo.indexOf("(") + 4, textInfo.lastIndexOf(")")));
+        String textInfo = tvSubmitTime.getText().toString();
+        if (textInfo.startsWith("时间：")) {
+            getSpUtil().putString(examId + "_" + position + "_use_time", textInfo.substring(3));
         }
 
         if (clear) {
@@ -1074,7 +1328,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
     /**
      * 获取oss上传所需信息
      */
-    private void getUpLoadInfo() {
+    private synchronized void getUpLoadInfo() {
+
+        if (isUpload) {
+            return;
+        }
+        isUpload = true;
+
         showNoNetDialog();
         NetWorkManager.queryReplyRequest(SpUtils.getUserId() + "")
                 .subscribe(new Action1<STSbean>() {
@@ -1091,6 +1351,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        isUpload = false;
                     }
                 });
 
@@ -1102,7 +1363,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * @param stSbean
      */
     public void upLoadPic(STSbean stSbean) {
-
 
         String endpoint = Commons.ENDPOINT;
 
@@ -1124,11 +1384,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
         OSSLog.enableLog();
         OSS oss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, credentialProvider, conf);
 
-
+        //作业中某一题所有结果（图片，文本），统计上传数据到集合中，方便将该信息提交到服务器
+        ArrayList<HomeWorkResultbean> homeWorkResultbeanList = new ArrayList<>();
         Observable.create(new Observable.OnSubscribe<Object>() {
             @Override
             public void call(Subscriber<? super Object> subscriber) {
-
 
                 for (int i = 0; i < homeWorkPageSize; i++) {
 
@@ -1142,40 +1402,47 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                             String picPath = tmpPathList.get(j);
 
-                            if (TextUtils.isEmpty(picPath)) {
-                                continue;
+
+                            if (!TextUtils.isEmpty(picPath) && picPath.contains("/")) {
+
+                                String picName = picPath.substring(picPath.lastIndexOf("/"));
+
+
+                                // 构造上传请求
+                                PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                                try {
+                                    PutObjectResult putResult = oss.putObject(put);
+                                    LogUtils.e("PutObject", "UploadSuccess");
+                                    LogUtils.e("ETag", putResult.getETag());
+                                    LogUtils.e("RequestId", putResult.getRequestId());
+                                } catch (ClientException e) {
+                                    // 本地异常如网络异常等
+                                    e.printStackTrace();
+                                    isUpload = false;
+                                } catch (ServiceException e) {
+                                    // 服务异常
+                                    LogUtils.e("RequestId", e.getRequestId());
+                                    LogUtils.e("ErrorCode", e.getErrorCode());
+                                    LogUtils.e("HostId", e.getHostId());
+                                    LogUtils.e("RawMessage", e.getRawMessage());
+                                    isUpload = false;
+                                }
+
+                                STSResultbean stsResultbean = new STSResultbean();
+                                stsResultbean.setBucket(stSbean.getBucketName());
+                                stsResultbean.setRemote(stSbean.getPath() + picName);
+                                File picFile = new File(picPath);
+                                stsResultbean.setSize(picFile.length());
+                                stsResultbeanArrayList.add(stsResultbean);
+                                //上传后清理掉本地图片文件
+                                picFile.delete();
+                            } else {
+                                STSResultbean stsResultbean = new STSResultbean();
+                                stsResultbean.setBucket(stSbean.getBucketName());
+                                stsResultbean.setRemote("");
+                                stsResultbean.setSize(0);
+                                stsResultbeanArrayList.add(stsResultbean);
                             }
-
-
-                            String picName = picPath.substring(picPath.lastIndexOf("/"));
-
-
-                            // 构造上传请求
-                            PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
-                            try {
-                                PutObjectResult putResult = oss.putObject(put);
-                                LogUtils.e("PutObject", "UploadSuccess");
-                                LogUtils.e("ETag", putResult.getETag());
-                                LogUtils.e("RequestId", putResult.getRequestId());
-                            } catch (ClientException e) {
-                                // 本地异常如网络异常等
-                                e.printStackTrace();
-                            } catch (ServiceException e) {
-                                // 服务异常
-                                LogUtils.e("RequestId", e.getRequestId());
-                                LogUtils.e("ErrorCode", e.getErrorCode());
-                                LogUtils.e("HostId", e.getHostId());
-                                LogUtils.e("RawMessage", e.getRawMessage());
-                            }
-
-                            STSResultbean stsResultbean = new STSResultbean();
-                            stsResultbean.setBucket(stSbean.getBucketName());
-                            stsResultbean.setRemote(stSbean.getPath() + picName);
-                            File picFile = new File(picPath);
-                            stsResultbean.setSize(picFile.length());
-                            stsResultbeanArrayList.add(stsResultbean);
-                            //上传后清理掉本地图片文件
-                            picFile.delete();
 
                         }
                         tmpPathList.clear();
@@ -1188,9 +1455,16 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
 
+                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
+                        if (isStudentCheck) {
+                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+                        } else {
+                            homeWorkResultbean.setReplyCommentator(teacherId);
+                        }
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
                         homeWorkResultbean.setTxtContent(tmpJudgeAnswerList.size() > 0 ? tmpJudgeAnswerList : tmpCheckedAnswerList);
+                        homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
 
@@ -1208,7 +1482,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setExamId(Integer.parseInt(examId));
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
-
+                        homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
+                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
+                        if (isStudentCheck) {
+                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+                        } else {
+                            homeWorkResultbean.setReplyCommentator(teacherId);
+                        }
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
                     }
@@ -1233,7 +1513,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.show();
                             loadingProgressDialog.setTitle("答案上传中...");
                         }
-
                     }
 
                     @Override
@@ -1242,34 +1521,46 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
-
-
-                        writeInfoToS();
-
+                        writeInfoToS(homeWorkResultbeanList);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
+                        isUpload = false;
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                        new HintDialog(WriteHomeWorkActivity.this, "作业轨迹上传oss失败，请退出后重新操作", "确定", new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finish();
+                            }
+                        }).show();
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
                         if (loadingProgressDialog != null) {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
                     }
-
-                    @Override
-                    public void onNext(Object o) {
-                    }
                 });
-
     }
 
 
     /**
      * 将上传信息提交给服务器
      */
-    private void writeInfoToS() {
-
+    private void writeInfoToS(ArrayList<HomeWorkResultbean> homeWorkResultbeanList) {
         String content = new Gson().toJson(homeWorkResultbeanList);
+
+        if (homeWorkResultbeanList != null) {
+            homeWorkResultbeanList.clear();
+        }
+        homeWorkResultbeanList = null;
 
         NetWorkManager.postReply(SpUtils.getUserId() + "", content)
                 .subscribe(new Action1<Object>() {
@@ -1278,38 +1569,48 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (timedTask != null) {
                             timedTask.stop();
                         }
+                        if (timingTask != null) {
+                            timingTask.stop();
+                        }
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
+                        //发送消息
+                        if (teacherId != 0) {
+                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId), SessionTypeEnum.P2P, SpUtils.getAccountId(), SpUtils.getAccountName()
+                                    , teacherId, new RequestCallback<Void>() {
 
+                                        @Override
+                                        public void onSuccess(Void param) {
+                                            LogUtils.d("提交消息通知教师成功！");
+                                        }
+
+                                        @Override
+                                        public void onFailed(int code) {
+                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                        }
+
+                                        @Override
+                                        public void onException(Throwable exception) {
+                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                        }
+                                    });
+                        }
+                        mIsSubmit = true;
                         onBackPressed();
-
-//                        NetWorkManager.refreshHomeworkBook(getIntent().getIntExtra("mHomewrokId", 0)).subscribe(new Action1<Object>() {
-//                            @Override
-//                            public void call(Object o) {
-//
-////                                YoungyApplicationManager.getRxBus(getBaseContext()).send("refreshHomeworkList");
-//                                onBackPressed();
-//                            }
-//                        }, new Action1<Throwable>() {
-//                            @Override
-//                            public void call(Throwable throwable) {
-//                                throwable.printStackTrace();
-//                                onBackPressed();
-//                            }
-//                        });
 
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        isUpload = false;
                         throwable.printStackTrace();
                         if (throwable instanceof ApiException) {
                             String errorCode = ((ApiException) throwable).getCode();
                             if (errorCode.equals("400")) {
 
-                                HintDialog hintDialog = new HintDialog(getBaseContext(), "该作业已经超过提交时间！", "确定", new DialogInterface.OnDismissListener() {
+                                HintDialog hintDialog = new HintDialog(WriteHomeWorkActivity.this, "该作业已经完成提交", "确定", new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
-                                        onBackPressed();
+                                        finish();
                                     }
                                 });
                                 hintDialog.show();
@@ -1363,7 +1664,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            bitmap.recycle();
+//            bitmap.recycle();
         }
         return f.getAbsolutePath();
     }
@@ -1599,7 +1900,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        removeReceiveHomeworkMsg();
         if (examPaperContentList != null) {
             examPaperContentList.clear();
         }
@@ -1629,6 +1930,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         timedTask = null;
 
+        if (timingTask != null) {
+            timingTask.stop();
+        }
+        timingTask = null;
+
         if (bytesList != null) {
             pathList.clear();
         }
@@ -1639,12 +1945,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
             cgBytes.clear();
         }
         cgBytes = null;
-
-        if (homeWorkResultbeanList != null) {
-            homeWorkResultbeanList.clear();
-        }
-        homeWorkResultbeanList = null;
-
 
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.recycle();
@@ -1665,8 +1965,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (!mIsFinish)
-            tvSaveHomework.callOnClick();
+        if (!mIsFinish) {
+            //tvSaveHomework.callOnClick();
+        }
+        if (isTimerWork) {
+            saveLastHomeWorkData(showHomeWorkPosition, false);
+        }
     }
 
     @Override
@@ -1711,5 +2015,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
         }
+    }
+
+    public String getExam_id() {
+        return examId;
     }
 }

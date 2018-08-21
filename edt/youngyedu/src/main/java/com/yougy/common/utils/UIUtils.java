@@ -1,5 +1,7 @@
 package com.yougy.common.utils;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -7,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
@@ -21,6 +24,7 @@ import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.view.Toaster;
 import com.zhy.autolayout.utils.AutoUtils;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -287,6 +291,36 @@ public class UIUtils {
     }
 
 
+
+
+
+    /**
+     * 对toast的简易封装。线程安全，可以在非UI线程调用。
+     * @param resId    Toast内容的资源id
+     */
+    public static void showToastSafe(final int resId) {
+        if (Process.myTid() == getMainThreadId()) {
+            // 调用在UI线程
+            if (BaseActivity.getForegroundActivity() != null) {
+                Toaster.showDefaultToast(BaseActivity.getForegroundActivity(), resId, Toast.LENGTH_SHORT);
+            }
+        } else {
+            // 调用在非UI线程
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    if (BaseActivity.getForegroundActivity() != null) {
+                        Toaster.showDefaultToast(BaseActivity.getForegroundActivity(), resId, Toast.LENGTH_SHORT);
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+
     /**
      * 对toast的简易封装。线程安全，可以在非UI线程调用。
      *
@@ -447,4 +481,15 @@ public class UIUtils {
             }
         }
     }
+
+    public static String getTopActivityName(Context context) {
+        ActivityManager manager = ((ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE));
+        ActivityManager.RunningTaskInfo runningTaskInfo = manager.getRunningTasks(1).get(0);
+        String topActivityName = "";
+        if (runningTaskInfo!=null) {
+            topActivityName = runningTaskInfo.topActivity.getClassName();
+        }
+        return topActivityName;
+    }
+
 }

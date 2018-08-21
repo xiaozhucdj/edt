@@ -24,6 +24,7 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.init.bean.Student;
+import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
 import com.yougy.shop.QueryQRStrObj;
 import com.yougy.shop.bean.BookInfo;
@@ -76,7 +77,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"} , values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
-            , @Field("examId") String examId, @Field("picContent") String picContent, @Field("txtContent") String txtContent , @Field("replyUseTime") String replyUseTime);
+            , @Field("examId") String examId, @Field("picContent") String picContent, @Field("txtContent") String txtContent , @Field("replyUseTime") String replyUseTime,@Field("replyCreateTime") String replyCreateTime);
 /**
      *  解答上传（多题，作业）
      */
@@ -124,6 +125,16 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
+    Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail_New(
+            @Field("homeworkId") Integer homeworkId , @Field("examTypeCode") String type , @Field("needRefresh") Boolean needRefresh
+            ,@Field("examStatusCode") String examStatusCode);
+
+    /**
+     * 作业本内容作业(考试)列表接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
     Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(
             @Field("homeworkId") Integer homeworkId , @Field("examTypeCode") String type , @Field("needRefresh") Boolean needRefresh);
 
@@ -160,15 +171,6 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"queryExam"})
     Observable<BaseResult<List<HomeworkDetail>>> queryExam(@Field("examId") String examIds
             , @Field("examStartTime") String examStartTime);
-
-    /**
-     * 查询问答
-     */
-    @FormUrlEncoded
-    @POST("classRoom")
-    @DefaultField(keys = {"m" , "examTypeCode"}, values = {"queryExam" , "II01"})
-    Observable<BaseResult<List<HomeworkDetail>>> queryAnswer(@Field("classId") String classId
-            , @Field("book") String bookId , @Field("cursor") Integer cursor);
 
     /**
      * 查询解答摘要
@@ -224,6 +226,14 @@ public interface ServerApi {
     Observable<BaseResult<Object>> removeCart(@Body RemoveRequestObj removeRequestObj);
 
     /**
+     * 删除订单(可批量)
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"removeOrder"})
+    Observable<BaseResult<Object>> removeOrder(@Field("orderId") String orderId , @Field("orderOwner") String orderOwner);
+
+    /**
      * 获取订单树,包括订单的拆分的子订单信息
      */
     @FormUrlEncoded
@@ -232,12 +242,13 @@ public interface ServerApi {
     Observable<BaseResult<List<OrderDetailBean>>> queryOrderTree(@Field("orderId") String orderId);
 
     /**
-     * 获取我的订单列表,不包含子订单信息
+     * 获取我的订单列表
      */
     @FormUrlEncoded
     @POST("bookStore")
-    @DefaultField(keys = {"m" , "orderParent"}, values = {"queryOrderSole" , "0"})
-    Observable<BaseResult<List<OrderSummary>>> queryOrderSole(@Field("orderOwner") String orderOwner , @Field("ps") Integer ps , @Field("pn") Integer pn);
+    @DefaultField(keys = {"m" , "orderParent"}, values = {"queryOrderAbbr" , "0"})
+    Observable<BaseResult<List<OrderSummary>>> queryOrderAbbr(@Field("orderOwner") String orderOwner
+            , @Field("ps") Integer ps , @Field("pn") Integer pn , @Field("orderCreateTime") String orderCreateTime);
 
     /**
      * 订单结算,获取支付二维码
@@ -283,7 +294,12 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"createOrder"})
     Observable<BaseResult<List<OrderIdObj>>> createOrder(@Body CreateOrderRequestObj createOrderRequestObj);
 
-
+    /**
+     * 订单查重
+     */
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"allowOrder"})
+    Observable<BaseResult<Object>> allowOrder(@Body AllowOrderRequestObj allowOrderRequestObj);
     /**
      * 删除单个收藏夹
      *
@@ -370,10 +386,19 @@ public interface ServerApi {
 
 
     ///////////////////////////////书城//////////////////////////////////////
+    @FormUrlEncoded
     @POST("bookStore")
-    Observable<BaseResult<List<CategoryInfo>>> queryBookCategory(@Body BookStoreCategoryReq req);
+    @DefaultField(keys = {"m"}, values = {"queryBookCategoryPlus"})
+    Observable<BaseResult<List<CategoryInfo>>> queryBookCategory();
+    @FormUrlEncoded
     @POST("bookStore")
-    Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Body BookStoreQueryBookInfoReq req);
+    @DefaultField(keys = {"m"}, values = {"queryBook"})
+    Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Field("bookId") Integer bookId
+            , @Field("bookCategory") Integer bookCategory, @Field("bookCategoryMatch") Integer bookCategoryMatch
+            , @Field("userId") Integer userId, @Field("bookVersion") Integer bookVersion
+            , @Field("bookTitle") String bookTitle , @Field("bookTitleMatch") String bookTitleMatch
+            , @Field("ps") Integer ps , @Field("pn") Integer pn);
+
     @POST("bookStore")
     Observable<BaseResult<List<BookInfo>>> queryBookShopHomeInfo(@Body BookStoreHomeReq req);
 
@@ -399,7 +424,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postCommentRequest"})
-    Observable<BaseResult<STSbean>> postCommentRequest(@Field("replyId") String replyId);
+    Observable<BaseResult<STSbean>> postCommentRequest(@Field("replyId") String replyId, @Field("userId") String userId);
 
     /**
      * 作业评定(结束某个学生的作业,其实就是调了这个接口就会将这个学生这次考试的错题写到错题本里去,不调就不写)
@@ -417,7 +442,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
-            , @Field("content") String content, @Field("replyCommentator") String replyCommentator);
+            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator);
 
     /**
      * 添加单个收藏夹

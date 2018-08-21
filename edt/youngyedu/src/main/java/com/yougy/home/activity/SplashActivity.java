@@ -15,9 +15,11 @@ import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewLoginReq;
+import com.yougy.common.utils.DeviceScreensaverUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -65,6 +67,16 @@ public class SplashActivity extends BaseActivity {
         subscription = new CompositeSubscription();
         tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
         handleEvent();
+
+//        if (!SpUtils.getDeviceScreen()){
+//            ThreadManager.getSinglePool().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    DeviceScreensaverUtils.setDeviceBg();
+//                    SpUtils.setDeviceScreen();
+//                }
+//            });
+//        }
     }
 
     @Override
