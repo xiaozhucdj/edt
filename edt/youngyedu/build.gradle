@@ -96,7 +96,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.google.code.gson:gson:2.7'
-    compile project(':okhttputils')
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.yolanda.nohttp:nohttp:1.0.7'
     compile 'com.android.support:support-v4:25.0.0'
@@ -149,4 +148,5 @@ dependencies {
         exclude group: 'com.squareup.retrofit2' , module: 'retrofit'
     }
     compile 'com.onyx.android.sdk:onyxsdk-ui:1.0.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1@jar'
 }

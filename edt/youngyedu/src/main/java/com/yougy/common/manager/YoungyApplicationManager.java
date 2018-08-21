@@ -41,7 +41,6 @@ import com.yougy.order.LockerActivity;
 import com.yougy.ui.activity.BuildConfig;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
-import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
@@ -53,10 +52,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import okhttp3.OkHttpClient;
 
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
@@ -145,11 +142,11 @@ public class YoungyApplicationManager extends LitePalApplication {
             }
 
 
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(REQUEST_TIME, TimeUnit.MILLISECONDS)
-                    .readTimeout(REQUEST_TIME, TimeUnit.MILLISECONDS)
-                    .build();
-            OkHttpUtils.initClient(client);
+//            OkHttpClient client = new OkHttpClient.Builder()
+//                    .connectTimeout(REQUEST_TIME, TimeUnit.MILLISECONDS)
+//                    .readTimeout(REQUEST_TIME, TimeUnit.MILLISECONDS)
+//                    .build();
+//            OkHttpUtils.initClient(client);
 
             NoHttp.initialize(this);
 

@@ -289,33 +289,6 @@ public class PlideReaderPresenter{
         }
     }
 
-//    public void nextScreen() {
-//        final NextScreenRequest nextScreenRequest = new NextScreenRequest();
-//        getReader().submitRequest(getContext(), nextScreenRequest, new BaseCallback() {
-//            @Override
-//            public void done(BaseRequest baseRequest, Throwable throwable) {
-//                if (throwable == null) {
-//                    readerView.updatePage(getCurrentPage(nextScreenRequest), getReader().getViewportBitmap().getBitmap());
-//                } else {
-//                    readerView.showThrowable(throwable);
-//                }
-//            }
-//        });
-//    }
-
-//    public void prevScreen() {
-//        final PreviousScreenRequest nextScreenRequest = new PreviousScreenRequest();
-//        getReader().submitRequest(getContext(), nextScreenRequest, new BaseCallback() {
-//            @Override
-//            public void done(BaseRequest baseRequest, Throwable throwable) {
-//                if (throwable == null) {
-//                    readerView.updatePage(getCurrentPage(nextScreenRequest), getReader().getViewportBitmap().getBitmap());
-//                } else {
-//                    readerView.showThrowable(throwable);
-//                }
-//            }
-//        });
-//    }
 
     public String getCurrentPageName(final BaseReaderRequest request) {
         return request.getReaderViewInfo().getFirstVisiblePage().getName();
@@ -328,20 +301,6 @@ public class PlideReaderPresenter{
     public Reader getReader() {
         return reader;
     }
-
-//    public void getDirectory() {
-//        final GetTableOfContentRequest request = new GetTableOfContentRequest();
-//        getReader().submitRequest(getContext(), request, new BaseCallback() {
-//            @Override
-//            public void done(BaseRequest baseRequest, Throwable throwable) {
-//                if (throwable == null) {
-//                    readerView.updateDirectory(request.getReaderUserDataInfo().getTableOfContent());
-//                } else {
-//                    readerView.showThrowable(throwable);
-//                }
-//            }
-//        });
-//    }
 
     public Result close(PlideRequestProcessor processor) throws InterruptedException {
 

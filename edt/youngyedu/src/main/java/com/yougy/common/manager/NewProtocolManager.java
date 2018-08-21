@@ -1,47 +1,5 @@
 package com.yougy.common.manager;
 
-import com.yougy.common.global.Commons;
-import com.yougy.common.protocol.request.AliyunDataDownloadReq;
-import com.yougy.common.protocol.request.AliyunDataUploadReq;
-import com.yougy.common.protocol.request.NewBindDeviceReq;
-import com.yougy.common.protocol.request.NewBookShelfReq;
-import com.yougy.common.protocol.request.NewBookStoreBookReq;
-import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
-import com.yougy.common.protocol.request.NewBookStoreHomeReq;
-import com.yougy.common.protocol.request.NewDeleteNoteReq;
-import com.yougy.common.protocol.request.NewDeleteUserLogReq;
-import com.yougy.common.protocol.request.NewGetAppVersionReq;
-import com.yougy.common.protocol.request.NewInsertAllNoteReq;
-import com.yougy.common.protocol.request.NewInserNoteReq;
-import com.yougy.common.protocol.request.NewLoginReq;
-import com.yougy.common.protocol.request.NewLogoutReq;
-import com.yougy.common.protocol.request.NewQueryAreaReq;
-import com.yougy.common.protocol.request.NewQueryDeviceReq;
-import com.yougy.common.protocol.request.NewQueryNoteReq;
-import com.yougy.common.protocol.request.NewQuerySchoolOrgReq;
-import com.yougy.common.protocol.request.NewQuerySchoolReq;
-import com.yougy.common.protocol.request.NewQueryStudentReq;
-import com.yougy.common.protocol.request.NewQueryTeachertReq;
-import com.yougy.common.protocol.request.NewQueryUserLogReq;
-import com.yougy.common.protocol.request.NewQueryUserReq;
-import com.yougy.common.protocol.request.NewUnBindDeviceReq;
-import com.yougy.common.protocol.request.NewUpdateNoteReq;
-import com.yougy.common.protocol.request.NewUpdateUserReq;
-import com.yougy.common.protocol.request.PromotionReq;
-import com.yougy.common.utils.GsonUtil;
-import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SystemUtils;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.builder.PostStringBuilder;
-import com.zhy.http.okhttp.callback.Callback;
-import com.zhy.http.okhttp.request.RequestCall;
-
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.Response;
-
-
 /**
  * Created by Administrator on 2017/5/15.
  */
