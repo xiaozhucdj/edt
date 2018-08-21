@@ -63,10 +63,7 @@ public class PopupUtil {
     }
 
     public static boolean isShow() {
-        if (popupWindow != null && popupWindow.isShowing()) {
-            return true;
-        }
-        return false;
+        return popupWindow != null && popupWindow.isShowing();
     }
 
 }

@@ -82,15 +82,15 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mCancelIv = (ImageView) mRoot.findViewById(R.id.cancel_label);
-        mSaveIv = (ImageView) mRoot.findViewById(R.id.save_label);
-        mInputByGestureIv = (ImageView) mRoot.findViewById(R.id.input_gesture);
-        mInputBySoftIv = (ImageView) mRoot.findViewById(R.id.input_soft);
-        mUndoIv = (ImageView) mRoot.findViewById(R.id.undo);
-        mRedoIv = (ImageView) mRoot.findViewById(R.id.redo);
-        mEditText = (EditText) mRoot.findViewById(R.id.edit_text);
+        mCancelIv = mRoot.findViewById(R.id.cancel_label);
+        mSaveIv = mRoot.findViewById(R.id.save_label);
+        mInputByGestureIv = mRoot.findViewById(R.id.input_gesture);
+        mInputBySoftIv = mRoot.findViewById(R.id.input_soft);
+        mUndoIv = mRoot.findViewById(R.id.undo);
+        mRedoIv = mRoot.findViewById(R.id.redo);
+        mEditText = mRoot.findViewById(R.id.edit_text);
         mEditText.addTextChangedListener(this);
-        mShortNoteBookView = (NoteBookView) mRoot.findViewById(R.id.booknote);
+        mShortNoteBookView = mRoot.findViewById(R.id.booknote);
         mShortNoteBookView.setIntercept(false);
         byte[] bytes = label.getBytes();
         if (label != null && bytes != null) {

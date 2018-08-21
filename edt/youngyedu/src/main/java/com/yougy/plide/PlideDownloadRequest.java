@@ -24,7 +24,7 @@ public class PlideDownloadRequest extends PlideRequest{
         getProcessor().getDownloader().download(mUrl, mUseCache , new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String savePath) {
-                getProcessor().runOnUiThread(new Runnable() {
+                PlideRequestProcessor.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         callListeners(PlideLoadListener.STATUS.DOWNLOADING , mUrl , -999 , -999 , null , null);
@@ -40,7 +40,7 @@ public class PlideDownloadRequest extends PlideRequest{
             @Override
             public void onDownloadStop(String url, String savePath, int errorCode, String reason) {
                 LogUtils.e("下载文件" + url + "失败,reason :" + reason);
-                getProcessor().runOnUiThread(new Runnable() {
+                PlideRequestProcessor.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (errorCode == -1){
@@ -86,7 +86,7 @@ public class PlideDownloadRequest extends PlideRequest{
 
     @Override
     public void onCancelled() {
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 callListeners(PlideLoadListener.STATUS.ERROR, mUrl , -999 , -999 , PlideLoadListener.ERROR_TYPE.USER_CANCLE , "用户取消下载");

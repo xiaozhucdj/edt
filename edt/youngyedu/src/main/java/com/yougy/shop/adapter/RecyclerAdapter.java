@@ -47,7 +47,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         RecyclerHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.item_tv);
+            textView = itemView.findViewById(R.id.item_tv);
         }
 
         void bindView(CategoryInfo info) {

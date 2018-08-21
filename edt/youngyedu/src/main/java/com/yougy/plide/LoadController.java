@@ -73,10 +73,7 @@ public class LoadController implements ReaderContract.ReaderView{
     }
 
     protected boolean isReaderPresenterAbandoned(){
-        if (mReaderPresenter == null){
-            return true;
-        }
-        return false;
+        return mReaderPresenter == null;
     }
 
     protected void abandonReaderPresenter(){

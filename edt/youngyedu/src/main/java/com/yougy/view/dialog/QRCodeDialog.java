@@ -143,6 +143,6 @@ public class QRCodeDialog extends BaseDialog {
     }
 
     public interface OnBtnClickListener {
-        public void onBtnClick(FUNCTION function);
+        void onBtnClick(FUNCTION function);
     }
 }

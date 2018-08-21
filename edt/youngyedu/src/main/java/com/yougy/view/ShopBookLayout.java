@@ -30,11 +30,11 @@ public class ShopBookLayout extends LinearLayout {
 
     private void init(Context context) {
         mLinearLayout = (LinearLayout) View.inflate(context, R.layout.shop_book_layout, this);
-        shopBookViews[0] = (ShopBookView) findViewById(R.id.shop_book_first);
-        shopBookViews[1] = (ShopBookView) findViewById(R.id.shop_book_second);
-        shopBookViews[2] = (ShopBookView) findViewById(R.id.shop_book_third);
-        shopBookViews[3] = (ShopBookView) findViewById(R.id.shop_book_fourth);
-        shopBookViews[4] = (ShopBookView) findViewById(R.id.shop_book_five);
+        shopBookViews[0] = findViewById(R.id.shop_book_first);
+        shopBookViews[1] = findViewById(R.id.shop_book_second);
+        shopBookViews[2] = findViewById(R.id.shop_book_third);
+        shopBookViews[3] = findViewById(R.id.shop_book_fourth);
+        shopBookViews[4] = findViewById(R.id.shop_book_five);
     }
 
     public void updateView(List<BookInfo> infos) {

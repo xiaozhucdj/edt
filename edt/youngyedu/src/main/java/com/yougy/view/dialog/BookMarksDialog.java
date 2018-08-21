@@ -58,15 +58,15 @@ public class BookMarksDialog extends BaseDialog {
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_book_marks);
-        this.fmConfirmOrCancel = (FrameLayout) findViewById(R.id.fm_ConfirmOrCancel);
-        this.llChangeOrDelete = (RelativeLayout) findViewById(R.id.ll_ChangeOrDelete);
-        this.btndelete = (Button) findViewById(R.id.btn_delete);
-        this.btnchange = (Button) findViewById(R.id.btn_change);
-        this.btnaddmarks = (Button) findViewById(R.id.btn_add_marks);
-        this.etmarks = (EditText) findViewById(R.id.et_marks);
-        this.tvtitle = (TextView) findViewById(R.id.tv_title);
+        this.fmConfirmOrCancel = findViewById(R.id.fm_ConfirmOrCancel);
+        this.llChangeOrDelete = findViewById(R.id.ll_ChangeOrDelete);
+        this.btndelete = findViewById(R.id.btn_delete);
+        this.btnchange = findViewById(R.id.btn_change);
+        this.btnaddmarks = findViewById(R.id.btn_add_marks);
+        this.etmarks = findViewById(R.id.et_marks);
+        this.tvtitle = findViewById(R.id.tv_title);
 
-        this.imgBtn_close = (ImageButton) findViewById(R.id.imgBtn_close);
+        this.imgBtn_close = findViewById(R.id.imgBtn_close);
         imgBtn_close.setOnClickListener(mClickListener);
         btndelete.setOnClickListener(mClickListener);
         btnchange.setOnClickListener(mClickListener);
@@ -108,7 +108,7 @@ public class BookMarksDialog extends BaseDialog {
      * 点击事情的监听函数
      */
     public interface DialogClickFinsihListener {
-        public void onDialogConfirmCancleClick(BookMarksDialog dialog, ClickState clickState);
+        void onDialogConfirmCancleClick(BookMarksDialog dialog, ClickState clickState);
     }
 
     /**

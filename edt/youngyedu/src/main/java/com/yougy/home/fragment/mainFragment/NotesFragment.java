@@ -110,8 +110,8 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_notes, null);
         initNotes();
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        mLoadingNull = mRootView.findViewById(R.id.loading_null);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
@@ -119,7 +119,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
      * 初始化 书列表
      */
     private void initNotes() {
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_view);
+        mRecyclerView = mRootView.findViewById(R.id.recycler_view);
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);

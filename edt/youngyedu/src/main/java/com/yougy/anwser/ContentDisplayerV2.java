@@ -495,7 +495,7 @@ public class ContentDisplayerV2 extends RelativeLayout{
         //下载图片
         try {
             drawable = Glide.with(BaseActivity.getCurrentActivity())
-                    .load(url).skipMemoryCache(useCache ? false : true)
+                    .load(url).skipMemoryCache(!useCache)
                     .diskCacheStrategy(useCache ? DiskCacheStrategy.ALL : DiskCacheStrategy.NONE)
                     .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .get();
@@ -722,7 +722,7 @@ public class ContentDisplayerV2 extends RelativeLayout{
          * @param errorType 如果有错误,错误类型是啥,无错误,传null
          * @param errorMsg 如果有错误,错误描述是啥,无错误,传null
          */
-        public void onStatusChanged(LOADING_STATUS newStatus, String typeKey
+        void onStatusChanged(LOADING_STATUS newStatus, String typeKey
                 , int pageIndex, String url, ERROR_TYPE errorType, String errorMsg);
     }
 

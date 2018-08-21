@@ -32,7 +32,7 @@ public class LoadingErrorDialog extends BaseDialog implements View.OnClickListen
     @Override
     protected void initLayout() {
         setContentView(R.layout.load_error_layout);
-        mFrameLayout = (FrameLayout) findViewById(R.id.load_error);
+        mFrameLayout = findViewById(R.id.load_error);
         mFrameLayout.setOnClickListener(this);
     }
 

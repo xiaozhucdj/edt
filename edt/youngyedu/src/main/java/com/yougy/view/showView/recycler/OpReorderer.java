@@ -227,7 +227,7 @@ class OpReorderer {
         return -1;
     }
 
-    static interface Callback {
+    interface Callback {
 
         AdapterHelper.UpdateOp obtainUpdateOp(int cmd, int startPosition, int itemCount, Object payload);
 

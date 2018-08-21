@@ -45,7 +45,7 @@ public class FitGradeAdapter extends RecyclerView.Adapter<FitGradeAdapter.Holder
 
         public HolderFitGrade(View itemView) {
             super(itemView);
-            mTvGrade = (TextView) itemView.findViewById(R.id.tv_grade);
+            mTvGrade = itemView.findViewById(R.id.tv_grade);
         }
 
         public void setViewData(int position) {

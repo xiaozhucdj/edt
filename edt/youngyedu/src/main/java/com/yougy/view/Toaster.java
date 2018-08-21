@@ -24,7 +24,7 @@ public class Toaster {
         if (mToast == null) {
             mToast = Toast.makeText(context, text, duration);
             mView = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
-            mText = (TextView) mView.findViewById(R.id.customToast_innerLayout_txtMessage);
+            mText = mView.findViewById(R.id.customToast_innerLayout_txtMessage);
             mToast.setView(mView);
         }
 
@@ -38,7 +38,7 @@ public class Toaster {
         if (mToast == null) {
             mToast = Toast.makeText(context, text, duration);
             mView = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
-            mText = (TextView) mView.findViewById(R.id.customToast_innerLayout_txtMessage);
+            mText = mView.findViewById(R.id.customToast_innerLayout_txtMessage);
             mToast.setView(mView);
         }
 
@@ -53,7 +53,7 @@ public class Toaster {
         if (mToast == null) {
             mToast = Toast.makeText(context, text, duration);
             mView = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
-            mText = (TextView) mView.findViewById(R.id.customToast_innerLayout_txtMessage);
+            mText = mView.findViewById(R.id.customToast_innerLayout_txtMessage);
             mToast.setView(mView);
         }
         mText.setText(text);
@@ -67,7 +67,7 @@ public class Toaster {
         if (mToast == null) {
             mToast = Toast.makeText(context, text, duration);
             mView = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
-            mText = (TextView) mView.findViewById(R.id.customToast_innerLayout_txtMessage);
+            mText = mView.findViewById(R.id.customToast_innerLayout_txtMessage);
             mToast.setView(mView);
         }
         mText.setText(text);

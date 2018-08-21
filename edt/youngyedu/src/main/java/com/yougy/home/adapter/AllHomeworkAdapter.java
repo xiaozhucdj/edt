@@ -62,7 +62,7 @@ public class AllHomeworkAdapter extends RecyclerView.Adapter<AllHomeworkAdapter.
 
         public HomeworkHolder(View itemView) {
             super(itemView);
-            mTvName = (TextView) itemView.findViewById(R.id.tv_myTitle);
+            mTvName = itemView.findViewById(R.id.tv_myTitle);
         }
 
         public void setViewData(int position) {

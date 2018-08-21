@@ -18,7 +18,7 @@ public class MyActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        ImageView imgView = (ImageView)findViewById(R.id.img);
+        ImageView imgView = findViewById(R.id.img);
 
         Drawable drawables[] = new Drawable[] {
 //                getSvgDrawable(R.raw.gal_model),

@@ -41,9 +41,9 @@ public class SearchBookDialog extends BaseDialog implements View.OnClickListener
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_search_book);
-        mImgClose = (ImageView) this.findViewById(R.id.img_close);
-        mEtKey = (EditText) this.findViewById(R.id.et_key);
-        mBtnSearch = (Button) this.findViewById(R.id.btn_search);
+        mImgClose = this.findViewById(R.id.img_close);
+        mEtKey = this.findViewById(R.id.et_key);
+        mBtnSearch = this.findViewById(R.id.btn_search);
         mImgClose.setOnClickListener(this);
         mBtnSearch.setOnClickListener(this);
     }

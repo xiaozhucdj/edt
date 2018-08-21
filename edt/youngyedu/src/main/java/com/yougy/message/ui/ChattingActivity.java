@@ -626,10 +626,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
      */
     private boolean shouldShowTime(IMMessage thisMessage , IMMessage lastMessage){
         final long TIME_INTERVAL = 1000*60*2;//2min
-        if (lastMessage != null && thisMessage.getTime() - lastMessage.getTime() < TIME_INTERVAL){
-            return false;
-        }
-        return true;
+        return !(lastMessage != null && thisMessage.getTime() - lastMessage.getTime() < TIME_INTERVAL);
     }
 
     private void openFile(String path , String displayName){

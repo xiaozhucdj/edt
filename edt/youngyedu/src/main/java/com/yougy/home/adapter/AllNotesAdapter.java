@@ -56,7 +56,7 @@ public class AllNotesAdapter extends RecyclerView.Adapter<AllNotesAdapter.AllHol
 
         public AllHolerFragmentNotes(View itemView) {
             super(itemView);
-            mTvTitle= (TextView) itemView.findViewById(R.id.tv_myTitle);
+            mTvTitle= itemView.findViewById(R.id.tv_myTitle);
 //            mTvNoteGrade = (TextView) itemView.findViewById(tv_noteGrade);
 //            mTvMyTitle = (TextView) itemView.findViewById(R.id.tv_myTitle);
 //

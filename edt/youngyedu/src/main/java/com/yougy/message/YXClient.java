@@ -410,7 +410,7 @@ public class YXClient {
                     } else {
                         pair.sencond.add(newMember);
                         for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                            listener.onThingChanged(new Pair<>(newMember.getTid(), (List<TeamMember>) new ArrayList<TeamMember>() {{
+                            listener.onThingChanged(new Pair<>(newMember.getTid(), new ArrayList<TeamMember>() {{
                                         add(newMember);
                                     }})
                                     , NEW);

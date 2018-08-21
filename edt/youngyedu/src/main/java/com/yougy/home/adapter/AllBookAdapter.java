@@ -76,8 +76,8 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.HolerAll
 
         public HolerAllFragmentBook(View itemView) {
             super(itemView);
-            mImgBookIcon = (ImageView) itemView.findViewById(R.id.img_book_icon);
-            mImgBookDownS = (ImageView) itemView.findViewById(R.id.img_down_book_s);
+            mImgBookIcon = itemView.findViewById(R.id.img_book_icon);
+            mImgBookDownS = itemView.findViewById(R.id.img_down_book_s);
         }
 
         public void setViewData(int position) {

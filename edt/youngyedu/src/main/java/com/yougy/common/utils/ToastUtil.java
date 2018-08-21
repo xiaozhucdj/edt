@@ -22,7 +22,7 @@ public class ToastUtil {
         if (mToast == null) {
             mToast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
             mView = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
-            mText = (TextView) mView.findViewById(R.id.customToast_innerLayout_txtMessage);
+            mText = mView.findViewById(R.id.customToast_innerLayout_txtMessage);
             mToast.setView(mView);
         }
 
@@ -37,7 +37,7 @@ public class ToastUtil {
         if (mToast == null) {
             mToast = Toast.makeText(context,  UIUtils.getResources().getText(resId), Toast.LENGTH_SHORT);
             mView = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
-            mText = (TextView) mView.findViewById(R.id.customToast_innerLayout_txtMessage);
+            mText = mView.findViewById(R.id.customToast_innerLayout_txtMessage);
             mToast.setView(mView);
         }
 

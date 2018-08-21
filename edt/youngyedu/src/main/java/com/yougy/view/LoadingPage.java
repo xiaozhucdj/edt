@@ -97,33 +97,33 @@ public class LoadingPage extends FrameLayout implements View.OnClickListener {
      */
     private void findIdAndClick() {
         //加载页
-        mStaticLoadingLayout = (ViewGroup) findViewById(R.id.loadingPage_staticLoadingState);
-        mImgStaticLoading = (ImageView) findViewById(R.id.loadingPage_staticLoadingState_image);
-        mTxtStaticLoading = (TextView) findViewById(R.id.loadingPage_staticLoadingState_text);
+        mStaticLoadingLayout = findViewById(R.id.loadingPage_staticLoadingState);
+        mImgStaticLoading = findViewById(R.id.loadingPage_staticLoadingState_image);
+        mTxtStaticLoading = findViewById(R.id.loadingPage_staticLoadingState_text);
         mTxtStaticLoading.setOnClickListener(LoadingPage.this);
 
         //服务器异常错误
-        mErrorLayout = (ViewGroup) findViewById(R.id.loadingPage_errorState);
-        mImgError = (ImageView) findViewById(R.id.loadingPage_errorState_image);
-        mTxtError = (TextView) findViewById(R.id.loadingPage_errorState_text);
+        mErrorLayout = findViewById(R.id.loadingPage_errorState);
+        mImgError = findViewById(R.id.loadingPage_errorState_image);
+        mTxtError = findViewById(R.id.loadingPage_errorState_text);
         mTxtError.setOnClickListener(LoadingPage.this);
 
         //服务器返回数据为空
-        mEmptyDataLayout = (ViewGroup) findViewById(R.id.loadingPage_emptyDataState);
-        mImgEmptyData = (ImageView) findViewById(R.id.loadingPage_emptyDataState_image);
-        mTxtEmptyData = (TextView) findViewById(R.id.loadingPage_emptyDataState_text);
+        mEmptyDataLayout = findViewById(R.id.loadingPage_emptyDataState);
+        mImgEmptyData = findViewById(R.id.loadingPage_emptyDataState_image);
+        mTxtEmptyData = findViewById(R.id.loadingPage_emptyDataState_text);
         mTxtEmptyData.setOnClickListener(this);
 
         //请求超时
-        mConnectTimeoutLayout = (ViewGroup) findViewById(R.id.loadingPage_connectTimeOutState);
-        mImgConnectTimeout = (ImageView) findViewById(R.id.loadingPage_connectTimeOutState_image);
-        mTxtConnectTimeout = (TextView) findViewById(R.id.loadingPage_connectTimeOutState_text);
+        mConnectTimeoutLayout = findViewById(R.id.loadingPage_connectTimeOutState);
+        mImgConnectTimeout = findViewById(R.id.loadingPage_connectTimeOutState_image);
+        mTxtConnectTimeout = findViewById(R.id.loadingPage_connectTimeOutState_text);
         mTxtConnectTimeout.setOnClickListener(this);
 
         //设备没有链接wifi
-        mNoNetworkLayout = (ViewGroup) findViewById(R.id.loadingPage_noNetworkState);
-        mImgNoNetwork = (ImageView) findViewById(R.id.loadingPage_noNetworkState_image);
-        mTxtNoNetwork = (TextView) findViewById(R.id.loadingPage_noNetworkState_text);
+        mNoNetworkLayout = findViewById(R.id.loadingPage_noNetworkState);
+        mImgNoNetwork = findViewById(R.id.loadingPage_noNetworkState_image);
+        mTxtNoNetwork = findViewById(R.id.loadingPage_noNetworkState_text);
         mTxtNoNetwork.setOnClickListener(this);
     }
 

@@ -34,7 +34,7 @@ public class LoadingProgressDialog extends BaseDialog {
     protected void initLayout() {
 //        setContentView(R.layout.dialog_loading_progress);
         setContentView(R.layout.load_layout);
-        mTvMsg = (TextView) this.findViewById(R.id.tv_loadingMsg);
+        mTvMsg = this.findViewById(R.id.tv_loadingMsg);
     }
 
     public void setTitle(String title) {

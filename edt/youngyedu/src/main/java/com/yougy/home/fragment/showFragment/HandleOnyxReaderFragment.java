@@ -177,30 +177,30 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         SharedPreferences prefs = ((Activity) mContext).getPreferences(Context.MODE_PRIVATE);
         mCurrentMarksPage = prefs.getInt("page" + fileName, 0);
 
-        bookNeedLayout = (LinearLayout) mRoot.findViewById(R.id.book_need_layout);
+        bookNeedLayout = mRoot.findViewById(R.id.book_need_layout);
         bookNeedLayout.setVisibility(View.VISIBLE);
 
         viewItemDirectory = mRoot.findViewById(R.id.view_item_directory);
         viewItemBookmarks = mRoot.findViewById(R.id.view_item_bookmarks);
-        mRlDirectory = (ViewGroup) mRoot.findViewById(R.id.rl_directory);
-        mLvBookDirectory = (ListView) mRoot.findViewById(R.id.lv_item_book_directory);
+        mRlDirectory = mRoot.findViewById(R.id.rl_directory);
+        mLvBookDirectory = mRoot.findViewById(R.id.lv_item_book_directory);
         mLvBookDirectory.setDividerHeight(0);
-        mBookMarkBtn = (Button) mRoot.findViewById(R.id.btn_item_bookmarks);
-        mItemDirectory = (Button) mRoot.findViewById(R.id.btn_item_directory);
+        mBookMarkBtn = mRoot.findViewById(R.id.btn_item_bookmarks);
+        mItemDirectory = mRoot.findViewById(R.id.btn_item_directory);
         //seek
-        mRl_page = (RelativeLayout) mRoot.findViewById(R.id.rl_page);
-        mSeekbarPage = (TextThumbSeekBar) mRoot.findViewById(R.id.seekbar_page);
+        mRl_page = mRoot.findViewById(R.id.rl_page);
+        mSeekbarPage = mRoot.findViewById(R.id.seekbar_page);
         mRoot.findViewById(R.id.tv_page_number).setVisibility(View.GONE);
-        mDirectoryImg = (ImageView) mRoot.findViewById(R.id.directory);
+        mDirectoryImg = mRoot.findViewById(R.id.directory);
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
-        mBackPageBtn = (ImageButton) mRoot.findViewById(R.id.btn_back_page);
+        mBackPageBtn = mRoot.findViewById(R.id.btn_back_page);
         mBackPageBtn.setEnabled(false);
         /**
          * 20160926添加next fram按钮
          */
-        mBackPageBack = (ImageView) mRoot.findViewById(R.id.img_pageBack);
+        mBackPageBack = mRoot.findViewById(R.id.img_pageBack);
         backScription = RxView.clicks(mBackPageBack).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getBackSubscriber());
-        mBackPageNext = (ImageView) mRoot.findViewById(R.id.img_pageNext);
+        mBackPageNext = mRoot.findViewById(R.id.img_pageNext);
         nextScription = RxView.clicks(mBackPageNext).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getNextSubscriber());
         //解析PDF
         initPDF();
@@ -211,7 +211,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      * 初始化 pdf
      */
     private void initPDF() {
-        mControlView = (ControlView) mRoot.findViewById(R.id.rl_pdf);
+        mControlView = mRoot.findViewById(R.id.rl_pdf);
         mOnyxImgView = new ImageView(getContext());
         //设置显示PDF 大小
         if (mIsReferenceBook) {

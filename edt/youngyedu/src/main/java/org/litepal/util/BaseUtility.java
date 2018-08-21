@@ -190,11 +190,8 @@ public class BaseUtility {
 		if ("[B".equals(fieldType) || "[Ljava.lang.Byte;".equals(fieldType)) {
 			return true;
 		}
-		if ("java.lang.String".equals(fieldType) || "java.util.Date".equals(fieldType)) {
-			return true;
-		}
-		return false;
-	}
+              return "java.lang.String".equals(fieldType) || "java.util.Date".equals(fieldType);
+          }
 
     /**
      * Judge a generic type is supported or not. Currently only basic data types

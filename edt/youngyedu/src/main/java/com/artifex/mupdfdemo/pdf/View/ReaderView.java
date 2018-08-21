@@ -369,11 +369,11 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
         /***
          * 多点触控
          */
-        if ((event.getAction() & event.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
+        if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
           mUserInteracting = true;
         }
 
-        if ((event.getAction() & event.ACTION_MASK) == MotionEvent.ACTION_UP) {
+        if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
             mScrollDisabled = false;
             mUserInteracting = false;
 
@@ -886,8 +886,6 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
      */
     protected void onSettle(View v) {
     }
-
-    ;
 
     /**
      * 重新设置View

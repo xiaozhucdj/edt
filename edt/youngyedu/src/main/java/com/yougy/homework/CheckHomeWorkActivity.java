@@ -1249,7 +1249,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
 
             int margin = UIUtils.dip2px(10);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) ((UIUtils.getScreenWidth() - PAGE_SHOW_SIZE * 2 * margin) / PAGE_SHOW_SIZE), ViewGroup.LayoutParams.MATCH_PARENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((UIUtils.getScreenWidth() - PAGE_SHOW_SIZE * 2 * margin) / PAGE_SHOW_SIZE, ViewGroup.LayoutParams.MATCH_PARENT);
             params.setMargins(margin, margin * 2, margin, 0);
             itemView.setLayoutParams(params);
 

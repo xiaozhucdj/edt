@@ -505,11 +505,8 @@ abstract class DataHandler extends LitePalBase {
 	 * @return Affect all lines or not.
 	 */
 	protected boolean isAffectAllLines(Object... conditions) {
-		if (conditions != null && conditions.length == 0) {
-			return true;
-		}
-		return false;
-	}
+              return conditions != null && conditions.length == 0;
+          }
 
 	/**
 	 * Get the where clause by the passed in id collection to apply multiple
@@ -948,11 +945,8 @@ abstract class DataHandler extends LitePalBase {
 	 */
 	private boolean isPrimitiveBooleanType(Field field) {
 		Class<?> fieldType = field.getType();
-		if ("boolean".equals(fieldType.getName())) {
-			return true;
-		}
-		return false;
-	}
+              return "boolean".equals(fieldType.getName());
+          }
 
 	/**
 	 * Put the value of field into ContentValues if current action is saving.

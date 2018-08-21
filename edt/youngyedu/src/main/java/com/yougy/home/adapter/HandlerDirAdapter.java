@@ -54,9 +54,9 @@ public class HandlerDirAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.adapter_outline_entry, null);
             holder = new ViewHolder();
 
-            holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
-            holder.tv_page = (TextView) convertView.findViewById(R.id.tv_page);
-            holder.rl_manger = (RelativeLayout) convertView.findViewById(R.id.rl_manger);
+            holder.tv_title = convertView.findViewById(R.id.tv_title);
+            holder.tv_page = convertView.findViewById(R.id.tv_page);
+            holder.rl_manger = convertView.findViewById(R.id.rl_manger);
             holder.view_line = convertView.findViewById(R.id.view_line);
             convertView.setTag(holder);
         } else {

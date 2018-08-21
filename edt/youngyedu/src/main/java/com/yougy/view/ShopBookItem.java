@@ -36,9 +36,9 @@ public class ShopBookItem extends RelativeLayout implements View.OnClickListener
 
     private void init(Context context) {
         View.inflate(context, R.layout.book_shop_classify_layout, this);
-        mBookClassifyTv = (TextView) findViewById(R.id.book_classify);
-        mBookMoreTv = (TextView) findViewById(R.id.book_more);
-        mShopBookLayout = (ShopBookLayout) findViewById(R.id.book_list);
+        mBookClassifyTv = findViewById(R.id.book_classify);
+        mBookMoreTv = findViewById(R.id.book_more);
+        mShopBookLayout = findViewById(R.id.book_list);
         mBookMoreTv.setOnClickListener(this);
     }
 

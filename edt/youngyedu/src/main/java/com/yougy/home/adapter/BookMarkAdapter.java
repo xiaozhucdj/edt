@@ -47,9 +47,9 @@ public class BookMarkAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.adapter_book_marks, null);
             holder = new ViewHolder();
-            holder.mTvCreatTime = (TextView) convertView.findViewById(R.id.tv_creat_time);
-            holder.mTvMarkNmae = (TextView) convertView.findViewById(R.id.tv_mark_name);
-            holder.mTvMarkPage = (TextView) convertView.findViewById(R.id.tv_mark_page);
+            holder.mTvCreatTime = convertView.findViewById(R.id.tv_creat_time);
+            holder.mTvMarkNmae = convertView.findViewById(R.id.tv_mark_name);
+            holder.mTvMarkPage = convertView.findViewById(R.id.tv_mark_page);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

@@ -36,12 +36,12 @@ public class DeleteDialog extends BaseDialog implements View.OnClickListener {
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_delete);
-        mBtnSure = (Button) this.findViewById(R.id.btn_sure);
+        mBtnSure = this.findViewById(R.id.btn_sure);
         mBtnSure.setOnClickListener(this);
 
-        mBtnCancel = (Button) this.findViewById(R.id.btn_cancel);
+        mBtnCancel = this.findViewById(R.id.btn_cancel);
         mBtnCancel.setOnClickListener(this);
-        mTvTitle = (TextView) this.findViewById(R.id.tv_title);
+        mTvTitle = this.findViewById(R.id.tv_title);
 
     }
 

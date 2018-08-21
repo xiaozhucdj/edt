@@ -191,13 +191,13 @@ public class QuestionReplySummary implements Parcelable {
                         content = new Content_new(Content_new.Type.IMG_URL , version , url , null);
                     }
                     else if (url.endsWith(".htm")){
-                        content = new Content_new(Content_new.Type.HTML_URL , version , url , null);;
+                        content = new Content_new(Content_new.Type.HTML_URL , version , url , null);
                     }
                 }
             }
             else if (format.equals("TEXT")){
                 String contentText = "" + contentTreeMap.get("value");
-                content = new Content_new(Content_new.Type.TEXT , version , contentText , null);;
+                content = new Content_new(Content_new.Type.TEXT , version , contentText , null);
             }
 //            if (content != null){
                 parsedContentList.add(content);

@@ -49,7 +49,7 @@ public class DialogNoteSubjectAdapter extends RecyclerView.Adapter<DialogNoteSub
 
         public HolderDialogSubject(View itemView) {
             super(itemView);
-            mTvSubject = (TextView) itemView.findViewById(R.id.tv_subject);
+            mTvSubject = itemView.findViewById(R.id.tv_subject);
         }
 
         public void setViewData(int position) {

@@ -622,7 +622,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                     }
                 }
-                contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
+                contentDisplayer.getContentAdapter().updateDataList("question", questionList);
 
                 //取题目的第一页纸展示
                 if (questionList != null && questionList.size() > 0) {
@@ -1632,7 +1632,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         rlAnswer.setDrawingCacheEnabled(true);
         Bitmap tBitmap = rlAnswer.getDrawingCache();
         // 拷贝图片，否则在setDrawingCacheEnabled(false)以后该图片会被释放掉
-        tBitmap = tBitmap.createBitmap(tBitmap);
+        tBitmap = Bitmap.createBitmap(tBitmap);
         rlAnswer.setDrawingCacheEnabled(false);
         return tBitmap;
     }
@@ -1777,7 +1777,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             ButterKnife.bind(this, itemView);
 
             int margin = UIUtils.dip2px(10);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) ((UIUtils.getScreenWidth() - UIUtils.dip2px(660) - PAGE_SHOW_SIZE * 2 * margin) / PAGE_SHOW_SIZE), ViewGroup.LayoutParams.MATCH_PARENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((UIUtils.getScreenWidth() - UIUtils.dip2px(660) - PAGE_SHOW_SIZE * 2 * margin) / PAGE_SHOW_SIZE, ViewGroup.LayoutParams.MATCH_PARENT);
             params.setMargins(margin, 0, margin, 0);
             itemView.setLayoutParams(params);
 
