@@ -319,16 +319,29 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 定时作业到时间后，进入后直接提交    作业进入  目前是不能返回的 不存在退出再次进入的情况
+     */
+    private Runnable mAutoSubmit = () -> autoSubmitHomeWork();
+    /**
+     * 手写模式开启    OnCreate 先拦截 手绘   onResume  延迟200ms取消拦截
+     */
+    private Runnable mInterceptAnswerBoard = new Runnable(){
+        @Override
+        public void run() {
+            if (mNbvAnswerBoard != null) {
+                mNbvAnswerBoard.setIntercept(false);
+            }
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
         if (isAutoSubmit) {
-            YoungyApplicationManager.getMainThreadHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    autoSubmitHomeWork();
-                }
-            }, 2500);
+            YoungyApplicationManager.getMainThreadHandler().postDelayed(mAutoSubmit, 1500);
+        } else {
+            YoungyApplicationManager.getMainThreadHandler().postDelayed(mInterceptAnswerBoard, 200);
         }
     }
 
@@ -379,6 +392,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+    }
+
     /**
      * 时间到了自动提交任务
      */
@@ -405,6 +423,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         mNbvAnswerBoard = new NoteBookView2(WriteHomeWorkActivity.this);
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
+        mNbvAnswerBoard.setIntercept(true);
 //        findViewById(R.id.img_btn_right).setVisibility(View.GONE);
 
         /*mNbvAnswerBoard.setOnTouchListener(new View.OnTouchListener() {
@@ -497,6 +516,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         imageRefresh.setOnClickListener(v -> loadData());
     }
+
+
+
 
     @Override
     protected void loadData() {
@@ -1900,6 +1922,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        YoungyApplicationManager.getMainThreadHandler().removeCallbacks(mAutoSubmit);
+        YoungyApplicationManager.getMainThreadHandler().removeCallbacks(mInterceptAnswerBoard);
         removeReceiveHomeworkMsg();
         if (examPaperContentList != null) {
             examPaperContentList.clear();

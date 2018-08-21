@@ -222,8 +222,16 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             mOnyxImgView.setLayoutParams(new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
         }
         mControlView.addView(mOnyxImgView, 0);
+//        getReaderPresenter().openDocument(mPdfFile, mControlActivity.mBookId + "");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LogUtils.e("HandleOnyxReaderFragment onStart------");
         getReaderPresenter().openDocument(mPdfFile, mControlActivity.mBookId + "");
     }
+
 
     /////////////////////////////////////////pdf sdk start////////////////////////////////////////////
 
@@ -295,11 +303,17 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         mErrorDialog.show();
     }
 
+
+    private boolean isSuccesspdf  =false ;
     @Override
     public void openDocumentFinsh() {
-        mPageCounts = mReaderPresenter.getPages();
-        initSeekBar();
-        initDB();
+
+        if (!isSuccesspdf){
+            mPageCounts = mReaderPresenter.getPages();
+            initSeekBar();
+            initDB();
+        }
+
     }
 
     /**
@@ -520,6 +534,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             return;
         }
         mCurrentMarksPage = position;
+        isSuccesspdf =true;
         getReaderPresenter().gotoPage(position);
     }
 

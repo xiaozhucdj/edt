@@ -170,7 +170,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             binding.textScoreTitle.setText("分数");
             binding.circleProgressBar.setProgress(totalScore * 100 / examTotalPoints);
             binding.circleProgressBar.setIsDrawCenterText(false);
-            binding.textScore.setText(String.valueOf(totalScore));
+            binding.textScore.setText(totalScore + "分");
         } else { //不计分作业
             binding.textScoreTitle.setText("正确率");
             binding.circleProgressBar.setProgress((int) (mAccuracy * 100));
