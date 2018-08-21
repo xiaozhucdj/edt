@@ -142,9 +142,9 @@ public class NewShopBookItem extends RelativeLayout implements View.OnClickListe
     }
 
     public interface OnItemActionListener{
-        public void onItemClick(int position);
-        public void onCheckedChanged(int position , boolean checked);
-        public void onBtnClick(int position);
+        void onItemClick(int position);
+        void onCheckedChanged(int position, boolean checked);
+        void onBtnClick(int position);
     }
 
     public void setChecked(boolean checked , boolean callListener){

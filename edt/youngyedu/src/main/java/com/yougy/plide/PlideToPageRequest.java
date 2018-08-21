@@ -22,7 +22,7 @@ public class PlideToPageRequest extends PlideRequest {
 
     @Override
     public void run() throws InterruptedException {
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 callListeners(PlideLoadListener.STATUS.TO_PAGE_ING , mUrl , mToPageIndex , -999, null , null);
@@ -30,7 +30,7 @@ public class PlideToPageRequest extends PlideRequest {
         });
         Result<Bitmap> result = getProcessor().getPresenter().gotoPage(mToPageIndex);
         if (result.getResultCode() == 0){
-            getProcessor().runOnUiThread(new Runnable() {
+            PlideRequestProcessor.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 //                    try {
@@ -45,7 +45,7 @@ public class PlideToPageRequest extends PlideRequest {
             });
         }
         else {
-            getProcessor().runOnUiThread(new Runnable() {
+            PlideRequestProcessor.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     callListeners(PlideLoadListener.STATUS.ERROR , mUrl , mToPageIndex , -999 , PlideLoadListener.ERROR_TYPE.TO_PAGE_ERROR , result.getErrorMsg());
@@ -57,7 +57,7 @@ public class PlideToPageRequest extends PlideRequest {
 
     @Override
     public void onCancelled() {
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 callListeners(PlideLoadListener.STATUS.ERROR , mUrl , mToPageIndex , -999 , PlideLoadListener.ERROR_TYPE.USER_CANCLE, "用户取消toPage");

@@ -16,13 +16,13 @@ public class PlideOpenDocumentRequest extends PlideRequest {
 
     @Override
     public void run() throws InterruptedException{
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 callListeners(PlideLoadListener.STATUS.OPEN_DOCUMENT_ING , mUrl , -999 , -999 , null , null);
             }
         });
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mImageView.setImageBitmap(null);
@@ -41,7 +41,7 @@ public class PlideOpenDocumentRequest extends PlideRequest {
 //        }
         Result<Integer> result = getProcessor().getPresenter().openDocument(CommonDownloader.getSavePath(mUrl) , null);
         if (result.getResultCode() == 0){
-            getProcessor().runOnUiThread(new Runnable() {
+            PlideRequestProcessor.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     callListeners(PlideLoadListener.STATUS.OPEN_DOCUMENT_SUCCESS , mUrl , -999  , result.getData() , null , null);
@@ -49,7 +49,7 @@ public class PlideOpenDocumentRequest extends PlideRequest {
             });
         }
         else {
-            getProcessor().runOnUiThread(new Runnable() {
+            PlideRequestProcessor.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     callListeners(PlideLoadListener.STATUS.ERROR , mUrl , -999 , -999, PlideLoadListener.ERROR_TYPE.OPEN_DOCUMENT_ERROR , result.getErrorMsg());
@@ -61,7 +61,7 @@ public class PlideOpenDocumentRequest extends PlideRequest {
 
     @Override
     public void onCancelled() {
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 callListeners(PlideLoadListener.STATUS.ERROR , mUrl , -999 , -999 , PlideLoadListener.ERROR_TYPE.USER_CANCLE, "用户取消openDocument");

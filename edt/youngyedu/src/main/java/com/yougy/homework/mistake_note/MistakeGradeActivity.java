@@ -97,7 +97,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
 
     @Override
     protected void init() {
-        questionItem = (ParsedQuestionItem) getIntent().getParcelableExtra("questionItem");
+        questionItem = getIntent().getParcelableExtra("questionItem");
         ArrayList<String> contentList = getIntent().getStringArrayListExtra("writeImgList");
         for (String url : contentList) {
             if (!TextUtils.isEmpty(url)) {

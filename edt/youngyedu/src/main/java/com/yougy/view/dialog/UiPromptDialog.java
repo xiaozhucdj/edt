@@ -44,18 +44,18 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_down_book);
-        mTvTitle = (TextView) this.findViewById(R.id.tv_title);
+        mTvTitle = this.findViewById(R.id.tv_title);
 
-        mBtnCancel = (Button) this.findViewById(R.id.btn_cancel);
+        mBtnCancel = this.findViewById(R.id.btn_cancel);
         mBtnCancel.setOnClickListener(this);
 
-        mBtnConfirm = (Button) this.findViewById(R.id.btn_confirm);
+        mBtnConfirm = this.findViewById(R.id.btn_confirm);
         mBtnConfirm.setOnClickListener(this);
 
 
-        mRlCancelAndConfirm = (RelativeLayout) this.findViewById(R.id.rl_cancelAndConfirm);
-        mRlCenter = (RelativeLayout) this.findViewById(R.id.rl_center);
-        mBtnCenterConfirm = (Button) this.findViewById(R.id.btn_centerConfirm);
+        mRlCancelAndConfirm = this.findViewById(R.id.rl_cancelAndConfirm);
+        mRlCenter = this.findViewById(R.id.rl_center);
+        mBtnCenterConfirm = this.findViewById(R.id.btn_centerConfirm);
         mBtnCenterConfirm.setOnClickListener(this);
 
     }

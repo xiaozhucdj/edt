@@ -58,8 +58,8 @@ public class AdaptetHistorys extends RecyclerView.Adapter<AdaptetHistorys.HolerH
 
         public HolerHistorys(View itemView) {
             super(itemView);
-            mLlItem = (LinearLayout) itemView.findViewById(R.id.ll_item);
-            mTvHistory = (TextView) itemView.findViewById(R.id.tv_history);
+            mLlItem = itemView.findViewById(R.id.ll_item);
+            mTvHistory = itemView.findViewById(R.id.tv_history);
         }
 
         public void setViewData(int position) {

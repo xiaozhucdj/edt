@@ -658,7 +658,7 @@ public class ContentDisplayer extends RelativeLayout {
         });
     }
     public interface OnLoadingStatusChangedListener{
-        public void onLoadingStatusChanged(LOADING_STATUS loadingStatus);
+        void onLoadingStatusChanged(LOADING_STATUS loadingStatus);
     }
     /**
      * 在主线程中执行代码

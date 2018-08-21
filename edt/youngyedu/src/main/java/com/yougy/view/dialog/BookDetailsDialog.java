@@ -42,13 +42,13 @@ public class BookDetailsDialog extends BaseDialog implements View.OnClickListene
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_book_details);
-        mImgClosae = (ImageView) this.findViewById(R.id.img_close);
+        mImgClosae = this.findViewById(R.id.img_close);
         mImgClosae.setOnClickListener(this);
 
-        mBtnCancel = (Button) this.findViewById(R.id.btn_cancel);
+        mBtnCancel = this.findViewById(R.id.btn_cancel);
         mBtnCancel.setOnClickListener(this);
 
-        mBtnConfirm = (Button) this.findViewById(R.id.btn_confirm);
+        mBtnConfirm = this.findViewById(R.id.btn_confirm);
         mBtnConfirm.setOnClickListener(this);
 
     }

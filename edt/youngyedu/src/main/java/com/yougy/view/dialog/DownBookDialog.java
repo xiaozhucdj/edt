@@ -43,12 +43,12 @@ public class DownBookDialog extends BaseDialog implements View.OnClickListener {
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_down_book);
-        mTvTitle = (TextView) this.findViewById(R.id.tv_title);
+        mTvTitle = this.findViewById(R.id.tv_title);
 
-        mBtnCancel = (Button) this.findViewById(R.id.btn_cancel);
+        mBtnCancel = this.findViewById(R.id.btn_cancel);
         mBtnCancel.setOnClickListener(this);
 
-        mBtnConfirm = (Button) this.findViewById(R.id.btn_confirm);
+        mBtnConfirm = this.findViewById(R.id.btn_confirm);
         mBtnConfirm.setOnClickListener(this);
     }
 

@@ -141,7 +141,7 @@ public class ShopPromotionActivity extends ShopBaseActivity{
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.leftMargin = UIUtils.px2dip(25);
             View pageLayout = View.inflate(this, R.layout.page_item, null);
-            final Button pageBtn = (Button) pageLayout.findViewById(R.id.page_btn);
+            final Button pageBtn = pageLayout.findViewById(R.id.page_btn);
             if (index == 1) {
                 pageBtn.setSelected(true);
             }

@@ -7,9 +7,9 @@ package com.yougy.common.protocol.request;
 
 public class NewUpdateUserReq extends NewBaseReq {
     /**用户编码*/
-    private    int userId = -1 ;;
+    private    int userId = -1 ;
     /**用户年龄*/
-    private int userAge = -1 ;;
+    private int userAge = -1 ;
     /**用户照片*/
     private String userPhoto;
     /**用户电话*/

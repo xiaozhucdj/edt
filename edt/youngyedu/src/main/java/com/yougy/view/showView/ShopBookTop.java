@@ -27,8 +27,8 @@ public class ShopBookTop extends RelativeLayout {
 
     private void init(Context context) {
         View.inflate(context, R.layout.shop_cart_top, this);
-        mBackBtn = (TextView) findViewById(R.id.book_shop_back);
-        mTitle = (TextView) findViewById(R.id.book_shop_title);
+        mBackBtn = findViewById(R.id.book_shop_back);
+        mTitle = findViewById(R.id.book_shop_title);
         mBackBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -55,25 +55,25 @@ public class PaySuccessDialog extends BaseDialog implements View.OnClickListener
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_pay_success);
-        mImgClosae = (ImageView) this.findViewById(R.id.img_close);
+        mImgClosae = this.findViewById(R.id.img_close);
         mImgClosae.setOnClickListener(this);
 
-        mBtnCancel = (Button) this.findViewById(R.id.btn_cancel);
+        mBtnCancel = this.findViewById(R.id.btn_cancel);
         mBtnCancel.setOnClickListener(this);
 
-        mBtnConfirm = (Button) this.findViewById(R.id.btn_confirm);
+        mBtnConfirm = this.findViewById(R.id.btn_confirm);
         mBtnConfirm.setOnClickListener(this);
 
 
-        mTvOrderNumber = (TextView) this.findViewById(R.id.tv_order_number);
-        mTvOrderTime = (TextView) this.findViewById(R.id.tv_order_time);
-        mTvOrderDetail = (TextView) this.findViewById(R.id.tv_order_detail);
-        mTvSalesDetail = (TextView) this.findViewById(R.id.tv_sales_detail);
-        mImgSmallIcon = (ImageView) this.findViewById(R.id.img_book_icon);
-        mTvBookName = (TextView) this.findViewById(R.id.tv_book_name);
-        mTvBookAuther = (TextView) this.findViewById(R.id.tv_book_auther);
-        mTvFactoryPrice = (TextView) this.findViewById(R.id.tv_factory_price);
-        mTvMarketPrice = (TextView) this.findViewById(R.id.tv_market_price);
+        mTvOrderNumber = this.findViewById(R.id.tv_order_number);
+        mTvOrderTime = this.findViewById(R.id.tv_order_time);
+        mTvOrderDetail = this.findViewById(R.id.tv_order_detail);
+        mTvSalesDetail = this.findViewById(R.id.tv_sales_detail);
+        mImgSmallIcon = this.findViewById(R.id.img_book_icon);
+        mTvBookName = this.findViewById(R.id.tv_book_name);
+        mTvBookAuther = this.findViewById(R.id.tv_book_auther);
+        mTvFactoryPrice = this.findViewById(R.id.tv_factory_price);
+        mTvMarketPrice = this.findViewById(R.id.tv_market_price);
     }
 
 

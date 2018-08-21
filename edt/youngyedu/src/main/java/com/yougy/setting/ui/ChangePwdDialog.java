@@ -89,10 +89,7 @@ public class ChangePwdDialog extends BaseDialog {
     }
 
     public boolean isLengthLegal(int length) {
-        if (length > 16 || length < 6) {
-            return false;
-        }
-        return true;
+        return !(length > 16 || length < 6);
     }
 
     public DialogPwdListener mPwdListener;

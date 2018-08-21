@@ -742,7 +742,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         binding.rlAnswer.setDrawingCacheEnabled(true);
         Bitmap tBitmap = binding.rlAnswer.getDrawingCache();
         // 拷贝图片，否则在setDrawingCacheEnabled(false)以后该图片会被释放掉
-        tBitmap = tBitmap.createBitmap(tBitmap);
+        tBitmap = Bitmap.createBitmap(tBitmap);
         binding.rlAnswer.setDrawingCacheEnabled(false);
         if (tBitmap != null) {
 //            ivResult.setImageBitmap(tBitmap);
@@ -757,7 +757,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         binding.rlAnswer.setDrawingCacheEnabled(true);
         Bitmap tBitmap = binding.rlAnswer.getDrawingCache();
         // 拷贝图片，否则在setDrawingCacheEnabled(false)以后该图片会被释放掉
-        tBitmap = tBitmap.createBitmap(tBitmap);
+        tBitmap = Bitmap.createBitmap(tBitmap);
         binding.rlAnswer.setDrawingCacheEnabled(false);
         return tBitmap;
     }
@@ -1093,7 +1093,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
             ButterKnife.bind(this, itemView);
 
             int margin = UIUtils.dip2px(10);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) ((UIUtils.getScreenWidth() - UIUtils.dip2px(660) - PAGE_SHOW_SIZE * 2 * margin) / PAGE_SHOW_SIZE), ViewGroup.LayoutParams.MATCH_PARENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((UIUtils.getScreenWidth() - UIUtils.dip2px(660) - PAGE_SHOW_SIZE * 2 * margin) / PAGE_SHOW_SIZE, ViewGroup.LayoutParams.MATCH_PARENT);
             params.setMargins(margin, 0, margin, 0);
             itemView.setLayoutParams(params);
 

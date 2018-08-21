@@ -62,7 +62,7 @@ public class HomeworkFragment extends BFragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_View);
+        mRecyclerView = mRootView.findViewById(R.id.recycler_View);
 //        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
@@ -84,10 +84,10 @@ public class HomeworkFragment extends BFragment {
             }
         });
         mHomeworkAdapter.notifyDataSetChanged();
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
+        mLoadingNull = mRootView.findViewById(R.id.loading_null);
 
-        tvErrMsg = (TextView) mRootView.findViewById(R.id.tv_errMsg);
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        tvErrMsg = mRootView.findViewById(R.id.tv_errMsg);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 

@@ -40,10 +40,10 @@ public class CancelAndConfirmDialog extends BaseDialog implements View.OnClickLi
 
     protected void initLayout() {
         setContentView(R.layout.dialog_cancle_confirm);
-        mTvTitle = (TextView) this.findViewById(R.id.title_tv);
-        mBtnCancel = (Button) this.findViewById(R.id.cancle_btn);
+        mTvTitle = this.findViewById(R.id.title_tv);
+        mBtnCancel = this.findViewById(R.id.cancle_btn);
         mBtnCancel.setOnClickListener(this);
-        mBtnConfirm = (Button) this.findViewById(R.id.confirm_btn);
+        mBtnConfirm = this.findViewById(R.id.confirm_btn);
         mBtnConfirm.setOnClickListener(this);
     }
 

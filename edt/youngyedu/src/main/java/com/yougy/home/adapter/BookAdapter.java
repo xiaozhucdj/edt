@@ -135,20 +135,20 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.HolerFragmentB
 
         public HolerFragmentBook(View itemView) {
             super(itemView);
-            mImgBookIconL = (ImageView) itemView.findViewById(R.id.img_book_iconL);
-            mImgBookIconS = (ImageView) itemView.findViewById(R.id.img_book_iconS);
-            mRlL = (RelativeLayout) itemView.findViewById(R.id.rl_book_itemL);
-            mRlS = (RelativeLayout) itemView.findViewById(R.id.rl_book_itemS);
+            mImgBookIconL = itemView.findViewById(R.id.img_book_iconL);
+            mImgBookIconS = itemView.findViewById(R.id.img_book_iconS);
+            mRlL = itemView.findViewById(R.id.rl_book_itemL);
+            mRlS = itemView.findViewById(R.id.rl_book_itemS);
 
-            mImgBookDownL = (ImageView) itemView.findViewById(R.id.img_down_book_l);
-            mImgBookDownS = (ImageView) itemView.findViewById(R.id.img_down_book_s);
-
-
-            mImgBookDeleteL = (ImageView) itemView.findViewById(R.id.img_delete_book_l);
-            mImgBookDeleteS = (ImageView) itemView.findViewById(R.id.img_delete_book_s);
+            mImgBookDownL = itemView.findViewById(R.id.img_down_book_l);
+            mImgBookDownS = itemView.findViewById(R.id.img_down_book_s);
 
 
-            mImgAdd = (ImageView) itemView.findViewById(R.id.img_add_icon);
+            mImgBookDeleteL = itemView.findViewById(R.id.img_delete_book_l);
+            mImgBookDeleteS = itemView.findViewById(R.id.img_delete_book_s);
+
+
+            mImgAdd = itemView.findViewById(R.id.img_add_icon);
 
         }
 

@@ -14,7 +14,7 @@ public class ShowImgView extends SurfaceView {
     private Bitmap bitmap;
     public Bitmap CurrentBitmap = null;
    /* private float nDisplayX = 0;
-    private float nDisplayY = 0*/;
+    private float nDisplayY = 0*/
     private int drawCount = 0;
     public ShowImgView(Context context) {
         super(context);

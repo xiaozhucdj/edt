@@ -60,9 +60,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.HolerFragmen
             super(itemView);
 //            mTvNoteName = (TextView) itemView.findViewById(R.id.tv_noteName);
 //            mTvNoteGrade = (TextView) itemView.findViewById(R.id.tv_noteGrade);
-            mTvMyTitle = (TextView) itemView.findViewById(R.id.tv_myTitle);
-            mIvIcon = (ImageView) itemView.findViewById(R.id.img_book_icon);
-            mIvAdd = (ImageView) itemView.findViewById(R.id.img_add_icon);
+            mTvMyTitle = itemView.findViewById(R.id.tv_myTitle);
+            mIvIcon = itemView.findViewById(R.id.img_book_icon);
+            mIvAdd = itemView.findViewById(R.id.img_add_icon);
         }
 
 //        private void setViewVisibility(boolean visibility) {

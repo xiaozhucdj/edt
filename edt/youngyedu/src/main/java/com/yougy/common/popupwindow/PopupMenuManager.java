@@ -17,10 +17,10 @@ public class PopupMenuManager {
         View contentView = PopupUtil.showPopupWindowMenu(mContext, view, R.layout.check_homework_menu);
 
 
-        TextView tvRight = (TextView) contentView.findViewById(R.id.tv_homework_menu_right);
-        TextView tvError = (TextView) contentView.findViewById(R.id.tv_homework_menu_error);
-        TextView tvTime = (TextView) contentView.findViewById(R.id.tv_homework_menu_time);
-        TextView tvPercent = (TextView) contentView.findViewById(R.id.tv_homework_menu_percent);
+        TextView tvRight = contentView.findViewById(R.id.tv_homework_menu_right);
+        TextView tvError = contentView.findViewById(R.id.tv_homework_menu_error);
+        TextView tvTime = contentView.findViewById(R.id.tv_homework_menu_time);
+        TextView tvPercent = contentView.findViewById(R.id.tv_homework_menu_percent);
 
 
         tvRight.setText(mRight);

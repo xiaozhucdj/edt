@@ -79,13 +79,13 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
     @Override
     protected void initLayout() {
         setContentView(R.layout.dialog_fragment_notes);
-        mBtnCancel = (ImageView) this.findViewById(R.id.img_close);
+        mBtnCancel = this.findViewById(R.id.img_close);
         mBtnCancel.setOnClickListener(this);
 
-        mBtnCreat = (Button) this.findViewById(R.id.btn_creat);
+        mBtnCreat = this.findViewById(R.id.btn_creat);
         mBtnCreat.setOnClickListener(this);
 
-        mEditName = (EditText) this.findViewById(R.id.et_note_name);
+        mEditName = this.findViewById(R.id.et_note_name);
         mEditName.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -98,27 +98,27 @@ public class CreatNoteDialog extends BaseDialog implements View.OnClickListener 
         });
 
 
-        mImgBtnWhite = (ImageButton) this.findViewById(R.id.img_btn_style_white);
+        mImgBtnWhite = this.findViewById(R.id.img_btn_style_white);
         mImgBtnWhite.setOnClickListener(this);
 
-        mImgBtnBiJi = (ImageButton) this.findViewById(R.id.img_btn_style_biji);
+        mImgBtnBiJi = this.findViewById(R.id.img_btn_style_biji);
         mImgBtnBiJi.setOnClickListener(this);
 
-        mImgBtnTianZi = (ImageButton) this.findViewById(R.id.img_btn_style_tianzi);
+        mImgBtnTianZi = this.findViewById(R.id.img_btn_style_tianzi);
         mImgBtnTianZi.setOnClickListener(this);
         setNoteStyleStates();
 
 
-        mTvNoteType = (TextView) this.findViewById(R.id.tv_noteType);
-        mLLNoteType = (LinearLayout) this.findViewById(R.id.ll_noteType);
+        mTvNoteType = this.findViewById(R.id.tv_noteType);
+        mLLNoteType = this.findViewById(R.id.ll_noteType);
 
-        mTvSubject = (TextView) this.findViewById(R.id.tv_subject);
-
-
-        mTvTitle = (TextView) this.findViewById(R.id.tv_title);
+        mTvSubject = this.findViewById(R.id.tv_subject);
 
 
-        mRecyclerView = (RecyclerView) this.findViewById(R.id.recycler_subject);
+        mTvTitle = this.findViewById(R.id.tv_title);
+
+
+        mRecyclerView = this.findViewById(R.id.recycler_subject);
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(mContex, 4);
         layout.setScrollEnabled(true);

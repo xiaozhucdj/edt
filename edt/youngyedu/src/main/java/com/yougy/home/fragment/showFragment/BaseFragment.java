@@ -300,7 +300,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     private void initBaseView() {
         /***baseFragment 根View*/
-        mParentLayout = (FrameLayout) mRoot.findViewById(R.id.parent_layout);
+        mParentLayout = mRoot.findViewById(R.id.parent_layout);
         /**
          *         opt_container .xml
          *         显示笔工具栏
@@ -312,72 +312,72 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
 
         // 显示笔工具栏  LinearLayout
-        mPaintChoose = (RelativeLayout) mRoot.findViewById(R.id.paint_choose);
+        mPaintChoose = mRoot.findViewById(R.id.paint_choose);
         //钢笔
-        mPen = (ImageButton) mRoot.findViewById(R.id.pen);
+        mPen = mRoot.findViewById(R.id.pen);
         //铅笔
-        mPencil = (ImageButton) mRoot.findViewById(R.id.pencil);
+        mPencil = mRoot.findViewById(R.id.pencil);
         //油性黑笔
-        mOliBlackPen = (ImageButton) mRoot.findViewById(R.id.oli_black_pen);
+        mOliBlackPen = mRoot.findViewById(R.id.oli_black_pen);
         //马克笔
-        mMakerPen = (ImageButton) mRoot.findViewById(R.id.maker_pen);
+        mMakerPen = mRoot.findViewById(R.id.maker_pen);
         //橡皮
-        mEraser = (ImageView) mRoot.findViewById(R.id.eraser);
+        mEraser = mRoot.findViewById(R.id.eraser);
         // 颜色 ImageButton
-        mColor = (ImageButton) mRoot.findViewById(R.id.color);
+        mColor = mRoot.findViewById(R.id.color);
         // 笔大小 SeekBar
-        mPenSizePg = (SeekBar) mRoot.findViewById(R.id.pen_size_pg);
+        mPenSizePg = mRoot.findViewById(R.id.pen_size_pg);
         //笔大小 ImageView
-        mPenSizeIv = (ImageView) mRoot.findViewById(R.id.pen_size);
+        mPenSizeIv = mRoot.findViewById(R.id.pen_size);
         // 透明度 SeekBar
-        mPenAlphaPg = (SeekBar) mRoot.findViewById(R.id.pen_alpha_pg);
+        mPenAlphaPg = mRoot.findViewById(R.id.pen_alpha_pg);
         //透明度  ImageView
-        mPenAlphaIv = (ImageView) mRoot.findViewById(R.id.pen_alpha);
+        mPenAlphaIv = mRoot.findViewById(R.id.pen_alpha);
 /**********************************************************************/
         /***
          *  按钮 工具栏
          */
 
         // 按钮 工具栏 总控件
-        mOptionLayout = (LinearLayout) mRoot.findViewById(R.id.opt_layout);
+        mOptionLayout = mRoot.findViewById(R.id.opt_layout);
 
         //书包
-        mBookPackageIv = (ImageView) mRoot.findViewById(R.id.book_package);
+        mBookPackageIv = mRoot.findViewById(R.id.book_package);
         //手势
-        mGestureIv = (ImageView) mRoot.findViewById(R.id.gesture);
+        mGestureIv = mRoot.findViewById(R.id.gesture);
         // 画笔 并且弹出 笔栏目
-        mPaintDrawIv = (ImageView) mRoot.findViewById(R.id.paint_draw);
+        mPaintDrawIv = mRoot.findViewById(R.id.paint_draw);
         // 画图 显示一个webViwe 添加刘阳HTML
-        mDrawPicIv = (ImageView) mRoot.findViewById(R.id.draw_pic);
+        mDrawPicIv = mRoot.findViewById(R.id.draw_pic);
         // 添加标签
-        mLabelIv = (ImageView) mRoot.findViewById(R.id.label);
+        mLabelIv = mRoot.findViewById(R.id.label);
         // 插入图片 调用系统 相册
-        mImageIv = (ImageView) mRoot.findViewById(R.id.image);
+        mImageIv = mRoot.findViewById(R.id.image);
         // 截图
-        mScreenshotIv = (ImageView) mRoot.findViewById(R.id.screenshot);
+        mScreenshotIv = mRoot.findViewById(R.id.screenshot);
         // 发送
-        mSendIv = (ImageView) mRoot.findViewById(R.id.send);
+        mSendIv = mRoot.findViewById(R.id.send);
         // 后退
-        mUndoIv = (ImageView) mRoot.findViewById(R.id.undo);
+        mUndoIv = mRoot.findViewById(R.id.undo);
         RxView.clicks(mUndoIv).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getUndoSubscriber());
         //前进
-        mRedoIv = (ImageView) mRoot.findViewById(R.id.redo);
+        mRedoIv = mRoot.findViewById(R.id.redo);
         RxView.clicks(mRedoIv).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getRedoSubscriber());
         // 添加书签
-        mBookMarkerIv = (ImageView) mRoot.findViewById(R.id.bookmark);
+        mBookMarkerIv = mRoot.findViewById(R.id.bookmark);
         //查看目录
-        mDirectoryIv = (ImageView) mRoot.findViewById(R.id.directory);
+        mDirectoryIv = mRoot.findViewById(R.id.directory);
 
         //切换Fragment 课本
-        mTextbookIv = (ImageView) mRoot.findViewById(R.id.textbook);
+        mTextbookIv = mRoot.findViewById(R.id.textbook);
 
         //切换Fragment 作业
-        mExerciseBookIv = (ImageView) mRoot.findViewById(R.id.exercise_book);
+        mExerciseBookIv = mRoot.findViewById(R.id.exercise_book);
 
 
 
         //修改笔记
-        mImgupdataNote = (ImageView) mRoot.findViewById(R.id.img_updataNote);
+        mImgupdataNote = mRoot.findViewById(R.id.img_updataNote);
 
 //        if (mControlActivity.mBookId > 0 && !StringUtils.isEmpty(FileUtils.getBookFileName(mControlActivity.mBookId, FileUtils.bookDir))) {
 
@@ -389,11 +389,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
         mImgupdataNote.setOnClickListener(this);
         //删除笔记
-        mImgDeleteNote = (ImageView) mRoot.findViewById(img_deleteNote);
+        mImgDeleteNote = mRoot.findViewById(img_deleteNote);
         mImgDeleteNote.setOnClickListener(this);
 
         //切换Fragment 笔记
-        mNotebookIv = (ImageView) mRoot.findViewById(R.id.notebook);
+        mNotebookIv = mRoot.findViewById(R.id.notebook);
         mNotebookIv.setEnabled(mControlActivity.mNoteId > 0);
 
         // 判断作业状体按钮
@@ -412,17 +412,17 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
 
         // 显示 书签和 目录内容的 控件
-        mBookNeedLayout = (LinearLayout) mRoot.findViewById(R.id.book_need_layout);
+        mBookNeedLayout = mRoot.findViewById(R.id.book_need_layout);
 
         /**
          *  Seekbar 底部进度条
          */
 
         // Seekbar 根VIEW
-        mRl_page = (RelativeLayout) mRoot.findViewById(R.id.rl_page);
+        mRl_page = mRoot.findViewById(R.id.rl_page);
 
         //替换布局的  ViewStub
-        mStub = (ViewStub) mRoot.findViewById(R.id.view_stub);
+        mStub = mRoot.findViewById(R.id.view_stub);
 
         /***
          *  初始化 按钮状态
@@ -435,21 +435,21 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         mPenAlphaPg.setProgress(100);*/
         mGestureIv.setSelected(true);
         // 绘制控件
-        mFrameLayout = (MyFrameLayout) mRoot.findViewById(R.id.note_parent);
+        mFrameLayout = mRoot.findViewById(R.id.note_parent);
         // 截图 View
         mScreenShotView = new ScreenShotView(mContext);
 
         //其他按钮根布局
-        mLlOtherIcon = (LinearLayout) mRoot.findViewById(R.id.ll_OtherIcon);
+        mLlOtherIcon = mRoot.findViewById(R.id.ll_OtherIcon);
         mLlOtherIcon.setVisibility(View.GONE);
         //控制是否显示其它按钮
-        mImgShowOtherIcon = (ImageView) mRoot.findViewById(R.id.img_showOhterIcon);
-        mImgPaste = (ImageView) mRoot.findViewById(R.id.paste);
+        mImgShowOtherIcon = mRoot.findViewById(R.id.img_showOhterIcon);
+        mImgPaste = mRoot.findViewById(R.id.paste);
         setPasteEnable();
 
 
-        mTvPenOrEraser = (TextView) mRoot.findViewById(R.id.tv_pen_or_eraser);
-        mSeekPenOrEraser = (SeekBar) mRoot.findViewById(R.id.seek_pen_or_eraser);
+        mTvPenOrEraser = mRoot.findViewById(R.id.tv_pen_or_eraser);
+        mSeekPenOrEraser = mRoot.findViewById(R.id.seek_pen_or_eraser);
         mSeekPenOrEraser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -957,7 +957,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
             LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = layoutInflater.inflate(R.layout.color_layout, null);
             popWindow = new PopupWindow(view, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.color_selector);
+            RecyclerView recyclerView = view.findViewById(R.id.color_selector);
             final int[] colors = getResources().getIntArray(R.array.colors);
             ColorAdapter adapter = new ColorAdapter(colors, mContext);
             recyclerView.setLayoutManager(new GridLayoutManager(mContext, 6));
@@ -1179,8 +1179,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 //        imageViews.put(new Position(params.leftMargin, params.topMargin), imageView);
         MoveRelativeLayout1 view = (MoveRelativeLayout1) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
         view.setPhotoGraph(photo);
-        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
-        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
+        final Button deleteBtn = view.findViewById(R.id.delete_pic);
+        ImageView imagebtn = view.findViewById(R.id.insert_pic);
         imagebtn.setImageBitmap(bitmap);
         params.width = bitmap.getWidth();
         params.height = bitmap.getHeight();
@@ -1338,22 +1338,22 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     private void showScreenCutOptLayout() {
         if (screenCutOptLayout == null) {
-            screenCutOptLayout = (LinearLayout) mRoot.findViewById(R.id.screen_cut_layout);
+            screenCutOptLayout = mRoot.findViewById(R.id.screen_cut_layout);
         }
         if (cancelCut == null) {
-            cancelCut = (Button) mRoot.findViewById(R.id.cancel_cut);
+            cancelCut = mRoot.findViewById(R.id.cancel_cut);
             cancelCut.setOnClickListener(this);
         }
         if (copyCut == null) {
-            copyCut = (Button) mRoot.findViewById(R.id.copy_cut);
+            copyCut = mRoot.findViewById(R.id.copy_cut);
             copyCut.setOnClickListener(this);
         }
         if (sendCut == null) {
-            sendCut = (Button) mRoot.findViewById(R.id.send_cut);
+            sendCut = mRoot.findViewById(R.id.send_cut);
             sendCut.setOnClickListener(this);
         }
         if (saveCut == null) {
-            saveCut = (Button) mRoot.findViewById(R.id.save_cut);
+            saveCut = mRoot.findViewById(R.id.save_cut);
             saveCut.setOnClickListener(this);
         }
         screenCutOptLayout.setVisibility(View.VISIBLE);
@@ -1362,10 +1362,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     private void showScreenCutOptWindow() {
         View view = View.inflate(mContext, R.layout.screencut_opt_layout, null);
-        Button cancelCut = (Button) view.findViewById(R.id.cancel_cut);
-        Button copyCut = (Button) view.findViewById(R.id.copy_cut);
-        Button sendCut = (Button) view.findViewById(R.id.send_cut);
-        Button saveCut = (Button) view.findViewById(R.id.save_cut);
+        Button cancelCut = view.findViewById(R.id.cancel_cut);
+        Button copyCut = view.findViewById(R.id.copy_cut);
+        Button sendCut = view.findViewById(R.id.send_cut);
+        Button saveCut = view.findViewById(R.id.save_cut);
         cancelCut.setOnClickListener(this);
         copyCut.setOnClickListener(this);
         sendCut.setOnClickListener(this);
@@ -1739,8 +1739,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         PictureDrawable drawable = new PictureDrawable(picture);
         final MoveRelativeLayout view = (MoveRelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.insert_pic_layout, null);
         view.setDiagram(diagram);
-        final Button deleteBtn = (Button) view.findViewById(R.id.delete_pic);
-        ImageView imagebtn = (ImageView) view.findViewById(R.id.insert_pic);
+        final Button deleteBtn = view.findViewById(R.id.delete_pic);
+        ImageView imagebtn = view.findViewById(R.id.insert_pic);
         imagebtn.setImageDrawable(drawable);
         params.width = 400;
         params.height = 400;

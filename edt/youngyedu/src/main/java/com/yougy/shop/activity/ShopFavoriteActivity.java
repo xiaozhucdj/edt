@@ -165,7 +165,7 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
             //本次能展示的最后一本书的序号(从0开始)
             int lastShowBookIndex;
             //是否显示<<向前按钮
-            boolean showForward = (currentShowFirstPageIndex == 0 ? false : true);
+            boolean showForward = (currentShowFirstPageIndex != 0);
             //是否显示>>向后按钮
             boolean showNext;
             if (favorList.size() <= (currentShowFirstPageIndex + ONCE_SHOW_PAGE_NUM) * ITEM_NUM) {
@@ -183,7 +183,7 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
                 needRefreshItems = false;
             }
             //如果当前显示的页码按钮在页码容器中,则高亮显示
-            TextView selectedBtn = (TextView) pageBtnContainer.findViewWithTag((currentSelectedPageIndex + 1));
+            TextView selectedBtn = pageBtnContainer.findViewWithTag((currentSelectedPageIndex + 1));
             if (selectedBtn != null) {
                 selectedBtn.setSelected(true);
             }
@@ -202,7 +202,7 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
             if (i <= endIndex) {
                 Favor favor = favorList.get(i);
                 bookItems.get(j).setData(favor);
-                boolean checked = (findFavorByBookID(checkedBookInfoList, favor.getBookId()) == null) ? false : true;
+                boolean checked = findFavorByBookID(checkedBookInfoList, favor.getBookId()) != null;
                 if (!checked) {
                     allCheck = false;
                 }
@@ -279,11 +279,11 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
                         refreshView();
                         break;
                     default:
-                        TextView btn = (TextView) pageBtnContainer.findViewWithTag(currentSelectedPageIndex + 1);
+                        TextView btn = pageBtnContainer.findViewWithTag(currentSelectedPageIndex + 1);
                         if (btn != null) {
                             btn.setSelected(false);
                         }
-                        btn = (TextView) pageBtnContainer.findViewWithTag(i);
+                        btn = pageBtnContainer.findViewWithTag(i);
                         if (btn != null) {
                             btn.setSelected(true);
                         }

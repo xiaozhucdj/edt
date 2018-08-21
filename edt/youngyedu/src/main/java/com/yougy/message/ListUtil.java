@@ -134,6 +134,6 @@ public class ListUtil {
 
 
     public interface ConditionJudger<T>{
-        public boolean isMatchCondition(T nodeInList);
+        boolean isMatchCondition(T nodeInList);
     }
 }

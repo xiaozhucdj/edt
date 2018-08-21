@@ -124,22 +124,22 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_all_book, null);
-        mBookItemTile = (TextView) mRootView.findViewById(R.id.tv_bookItemTile);
+        mBookItemTile = mRootView.findViewById(R.id.tv_bookItemTile);
         initFitGradeAdapter();
         initSubjectAdapter();
         initBookAdapter();
 
-        mSubMore = (TextView) mRootView.findViewById(R.id.tv_subjectMore);
+        mSubMore = mRootView.findViewById(R.id.tv_subjectMore);
 
-        mGradeMore = (TextView) mRootView.findViewById(R.id.tv_gradeMore);
+        mGradeMore = mRootView.findViewById(R.id.tv_gradeMore);
 //        mGradeMore.setTag(0);
         mGradeMore.setOnClickListener(this);
 
-        mGroupSub = (ViewGroup) mRootView.findViewById(R.id.rl_subject);
-        mGroupGrade = (ViewGroup) mRootView.findViewById(R.id.rl_grade);
-        mLoadingNull = (ViewGroup) mRootView.findViewById(R.id.loading_null);
-        llTerm = (LinearLayout) mRootView.findViewById(R.id.ll_term);
-        mPageBtnBar = (PageBtnBar) mRootView.findViewById(R.id.btn_bar);
+        mGroupSub = mRootView.findViewById(R.id.rl_subject);
+        mGroupGrade = mRootView.findViewById(R.id.rl_grade);
+        mLoadingNull = mRootView.findViewById(R.id.loading_null);
+        llTerm = mRootView.findViewById(R.id.ll_term);
+        mPageBtnBar = mRootView.findViewById(R.id.btn_bar);
         return mRootView;
     }
 
@@ -148,7 +148,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
      * 初始化年级
      */
     private void initFitGradeAdapter() {
-        mFitGradeView = (RecyclerView) mRootView.findViewById(R.id.recycler_fitGrade);
+        mFitGradeView = mRootView.findViewById(R.id.recycler_fitGrade);
         mFitGradeView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
         layout.setScrollEnabled(false);
@@ -205,7 +205,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
      */
     private void initSubjectAdapter() {
 
-        mSubjectView = (RecyclerView) mRootView.findViewById(R.id.recycler_subject);
+        mSubjectView = mRootView.findViewById(R.id.recycler_subject);
         mSubjectView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), 4);
         layout.setScrollEnabled(false);
@@ -265,7 +265,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
      * 初始化课本
      */
     private void initBookAdapter() {
-        mBookView = (RecyclerView) mRootView.findViewById(R.id.recycler_books);
+        mBookView = mRootView.findViewById(R.id.recycler_books);
         mBookView.addItemDecoration(new DividerGridItemDecoration(UIUtils.getContext()));
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(),FileContonst.SMALL_PAGE_LINES);
         layout.setScrollEnabled(false);

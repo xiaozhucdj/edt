@@ -15,7 +15,7 @@ public class PlideQueryPageCountRequest extends PlideRequest {
     @Override
     public void run() throws InterruptedException {
         int totalPageCount = getProcessor().getPresenter().getTotalPages();
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (mInnerLogicListener != null){
@@ -28,7 +28,7 @@ public class PlideQueryPageCountRequest extends PlideRequest {
 
     @Override
     public void onCancelled() {
-        getProcessor().runOnUiThread(new Runnable() {
+        PlideRequestProcessor.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (mInnerLogicListener != null){

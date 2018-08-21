@@ -489,7 +489,7 @@ public class WriteableContentDisplayer extends RelativeLayout {
                         //尝试下载content内的数据,Glide的get是同步方法,只要返回就是成功,错误会报异常
                         GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) Glide.with(getContext())
                                 .load(content.getValue())
-                                .skipMemoryCache(useCache ? false : true)
+                                .skipMemoryCache(!useCache)
                                 .diskCacheStrategy(useCache ? DiskCacheStrategy.ALL : DiskCacheStrategy.NONE)
                                 .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                                 .get();
@@ -589,7 +589,7 @@ public class WriteableContentDisplayer extends RelativeLayout {
                         //尝试下载content内的数据,Glide的get是同步方法,只要返回就是成功,错误会报异常
                         GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) Glide.with(getContext())
                                 .load(content.getValue())
-                                .skipMemoryCache(useCache ? false : true)
+                                .skipMemoryCache(!useCache)
                                 .diskCacheStrategy(useCache ? DiskCacheStrategy.ALL : DiskCacheStrategy.NONE)
                                 .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                                 .get();

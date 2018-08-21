@@ -194,11 +194,7 @@ public class FileUtils {
             makeParentsDir(targetParent.getAbsolutePath());
             targetParent.mkdir();
         } else {
-            if (targetParent.isDirectory()) {
-                return true;
-            } else {
-                return false;
-            }
+            return targetParent.isDirectory();
         }
         return true;
     }

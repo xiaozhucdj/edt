@@ -46,7 +46,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.HolderSu
 
         public HolderSubject(View itemView) {
             super(itemView);
-            mTvSubject = (TextView) itemView.findViewById(R.id.tv_subject);
+            mTvSubject = itemView.findViewById(R.id.tv_subject);
         }
 
         public void setViewData(int position) {
