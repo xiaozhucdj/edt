@@ -107,7 +107,6 @@ dependencies {
     compile files('libs/commons-net-3.5.jar')
     compile 'com.google.protobuf:protobuf-java:3.1.0'
     compile 'com.android.support:design:25.+'
-    compile files('libs/volley.jar')
     compile 'org.sufficientlysecure:html-textview:3.0'
     compile files('libs/eventbus-2.2.1.jar')
 //    compile 'com.android.support:multidex:1.0.3'
