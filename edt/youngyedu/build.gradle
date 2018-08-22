@@ -34,7 +34,7 @@ android {
         targetSdkVersion 22
         versionName "2.0.0"
         multiDexEnabled true
-        versionCode 10
+        versionCode 11
 
 //        ndk {
 //            // 设置支持的SO库架构
