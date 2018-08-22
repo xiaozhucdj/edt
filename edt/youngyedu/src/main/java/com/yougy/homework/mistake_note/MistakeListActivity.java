@@ -334,7 +334,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
             return;
         }
 
-        NetWorkManager.queryHomeworkExcerptWithReply(29, currentNode != null ? currentNode.getId() : null)
+        NetWorkManager.queryHomeworkExcerptWithReply(homeworkId, currentNode != null ? currentNode.getId() : null)
                 .compose(bindToLifecycle())
                 .subscribe(new Action1<List<QuestionReplyDetail>>() {
                     @Override
