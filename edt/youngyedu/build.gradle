@@ -18,7 +18,10 @@ android {
     aaptOptions.cruncherEnabled = false
     aaptOptions.useNewCruncher = false
 
-
+    lintOptions{
+        checkReleaseBuilds false
+        abortOnError false
+    }
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
@@ -62,7 +65,9 @@ android {
             signingConfig signingConfigs.leke_key
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //签名
             signingConfig signingConfigs.leke_key
@@ -104,11 +109,10 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.3'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
-    compile files('libs/commons-net-3.5.jar')
     compile 'com.google.protobuf:protobuf-java:3.1.0'
     compile 'com.android.support:design:25.+'
     compile 'org.sufficientlysecure:html-textview:3.0'
-    compile files('libs/eventbus-2.2.1.jar')
+    compile 'de.greenrobot:eventbus:2.4.0'
 //    compile 'com.android.support:multidex:1.0.3'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
