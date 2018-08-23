@@ -1,1 +1,1 @@
-include ':youngyedu', ':okhttputils'
+include ':youngyedu'
