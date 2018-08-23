@@ -482,6 +482,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(List<QuestionReplyDetail> questionReplyDetails) {
                         mQuestionReplyDetails = questionReplyDetails;
+                        replyScoreList.clear();
                         pageSize = mQuestionReplyDetails.size();
 
                         if (pageSize == 0) {
