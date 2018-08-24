@@ -18,10 +18,10 @@ android {
     aaptOptions.cruncherEnabled = false
     aaptOptions.useNewCruncher = false
 
-    lintOptions{
-        checkReleaseBuilds false
-        abortOnError false
-    }
+//    lintOptions{
+//        checkReleaseBuilds false
+//        abortOnError false
+//    }
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
@@ -65,9 +65,9 @@ android {
             signingConfig signingConfigs.leke_key
         }
         release {
-            minifyEnabled true
-            zipAlignEnabled true
-            shrinkResources true
+            minifyEnabled false
+//            zipAlignEnabled true
+//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //签名
             signingConfig signingConfigs.leke_key
