@@ -1258,8 +1258,7 @@ public class YXClient {
                                     loadingDialog.dismiss();
                                 }
                                 if (mMsgFail == null || !mMsgFail.isShowing()) {
-                                    mMsgFail = new ConfirmDialog(BaseActivity.getCurrentActivity(), "连接到消息服务器失败 : "
-                                            + reason + " , 是否重连?", new DialogInterface.OnClickListener() {
+                                    mMsgFail = new ConfirmDialog(BaseActivity.getCurrentActivity(), "当前网络有问题,是否重连?", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
