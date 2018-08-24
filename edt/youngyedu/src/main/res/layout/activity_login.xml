@@ -144,7 +144,7 @@
                 android:layout_marginLeft="15px"
                 android:background="@null"
                 android:digits="1234567890"
-                android:hint="请输入乐课账号"
+                android:hint="请输入账号"
                 android:inputType="number"
                 android:singleLine="true"
                 android:textColor="@color/black"
