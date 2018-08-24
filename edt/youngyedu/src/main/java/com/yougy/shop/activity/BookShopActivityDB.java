@@ -119,23 +119,24 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             } else {
                 extrabookSelected();
             }
-        },throwable -> {
-            if (throwable instanceof UnknownHostException) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("网络访问失败，请检查路由器是否正确连接！");
-                builder.setNegativeButton("取消", (dialog, which) -> {
-                    dialog.dismiss();
-                    finish();
-                });
-                builder.setPositiveButton("确定", (dialog, which) -> {
-                    dialog.dismiss();
-                    finish();
-                });
-                builder.show();
-            }
+        }, throwable -> {
+            showNetErrorDialog();
         });
     }
 
+    private void showNetErrorDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("网络访问失败，请检查路由器是否正确连接！");
+        builder.setNegativeButton("取消", (dialog, which) -> {
+            dialog.dismiss();
+            finish();
+        });
+        builder.setPositiveButton("确定", (dialog, which) -> {
+            dialog.dismiss();
+            finish();
+        });
+        builder.show();
+    }
 
     @Override
     protected void refreshView() {
@@ -215,7 +216,10 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             bookInfos.clear();
             bookInfos.addAll(result.getData());
             BookShopActivityDB.this.refreshSingleClassifyRecycler(result.getData());
-        }, throwable -> LogUtils.e(tag, "error is : " + throwable.getMessage()));
+        }, throwable -> {
+            LogUtils.e(tag, "error is : " + throwable.getMessage());
+            showNetErrorDialog();
+        });
     }
 
 
@@ -372,7 +376,9 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         binding.singleClassifyLayout.setVisibility(View.GONE);
         binding.allClassifyRecycler.setVisibility(View.VISIBLE);
         if (!flag) {
-            getHomeInfo().subscribe(this::handleHomeInfo);
+            getHomeInfo().subscribe(this::handleHomeInfo, throwable -> {
+                showNetErrorDialog();
+            });
         }
     }
 
