@@ -31,6 +31,7 @@ import com.yougy.init.bean.Student;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
+import com.yougy.view.dialog.AppUpdateDialog;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownProgressDialog;
 import com.yougy.view.dialog.HintDialog;
@@ -58,6 +59,7 @@ public class SplashActivity extends BaseActivity {
     private int lastProgress;
 
     private WeakHandler mHandler = new WeakHandler();
+    private AppUpdateDialog mAppUpdateDialog;
 //    private PowerManager.WakeLock mWakeLock;
 
     @Override
@@ -227,24 +229,40 @@ public class SplashActivity extends BaseActivity {
                     int serverVersion = TextUtils.isEmpty(version.getAppVersion()) ? -1 : Integer.parseInt(version.getAppVersion());
                     String url = version.getAppUrl();
                     if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
-                        mHandler.post(() -> new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
-                                , "现在升级", "暂缓升级", (dialog, which) -> {
-                            //现在升级
-                            LogUtils.e("FH", "用户点击现在升级");
-                            SpUtils.setVersion("" + serverVersion);
-                            if (SpUtils.getStudent().getUserId() == -1) {
-                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
-                            } else {
-                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mAppUpdateDialog == null) {
+                                    mAppUpdateDialog = new AppUpdateDialog(getThisActivity());
+                                    mAppUpdateDialog.setCliclListener(new AppUpdateDialog.AppUpdateClicklListener() {
+                                        @Override
+                                        public void cancelListener() {
+                                            mAppUpdateDialog.dismiss();
+                                            login();
+                                        }
+
+                                        @Override
+                                        public void confirmListener() {
+                                            LogUtils.e("FH", "用户点击现在升级");
+                                            SpUtils.setVersion("" + serverVersion);
+                                            if (SpUtils.getStudent().getUserId() == -1) {
+                                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                                            } else {
+                                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                                            }
+                                            mAppUpdateDialog.dismiss();
+                                            doDownLoad(SplashActivity.this, url);
+                                        }
+                                    });
+                                    mAppUpdateDialog.show();
+                                    mAppUpdateDialog.setContent(version.getUpdaMsg().replaceAll("#", "\n"));
+                                    int forceVersion = TextUtils.isEmpty(version.getForceVersion()) ? -1 : Integer.parseInt(version.getForceVersion());
+                                    if (localVersion < forceVersion) {
+                                        mAppUpdateDialog.isShowcCancel(false);
+                                    }
+                                }
                             }
-                            dialog.dismiss();
-                            doDownLoad(SplashActivity.this, url);
-                        }, (dialog, which) -> {
-                            //暂缓升级
-                            LogUtils.e("FH", "用户点击暂缓升级,直接登录");
-                            dialog.dismiss();
-                            login();
-                        }).show());
+                        });
                     } else {
                         LogUtils.e("FH", "检测版本成功,没有更新的版本,开始登录...");
                         login();

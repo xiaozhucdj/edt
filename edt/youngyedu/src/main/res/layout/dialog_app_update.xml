@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent">
+
+    <RelativeLayout
+        android:layout_width="600px"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_rounded_rectangle_all_white"
+        android:paddingBottom="30px"
+        android:paddingLeft="53px"
+        android:paddingRight="53px"
+        android:paddingTop="30px">
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="电子书包又更新喽!"
+            android:textColor="@color/black"
+            android:textSize="30px"
+            android:textStyle="bold" />
+
+        <TextView
+            android:lineSpacingExtra="3px"
+            android:minHeight="150px"
+            android:id="@+id/content_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_tv"
+            android:layout_marginBottom="40px"
+            android:layout_marginTop="40px"
+            android:text="修复细节问题，优化交互体验"
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
+
+        <Button
+            android:id="@+id/cancle_btn"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_below="@id/content_tv"
+            android:layout_marginRight="1px"
+            android:layout_marginTop="1px"
+            android:background="@drawable/bind_cancel_btn_bg"
+            android:text="暂不更新"
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
+        <Button
+            android:id="@+id/confirm_btn"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/content_tv"
+            android:layout_marginRight="1px"
+            android:layout_marginTop="1px"
+            android:background="@drawable/bind_confirm_btn_bg"
+            android:text="立即更新"
+            android:textColor="@color/white"
+            android:textSize="24px" />
+
+    </RelativeLayout>
+</RelativeLayout>
+
+

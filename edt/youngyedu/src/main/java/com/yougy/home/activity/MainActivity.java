@@ -63,6 +63,7 @@ import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
+import com.yougy.view.dialog.AppUpdateDialog;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownProgressDialog;
 
@@ -165,6 +166,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private long mLastTime;
     private TextView testVersion;
     private boolean isStScreensaver;
+    private AppUpdateDialog mAppUpdateDialog;
 
 
     /***************************************************************************/
@@ -974,7 +976,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
 
-        if (!isStScreensaver){
+        if (!isStScreensaver) {
             ThreadManager.getSinglePool().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -1150,28 +1152,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     LogUtils.i("袁野 localVersion ==" + localVersion);
                     final String url = version.getAppUrl();
                     if (serverVersion > localVersion && !TextUtils.isEmpty(url)) {
-                        mHandler.post(() -> new ConfirmDialog(getThisActivity(), null, "检测到有更新版本的程序,是否升级?"
-                                , "现在升级", "暂缓升级", (dialog, which) -> {
-                            //现在升级
-                            SpUtils.setVersion("" + serverVersion);
-                            FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
-                            dialog.dismiss();
-                            doDownLoad(MainActivity.this, url);
-                        }, (dialog, which) -> {
-                            //暂缓升级
-                            dialog.dismiss();
-                        }).show());
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mAppUpdateDialog == null) {
+                                    mAppUpdateDialog = new AppUpdateDialog(getThisActivity());
+                                    mAppUpdateDialog.setCliclListener(new AppUpdateDialog.AppUpdateClicklListener() {
+                                        @Override
+                                        public void cancelListener() {
+                                            mAppUpdateDialog.dismiss();
+                                        }
+
+                                        @Override
+                                        public void confirmListener() {
+                                            SpUtils.setVersion("" + serverVersion);
+                                            FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_STUDENT + "," + SpUtils.getVersion());
+                                            mAppUpdateDialog.dismiss();
+                                            doDownLoad(MainActivity.this, url);
+                                        }
+                                    });
+                                }
+                                mAppUpdateDialog.show();
+                                mAppUpdateDialog.setContent(version.getUpdaMsg().replaceAll("#", "\n"));
+                                int forceVersion = TextUtils.isEmpty(version.getForceVersion()) ? -1 : Integer.parseInt(version.getForceVersion());
+                                if (localVersion < forceVersion) {
+                                    mAppUpdateDialog.isShowcCancel(false);
+                                }
+                            }
+                        });
                     } else {
                         ToastUtil.showCustomToast(MainActivity.this, "当前版本 : " + VersionUtils.getVersionName() + " ,已经是最新版本了");
                     }
                 }, throwable -> {
                     ToastUtil.showCustomToast(MainActivity.this, "检测版本失败，请稍后重试");
                 });
+
     }
 
-    /**
-     * 开始执行下载动作
-     */
     private void doDownLoad(final Context mContext, final String downloadUrl) {
         final DownProgressDialog downProgressDialog = new DownProgressDialog(mContext);
 
