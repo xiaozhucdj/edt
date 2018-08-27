@@ -19,6 +19,7 @@
             android:layout_marginTop="40px"
             android:gravity="center"
             android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            android:textColor="@color/black"
             android:textSize="30px" />
 
         <Button
