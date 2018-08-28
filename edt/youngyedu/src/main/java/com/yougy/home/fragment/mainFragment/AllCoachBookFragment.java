@@ -105,7 +105,6 @@ public class AllCoachBookFragment extends BFragment implements View.OnClickListe
      */
     private int mFitGradeIndex = -1;
 
-    private ViewGroup mRootView;
     private boolean mIsFist;
     private TextView mBookItemTile;
     private RecyclerView mFitGradeView;

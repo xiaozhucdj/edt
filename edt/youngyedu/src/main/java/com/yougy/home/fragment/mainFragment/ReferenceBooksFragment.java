@@ -86,7 +86,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
      * 搜索的 key
      */
     private String mSearchKey;
-    private ViewGroup mRootView;
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
     private boolean mIsFist;

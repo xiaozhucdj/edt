@@ -107,7 +107,6 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
      */
     private int mFitGradeIndex = -1;
 
-    private ViewGroup mRootView;
     private boolean mIsFist;
     private TextView mBookItemTile;
     private RecyclerView mFitGradeView;

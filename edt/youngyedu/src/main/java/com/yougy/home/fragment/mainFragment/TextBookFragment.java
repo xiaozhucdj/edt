@@ -61,7 +61,7 @@ public class TextBookFragment extends BFragment {
     /***
      * 当前翻页的角标
      */
-    private ViewGroup mRootView;
+
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
     private boolean mIsFist;
