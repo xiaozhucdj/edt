@@ -296,6 +296,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="30dp"
                 android:background="@drawable/icon_qingkong"
+                android:clickable="true"
                 android:gravity="center"
                 android:onClick="onClick"
                 android:text="清空"
