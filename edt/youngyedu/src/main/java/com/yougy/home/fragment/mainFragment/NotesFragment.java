@@ -94,7 +94,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
     private int mDelteIndex = 1;
 
     ///////////////////////////////View////////////////////////////////////
-    private ViewGroup mRootView;
+
     private RecyclerView mRecyclerView;
     private NotesAdapter mNotesAdapter;
     private CreatNoteDialog mNoteDialog;

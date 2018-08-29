@@ -106,7 +106,6 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     private int mFitGradeIndex = -1;
     //////////////////////////////////////View/////////////////////////////////////////////////////
 
-    private ViewGroup mRootView;
     private boolean mIsFist;
     private TextView mBookItemTile;
     private RecyclerView mFitGradeView;

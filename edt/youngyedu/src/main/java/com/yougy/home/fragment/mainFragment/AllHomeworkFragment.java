@@ -101,7 +101,7 @@ public class AllHomeworkFragment extends BFragment implements View.OnClickListen
      */
     private int mFitGradeIndex = -1;
 
-    private ViewGroup mRootView;
+
     private boolean mIsFist;
     private TextView mBookItemTile;
     private RecyclerView mFitGradeView;

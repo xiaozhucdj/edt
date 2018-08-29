@@ -50,7 +50,6 @@ public class HomeworkFragment extends BFragment {
      */
     private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
 
-    private ViewGroup mRootView;
     private RecyclerView mRecyclerView;
     private HomeworkAdapter mHomeworkAdapter;
     private boolean mIsFist;

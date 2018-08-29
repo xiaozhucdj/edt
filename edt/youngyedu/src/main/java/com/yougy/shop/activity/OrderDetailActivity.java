@@ -157,11 +157,14 @@ public class OrderDetailActivity extends ShopBaseActivity {
                         binding.orderFinalPriceTv.setText("订单金额 : ￥" + mTopOrderDetail.orderAmount);
                         orderPrice = mTopOrderDetail.orderAmount;
 
+                        LogUtils.i("mTopOrderDetail.orderInfo.size() =="+mTopOrderDetail.orderInfo.size() );
 
-                        if (mTopOrderDetail.orderInfo.size() == 1 && orderStatus.equals("交易成功") && showSuccessDialog) {
+                        if (orderStatus.equals("交易成功") && showSuccessDialog) {
                             BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
                             EventBus.getDefault().post(baseEvent);
-                            showPaySuccessDialog();
+                            if (mTopOrderDetail.orderInfo.size() == 1 ){
+                                showPaySuccessDialog();
+                            }
                         }
                     }
                 }, new Action1<Throwable>() {

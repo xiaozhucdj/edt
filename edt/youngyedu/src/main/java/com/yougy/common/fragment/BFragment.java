@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.ServiceException;
@@ -23,6 +24,7 @@ import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
@@ -55,13 +57,14 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     protected ConnectableObservable<Object> tapEventEmitter;
     protected Context context;
     public String tag;
-
+    public ViewGroup mRootView;
     protected boolean mIsRefresh;
 
     public void loadIntent(Class<?> cls) {
         Intent intent = new Intent(getActivity(), cls);
         startActivity(intent);
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -90,6 +93,10 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        if (!hidden && mRootView!=null) {
+            invalidateDelayed(mRootView);
+        }
+
         mHide = hidden;
         LogUtils.e(tag, "mhide is : " + hidden);
         if (subscription != null) {
@@ -178,11 +185,11 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         }
         return notes;
     }
+
     protected UiPromptDialog mUiPromptDialog;
     //---------------------------------CancelAndDetermine--------------------------------------------
 
     /**
-     *
      * @param titleId 标题
      */
     protected void showCancelAndDetermineDialog(int titleId) {
@@ -197,12 +204,11 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
     /**
-     *
-     * @param titleId  标题
-     * @param cancleId  取消按钮
+     * @param titleId     标题
+     * @param cancleId    取消按钮
      * @param determineId 确定按钮
      */
-    protected void showCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId) {
+    protected void showCancelAndDetermineDialog(int titleId, int cancleId, int determineId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
@@ -214,7 +220,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
 
-    protected void showTagCancelAndDetermineDialog(int titleId ,int tag) {
+    protected void showTagCancelAndDetermineDialog(int titleId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
@@ -226,15 +232,13 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
 
-
     /**
-     *
-     * @param titleId  标题
-     * @param cancleId  取消按钮
+     * @param titleId     标题
+     * @param cancleId    取消按钮
      * @param determineId 确定按钮
-     * @param tag        tag 处理分类
+     * @param tag         tag 处理分类
      */
-    protected void showTagCancelAndDetermineDialog(int titleId ,int cancleId ,int determineId,int tag) {
+    protected void showTagCancelAndDetermineDialog(int titleId, int cancleId, int determineId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
@@ -251,7 +255,6 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     //---------------------------------CenterDetermine--------------------------------------------
 
     /**
-     *
      * @param titleId 标题
      */
     protected void showCenterDetermineDialog(int titleId) {
@@ -266,10 +269,9 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
     /**
-     *
      * @param titleId 标题
      */
-    protected void showCenterDetermineDialog(int titleId ,int confirmId) {
+    protected void showCenterDetermineDialog(int titleId, int confirmId) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
@@ -282,10 +284,9 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
     /**
-     *
      * @param titleId 标题
      */
-    protected void showTagCenterDetermineDialog(int titleId,int tag) {
+    protected void showTagCenterDetermineDialog(int titleId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
@@ -297,10 +298,9 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
     /**
-     *
      * @param titleId 标题
      */
-    protected void showTagCenterDetermineDialog(int titleId ,int confirmId,int tag) {
+    protected void showTagCenterDetermineDialog(int titleId, int confirmId, int tag) {
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);
@@ -315,7 +315,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
     //---------------------------------dissmiss--------------------------------------------
 
-    protected void dissMissUiPromptDialog( ) {
+    protected void dissMissUiPromptDialog() {
         if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
             mUiPromptDialog.dismiss();
         }
@@ -336,8 +336,6 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     public void onUiCenterDetermineListener() {
         dissMissUiPromptDialog();
     }
-
-
 
 
     private void savebookDownloadKey(int bookId, String key) {
@@ -371,17 +369,17 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         if (mDownDialog == null) {
             mDownDialog = new DownBookDialog(getActivity());
         }
-            mDownDialog.setListener(new DownBookDialog.DownBookListener() {
-                @Override
-                public void onCancelListener() {
-                    cancelDownBook(bookId);
-                }
+        mDownDialog.setListener(new DownBookDialog.DownBookListener() {
+            @Override
+            public void onCancelListener() {
+                cancelDownBook(bookId);
+            }
 
-                @Override
-                public void onConfirmListener() {
-                    confirmDownBook(bookId);
-                }
-            });
+            @Override
+            public void onConfirmListener() {
+                confirmDownBook(bookId);
+            }
+        });
         mDownDialog.show();
         mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
         mDownDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
@@ -390,7 +388,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     /**
      * 取消下载图书
      */
-    protected void cancelDownBook(int  bookid) {
+    protected void cancelDownBook(int bookid) {
         mDownDialog.dismiss();
         NewDownBookManager.getInstance().cancel(bookid);
     }
@@ -408,7 +406,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
      * 查询下载图书 信息
      */
     private void queryBookDownLoadSyn(int bookId) {
-        NetWorkManager.downloadBook(SpUtils.getUserId()+"" ,bookId+"") .filter(new Func1<List<DownloadInfo>, Boolean>() {
+        NetWorkManager.downloadBook(SpUtils.getUserId() + "", bookId + "").filter(new Func1<List<DownloadInfo>, Boolean>() {
             @Override
             public Boolean call(List<DownloadInfo> downloadInfos) {
                 return downloadInfos != null;
@@ -417,9 +415,9 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
             @Override
             public void call(List<DownloadInfo> downloadInfos) {
 
-                if (downloadInfos!=null && downloadInfos.size()>0){
+                if (downloadInfos != null && downloadInfos.size() > 0) {
                     //下载图书
-                    savebookDownloadKey(bookId,downloadInfos.get(0).getAtchEncryptKey());
+                    savebookDownloadKey(bookId, downloadInfos.get(0).getAtchEncryptKey());
                     NewDownBookInfo info = new NewDownBookInfo();
                     info.setBookId(bookId);
                     info.setAccessKeyId(downloadInfos.get(0).getAccessKeyId());
@@ -428,10 +426,10 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
                     info.setExpiration(downloadInfos.get(0).getExpiration());
                     info.setObjectKey(downloadInfos.get(0).getAtchRemotePath());
                     info.setBucketName(downloadInfos.get(0).getAtchBucket());
-                    info.setSaveFilePath(FileUtils.getTextBookFilesDir() +bookId + ".pdf");
+                    info.setSaveFilePath(FileUtils.getTextBookFilesDir() + bookId + ".pdf");
 //                    System.out.println("to............"+info.toString());
                     downBook(info);
-                }else{
+                } else {
                     mDownDialog.setTitle(UIUtils.getContext().getResources().getString(R.string.down_book_error));
                     mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
                 }
@@ -439,11 +437,11 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-                String msg  = UIUtils.getContext().getResources().getString(R.string.down_book_error) ;
+                String msg = UIUtils.getContext().getResources().getString(R.string.down_book_error);
                 if (throwable instanceof ApiException) {
                     String errorCode = ((ApiException) throwable).getCode();
                     LogUtils.i("resultCode" + errorCode);
-                    if (errorCode.equals("404")){
+                    if (errorCode.equals("404")) {
                         msg = "没有找到该图书";
                     }
                 } else {
@@ -451,7 +449,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
                 mDownDialog.setTitle(msg);
                 mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             }
-        }) ;
+        });
     }
 
     private void downBook(NewDownBookInfo info) {
@@ -495,8 +493,10 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         });
     }
 
-    /**图书下载完成后的回调*/
-    protected void  onDownBookFinish(){
+    /**
+     * 图书下载完成后的回调
+     */
+    protected void onDownBookFinish() {
 
     }
 
@@ -511,5 +511,25 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     }
 
 
+    private Runnable mRefreshRun;
 
+    public void invalidateDelayed(View view) {
+        if (mRefreshRun == null) {
+            mRefreshRun = new Runnable() {
+                @Override
+                public void run() {
+                    RefreshUtil.invalidate(view);
+                }
+            };
+        }
+        UIUtils.getMainThreadHandler().postDelayed(mRefreshRun, 2000);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mRefreshRun != null) {
+            UIUtils.getMainThreadHandler().removeCallbacks(mRefreshRun);
+        }
+    }
 }

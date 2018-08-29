@@ -51,7 +51,6 @@ public class FolderFragment extends BFragment {
      * 一页数据个数
      */
     private static final int COUNT_PER_PAGE = FileContonst.PAGE_COUNTS;
-    private ViewGroup mRootView;
     private RecyclerView mRecyclerView;
     private HomeworkAdapter mCourseAdapter;
     private boolean mIsFist;
