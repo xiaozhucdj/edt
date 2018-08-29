@@ -16,6 +16,7 @@ import com.yougy.common.down.NewDownBookManager;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.manager.DialogManager;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
@@ -193,6 +194,10 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
      * @param titleId 标题
      */
     protected void showCancelAndDetermineDialog(int titleId) {
+        if (titleId == R.string.jump_to_net) {//网络重连
+            DialogManager.newInstance().showNetConnDialog(getActivity());
+            return;
+        }
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(getActivity());
             mUiPromptDialog.setListener(this);

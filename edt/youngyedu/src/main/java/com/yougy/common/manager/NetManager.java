@@ -11,9 +11,13 @@ import android.net.wifi.WifiManager;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.message.YXClient;
+import com.yougy.ui.activity.R;
+import com.yougy.view.dialog.UiPromptDialog;
 
 import de.greenrobot.event.EventBus;
 
@@ -62,8 +66,13 @@ public class NetManager {
      * @param enabled
      */
     public void changeWiFi(Context context, boolean enabled) {
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(enabled);
+        try {
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(enabled);
+            wifiManager.reconnect();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -106,9 +115,10 @@ public class NetManager {
                 if (isConnected && SpUtils.getUserId() > 0 ) {
                     YXClient.checkNetAndRefreshLogin(null, null);
                 }
-                NetManager.getInstance().changeWiFi(context, true);
+                NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_WIIF, "");
                 EventBus.getDefault().post(baseEvent);
+                DialogManager.newInstance().showNetConnDialog(context);
             }
         }
     }

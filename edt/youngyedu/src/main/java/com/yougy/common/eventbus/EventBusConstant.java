@@ -9,6 +9,7 @@ public class EventBusConstant {
      * eventbus
      */
     public static final String EVENT_WIIF = "event_wiif";
+    public static final String EVENT_NETDIALOG_DISMISS = "event_netdialog_dismiss";
     public static final String EVENTBUS_POWER= "eventbus_power";
 
     public static final String  current_text_book = "current_text_book" ;

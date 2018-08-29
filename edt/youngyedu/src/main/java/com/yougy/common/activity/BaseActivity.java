@@ -24,6 +24,7 @@ import com.yougy.common.down.NewDownBookManager;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.manager.DialogManager;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YoungyApplicationManager;
@@ -132,8 +133,6 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
-        NetManager.getInstance().registerReceiver(this);
-        PowerManager.getInstance().registerReceiver(this);
         //设置无标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView();
@@ -150,17 +149,9 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 
 
     public void onEventMainThread(BaseEvent event) {
-        if (event == null) {
-            return;
-        } else if (EventBusConstant.EVENT_WIIF.equals(event.getType())) {
-            if (NetManager.getInstance().isWifiConnected(this) ) {
-                if (mUiPromptDialog != null && mUiPromptDialog.isShowing()) {
-                    mUiPromptDialog.dismiss();
-                    LogUtils.e("yuanye base EVENT_WIIF  1");
-                }
-            } else {
-                LogUtils.e("yuanye base EVENT_WIIF  2");
-                showNoNetDialog();
+        if (event != null) {
+            if (event.getType().equals(EventBusConstant.EVENT_NETDIALOG_DISMISS)) {
+                invalidateDelayed(); //半透明层强制刷新
             }
         }
     }
@@ -235,8 +226,6 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        NetManager.getInstance().unregisterReceiver(this);
-        PowerManager.getInstance().unregisterReceiver(this);
         mDialogs.clear();
         mActivities.remove(this);
     }
@@ -812,6 +801,10 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
      * @param titleId 标题
      */
     protected void showCancelAndDetermineDialog(int titleId) {
+        if (titleId == R.string.jump_to_net) {//网络重连
+            DialogManager.newInstance().showNetConnDialog(getBaseContext());
+            return;
+        }
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -840,6 +833,10 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 
 
     protected void showTagCancelAndDetermineDialog(int titleId, int tag) {
+        if (titleId == R.string.jump_to_net) {//网络重连
+            DialogManager.newInstance().showNetConnDialog(getBaseContext());
+            return;
+        }
         if (mUiPromptDialog == null) {
             mUiPromptDialog = new UiPromptDialog(this);
             mUiPromptDialog.setListener(this);
@@ -984,32 +981,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
         if (NetUtils.isNetConnected()) {
             return false;
         }
-        if (mUiPromptDialog == null) {
-            mUiPromptDialog = new UiPromptDialog(this);
-            mUiPromptDialog.setListener(new UiPromptDialog.Listener() {
-                @Override
-                public void onUiCancelListener() {
-                    dissMissUiPromptDialog();
-                }
-
-                @Override
-                public void onUiDetermineListener() {
-                    dissMissUiPromptDialog();
-                    jumpTonet();
-                }
-
-                @Override
-                public void onUiCenterDetermineListener() {
-                    dissMissUiPromptDialog();
-                }
-            });
-        }
-        if (!mUiPromptDialog.isShowing()) {
-            mUiPromptDialog.show();
-            mUiPromptDialog.setTag(0);
-            mUiPromptDialog.setTitle(R.string.jump_to_net);
-            mUiPromptDialog.setDialogStyle(false);
-        }
+        DialogManager.newInstance().showNetConnDialog(this);
         return true;
     }
 

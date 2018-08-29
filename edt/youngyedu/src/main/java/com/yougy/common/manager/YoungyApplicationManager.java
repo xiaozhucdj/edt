@@ -126,6 +126,9 @@ public class YoungyApplicationManager extends LitePalApplication {
 
             rxBus = new RxBus();
 
+            NetManager.getInstance().registerReceiver(this);
+            PowerManager.getInstance().registerReceiver(this);
+
             //创建 课本 文件夹
             FileUtils.createDirs(FileUtils.getTextBookFilesDir());
             //创建 课本 图片 文件夹
@@ -340,6 +343,13 @@ public class YoungyApplicationManager extends LitePalApplication {
         }
 //        checkAnr();
         LogUtils.setOpenLog(BuildConfig.DEBUG);
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        NetManager.getInstance().unregisterReceiver(this);
+        PowerManager.getInstance().unregisterReceiver(this);
     }
 
     private void checkAnr() {
