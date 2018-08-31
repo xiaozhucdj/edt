@@ -20,21 +20,21 @@
             android:layout_height="wrap_content"
             android:text="电子书包又更新喽!"
             android:textColor="@color/black"
-            android:textSize="30px"
+            android:textSize="26px"
             android:textStyle="bold" />
 
         <TextView
-            android:lineSpacingExtra="3px"
+            android:lineSpacingExtra="20px"
             android:minHeight="150px"
             android:id="@+id/content_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/title_tv"
             android:layout_marginBottom="40px"
-            android:layout_marginTop="40px"
+            android:layout_marginTop="20px"
             android:text="修复细节问题，优化交互体验"
             android:textColor="@color/black"
-            android:textSize="24px" />
+            android:textSize="22px" />
 
 
         <Button
