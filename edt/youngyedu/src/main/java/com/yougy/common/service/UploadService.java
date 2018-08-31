@@ -40,6 +40,6 @@ public class UploadService extends IntentService {
         NetWorkManager.queryUploadAliyunData().subscribe(data -> {
             AliyunUtil aliyunUtil = new AliyunUtil(data);
             aliyunUtil.asyncUpload();
-        });
+        }, Throwable::printStackTrace);
     }
 }

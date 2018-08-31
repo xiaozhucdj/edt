@@ -10,7 +10,6 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 
 
-
 /**
  * Created by jiangliang on 2017/4/24.
  */
@@ -32,15 +31,13 @@ public class DownloadService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (NetUtils.isNetConnected()) {
-            try {
-                NetWorkManager.queryDownloadAliyunData().subscribe(data -> {
-                    AliyunUtil aliyunUtil = new AliyunUtil(data);
-                    aliyunUtil.download();
-                });
-            }catch (Exception e) {
+            NetWorkManager.queryDownloadAliyunData().subscribe(data -> {
+                AliyunUtil aliyunUtil = new AliyunUtil(data);
+                aliyunUtil.download();
+            }, throwable -> {
                 LogUtils.e("zhangyc queryDownloadAliyunData SocketTimeoutException....");
-                e.printStackTrace();
-            }
+                throwable.printStackTrace();
+            });
         }
     }
 }

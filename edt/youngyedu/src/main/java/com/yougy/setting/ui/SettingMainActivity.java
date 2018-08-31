@@ -233,7 +233,7 @@ public class SettingMainActivity extends BaseActivity {
                 } finally {
                     loadingProgressDialog.dismiss();
                 }
-            });
+            }, Throwable::printStackTrace);
         } else {
             unbindDevice();
         }
