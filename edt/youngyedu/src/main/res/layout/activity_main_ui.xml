@@ -443,6 +443,18 @@
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/btn_deviceSize"
+                    android:text="设备大小"
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@drawable/tab_title_select"
+                    android:textSize="24px" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2px"

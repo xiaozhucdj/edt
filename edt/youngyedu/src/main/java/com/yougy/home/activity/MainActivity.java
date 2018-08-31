@@ -167,6 +167,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView testVersion;
     private boolean isStScreensaver;
     private AppUpdateDialog mAppUpdateDialog;
+    private Button btn_deviceSize;
 
 
     /***************************************************************************/
@@ -296,16 +297,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_check_update).setOnClickListener(this);
 
         imgSextIcon = (ImageView) this.findViewById(R.id.img_sex_icon);
-
         testVersion = (TextView) this.findViewById(R.id.test_version);
+        btn_deviceSize = (Button) findViewById(R.id.btn_deviceSize);
+        btn_deviceSize.setOnClickListener(this);
     }
-
 
     @Override
     protected void loadData() {
         if (BuildConfig.DEBUG) {
             testVersion.setVisibility(View.VISIBLE);
             testVersion.setText(UIUtils.getString(R.string.app_name));
+            btn_deviceSize.setVisibility(View.VISIBLE);
         }
 
         String sex = SpUtils.getSex();
@@ -504,6 +506,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 intent.setComponent(new ComponentName("com.onyx.android.settings", "com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
                 break;
+
+            case R.id.btn_deviceSize:
+                UIUtils.showToastSafe("W--"+UIUtils.getScreenWidth() +"H--"+UIUtils.getScreenHeight());
             default:
                 break;
         }
