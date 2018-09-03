@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.onyx.android.sdk.device.Device;
 import com.onyx.android.sdk.utils.ReflectUtil;
+import com.yougy.common.global.FileContonst;
 import com.yougy.init.bean.Student;
 import com.yougy.ui.activity.R;
 
@@ -81,9 +82,9 @@ public class DeviceScreensaverUtils {
         int orientation = 0;
 
         if (!isDevice) {
-            if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+            if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
                 startY = 560;
-            } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+            } else if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_EDU)) {
                 startX = 950;
             }
         }
@@ -101,9 +102,9 @@ public class DeviceScreensaverUtils {
 
     private static Bitmap rotateBitmap(Bitmap origin) {
         float alpha = 0;
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
             alpha = 90;
-        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+        } else if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_EDU)) {
             alpha = -90;
         }
 

@@ -35,6 +35,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
@@ -709,7 +710,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     private void startClock() {
 
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
             return;
         }
         timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)

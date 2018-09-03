@@ -31,6 +31,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
@@ -224,7 +225,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
             @Override
             public void onFocusChanged(boolean focused) {
                 if (focused){
-                    if ("PL107".equalsIgnoreCase(SystemUtils.getDeviceModel())){
+                    if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)){
                         binding.bottomBarLayout.setPadding(0 , 0 , 0, 500);
                     }
                     else {

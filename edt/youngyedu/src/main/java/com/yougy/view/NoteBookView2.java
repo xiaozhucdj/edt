@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
@@ -108,11 +109,11 @@ public class NoteBookView2 extends View {
 
         matrix = new Matrix();
 
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
-            LogUtils.e(getClass().getName(), "PL107");
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
+            LogUtils.e(getClass().getName(), FileContonst.DEVICE_TYPE_PL107);
             matrix.postRotate(90);
             matrix.postTranslate(UIUtils.getScreenHeight(), 0);
-        } else if (SystemUtils.getDeviceModel().equalsIgnoreCase("N96") || SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+        } else if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_N96) || SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_EDU)) {
             LogUtils.e(getClass().getName(), "N96");
             matrix.postRotate(270);
             matrix.postTranslate(0, UIUtils.getScreenWidth());
@@ -253,7 +254,7 @@ public class NoteBookView2 extends View {
             return false;
         }
 
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
             mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN;
         } else {
             mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS;

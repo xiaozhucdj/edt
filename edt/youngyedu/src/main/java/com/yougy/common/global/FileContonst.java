@@ -123,8 +123,11 @@ public class FileContonst {
 
     public static int heightL = 266;
 
+    public static final String DEVICE_TYPE_EDU = "EDU";
+    public static final String DEVICE_TYPE_PL107 = "PL107";
+    public static final String DEVICE_TYPE_N96 = "N96";
     static {
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("EDU")) {
+        if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_EDU)||SystemUtils.getDeviceModel().contains(DEVICE_TYPE_PL107)) {
             withS = 150;
             heightS = 200;
             withL = 200;

@@ -48,6 +48,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
@@ -275,7 +276,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             mImageViewBack.setVisibility(View.GONE);
         }
         LogUtils.d("homework isTimerWork = " + isTimerWork);
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
             tvSubmitTime.setVisibility(View.INVISIBLE);
             tvTiming.setVisibility(View.INVISIBLE);
         } else {
@@ -865,7 +866,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     private void startClock() {
 
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
             return;
         }
         timedTask = new TimedTask(TimedTask.TYPE.IMMEDIATELY_AND_CIRCULATION, 1000)
@@ -1273,7 +1274,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         getSpUtil().setDataList(examId + "_" + position + "_judge_list", judgeAnswerList);
 
 
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
             refreshTime();
         }
 
@@ -1301,7 +1302,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
             judgeAnswerList.clear();
         }
 
-        if (SystemUtils.getDeviceModel().equalsIgnoreCase("PL107")) {
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
             tvSubmitHomeWork.setText("提交答案");
         }
     }
