@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -156,16 +155,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         }
 
         //新建写字板，并添加到界面上
-        /*rlAnswer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                mNbvAnswerBoard = new NoteBookView2(WriteErrorHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
-                fillData();
-
-            }
-        });*/
-
         mNbvAnswerBoard = new NoteBookView2(WriteErrorHomeWorkActivity.this);
 
         mCaogaoNoteBoard = new NoteBookView2(this, 960, 420);
@@ -236,24 +225,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        /*showNoNetDialog();
-        NetWorkManager.queryQuestionItemList(null, null, itemId, null)
-                .subscribe(new Action1<List<ParsedQuestionItem>>() {
-                    @Override
-                    public void call(List<ParsedQuestionItem> parsedQuestionItems) {
-                        if (parsedQuestionItems != null || parsedQuestionItems.size() != 0) {
-                            questionItem = parsedQuestionItems.get(0);
-                            //TODO 获取到题目之后的逻辑
-                            fillData();
-                        }
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });*/
-
+        fillData();
     }
 
     //填充数据
