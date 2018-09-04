@@ -12,24 +12,21 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
-
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.PageableRecyclerView;
-import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.MistakeSummary;
+import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.message.ListUtil;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityMistakeNoteBookStructureBinding;
 import com.yougy.ui.activity.databinding.ItemBookChapterBinding;
 import com.yougy.ui.activity.databinding.ItemBookTopChapterBinding;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import rx.functions.Action1;
 
 /**
@@ -195,27 +192,31 @@ public class BookStructureActivity extends HomeworkBaseActivity {
             finish();
             return;
         }
-        NetWorkManager.queryHomeworkBookDetail(homeworkId)
-                .subscribe(new Action1<List<HomeworkBookDetail>>() {
+        NetWorkManager.queryHomeworkExcerptWithReply(homeworkId,  null)
+                .compose(bindToLifecycle())
+                .subscribe(new Action1<List<QuestionReplyDetail>>() {
                     @Override
-                    public void call(List<HomeworkBookDetail> homeworkBookDetails) {
-                        if (homeworkBookDetails != null && homeworkBookDetails.size() != 0
-                                && homeworkBookDetails.get(0).getHomeworkExcerpt() != null
-                                && homeworkBookDetails.get(0).getHomeworkExcerpt().size() != 0) {
-                            mistakeList.clear();
-                            for (MistakeSummary mistakeSummary : homeworkBookDetails.get(0).getHomeworkExcerpt()) {
-                                //被标记为"我已学会"的错题不算作错题,排除
-                                if (!mistakeSummary.getExtra().isDeleted()) {
-                                    mistakeList.add(mistakeSummary);
-                                }
+                    public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                        mistakeList.clear();
+
+                        for (int i = 0; i < questionReplyDetails.size(); i++) {
+
+                            QuestionReplyDetail questionReplyDetail = questionReplyDetails.get(i);
+                            MistakeSummary homeworkExcerpt = questionReplyDetail.getHomeworkExcerpt();
+                            //被标记为"我已学会"的错题不算作错题,排除
+                            if (!homeworkExcerpt.getExtra().isDeleted()) {
+                                mistakeList.add(homeworkExcerpt);
                             }
-                            binding.mainRecyclerview.notifyDataSetChanged();
                         }
+                        questionReplyDetails.clear();
+                        binding.mainRecyclerview.notifyDataSetChanged();
+
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        ToastUtil.showCustomToast(getBaseContext(),"获取章节错题异常");
                     }
                 });
     }
