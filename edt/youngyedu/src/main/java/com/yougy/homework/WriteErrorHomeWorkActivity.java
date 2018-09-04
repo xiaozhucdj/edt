@@ -23,7 +23,6 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
-import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -49,7 +48,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import rx.functions.Action1;
 
 /**
  * Created by cdj
@@ -59,8 +57,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @BindView(R.id.iv_chooese_tag)
     ImageView ivChooeseTag;
-    @BindView(R.id.rcv_all_homework_page)
-    RecyclerView allHomeWorkPage;
     @BindView(R.id.rcv_all_question_page)
     RecyclerView allQuestionPage;
     @BindView(R.id.rcv_chooese_item)
@@ -90,6 +86,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     RelativeLayout rlCaogaoBox;
     @BindView(R.id.sub_title_tv)
     TextView subTitleTv;
+    @BindView(R.id.tv_check_score)
+    TextView tvCheckScore;
+    @BindView(R.id.iv_check_result)
+    ImageView ivCheckResult;
 
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -125,11 +125,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     //是否第一次自动点击进入第一页
     private boolean isFirstComeInQuestion;
 
-    private String itemId;
     private int homeworkId;
-    private int lastScore;
+    private int lastScore, replyScore;
     private String bookTitle;
-    private ParsedQuestionItem questionItem;
+    private ParsedQuestionItem parsedQuestionItem;
+    private Integer itemWeight;
 
     @Override
     protected void setContentView() {
@@ -138,14 +138,14 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        itemId = getIntent().getStringExtra("QUESTION_ITEMID");
         homeworkId = getIntent().getIntExtra("HOMEWORKID", -1);
-        lastScore = getIntent().getIntExtra("LASTSCORE", -1);
         bookTitle = getIntent().getStringExtra("BOOKTITLE");
-        if (TextUtils.isEmpty(itemId)) {
-            ToastUtil.showCustomToast(getApplicationContext(), "itemId 为空");
-            return;
-        }
+        lastScore = getIntent().getIntExtra("LASTSCORE", -1);
+        replyScore = getIntent().getIntExtra("REPLYSCORE", -1);
+        itemWeight = (Integer) getIntent().getSerializableExtra("REPLYITEMWEIGHT");
+
+        parsedQuestionItem = (ParsedQuestionItem) getIntent().getParcelableExtra("PARSEDQUESTIONITEM");
+
     }
 
 
@@ -161,6 +161,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             public void onGlobalLayout() {
                 rlAnswer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 mNbvAnswerBoard = new NoteBookView2(WriteErrorHomeWorkActivity.this, rlAnswer.getMeasuredWidth(), rlAnswer.getMeasuredHeight());
+                fillData();
 
             }
         });*/
@@ -235,7 +236,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        showNoNetDialog();
+        /*showNoNetDialog();
         NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
@@ -251,16 +252,17 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
                     }
-                });
+                });*/
+
     }
 
     //填充数据
     private void fillData() {
-        if (questionItem == null) {
+        if (parsedQuestionItem == null) {
             ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
             return;
         }
-        questionList = questionItem.questionContentList;
+        questionList = parsedQuestionItem.questionContentList;
         contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
 
@@ -335,7 +337,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                             //选择题不能加页
                             tvAddPage.setVisibility(View.GONE);
                             tvClearWrite.setVisibility(View.GONE);
-                            chooeseAnswerList = questionItem.answerList;
+                            chooeseAnswerList = parsedQuestionItem.answerList;
 
                             setChooeseResult();
 
@@ -406,6 +408,53 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
             isFirstComeInQuestion = true;
             questionPageNumAdapter.onItemClickListener.onItemClick1(0);
+
+
+            //不是记分题
+            if (itemWeight == null) {
+
+                tvCheckScore.setVisibility(View.GONE);
+                switch (replyScore) {
+                    case -1://说明未批改
+                        //异常情况（进入错题笨了，就不可能未批改）
+                        break;
+                    case 0://判错
+                        ivCheckResult.setImageResource(R.drawable.img_cuowu);
+                        break;
+                    case 50://判半对
+                        ivCheckResult.setImageResource(R.drawable.img_bandui);
+                        break;
+                    case 100://判对
+                        ivCheckResult.setImageResource(R.drawable.img_zhengque);
+
+                        break;
+                }
+            } else {
+                tvCheckScore.setVisibility(View.VISIBLE);
+
+                //记分题
+                //未批改
+                if (replyScore == -1) {
+                    //异常情况（进入错题笨了，就不可能未批改）
+
+                } else if (replyScore == 0) {
+                    //错误
+                    ivCheckResult.setImageResource(R.drawable.img_cuowu);
+                    tvCheckScore.setText("（" + replyScore + "分）");
+                } else {
+                    //满分
+                    if (itemWeight == replyScore) {
+                        ivCheckResult.setImageResource(R.drawable.img_zhengque);
+                        tvCheckScore.setText("（" + replyScore + "分）");
+                    } else {
+                        //半对
+                        ivCheckResult.setImageResource(R.drawable.img_bandui);
+                        tvCheckScore.setText("（" + replyScore + "分）");
+                    }
+                }
+            }
+
+
         } else {
             ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
         }
@@ -560,10 +609,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     private void gotoMistakeGradeActivity() {
         //TODO 此处跳转到错题判断界面
         Intent intent = new Intent(getApplicationContext(), MistakeGradeActivity.class);
-        intent.putStringArrayListExtra("writeImgList", pathList);
-        intent.putExtra("questionItem", questionItem);
-        intent.putExtra("homeworkId", homeworkId);
-        intent.putExtra("bookTitle", bookTitle);
+        intent.putStringArrayListExtra("WRITEIMGLIST", pathList);
+        intent.putExtra("PARSEDQUESTIONITEM", parsedQuestionItem);
+        intent.putExtra("HOMEWORKID", homeworkId);
+        intent.putExtra("BOOKTITLE", bookTitle);
+        intent.putExtra("REPLYID", getIntent().getIntExtra("REPLYID", -1));
         startActivity(intent);
         finish();
     }
@@ -714,8 +764,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                     }
                 })) {
                     itemBinding.checkbox.setSelected(true);
+                    itemBinding.textview.setSelected(true);
                 } else {
                     itemBinding.checkbox.setSelected(false);
+                    itemBinding.textview.setSelected(false);
                 }
             } else {
                 itemBinding.textview.setText("格式错误");

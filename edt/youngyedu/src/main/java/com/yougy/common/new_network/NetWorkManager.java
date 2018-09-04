@@ -12,7 +12,6 @@ import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.model.Version;
-import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
@@ -51,7 +50,6 @@ import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -241,6 +239,16 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+
+    public static Observable<List<QuestionReplyDetail>> queryHomeworkExcerptWithReply(Integer homeworkId,Integer examFitCourseBookCursor) {
+        LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
+        return getInstance().getServerApi().queryHomeworkExcerptWithReply(homeworkId, examFitCourseBookCursor)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+                .compose(RxResultHelper.parseReplyDetail());
+    }
+
+
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
         return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "[\"II01\",\"II51\",\"II52\",\"II53\",\"II61\"]", true)
@@ -292,18 +300,18 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> deleteMistake(Integer homeworkId, String itemId) {
+    public static Observable<Object> deleteMistake(Integer homeworkId, String replyId) {
         LogUtils.e("FH", "!!!!!调用ServerApi移除错题(标记为删除):deleteMistake");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
-                , "{\"item\":" + itemId + ",\"extra\":{\"deleted\":true}}")
+                , "{\"reply\":" + replyId + ",\"extra\":{\"deleted\":true}}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> setMistakeLastScore(Integer homeworkId, String itemId, int score) {
+    public static Observable<Object> setMistakeLastScore(Integer homeworkId, String replyId, int score) {
         LogUtils.e("FH", "!!!!!调用ServerApi设置错题上次自评结果:setMistakeLastScore");
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
-                , "{\"item\":" + itemId + ",\"extra\":{\"lastScore\":" + score + "}}")
+                , "{\"reply\":" + replyId + ",\"extra\":{\"lastScore\":" + score + "}}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

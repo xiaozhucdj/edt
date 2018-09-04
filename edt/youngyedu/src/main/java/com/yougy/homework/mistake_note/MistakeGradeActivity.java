@@ -12,7 +12,6 @@ import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.homework.FullScreenHintDialog;
@@ -33,10 +32,11 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
     ActivityMistakeGradeBinding binding;
     int currentShowWriteImgPageIndex = 0;
     int currentShowAnalysisPageIndex = 0;
-    private ParsedQuestionItem questionItem;
-    private String questionType;
+
+    private ParsedQuestionItem parsedQuestionItem;
     private ArrayList<Content_new> writeContentList = new ArrayList<Content_new>();
     private int homeworkId;
+    private int replyId;
     private String bookTitle;
 
     @Override
@@ -97,16 +97,16 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
 
     @Override
     protected void init() {
-        questionItem = getIntent().getParcelableExtra("questionItem");
-        ArrayList<String> contentList = getIntent().getStringArrayListExtra("writeImgList");
+        parsedQuestionItem = (ParsedQuestionItem) getIntent().getParcelableExtra("PARSEDQUESTIONITEM");
+        ArrayList<String> contentList = getIntent().getStringArrayListExtra("WRITEIMGLIST");
         for (String url : contentList) {
             if (!TextUtils.isEmpty(url)) {
                 writeContentList.add(new Content_new(Content_new.Type.IMG_URL, 0, url, null));
             }
         }
-        homeworkId = getIntent().getIntExtra("homeworkId", -1);
-        bookTitle = getIntent().getStringExtra("bookTitle");
-        questionType = (String) questionItem.questionContentList.get(0).getExtraData();
+        homeworkId = getIntent().getIntExtra("HOMEWORKID", -1);
+        replyId = getIntent().getIntExtra("REPLYID", -1);
+        bookTitle = getIntent().getStringExtra("BOOKTITLE");
     }
 
     @Override
@@ -118,10 +118,8 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
     protected void loadData() {
         binding.writedQuestionBtn.setSelected(true);
         binding.contentDisplayer.getContentAdapter().updateDataList("question", writeContentList);
-        binding.contentDisplayer.getContentAdapter().updateDataList("analysis", questionItem.analysisContentList);
-        if (questionType.equals("选择")) {
-            binding.contentDisplayer.getContentAdapter().setSubText(RxResultHelper.parseAnswerList(questionItem.answerContentList));
-        }
+        binding.contentDisplayer.getContentAdapter().updateDataList("analysis", parsedQuestionItem.analysisContentList);
+
         if (!TextUtils.isEmpty(bookTitle)) {
             binding.subTitleTv.setText(" - " + bookTitle);
         }
@@ -144,7 +142,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
 
     //正确
     public void onRightBtnClick(View view) {
-        NetWorkManager.setMistakeLastScore(homeworkId, questionItem.itemId, 100)
+        NetWorkManager.setMistakeLastScore(homeworkId, replyId + "", 100)
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
@@ -157,12 +155,11 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
                         ToastUtil.showCustomToast(getApplicationContext(), "自评失败");
                     }
                 });
-//        YoungyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 100);
     }
 
     //错误
     public void onWrongBtnClick(View view) {
-        NetWorkManager.setMistakeLastScore(homeworkId, questionItem.itemId, 0)
+        NetWorkManager.setMistakeLastScore(homeworkId, replyId + "", 0)
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
@@ -175,7 +172,6 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
                         ToastUtil.showCustomToast(getApplicationContext(), "自评失败");
                     }
                 });
-//        YoungyApplicationManager.getRxBus(getApplicationContext()).send("lastScoreChanged:" + questionItem.itemId + ":" + 0);
     }
 
     //我已学会
@@ -187,12 +183,11 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
                     .setBtn1("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            NetWorkManager.deleteMistake(homeworkId, questionItem.itemId).subscribe(new Action1<Object>() {
+                            NetWorkManager.deleteMistake(homeworkId, replyId + "").subscribe(new Action1<Object>() {
                                 @Override
                                 public void call(Object o) {
                                     ToastUtil.showCustomToast(getApplicationContext(), "已学会");
                                     finish();
-//                                YoungyApplicationManager.getRxBus(getApplicationContext()).send("removeMistakeItem:" + questionItem.itemId);
                                 }
                             }, new Action1<Throwable>() {
                                 @Override

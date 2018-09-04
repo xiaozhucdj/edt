@@ -54,52 +54,54 @@ import rx.Observable;
 public interface ServerApi {
 
     /**
-     *  查询题目整体(列表)
+     * 查询题目整体(列表)
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"} , values = {"queryItem"})
+    @DefaultField(keys = {"m"}, values = {"queryItem"})
     Observable<BaseResult<List<OriginQuestionItem>>> queryTotalQuestionList(@Field("userId") String userId
-            , @Field("bookId") String bookId , @Field("itemId") String itemId, @Field("cursor") Integer cursor);
-/**
-     *  问题解答上传oss
+            , @Field("bookId") String bookId, @Field("itemId") String itemId, @Field("cursor") Integer cursor);
+
+    /**
+     * 问题解答上传oss
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"} , values = {"postReplyRequest"})
+    @DefaultField(keys = {"m"}, values = {"postReplyRequest"})
     Observable<BaseResult<STSbean>> queryReplyRequest(@Field("userId") String userId);
 
 
     /**
-     *  解答上传（单题）
+     * 解答上传（单题）
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"} , values = {"postReply"})
+    @DefaultField(keys = {"m"}, values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("itemId") String itemId
-            , @Field("examId") String examId, @Field("picContent") String picContent, @Field("txtContent") String txtContent , @Field("replyUseTime") String replyUseTime,@Field("replyCreateTime") String replyCreateTime);
-/**
-     *  解答上传（多题，作业）
-     */
-    @FormUrlEncoded
-    @POST("classRoom")
-    @DefaultField(keys = {"m"} , values = {"postReply"})
-    Observable<BaseResult<Object>> postReply(@Field("userId") String userId,  @Field("data") String data);
+            , @Field("examId") String examId, @Field("picContent") String picContent, @Field("txtContent") String txtContent, @Field("replyUseTime") String replyUseTime, @Field("replyCreateTime") String replyCreateTime);
 
     /**
-     *  按userId查询云信token
+     * 解答上传（多题，作业）
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postReply"})
+    Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("data") String data);
+
+    /**
+     * 按userId查询云信token
      */
     @FormUrlEncoded
     @POST("netease")
-    @DefaultField(keys = {"m"} , values = {"queryToken"})
+    @DefaultField(keys = {"m"}, values = {"queryToken"})
     Observable<BaseResult<Object>> queryToken(@Field("userId") String userId);
 
     /**
-     *  按userId更新云信token,并返回更新后的token
+     * 按userId更新云信token,并返回更新后的token
      */
     @FormUrlEncoded
     @POST("netease")
-    @DefaultField(keys = {"m"} , values = {"updateToken"})
+    @DefaultField(keys = {"m"}, values = {"updateToken"})
     Observable<BaseResult<Object>> updateToken(@Field("userId") String userId);
 
     /**
@@ -108,7 +110,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"downloadBook"})
-    Observable<BaseResult<List<DownloadInfo>>> downloadBook(@Field("userId") String userId , @Field("bookId") String bookId);
+    Observable<BaseResult<List<DownloadInfo>>> downloadBook(@Field("userId") String userId, @Field("bookId") String bookId);
 
     /**
      * 作业本列表接口
@@ -126,8 +128,8 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
     Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail_New(
-            @Field("homeworkId") Integer homeworkId , @Field("examTypeCode") String type , @Field("needRefresh") Boolean needRefresh
-            ,@Field("examStatusCode") String examStatusCode);
+            @Field("homeworkId") Integer homeworkId, @Field("examTypeCode") String type, @Field("needRefresh") Boolean needRefresh
+            , @Field("examStatusCode") String examStatusCode);
 
     /**
      * 作业本内容作业(考试)列表接口
@@ -136,7 +138,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryHomeworkSole"})
     Observable<BaseResult<List<HomeworkBookDetail>>> queryHomeworkBookDetail(
-            @Field("homeworkId") Integer homeworkId , @Field("examTypeCode") String type , @Field("needRefresh") Boolean needRefresh);
+            @Field("homeworkId") Integer homeworkId, @Field("examTypeCode") String type, @Field("needRefresh") Boolean needRefresh);
 
     /**
      * 获取图书信息
@@ -144,7 +146,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"queryBook"})
-    Observable<BaseResult<List<BookInfo>>> queryBook(@Field("bookId") String bookId ,@Field("userId") String userId);
+    Observable<BaseResult<List<BookInfo>>> queryBook(@Field("bookId") String bookId, @Field("userId") String userId);
 
     /**
      * 刷新作业本中所有作业的状态
@@ -161,7 +163,17 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"reviewComment"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
-            , @Field("itemId") Integer itemId , @Field("userId") String userId);
+            , @Field("itemId") Integer itemId, @Field("userId") String userId);
+
+
+    /**
+     * 查询错题列表
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryHomeworkExcerptWithReply"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> queryHomeworkExcerptWithReply(@Field("homeworkId") Integer homeworkId
+            , @Field("examFitCourseBookCursor") Integer examFitCourseBookCursor);
 
     /**
      * 查询作业详情
@@ -179,7 +191,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryReply"})
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
-            , @Field("userId") Integer userId , @Field("replyId") String replyId);
+            , @Field("userId") Integer userId, @Field("replyId") String replyId);
 
     /**
      * 作业本错题移除
@@ -231,7 +243,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"removeOrder"})
-    Observable<BaseResult<Object>> removeOrder(@Field("orderId") String orderId , @Field("orderOwner") String orderOwner);
+    Observable<BaseResult<Object>> removeOrder(@Field("orderId") String orderId, @Field("orderOwner") String orderOwner);
 
     /**
      * 获取订单树,包括订单的拆分的子订单信息
@@ -246,9 +258,9 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("bookStore")
-    @DefaultField(keys = {"m" , "orderParent"}, values = {"queryOrderAbbr" , "0"})
+    @DefaultField(keys = {"m", "orderParent"}, values = {"queryOrderAbbr", "0"})
     Observable<BaseResult<List<OrderSummary>>> queryOrderAbbr(@Field("orderOwner") String orderOwner
-            , @Field("ps") Integer ps , @Field("pn") Integer pn , @Field("orderCreateTime") String orderCreateTime);
+            , @Field("ps") Integer ps, @Field("pn") Integer pn, @Field("orderCreateTime") String orderCreateTime);
 
     /**
      * 订单结算,获取支付二维码
@@ -300,6 +312,7 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"allowOrder"})
     Observable<BaseResult<Object>> allowOrder(@Body AllowOrderRequestObj allowOrderRequestObj);
+
     /**
      * 删除单个收藏夹
      *
@@ -338,7 +351,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("users")
-    @DefaultField(keys = {"m"},values = {"login"})
+    @DefaultField(keys = {"m"}, values = {"login"})
     Observable<BaseResult<List<Student>>> login(@Field("userName") String userName
             , @Field("userPassword") String userPassword, @Field("userToken") String userToken
             , @Field("deviceId") String deviceId, @Field("userId") String userId);
@@ -351,7 +364,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("version")
-    @DefaultField(keys = {"m","os"},values = {"getAppVersion","student"})
+    @DefaultField(keys = {"m", "os"}, values = {"getAppVersion", "student"})
     Observable<BaseResult<Version>> getVersion();
 
     /**
@@ -390,14 +403,15 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"queryBookCategoryPlus"})
     Observable<BaseResult<List<CategoryInfo>>> queryBookCategory();
+
     @FormUrlEncoded
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"queryBook"})
     Observable<BaseResult<List<BookInfo>>> queryBookInfo(@Field("bookId") Integer bookId
             , @Field("bookCategory") Integer bookCategory, @Field("bookCategoryMatch") Integer bookCategoryMatch
             , @Field("userId") Integer userId, @Field("bookVersion") Integer bookVersion
-            , @Field("bookTitle") String bookTitle , @Field("bookTitleMatch") String bookTitleMatch
-            , @Field("ps") Integer ps , @Field("pn") Integer pn);
+            , @Field("bookTitle") String bookTitle, @Field("bookTitleMatch") String bookTitleMatch
+            , @Field("ps") Integer ps, @Field("pn") Integer pn);
 
     @POST("bookStore")
     Observable<BaseResult<List<BookInfo>>> queryBookShopHomeInfo(@Body BookStoreHomeReq req);
@@ -433,7 +447,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"closeHomework"})
     Observable<BaseResult<Object>> closeHomework(@Field("examId") Integer examId
-            , @Field("courseId") Integer courseId , @Field("userId") String userId);
+            , @Field("courseId") Integer courseId, @Field("userId") String userId);
 
     /**
      * 教师批改上传（单题）
