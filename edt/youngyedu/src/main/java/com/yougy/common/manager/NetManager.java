@@ -110,6 +110,7 @@ public class NetManager {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            mContext = context;
             String action = intent.getAction();
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
@@ -117,10 +118,31 @@ public class NetManager {
                     YXClient.checkNetAndRefreshLogin(null, null);
                 }
                 NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
+                YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 2 * 60 * 1000);
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_WIIF, "");
                 EventBus.getDefault().post(baseEvent);
                 DialogManager.newInstance().showNetConnDialog(context);
             }
         }
     }
+
+    /**
+     * 开启任务  断开情况下2分钟检测尝试重连一次
+     */
+    private Context mContext;
+    private Runnable netRetryConnRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mContext != null) {
+                if (!isWifiConnected(mContext)) {
+                    NetManager.getInstance().changeWiFi(mContext, true);
+                    YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 2 * 60 * 1000);
+                } else {
+                    YoungyApplicationManager.getMainThreadHandler().removeCallbacks(netRetryConnRunnable);
+                }
+            } else {
+                LogUtils.e("mContext is Null, not received broadcast.");
+            }
+        }
+    };
 }
