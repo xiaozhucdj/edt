@@ -416,9 +416,7 @@ public class ShopFavoriteActivity extends ShopBaseActivity implements View.OnCli
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        if (mUiPromptDialog.getTag() == mTagForNoNet) {
-            jumpTonet();
-        } else if (mUiPromptDialog.getTag() == mTagForGetFaverFail) {
+        if (mUiPromptDialog.getTag() == mTagForGetFaverFail) {
             loadData();
         } else if (mUiPromptDialog.getTag() ==mTagForCancelAllBook) {
             List<BookIdObj> bookIdObjList = new ArrayList<BookIdObj>();

@@ -273,10 +273,7 @@ public class SettingMainActivity extends BaseActivity {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        if (mTagNoNet == mUiPromptDialog.getTag()) {
-            jumpTonet();
-
-        } else if (mTagUnbindFail == mUiPromptDialog.getTag()) {
+        if (mTagUnbindFail == mUiPromptDialog.getTag()) {
             unBindRequest();
         }
     }

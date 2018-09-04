@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.UiPromptDialog;
@@ -37,6 +38,16 @@ public class DialogManager {
     /*************************************网络连接对话框*******************************************/
     private UiPromptDialog mNetConnStatusDialog;
     public void showNetConnDialog (Context context) {
+        if (context == null) {
+            LogUtils.e("showNetConnDialog context error. return.");
+            return;
+        }
+        YoungyApplicationManager applicationManager = (YoungyApplicationManager) context.getApplicationContext();
+        if (!applicationManager.isForegroundApp()){
+            LogUtils.d("isForegroudApp false, return.");
+            return;
+        }
+
         if (mNetConnStatusDialog == null) {
             mNetConnStatusDialog = new UiPromptDialog(context);
         }
@@ -45,6 +56,10 @@ public class DialogManager {
                 mNetConnStatusDialog.dismiss();
             }
             return;
+        } else {
+            if (mNetConnStatusDialog.isShowing()) {
+                return;
+            }
         }
         mNetConnStatusDialog.setListener(new UiPromptDialog.Listener() {
             @Override
@@ -64,12 +79,9 @@ public class DialogManager {
             }
         });
 
-        mNetConnStatusDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_NETDIALOG_DISMISS, "");
-                EventBus.getDefault().post(baseEvent);
-            }
+        mNetConnStatusDialog.setOnDismissListener(dialog -> {
+            BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_NETDIALOG_DISMISS, "");
+            EventBus.getDefault().post(baseEvent);
         });
 
         if (!mNetConnStatusDialog.isShowing()) {
@@ -93,6 +105,5 @@ public class DialogManager {
         context.startActivity(intent);
     }
     /*************************************网络连接对话框*******************************************/
-
 
 }

@@ -247,9 +247,6 @@ public class ShopCartActivity extends ShopBaseActivity {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        if (mUiPromptDialog.getTag() == mTagForNoNet) {
-            jumpTonet();
-        }
     }
     public void sortCartItem(){
         sortMap.clear();

@@ -69,7 +69,8 @@ public class NetManager {
         try {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             wifiManager.setWifiEnabled(enabled);
-            wifiManager.reconnect();
+            if (enabled)
+                wifiManager.reconnect();
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
@@ -110,7 +111,7 @@ public class NetManager {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) || action.equalsIgnoreCase(WIFI_STATE_CHANGED_ACTION)) {
+            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
                 if (isConnected && SpUtils.getUserId() > 0 ) {
                     YXClient.checkNetAndRefreshLogin(null, null);

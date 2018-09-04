@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
 import android.os.Process;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -856,10 +855,5 @@ public abstract class AutoLayoutBaseActivity extends AutoLayoutActivity implemen
     @Override
     public void onUiCenterDetermineListener() {
         dissMissUiPromptDialog();
-    }
-
-    public void jumpTonet(){
-        Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-        startActivity(intent);
     }
 }

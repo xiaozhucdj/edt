@@ -460,9 +460,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        if (mUiPromptDialog.getTag() == mTagForNoNet) {
-            jumpTonet();
-        } else if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail) {
+        if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail) {
             refreshData();
         }
     }

@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -495,5 +496,23 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     public static Looper getMainThreadLooper() {
         return mMainLooper;
+    }
+
+    /**
+     * 应用是否在前台
+     * @return
+     */
+    public boolean isForegroundApp () {
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runnings = am.getRunningAppProcesses();
+        for(ActivityManager.RunningAppProcessInfo running : runnings){
+            if(running.processName.equals(getPackageName())){
+                if(running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                        || running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

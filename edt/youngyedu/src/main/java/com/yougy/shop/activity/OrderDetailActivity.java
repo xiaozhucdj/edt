@@ -407,9 +407,7 @@ public class OrderDetailActivity extends ShopBaseActivity {
     @Override
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
-        if (mUiPromptDialog.getTag() == mTagForNoNet) {
-            jumpTonet();
-        } else if (mUiPromptDialog.getTag() == mTagForZxingfail) {
+        if (mUiPromptDialog.getTag() == mTagForZxingfail) {
             queryQRStr(PAY_ALIPAY);
         }
     }

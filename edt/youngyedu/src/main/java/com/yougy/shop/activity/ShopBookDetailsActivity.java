@@ -756,10 +756,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     public void onUiDetermineListener() {
         super.onUiDetermineListener();
         // 获取图书详情 ，无网络
-        if (getUiPromptDialog().getTag() == mTagForRequestDetailsNoNet || getUiPromptDialog().getTag() == mTagNoNet) {
-            jumpTonet();
-            //打开PDF
-        } else if (getUiPromptDialog().getTag() == mTagBookReader) {
+        if (getUiPromptDialog().getTag() == mTagBookReader) {
             jumpToControlFragmentActivity();
             //获取图书详情失败
         } else if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail) {
