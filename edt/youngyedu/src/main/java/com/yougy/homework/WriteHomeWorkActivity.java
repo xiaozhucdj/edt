@@ -58,6 +58,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.OnClickFastListener;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SharedPreferencesUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
@@ -327,7 +328,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     /**
      * 手写模式开启    OnCreate 先拦截 手绘   onResume  延迟200ms取消拦截
      */
-    private Runnable mInterceptAnswerBoard = new Runnable(){
+    private Runnable mInterceptAnswerBoard = new Runnable() {
         @Override
         public void run() {
             if (mNbvAnswerBoard != null) {
@@ -517,8 +518,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         imageRefresh.setOnClickListener(v -> loadData());
     }
-
-
 
 
     @Override
@@ -979,6 +978,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     }
 
     private static long lastClickTime;
+
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
             R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title})
     public void onClick(View view) {
@@ -1112,6 +1112,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 break;
             case R.id.tv_clear_write:
                 mNbvAnswerBoard.clearAll();
+                RefreshUtil.invalidate(rlAnswer);
                 break;
             case R.id.tv_add_page:
                 if (btnLocked == false) {

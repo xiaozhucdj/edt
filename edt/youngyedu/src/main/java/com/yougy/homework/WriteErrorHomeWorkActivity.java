@@ -210,7 +210,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
 
-                if (questionList == null && questionList.get(0) == null) {
+                if (questionList == null) {
+                    return;
+                }
+
+                if (questionList.get(0) == null) {
                     return;
                 }
 
@@ -519,6 +523,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 break;
             case R.id.tv_clear_write:
                 mNbvAnswerBoard.clearAll();
+                RefreshUtil.invalidate(rlAnswer);
                 break;
             case R.id.tv_add_page:
                 if (questionPageSize - contentDisplayer.getContentAdapter().getPageCount("question") > 5) {
