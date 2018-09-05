@@ -191,15 +191,19 @@ public class MistakeListActivity extends HomeworkBaseActivity {
             @Override
             public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
 
-                if (newStatus == WriteableContentDisplayer.LOADING_STATUS.ERROR) {
-                    binding.wcdContentDisplayer.setHintText(errorMsg);
-                } else {
-                    binding.wcdContentDisplayer.setHintText(null);
+                switch (newStatus) {
+                    case LOADING:
+                        binding.wcdContentDisplayer.setHintText("加载中");
+                        break;
+                    case ERROR:
+                        binding.wcdContentDisplayer.setHintText(errorMsg);
+                        break;
+                    case SUCCESS:
+                        binding.wcdContentDisplayer.setHintText(null);//设置为null该view会gone
+                        break;
                 }
             }
         });
-
-
     }
 
     private boolean findCurrentNode(BookInfo.BookContentsBean.NodesBean from, BookInfo.BookContentsBean.NodesBean tofind) {

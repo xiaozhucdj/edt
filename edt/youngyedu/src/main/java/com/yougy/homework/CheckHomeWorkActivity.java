@@ -338,11 +338,18 @@ public class CheckHomeWorkActivity extends BaseActivity {
             @Override
             public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
 
-                if (newStatus == WriteableContentDisplayer.LOADING_STATUS.ERROR) {
-                    wcdContentDisplayer.setHintText(errorMsg);
-                } else {
-                    wcdContentDisplayer.setHintText(null);
+                switch (newStatus) {
+                    case LOADING:
+                        wcdContentDisplayer.setHintText("加载中");
+                        break;
+                    case ERROR:
+                        wcdContentDisplayer.setHintText(errorMsg);
+                        break;
+                    case SUCCESS:
+                        wcdContentDisplayer.setHintText(null);//设置为null该view会gone
+                        break;
                 }
+
             }
         });
     }
