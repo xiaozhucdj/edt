@@ -350,6 +350,19 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         break;
                 }
 
+                if (newStatus == WriteableContentDisplayer.LOADING_STATUS.SUCCESS) {
+
+                    myLeaveScribbleMode();
+                    UIUtils.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            wcdContentDisplayer.getLayer2().setIntercept(false);
+                        }
+                    }, 600);
+                } else {
+                    wcdContentDisplayer.getLayer2().setIntercept(true);
+                }
+
             }
         });
     }
