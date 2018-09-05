@@ -210,6 +210,10 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             @Override
             public void onLoadingStatusChanged(ContentDisplayer.LOADING_STATUS loadingStatus) {
 
+                if (questionList == null && questionList.get(0) == null) {
+                    return;
+                }
+
                 if ("选择".equals(questionList.get(0).getExtraData()) || "判断".equals(questionList.get(0).getExtraData())) {
                     mNbvAnswerBoard.setVisibility(View.GONE);
                 } else {
