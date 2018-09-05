@@ -151,7 +151,7 @@ public class ContentDisplayer extends RelativeLayout {
         addView(pdfImageView , params);
 
         clickOrHintlayer = new TextView(getContext());
-        clickOrHintlayer.setTextSize(TypedValue.COMPLEX_UNIT_SP , 20);
+        clickOrHintlayer.setTextSize(30);
         mainTextView.setTextColor(Color.BLACK);
         clickOrHintlayer.setGravity(Gravity.CENTER);
         clickOrHintlayer.setOnClickListener(new OnClickListener() {

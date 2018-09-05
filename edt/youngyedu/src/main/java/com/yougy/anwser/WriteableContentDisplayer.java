@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -393,7 +395,8 @@ public class WriteableContentDisplayer extends RelativeLayout {
 
         hintLayer = new TextView(getContext());
         hintLayer.setTextColor(Color.BLACK);
-        hintLayer.setGravity(CENTER_IN_PARENT);
+        hintLayer.setTextSize(30);
+        hintLayer.setGravity(Gravity.CENTER);
         LayoutParams hintLayerLayoutParam = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addView(hintLayer, hintLayerLayoutParam);
     }
