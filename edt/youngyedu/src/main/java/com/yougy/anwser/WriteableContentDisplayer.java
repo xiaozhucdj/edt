@@ -227,6 +227,7 @@ public class WriteableContentDisplayer extends RelativeLayout {
             @Override
             public void run() throws InterruptedException {
                 inserCheckPoint();
+                callOnStatusChangedListener(LOADING_STATUS.LOADING , typeKey , pageIndex , null , null);
                 //线程同步状态量
                 boolean[] needWait = new boolean[]{true, true, true, true};
                 //在主线程里执行beforeToPage.在beforeToPage的过程中用到的needWait[0]来表示同步状态.
