@@ -47,6 +47,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.RecycleUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -148,6 +149,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     TextView commentTv;
     @BindView(R.id.comment_dialog)
     RelativeLayout commentDialog;
+    @BindView(R.id.ll_control_bottom)
+    LinearLayout llControlBottom;
 
     private CustomLinearLayoutManager linearLayoutManager;
 
@@ -1715,6 +1718,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
      */
     public void refreshLastAndNextQuestionBtns() {
 
+        RefreshUtil.invalidate(llControlBottom);
         titleTextview.setText(studentName + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
 
         if (currentShowQuestionIndex > 0) {
