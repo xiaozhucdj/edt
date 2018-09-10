@@ -90,6 +90,8 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     TextView tvCheckScore;
     @BindView(R.id.iv_check_result)
     ImageView ivCheckResult;
+    @BindView(R.id.title_tv)
+    TextView titleTv;
 
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸

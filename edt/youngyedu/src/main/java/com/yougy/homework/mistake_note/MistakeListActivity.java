@@ -302,7 +302,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
                 intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
                 intent.putExtra("HOMEWORKID", homeworkId);
-                intent.putExtra("BOOKTITLE", getIntent().getStringExtra("booktitle"));
+                intent.putExtra("BOOKTITLE", questionReplyDetail.getHomeworkExcerpt().getCursorName());
 
                 intent.putExtra("PARSEDQUESTIONITEM", questionReplyDetail.getParsedQuestionItem());
                 intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
@@ -491,6 +491,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
             }
         }
         binding.tvMistakeFrom.setText("来源于：" + questionReplyDetail.getHomeworkExcerpt().getExtra().getName());
+        binding.tvTitle.setText(questionReplyDetail.getHomeworkExcerpt().getCursorName());
 
         binding.wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
         binding.wcdContentDisplayer.getLayer1().setIntercept(true);

@@ -20,6 +20,15 @@ public class MistakeSummary implements Parcelable {
     private int item;
     private double version;
     private String format;
+    private String cursorName;
+
+    public String getCursorName() {
+        return cursorName;
+    }
+
+    public void setCursorName(String cursorName) {
+        this.cursorName = cursorName;
+    }
 
     public ExtraBean getExtra() {
         return extra;
@@ -195,6 +204,7 @@ public class MistakeSummary implements Parcelable {
         dest.writeInt(this.item);
         dest.writeDouble(this.version);
         dest.writeString(this.format);
+        dest.writeString(this.cursorName);
     }
 
     public MistakeSummary() {
@@ -205,6 +215,7 @@ public class MistakeSummary implements Parcelable {
         this.item = in.readInt();
         this.version = in.readDouble();
         this.format = in.readString();
+        this.cursorName = in.readString();
     }
 
     public static final Parcelable.Creator<MistakeSummary> CREATOR = new Parcelable.Creator<MistakeSummary>() {
