@@ -35,7 +35,7 @@ android {
         applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
-        versionName "2.3.4"
+        versionName "2.1.0"
         multiDexEnabled true
         versionCode 12
 
