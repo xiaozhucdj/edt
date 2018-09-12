@@ -17,7 +17,7 @@ package com.yougy.view.showView.recycler;
  */
 
 import android.support.annotation.NonNull;
-import android.support.v4.animation.AnimatorCompatHelper;
+//import android.support..animation.AnimatorCompatHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
@@ -513,7 +513,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
     }
 
     private void resetAnimation(ViewHolder holder) {
-        AnimatorCompatHelper.clearInterpolator(holder.itemView);
+//        AnimatorCompatHelper.clearInterpolator(holder.itemView);
         endAnimation(holder);
     }
 
