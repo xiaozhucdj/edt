@@ -84,12 +84,12 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     LinearLayout llCaogaoControl;
     @BindView(R.id.rl_caogao_box)
     RelativeLayout rlCaogaoBox;
-    @BindView(R.id.sub_title_tv)
-    TextView subTitleTv;
     @BindView(R.id.tv_check_score)
     TextView tvCheckScore;
     @BindView(R.id.iv_check_result)
     ImageView ivCheckResult;
+    @BindView(R.id.title_tv)
+    TextView titleTv;
 
     private NoteBookView2 mNbvAnswerBoard;
     //作业草稿纸
@@ -152,7 +152,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     @Override
     protected void initLayout() {
         if (!TextUtils.isEmpty(bookTitle)) {
-            subTitleTv.setText(" - " + bookTitle);
+            titleTv.setText(bookTitle);
         }
 
         //新建写字板，并添加到界面上

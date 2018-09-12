@@ -121,7 +121,7 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
         binding.contentDisplayer.getContentAdapter().updateDataList("analysis", parsedQuestionItem.analysisContentList);
 
         if (!TextUtils.isEmpty(bookTitle)) {
-            binding.subTitleTv.setText(" - " + bookTitle);
+            binding.titleTv.setText(bookTitle);
         }
         refreshViewSafe();
     }
