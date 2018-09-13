@@ -218,25 +218,24 @@ public class SplashActivity extends BaseActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        if (throwable instanceof ApiException){
-                            if ("401".equals(((ApiException) throwable).getCode())){
-                                //登录失败,可能是在pc端被解绑了.
-                                //删除本端的缓存数据并且跳转到login界面
-                                SpUtils.clearSP();
-                                SpUtils.changeInitFlag(false);
-                                Connector.resetHelper();
-                                deleteDatabase(DATABASE_NAME);
-                                deleteDatabase(JOURNAL_NAME);
-                                FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
-                                YXClient.getInstance().logout();
-                                ThreadManager.getSinglePool().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DeviceScreensaverUtils.setScreensaver();
-                                    }
-                                });
-                                SplashActivity.this.jumpActivity(LoginActivity.class);
-                            }
+                        if (throwable instanceof ApiException
+                                && ("401".equals(((ApiException) throwable).getCode()))) {
+                            //登录失败,可能是在pc端被解绑了.
+                            //删除本端的缓存数据并且跳转到login界面
+                            SpUtils.clearSP();
+                            SpUtils.changeInitFlag(false);
+                            Connector.resetHelper();
+                            deleteDatabase(DATABASE_NAME);
+                            deleteDatabase(JOURNAL_NAME);
+                            FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                            YXClient.getInstance().logout();
+                            ThreadManager.getSinglePool().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DeviceScreensaverUtils.setScreensaver();
+                                }
+                            });
+                            SplashActivity.this.jumpActivity(LoginActivity.class);
                         }
                         else if (-1 == SpUtils.getAccountId()) {
                             LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
