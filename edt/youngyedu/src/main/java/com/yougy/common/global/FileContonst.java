@@ -126,15 +126,7 @@ public class FileContonst {
     public static final String DEVICE_TYPE_EDU = "EDU";
     public static final String DEVICE_TYPE_PL107 = "PL107";
     public static final String DEVICE_TYPE_N96 = "N96";
-    static {
-        if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_EDU)||SystemUtils.getDeviceModel().contains(DEVICE_TYPE_PL107)) {
-            withS = 150;
-            heightS = 200;
-            withL = 200;
-            heightL = 266;
-
-        }
-    }
+    public static String serverDevice = "PL107";
 
     /***
      * 消息锁屏
@@ -143,5 +135,25 @@ public class FileContonst {
 
     public final static String  NO_LOCK_SCREEN= "unlocking_screen";
 
-
+    static {
+        if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_EDU)) {
+            withS = 150;
+            heightS = 200;
+            withL = 200;
+            heightL = 266;
+            serverDevice = DEVICE_TYPE_EDU ;
+        } else if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_PL107)) {
+            withS = 150;
+            heightS = 200;
+            withL = 200;
+            heightL = 266;
+            serverDevice = DEVICE_TYPE_PL107 ;
+        } else if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_N96) ){
+            withS = 150;
+            heightS = 200;
+            withL = 200;
+            heightL = 266;
+            serverDevice = DEVICE_TYPE_N96 ;
+        }
+    }
 }

@@ -10,6 +10,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
@@ -100,7 +101,7 @@ public final class NetWorkManager {
                 newBuilder.header("Content-Type", "application/json");
                 newBuilder.header("Accept", "application/json");
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
-                newBuilder.addHeader("X-Device-Model", SystemUtils.getDeviceModel());
+                newBuilder.addHeader("X-Device-Model", FileContonst.serverDevice);
 //                if (Commons.isRelase) {
                     newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
 //                }
