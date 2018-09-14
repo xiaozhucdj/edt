@@ -3,34 +3,25 @@
     package="com.yougy.ui.activity"
     android:installLocation="auto">
 
-
     <!-- 网络 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- 网络 -->
     <!-- 读写SDkard -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <!-- 读写SDkard -->
     <!-- 允许挂载和反挂载文件系统可移动存储 -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!--bugly-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <!--背光-->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
-
 
     <application
         android:name="com.yougy.common.manager.YoungyApplicationManager"
@@ -42,7 +33,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-
         <activity
             android:name="com.yougy.home.activity.SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -51,22 +41,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.yougy.TestImgActivity"/>
+        <activity android:name="com.yougy.TestImgActivity">
+        </activity>
         <activity
             android:name="com.yougy.home.activity.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
 
         <activity
             android:name="com.yougy.home.activity.ControlFragmentActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
         <!--账号设置-->
         <activity
             android:name="com.yougy.setting.ui.SettingMainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity android:name="com.yougy.shop.activity.BookShopActivityDB" />
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity android:name="com.yougy.shop.activity.BookShopActivityDB" >
+        </activity>
 
 
         <!--确认订单页-->
@@ -74,107 +69,130 @@
         <activity
             android:name="com.yougy.init.activity.LoginActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
         <!--本地锁页-->
         <activity
             android:name="com.yougy.init.activity.LocalLockActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
         <activity
             android:name="com.yougy.shop.activity.SearchActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="stateHidden|adjustPan" >
+        </activity>
         <!--商城收藏页-->
         <activity
             android:name="com.yougy.shop.activity.ShopFavoriteActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
 
         <!--商城购物车页-->
         <activity
             android:name="com.yougy.shop.activity.ShopCartActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
         <!--商城支付成功页-->
         <activity
             android:name="com.yougy.shop.activity.PaySuccessActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
         <!--我的订单列表-->
         <activity
             android:name="com.yougy.shop.activity.OrderListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
 
         <activity
             android:name="com.yougy.shop.activity.ShopBookDetailsActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+        </activity>
         <activity
             android:name="com.yougy.shop.activity.ProbationReadBookActivity"
-            android:screenOrientation="portrait" />
-
-        <service android:name="com.yougy.common.service.DownloadService" />
-        <service android:name="com.yougy.common.service.UploadService" />
+            android:screenOrientation="portrait" >
+        </activity>
 
         <!-- 最近联系人-->
         <activity
             android:name="com.yougy.message.ui.RecentContactListActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
-
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
 
         <!--聊天界面-->
         <activity
             android:name="com.yougy.message.ui.ChattingActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustNothing" >
+        </activity>
         <!--群发聊天界面-->
         <activity
             android:name="com.yougy.message.ui.MultiChattingActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustNothing" >
+        </activity>
         <!--选择联系人界面-->
         <activity
             android:name="com.yougy.message.ui.ContactListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+        </activity>
         <!--问答中界面-->
-        <activity android:name="com.yougy.anwser.AnsweringActivity" />
+        <activity android:name="com.yougy.anwser.AnsweringActivity" >
+        </activity>
 
         <!--错题本图书章节选择界面-->
         <activity
             android:name="com.yougy.homework.mistake_note.BookStructureActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
         <!--错题本错题列表界面-->
         <activity
             android:name="com.yougy.homework.mistake_note.MistakeListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
         <!--已批改作业详情界面-->
         <activity
             android:name="com.yougy.homework.CheckedHomeworkOverviewActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
         <!--已批改作业题目详情界面-->
-        <activity android:name="com.yougy.homework.CheckedHomeworkDetailActivity" />
+        <activity android:name="com.yougy.homework.CheckedHomeworkDetailActivity" >
+        </activity>
         <!--错题练习界面-->
-        <activity android:name="com.yougy.homework.mistake_note.MistakeGradeActivity" />
+        <activity android:name="com.yougy.homework.mistake_note.MistakeGradeActivity" >
+        </activity>
 
-        <activity android:name="com.yougy.homework.WriteHomeWorkActivity" />
-        <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" />
-        <activity android:name="com.yougy.homework.CheckHomeWorkActivity" />
-        <activity android:name="com.yougy.shop.activity.ShopPromotionActivity"/>
+        <activity android:name="com.yougy.homework.WriteHomeWorkActivity" >
+        </activity>
+        <activity android:name="com.yougy.homework.WriteErrorHomeWorkActivity" >
+        </activity>
+        <activity android:name="com.yougy.homework.CheckHomeWorkActivity" >
+        </activity>
+        <activity android:name="com.yougy.shop.activity.ShopPromotionActivity">
+        </activity>
         <!--问答图书章节列表-->
-        <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" />
+        <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" >
+        </activity>
         <!--问答记录题目列表-->
-        <activity android:name="com.yougy.anwser.AnswerRecordListActivity" />
+        <activity android:name="com.yougy.anwser.AnswerRecordListActivity" >
+        </activity>
         <!--问答记录某次问答详情界面-->
-        <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity"/>
-        <activity android:name="com.yougy.shop.activity.OrderDetailActivity" />
+        <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity">
+        </activity>
+        <activity android:name="com.yougy.shop.activity.OrderDetailActivity" >
+        </activity>
+        <activity
+            android:name="com.yougy.order.LockerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+        </activity>
 
-      <!--  <receiver android:name="com.yougy.common.broadcast.WifiRecevier">
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>-->
+
+        <service android:name="com.yougy.common.service.DownloadService" >
+        </service>
+        <service android:name="com.yougy.common.service.UploadService" >
+        </service>
 
         <!--===================云信相关start===================-->
         <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。
@@ -187,19 +205,22 @@
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
-            android:process=":core" />
+            android:process=":core" >
+        </service>
 
         <!-- 运行后台辅助服务 -->
         <service
             android:name="com.netease.nimlib.service.NimService$Aux"
-            android:process=":core" />
+            android:process=":core" >
+        </service>
 
         <!-- 声明云信后台辅助服务 -->
         <service
             android:name="com.netease.nimlib.job.NIMJobService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE"
-            android:process=":core" />
+            android:process=":core" >
+        </service>
 
         <!-- 云信SDK的监视系统启动和网络变化的广播接收器，用户开机自启动以及网络变化时候重新登录，
             保持和 NimService 同一进程 -->
@@ -214,17 +235,20 @@
         </receiver>
 
         <!-- 云信进程间通信 Receiver -->
-        <receiver android:name="com.netease.nimlib.service.ResponseReceiver" />
+        <receiver android:name="com.netease.nimlib.service.ResponseReceiver" >
+        </receiver>
 
         <!-- 安卓保活配置 -->
         <service
             android:name="com.netease.cosine.core.CosineService"
-            android:process=":cosine" />
+            android:process=":cosine" >
+        </service>
 
         <receiver
             android:name="com.netease.cosine.target.CosineReceiver"
             android:exported="true"
-            android:process=":cosine" />
+            android:process=":cosine" >
+        </receiver>
 
         <meta-data
             android:name="com.netease.cosine.target"
@@ -234,7 +258,6 @@
             android:value="com.netease.nimlib.service.NimReceiver" />
         <!--===================云信相关end===================-->
 
-
         <!--AutoLayout中需要使用到的设计图大小-->
         <meta-data
             android:name="design_width"
@@ -242,11 +265,6 @@
         <meta-data
             android:name="design_height"
             android:value="1232" />
-
-        <activity
-            android:name="com.yougy.order.LockerActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
 
     </application>
 </manifest>
