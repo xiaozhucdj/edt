@@ -302,38 +302,19 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         super.onBackPressed();
     }
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                this.onKeyDown(keyCode, event);
-            }
-            return true;
-        }
-        if (keyCode == KeyEvent.KEYCODE_BUTTON_START || keyCode == KeyEvent.KEYCODE_CLEAR) {
-            return true;
-        }
-        return super.dispatchKeyEvent(event);
-    }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        LogUtils.i("onKeyDown " + keyCode);
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_PAGE_UP:
-                if (mFragment != null) {
-                    mFragment.prevPageForKey();
+        LogUtils.i("yuanye ..mJump==" + keyCode);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mFragment!=null){
+                if (mFragment instanceof HandleOnyxReaderFragment){
+                    mHandleOnyxReader.onBackListener();
+                }else if (mFragment instanceof NoteBookFragment){
+                    mNoteBookFragment.onBackListener();
                 }
-                break;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_PAGE_DOWN:
-                if (mFragment != null) {
-                    mFragment.nextPageForKey();
-                }
-                break;
+            }
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }

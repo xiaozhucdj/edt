@@ -209,6 +209,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     private int mCutterEraserSize = 2;
 
     private boolean mIsUserPen = true;
+    protected FrameLayout base_opt_layout;
 
     private String generatePicturePath() {
         picturePath = fileName + "-" + "picture" + "-" + position + "-" + pictureCount;
@@ -420,6 +421,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
         // Seekbar 根VIEW
         mRl_page = mRoot.findViewById(R.id.rl_page);
+        base_opt_layout = mRoot.findViewById(R.id.base_opt_layout);
 
         //替换布局的  ViewStub
         mStub = mRoot.findViewById(R.id.view_stub);
