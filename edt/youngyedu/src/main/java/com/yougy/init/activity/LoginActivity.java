@@ -17,7 +17,6 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.Student;
 import com.yougy.init.dialog.ConfirmUserInfoDialog;
@@ -36,7 +35,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void setContentView() {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(this) , R.layout.activity_login , null , false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_login, null, false);
         UIUtils.recursiveAuto(binding.getRoot());
         setContentView(binding.getRoot());
     }
@@ -141,13 +140,19 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    public void login(View view){
-        if (TextUtils.isEmpty(binding.accountEdittext.getText())){
-            new HintDialog(getThisActivity() , "账号不能为空").show();
+    private boolean isLogining = false;
+
+    public void login(View view) {
+        if (isLogining) {
             return;
         }
-        if (TextUtils.isEmpty(binding.pwdEdittext.getText()) || binding.pwdEdittext.getText().length() < 6){
-            new HintDialog(getThisActivity() , "密码长度太短").show();
+        isLogining = true;
+        if (TextUtils.isEmpty(binding.accountEdittext.getText())) {
+            new HintDialog(getThisActivity(), "账号不能为空").show();
+            return;
+        }
+        if (TextUtils.isEmpty(binding.pwdEdittext.getText()) || binding.pwdEdittext.getText().length() < 6) {
+            new HintDialog(getThisActivity(), "密码长度太短").show();
             return;
         }
         NewLoginReq loginReq = new NewLoginReq();
@@ -158,22 +163,26 @@ public class LoginActivity extends BaseActivity {
                 .subscribe(students -> {
                     Student student = students.get(0);
                     if (!student.getUserRole().equals(getString(R.string.student))) {
+                        isLogining = false;
                         new HintDialog(getThisActivity(), "权限错误:账号类型错误,请使用学生账号登录").show();
                     } else {
                         LogUtils.e("FH", "登录成功,弹出信息确认dialog");
                         confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this, student);
                         confirmUserInfoDialog.show();
                     }
-                }, throwable -> new HintDialog(getThisActivity() , "登录失败:用户名密码错误").show());
+                }, throwable -> {
+                    isLogining = false;
+                    new HintDialog(getThisActivity(), "登录失败:用户名密码错误").show();
+                });
     }
 
 
-    public void forgetPwd(View view){
+    public void forgetPwd(View view) {
         new HintDialog(this, "请联系管理员请求重置你的乐课账户密码,重置成功后请重新登录即可").show();
     }
 
-    public void wifi(View view){
-        boolean isConnected =false ;
+    public void wifi(View view) {
+        boolean isConnected = false;
         NetManager.getInstance().changeWiFi(this, !isConnected);
         binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
     }
@@ -194,10 +203,10 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-      super.onBackPressed();
+        super.onBackPressed();
     }
 
-   /* *//**
+    /* *//**
      * 检查系统应用程序，并打开
      *//*
     public void openApp(String appPag, String cls) {
