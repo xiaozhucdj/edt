@@ -198,6 +198,12 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<Object> allocationMutualHomework(String examId) {
+        return getInstance().getServerApi().allocationMutualHomework(examId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
     public Observable<Object> queryToken(String userId) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询云信token:queryToken");
         return getServerApi().queryToken(userId)

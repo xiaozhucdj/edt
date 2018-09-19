@@ -58,7 +58,6 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
-import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -1618,7 +1617,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(Object o) {
                         ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
-                        back();
+
                         if (teacherId != 0) {
                             YXClient.getInstance().sendSubmitHomeworkMsg(examId, SessionTypeEnum.P2P, studentId, studentName,
                                     teacherId, new RequestCallback<Void>() {
@@ -1638,6 +1637,23 @@ public class CheckHomeWorkActivity extends BaseActivity {
                                         }
                                     });
                         }
+
+
+                        //国东添加接口：互评作业分配接口
+                        NetWorkManager.allocationMutualHomework(examId + "")
+                                .subscribe(new Action1<Object>() {
+                                    @Override
+                                    public void call(Object o) {
+                                        back();
+                                    }
+                                }, new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        throwable.printStackTrace();
+                                        ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
+                                    }
+                                });
+
 
                     }
                 }, new Action1<Throwable>() {

@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -34,8 +33,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
-import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.ContentDisplayerAdapterV2;
 import com.yougy.anwser.ContentDisplayerV2;
 import com.yougy.anwser.Content_new;
@@ -1619,7 +1616,21 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                     });
                         }
                         mIsSubmit = true;
-                        onBackPressed();
+
+                        //国东添加接口：互评作业分配接口
+                        NetWorkManager.allocationMutualHomework(examId)
+                                .subscribe(new Action1<Object>() {
+                                    @Override
+                                    public void call(Object o) {
+                                        onBackPressed();
+                                    }
+                                }, new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        throwable.printStackTrace();
+                                        ToastUtil.showCustomToast(getBaseContext(),"allocationMutualHomework接口错误");
+                                    }
+                                });
 
                     }
                 }, new Action1<Throwable>() {

@@ -6,7 +6,6 @@ import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.model.Version;
-import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
@@ -87,6 +86,15 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("data") String data);
+
+
+    /**
+     * 互评作业分配接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"allocationMutualHomework"})
+    Observable<BaseResult<Object>> allocationMutualHomework(@Field("examId") String examId);
 
     /**
      * 按userId查询云信token
