@@ -97,6 +97,8 @@
         android:background="@color/background_black" />
 
     <RelativeLayout
+
+        android:id="@+id/buttom_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
@@ -128,7 +130,6 @@
             android:src="@drawable/edu_img_pagenext_select" />
 
         <com.yougy.view.showView.TextThumbSeekBar
-            android:thumbOffset="0px"
             android:id="@+id/seekbar_page"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -139,7 +140,41 @@
             android:minHeight="8dp"
             android:progressDrawable="@drawable/seekbar_pen_bg_selector"
             android:thumb="@drawable/seekbar_thumb_selector"
+            android:thumbOffset="0px"
             android:visibility="gone" />
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/img_page_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@null"
+        android:src="@drawable/img_page_back"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/img_page_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@null"
+        android:src="@drawable/img_page_next"
+        android:visibility="gone" />
+
+
+    <Button
+        android:id="@+id/img_btn_hide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttom_bar"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20px"
+        android:background="@drawable/img_btn_hide"
+        android:gravity="center"
+        android:text="显示菜单栏"
+        android:textColor="@color/white"
+        android:textSize="18px" />
 
 </RelativeLayout>

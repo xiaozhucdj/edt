@@ -68,7 +68,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-
 /**
  * Created by Administrator on 2016/12/23.
  * TextBookFragment 查询数据放入子线程 ,翻页labl放子线程
@@ -117,6 +116,11 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private HandlerDirAdapter mHandlerDirAdapter;
     private LoadingProgressDialog mloadingDialog;
     private boolean mIsReferenceBook;
+    private ImageView img_page_next;
+    private ImageView img_page_back;
+    private Button img_btn_hide;
+    private Subscription backScription2;
+    private Subscription nextScription2;
 
 
     @Nullable
@@ -200,8 +204,17 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
          */
         mBackPageBack = mRoot.findViewById(R.id.img_pageBack);
         backScription = RxView.clicks(mBackPageBack).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getBackSubscriber());
+
         mBackPageNext = mRoot.findViewById(R.id.img_pageNext);
         nextScription = RxView.clicks(mBackPageNext).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getNextSubscriber());
+
+
+        img_page_next = mRoot.findViewById(R.id.img_page_next);
+        img_page_back = mRoot.findViewById(R.id.img_page_back);
+        img_btn_hide = mRoot.findViewById(R.id.img_btn_hide);
+        img_btn_hide.setOnClickListener(this);
+        backScription2 = RxView.clicks(img_page_back).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getBackSubscriber());
+        nextScription2 = RxView.clicks(img_page_next).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getNextSubscriber());
         //解析PDF
         initPDF();
     }
@@ -304,11 +317,12 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     }
 
 
-    private boolean isSuccesspdf  =false ;
+    private boolean isSuccesspdf = false;
+
     @Override
     public void openDocumentFinsh() {
 
-        if (!isSuccesspdf){
+        if (!isSuccesspdf) {
             mPageCounts = mReaderPresenter.getPages();
             initSeekBar();
             initDB();
@@ -534,7 +548,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             return;
         }
         mCurrentMarksPage = position;
-        isSuccesspdf =true;
+        isSuccesspdf = true;
         getReaderPresenter().gotoPage(position);
     }
 
@@ -559,6 +573,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 break;
             case R.id.directory:
                 showDirectory();
+                break;
+            case R.id.img_btn_hide:
+                onBackListener();
                 break;
         }
     }
@@ -737,8 +754,17 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     //
     //////////////////////////生命周期//////////////////////////////////////////////
 
-    public void onDestroyView() {
-        super.onDestroyView();
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (backScription2 != null) {
+            backScription2.unsubscribe();
+        }
+        if (nextScription2 != null) {
+            nextScription2.unsubscribe();
+        }
+
         if (mSubDb != null && !mSubDb.isUnsubscribed()) {
             mSubDb.unsubscribe();
         }
@@ -754,7 +780,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         mRunThread = null;
         Runtime.getRuntime().gc();
     }
-
 
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -930,9 +955,25 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         }
     }
 
-    public  void onBackListener(){
+    public void onBackListener() {
+
         mNoteBookView.leaveScribbleMode();
-        mRl_page.setVisibility(mRl_page.getVisibility() == View.VISIBLE ?View.INVISIBLE:View.VISIBLE);
-        base_opt_layout.setVisibility(base_opt_layout.getVisibility() == View.VISIBLE ?View.INVISIBLE:View.VISIBLE);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) img_btn_hide.getLayoutParams();
+        if (mRl_page.getVisibility() == View.VISIBLE) {
+            mRl_page.setVisibility(View.GONE);
+            base_opt_layout.setVisibility(View.GONE);
+            img_page_next.setVisibility(View.VISIBLE);
+            img_page_back.setVisibility(View.VISIBLE);
+            img_btn_hide.setText("显示菜单栏");
+            params.setMargins(0,0,0,20);
+        }else{
+            mRl_page.setVisibility(View.VISIBLE);
+            base_opt_layout.setVisibility(View.VISIBLE);
+            img_page_next.setVisibility(View.GONE);
+            img_page_back.setVisibility(View.GONE);
+            img_btn_hide.setText("隐藏菜单栏");
+            params.setMargins(0,0,0,98);
+        }
+        img_btn_hide.setLayoutParams(params);
     }
 }
