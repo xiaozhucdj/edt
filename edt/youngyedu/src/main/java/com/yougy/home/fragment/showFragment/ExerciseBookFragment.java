@@ -16,6 +16,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -27,6 +28,7 @@ import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
+import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.homework.mistake_note.MistakeListActivity;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
@@ -224,9 +226,11 @@ public class ExerciseBookFragment extends BFragment {
                         } else {
                             intent.putExtra("isOnClass", false);
                         }
-                        //TODO  互评逻辑暂时未加
+                        //isStudentCheck  0   默认 不传  1 自评   2 互评
                         if ("II54".equals(typeCode) || "II57".equals(typeCode) || "IH52".equals(extraBean.getStatusCode())) {
-                            intent.putExtra("isStudentCheck", true);
+                            intent.putExtra("isStudentCheck", 1);
+                        } else if ("II55".equals(typeCode) || "II58".equals(typeCode) )  {
+                            intent.putExtra("isStudentCheck", 2);
                         }
                         intent.putExtra("teacherID", extraBean.getExamSponsor());
                         startActivity(intent);
@@ -359,6 +363,24 @@ public class ExerciseBookFragment extends BFragment {
         if (mControlActivity.mBookId <= 0) {
             binding.switch2bookBtn.setEnabled(false);
         }
+
+        if (currentStatus == STATUS.WAIT_FOR_CHECK) {
+            //待批改列表
+            NetWorkManager.queryReply(mControlActivity.mHomewrokId,null, String.valueOf(SpUtils.getUserId()))
+                    .subscribe(new Action1<List<QuestionReplySummary>>() {
+                        @Override
+                        public void call(List<QuestionReplySummary> questionReplySummaries) {
+                            LogUtils.d("questionReplySummaries size = " + questionReplySummaries.size());
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            LogUtils.e("request wait check homework list error." + throwable.getMessage());
+                        }
+                    });
+            return;
+        }
+
         // IH01  不显示
         String statusCode = "IH01";
         String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
@@ -366,11 +388,9 @@ public class ExerciseBookFragment extends BFragment {
             case DOING:
                 statusCode = "[\"IH02\",\"IH51\"]";
                 break;
-            case WAIT_FOR_CHECK:
-                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
-//                statusCode = "[\"IH03\",\"IH52\"]";
-//                examTypeCode = "[\"II54\",\"II55\",\"II57\",\"II58\"]";
-                break;
+//            case WAIT_FOR_CHECK:
+//                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+//                break;
             case CHECKED:
                 statusCode = "IH05";
                 break;
@@ -407,28 +427,28 @@ public class ExerciseBookFragment extends BFragment {
                                         binding.emptyHintLayout.setVisibility(View.GONE);
                                     }
                                     break;
-                                case WAIT_FOR_CHECK:
-                                    waitForCheckList.clear();
-                                    for (HomeworkSummary h : homeworkSummaryList) {
-                                        if ("IH52".equals(h.getExtra().getStatusCode())) {
-                                            waitForCheckList.add(h);
-                                        } else {
-                                            if ("II54".equals(h.getExtra().getTypeCode())
-                                                    || "II55".equals(h.getExtra().getTypeCode())
-                                                    || "II57".equals(h.getExtra().getTypeCode())
-                                                    || "II58".equals(h.getExtra().getTypeCode())) {
-                                                waitForCheckList.add(h);
-                                            }
-                                        }
-                                    }
-//                                waitForCheckList.addAll(homeworkSummaryList);
-                                    if (waitForCheckList.size() == 0) {
-                                        binding.emptyHintLayout.setVisibility(View.VISIBLE);
-                                        binding.emptyHintTv.setText("您还没有待批改的作业哦");
-                                    } else {
-                                        binding.emptyHintLayout.setVisibility(View.GONE);
-                                    }
-                                    break;
+//                                case WAIT_FOR_CHECK:
+//                                    waitForCheckList.clear();
+//                                    for (HomeworkSummary h : homeworkSummaryList) {
+//                                        if ("IH52".equals(h.getExtra().getStatusCode())) {
+//                                            waitForCheckList.add(h);
+//                                        } else {
+//                                            if ("II54".equals(h.getExtra().getTypeCode())
+//                                                    || "II55".equals(h.getExtra().getTypeCode())
+//                                                    || "II57".equals(h.getExtra().getTypeCode())
+//                                                    || "II58".equals(h.getExtra().getTypeCode())) {
+//                                                waitForCheckList.add(h);
+//                                            }
+//                                        }
+//                                    }
+////                                waitForCheckList.addAll(homeworkSummaryList);
+//                                    if (waitForCheckList.size() == 0) {
+//                                        binding.emptyHintLayout.setVisibility(View.VISIBLE);
+//                                        binding.emptyHintTv.setText("您还没有待批改的作业哦");
+//                                    } else {
+//                                        binding.emptyHintLayout.setVisibility(View.GONE);
+//                                    }
+//                                    break;
                                 case CHECKED:
                                     checkedList.clear();
                                     checkedList.addAll(homeworkSummaryList);
