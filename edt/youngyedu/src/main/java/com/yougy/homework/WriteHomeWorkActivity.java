@@ -203,7 +203,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private int saveQuestionPage = 0;
 
     private String examName;
-    private boolean isStudentCheck;
+    //isStudentCheck  0   默认 不传  1 自评   2 互评
+    private int isStudentCheck;
     private String examId = "550";
     //是否添加了手写板
     private boolean isAddAnswerBoard;
@@ -247,7 +248,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void init() {
 
         examId = getIntent().getStringExtra("examId");
-        isStudentCheck = getIntent().getBooleanExtra("isStudentCheck", false);
+        isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
         if (TextUtils.isEmpty(examId)) {
             ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
             mIsFinish = true;
@@ -1476,11 +1477,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
 
-                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
-                        if (isStudentCheck) {
+                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
+                        if (isStudentCheck == 0) {
+                            homeWorkResultbean.setReplyCommentator(teacherId);
+                        } else if (isStudentCheck == 1) {
                             homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
                         } else {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
+                            homeWorkResultbean.setReplyCommentator(0);
                         }
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
@@ -1504,11 +1507,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
                         homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
-                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
-                        if (isStudentCheck) {
+                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
+                        if (isStudentCheck == 0) {
+                            homeWorkResultbean.setReplyCommentator(teacherId);
+                        } else if (isStudentCheck == 1) {
                             homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
                         } else {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
+                            homeWorkResultbean.setReplyCommentator(0);
                         }
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
@@ -1628,7 +1633,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                     @Override
                                     public void call(Throwable throwable) {
                                         throwable.printStackTrace();
-                                        ToastUtil.showCustomToast(getBaseContext(),"allocationMutualHomework接口错误");
+                                        ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
                                     }
                                 });
 
