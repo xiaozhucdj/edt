@@ -121,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="98px"
+        android:layout_marginBottom="88px"
         android:background="@drawable/img_btn_hide"
         android:gravity="center"
         android:text="显示菜单栏"

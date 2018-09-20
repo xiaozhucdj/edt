@@ -170,7 +170,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/buttom_bar"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="20px"
+        android:layout_marginBottom="10px"
         android:background="@drawable/img_btn_hide"
         android:gravity="center"
         android:text="显示菜单栏"
