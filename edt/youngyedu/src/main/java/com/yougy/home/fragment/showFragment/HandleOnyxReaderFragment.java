@@ -965,14 +965,14 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             img_page_next.setVisibility(View.VISIBLE);
             img_page_back.setVisibility(View.VISIBLE);
             img_btn_hide.setText("显示菜单栏");
-            params.setMargins(0,0,0,20);
+            params.setMargins(0,0,0,10);
         }else{
             mRl_page.setVisibility(View.VISIBLE);
             base_opt_layout.setVisibility(View.VISIBLE);
             img_page_next.setVisibility(View.GONE);
             img_page_back.setVisibility(View.GONE);
             img_btn_hide.setText("隐藏菜单栏");
-            params.setMargins(0,0,0,98);
+            params.setMargins(0,0,0,88);
         }
         img_btn_hide.setLayoutParams(params);
     }
