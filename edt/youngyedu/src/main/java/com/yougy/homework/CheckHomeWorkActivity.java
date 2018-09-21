@@ -58,7 +58,6 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
-import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -353,19 +352,20 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         break;
                 }
 
-                if (newStatus == WriteableContentDisplayer.LOADING_STATUS.SUCCESS) {
+                if (questionBodyBtn.isSelected() && llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
+                    if (newStatus == WriteableContentDisplayer.LOADING_STATUS.SUCCESS) {
 
-                    myLeaveScribbleMode();
-                    UIUtils.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            wcdContentDisplayer.getLayer2().setIntercept(false);
-                        }
-                    }, 600);
-                } else {
-                    wcdContentDisplayer.getLayer2().setIntercept(true);
+                        myLeaveScribbleMode();
+                        UIUtils.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                wcdContentDisplayer.getLayer2().setIntercept(false);
+                            }
+                        }, 600);
+                    } else {
+                        wcdContentDisplayer.getLayer2().setIntercept(true);
+                    }
                 }
-
             }
         });
     }

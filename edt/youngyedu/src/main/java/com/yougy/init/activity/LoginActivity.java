@@ -1,5 +1,6 @@
 package com.yougy.init.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
@@ -149,10 +150,12 @@ public class LoginActivity extends BaseActivity {
         isLogining = true;
         if (TextUtils.isEmpty(binding.accountEdittext.getText())) {
             new HintDialog(getThisActivity(), "账号不能为空").show();
+            isLogining = false;
             return;
         }
         if (TextUtils.isEmpty(binding.pwdEdittext.getText()) || binding.pwdEdittext.getText().length() < 6) {
             new HintDialog(getThisActivity(), "密码长度太短").show();
+            isLogining = false;
             return;
         }
         NewLoginReq loginReq = new NewLoginReq();
@@ -169,6 +172,12 @@ public class LoginActivity extends BaseActivity {
                         LogUtils.e("FH", "登录成功,弹出信息确认dialog");
                         confirmUserInfoDialog = new ConfirmUserInfoDialog(LoginActivity.this, student);
                         confirmUserInfoDialog.show();
+                        confirmUserInfoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                isLogining = false;
+                            }
+                        });
                     }
                 }, throwable -> {
                     isLogining = false;
