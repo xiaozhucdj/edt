@@ -321,7 +321,6 @@ public class ExerciseBookFragment extends BFragment {
             }
         });
 
-
         return binding.getRoot();
     }
 
@@ -389,7 +388,7 @@ public class ExerciseBookFragment extends BFragment {
                 statusCode = "[\"IH02\",\"IH51\"]";
                 break;
             case WAIT_FOR_CHECK:
-                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+                statusCode = "[\"IH03\",\"IH04\",\"IH52\",\"IH53\"]";
                 break;
             case CHECKED:
                 statusCode = "IH05";
