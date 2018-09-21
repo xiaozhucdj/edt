@@ -16,7 +16,6 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
-import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -27,9 +26,7 @@ import com.yougy.homework.CheckedHomeworkOverviewActivity;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
-import com.yougy.homework.bean.HomeworkRemark;
 import com.yougy.homework.bean.HomeworkSummary;
-import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.homework.mistake_note.MistakeListActivity;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
@@ -357,6 +354,7 @@ public class ExerciseBookFragment extends BFragment {
 
 
     private void refreshData() {
+
         binding.switch2homeworkBtn.setEnabled(false);
         if (mControlActivity.mNoteId <= 0) {
             binding.switch2noteBtn.setEnabled(false);
