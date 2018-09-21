@@ -75,9 +75,17 @@ public final class NetWorkManager {
         return mServerApi;
     }
 
+    MyHttpLoggingInterceptor interceptor;
+
+    public void openBODY(){
+        if (interceptor!=null){
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        }
+    }
+
     private NetWorkManager() {
         // 配置日志输出，因为Retrofit2不支持输出日志，只能用OkHttp来输出
-        MyHttpLoggingInterceptor interceptor = new MyHttpLoggingInterceptor();
+        interceptor = new MyHttpLoggingInterceptor();
         if (BuildConfig.DEBUG) {
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         } else {
@@ -103,7 +111,7 @@ public final class NetWorkManager {
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
                 newBuilder.addHeader("X-Device-Model", FileContonst.serverDevice);
 //                if (Commons.isRelase) {
-                    newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
+                newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
 //                }
 
                 Request request = newBuilder.build();
@@ -186,8 +194,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> postReply(String userId, String itemId, String examId, String picContent, String txtContent, String replyUseTime,String replyCreateTime) {
-        return getInstance().getServerApi().postReply(userId, itemId, examId, picContent, txtContent, replyUseTime,replyCreateTime)
+    public static Observable<Object> postReply(String userId, String itemId, String examId, String picContent, String txtContent, String replyUseTime, String replyCreateTime) {
+        return getInstance().getServerApi().postReply(userId, itemId, examId, picContent, txtContent, replyUseTime, replyCreateTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -226,7 +234,7 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_New(Integer homeworkId,String examTypeCode, String statusCode) {
+    public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_New(Integer homeworkId, String examTypeCode, String statusCode) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail_New");
         return getInstance().getServerApi().queryHomeworkBookDetail_New(homeworkId, examTypeCode, true, statusCode)
                 .compose(RxSchedulersHelper.io_main())
@@ -241,7 +249,7 @@ public final class NetWorkManager {
     }
 
 
-    public static Observable<List<QuestionReplyDetail>> queryHomeworkExcerptWithReply(Integer homeworkId,Integer examFitCourseBookCursor) {
+    public static Observable<List<QuestionReplyDetail>> queryHomeworkExcerptWithReply(Integer homeworkId, Integer examFitCourseBookCursor) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
         return getInstance().getServerApi().queryHomeworkExcerptWithReply(homeworkId, examFitCourseBookCursor)
                 .compose(RxSchedulersHelper.io_main())
@@ -346,9 +354,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<Object> removeOrder(String orderId , String orderOwner) {
+    public static Observable<Object> removeOrder(String orderId, String orderOwner) {
         LogUtils.e("FH", "!!!!!调用ServerApi删除订单:removeOrder");
-        return getInstance().getServerApi().removeOrder(orderId , orderOwner)
+        return getInstance().getServerApi().removeOrder(orderId, orderOwner)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -363,7 +371,7 @@ public final class NetWorkManager {
     public static Observable<Pair<Integer, List<OrderSummary>>> queryMyOrderList(String orderOwner
             , Integer ps, Integer pn) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询我的订单");
-        return getInstance().getServerApi().queryOrderAbbr(orderOwner, ps, pn , "{\"order\":\"DESC\"}")
+        return getInstance().getServerApi().queryOrderAbbr(orderOwner, ps, pn, "{\"order\":\"DESC\"}")
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult_new(loadingProgressDialog));
     }
@@ -446,7 +454,7 @@ public final class NetWorkManager {
     /**
      * 根据类别获取图书信息
      * add by jiangliang
-     *
+     * <p>
      * modified by FH
      * 此处原先的用法是req里如果有不使用的字段,则默认传-1或者"",但是这会导致服务器返回的数据为null
      * 因此改成不使用的字段,直接不传这个字段至服务器
