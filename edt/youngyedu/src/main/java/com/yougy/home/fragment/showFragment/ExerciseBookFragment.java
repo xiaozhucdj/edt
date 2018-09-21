@@ -27,6 +27,7 @@ import com.yougy.homework.CheckedHomeworkOverviewActivity;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
+import com.yougy.homework.bean.HomeworkRemark;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.homework.mistake_note.MistakeListActivity;
@@ -226,7 +227,8 @@ public class ExerciseBookFragment extends BFragment {
                         } else {
                             intent.putExtra("isOnClass", false);
                         }
-                        //isStudentCheck  0   默认 不传  1 自评   2 互评
+                        //isStudentCheck  0   默认不传  1 自评   2 互评
+                        LogUtils.d("isStudentCheck：：typeCode： " +  typeCode);
                         if ("II54".equals(typeCode) || "II57".equals(typeCode) || "IH52".equals(extraBean.getStatusCode())) {
                             intent.putExtra("isStudentCheck", 1);
                         } else if ("II55".equals(typeCode) || "II58".equals(typeCode) )  {
@@ -364,22 +366,22 @@ public class ExerciseBookFragment extends BFragment {
             binding.switch2bookBtn.setEnabled(false);
         }
 
-        if (currentStatus == STATUS.WAIT_FOR_CHECK) {
-            //待批改列表
-            NetWorkManager.queryReply(mControlActivity.mHomewrokId,null, String.valueOf(SpUtils.getUserId()))
-                    .subscribe(new Action1<List<QuestionReplySummary>>() {
-                        @Override
-                        public void call(List<QuestionReplySummary> questionReplySummaries) {
-                            LogUtils.d("questionReplySummaries size = " + questionReplySummaries.size());
-                        }
-                    }, new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-                            LogUtils.e("request wait check homework list error." + throwable.getMessage());
-                        }
-                    });
-            return;
-        }
+//        if (currentStatus == STATUS.WAIT_FOR_CHECK) {
+//            //待批改列表
+//            NetWorkManager.queryReply(mControlActivity.mHomewrokId,null, String.valueOf(SpUtils.getUserId()))
+//                    .subscribe(new Action1<List<QuestionReplySummary>>() {
+//                        @Override
+//                        public void call(List<QuestionReplySummary> questionReplySummaries) {
+//                            LogUtils.d("questionReplySummaries size = " + questionReplySummaries.size());
+//                        }
+//                    }, new Action1<Throwable>() {
+//                        @Override
+//                        public void call(Throwable throwable) {
+//                            LogUtils.e("request wait check homework list error." + throwable.getMessage());
+//                        }
+//                    });
+//            return;
+//        }
 
         // IH01  不显示
         String statusCode = "IH01";
@@ -388,9 +390,9 @@ public class ExerciseBookFragment extends BFragment {
             case DOING:
                 statusCode = "[\"IH02\",\"IH51\"]";
                 break;
-//            case WAIT_FOR_CHECK:
-//                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
-//                break;
+            case WAIT_FOR_CHECK:
+                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
+                break;
             case CHECKED:
                 statusCode = "IH05";
                 break;
@@ -427,8 +429,16 @@ public class ExerciseBookFragment extends BFragment {
                                         binding.emptyHintLayout.setVisibility(View.GONE);
                                     }
                                     break;
-//                                case WAIT_FOR_CHECK:
-//                                    waitForCheckList.clear();
+                                case WAIT_FOR_CHECK:
+                                    waitForCheckList.clear();
+                                    int size = homeworkBookDetails.get(0).getHomeworkRemarks().size();
+                                    for (int i = 0; i < size; i++) {
+                                        HomeworkSummary homeworkSummary = new HomeworkSummary();
+                                        HomeworkSummary.ExtraBean extraBean = homeworkBookDetails.get(0).getHomeworkRemarks().get(i);
+                                        homeworkSummary.setExtra(extraBean);
+                                        waitForCheckList.add(homeworkSummary);
+                                    }
+
 //                                    for (HomeworkSummary h : homeworkSummaryList) {
 //                                        if ("IH52".equals(h.getExtra().getStatusCode())) {
 //                                            waitForCheckList.add(h);
@@ -442,13 +452,13 @@ public class ExerciseBookFragment extends BFragment {
 //                                        }
 //                                    }
 ////                                waitForCheckList.addAll(homeworkSummaryList);
-//                                    if (waitForCheckList.size() == 0) {
-//                                        binding.emptyHintLayout.setVisibility(View.VISIBLE);
-//                                        binding.emptyHintTv.setText("您还没有待批改的作业哦");
-//                                    } else {
-//                                        binding.emptyHintLayout.setVisibility(View.GONE);
-//                                    }
-//                                    break;
+                                    if (waitForCheckList.size() == 0) {
+                                        binding.emptyHintLayout.setVisibility(View.VISIBLE);
+                                        binding.emptyHintTv.setText("您还没有待批改的作业哦");
+                                    } else {
+                                        binding.emptyHintLayout.setVisibility(View.GONE);
+                                    }
+                                    break;
                                 case CHECKED:
                                     checkedList.clear();
                                     checkedList.addAll(homeworkSummaryList);
