@@ -264,6 +264,7 @@ public class ExerciseBookFragment extends BFragment {
                 refreshData();
             }
         });
+
         binding.mistakesBookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
