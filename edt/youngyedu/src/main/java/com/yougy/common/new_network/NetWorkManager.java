@@ -284,6 +284,13 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReplyDetail());
     }
+    public static Observable<List<QuestionReplyDetail>> queryReplyDetail2(Integer examId, Integer itemId, String replyCommentator) {
+        LogUtils.e("FH", "!!!!!调用ServerApi查询学生互评解答详情:queryReplyDetail");
+        return getInstance().getServerApi().reviewComment2(examId, itemId, replyCommentator)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog))
+                .compose(RxResultHelper.parseReplyDetail());
+    }
 
     public static Observable<List<HomeworkDetail>> queryExam(String examId, String examStartTime) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询考试:queryExam");
