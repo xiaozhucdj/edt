@@ -83,9 +83,9 @@ public class ExerciseBookFragment extends BFragment {
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
-                HomeworkSummary homeworkSummary = doingList.get(position);
                 switch (currentStatus) {
                     case DOING:
+                        HomeworkSummary homeworkSummary = doingList.get(position);
                         if (!StringUtils.isEmpty(homeworkSummary.getExtra().getLifeTime())) {
                             holder.binding.statusTv.setText("限\n\n时");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
@@ -100,11 +100,12 @@ public class ExerciseBookFragment extends BFragment {
                         holder.setData(homeworkSummary);
                         break;
                     case WAIT_FOR_CHECK:
-                        if (isSelfEvaluation(homeworkSummary)) {
+                        HomeworkSummary homeworkSummary2 = waitForCheckList.get(position);
+                        if (isSelfEvaluation(homeworkSummary2)) {
                             holder.binding.statusTv.setText("自\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
-                        } else if (isMutualEvaluation(homeworkSummary)) {
+                        } else if (isMutualEvaluation(homeworkSummary2)) {
                             holder.binding.statusTv.setText("互\n\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
@@ -353,7 +354,7 @@ public class ExerciseBookFragment extends BFragment {
                 statusCode = "[\"IH02\",\"IH51\"]";
                 break;
             case WAIT_FOR_CHECK:
-                statusCode = "[\"IH03\",\"IH04\",\"IH52\",\"IH53\"]";
+                statusCode = null;
                 break;
             case CHECKED:
                 statusCode = "IH05";
@@ -500,7 +501,8 @@ public class ExerciseBookFragment extends BFragment {
             return true;
         }
         if ("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
-                || "IH04".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
+                || "IH04".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
+                || "IH05".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
             if ("II55".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
                     ||"II58".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())) {
                 return true;
