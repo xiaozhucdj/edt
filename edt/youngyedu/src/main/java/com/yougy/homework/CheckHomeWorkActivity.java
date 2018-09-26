@@ -85,6 +85,8 @@ import rx.schedulers.Schedulers;
 public class CheckHomeWorkActivity extends BaseActivity {
 
     private int examId, studentId, toShowPosition;
+    //isStudentCheck  0   默认 不传  1 自评   2 互评
+    private int isStudentCheck;
     private boolean isCheckOver, isStudentLook;
     private String studentName;
     @BindView(R.id.rcv_all_question_page)
@@ -213,6 +215,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         studentName = SpUtils.getAccountName();
         teacherId = getIntent().getIntExtra("teacherID", 0);
         titleTextview.setText(studentName);
+        isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
     }
 
     @Override
@@ -501,7 +504,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         showNoNetDialog();
 
         //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2
-        if (getIntent().getIntExtra("isStudentCheck", 0) == 2) {
+        if (isStudentCheck == 2) {
             NetWorkManager.queryReplyDetail2(examId, null, String.valueOf(studentId))
                     .subscribe(new Action1<List<QuestionReplyDetail>>() {
                         @Override
@@ -1658,7 +1661,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
+                        if (isStudentCheck == 2) {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业互评完毕");
+                        } else {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
+                        }
 
                         if (teacherId != 0) {
                             YXClient.getInstance().sendSubmitHomeworkMsg(examId, SessionTypeEnum.P2P, studentId, studentName,
@@ -1702,7 +1709,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                        if (isStudentCheck == 2) {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业互评提交错误了");
+                        } else {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                        }
                     }
                 });
     }
