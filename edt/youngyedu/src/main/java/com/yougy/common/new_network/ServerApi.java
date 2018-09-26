@@ -173,6 +173,16 @@ public interface ServerApi {
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("userId") String userId);
 
+    /**
+     * 查询学生互评解答详情
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"reviewComment"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
+            , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator);
+
+
 
     /**
      * 查询错题列表

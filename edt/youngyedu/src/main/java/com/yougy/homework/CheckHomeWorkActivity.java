@@ -499,49 +499,91 @@ public class CheckHomeWorkActivity extends BaseActivity {
     public void loadData() {
 
         showNoNetDialog();
-        NetWorkManager.queryReplyDetail(examId, null, String.valueOf(studentId))
-                .subscribe(new Action1<List<QuestionReplyDetail>>() {
-                    @Override
-                    public void call(List<QuestionReplyDetail> questionReplyDetails) {
-                        mQuestionReplyDetails = questionReplyDetails;
-                        replyScoreList.clear();
-                        pageSize = mQuestionReplyDetails.size();
 
-                        if (pageSize == 0) {
-                            new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    finish();
-                                }
-                            }).show();
-                            return;
+        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2
+        if (getIntent().getIntExtra("isStudentCheck", 0) == 2) {
+            NetWorkManager.queryReplyDetail2(examId, null, String.valueOf(studentId))
+                    .subscribe(new Action1<List<QuestionReplyDetail>>() {
+                        @Override
+                        public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                            mQuestionReplyDetails = questionReplyDetails;
+                            replyScoreList.clear();
+                            pageSize = mQuestionReplyDetails.size();
+
+                            if (pageSize == 0) {
+                                new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        finish();
+                                    }
+                                }).show();
+                                return;
+                            }
+
+                            setPageNumberView();
+                            questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                            for (int i = 0; i < pageSize; i++) {
+                                replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                            }
+
+                            refreshQuestion();
+                            refreshLastAndNextQuestionBtns();
+
+                            //学生查看已批改作业，点击某一题进入时直接进入当前题目。
+                            if (toShowPosition != 0) {
+                                pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            }
+
                         }
-
-                        setPageNumberView();
-                        questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
-                        for (int i = 0; i < pageSize; i++) {
-                            replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
                         }
+                    });
+        } else {
+            NetWorkManager.queryReplyDetail(examId, null, String.valueOf(studentId))
+                    .subscribe(new Action1<List<QuestionReplyDetail>>() {
+                        @Override
+                        public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                            mQuestionReplyDetails = questionReplyDetails;
+                            replyScoreList.clear();
+                            pageSize = mQuestionReplyDetails.size();
 
-                        refreshQuestion();
-                        refreshLastAndNextQuestionBtns();
+                            if (pageSize == 0) {
+                                new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        finish();
+                                    }
+                                }).show();
+                                return;
+                            }
 
-                        //学生查看已批改作业，点击某一题进入时直接进入当前题目。
-                        if (toShowPosition != 0) {
-                            pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            setPageNumberView();
+                            questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                            for (int i = 0; i < pageSize; i++) {
+                                replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                            }
+
+                            refreshQuestion();
+                            refreshLastAndNextQuestionBtns();
+
+                            //学生查看已批改作业，点击某一题进入时直接进入当前题目。
+                            if (toShowPosition != 0) {
+                                pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            }
+
                         }
-
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
-                    }
-                });
-
-//        btnRight.setVisibility(View.VISIBLE);
-//        btnRight.setImageResource(R.drawable.icon_gengduo);
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
+                        }
+                    });
+        }
 
     }
 
