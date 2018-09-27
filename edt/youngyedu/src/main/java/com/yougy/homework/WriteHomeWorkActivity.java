@@ -1623,19 +1623,21 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         mIsSubmit = true;
 
                         //国东添加接口：互评作业分配接口
-                        NetWorkManager.allocationMutualHomework(examId)
-                                .subscribe(new Action1<Object>() {
-                                    @Override
-                                    public void call(Object o) {
-                                        onBackPressed();
-                                    }
-                                }, new Action1<Throwable>() {
-                                    @Override
-                                    public void call(Throwable throwable) {
-                                        throwable.printStackTrace();
-                                        ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
-                                    }
-                                });
+                        if (isStudentCheck == 2) {
+                            NetWorkManager.allocationMutualHomework(examId)
+                                    .subscribe(new Action1<Object>() {
+                                        @Override
+                                        public void call(Object o) {
+                                            onBackPressed();
+                                        }
+                                    }, new Action1<Throwable>() {
+                                        @Override
+                                        public void call(Throwable throwable) {
+                                            throwable.printStackTrace();
+                                            ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
+                                        }
+                                    });
+                        }
 
                     }
                 }, new Action1<Throwable>() {
