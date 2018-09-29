@@ -212,7 +212,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             //分类码
             extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
             extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
-            extras.putBoolean(FileContonst.IS_REFERENCE_BOOK, true);
+//            extras.putBoolean(FileContonst.IS_REFERENCE_BOOK, true);
             loadIntentWithExtras(ControlFragmentActivity.class, extras);
         } else {
             if (NetUtils.isNetConnected()) {
