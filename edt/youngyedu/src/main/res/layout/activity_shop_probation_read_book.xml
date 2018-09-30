@@ -173,7 +173,7 @@
         android:layout_marginBottom="10px"
         android:background="@drawable/img_btn_hide"
         android:gravity="center"
-        android:text="显示菜单栏"
+        android:text="隐藏菜单栏"
         android:textColor="@color/white"
         android:textSize="18px" />
 
