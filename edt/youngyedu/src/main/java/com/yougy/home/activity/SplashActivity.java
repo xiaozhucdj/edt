@@ -199,7 +199,7 @@ public class SplashActivity extends BaseActivity {
         LogUtils.e(tag, "login...................");
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
-        NetWorkManager.login(loginReq)
+        NetWorkManager.getInstance(false).login(loginReq)
                 .compose(bindToLifecycle())
                 .subscribe(students -> {
                     Student student = students.get(0);

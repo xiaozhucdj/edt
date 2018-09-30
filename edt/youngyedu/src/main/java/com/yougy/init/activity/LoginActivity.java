@@ -161,7 +161,7 @@ public class LoginActivity extends BaseActivity {
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setUserName(binding.accountEdittext.getText().toString());
         loginReq.setUserPassword(binding.pwdEdittext.getText().toString());
-        NetWorkManager.login(loginReq)
+        NetWorkManager.getInstance(false).login(loginReq)
                 .compose(bindToLifecycle())
                 .subscribe(students -> {
                     Student student = students.get(0);

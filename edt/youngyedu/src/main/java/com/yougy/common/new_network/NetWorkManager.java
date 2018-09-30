@@ -447,10 +447,10 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<Student>> login(NewLoginReq req) {
-        return getInstance(false).getServerApi().login(req)
+    public Observable<List<Student>> login(NewLoginReq req) {
+        return getServerApi().login(req)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(null));
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<Student>> login(String userName, String userPassword, String userToken, String deviceId, String userId) {
