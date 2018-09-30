@@ -69,6 +69,8 @@ public class SplashActivity extends BaseActivity {
     private AppUpdateDialog mAppUpdateDialog;
 //    private PowerManager.WakeLock mWakeLock;
 
+    public static long lastLogInSuccessedTimeStamp = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

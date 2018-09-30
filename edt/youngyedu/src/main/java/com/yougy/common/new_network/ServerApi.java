@@ -21,6 +21,7 @@ import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.init.bean.Student;
@@ -192,6 +193,17 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"queryReply"})
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
             , @Field("userId") Integer userId, @Field("replyId") String replyId);
+
+
+    /**
+     * 查询某次考试总分情况
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"sumReplyStudent"})
+    Observable<BaseResult<List<HomeworkSummarySumInfo>>> sumReplyStudent(@Field("examId") Integer examId
+            , @Field("studentId") Integer studentId);
+
 
     /**
      * 作业本错题移除

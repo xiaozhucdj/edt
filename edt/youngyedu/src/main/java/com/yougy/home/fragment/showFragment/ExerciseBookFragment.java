@@ -175,12 +175,8 @@ public class ExerciseBookFragment extends BFragment {
                                 //是否为计分作业
                                 intent.putExtra("isScoring", true);
                                 intent.putExtra("getExamTotalPoints", holder.getData().getExtra().getExamTotalPoints());
-                                intent.putExtra("getTotalPoints", holder.getData().getExtra().getTotalPoints());
-                            } else {
-                                intent.putExtra("getItemCount", holder.getData().getExtra().getItemCount());
-                                intent.putExtra("getCorrectCount", holder.getData().getExtra().getCorrectCount());
                             }
-                            intent.putExtra("getAccuracy", holder.getData().getExtra().getAccuracy());
+                            intent.putExtra("getItemCount", holder.getData().getExtra().getItemCount());
                             startActivity(intent);
                         }
                         break;

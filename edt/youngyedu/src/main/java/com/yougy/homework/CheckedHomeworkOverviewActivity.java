@@ -14,6 +14,7 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
+import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityCheckedHomeworkDetailBinding;
@@ -43,7 +44,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     private boolean isScoring = false;// 是否计分作业
     private int examTotalPoints ;//exam 总分
     private int totalScore ;//得分
-    private float mAccuracy; //正确率
     private int itemCount;//总题数
     private int correctCount;//正确的题目
 
@@ -64,12 +64,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         examName = getIntent().getStringExtra("examName");
         isScoring = getIntent().getBooleanExtra("isScoring", false);
         examTotalPoints = getIntent().getIntExtra("getExamTotalPoints", 0);
-        totalScore = getIntent().getIntExtra("getTotalPoints", 0);
-        mAccuracy = getIntent().getFloatExtra("getAccuracy", 0);
         itemCount = getIntent().getIntExtra("getItemCount", 0 );
-        correctCount = getIntent().getIntExtra("getCorrectCount", 0 );
         binding.titleTv.setText(examName);
-        refreshCircleProgressBar();
     }
 
     @Override
@@ -157,6 +153,27 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        ToastUtil.showCustomToast(getApplicationContext() , "获取每题分数数据失败");
+                    }
+                });
+        NetWorkManager.sumReplyStudent(examId , SpUtils.getUserId())
+                .subscribe(new Action1<List<HomeworkSummarySumInfo>>() {
+                    @Override
+                    public void call(List<HomeworkSummarySumInfo> homeworkSummarySumInfos) {
+                        if (homeworkSummarySumInfos == null || homeworkSummarySumInfos.size() == 0){
+                            ToastUtil.showCustomToast(getApplicationContext() , "获取总分失败,查不到数据");
+                        }
+                        else {
+                            totalScore = homeworkSummarySumInfos.get(0).getScore();
+                            correctCount = homeworkSummarySumInfos.get(0).getCorrectCount();
+                            refreshCircleProgressBar();
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        ToastUtil.showCustomToast(getApplicationContext() , "获取总分失败");
                     }
                 });
     }
@@ -173,7 +190,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             binding.textScore.setText(totalScore + "分");
         } else { //不计分作业
             binding.textScoreTitle.setText("正确率");
-            binding.circleProgressBar.setProgress((int) (mAccuracy * 100));
+            binding.circleProgressBar.setProgress((int) (correctCount * 100 / itemCount));
             binding.textScore.setText(correctCount + "/" + itemCount);
             binding.circleProgressBar.setIsDrawCenterText(false);
         }

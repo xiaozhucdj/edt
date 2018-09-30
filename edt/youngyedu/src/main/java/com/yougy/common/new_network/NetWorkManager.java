@@ -30,6 +30,7 @@ import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.init.bean.Student;
@@ -298,6 +299,13 @@ public final class NetWorkManager {
     public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId, Integer userId) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
         return getInstance().getServerApi().queryReply(examId, userId, null)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<List<HomeworkSummarySumInfo>> sumReplyStudent(Integer examId, Integer studentId) {
+        LogUtils.e("FH", "!!!!!调用ServerApi查询学生考试分数总和:queryReplySummary");
+        return getInstance().getServerApi().sumReplyStudent(examId, studentId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
