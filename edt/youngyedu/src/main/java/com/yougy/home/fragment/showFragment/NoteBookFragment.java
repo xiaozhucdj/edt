@@ -204,6 +204,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 dialog = new LoadingProgressDialog(getActivity());
                 dialog.show();
                 dialog.setTitle("数据加载中...");
+                dialog.setCancelable(true);
             }
 
             @Override
