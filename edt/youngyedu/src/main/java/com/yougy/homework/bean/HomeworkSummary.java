@@ -74,6 +74,15 @@ public class HomeworkSummary {
         private int itemCount;//考试题总数
         private int correctCount;//正确的题目
         private int examSponsor;//teacher id
+        private int exam;//id
+
+        public int getExam() {
+            return exam;
+        }
+
+        public void setExam(int exam) {
+            this.exam = exam;
+        }
 
         public String getBook() {
             return book;

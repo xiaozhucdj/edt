@@ -23,7 +23,7 @@ public class Commons {
     public static String YUNXING_APP_KEY;
 
 
-    private static int testCase = 2;
+    private static int testCase = 1;
 
     static {
         if (isRelase) {

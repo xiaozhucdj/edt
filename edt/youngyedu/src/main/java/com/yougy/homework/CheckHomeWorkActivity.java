@@ -85,6 +85,8 @@ import rx.schedulers.Schedulers;
 public class CheckHomeWorkActivity extends BaseActivity {
 
     private int examId, studentId, toShowPosition;
+    //isStudentCheck  0   默认 不传  1 自评   2 互评
+    private int isStudentCheck;
     private boolean isCheckOver, isStudentLook;
     private String studentName;
     @BindView(R.id.rcv_all_question_page)
@@ -213,6 +215,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         studentName = SpUtils.getAccountName();
         teacherId = getIntent().getIntExtra("teacherID", 0);
         titleTextview.setText(studentName);
+        isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
     }
 
     @Override
@@ -500,49 +503,91 @@ public class CheckHomeWorkActivity extends BaseActivity {
     public void loadData() {
 
         showNoNetDialog();
-        NetWorkManager.queryReplyDetail(examId, null, String.valueOf(studentId))
-                .subscribe(new Action1<List<QuestionReplyDetail>>() {
-                    @Override
-                    public void call(List<QuestionReplyDetail> questionReplyDetails) {
-                        mQuestionReplyDetails = questionReplyDetails;
-                        replyScoreList.clear();
-                        pageSize = mQuestionReplyDetails.size();
 
-                        if (pageSize == 0) {
-                            new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    finish();
-                                }
-                            }).show();
-                            return;
+        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2
+        if (isStudentCheck == 2) {
+            NetWorkManager.queryReplyDetail2(examId, null, String.valueOf(studentId))
+                    .subscribe(new Action1<List<QuestionReplyDetail>>() {
+                        @Override
+                        public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                            mQuestionReplyDetails = questionReplyDetails;
+                            replyScoreList.clear();
+                            pageSize = mQuestionReplyDetails.size();
+
+                            if (pageSize == 0) {
+                                new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        finish();
+                                    }
+                                }).show();
+                                return;
+                            }
+
+                            setPageNumberView();
+                            questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                            for (int i = 0; i < pageSize; i++) {
+                                replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                            }
+
+                            refreshQuestion();
+                            refreshLastAndNextQuestionBtns();
+
+                            //学生查看已批改作业，点击某一题进入时直接进入当前题目。
+                            if (toShowPosition != 0) {
+                                pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            }
+
                         }
-
-                        setPageNumberView();
-                        questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
-                        for (int i = 0; i < pageSize; i++) {
-                            replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
                         }
+                    });
+        } else {
+            NetWorkManager.queryReplyDetail(examId, null, String.valueOf(studentId))
+                    .subscribe(new Action1<List<QuestionReplyDetail>>() {
+                        @Override
+                        public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                            mQuestionReplyDetails = questionReplyDetails;
+                            replyScoreList.clear();
+                            pageSize = mQuestionReplyDetails.size();
 
-                        refreshQuestion();
-                        refreshLastAndNextQuestionBtns();
+                            if (pageSize == 0) {
+                                new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        finish();
+                                    }
+                                }).show();
+                                return;
+                            }
 
-                        //学生查看已批改作业，点击某一题进入时直接进入当前题目。
-                        if (toShowPosition != 0) {
-                            pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            setPageNumberView();
+                            questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                            for (int i = 0; i < pageSize; i++) {
+                                replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                            }
+
+                            refreshQuestion();
+                            refreshLastAndNextQuestionBtns();
+
+                            //学生查看已批改作业，点击某一题进入时直接进入当前题目。
+                            if (toShowPosition != 0) {
+                                pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            }
+
                         }
-
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
-                    }
-                });
-
-//        btnRight.setVisibility(View.VISIBLE);
-//        btnRight.setImageResource(R.drawable.icon_gengduo);
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
+                        }
+                    });
+        }
 
     }
 
@@ -1617,8 +1662,12 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
-                        back();
+                        if (isStudentCheck == 2) {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业互评完毕");
+                        } else {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
+                        }
+
                         if (teacherId != 0) {
                             YXClient.getInstance().sendSubmitHomeworkMsg(examId, SessionTypeEnum.P2P, studentId, studentName,
                                     teacherId, new RequestCallback<Void>() {
@@ -1639,12 +1688,35 @@ public class CheckHomeWorkActivity extends BaseActivity {
                                     });
                         }
 
+
+                        //国东添加接口：互评作业分配接口
+                        if (isStudentCheck == 2) {
+                            NetWorkManager.allocationMutualHomework(examId + "")
+                                    .subscribe(new Action1<Object>() {
+                                        @Override
+                                        public void call(Object o) {
+                                            back();
+                                        }
+                                    }, new Action1<Throwable>() {
+                                        @Override
+                                        public void call(Throwable throwable) {
+                                            throwable.printStackTrace();
+                                            ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
+                                        }
+                                    });
+                        }
+
+
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                        if (isStudentCheck == 2) {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业互评提交错误了");
+                        } else {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                        }
                     }
                 });
     }

@@ -6,7 +6,6 @@ import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.model.Version;
-import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
@@ -89,6 +88,15 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("data") String data);
 
+
+    /**
+     * 互评作业分配接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"allocationMutualHomework"})
+    Observable<BaseResult<Object>> allocationMutualHomework(@Field("examId") String examId);
+
     /**
      * 按userId查询云信token
      */
@@ -165,6 +173,16 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"reviewComment"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("userId") String userId);
+
+    /**
+     * 查询学生互评解答详情
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"reviewComment"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
+            , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator);
+
 
 
     /**
