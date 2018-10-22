@@ -23,7 +23,9 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -38,6 +40,8 @@ import com.yougy.view.CustomGridLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 import static android.content.ContentValues.TAG;
 import static com.yougy.common.global.FileContonst.PAGE_COUNTS;
@@ -178,7 +182,22 @@ public class TextBookFragment extends BFragment {
             req.setBookFitGradeName();
             req.setBookCategoryMatch(10000);
             NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
-                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK)));
+                    .subscribe(new Action1<List<BookInfo>>() {
+                        @Override
+                        public void call(List<BookInfo> bookInfos) {
+                            TextBookFragment.this.freshUI(bookInfos);
+                            if (bookInfos!=null && bookInfos.size()>0){
+                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK,  GsonUtil.toJson(bookInfos));
+                            }else{
+                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK, "");
+                            }
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            TextBookFragment.this.freshUI(TextBookFragment.this.getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
+                        }
+                    });
         } else {
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));

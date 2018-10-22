@@ -23,7 +23,9 @@ import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -45,6 +47,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
+
+import rx.functions.Action1;
 
 import static android.content.ContentValues.TAG;
 import static android.view.View.OnClickListener;
@@ -344,7 +348,24 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
             //设置年级
             req.setBookCategoryMatch(10000);
             NetWorkManager.getBookShelf(req).compose(((BaseActivity) context).bindToLifecycle())
-                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK)));
+                    .subscribe(new Action1<List<BookInfo>>() {
+                        @Override
+                        public void call(List<BookInfo> bookInfos) {
+                            AllTextBookFragment.this.freshUI(bookInfos);
+                            if (bookInfos!=null && bookInfos.size()>0){
+                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK,  GsonUtil.toJson(bookInfos));
+                            }else{
+                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK, "");
+                            }
+
+
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            AllTextBookFragment.this.freshUI(AllTextBookFragment.this.getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
+                        }
+                    });
         } else {
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK));
