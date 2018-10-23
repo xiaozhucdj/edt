@@ -5,7 +5,7 @@ import com.yougy.common.activity.BaseActivity;
 public class TaskListActivity extends BaseActivity {
     @Override
     protected void setContentView() {
-        
+
     }
 
     @Override
