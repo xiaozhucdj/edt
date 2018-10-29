@@ -496,4 +496,9 @@ public class ExerciseBookFragment extends BFragment {
         super.onDownBookFinish();
         mControlActivity.switch2TextBookFragment();
     }
+
+    public void onBackListener() {
+        getActivity().finish();
+    }
+
 }
