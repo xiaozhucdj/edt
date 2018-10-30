@@ -76,6 +76,7 @@ public class HomeworkSummary {
         private int examSponsor;//teacher id
         private int exam;//id
         private String eval;//作业批改类型(IKXX)
+        private String team;//如果是分组作业,这里是组名
 
         public int getExam() {
             return exam;
@@ -213,5 +214,13 @@ public class HomeworkSummary {
             return this;
         }
 
+        public String getTeam() {
+            return team;
+        }
+
+        public ExtraBean setTeam(String team) {
+            this.team = team;
+            return this;
+        }
     }
 }
