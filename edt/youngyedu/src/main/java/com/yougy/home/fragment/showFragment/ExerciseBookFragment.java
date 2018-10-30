@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,11 +86,12 @@ public class ExerciseBookFragment extends BFragment {
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
+                HomeworkSummary homeworkSummary;
                 switch (currentStatus) {
                     case DOING:
-                        HomeworkSummary homeworkSummary = doingList.get(position);
+                        homeworkSummary = doingList.get(position);
                         if (!StringUtils.isEmpty(homeworkSummary.getExtra().getLifeTime())) {
-                            holder.binding.statusTv.setText("限\n\n时");
+                            holder.binding.statusTv.setText("限\n时");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                             holder.binding.textLifetime.setText("限时：" + homeworkSummary.getExtra().getLifeTime());
@@ -102,13 +104,13 @@ public class ExerciseBookFragment extends BFragment {
                         holder.setData(homeworkSummary);
                         break;
                     case WAIT_FOR_CHECK:
-                        HomeworkSummary homeworkSummary2 = waitForCheckList.get(position);
-                        if (IKCODE_01.equals(homeworkSummary2.getExtra().getEval())){
-                            holder.binding.statusTv.setText("自\n\n评");
+                        homeworkSummary = waitForCheckList.get(position);
+                        if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())){
+                            holder.binding.statusTv.setText("自\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
-                        } else if (isMutualEvaluation(homeworkSummary2)) {
-                            holder.binding.statusTv.setText("互\n\n评");
+                        } else if (isMutualEvaluation(homeworkSummary)) {
+                            holder.binding.statusTv.setText("互\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else {
@@ -116,16 +118,16 @@ public class ExerciseBookFragment extends BFragment {
                         }
                         holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.GONE);
-                        holder.setData(waitForCheckList.get(position));
+                        holder.setData(homeworkSummary);
                         break;
                     case CHECKED:
-                        HomeworkSummary checkedHomeworkSummary = checkedList.get(position);
-                        HomeworkSummary.ExtraBean extraBean = checkedHomeworkSummary.getExtra();
+                        homeworkSummary = checkedList.get(position);
+                        HomeworkSummary.ExtraBean extraBean = homeworkSummary.getExtra();
                         if (extraBean.getExamTotalPoints() != 0) {
                             //计分作业
                             holder.binding.textRateScore.setText("分数：" + extraBean.getTotalPoints());
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
-                            holder.binding.statusTv.setText("计\n\n分");
+                            holder.binding.statusTv.setText("计\n分");
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else {
                             holder.binding.statusTv.setVisibility(View.GONE);
@@ -133,7 +135,7 @@ public class ExerciseBookFragment extends BFragment {
                         }
                         holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.VISIBLE);
-                        holder.setData(checkedHomeworkSummary);
+                        holder.setData(homeworkSummary);
                         break;
                 }
             }
@@ -402,7 +404,6 @@ public class ExerciseBookFragment extends BFragment {
                                     }
                                     break;
                             }
-
                         }
                         binding.mainRecyclerview.setCurrentPage(0);
                         binding.mainRecyclerview.notifyDataSetChanged();
@@ -446,6 +447,13 @@ public class ExerciseBookFragment extends BFragment {
                 binding.timeTv.setVisibility(View.VISIBLE);
             } else {
                 binding.timeTv.setVisibility(View.GONE);
+            }
+            if (!TextUtils.isEmpty(data.getExtra().getTeam())){
+                binding.groupNameTv.setVisibility(View.VISIBLE);
+                binding.groupNameTv.setText("组名 : " + data.getExtra().getTeam());
+            }
+            else {
+                binding.groupNameTv.setVisibility(View.GONE);
             }
         }
 
