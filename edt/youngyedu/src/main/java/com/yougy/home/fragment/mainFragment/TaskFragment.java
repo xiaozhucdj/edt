@@ -1,5 +1,6 @@
 package com.yougy.home.fragment.mainFragment;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.task.Task;
+import com.yougy.task.TaskListActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.AdapterFragmentHomeworkBinding;
 import com.yougy.ui.activity.databinding.FragmentTaskBinding;
@@ -55,13 +57,13 @@ public class TaskFragment extends BFragment {
         LogUtils.e(tag,"init view ... ");
         binding.pageableRecycler.setMaxItemNumInOnePage(9);
         binding.pageableRecycler.setLayoutManager(new GridLayoutManager(getContext(),3));
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
+        DividerItemDecoration divider = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(context, R.drawable.adaper_divider_img_normal));
         binding.pageableRecycler.addItemDecoration(divider);
         binding.pageableRecycler.setAdapter(adapter = new PageableRecyclerView.Adapter<TaskHolder>() {
             @Override
             public TaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new TaskHolder(DataBindingUtil.inflate(LayoutInflater.from(getContext()),R.layout.adapter_fragment_homework,parent,false));
+                return new TaskHolder(DataBindingUtil.inflate(LayoutInflater.from(context),R.layout.adapter_fragment_homework,parent,false));
             }
 
             @Override
@@ -88,13 +90,7 @@ public class TaskFragment extends BFragment {
 
         public void setData(Task task){
             binding.tvMyTitle.setText(task.getTaskName());
-            LogUtils.e(tag,"task name is : " + task.getTaskName());
-            binding.getRoot().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
+            binding.getRoot().setOnClickListener(v -> context.startActivity(new Intent(context,TaskListActivity.class)));
         }
 
     }
