@@ -24,6 +24,7 @@ import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
@@ -63,6 +64,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+
+import static com.yougy.common.global.Constant.*;
 
 /**
  */
@@ -250,7 +253,7 @@ public final class NetWorkManager {
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]", true)
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, StringUtils.smartCombineStrings("[" , "]" , "\"" , "\"" , "," , IICODE_02 , IICODE_03), true)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -267,7 +270,7 @@ public final class NetWorkManager {
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "[\"II01\",\"II51\",\"II52\",\"II53\",\"II61\"]", true)
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, StringUtils.smartCombineStrings("[" , "]" , "\"" , "\"" , "," , IICODE_01), true)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

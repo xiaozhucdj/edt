@@ -44,4 +44,38 @@ public class StringUtils {
             return str;
         }
     }
+
+    /**
+     * 本方法能够自动将给定的多个字符串拼接成一个整串,并且支持在每个子串的前后添加自定义的字符串,支持自定义子串之间的分隔符,支持为拼接结果添加整体的前缀和后缀.
+     * 拼接结果格式为 globalProfix+substringProfix+subString1+substringPostfix+separator+substringProfix+subString2+substringPostfix+.....+globalPostfix
+     * 举例 例如 smartCombineStrings("[" , "]" , "(" , ")" , "," , "aaa" , "bbb" , "ccc")会输出"[(aaa),(bbb),(ccc)]"这样的字符串
+     * 又例如 smartCombineStrings(null , null , null , null , "+" , "111" , "222" , "333")会输出"111+222+333"这样的字符串
+     * 又例如 smartCombineStrings(null , null , null , null , "+" , null)会输出""空白字符串
+     * @param globalProfix 全局的前缀,会加在最终拼接结果的最前面
+     * @param globalPostfix 全局的后缀,会加在最终拼接结果的最后面
+     * @param substringProfix 子串的前缀,会加在每个子串的前面
+     * @param substringPostfix 子串的后缀,会加在每个子串的后面
+     * @param separator 子串之间的分隔符
+     * @param subStrings 要拼接的子串
+     * @return 各个子串拼接而成的字符串
+     */
+    public static String smartCombineStrings(String globalProfix , String globalPostfix
+            , String substringProfix , String substringPostfix , String separator , String ... subStrings){
+        String resultString = TextUtils.isEmpty(globalProfix)?"":globalProfix;
+        if (subStrings != null){
+            for (int i = 0; i < subStrings.length; i++) {
+                if (!TextUtils.isEmpty(subStrings[i])){
+                    resultString = resultString + (TextUtils.isEmpty(substringProfix)?"":substringProfix);
+                    resultString = resultString + subStrings[i];
+                    resultString = resultString + (TextUtils.isEmpty(substringPostfix)?"":substringPostfix);
+                    if (i + 1 < subStrings.length){
+                        resultString = resultString + (TextUtils.isEmpty(separator)?"":separator);
+                    }
+                }
+            }
+        }
+        resultString = resultString + (TextUtils.isEmpty(globalPostfix)?"":globalPostfix);
+        return resultString;
+    }
+
 }

@@ -75,6 +75,7 @@ public class HomeworkSummary {
         private int correctCount;//正确的题目
         private int examSponsor;//teacher id
         private int exam;//id
+        private String eval;//作业批改类型(IKXX)
 
         public int getExam() {
             return exam;
@@ -203,5 +204,14 @@ public class HomeworkSummary {
         public void setExamSponsor(int exmaSponsor) {
             this.examSponsor = exmaSponsor;
         }
+
+        public String getEval() {
+            return eval;
+        }
+        public ExtraBean setEval(String eval) {
+            this.eval = eval;
+            return this;
+        }
+
     }
 }
