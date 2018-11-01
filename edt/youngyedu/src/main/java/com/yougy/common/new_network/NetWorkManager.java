@@ -555,8 +555,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(null));
     }
 
-    public static Observable<Object> postComment(String replyId, String score, String content, String replyCommentator) {
-        return getInstance().getServerApi().postComment(replyId, score, content, replyCommentator)
+    public static Observable<Object> postComment(String replyId, String score, String content, String replyCommentator,String originalReplyCommentator) {
+        return getInstance().getServerApi().postComment(replyId, score, content, replyCommentator, originalReplyCommentator)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

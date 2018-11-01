@@ -1567,7 +1567,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         String content = new Gson().toJson(stsResultbeanArrayList);
 
-        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "")
+        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "",SpUtils.getUserId() + "")
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {

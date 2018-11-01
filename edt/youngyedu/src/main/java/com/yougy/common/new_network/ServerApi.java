@@ -486,7 +486,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
-            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator);
+            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator,@Field("originalReplyCommentator") String originalReplyCommentator);
 
     /**
      * 添加单个收藏夹
