@@ -313,6 +313,9 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
                 }else if (mFragment instanceof NoteBookFragment){
                     mNoteBookFragment.onBackListener();
                 }
+                else if (mFragment instanceof ExerciseBookFragment){
+                    mExerciseBookFragment.onBackListener();
+                }
             }
             return true;
         }

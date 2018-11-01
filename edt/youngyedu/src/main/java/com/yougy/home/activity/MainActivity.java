@@ -53,6 +53,7 @@ import com.yougy.home.fragment.mainFragment.FolderFragment;
 import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
+import com.yougy.home.fragment.mainFragment.TaskFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
 import com.yougy.message.YXClient;
 import com.yougy.message.ui.RecentContactListActivity;
@@ -103,7 +104,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private NotesFragment mNotesFragment;
     private ReferenceBooksFragment mReferenceBooksFragment;
     private TextBookFragment mTextBookFragment;
-
+    private TaskFragment mTaskFragment;
 
     private AllTextBookFragment mAllTextBookFragment;
     private AllCoachBookFragment mAllCoachBookFragment;
@@ -117,6 +118,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView mTvCoachBook;
     private TextView mTvTextBook;
 
+    private Button mBtnTask;
     private Button mBtnBookStore;
     private Button mBtnCurrentBook;
     private Button mBtnAllBook;
@@ -197,6 +199,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentTransaction.remove(mNotesFragment);
         fragmentTransaction.remove(mReferenceBooksFragment);
         fragmentTransaction.remove(mTextBookFragment);
+        fragmentTransaction.remove(mTaskFragment);
         fragmentTransaction.remove(mAllTextBookFragment);
         fragmentTransaction.remove(mAllCoachBookFragment);
         fragmentTransaction.remove(mAllNotesFragment);
@@ -213,7 +216,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mNotesFragment = null;
         mReferenceBooksFragment = null;
         mTextBookFragment = null;
-
+        mTaskFragment = null;
 
         mAllTextBookFragment = null;
         mAllCoachBookFragment = null;
@@ -246,6 +249,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mTvTextBook = (TextView) findViewById(R.id.tv_text_book);
         mTvTextBook.setOnClickListener(this);
 
+        mBtnTask = findViewById(R.id.btn_task);
+        mBtnTask.setOnClickListener(this);
         //有侧边栏显示按钮
         mImgBtnShowRight = (ImageButton) this.findViewById(R.id.imgBtn_showRight);
         mImgBtnShowRight.setOnClickListener(this);
@@ -384,7 +389,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_NOTES_FRAGMENT : FragmentDisplayOption.NOTES_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
-
             case R.id.tv_reference_books:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(FragmentDisplayOption.REFERENCE_BOOKS_FRAGMENT);
@@ -402,7 +406,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_TEXT_BOOK_FRAGMENT : FragmentDisplayOption.TEXT_BOOK_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
-
+            case R.id.btn_task:
+                refreshTabBtnState(clickedViewId);
+                bringFragmentToFrontInner(FragmentDisplayOption.TASK_FRAGMENT);
+                break;
             case R.id.imgBtn_showRight:
 //                mFlRight.setVisibility(View.VISIBLE);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
@@ -584,7 +591,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Fragment whichToBack7 = null;
         Fragment whichToBack8 = null;
         Fragment whichToBack9 = null;
-
+        Fragment whichToBack10 = null;
 
         switch (fragmentDisplayOption) {
             case TEXT_BOOK_FRAGMENT:
@@ -599,6 +606,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
             case ALL_TEXT_BOOK_FRAGMENT:
                 //显示 全部 课本
@@ -612,6 +620,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case COACH_BOOK_FRAGMENT:
@@ -626,6 +635,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case ALL_COACH_BOOK_FRAGMENT:
@@ -640,6 +650,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case REFERENCE_BOOKS_FRAGMENT:
@@ -654,6 +665,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case NOTES_FRAGMENT:
@@ -668,6 +680,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case ALL_NOTES_FRAGMENT:
@@ -683,6 +696,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
             case HOMEWORK_FRAGMENT:
                 //作业
@@ -696,6 +710,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
             case ALL_HOMEWORK_FRAGMENT:
                 //全部作业
@@ -710,6 +725,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case FOLDER_FRAGMENT:
@@ -723,6 +739,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mHomeworkFragment;
                 whichToBack9 = mAllHomeworkFragment;
+                whichToBack10 = mTaskFragment;
+                break;
+            case TASK_FRAGMENT:
+                whichToFront = mTaskFragment;
+                whichToBack1 = mTextBookFragment;
+                whichToBack2 = mAllTextBookFragment;
+                whichToBack3 = mCoachBookFragment;
+                whichToBack4 = mAllCoachBookFragment;
+                whichToBack5 = mReferenceBooksFragment;
+                whichToBack6 = mNotesFragment;
+                whichToBack7 = mAllNotesFragment;
+                whichToBack8 = mHomeworkFragment;
+                whichToBack9 = mAllHomeworkFragment;
+                whichToBack10 = mFolderFragment;
                 break;
             default:
                 break;
@@ -740,6 +770,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .hide(whichToBack7)
                 .hide(whichToBack8)
                 .hide(whichToBack9)
+                .hide(whichToBack10)
                 .commitAllowingStateLoss();
 
 
@@ -849,7 +880,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         // 笔记
         mNotesFragment = new NotesFragment();
         mAllNotesFragment = new AllNotesFragment();
-
+        mTaskFragment = new TaskFragment();
 
         //作业
         mHomeworkFragment = new HomeworkFragment();
@@ -872,7 +903,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //作业
                 .add(R.id.fl_content_layout, mHomeworkFragment).add(R.id.fl_content_layout, mAllHomeworkFragment)
                 //文件夹
-                .add(R.id.fl_content_layout, mFolderFragment)
+                .add(R.id.fl_content_layout, mFolderFragment).add(R.id.fl_content_layout,mTaskFragment)
 
                 /***
                  * hide 全部fragment
@@ -887,7 +918,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //作业
                 .hide(mHomeworkFragment).hide(mAllHomeworkFragment)
                 //文件夹
-                .hide(mFolderFragment)
+                .hide(mFolderFragment).hide(mTaskFragment)
                 //提交事务
                 .commitAllowingStateLoss();
 
@@ -974,7 +1005,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         /**
          * 文件夹
          */
-        FOLDER_FRAGMENT
+        FOLDER_FRAGMENT,
+        /**
+         * 任务
+         */
+        TASK_FRAGMENT
     }
 
     @Override

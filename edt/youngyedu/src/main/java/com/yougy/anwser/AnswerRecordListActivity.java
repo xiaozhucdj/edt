@@ -23,6 +23,8 @@ import java.util.List;
 
 import rx.functions.Action1;
 
+import static com.yougy.common.global.Constant.*;
+
 /**
  * Created by FH on 2018/3/8.
  * 问答记录列表
@@ -73,18 +75,18 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                 binding.contentDisplayer.getContentAdapter().setSubText(subText);
                 binding.contentDisplayer.getContentAdapter().toPage("question" + btnIndex, 0 , true);
                 switch (homeworkDetail.getExamStatusCode()){
-                    case "IH01":
+                    case IHCODE_01:
                         binding.statusTv.setText("未\n开\n始");
                         binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
                         break;
-                    case "IH51":
+                    case IHCODE_51:
                         binding.statusTv.setText("未\n提\n交");
                         binding.statusTv.setBackgroundResource(R.drawable.img_answer_status_bg_red);
                         break;
-                    case "IH02"://作答中
-                    case "IH03"://未批改
-                    case "IH04"://批改中
-                    case "IH05"://已批改
+                    case IHCODE_02://作答中
+                    case IHCODE_03://未批改
+                    case IHCODE_04://批改中
+                    case IHCODE_05://已批改
                         NetWorkManager.queryReply(homeworkDetail.getExamId() , SpUtils.getUserId() , null)
                                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                                     @Override
