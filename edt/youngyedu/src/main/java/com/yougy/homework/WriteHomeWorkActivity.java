@@ -1478,13 +1478,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setItemId(itemId);
 
                         //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
-                        if (isStudentCheck == 0) {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
-                        } else if (isStudentCheck == 1) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
-                        } else {
-                            homeWorkResultbean.setReplyCommentator(0);
-                        }
+//                        if (isStudentCheck == 0) {
+//                            homeWorkResultbean.setReplyCommentator(teacherId);
+//                        } else if (isStudentCheck == 1) {
+//                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+//                        } else {
+//                            homeWorkResultbean.setReplyCommentator(0);
+//                        }
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
                         homeWorkResultbean.setTxtContent(tmpJudgeAnswerList.size() > 0 ? tmpJudgeAnswerList : tmpCheckedAnswerList);
@@ -1508,13 +1508,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setItemId(itemId);
                         homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
                         //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
-                        if (isStudentCheck == 0) {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
-                        } else if (isStudentCheck == 1) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
-                        } else {
-                            homeWorkResultbean.setReplyCommentator(0);
-                        }
+//                        if (isStudentCheck == 0) {
+//                            homeWorkResultbean.setReplyCommentator(teacherId);
+//                        } else if (isStudentCheck == 1) {
+//                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+//                        } else {
+//                            homeWorkResultbean.setReplyCommentator(0);
+//                        }
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
                     }
