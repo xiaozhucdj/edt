@@ -190,7 +190,7 @@ public class ExerciseBookFragment extends BFragment {
                         else if (isMutualEvaluation(homeworkSummary)) {
                             intent = new Intent(getActivity(), CheckHomeWorkActivity.class);
                             intent.putExtra("isStudentCheck", 2);
-                            intent.putExtra("examId", homeworkSummary.getExam());
+                            intent.putExtra("examId", homeworkSummary.getExtra().getExam());
                             intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                             startActivity(intent);
                         } else {
