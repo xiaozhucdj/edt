@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayerAdapterV2;
 import com.yougy.anwser.ContentDisplayerV2;
 import com.yougy.anwser.Content_new;
@@ -67,7 +68,7 @@ import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
-import com.yougy.message.attachment.ReceiveWorkAttachment;
+import com.yougy.message.attachment.CollectHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
@@ -294,15 +295,18 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 收作业消息
      */
     private void initReceiveHomeworkMsg() {
-        receiverMsg = message -> {
-            if (message.getAttachment() instanceof ReceiveWorkAttachment) {
-                ReceiveWorkAttachment receiveWorkAttachment = (ReceiveWorkAttachment) message.getAttachment();
-                LogUtils.d("examId = " + examId + "   receiveWorkAttachment.examId = " + receiveWorkAttachment.examId);
-                if (examId.equals(receiveWorkAttachment.examId)) {
-                    LogUtils.w("teacher receive homework , auto submit.");
-                    WriteHomeWorkActivity.this.autoSubmitHomeWork();
-                } else {
-                    LogUtils.w("current examId is not receive examId. not submit.");
+        receiverMsg = new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                if (message.getAttachment() instanceof CollectHomeworkAttachment) {
+                    CollectHomeworkAttachment collectHomeworkAttachment = (CollectHomeworkAttachment) message.getAttachment();
+                    LogUtils.d("examId = " + examId + "   collectHomeworkAttachment.examId = " + collectHomeworkAttachment.examId);
+                    if (examId.equals(collectHomeworkAttachment.examId)) {
+                        LogUtils.w("teacher receive homework , auto submit.");
+                        WriteHomeWorkActivity.this.autoSubmitHomeWork();
+                    } else {
+                        LogUtils.w("current examId is not receive examId. not submit.");
+                    }
                 }
             }
         };
