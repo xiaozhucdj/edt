@@ -64,4 +64,14 @@ public class RetryAskQuestionAttachment extends CustomAttachment{
         }
         return returnJsonObj;
     }
+
+    @Override
+    public String toString() {
+        return "RetryAskQuestionAttachment{" +
+                "examId=" + examId +
+                ", itemId=" + itemId +
+                ", userId=" + userId +
+                ", questionType='" + questionType + '\'' +
+                '}';
+    }
 }

@@ -168,6 +168,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private boolean isStScreensaver;
     private AppUpdateDialog mAppUpdateDialog;
     private Button btn_deviceSize;
+    private DeviceYxMsgErrorDialog mDeviceYxMsgErrorDialog;
 
 
     /***************************************************************************/
@@ -304,10 +305,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
+        btn_deviceSize.setVisibility(View.VISIBLE);
         if (BuildConfig.DEBUG) {
-            testVersion.setVisibility(View.VISIBLE);
-            testVersion.setText(UIUtils.getString(R.string.app_name));
-            btn_deviceSize.setVisibility(View.VISIBLE);
+//            testVersion.setVisibility(View.VISIBLE);
+//            testVersion.setText(UIUtils.getString(R.string.app_name));
+//            btn_deviceSize.setVisibility(View.VISIBLE);
         }
 
         String sex = SpUtils.getSex();
@@ -508,7 +510,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.btn_deviceSize:
-                UIUtils.showToastSafe("W--"+UIUtils.getScreenWidth() +"H--"+UIUtils.getScreenHeight());
+//                UIUtils.showToastSafe("W--"+UIUtils.getScreenWidth() +"H--"+UIUtils.getScreenHeight());
+                if (mDeviceYxMsgErrorDialog == null) {
+                    mDeviceYxMsgErrorDialog = new DeviceYxMsgErrorDialog(this);
+                }
+
+                mDeviceYxMsgErrorDialog.show();
+
             default:
                 break;
         }

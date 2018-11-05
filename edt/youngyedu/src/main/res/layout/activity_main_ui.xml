@@ -446,7 +446,7 @@
                 <Button
                     android:visibility="gone"
                     android:id="@+id/btn_deviceSize"
-                    android:text="设备大小"
+                    android:text="测试消息"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
