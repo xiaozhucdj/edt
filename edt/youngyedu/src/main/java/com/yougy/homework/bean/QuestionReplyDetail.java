@@ -55,6 +55,18 @@ public class QuestionReplyDetail {
     private List<Content_new> parsedReplyContentList = new ArrayList<Content_new>();
     private List<Content_new> parsedReplyCommentList = new ArrayList<Content_new>();
     private ParsedQuestionItem parsedQuestionItem;
+
+
+    private List<ReplyCommented> replyCommented;
+
+    public List<ReplyCommented> getReplyCommented() {
+        return replyCommented;
+    }
+
+    public void setReplyCommented(List<ReplyCommented> replyCommented) {
+        this.replyCommented = replyCommented;
+    }
+
     public Integer getReplyItemWeight() {
         return replyItemWeight;
     }
@@ -219,33 +231,31 @@ public class QuestionReplyDetail {
         return this;
     }
 
-    public void parse(){
+    public void parse() {
         for (LinkedTreeMap linkedTreeMap : replyContent) {
             String format = (String) linkedTreeMap.get("format");
-            if (format.startsWith("ATCH/")){
+            if (format.startsWith("ATCH/")) {
                 if (linkedTreeMap.get("remote") != null
-                        && !TextUtils.isEmpty((String)linkedTreeMap.get("remote"))){
+                        && !TextUtils.isEmpty((String) linkedTreeMap.get("remote"))) {
                     String url = "http://" + linkedTreeMap.get("bucket") + Commons.ANSWER_PIC_HOST + linkedTreeMap.get("remote");
                     if (url.endsWith(".gif")
                             || url.endsWith(".jpg")
                             || url.endsWith(".png")
-                            ){
+                            ) {
                         parsedReplyContentList.add(
                                 new Content_new(Content_new.Type.IMG_URL
                                         , ((Double) linkedTreeMap.get("version"))
                                         , url
                                         , null)
                         );
-                    }
-                    else if (url.endsWith(".htm")){
+                    } else if (url.endsWith(".htm")) {
                         parsedReplyContentList.add(
                                 new Content_new(Content_new.Type.HTML_URL
                                         , ((Double) linkedTreeMap.get("version"))
                                         , url
                                         , null)
                         );
-                    }
-                    else if (url.endsWith(".pdf")){
+                    } else if (url.endsWith(".pdf")) {
                         if ("ATCH/PDF_COLOR".equals(format)) {
                             parsedReplyContentList.add(
                                     new Content_new(Content_new.Type.PDF
@@ -255,11 +265,10 @@ public class QuestionReplyDetail {
                             );
                         }
                     }
-                }else{
+                } else {
                     parsedReplyContentList.add(null);
                 }
-            }
-            else if (format.equals("TEXT")){
+            } else if (format.equals("TEXT")) {
                 parsedReplyContentList.add(
                         new Content_new(Content_new.Type.TEXT
                                 , ((Double) linkedTreeMap.get("version"))
@@ -308,7 +317,7 @@ public class QuestionReplyDetail {
                             );
                         }
                     }
-                }else{
+                } else {
                     parsedReplyCommentList.add(null);
                 }
             } else if (format.equals("TEXT")) {

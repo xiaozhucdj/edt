@@ -526,8 +526,15 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                             setPageNumberView();
                             questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                            //先赋值，因为这里如果直接从学生结果中去分数，如果后面的题目没有批改，则取不出来数据，导致异常。
                             for (int i = 0; i < pageSize; i++) {
                                 replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                            }
+                            //再赋学生互评结果值，如果有的话，没有就不用管
+                            for (int i = 0; i < pageSize; i++) {
+                                if (mQuestionReplyDetails.get(i).getReplyCommented().size() > 0) {
+                                    replyScoreList.set(i, mQuestionReplyDetails.get(i).getReplyCommented().get(0).getReplyScore());
+                                }
                             }
 
                             refreshQuestion();
@@ -802,18 +809,30 @@ public class CheckHomeWorkActivity extends BaseActivity {
         //先清空集合数据（避免其他题目数据传入）
         textCommentList.clear();
 
-        List<Content_new> replyCommentList = questionReplyDetail.getParsedReplyCommentList();
-        for (int i = 0; i < replyCommentList.size(); i++) {
+        List<Content_new> replyCommentList = null;
+        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2
+        if (isStudentCheck == 2) {
+            //互评的话，取学生评论内部的结果
+            if (questionReplyDetail.getReplyCommented().size() > 0) {
+                replyCommentList = questionReplyDetail.getReplyCommented().get(0).parse().getParsedReplyCommentList();
+            }
+        } else {
+            //非互评，取外层结果
+            replyCommentList = questionReplyDetail.getParsedReplyCommentList();
+        }
+        if (replyCommentList != null) {
+            for (int i = 0; i < replyCommentList.size(); i++) {
 
-            Content_new content_new = replyCommentList.get(i);
-            if (content_new != null) {
-                if (content_new.getType() == Content_new.Type.IMG_URL) {
-                    imgCommentList.add(content_new);
-                } else if (content_new.getType() == Content_new.Type.TEXT) {
-                    textCommentList.add(content_new);
+                Content_new content_new = replyCommentList.get(i);
+                if (content_new != null) {
+                    if (content_new.getType() == Content_new.Type.IMG_URL) {
+                        imgCommentList.add(content_new);
+                    } else if (content_new.getType() == Content_new.Type.TEXT) {
+                        textCommentList.add(content_new);
+                    }
+                } else {
+                    imgCommentList.add(null);
                 }
-            } else {
-                imgCommentList.add(null);
             }
         }
 
@@ -1567,7 +1586,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         String content = new Gson().toJson(stsResultbeanArrayList);
 
-        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "")
+        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", SpUtils.getUserId() + "")
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
