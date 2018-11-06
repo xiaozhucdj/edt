@@ -181,8 +181,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"reviewComment"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
-            , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator);
-
+            , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator, @Field("replyCreator") long replyCreator);
 
 
     /**
@@ -486,7 +485,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
-            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator,@Field("originalReplyCommentator") String originalReplyCommentator);
+            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator, @Field("originalReplyCommentator") String originalReplyCommentator);
 
     /**
      * 添加单个收藏夹

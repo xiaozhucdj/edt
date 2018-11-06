@@ -77,6 +77,15 @@ public class HomeworkSummary {
         private int exam;//id
         private String eval;//作业批改类型(IKXX)
         private String team;//如果是分组作业,这里是组名
+        private long replyCreator;
+
+        public long getReplyCreator() {
+            return replyCreator;
+        }
+
+        public void setReplyCreator(long replyCreator) {
+            this.replyCreator = replyCreator;
+        }
 
         public int getExam() {
             return exam;
