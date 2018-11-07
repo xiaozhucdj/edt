@@ -66,7 +66,9 @@ import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENT
  */
 public class YoungyApplicationManager extends LitePalApplication {
 
-    public  static String  lastAnsMsg = "无消息" ;
+    public static String lastAnsMsg = "无消息";
+    public static String start_net = "无消息";
+    public static String end_net = "无消息";
     private final int REQUEST_TIME = 15 * 1000;
     public static final boolean DEBUG = true;
 
@@ -211,7 +213,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment) {
-                        lastAnsMsg ="服务器发送结果："+ "接收时间"+DateUtils.getTimeString()+"消息内容"+message.getAttachment().toString();
+                        lastAnsMsg = "服务器发送结果：" + "接收时间" + DateUtils.getTimeString() + "消息内容" + message.getAttachment().toString();
                         Calendar now = Calendar.getInstance();
                         Calendar messageTime = Calendar.getInstance();
                         messageTime.setTime(new Date(message.getTime()));
@@ -258,7 +260,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                             EventBus.getDefault().post(baseEvent);
                         }
                     } else if (message.getAttachment() instanceof RetryAskQuestionAttachment) {
-                        lastAnsMsg ="教师重发问答结果："+ "接收时间"+DateUtils.getTimeString()+"消息内容"+message.getAttachment().toString();
+                        lastAnsMsg = "教师重发问答结果：" + "接收时间" + DateUtils.getTimeString() + "消息内容" + message.getAttachment().toString();
 
                         Calendar now = Calendar.getInstance();
                         Calendar messageTime = Calendar.getInstance();
@@ -504,15 +506,16 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     /**
      * 应用是否在前台
+     *
      * @return
      */
-    public boolean isForegroundApp () {
+    public boolean isForegroundApp() {
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runnings = am.getRunningAppProcesses();
-        for(ActivityManager.RunningAppProcessInfo running : runnings){
-            if(running.processName.equals(getPackageName())){
-                if(running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                        || running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE){
+        for (ActivityManager.RunningAppProcessInfo running : runnings) {
+            if (running.processName.equals(getPackageName())) {
+                if (running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                        || running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE) {
                     return true;
                 }
             }

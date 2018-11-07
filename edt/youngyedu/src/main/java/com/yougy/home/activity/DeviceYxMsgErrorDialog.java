@@ -29,6 +29,11 @@ public class DeviceYxMsgErrorDialog extends BaseDialog {
     private String title1 = "测试完成 ，请查看，并拍照:";
     private String title2 = "请耐心等待， 测试 大约需要2分钟...";
 
+    private String start_net = "联网开始时间：";
+    private String end_net = "断网时间:";
+    private TextView tv_start_net;
+    private TextView tv_end_net;
+
     public DeviceYxMsgErrorDialog(Context context) {
         super(context);
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
@@ -56,6 +61,10 @@ public class DeviceYxMsgErrorDialog extends BaseDialog {
         tv_last_msg = (TextView) this.findViewById(R.id.tv_last_msg);
 
         title_tv = (TextView) this.findViewById(R.id.title_tv);
+
+        tv_start_net = (TextView) this.findViewById(R.id.tv_start_net);
+
+        tv_end_net = (TextView) this.findViewById(R.id.tv_end_net);
 
         btn_close = (Button) this.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +137,9 @@ public class DeviceYxMsgErrorDialog extends BaseDialog {
                 tv_yx_state.setText("消息状态:" + result);
                 tv_last_msg.setText("最后一条消息" + YoungyApplicationManager.lastAnsMsg);
 
+                tv_start_net.setText(start_net+YoungyApplicationManager.start_net);
+                tv_end_net.setText(end_net+YoungyApplicationManager.end_net);
+
 
                 if (NetUtils.isNetConnected()) {
                     tv_net_state.setText("网络是是否链接:" + "正常");
@@ -190,6 +202,7 @@ public class DeviceYxMsgErrorDialog extends BaseDialog {
         tv_yx_state.setText("消息状态state:");
         tv_last_msg.setText("最后一条消息:");
         title_tv.setText("设备信息!");
-
+        tv_start_net.setText(start_net);
+        tv_end_net.setText(end_net);
     }
 }

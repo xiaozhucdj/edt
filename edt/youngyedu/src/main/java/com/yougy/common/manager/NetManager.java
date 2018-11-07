@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -112,13 +113,22 @@ public class NetManager {
         public void onReceive(Context context, Intent intent) {
             mContext = context;
             String action = intent.getAction();
-            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ) {
+            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
-                if (isConnected && SpUtils.getUserId() > 0 ) {
+
+                LogUtils.e("onReceive...."+isConnected);
+                if (isConnected){
+                    YoungyApplicationManager.start_net =  YoungyApplicationManager.start_net +DateUtils.getCalendarAndTimeString()+"时间：";
+                }else{
+                    YoungyApplicationManager.end_net =  YoungyApplicationManager.end_net +DateUtils.getCalendarAndTimeString()+"时间";
+                }
+
+
+                if (isConnected && SpUtils.getUserId() > 0) {
                     YXClient.checkNetAndRefreshLogin(null, null);
                 }
                 NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
-                YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 2 * 60 * 1000);
+//                YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 2 * 60 * 1000);
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_WIIF, "");
                 EventBus.getDefault().post(baseEvent);
                 DialogManager.newInstance().showNetConnDialog(context);

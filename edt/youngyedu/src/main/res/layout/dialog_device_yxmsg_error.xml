@@ -69,6 +69,24 @@
                 android:textColor="@color/black"
                 android:textSize="24px" />
 
+            <TextView
+                android:layout_marginTop="20px"
+                android:id="@+id/tv_start_net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="联网开始时间:"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <TextView
+                android:layout_marginTop="20px"
+                android:id="@+id/tv_end_net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="断网时间:"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
         </LinearLayout>
 
 
