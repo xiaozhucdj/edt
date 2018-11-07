@@ -312,13 +312,6 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.parseHomeworkQuestion());
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId, Integer userId) {
-        LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
-        return getInstance().getServerApi().queryReply(examId, userId, null)
-                .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
-    }
-
     public static Observable<List<HomeworkSummarySumInfo>> sumReplyStudent(Integer examId, Integer studentId) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询学生考试分数总和:queryReplySummary");
         return getInstance().getServerApi().sumReplyStudent(examId, studentId)
@@ -356,9 +349,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId, String replyId) {
+    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId, String replyId , Boolean allCorrected) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询考试回答情况:queryReply");
-        return getInstance().getServerApi().queryReply(examId, userId, replyId)
+        return getInstance().getServerApi().queryReply(examId, userId, replyId , allCorrected)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReply());

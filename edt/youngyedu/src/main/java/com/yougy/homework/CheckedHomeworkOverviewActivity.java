@@ -38,14 +38,17 @@ import rx.functions.Action1;
 public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     ActivityCheckedHomeworkDetailBinding binding;
     ArrayList<QuestionReplySummary> replyList = new ArrayList<QuestionReplySummary>();
+    ArrayList<ArrayList<Integer>> scoreList = new ArrayList<ArrayList<Integer>>();
     int examId;
     String examName;
 
     private boolean isScoring = false;// 是否计分作业
+    private boolean isMutualEvaluation = false;//是否是互评作业
     private int examTotalPoints ;//exam 总分
     private int totalScore ;//得分
     private int itemCount;//总题数
     private int correctCount;//正确的题目
+    private int currentSelectCommentIndex = 0;
 
     @Override
     protected void setContentView() {
@@ -62,7 +65,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             finish();
         }
         examName = getIntent().getStringExtra("examName");
-        isScoring = getIntent().getBooleanExtra("isScoring", false);
+        isScoring = getIntent().getBooleanExtra("isScoring", true);
+        isMutualEvaluation = getIntent().getBooleanExtra("isMutualEvaluation" , true);
         examTotalPoints = getIntent().getIntExtra("getExamTotalPoints", 0);
         itemCount = getIntent().getIntExtra("getItemCount", 0 );
         binding.titleTv.setText(examName);
@@ -71,9 +75,19 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     @Override
     protected void initLayout() {
         if (isScoring) {
-            binding.mainRecyclerview.setMaxItemNumInOnePage(30);
+            if (isMutualEvaluation){
+                binding.mainRecyclerview.setMaxItemNumInOnePage(24);
+            }
+            else {
+                binding.mainRecyclerview.setMaxItemNumInOnePage(30);
+            }
         } else {
-            binding.mainRecyclerview.setMaxItemNumInOnePage(42);
+            if (isMutualEvaluation){
+                binding.mainRecyclerview.setMaxItemNumInOnePage(36);
+            }
+            else {
+                binding.mainRecyclerview.setMaxItemNumInOnePage(42);
+            }
         }
         binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6) {
             @Override
@@ -101,12 +115,18 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 } else {
                     holder.itemBinding2.textview.setText("" + (position + 1));
                 }
-                holder.setData(replyList.get(position));
+                holder.setData(
+                        scoreList.get(currentSelectCommentIndex).get(position)
+//                        , replyList.get(position).getReplyItemWeight());
+                        , 100);
             }
 
             @Override
             public int getItemCount() {
-                return replyList.size();
+                if (scoreList.size() == 0){
+                    return 0;
+                }
+                return scoreList.get(currentSelectCommentIndex).size();
             }
         });
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
@@ -134,12 +154,72 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReplySummary(examId, SpUtils.getUserId())
+        NetWorkManager.queryReply(examId, SpUtils.getUserId() , null , true)
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                     @Override
                     public void call(List<QuestionReplySummary> replySummaries) {
                         replyList.clear();
                         replyList.addAll(replySummaries);
+                        scoreList.clear();
+                        for (QuestionReplySummary replySummary : replyList) {
+                            for (int i = 0; i < replySummary.getReplyCommented().size(); i++) {
+                                QuestionReplySummary.ReplyCommentedBean replyCommentedBean
+                                        = replySummary.getReplyCommented().get(i);
+                                if (i + 1 > scoreList.size()){
+                                    scoreList.add(new ArrayList<Integer>());
+                                }
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
+                            }
+                        }
                         binding.mainRecyclerview.notifyDataSetChanged();
                         binding.questionNumTv.setText("习题数量 : " + replyList.size());
                         long allUseTime = 0;
@@ -217,7 +297,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     private class MyHolder extends RecyclerView.ViewHolder {
         private ItemQuestionGridviewBinding itemBinding;
         private ItemQuestionGridview2Binding itemBinding2;
-        private QuestionReplySummary data;
 
         public MyHolder(ItemQuestionGridviewBinding binding) {
             super(binding.getRoot());
@@ -229,23 +308,22 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             this.itemBinding2 = binding;
         }
 
-        public MyHolder setData(QuestionReplySummary data) {
-            this.data = data;
+        public MyHolder setData(int score , int replyItemWeight) {
             if (isScoring) {
-                if (data.getReplyScore() == 0) {
+                if (score == 0) {
                     itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_cuowu);
                 }
                 else {
-                    if (data.getReplyScore() == data.getReplyItemWeight()) {
+                    if (score == replyItemWeight) {
                         itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_zhengque);
                     } else {
                         itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_bandui);
                     }
                 }
             } else {
-                if (data.getReplyScore() == 0) {
+                if (score == 0) {
                     itemBinding2.icon.setBackgroundResource(R.drawable.img_cuowu_2);
-                } else if (data.getReplyScore() == 100) {
+                } else if (score == 100) {
                     itemBinding2.icon.setBackgroundResource(R.drawable.img_zhengque_2);
                 } else {
                     itemBinding2.icon.setBackgroundResource(R.drawable.img_bandui_2);
@@ -253,12 +331,9 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             }
 
             if (isScoring) {//计分作业
-                itemBinding.scoreText.setText(data.getReplyScore() + "分");
+                itemBinding.scoreText.setText(score + "分");
             }
             return this;
-        }
-        public QuestionReplySummary getData() {
-            return data;
         }
     }
 }

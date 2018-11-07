@@ -119,12 +119,50 @@
             android:layout_marginRight="15px"
             android:layout_marginTop="6px"
             />
+        <View
+            android:id="@+id/bg"
+            android:layout_width="932px"
+            android:layout_height="900px"
+            android:background="@drawable/check_homework_overiew_bg"
+            android:layout_below="@id/layout_circleProgressBar"
+            android:layout_marginTop="20px"
+            android:layout_marginLeft="10px"
+            />
+        <LinearLayout
+            android:id="@+id/comment_choose_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/bg"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20px"
+            android:layout_marginBottom="40px"
+            >
+            <TextView
+                android:id="@+id/last_comment_btn"
+                android:layout_width="40px"
+                android:layout_height="40px"
+                android:background="@drawable/last_comment_btn_bg_selector"
+                />
+            <TextView
+                android:id="@+id/comment_name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="28px"
+                android:text="批改结果X"/>
+            <TextView
+                android:id="@+id/next_comment_btn"
+                android:layout_width="40px"
+                android:layout_height="40px"
+                android:background="@drawable/next_comment_btn_bg_selector"
+                />
+        </LinearLayout>
         <com.yougy.homework.PageableRecyclerView
             android:id="@+id/main_recyclerview"
             android:layout_width="900px"
             android:layout_height="match_parent"
             android:layout_marginBottom="16px"
-            android:layout_below="@id/layout_circleProgressBar"
+            android:layout_below="@id/comment_choose_layout"
             android:layout_marginLeft="50px"
             />
     </RelativeLayout>
