@@ -191,6 +191,7 @@ public class ExerciseBookFragment extends BFragment {
                             intent = new Intent(getActivity(), CheckHomeWorkActivity.class);
                             intent.putExtra("isStudentCheck", 2);
                             intent.putExtra("examId", homeworkSummary.getExtra().getExam());
+                            intent.putExtra("replyCreator", homeworkSummary.getExtra().getReplyCreator());
                             intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                             startActivity(intent);
                         } else {

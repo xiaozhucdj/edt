@@ -203,6 +203,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private boolean isBrowse = false;
     //教师端是否是重批模式
     private boolean isCheckChange = false;
+    private long replyCreator;
 
     @Override
     public void init() {
@@ -211,6 +212,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         toShowPosition = getIntent().getIntExtra("toShowPosition", 0);
         isCheckOver = getIntent().getBooleanExtra("isCheckOver", false);
         isStudentLook = getIntent().getBooleanExtra("isStudentLook", false);
+        replyCreator = getIntent().getLongExtra("replyCreator", 0);
 
         studentName = SpUtils.getAccountName();
         teacherId = getIntent().getIntExtra("teacherID", 0);
@@ -506,7 +508,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2
         if (isStudentCheck == 2) {
-            NetWorkManager.queryReplyDetail2(examId, null, String.valueOf(studentId))
+            NetWorkManager.queryReplyDetail2(examId, null, String.valueOf(studentId), replyCreator)
                     .subscribe(new Action1<List<QuestionReplyDetail>>() {
                         @Override
                         public void call(List<QuestionReplyDetail> questionReplyDetails) {
