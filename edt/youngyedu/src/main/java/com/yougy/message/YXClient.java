@@ -1170,6 +1170,8 @@ public class YXClient {
      * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
      */
     public static void checkNetAndRefreshLogin(Activity activity, Runnable onRefreshSuccessRunnable) {
+
+        LogUtils.e("yuaye...net..checkNetAndRefreshLogin");
         if (SpUtils.getUserId() <= 0) {
             return;
         }

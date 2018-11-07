@@ -92,7 +92,7 @@ public class DialogManager {
         }
     }
 
-    private void dissMissUiPromptDialog () {
+    public void dissMissUiPromptDialog () {
         if (mNetConnStatusDialog != null && mNetConnStatusDialog.isShowing()) {
             mNetConnStatusDialog.dismiss();
             mNetConnStatusDialog = null;
