@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapter;
+import com.google.gson.internal.LinkedTreeMap;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.WriteableContentDisplayer;
@@ -24,6 +25,7 @@ import com.yougy.homework.HomeworkBaseActivity;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.bean.MistakeSummary;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.ReplyCommented;
 import com.yougy.message.ListUtil;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
@@ -65,6 +67,10 @@ public class MistakeListActivity extends HomeworkBaseActivity {
     //存放教师批注
     private List<Content_new> textCommentList = new ArrayList<>();
     private HomeWorkPageNumAdapter homeWorkPageNumAdapter;
+
+    //用于存放互评人员名称，包括老师名字（如果有老师名字，在第一位）
+    private ArrayList<String> checkerNames = new ArrayList<>();
+    private int showCheckPeoplePosition = 0;
 
     @Override
     protected void setContentView() {
@@ -326,8 +332,26 @@ public class MistakeListActivity extends HomeworkBaseActivity {
             case R.id.tv_comment_cancle:
                 binding.commentDialog.setVisibility(View.GONE);
                 break;
-        }
+            case R.id.iv_last_people:
+                if (showCheckPeoplePosition > 0) {
+                    showCheckPeoplePosition--;
+                    setOtherCheckNames();
+                    refreshQuestion();
+                } else {
+                    ToastUtil.showCustomToast(this, "已经是第一个批改结果");
+                }
+                break;
+            case R.id.iv_next_people:
 
+                if (showCheckPeoplePosition < (checkerNames.size() - 1)) {
+                    showCheckPeoplePosition++;
+                    setOtherCheckNames();
+                    refreshQuestion();
+                } else {
+                    ToastUtil.showCustomToast(this, "已经是最后一个批改结果");
+                }
+                break;
+        }
     }
 
 
@@ -370,6 +394,42 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                             setHomeWorkNumberView();
                             questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
 
+                            checkerNames.clear();
+                            //1.查看是否有教师批改结果
+                            List<LinkedTreeMap> replyCommetnList = questionReplyDetail.getReplyComment();
+                            if (replyCommetnList != null && replyCommetnList.size() > 0) {
+
+                                List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
+                                if (replyCommentedList != null && replyCommentedList.size() > 0) {
+
+                                    //有老师，有学生批改，说明是互评
+                                    binding.rlOtherCheckBar.setVisibility(View.VISIBLE);
+
+                                    checkerNames.add("批改结果（教师）");
+                                    for (ReplyCommented replyCommented : replyCommentedList) {
+                                        checkerNames.add("批改结果（" + replyCommented.getReplyCommentatorName() + "）");
+                                    }
+                                    setOtherCheckNames();
+                                } else {
+                                    //只有教师批改，说明是老师批改
+                                    binding.rlOtherCheckBar.setVisibility(View.GONE);
+                                }
+
+                            } else {
+                                List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
+                                if (replyCommentedList != null && replyCommentedList.size() > 0) {
+
+                                    //只有学生批改，说明是互评，或者自评
+                                    binding.rlOtherCheckBar.setVisibility(View.VISIBLE);
+                                    for (ReplyCommented replyCommented : replyCommentedList) {
+                                        checkerNames.add("批改结果（" + replyCommented.getReplyCommentatorName() + "）");
+                                    }
+                                    setOtherCheckNames();
+                                } else {
+                                    //没有教师和学生批改，异常数据，错题本中的题目必须已经批改了
+                                }
+                            }
+
                             refreshQuestion();
                         }
                     }
@@ -388,6 +448,12 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
 
     }
+
+    //互评作业时，顶部批改人名字
+    private void setOtherCheckNames() {
+        binding.tvResult.setText(checkerNames.get(showCheckPeoplePosition));
+    }
+
 
     @Override
     protected void onResume() {
@@ -530,18 +596,49 @@ public class MistakeListActivity extends HomeworkBaseActivity {
         //先清空集合数据（避免其他题目数据传入）
         textCommentList.clear();
 
-        List<Content_new> replyCommentList = questionReplyDetail.getParsedReplyCommentList();
-        for (int i = 0; i < replyCommentList.size(); i++) {
+        List<Content_new> replyCommentList = null;
+        List<LinkedTreeMap> replyCommetnList = questionReplyDetail.getReplyComment();
+        if (replyCommetnList != null && replyCommetnList.size() > 0) {
 
-            Content_new content_new = replyCommentList.get(i);
-            if (content_new != null) {
-                if (content_new.getType() == Content_new.Type.IMG_URL) {
-                    imgCommentList.add(content_new);
-                } else if (content_new.getType() == Content_new.Type.TEXT) {
-                    textCommentList.add(content_new);
+            List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
+            if (replyCommentedList != null && replyCommentedList.size() > 0) {
+
+                //有老师，有学生批改，说明是互评
+                if (showCheckPeoplePosition == 0) {//点击的是教师批改
+                    replyCommentList = questionReplyDetail.getParsedReplyCommentList();
+                } else {
+                    replyCommentList = questionReplyDetail.getReplyCommented().get(showCheckPeoplePosition - 1).parse().getParsedReplyCommentList();
                 }
+
             } else {
-                imgCommentList.add(null);
+                //只有教师批改，说明是老师批改
+                replyCommentList = questionReplyDetail.getParsedReplyCommentList();
+            }
+
+        } else {
+            List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
+            if (replyCommentedList != null && replyCommentedList.size() > 0) {
+
+                //只有学生批改，说明是互评，或者自评
+                replyCommentList = questionReplyDetail.getReplyCommented().get(showCheckPeoplePosition).parse().getParsedReplyCommentList();
+            } else {
+                //没有教师和学生批改，异常数据，错题本中的题目必须已经批改了
+
+            }
+        }
+
+        if (replyCommentList != null) {
+            for (int i = 0; i < replyCommentList.size(); i++) {
+                Content_new content_new = replyCommentList.get(i);
+                if (content_new != null) {
+                    if (content_new.getType() == Content_new.Type.IMG_URL) {
+                        imgCommentList.add(content_new);
+                    } else if (content_new.getType() == Content_new.Type.TEXT) {
+                        textCommentList.add(content_new);
+                    }
+                } else {
+                    imgCommentList.add(null);
+                }
             }
         }
 
