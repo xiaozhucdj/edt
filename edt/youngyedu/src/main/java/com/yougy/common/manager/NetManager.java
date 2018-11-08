@@ -10,6 +10,7 @@ import android.net.wifi.WifiManager;
 
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.message.YXClient;
@@ -22,7 +23,7 @@ import de.greenrobot.event.EventBus;
  */
 
 public class NetManager {
-    private boolean isNetOutage = true;
+    private boolean isNetOutage = false;
     private static NetManager sInstance;
     private final NetReceiver mNetReceiver;
 
@@ -114,8 +115,6 @@ public class NetManager {
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
                 LogUtils.e("yuaye...net..isConnected.."+isConnected);
-
-
                 if (isConnected) {//当前是已连接状态的时，若网络Dialog打开则关闭
                     DialogManager.newInstance().dissMissUiPromptDialog();
                     if (SpUtils.getUserId() > 0 && isNetOutage) {
@@ -124,6 +123,7 @@ public class NetManager {
                     isNetOutage = false;
                 } else {
                     isNetOutage = true;
+                    YoungyApplicationManager.end_net =  YoungyApplicationManager.end_net+":"+DateUtils.getTimeHHMMString() ;
                     NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
                     YoungyApplicationManager.getMainThreadHandler().removeCallbacks(netRetryConnRunnable);
                     YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 30000);
