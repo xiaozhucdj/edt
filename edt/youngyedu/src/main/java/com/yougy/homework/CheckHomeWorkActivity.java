@@ -506,8 +506,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         showNoNetDialog();
 
-        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2
-        if (isStudentCheck == 2) {
+        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2,学生自评逻辑和互评逻辑一样，批改结果在内层，如果自评被老师重批了，那么是覆盖了内层，外层仍然没有数据
+        if (isStudentCheck == 2 || isStudentCheck == 1) {
             NetWorkManager.queryReplyDetail2(examId, null, String.valueOf(studentId), replyCreator)
                     .subscribe(new Action1<List<QuestionReplyDetail>>() {
                         @Override
@@ -812,14 +812,14 @@ public class CheckHomeWorkActivity extends BaseActivity {
         textCommentList.clear();
 
         List<Content_new> replyCommentList = null;
-        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2
-        if (isStudentCheck == 2) {
+        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2 ， 自评同样取内层数据
+        if (isStudentCheck == 2 || isStudentCheck == 1) {
             //互评的话，取学生评论内部的结果
             if (questionReplyDetail.getReplyCommented().size() > 0) {
                 replyCommentList = questionReplyDetail.getReplyCommented().get(0).parse().getParsedReplyCommentList();
             }
         } else {
-            //非互评，取外层结果
+            //教师评，取外层结果
             replyCommentList = questionReplyDetail.getParsedReplyCommentList();
         }
         if (replyCommentList != null) {
