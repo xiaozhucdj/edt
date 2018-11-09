@@ -183,9 +183,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                                         scoreList.remove(list);
                                         k--;
                                     }
-                                    else {
-                                        k++;
-                                    }
                                 }
                             }
                         }

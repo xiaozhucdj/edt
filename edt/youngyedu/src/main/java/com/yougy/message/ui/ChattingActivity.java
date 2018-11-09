@@ -581,7 +581,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         if (attachment == null) {
             return;
         }
-        NetWorkManager.queryReply(Integer.parseInt(attachment.examId), SpUtils.getUserId(), null , null).subscribe(new Action1<List<QuestionReplySummary>>() {
+        NetWorkManager.queryReply(Integer.parseInt(attachment.examId), SpUtils.getUserId(), null)
+                .subscribe(new Action1<List<QuestionReplySummary>>() {
             @Override
             public void call(List<QuestionReplySummary> questionReplySummaries) {
                 LogUtils.d("questionReplySummaries size = " + questionReplySummaries.size());

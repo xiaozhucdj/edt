@@ -87,7 +87,7 @@ public class AnswerRecordListActivity extends AnswerBaseActivity{
                     case IHCODE_03://未批改
                     case IHCODE_04://批改中
                     case IHCODE_05://已批改
-                        NetWorkManager.queryReply(homeworkDetail.getExamId() , SpUtils.getUserId() , null , null)
+                        NetWorkManager.queryReply(homeworkDetail.getExamId() , SpUtils.getUserId() , null)
                                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                                     @Override
                                     public void call(List<QuestionReplySummary> replySummaries) {
