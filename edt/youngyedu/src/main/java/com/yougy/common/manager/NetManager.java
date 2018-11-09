@@ -114,6 +114,7 @@ public class NetManager {
             String action = intent.getAction();
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
+                LogUtils.e("FHHHH" , "网络状态变化广播 isConnected=" + isConnected);
                 if (isConnected && SpUtils.getUserId() > 0 ) {
                     YXClient.checkNetAndRefreshLogin(null, null);
                 }

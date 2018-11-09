@@ -154,13 +154,41 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReply(examId, SpUtils.getUserId() , null , true)
+        NetWorkManager.queryReply(examId, SpUtils.getUserId() , null)
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                     @Override
                     public void call(List<QuestionReplySummary> replySummaries) {
                         replyList.clear();
                         replyList.addAll(replySummaries);
                         scoreList.clear();
+                        for (int i = 0; i < replyList.size(); i++) {
+                            QuestionReplySummary replySummary = replyList.get(i);
+                            for (int j = 0 , k = 0; j < replySummary.getReplyCommented().size(); j++ , k++) {
+                                QuestionReplySummary.ReplyCommentedBean replyCommentedBean
+                                        = replySummary.getReplyCommented().get(j);
+                                if (i == 0){
+                                    if (j + 1 > scoreList.size()){
+                                        scoreList.add(new ArrayList<Integer>());
+                                    }
+                                }
+                                ArrayList<Integer> list = scoreList.get(k);
+                                if (replyCommentedBean.getReplyScore() == -1){
+                                    list.add(0 , null);
+                                }
+                                else {
+                                    list.add(replyCommentedBean.getReplyScore());
+                                }
+                                if (i + 1 == replyList.size()){
+                                    if (list.get(0) == null){
+                                        scoreList.remove(list);
+                                        k--;
+                                    }
+                                    else {
+                                        k++;
+                                    }
+                                }
+                            }
+                        }
                         for (QuestionReplySummary replySummary : replyList) {
                             for (int i = 0; i < replySummary.getReplyCommented().size(); i++) {
                                 QuestionReplySummary.ReplyCommentedBean replyCommentedBean
@@ -168,55 +196,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                                 if (i + 1 > scoreList.size()){
                                     scoreList.add(new ArrayList<Integer>());
                                 }
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
                                 scoreList.get(i).add(replyCommentedBean.getReplyScore());
                             }
                         }
@@ -265,12 +244,17 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     private void refreshCircleProgressBar() {
         if (isScoring) {
             binding.textScoreTitle.setText("分数");
-            binding.circleProgressBar.setProgress(totalScore * 100 / examTotalPoints);
+            if (examTotalPoints == 0){
+                binding.circleProgressBar.setProgress(0);
+            }
+            else {
+                binding.circleProgressBar.setProgress(totalScore * 100 / examTotalPoints);
+            }
             binding.circleProgressBar.setIsDrawCenterText(false);
             binding.textScore.setText(totalScore + "分");
         } else { //不计分作业
             binding.textScoreTitle.setText("正确率");
-            binding.circleProgressBar.setProgress((int) (correctCount * 100 / itemCount));
+            binding.circleProgressBar.setProgress(correctCount * 100 / itemCount);
             binding.textScore.setText(correctCount + "/" + itemCount);
             binding.circleProgressBar.setIsDrawCenterText(false);
         }

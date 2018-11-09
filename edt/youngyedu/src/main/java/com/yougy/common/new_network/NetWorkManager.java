@@ -350,9 +350,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId, String replyId , Boolean allCorrected) {
+    public static Observable<List<QuestionReplySummary>> queryReply(Integer examId, Integer userId, String replyId) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询考试回答情况:queryReply");
-        return getInstance().getServerApi().queryReply(examId, userId, replyId , allCorrected)
+        return getInstance().getServerApi().queryReply(examId, userId, replyId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReply());

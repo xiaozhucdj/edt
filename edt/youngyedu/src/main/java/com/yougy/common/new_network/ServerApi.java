@@ -209,7 +209,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryReply"})
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
-            , @Field("userId") Integer userId, @Field("replyId") String replyId , @Field("allCorrected") Boolean allCorrected);
+            , @Field("userId") Integer userId, @Field("replyId") String replyId);
 
 
     /**
