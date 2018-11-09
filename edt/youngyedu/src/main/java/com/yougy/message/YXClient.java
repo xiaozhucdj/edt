@@ -421,28 +421,31 @@ public class YXClient {
         }
     };
     //群成员被移除观察者
-    private Observer<TeamMember> teamMemberRemoveObserver = new Observer<TeamMember>() {
+    private Observer<List<TeamMember>> teamMemberRemoveObserver = new Observer<List<TeamMember>>() {
         @Override
-        public void onEvent(final TeamMember teamMember) {
-            lv("收到群成员被移除通知" + teamMember);
-            if (teamMember.getAccount().length() == 6 || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtils.getUserId() + ""))) {
-                //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
-                return;
-            }
-            if (getTeamMemberByID(teamMember.getTid()) != null) {
-                Pair<Long, List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
-                pair.first = System.currentTimeMillis();
-                ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
-                    @Override
-                    public boolean isMatchCondition(TeamMember nodeInList) {
-                        return nodeInList.getAccount().equals(teamMember.getAccount());
+        public void onEvent(final List<TeamMember> teamMemberList) {
+            lv("收到群成员被移除通知" + teamMemberList.toString() + " size=" + teamMemberList.size());
+            for (TeamMember teamMember : teamMemberList) {
+                if (teamMember.getAccount().length() == 6
+                        || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtils.getUserId() + ""))) {
+                    //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
+                    continue;
+                }
+                if (getTeamMemberByID(teamMember.getTid()) != null) {
+                    Pair<Long, List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
+                    pair.first = System.currentTimeMillis();
+                    ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
+                        @Override
+                        public boolean isMatchCondition(TeamMember nodeInList) {
+                            return nodeInList.getAccount().equals(teamMember.getAccount());
+                        }
+                    });
+                    List<TeamMember> list = new ArrayList<TeamMember>() {{
+                        add(teamMember);
+                    }};
+                    for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
+                        listener.onThingChanged(new Pair<String, List<TeamMember>>(teamMember.getTid(), list), DELETE);
                     }
-                });
-                List<TeamMember> list = new ArrayList<TeamMember>() {{
-                    add(teamMember);
-                }};
-                for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                    listener.onThingChanged(new Pair<String, List<TeamMember>>(teamMember.getTid(), list), DELETE);
                 }
             }
         }
