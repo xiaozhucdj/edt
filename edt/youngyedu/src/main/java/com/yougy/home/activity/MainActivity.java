@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -985,9 +986,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         FOLDER_FRAGMENT
     }
 
+//    key是 "close_wifi_delay",  永不关闭传值:-1
+    public static boolean changeSystemConfigIntegerValue(Context context, String dataKey, int value) {
+        try {
+            return Settings.System.putInt(context.getContentResolver(), dataKey, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
+
+
+        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
+
+
+
 
         if (!isStScreensaver) {
             ThreadManager.getSinglePool().execute(new Runnable() {
