@@ -204,6 +204,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     //教师端是否是重批模式
     private boolean isCheckChange = false;
     private long replyCreator;
+    private String replyCommentator;
 
     @Override
     public void init() {
@@ -213,6 +214,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         isCheckOver = getIntent().getBooleanExtra("isCheckOver", false);
         isStudentLook = getIntent().getBooleanExtra("isStudentLook", false);
         replyCreator = getIntent().getLongExtra("replyCreator", 0);
+        replyCommentator = getIntent().getStringExtra("replyCommentator");
 
         studentName = SpUtils.getAccountName();
         teacherId = getIntent().getIntExtra("teacherID", 0);
@@ -508,7 +510,14 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2,学生自评逻辑和互评逻辑一样，批改结果在内层，如果自评被老师重批了，那么是覆盖了内层，外层仍然没有数据
         if (isStudentCheck == 2 || isStudentCheck == 1) {
-            NetWorkManager.queryReplyDetail2(examId, null, String.valueOf(studentId), replyCreator)
+
+            if (isCheckOver) {//批改完毕，查看批改的作业
+                //查看批改作业，直接用intent传递过来的replyCommentator
+            } else {//自评，或者互评
+                replyCommentator = String.valueOf(studentId);
+            }
+
+            NetWorkManager.queryReplyDetail2(examId, null, replyCommentator, replyCreator)
                     .subscribe(new Action1<List<QuestionReplyDetail>>() {
                         @Override
                         public void call(List<QuestionReplyDetail> questionReplyDetails) {
