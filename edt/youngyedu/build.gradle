@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.youngy.ui2"
+        applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
         versionName "ql_test_1.0"
