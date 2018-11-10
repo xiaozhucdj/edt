@@ -134,8 +134,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/bg"
             android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
             android:layout_marginTop="20px"
-            android:layout_marginBottom="40px"
+            android:gravity="center_vertical"
             >
             <TextView
                 android:id="@+id/last_comment_btn"
@@ -149,7 +150,11 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="28px"
-                android:text="批改结果X"/>
+                android:text="批改结果X"
+                android:layout_marginLeft="20px"
+                android:layout_marginRight="20px"
+                />
+
             <TextView
                 android:id="@+id/next_comment_btn"
                 android:layout_width="40px"
@@ -161,7 +166,7 @@
             android:id="@+id/main_recyclerview"
             android:layout_width="900px"
             android:layout_height="match_parent"
-            android:layout_marginBottom="16px"
+            android:layout_marginBottom="80px"
             android:layout_below="@id/comment_choose_layout"
             android:layout_marginLeft="50px"
             />

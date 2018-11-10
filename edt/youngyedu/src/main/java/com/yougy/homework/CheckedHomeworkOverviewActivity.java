@@ -43,12 +43,12 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     String examName;
 
     private boolean isScoring = false;// 是否计分作业
-    private boolean isMutualEvaluation = false;//是否是互评作业
     private int examTotalPoints ;//exam 总分
-    private int totalScore ;//得分
+    private double scoreAvg ;//平均总得分
     private int itemCount;//总题数
     private int correctCount;//正确的题目
     private int currentSelectCommentIndex = 0;
+    private int isStudentCheck = 0;
 
     @Override
     protected void setContentView() {
@@ -65,29 +65,20 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             finish();
         }
         examName = getIntent().getStringExtra("examName");
-        isScoring = getIntent().getBooleanExtra("isScoring", true);
-        isMutualEvaluation = getIntent().getBooleanExtra("isMutualEvaluation" , true);
+        isScoring = getIntent().getBooleanExtra("isScoring", false);
         examTotalPoints = getIntent().getIntExtra("getExamTotalPoints", 0);
         itemCount = getIntent().getIntExtra("getItemCount", 0 );
+        isStudentCheck = getIntent().getIntExtra("isStudentCheck" , 0);
         binding.titleTv.setText(examName);
     }
 
     @Override
     protected void initLayout() {
         if (isScoring) {
-            if (isMutualEvaluation){
-                binding.mainRecyclerview.setMaxItemNumInOnePage(24);
-            }
-            else {
-                binding.mainRecyclerview.setMaxItemNumInOnePage(30);
-            }
-        } else {
-            if (isMutualEvaluation){
-                binding.mainRecyclerview.setMaxItemNumInOnePage(36);
-            }
-            else {
-                binding.mainRecyclerview.setMaxItemNumInOnePage(42);
-            }
+            binding.mainRecyclerview.setMaxItemNumInOnePage(24);
+        }
+        else {
+            binding.mainRecyclerview.setMaxItemNumInOnePage(36);
         }
         binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6) {
             @Override
@@ -116,9 +107,9 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     holder.itemBinding2.textview.setText("" + (position + 1));
                 }
                 holder.setData(
-                        scoreList.get(currentSelectCommentIndex).get(position)
-//                        , replyList.get(position).getReplyItemWeight());
-                        , 100);
+                        scoreList.get(currentSelectCommentIndex).get(position + 1)
+                        , replyList.get(position).getReplyItemWeight());
+//                        , 100);
             }
 
             @Override
@@ -126,26 +117,21 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 if (scoreList.size() == 0){
                     return 0;
                 }
-                return scoreList.get(currentSelectCommentIndex).size();
+                return scoreList.get(currentSelectCommentIndex).size() - 1;
             }
         });
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 MyHolder holder = (MyHolder) vh;
-                Intent /*intent = new Intent(CheckedHomeworkOverviewActivity.this, CheckedHomeworkDetailActivity.class);
-                intent.putExtra("examName", examName);
-                intent.putExtra("toShow", holder.getData());
-                intent.putExtra("examId", examId);
-                intent.putParcelableArrayListExtra("all", replyList);
-                intent.putExtra("isScoring", isScoring);
-                startActivity(intent);*/
-
-                intent = new Intent(CheckedHomeworkOverviewActivity.this , CheckHomeWorkActivity.class);
+                Intent intent = new Intent(CheckedHomeworkOverviewActivity.this , CheckHomeWorkActivity.class);
                 intent.putExtra("examId" , examId);
                 intent.putExtra("toShowPosition", holder.getPosition());
                 intent.putExtra("isCheckOver", true);
                 intent.putExtra("isStudentLook", true);
+                intent.putExtra("isStudentCheck" , isStudentCheck);
+                intent.putExtra("replyCreator" , (long) SpUtils.getUserId());
+                intent.putExtra("replyCommentator" , String.valueOf(scoreList.get(currentSelectCommentIndex).get(0)));
                 startActivity(intent);
 
             }
@@ -168,34 +154,29 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                                         = replySummary.getReplyCommented().get(j);
                                 if (i == 0){
                                     if (j + 1 > scoreList.size()){
-                                        scoreList.add(new ArrayList<Integer>());
+                                        scoreList.add(new ArrayList<Integer>(){
+                                            {
+                                                add(replyCommentedBean.getReplyCommentator());
+                                            }
+                                        });
                                     }
                                 }
                                 ArrayList<Integer> list = scoreList.get(k);
                                 if (replyCommentedBean.getReplyScore() == -1){
-                                    list.add(0 , null);
+                                    list.add(1 , null);
                                 }
                                 else {
                                     list.add(replyCommentedBean.getReplyScore());
                                 }
                                 if (i + 1 == replyList.size()){
-                                    if (list.get(0) == null){
+                                    if (list.get(1) == null){
                                         scoreList.remove(list);
                                         k--;
                                     }
                                 }
                             }
                         }
-                        for (QuestionReplySummary replySummary : replyList) {
-                            for (int i = 0; i < replySummary.getReplyCommented().size(); i++) {
-                                QuestionReplySummary.ReplyCommentedBean replyCommentedBean
-                                        = replySummary.getReplyCommented().get(i);
-                                if (i + 1 > scoreList.size()){
-                                    scoreList.add(new ArrayList<Integer>());
-                                }
-                                scoreList.get(i).add(replyCommentedBean.getReplyScore());
-                            }
-                        }
+                        refreshCommentChooseBar();
                         binding.mainRecyclerview.notifyDataSetChanged();
                         binding.questionNumTv.setText("习题数量 : " + replyList.size());
                         long allUseTime = 0;
@@ -220,7 +201,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                             ToastUtil.showCustomToast(getApplicationContext() , "获取总分失败,查不到数据");
                         }
                         else {
-                            totalScore = homeworkSummarySumInfos.get(0).getScore();
+                            scoreAvg = homeworkSummarySumInfos.get(0).getScoreAvg();
                             correctCount = homeworkSummarySumInfos.get(0).getCorrectCount();
                             refreshCircleProgressBar();
                         }
@@ -234,7 +215,27 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 });
     }
 
-
+    /**
+     * 刷新批改结果选择条
+     */
+    private void refreshCommentChooseBar(){
+        if (currentSelectCommentIndex + 1 > scoreList.size()){
+            currentSelectCommentIndex = scoreList.size() - 1;
+        }
+        if (currentSelectCommentIndex == 0){
+            binding.lastCommentBtn.setEnabled(false);
+        }
+        else {
+            binding.lastCommentBtn.setEnabled(true);
+        }
+        if (currentSelectCommentIndex + 1 == scoreList.size()){
+            binding.nextCommentBtn.setEnabled(false);
+        }
+        else {
+            binding.nextCommentBtn.setEnabled(true);
+        }
+        binding.commentNameTextview.setText("批改结果" + (currentSelectCommentIndex + 1));
+    }
     /**
      * 更新圆形进度条的文字
      */
@@ -245,14 +246,20 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 binding.circleProgressBar.setProgress(0);
             }
             else {
-                binding.circleProgressBar.setProgress(totalScore * 100 / examTotalPoints);
+                binding.circleProgressBar.setProgress(((int) (scoreAvg * 100 / examTotalPoints)));
             }
             binding.circleProgressBar.setIsDrawCenterText(false);
-            binding.textScore.setText(totalScore + "分");
+            binding.textScore.setText(scoreAvg + "分");
         } else { //不计分作业
             binding.textScoreTitle.setText("正确率");
-            binding.circleProgressBar.setProgress(correctCount * 100 / itemCount);
-            binding.textScore.setText(correctCount + "/" + itemCount);
+            if (isStudentCheck == 2){//互评
+                binding.circleProgressBar.setProgress(((int) scoreAvg));
+                binding.textScore.setText(scoreAvg + "%");
+            }
+            else {
+                binding.circleProgressBar.setProgress(correctCount * 100 / itemCount);
+                binding.textScore.setText(correctCount + "/" + itemCount);
+            }
             binding.circleProgressBar.setIsDrawCenterText(false);
         }
 
@@ -266,11 +273,21 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         finish();
     }
 
-    @OnClick({R.id.image_refresh})
+    @OnClick({R.id.image_refresh , R.id.last_comment_btn , R.id.next_comment_btn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.image_refresh:
                 loadData();
+                break;
+            case R.id.last_comment_btn:
+                currentSelectCommentIndex--;
+                refreshCommentChooseBar();
+                binding.mainRecyclerview.notifyDataSetChanged();
+                break;
+            case R.id.next_comment_btn:
+                currentSelectCommentIndex++;
+                refreshCommentChooseBar();
+                binding.mainRecyclerview.notifyDataSetChanged();
                 break;
         }
     }

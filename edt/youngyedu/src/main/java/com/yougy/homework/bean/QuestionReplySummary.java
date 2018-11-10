@@ -202,6 +202,7 @@ public class QuestionReplySummary implements Parcelable {
 
     public static class ReplyCommentedBean implements Parcelable {
         private int replyScore;
+        private int replyCommentator;
 
         public int getReplyScore() {
             return replyScore;
@@ -212,6 +213,14 @@ public class QuestionReplySummary implements Parcelable {
             return this;
         }
 
+        public int getReplyCommentator() {
+            return replyCommentator;
+        }
+
+        public ReplyCommentedBean setReplyCommentator(int replyCommentator) {
+            this.replyCommentator = replyCommentator;
+            return this;
+        }
 
         @Override
         public int describeContents() {
@@ -221,6 +230,7 @@ public class QuestionReplySummary implements Parcelable {
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(this.replyScore);
+            dest.writeInt(this.replyCommentator);
         }
 
         public ReplyCommentedBean() {
@@ -228,6 +238,7 @@ public class QuestionReplySummary implements Parcelable {
 
         protected ReplyCommentedBean(Parcel in) {
             this.replyScore = in.readInt();
+            this.replyCommentator = in.readInt();
         }
 
         public static final Parcelable.Creator<ReplyCommentedBean> CREATOR = new Parcelable.Creator<ReplyCommentedBean>() {
