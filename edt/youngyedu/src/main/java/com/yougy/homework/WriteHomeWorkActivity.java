@@ -66,6 +66,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.CollectHomeworkAttachment;
@@ -1605,29 +1606,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
                         //发送消息
                         if (teacherId != 0) {
-                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
-                                    , SessionTypeEnum.P2P
-                                    , SpUtils.getAccountId()
-                                    , SpUtils.getAccountName()
-                                    , teacherId
-                                    , subGroupId
-                                    , new RequestCallback<Void>() {
-
-                                        @Override
-                                        public void onSuccess(Void param) {
-                                            LogUtils.d("提交消息通知教师成功！");
-                                        }
-
-                                        @Override
-                                        public void onFailed(int code) {
-                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
-                                        }
-
-                                        @Override
-                                        public void onException(Throwable exception) {
-                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
-                                        }
-                                    });
+                            sendFinishMsgToTeacher();
                         }
                         mIsSubmit = true;
 
@@ -1669,6 +1648,50 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         } else {
                             ToastUtil.showCustomToast(getBaseContext(), "提交失败，请重试");
                         }
+                    }
+                });
+    }
+
+
+    //完成作业后发送消息给教师端
+    private void sendFinishMsgToTeacher() {
+
+        NetWorkManager.querySchoolTeamByStudentAndExam(SpUtils.getUserId() + "", examId)
+                .subscribe(new Action1<TeamBean>() {
+                    @Override
+                    public void call(TeamBean teamBean) {
+                        if (teamBean != null) {
+
+                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
+                                    , SessionTypeEnum.P2P
+                                    , SpUtils.getAccountId()
+                                    , SpUtils.getAccountName()
+                                    , teacherId
+                                    , teamBean.getTeamId() + ""
+                                    , new RequestCallback<Void>() {
+
+                                        @Override
+                                        public void onSuccess(Void param) {
+                                            LogUtils.d("提交消息通知教师成功！");
+                                        }
+
+                                        @Override
+                                        public void onFailed(int code) {
+                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                        }
+
+                                        @Override
+                                        public void onException(Throwable exception) {
+                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                        }
+                                    });
+
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
                     }
                 });
     }

@@ -34,6 +34,7 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.init.bean.Student;
 import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
@@ -651,5 +652,9 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-
+    public static Observable<TeamBean> querySchoolTeamByStudentAndExam(String studentId, String examId) {
+        return getInstance().getServerApi().querySchoolTeamByStudentAndExam(studentId, examId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 }

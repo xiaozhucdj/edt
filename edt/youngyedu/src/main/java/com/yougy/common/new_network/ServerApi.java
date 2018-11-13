@@ -23,6 +23,7 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.init.bean.Student;
 import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
@@ -575,5 +576,14 @@ public interface ServerApi {
 
     @POST("classRoom")
     Observable<BaseResult<List<com.yougy.init.bean.BookInfo>>> getBookShelf(@Body NewBookShelfReq req);
+
+
+    /**
+     * 获取组信息
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"querySchoolTeamByStudentAndExam"})
+    Observable<BaseResult<TeamBean>> querySchoolTeamByStudentAndExam(@Field("studentId") String studentId, @Field("examId") String examId);
 
 }

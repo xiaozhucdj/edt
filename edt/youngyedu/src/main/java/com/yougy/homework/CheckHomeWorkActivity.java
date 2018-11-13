@@ -205,12 +205,15 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private boolean isCheckChange = false;
     private long replyCreator;
     private String replyCommentator;
+    private int teamId;
 
 
     @Override
     public void init() {
         studentId = SpUtils.getUserId();
         examId = getIntent().getIntExtra("examId", -1);
+        teamId = getIntent().getIntExtra("teamId", -1);
+
         toShowPosition = getIntent().getIntExtra("toShowPosition", 0);
         isCheckOver = getIntent().getBooleanExtra("isCheckOver", false);
         isStudentLook = getIntent().getBooleanExtra("isStudentLook", false);
@@ -1706,7 +1709,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                                     , studentId
                                     , studentName
                                     , teacherId
-                                    , subGroupId
+                                    , teamId + ""
                                     , new RequestCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void param) {
