@@ -211,8 +211,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     @Override
     public void init() {
         studentId = SpUtils.getUserId();
-        examId = getIntent().getIntExtra("examId", -1);
-        teamId = getIntent().getIntExtra("teamId", -1);
+        examId = getIntent().getIntExtra("examId", 0);
+        teamId = getIntent().getIntExtra("teamId", 0);
 
         toShowPosition = getIntent().getIntExtra("toShowPosition", 0);
         isCheckOver = getIntent().getBooleanExtra("isCheckOver", false);

@@ -1692,6 +1692,30 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
+                        //如果不是分组作业这里获取的话服务器返回400，
+                        YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
+                                , SessionTypeEnum.P2P
+                                , SpUtils.getAccountId()
+                                , SpUtils.getAccountName()
+                                , teacherId
+                                , 0
+                                , new RequestCallback<Void>() {
+
+                                    @Override
+                                    public void onSuccess(Void param) {
+                                        LogUtils.d("提交消息通知教师成功！");
+                                    }
+
+                                    @Override
+                                    public void onFailed(int code) {
+                                        LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                    }
+
+                                    @Override
+                                    public void onException(Throwable exception) {
+                                        LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                    }
+                                });
                     }
                 });
     }
