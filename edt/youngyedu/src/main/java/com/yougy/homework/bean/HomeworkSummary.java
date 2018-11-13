@@ -76,7 +76,8 @@ public class HomeworkSummary {
         private int examSponsor;//teacher id
         private int exam;//id
         private String eval;//作业批改类型(IKXX)
-        private String team;//如果是分组作业,这里是组名
+        private String teamName;//如果是分组作业,这里是组名
+        private String team;//如果是分组作业,这里是小组id
         private long replyCreator;
 
         public long getReplyCreator() {
@@ -220,6 +221,15 @@ public class HomeworkSummary {
         }
         public ExtraBean setEval(String eval) {
             this.eval = eval;
+            return this;
+        }
+
+        public String getTeamName() {
+            return teamName;
+        }
+
+        public ExtraBean setTeamName(String teamName) {
+            this.teamName = teamName;
             return this;
         }
 

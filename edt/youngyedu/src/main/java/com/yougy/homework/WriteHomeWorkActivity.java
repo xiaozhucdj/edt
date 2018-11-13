@@ -1605,8 +1605,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
                         //发送消息
                         if (teacherId != 0) {
-                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId), SessionTypeEnum.P2P, SpUtils.getAccountId(), SpUtils.getAccountName()
-                                    , teacherId, new RequestCallback<Void>() {
+                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
+                                    , SessionTypeEnum.P2P
+                                    , SpUtils.getAccountId()
+                                    , SpUtils.getAccountName()
+                                    , teacherId
+                                    , subGroupId
+                                    , new RequestCallback<Void>() {
 
                                         @Override
                                         public void onSuccess(Void param) {

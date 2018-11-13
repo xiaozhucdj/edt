@@ -206,6 +206,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private long replyCreator;
     private String replyCommentator;
 
+
     @Override
     public void init() {
         studentId = SpUtils.getUserId();
@@ -220,6 +221,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         teacherId = getIntent().getIntExtra("teacherID", 0);
         titleTextview.setText(studentName);
         isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
+
     }
 
     @Override
@@ -1699,8 +1701,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         }
 
                         if (teacherId != 0) {
-                            YXClient.getInstance().sendSubmitHomeworkMsg(examId, SessionTypeEnum.P2P, studentId, studentName,
-                                    teacherId, new RequestCallback<Void>() {
+                            YXClient.getInstance().sendSubmitHomeworkMsg(examId
+                                    , SessionTypeEnum.P2P
+                                    , studentId
+                                    , studentName
+                                    , teacherId
+                                    , subGroupId
+                                    , new RequestCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void param) {
                                             LogUtils.v("自评发送消息成功 ！");

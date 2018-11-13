@@ -16,19 +16,23 @@ public class SubmitHomeworkAttachment extends CustomAttachment{
     public int studentId;
     public String studentName;
     public int examId;
+    public String subGroupId;
 
     private final String KEY_STUDENT_ID = "studentId";
     private final String KEY_STUDENT_NAME = "studentName";
     private final String KEY_EXAM_ID = "keyExamId";
+    private final String KEY_SUB_GROUP_ID = "keySubgroupId";
+
 
     public SubmitHomeworkAttachment(String clue , double version) {
         super(clue , version);
     }
-    public SubmitHomeworkAttachment(int studentId , String studentName, int examId) {
+    public SubmitHomeworkAttachment(int studentId , String studentName, int examId , String subGroupId) {
         super(CustomAttachParser.CLUE_SUBMITE_HOMEWORK , 1);
         this.studentId = studentId;
         this.studentName = studentName;
         this.examId = examId;
+        this.subGroupId = subGroupId;
     }
     @Override
     protected void parseData(JSONObject data) throws JSONException {
@@ -36,6 +40,7 @@ public class SubmitHomeworkAttachment extends CustomAttachment{
         studentId = introJsonObj.getInt(KEY_STUDENT_ID);
         studentName = introJsonObj.getString(KEY_STUDENT_NAME);
         examId = introJsonObj.getInt(KEY_EXAM_ID);
+        subGroupId = introJsonObj.getString(KEY_SUB_GROUP_ID);
     }
 
     @Override
@@ -46,6 +51,7 @@ public class SubmitHomeworkAttachment extends CustomAttachment{
             introJsonObj.put(KEY_STUDENT_ID , studentId);
             introJsonObj.put(KEY_STUDENT_NAME , studentName);
             introJsonObj.put(KEY_EXAM_ID , examId);
+            introJsonObj.put(KEY_SUB_GROUP_ID , subGroupId);
             returnJsonObj.put(CustomAttachParser.KEY_INTRO , introJsonObj);
         }
         catch (JSONException e) {

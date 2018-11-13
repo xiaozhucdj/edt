@@ -1044,15 +1044,15 @@ public class YXClient {
      * @return
      */
     public IMMessage sendSubmitHomeworkMsg(int examId, SessionTypeEnum typeEnum
-            , int studentId, String studentName, int teacherId,  RequestCallback<Void> requestCallback) {
+            , int studentId, String studentName, int teacherId,  String subGroupId , RequestCallback<Void> requestCallback) {
         LogUtils.d("homeworkTeacherIds teacherId = " + teacherId);
         final IMMessage message;
         switch (typeEnum) {
             case P2P:
-                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.P2P, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId));
+                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.P2P, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId , subGroupId));
                 break;
             case Team:
-                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId));
+                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId , subGroupId));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);

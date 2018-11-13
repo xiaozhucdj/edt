@@ -462,9 +462,9 @@ public class ExerciseBookFragment extends BFragment {
             } else {
                 binding.timeTv.setVisibility(View.GONE);
             }
-            if (!TextUtils.isEmpty(data.getExtra().getTeam())){
+            if (!TextUtils.isEmpty(data.getExtra().getTeamName())){
                 binding.groupNameTv.setVisibility(View.VISIBLE);
-                binding.groupNameTv.setText("组名 : " + data.getExtra().getTeam());
+                binding.groupNameTv.setText("组名 : " + data.getExtra().getTeamName());
             }
             else {
                 binding.groupNameTv.setVisibility(View.GONE);
