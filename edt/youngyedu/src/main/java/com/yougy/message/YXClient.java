@@ -1044,7 +1044,7 @@ public class YXClient {
      * @return
      */
     public IMMessage sendSubmitHomeworkMsg(int examId, SessionTypeEnum typeEnum
-            , int studentId, String studentName, int teacherId,  String subGroupId , RequestCallback<Void> requestCallback) {
+            , int studentId, String studentName, int teacherId,  int subGroupId , RequestCallback<Void> requestCallback) {
         LogUtils.d("homeworkTeacherIds teacherId = " + teacherId);
         final IMMessage message;
         switch (typeEnum) {

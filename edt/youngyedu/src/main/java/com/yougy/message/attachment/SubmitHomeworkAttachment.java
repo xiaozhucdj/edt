@@ -16,7 +16,7 @@ public class SubmitHomeworkAttachment extends CustomAttachment{
     public int studentId;
     public String studentName;
     public int examId;
-    public String subGroupId;
+    public int subGroupId;
 
     private final String KEY_STUDENT_ID = "studentId";
     private final String KEY_STUDENT_NAME = "studentName";
@@ -27,7 +27,7 @@ public class SubmitHomeworkAttachment extends CustomAttachment{
     public SubmitHomeworkAttachment(String clue , double version) {
         super(clue , version);
     }
-    public SubmitHomeworkAttachment(int studentId , String studentName, int examId , String subGroupId) {
+    public SubmitHomeworkAttachment(int studentId , String studentName, int examId , int subGroupId) {
         super(CustomAttachParser.CLUE_SUBMITE_HOMEWORK , 1);
         this.studentId = studentId;
         this.studentName = studentName;
@@ -40,7 +40,7 @@ public class SubmitHomeworkAttachment extends CustomAttachment{
         studentId = introJsonObj.getInt(KEY_STUDENT_ID);
         studentName = introJsonObj.getString(KEY_STUDENT_NAME);
         examId = introJsonObj.getInt(KEY_EXAM_ID);
-        subGroupId = introJsonObj.getString(KEY_SUB_GROUP_ID);
+        subGroupId = introJsonObj.getInt(KEY_SUB_GROUP_ID);
     }
 
     @Override

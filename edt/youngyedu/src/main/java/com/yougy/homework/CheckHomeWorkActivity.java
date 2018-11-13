@@ -1709,7 +1709,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                                     , studentId
                                     , studentName
                                     , teacherId
-                                    , teamId + ""
+                                    , teamId
                                     , new RequestCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void param) {

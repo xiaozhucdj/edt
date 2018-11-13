@@ -1667,7 +1667,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                     , SpUtils.getAccountId()
                                     , SpUtils.getAccountName()
                                     , teacherId
-                                    , teamBean.getTeamId() + ""
+                                    , teamBean.getTeamId()
                                     , new RequestCallback<Void>() {
 
                                         @Override
