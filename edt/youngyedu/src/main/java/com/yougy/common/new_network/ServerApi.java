@@ -38,6 +38,7 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.TaskSummary;
 
 import java.util.List;
 
@@ -182,7 +183,6 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"reviewComment"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator);
-
 
 
     /**
@@ -576,5 +576,10 @@ public interface ServerApi {
 
     @POST("classRoom")
     Observable<BaseResult<List<com.yougy.init.bean.BookInfo>>> getBookShelf(@Body NewBookShelfReq req);
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    Observable<BaseResult<TaskSummary>> queryTasks(@Field("userId") int userId, @Field("page") int page);
+
 
 }

@@ -3,87 +3,129 @@
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/y193"
         android:background="@drawable/btn_bg_selector"
+        android:layout_marginTop="@dimen/y20"
         >
+        <TextView
+            android:id="@+id/task_signature"
+            android:layout_width="@dimen/x36"
+            android:layout_height="@dimen/y82"
+            android:background="@drawable/img_homework_status_bg_red"
+            android:text="需\n签\n字"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/x18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textColor="@color/white"
+            />
         <TextView
             android:id="@+id/task_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="@dimen/y30"
-            android:layout_marginLeft="@dimen/x90"
-            android:text="背诵并默写伤仲永"
+            android:layout_marginTop="@dimen/y20"
+            android:layout_marginLeft="@dimen/x60"
+            android:textSize="@dimen/x24"
+            android:text="背诵并默写伤仲永背诵并默写伤仲永"
+            android:maxEms="10"
+            android:ellipsize="end"
+            android:singleLine="true"
             />
         <TextView
             android:id="@+id/task_chapter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@+id/task_title"
-            app:layout_constraintTop_toTopOf="@+id/task_title"
-            app:layout_constraintBottom_toBottomOf="@+id/task_title"
-            android:text="所属教材章节：伤仲永"
-            android:layout_marginLeft="@dimen/x30"
-            />
-        <TextView
-            android:id="@+id/task_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="班级任务"
-            app:layout_constraintTop_toTopOf="@+id/task_title"
-            app:layout_constraintBottom_toBottomOf="@+id/task_title"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="@dimen/x60"
-            />
-        <TextView
-            android:id="@+id/task_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="第一组"
-            app:layout_constraintTop_toTopOf="@+id/task_type"
-            app:layout_constraintBottom_toBottomOf="@+id/task_type"
-            />
-        <TextView
-            android:id="@+id/task_data_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="学习资料数：2"
             app:layout_constraintLeft_toLeftOf="@+id/task_title"
             app:layout_constraintTop_toBottomOf="@+id/task_title"
-            android:layout_marginTop="@dimen/y50"
+            android:text="所属教材章节：伤仲永"
+            android:layout_marginTop="@dimen/y10"
+            android:textSize="@dimen/x20"
+            android:maxEms="10"
+            android:ellipsize="end"
+            android:singleLine="true"
             />
-        <TextView
-            android:id="@+id/task_exercise_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="任务练习数：2"
-            app:layout_constraintTop_toTopOf="@+id/task_data_count"
-            app:layout_constraintBottom_toBottomOf="@+id/task_data_count"
-            app:layout_constraintLeft_toRightOf="@+id/task_data_count"
-            android:layout_marginLeft="@dimen/x90"
-            />
-        <TextView
-            android:id="@+id/task_signature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="需要家长签字"
-            app:layout_constraintTop_toTopOf="@+id/task_exercise_count"
-            app:layout_constraintBottom_toBottomOf="@+id/task_exercise_count"
-            app:layout_constraintLeft_toRightOf="@+id/task_exercise_count"
-            android:layout_marginLeft="@dimen/x90"
-            />
-
         <TextView
             android:id="@+id/task_complete_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/y50"
-            android:layout_marginBottom="8dp"
             android:text="完成时间：2018年5月22日9时15分"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/task_data_count"
-            app:layout_constraintTop_toBottomOf="@+id/task_data_count" />
+            android:textSize="@dimen/x20"
+            android:layout_marginRight="@dimen/x10"
+            android:drawableLeft="@drawable/icon_clock"
+            android:drawablePadding="@dimen/x5"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="@+id/task_title"
+            app:layout_constraintTop_toTopOf="@+id/task_title"
+            app:layout_constraintRight_toRightOf="parent"
+
+            />
+        <!--<TextView-->
+            <!--android:id="@+id/task_type"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="班级任务"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/task_title"-->
+            <!--app:layout_constraintBottom_toBottomOf="@+id/task_title"-->
+            <!--app:layout_constraintRight_toRightOf="parent"-->
+            <!--android:layout_marginRight="@dimen/x60"-->
+            <!--/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/task_group"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:visibility="gone"-->
+            <!--android:text="第一组"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/task_type"-->
+            <!--app:layout_constraintBottom_toBottomOf="@+id/task_type"-->
+            <!--/>-->
+        <TextView
+            android:id="@+id/task_data_count_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="学习资料数"
+            app:layout_constraintLeft_toLeftOf="@+id/task_title"
+            app:layout_constraintTop_toBottomOf="@+id/task_chapter"
+            android:layout_marginTop="@dimen/y20"
+            android:textSize="@dimen/x22"
+            />
+        <TextView
+            android:id="@+id/task_data_count"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@+id/task_data_count_tv"
+            app:layout_constraintRight_toRightOf="@+id/task_data_count_tv"
+            app:layout_constraintTop_toBottomOf="@+id/task_data_count_tv"
+            android:gravity="center"
+            android:text="2"
+            android:textSize="@dimen/x22"
+            android:layout_marginTop="@dimen/y15"
+            />
+        <TextView
+            android:id="@+id/task_exercise_count_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="任务练习数"
+            app:layout_constraintTop_toTopOf="@+id/task_data_count_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/task_data_count_tv"
+            app:layout_constraintLeft_toRightOf="@+id/task_data_count_tv"
+            android:layout_marginLeft="@dimen/x150"
+            android:textSize="@dimen/x22"
+            />
+        <TextView
+            android:id="@+id/task_exercise_count"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textSize="@dimen/x22"
+            android:gravity="center"
+            app:layout_constraintLeft_toLeftOf="@+id/task_exercise_count_tv"
+            app:layout_constraintRight_toRightOf="@+id/task_exercise_count_tv"
+            app:layout_constraintTop_toTopOf="@+id/task_data_count"
+            app:layout_constraintBottom_toBottomOf="@+id/task_data_count"
+            />
+
+
     </android.support.constraint.ConstraintLayout>
 </layout>
