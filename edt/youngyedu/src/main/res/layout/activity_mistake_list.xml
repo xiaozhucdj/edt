@@ -181,6 +181,54 @@
                     android:layout_height="2px"
                     android:background="@color/black" />
 
+
+                <!-- 左右 批改结果 -->
+                <RelativeLayout
+                    android:id="@+id/rl_other_check_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_result"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="30px"
+                        android:layout_marginRight="30px"
+                        android:text="批改结果"
+                        android:textColor="@color/black"
+                        android:textSize="24sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_last_people"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/tv_result"
+                        android:onClick="@{myOnClick}"
+                        android:src="@drawable/img_timu_last_black" />
+
+                    <ImageView
+                        android:id="@+id/iv_next_people"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/tv_result"
+                        android:onClick="@{myOnClick}"
+                        android:src="@drawable/img_timu_next_black" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2px"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/black" />
+
+                </RelativeLayout>
+
+
+                <!--来源于 -  分数-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -191,26 +239,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="10px"
                         android:layout_marginLeft="20px"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10px"
                         android:layout_weight="3"
                         android:text="来源于：%s"
                         android:textColor="@color/black"
                         android:textSize="24sp" />
 
-                    <View
-                        android:layout_width="2px"
-                        android:layout_height="match_parent"
-                        android:background="@color/black" />
-
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="10px"
                         android:layout_marginLeft="20px"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10px"
                         android:layout_weight="2">
 
                         <TextView
@@ -241,13 +284,9 @@
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2px"
-                    android:background="@color/black" />
-
             </LinearLayout>
 
+            <!-- 中间显示作业区域 内容，批注，选项 。。。 -->
             <LinearLayout
                 android:id="@+id/question_layout"
                 android:layout_width="match_parent"
@@ -404,6 +443,7 @@
 
             </LinearLayout>
 
+            <!--选题列表-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rcv_all_homework_page"
                 android:layout_width="match_parent"

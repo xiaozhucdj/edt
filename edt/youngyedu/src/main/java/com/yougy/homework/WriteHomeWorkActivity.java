@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayerAdapterV2;
 import com.yougy.anwser.ContentDisplayerV2;
 import com.yougy.anwser.Content_new;
@@ -65,9 +66,10 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
-import com.yougy.message.attachment.ReceiveWorkAttachment;
+import com.yougy.message.attachment.CollectHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
@@ -294,15 +296,18 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 收作业消息
      */
     private void initReceiveHomeworkMsg() {
-        receiverMsg = message -> {
-            if (message.getAttachment() instanceof ReceiveWorkAttachment) {
-                ReceiveWorkAttachment receiveWorkAttachment = (ReceiveWorkAttachment) message.getAttachment();
-                LogUtils.d("examId = " + examId + "   receiveWorkAttachment.examId = " + receiveWorkAttachment.examId);
-                if (examId.equals(receiveWorkAttachment.examId)) {
-                    LogUtils.w("teacher receive homework , auto submit.");
-                    WriteHomeWorkActivity.this.autoSubmitHomeWork();
-                } else {
-                    LogUtils.w("current examId is not receive examId. not submit.");
+        receiverMsg = new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                if (message.getAttachment() instanceof CollectHomeworkAttachment) {
+                    CollectHomeworkAttachment collectHomeworkAttachment = (CollectHomeworkAttachment) message.getAttachment();
+                    LogUtils.d("examId = " + examId + "   collectHomeworkAttachment.examId = " + collectHomeworkAttachment.examId);
+                    if (examId.equals(collectHomeworkAttachment.examId)) {
+                        LogUtils.w("teacher receive homework , auto submit.");
+                        WriteHomeWorkActivity.this.autoSubmitHomeWork();
+                    } else {
+                        LogUtils.w("current examId is not receive examId. not submit.");
+                    }
                 }
             }
         };
@@ -1478,13 +1483,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setItemId(itemId);
 
                         //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
-                        if (isStudentCheck == 0) {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
-                        } else if (isStudentCheck == 1) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
-                        } else {
-                            homeWorkResultbean.setReplyCommentator(0);
-                        }
+//                        if (isStudentCheck == 0) {
+//                            homeWorkResultbean.setReplyCommentator(teacherId);
+//                        } else if (isStudentCheck == 1) {
+//                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+//                        } else {
+//                            homeWorkResultbean.setReplyCommentator(0);
+//                        }
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
                         homeWorkResultbean.setTxtContent(tmpJudgeAnswerList.size() > 0 ? tmpJudgeAnswerList : tmpCheckedAnswerList);
@@ -1508,13 +1513,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         homeWorkResultbean.setItemId(itemId);
                         homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
                         //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
-                        if (isStudentCheck == 0) {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
-                        } else if (isStudentCheck == 1) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
-                        } else {
-                            homeWorkResultbean.setReplyCommentator(0);
-                        }
+//                        if (isStudentCheck == 0) {
+//                            homeWorkResultbean.setReplyCommentator(teacherId);
+//                        } else if (isStudentCheck == 1) {
+//                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+//                        } else {
+//                            homeWorkResultbean.setReplyCommentator(0);
+//                        }
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
                     }
@@ -1601,24 +1606,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
                         //发送消息
                         if (teacherId != 0) {
-                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId), SessionTypeEnum.P2P, SpUtils.getAccountId(), SpUtils.getAccountName()
-                                    , teacherId, new RequestCallback<Void>() {
-
-                                        @Override
-                                        public void onSuccess(Void param) {
-                                            LogUtils.d("提交消息通知教师成功！");
-                                        }
-
-                                        @Override
-                                        public void onFailed(int code) {
-                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
-                                        }
-
-                                        @Override
-                                        public void onException(Throwable exception) {
-                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
-                                        }
-                                    });
+                            sendFinishMsgToTeacher();
                         }
                         mIsSubmit = true;
 
@@ -1660,6 +1648,74 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         } else {
                             ToastUtil.showCustomToast(getBaseContext(), "提交失败，请重试");
                         }
+                    }
+                });
+    }
+
+
+    //完成作业后发送消息给教师端
+    private void sendFinishMsgToTeacher() {
+
+        NetWorkManager.querySchoolTeamByStudentAndExam(SpUtils.getUserId() + "", examId)
+                .subscribe(new Action1<TeamBean>() {
+                    @Override
+                    public void call(TeamBean teamBean) {
+                        if (teamBean != null) {
+
+                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
+                                    , SessionTypeEnum.P2P
+                                    , SpUtils.getAccountId()
+                                    , SpUtils.getAccountName()
+                                    , teacherId
+                                    , teamBean.getTeamId()
+                                    , new RequestCallback<Void>() {
+
+                                        @Override
+                                        public void onSuccess(Void param) {
+                                            LogUtils.d("提交消息通知教师成功！");
+                                        }
+
+                                        @Override
+                                        public void onFailed(int code) {
+                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                        }
+
+                                        @Override
+                                        public void onException(Throwable exception) {
+                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                        }
+                                    });
+
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        //如果不是分组作业这里获取的话服务器返回400，
+                        YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
+                                , SessionTypeEnum.P2P
+                                , SpUtils.getAccountId()
+                                , SpUtils.getAccountName()
+                                , teacherId
+                                , 0
+                                , new RequestCallback<Void>() {
+
+                                    @Override
+                                    public void onSuccess(Void param) {
+                                        LogUtils.d("提交消息通知教师成功！");
+                                    }
+
+                                    @Override
+                                    public void onFailed(int code) {
+                                        LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                    }
+
+                                    @Override
+                                    public void onException(Throwable exception) {
+                                        LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                    }
+                                });
                     }
                 });
     }

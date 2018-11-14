@@ -23,6 +23,7 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.init.bean.Student;
 import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
@@ -182,8 +183,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"reviewComment"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
-            , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator);
-
+            , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator, @Field("replyCreator") long replyCreator);
 
     /**
      * 查询错题列表
@@ -486,7 +486,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
-            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator);
+            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator, @Field("originalReplyCommentator") String originalReplyCommentator);
 
     /**
      * 添加单个收藏夹
@@ -581,5 +581,12 @@ public interface ServerApi {
     @POST("classRoom")
     Observable<BaseResult<TaskSummary>> queryTasks(@Field("userId") int userId, @Field("page") int page);
 
+    /**
+     * 获取组信息
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"querySchoolTeamByStudentAndExam"})
+    Observable<BaseResult<TeamBean>> querySchoolTeamByStudentAndExam(@Field("studentId") String studentId, @Field("examId") String examId);
 
 }

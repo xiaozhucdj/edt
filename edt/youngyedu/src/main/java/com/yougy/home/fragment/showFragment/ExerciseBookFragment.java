@@ -130,8 +130,14 @@ public class ExerciseBookFragment extends BFragment {
                             holder.binding.statusTv.setText("计\n分");
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else {
-                            holder.binding.statusTv.setVisibility(View.GONE);
-                            holder.binding.textRateScore.setText("正确率：" + extraBean.getCorrectCount() + "/" + extraBean.getItemCount());
+                            if (isMutualEvaluation(homeworkSummary)){
+                                holder.binding.statusTv.setVisibility(View.GONE);
+                                holder.binding.textRateScore.setText("正确率：" + (extraBean.getAccuracy()*100) + "%");
+                            }
+                            else {
+                                holder.binding.statusTv.setVisibility(View.GONE);
+                                holder.binding.textRateScore.setText("正确率：" + extraBean.getCorrectCount() + "/" + extraBean.getItemCount());
+                            }
                         }
                         holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.VISIBLE);
@@ -173,6 +179,12 @@ public class ExerciseBookFragment extends BFragment {
                                 intent.putExtra("getExamTotalPoints", holder.getData().getExtra().getExamTotalPoints());
                             }
                             intent.putExtra("getItemCount", holder.getData().getExtra().getItemCount());
+                            //isStudentCheck  0   默认不传  1 自评   2 互评
+                            if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())) {
+                                intent.putExtra("isStudentCheck", 1);
+                            } else if (isMutualEvaluation(homeworkSummary))  {
+                                intent.putExtra("isStudentCheck", 2);
+                            }
                             startActivity(intent);
                         }
 //                        else if (IHCODE_51.equals(holder.getData().getExtra().getStatusCode())){
@@ -183,14 +195,18 @@ public class ExerciseBookFragment extends BFragment {
                         if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())){
                             intent = new Intent(getActivity(), CheckHomeWorkActivity.class);
                             intent.putExtra("isStudentCheck", 1);
-                            intent.putExtra("examId", homeworkSummary.getExam());
+                            intent.putExtra("examId", homeworkSummary.getExtra().getExam());
+                            intent.putExtra("teamId", homeworkSummary.getExtra().getTeam());
+                            intent.putExtra("replyCreator", homeworkSummary.getExtra().getReplyCreator());
                             intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                             startActivity(intent);
                         }
                         else if (isMutualEvaluation(homeworkSummary)) {
                             intent = new Intent(getActivity(), CheckHomeWorkActivity.class);
                             intent.putExtra("isStudentCheck", 2);
-                            intent.putExtra("examId", homeworkSummary.getExam());
+                            intent.putExtra("examId", homeworkSummary.getExtra().getExam());
+                            intent.putExtra("teamId", homeworkSummary.getExtra().getTeam());
+                            intent.putExtra("replyCreator", homeworkSummary.getExtra().getReplyCreator());
                             intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                             startActivity(intent);
                         } else {
@@ -448,9 +464,9 @@ public class ExerciseBookFragment extends BFragment {
             } else {
                 binding.timeTv.setVisibility(View.GONE);
             }
-            if (!TextUtils.isEmpty(data.getExtra().getTeam())){
+            if (!TextUtils.isEmpty(data.getExtra().getTeamName())){
                 binding.groupNameTv.setVisibility(View.VISIBLE);
-                binding.groupNameTv.setText("组名 : " + data.getExtra().getTeam());
+                binding.groupNameTv.setText("组名 : " + data.getExtra().getTeamName());
             }
             else {
                 binding.groupNameTv.setVisibility(View.GONE);

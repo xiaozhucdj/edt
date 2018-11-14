@@ -56,7 +56,6 @@ import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.common.utils.StringUtils;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.attachment.CustomAttachParser;
@@ -65,7 +64,7 @@ import com.yougy.message.attachment.HomeworkRemindAttachment;
 import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
-import com.yougy.message.attachment.ReceiveWorkAttachment;
+import com.yougy.message.attachment.CollectHomeworkAttachment;
 import com.yougy.message.attachment.ReplyAttachment;
 import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
@@ -166,7 +165,7 @@ public class YXClient {
                             || newMessage.getAttachment() instanceof RetryAskQuestionAttachment
                             || newMessage.getAttachment() instanceof NeedRefreshHomeworkAttachment
                             || newMessage.getAttachment() instanceof SeatWorkAttachment
-                            || newMessage.getAttachment() instanceof ReceiveWorkAttachment
+                            || newMessage.getAttachment() instanceof CollectHomeworkAttachment
                             ) {
                         //在onCommandCustomMsgListener中收到的信息不会在onNewMessageListener中收到
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
@@ -1045,15 +1044,15 @@ public class YXClient {
      * @return
      */
     public IMMessage sendSubmitHomeworkMsg(int examId, SessionTypeEnum typeEnum
-            , int studentId, String studentName, int teacherId,  RequestCallback<Void> requestCallback) {
+            , int studentId, String studentName, int teacherId,  int subGroupId , RequestCallback<Void> requestCallback) {
         LogUtils.d("homeworkTeacherIds teacherId = " + teacherId);
         final IMMessage message;
         switch (typeEnum) {
             case P2P:
-                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.P2P, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId));
+                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.P2P, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId , subGroupId));
                 break;
             case Team:
-                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId));
+                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId , subGroupId));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);

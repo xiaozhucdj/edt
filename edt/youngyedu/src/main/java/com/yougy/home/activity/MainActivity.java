@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -479,8 +480,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_msg:
-                LogUtils.e(getClass().getName(), "我的消息");
-                gotoMyMessage();
+                changeSystemConfigIntegerValue(getApplicationContext() , "close_wifi_delay" , -1);
+//                LogUtils.e(getClass().getName(), "我的消息");
+//                gotoMyMessage();
                 break;
             case R.id.btn_account:
                 LogUtils.i("账号设置");
@@ -518,6 +520,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 UIUtils.showToastSafe("W--"+UIUtils.getScreenWidth() +"H--"+UIUtils.getScreenHeight());
             default:
                 break;
+        }
+    }
+
+    public static boolean changeSystemConfigIntegerValue(Context context, String dataKey, int value) {
+        try {
+            return Settings.System.putInt(context.getContentResolver(), dataKey, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

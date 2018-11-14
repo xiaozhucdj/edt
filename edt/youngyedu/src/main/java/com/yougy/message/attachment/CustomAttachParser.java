@@ -78,7 +78,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
                     attachment = new SeatWorkAttachment(clue , version);
                     break;
                 case CLUE_END_SEATWORK:
-                    attachment = new ReceiveWorkAttachment(clue, version);
+                    attachment = new CollectHomeworkAttachment(clue, version);
                     break;
                 case CLUE_SUBMITE_HOMEWORK:
                     attachment = new SubmitHomeworkAttachment(clue, version);
