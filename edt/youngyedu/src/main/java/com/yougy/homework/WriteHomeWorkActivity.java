@@ -1616,7 +1616,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                     .subscribe(new Action1<Object>() {
                                         @Override
                                         public void call(Object o) {
-                                            onBackPressed();
+
                                         }
                                     }, new Action1<Throwable>() {
                                         @Override
@@ -1626,6 +1626,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                                         }
                                     });
                         }
+                        onBackPressed();
 
                     }
                 }, new Action1<Throwable>() {
