@@ -35,7 +35,6 @@ import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
-import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.order.LockerActivity;
 import com.yougy.ui.activity.BuildConfig;
@@ -102,6 +101,7 @@ public class YoungyApplicationManager extends LitePalApplication {
     private long lastReceiverTime;
     private String lastExamId;//上次收到作业的时间，主要解决待机重启后，短时间内收到多条相同布置的作业的消息的过滤判断
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -115,7 +115,7 @@ public class YoungyApplicationManager extends LitePalApplication {
         if (inMainProcess(this)) {
             //申请wakeLock,保证不进入睡眠
             android.os.PowerManager powerManager = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
-            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK, "leke");
+            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK, "leke:myWakeLock");
             wakeLock.acquire();
 
             //       watcher = LeakCanary.install(this);
@@ -214,31 +214,42 @@ public class YoungyApplicationManager extends LitePalApplication {
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment) {
                         lastAnsMsg = "服务器发送结果：" + "接收时间" + DateUtils.getTimeString() + "消息内容" + message.getAttachment().toString();
-                        Calendar now = Calendar.getInstance();
-                        Calendar messageTime = Calendar.getInstance();
-                        messageTime.setTime(new Date(message.getTime()));
-                        if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
-                            int examId = ((AskQuestionAttachment) message.getAttachment()).examID;
-                            if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
-                                @Override
-                                public boolean isMatchCondition(Integer nodeInList) {
-                                    return nodeInList.intValue() == examId;
+                        getMainThreadHandler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Calendar now = Calendar.getInstance();
+                                Calendar messageTime = Calendar.getInstance();
+                                messageTime.setTime(new Date(message.getTime()));
+                                if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+                                        && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
+                                    int examId = ((AskQuestionAttachment) message.getAttachment()).examID;
+                                    if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
+                                        @Override
+                                        public boolean isMatchCondition(Integer nodeInList) {
+                                            return nodeInList.intValue() == examId;
+                                        }
+                                    })) {
+                                        Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
+                                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                                        newIntent.putExtra("from", ((AskQuestionAttachment) message.getAttachment()).from);
+                                        newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
+                                        startActivity(newIntent);
+                                        AnsweringActivity.handledExamIdList.add(examId);
+                                    }
                                 }
-                            })) {
-                                LogUtils.e("FHHHHH------------3");
-                                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
-                                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
-                                newIntent.putExtra("from", ((AskQuestionAttachment) message.getAttachment()).from);
-                                newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
-                                startActivity(newIntent);
-                                AnsweringActivity.handledExamIdList.add(examId);
-                            } else {
-                                LogUtils.e("FHHHHH------------4");
                             }
+                        } , 1000);
+                    }
+                    else if (message.getAttachment() instanceof EndQuestionAttachment) {
+                        if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
+                            @Override
+                            public boolean isMatchCondition(Integer nodeInList) {
+                                return nodeInList.intValue() == ((EndQuestionAttachment) message.getAttachment()).examID;
+                            }
+                        })){
+                            AnsweringActivity.handledExamIdList.add(((EndQuestionAttachment) message.getAttachment()).examID);
                         }
-                    } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         rxBus.send(message);
                     } else if (message.getAttachment() instanceof OverallLockAttachment) {
                         //TODO 全局锁屏
@@ -259,34 +270,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
                             EventBus.getDefault().post(baseEvent);
                         }
-                    } else if (message.getAttachment() instanceof RetryAskQuestionAttachment) {
-                        lastAnsMsg = "教师重发问答结果：" + "接收时间" + DateUtils.getTimeString() + "消息内容" + message.getAttachment().toString();
-
-                        Calendar now = Calendar.getInstance();
-                        Calendar messageTime = Calendar.getInstance();
-                        messageTime.setTime(new Date(message.getTime()));
-                        if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
-                            int examId = ((RetryAskQuestionAttachment) message.getAttachment()).examId;
-                            if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
-                                @Override
-                                public boolean isMatchCondition(Integer nodeInList) {
-                                    return nodeInList.intValue() == examId;
-                                }
-                            })) {
-                                LogUtils.e("FHHHHH------------1");
-                                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
-                                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
-                                newIntent.putExtra("from", ((RetryAskQuestionAttachment) message.getAttachment()).userId + "");
-                                newIntent.putExtra("examId", examId);
-                                startActivity(newIntent);
-                                AnsweringActivity.handledExamIdList.add(examId);
-                            } else {
-                                LogUtils.e("FHHHHH------------2");
-                            }
-                        }
-                    } else if (message.getAttachment() instanceof SeatWorkAttachment) {
+                    }  else if (message.getAttachment() instanceof SeatWorkAttachment) {
                         //判断是否在写作业界面
                         SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
                         if (BaseActivity.getForegroundActivity() instanceof WriteHomeWorkActivity) {
@@ -522,4 +506,6 @@ public class YoungyApplicationManager extends LitePalApplication {
         }
         return false;
     }
+
+
 }

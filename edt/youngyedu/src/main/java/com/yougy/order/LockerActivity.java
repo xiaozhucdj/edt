@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.netease.nimlib.sdk.RequestCallback;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -14,6 +15,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
 import com.yougy.message.YXClient;
@@ -123,14 +125,24 @@ public class LockerActivity extends BaseActivity {
             jumpTonet();
             return;
         }
-        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this, new RequestCallback() {
             @Override
-            public void run() {
+            public void onSuccess(Object param) {
                 if (!SpUtils.getOrder().contains(DateUtils.getCalendarString())){
                     SpUtils.setOrder(NO_LOCK_SCREEN);
                     BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
                     onEventMainThread(baseEvent);
                 }
+            }
+
+            @Override
+            public void onFailed(int code) {
+                ToastUtil.showCustomToast(getApplicationContext() , "连接消息服务器失败!");
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
             }
         });
     }

@@ -41,9 +41,7 @@ import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.home.fragment.showFragment.ExerciseBookFragment;
 import com.yougy.homework.WriteHomeWorkActivity;
-import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.MyEdittext;
@@ -110,7 +108,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     @Override
     protected void onStart() {
         super.onStart();
-        YXClient.checkNetAndRefreshLogin(this , null);
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this , null);
     }
 
     @Override
@@ -243,9 +241,9 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     private void send(){
         binding.bottomBarLayout.setPadding(0 , 0 , 0, 0);
         binding.messageEdittext.clearFocus();
-        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this, new RequestCallback() {
             @Override
-            public void run() {
+            public void onSuccess(Object param) {
                 if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")){
                     YXClient.getInstance().sendTestMessage(id, type, "109010001", "2", new ArrayList<String>(){{
                         add("1420");
@@ -277,6 +275,16 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     adapter.notifyDataSetChanged();
                     scrollToBottom(200);
                 }
+            }
+
+            @Override
+            public void onFailed(int code) {
+                ToastUtil.showCustomToast(getApplicationContext() , "连接消息服务器失败!");
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
             }
         });
     }

@@ -29,7 +29,6 @@ public class CustomAttachParser implements MsgAttachmentParser {
     final static String CLUE_NOTIFY_PAD_FOR_INTERLOCUTION = "notifyPadForInterlocution";
     final static String CLUE_OVERALLLOCK = "overallLock";
     final static String CLUE_OVERALLUNLOCK = "overallUnlock";
-    final static String CLUE_RETRY_ASK_QUESTION = "retryAskQuestion";
     final static String CLUE_SEND_REPLY = "sendReply";
     final static String CLUE_HOMEWORK_REMIND = "remindDoHomework";
     final static String CLUE_NEED_REFRESH_HOMEWORK = "needRefreshHomework";
@@ -64,9 +63,6 @@ public class CustomAttachParser implements MsgAttachmentParser {
                     break;
                 case CLUE_OVERALLUNLOCK:
                     attachment = new OverallUnlockAttachment(clue , version);
-                    break;
-                case CLUE_RETRY_ASK_QUESTION:
-                    attachment = new RetryAskQuestionAttachment(clue , version);
                     break;
                 case CLUE_HOMEWORK_REMIND:
                     attachment = new HomeworkRemindAttachment(clue , version);
