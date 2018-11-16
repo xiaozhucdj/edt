@@ -17,7 +17,7 @@ public class FileUtils {
     public static final String TEXT_BOOK = "text_book";
     public static final String TEXT_BOOK_ICON = "text_book_icon";
     public static final String TEXT_BOOK_PROBATION = "text_book_probation";
-
+    public static String mAnsweringFileAbsPath = FileUtils.getAppFilesDir();
 
     /**
      * 判断是否有存储卡，有返回TRUE，否则FALSE

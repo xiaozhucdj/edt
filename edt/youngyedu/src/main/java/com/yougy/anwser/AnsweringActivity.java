@@ -64,8 +64,11 @@ import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +91,9 @@ import static com.yougy.common.eventbus.EventBusConstant.EVENT_LOCKER_ACTIVITY_P
  */
 
 public class AnsweringActivity extends AnswerBaseActivity {
+
+
+    public RandomAccessFile mFile;
     public static ArrayList<Integer> handledExamIdList = new ArrayList<Integer>();
     ActivityAnsweringBinding binding;
     private NoteBookView2 mNbvAnswerBoard;
@@ -145,6 +151,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     public void init() {
+        initFileLog();
+        setLogMsg("init 初始化 start");
         LogUtils.e("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
 //        itemId = "2499";//填空
@@ -177,6 +185,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
+        setLogMsg("init 初始化 参数" + "itemId ==" + itemId + "fromUserId ==" + fromUserId + "examId ==" + examId);
     }
 
     @Override
@@ -229,9 +238,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     public void call(List<ParsedQuestionItem> parsedQuestionItems) {
                         if (parsedQuestionItems != null && parsedQuestionItems.size() > 0) {
                             questionItem = parsedQuestionItems.get(0);
-
+                            setLogMsg("queryQuestionItemList...获取到的题目为空,开始问答失败");
                             fillData();
                         } else {
+
+                            setLogMsg("queryQuestionItemList...获取到的题目为空,开始问答失败");
+                            saveAnsweringLog();
                             ToastUtil.showCustomToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
                             LogUtils.e("FH", "获取到的题目为空,开始问答失败");
                             myFinish();
@@ -1318,5 +1330,32 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_PUASE, "");
         EventBus.getDefault().post(baseEvent);
+    }
+
+
+    StringBuilder mBuilder;
+
+    private void initFileLog() {
+        try {
+            mFile = new RandomAccessFile(FileUtils.mAnsweringFileAbsPath + "answerLog" + ".txt", "rw");
+            mBuilder = new StringBuilder();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setLogMsg(String msg) {
+        mBuilder.append(DateUtils.getCalendarAndTimeString()) ;
+        mBuilder.append(msg);
+        mBuilder.append("\r\n");
+
+    }
+
+    private  void  saveAnsweringLog(){
+        try {
+            mFile.write(mBuilder.toString().getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
