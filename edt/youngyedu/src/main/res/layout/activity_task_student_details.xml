@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/task_student_details"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include
+        android:id="@+id/top_title_layout"
+        layout="@layout/top_title_bar"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/task_tab"/>
+
+    <View
+        android:id="@+id/view_line2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/y2"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/top_title_layout"/>
+
+    <LinearLayout
+        android:id="@+id/task_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/y60"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/view_line2"
+        app:layout_constraintBottom_toTopOf="@id/view_line1">
+
+        <TextView
+            android:id="@+id/tab_content"
+            style="@style/Text24pxBlackWidth0Style"
+            android:text="@string/str_task_content"
+            android:textSize="@dimen/x24"/>
+
+        <TextView
+            android:id="@+id/tab_materials"
+            style="@style/Text24pxBlackWidth0Style"
+            android:text="@string/str_task_materials"
+            android:textSize="@dimen/x24"/>
+
+        <TextView
+            android:id="@+id/tab_practice"
+            style="@style/Text24pxBlackWidth0Style"
+            android:text="@string/str_task_practice"
+            android:textSize="@dimen/x24"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_line1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/y1"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/task_tab"
+        app:layout_constraintBottom_toTopOf="@id/task_content"/>
+
+    <FrameLayout
+        android:id="@+id/task_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/y1155"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_line1"/>
+
+    <TextView
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/y70"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/x32"
+        android:text="我已完成任务"
+        android:gravity="center"
+        android:background="@drawable/bmp_bg_green"
+        app:layout_constraintBottom_toTopOf="parent"/>
+
+    <FrameLayout
+        android:id="@+id/frame_signature"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</android.support.constraint.ConstraintLayout>
