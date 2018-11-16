@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
@@ -28,6 +29,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.message.GlideCircleTransform;
 import com.yougy.message.ListUtil;
@@ -86,7 +88,7 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
     @Override
     protected void onStart() {
         super.onStart();
-        YXClient.checkNetAndRefreshLogin(this , null);
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this , null);
     }
 
     @Override
@@ -213,9 +215,9 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
     private void send(){
         binding.bottomBarLayout.setPadding(0 , 0 , 0, 0);
         binding.messageEdittext.clearFocus();
-        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this, new RequestCallback() {
             @Override
-            public void run() {
+            public void onSuccess(Object param) {
                 String msg = binding.messageEdittext.getText().toString().trim();
                 final IMMessage fakeMessage = MessageBuilder.createTextMessage("" , SessionTypeEnum.None , msg);
                 ArrayList<IMMessage> tempMessageList = YXClient.getInstance().sendTextMessage(idList , msg , MultiChattingActivity.this);
@@ -240,6 +242,16 @@ public class MultiChattingActivity extends MessageBaseActivity implements YXClie
                     binding.messageEdittext.setText("");
                     scrollToBottom(200);
                 }
+            }
+
+            @Override
+            public void onFailed(int code) {
+                ToastUtil.showCustomToast(getApplicationContext() , "连接消息服务器失败!");
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
             }
         });
     }
