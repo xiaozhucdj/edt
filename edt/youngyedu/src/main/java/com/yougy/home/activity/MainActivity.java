@@ -176,6 +176,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void init() {
+        mIsCheckStartNet = false;
         setPressTwiceToExit(true);
         YXClient.getInstance().with(this).addOnRecentContactListChangeListener(new YXClient.OnThingsChangedListener<List<RecentContact>>() {
             @Override
@@ -1000,8 +1001,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
 
+        if (!NetUtils.isNetConnected()) {
+            if (NetUtils.isNetAvailable()) {
+                NetManager.getInstance().changeWiFi(this, true);
+            }
+        }
 
-        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
+//        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
 
 
 

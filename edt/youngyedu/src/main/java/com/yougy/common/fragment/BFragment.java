@@ -388,6 +388,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         mDownDialog.show();
         mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
         mDownDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+        mDownDialog.runConfirmClick();
     }
 
     /**

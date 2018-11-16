@@ -114,16 +114,9 @@ public class NetManager {
             String action = intent.getAction();
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
-                LogUtils.e("yuaye...net..isConnected. com.youngy.ui2."+isConnected);
                 if (isConnected) {//当前是已连接状态的时，若网络Dialog打开则关闭
                     DialogManager.newInstance().dissMissUiPromptDialog();
-                    if (SpUtils.getUserId() > 0 && isNetOutage) {
-                        YXClient.checkNetAndRefreshLogin(null, null);
-                    }
-                    isNetOutage = false;
-                } else {
-                    isNetOutage = true;
-                    YoungyApplicationManager.end_net =  YoungyApplicationManager.end_net+":"+DateUtils.getTimeHHMMString() ;
+                }else{
                     NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
                     YoungyApplicationManager.getMainThreadHandler().removeCallbacks(netRetryConnRunnable);
                     YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 30000);

@@ -34,7 +34,7 @@ public class NetUtils {
 
 
     /** 判断是否有可用的网络 */
-    public boolean isNetAvailable() {
+    public static boolean isNetAvailable() {
         ConnectivityManager mgr = getConnManager();
         NetworkInfo[] info = mgr.getAllNetworkInfo();
         if (info != null) {

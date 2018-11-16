@@ -14,6 +14,7 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.manager.DialogManager;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.ThreadManager;
@@ -52,11 +53,16 @@ public class LocalLockActivity extends BaseActivity {
     static public final String NOT_GOTO_HOMEPAGE_ON_ENTER = "not_goto_homepage";
     ActivityLocalLockBinding binding;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DialogManager.newInstance().dissMissUiPromptDialog();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mIsCheckStartNet = false ;
     }
 
     @Override

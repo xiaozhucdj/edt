@@ -292,6 +292,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             mProReadDialog.show();
             mProReadDialog.getBtnConfirm().setVisibility(View.VISIBLE);
             mProReadDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+            mProReadDialog.runConfirmClick();
         } else {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
         }
