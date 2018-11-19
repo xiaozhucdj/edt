@@ -74,6 +74,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mIsCheckStartNet = false ;
         LitePal.getDatabase();
         subscription = new CompositeSubscription();
         tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();

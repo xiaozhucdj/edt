@@ -110,4 +110,7 @@ public class DownBookDialog extends BaseDialog implements View.OnClickListener {
         return mBtnConfirm;
     }
 
+    public void runConfirmClick(){
+        mBtnConfirm.callOnClick();
+    }
 }

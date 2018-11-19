@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
@@ -42,7 +43,6 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
@@ -65,7 +65,6 @@ import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
 import com.yougy.view.dialog.AppUpdateDialog;
-import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownProgressDialog;
 
 import java.io.File;
@@ -176,6 +175,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void init() {
+        mIsCheckStartNet = false;
         setPressTwiceToExit(true);
         YXClient.getInstance().with(this).addOnRecentContactListChangeListener(new YXClient.OnThingsChangedListener<List<RecentContact>>() {
             @Override
@@ -1000,8 +1000,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
 
+        if (!NetUtils.isNetConnected()) {
+            if (NetUtils.isNetAvailable()) {
+                NetManager.getInstance().changeWiFi(this, true);
+            }
+        }
 
-        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
+//        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
 
 
 
@@ -1018,9 +1023,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             });
         }
         initSysIcon();
-        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this, new RequestCallback() {
             @Override
-            public void run() {
+            public void onSuccess(Object param) {
                 new AsyncTask() {
                     @Override
                     protected Object doInBackground(Object[] params) {
@@ -1046,6 +1051,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         }
                     }
                 }.execute((Object[]) null);
+            }
+
+            @Override
+            public void onFailed(int code) {
+                ToastUtil.showCustomToast(getApplicationContext() , "连接消息服务器失败!");
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
             }
         });
 

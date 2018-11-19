@@ -117,9 +117,6 @@ public class NetManager {
                 LogUtils.e("yuaye...net..isConnected. com.youngy.ui2."+isConnected);
                 if (isConnected) {//当前是已连接状态的时，若网络Dialog打开则关闭
                     DialogManager.newInstance().dissMissUiPromptDialog();
-                    if (SpUtils.getUserId() > 0 && isNetOutage) {
-                        YXClient.checkNetAndRefreshLogin(null, null);
-                    }
                     isNetOutage = false;
                 } else {
                     isNetOutage = true;
