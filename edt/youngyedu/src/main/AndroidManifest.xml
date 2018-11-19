@@ -175,7 +175,7 @@
         <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" >
         </activity>
         <!--问答记录题目列表-->
-        <activity android:name="com.yougy.anwser.AnswerRecordListActivity" >
+        <activity android:name="com.yougy.anwser.AnswerRecordListDetailActivity" >
         </activity>
         <!--问答记录某次问答详情界面-->
         <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity">
