@@ -269,7 +269,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:background="@color/white"
-                android:padding="30px"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>

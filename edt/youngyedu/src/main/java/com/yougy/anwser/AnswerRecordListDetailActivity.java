@@ -1,6 +1,7 @@
 package com.yougy.anwser;
 
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -181,6 +182,25 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
                 }
             }
         });
+
+        binding.contentDisplayer.setStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
+            @Override
+            public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
+
+                switch (newStatus) {
+                    case LOADING:
+                        binding.contentDisplayer.setHintText("加载中");
+                        break;
+                    case ERROR:
+                        binding.contentDisplayer.setHintText(errorMsg);
+                        break;
+                    case SUCCESS:
+                        binding.contentDisplayer.setHintText(null);//设置为null该view会gone
+                        break;
+                }
+            }
+        });
+
         binding.questionBodyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,17 +337,17 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
                                         binding.statusHintTv.setVisibility(View.VISIBLE);
                                         binding.statusHintTv.setText("批改中");
                                         binding.buttomBtn.setVisibility(View.GONE);
+                                        binding.statusHintTv.setBackgroundResource(R.drawable.img_wenda);
                                     } else if ("IG04".equals(statusCode)) {
                                         binding.statusHintTv.setVisibility(View.VISIBLE);
                                         binding.buttomBtn.setVisibility(View.VISIBLE);
                                         binding.buttomIcon.setVisibility(View.VISIBLE);
                                         binding.statusHintTv.setText("已批改");
+                                        binding.statusHintTv.setBackgroundResource(R.drawable.img_bg_green);
+                                        binding.buttomBtn.setBackgroundResource(R.drawable.bmp_bg_green);
                                     }
                                     binding.buttomText.setVisibility(View.GONE);
-
-
                                 } else {
-
                                     //说明是未提交的问答
                                     binding.contentDisplayer.getContentAdapter().updateDataList("analysis", 0, parsedQuestionItem.analysisContentList);
                                     binding.contentDisplayer.getContentAdapter().updateDataList("question", 0, parsedQuestionItem.questionContentList);
@@ -342,7 +362,8 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
                                     binding.buttomIcon.setVisibility(View.GONE);
                                     binding.buttomText.setText("问答已结束");
                                     binding.buttomText.setVisibility(View.VISIBLE);
-
+                                    binding.statusHintTv.setBackgroundResource(R.drawable.img_wenda);
+                                    binding.buttomBtn.setBackgroundColor(Color.parseColor("#999999"));
                                 }
                                 binding.questionBodyBtn.performClick();
                             }
