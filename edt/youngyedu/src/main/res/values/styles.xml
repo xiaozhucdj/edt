@@ -58,4 +58,23 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
+    <style name="Text24pxBlackWidth0Style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@drawable/textcolor_black_write</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/x24</item>
+        <item name="android:background">@drawable/background_green_null</item>
+    </style>
+
+
+    <style name="xzfSpinnerStyle" parent="android:Widget.ListView.DropDown">
+        <!-- 分隔线颜色 -->
+        <item name="android:divider">#00ff00</item>
+        <item name="android:dividerHeight">1dp</item>
+        <!-- item按下效果 -->
+        <item name="android:listSelector">@drawable/bmp_bg_green</item>
+    </style>
 </resources>

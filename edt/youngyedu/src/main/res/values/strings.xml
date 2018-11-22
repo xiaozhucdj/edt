@@ -136,6 +136,23 @@
     <string name="load_error_tost">网络连接失败,刷新试试</string>
     <string name="student">学生</string>
 
+    <string name="str_task_content">任务内容</string>
+    <string name="str_task_materials">学习资料</string>
+    <string name="str_task_practice">任务练习</string>
+    <string name="str_task_signature">家长签字</string>
+    <string name="str_prev_student">上一个学生</string>
+    <string name="str_next_student">下一个学生</string>
+    <string name="str_task_materials_empty">该任务无学习资料</string>
+    <string name="str_task_practice_empty">该任务无任务练习</string>
+    <string name="str_select_practice">选择练习</string>
+    <string name="str_next_practice">下一个练习</string>
+    <string name="str_prev_practice">上一个练习</string>
+    <string name="unable_sign_temporary">家长暂时无法签字</string>
+    <string name="now_sign">现在签字</string>
+    <string name="temporary_no_sign">暂不签字</string>
+    <string name="is_finished_task">是否确认已经完成任务</string>
+    <string name="parent_sign">家长签字</string>
+
 
     <string-array name="titles">
         <item>课本</item>

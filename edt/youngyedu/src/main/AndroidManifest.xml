@@ -189,6 +189,9 @@
             android:screenOrientation="portrait" >
         </activity>
 
+        <activity android:name="com.yougy.task.TaskDetailStudentActivity"/>
+        <activity android:name="com.yougy.task.MaterialActivity"/>
+
 
         <service android:name="com.yougy.common.service.DownloadService" >
         </service>

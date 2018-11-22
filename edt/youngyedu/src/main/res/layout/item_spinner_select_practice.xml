@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/x60"
+    android:layout_height="@dimen/y60">
+
+    <ImageView
+        android:id="@+id/item_bg"
+        android:layout_width="@dimen/x60"
+        android:layout_height="@dimen/y60"
+        android:src="@drawable/background_circle_green_null"/>
+
+    <TextView
+        android:id="@+id/item_spinner_text"
+        android:layout_width="@dimen/x60"
+        android:layout_height="@dimen/y60"
+        android:textColor="@drawable/page_text_selector"
+        android:textSize="@dimen/x24"
+        android:gravity="center"
+        android:text="1">
+    </TextView>
+
+</android.support.constraint.ConstraintLayout>
+

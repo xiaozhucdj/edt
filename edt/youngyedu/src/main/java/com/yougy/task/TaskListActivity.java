@@ -1,5 +1,6 @@
 package com.yougy.task;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -189,9 +190,11 @@ public class TaskListActivity extends BaseActivity {
 
     private class TaskHolder extends RecyclerView.ViewHolder {
         TaskItemBinding binding;
+        View itemView;
 
         public TaskHolder(TaskItemBinding binding) {
             super(binding.getRoot());
+            itemView = binding.getRoot();
             this.binding = binding;
         }
 
@@ -201,6 +204,7 @@ public class TaskListActivity extends BaseActivity {
             binding.taskChapter.setText(task.getChapter());
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));
             binding.taskExerciseCount.setText(String.valueOf(task.getExerciseCount()));
+            itemView.setOnClickListener(v -> startActivity(new Intent(TaskListActivity.this, TaskDetailStudentActivity.class)));
         }
     }
 
