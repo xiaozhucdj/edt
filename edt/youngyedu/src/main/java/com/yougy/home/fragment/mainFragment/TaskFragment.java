@@ -48,7 +48,6 @@ public class TaskFragment extends BFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_task, container, false);
         initView();
-        loadData();
         return binding.getRoot();
     }
 
@@ -69,6 +68,12 @@ public class TaskFragment extends BFragment {
         } else {
             showCancelAndDetermineDialog(R.string.jump_to_net);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
     }
 
     private void freshUI(List<HomeworkBookSummary> beans) {
