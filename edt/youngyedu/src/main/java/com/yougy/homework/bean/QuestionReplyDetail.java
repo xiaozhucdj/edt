@@ -51,6 +51,15 @@ public class QuestionReplyDetail {
     private OriginQuestionItem replyItemContent;
     private Integer replyItemWeight;
     private MistakeSummary homeworkExcerpt;
+    private String replyExamName;
+
+    public String getReplyExamName() {
+        return replyExamName;
+    }
+
+    public void setReplyExamName(String replyExamName) {
+        this.replyExamName = replyExamName;
+    }
 
     private List<Content_new> parsedReplyContentList = new ArrayList<Content_new>();
     private List<Content_new> parsedReplyCommentList = new ArrayList<Content_new>();

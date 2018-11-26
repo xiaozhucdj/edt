@@ -1831,7 +1831,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     public void refreshLastAndNextQuestionBtns() {
 
         RefreshUtil.invalidate(llControlBottom);
-        titleTextview.setText(studentName + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
+        titleTextview.setText(questionReplyDetail.getReplyExamName() + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
 
         if (currentShowQuestionIndex > 0) {
 //            lastHomeworkBtn.setBackgroundResource(R.drawable.bmp_bg_blue);
