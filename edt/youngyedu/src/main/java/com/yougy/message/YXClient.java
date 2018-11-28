@@ -281,7 +281,7 @@ public class YXClient {
         @Override
         public void onEvent(StatusCode statusCode) {
             currentOnlineStatus = statusCode;
-            LogUtils.e("QQQQQ" , "观察到在线状态变化 : " + statusCode);
+            LogUtils.e("YUANYE 观察到在线状态变化 ."+statusCode);
             LogUtils.e("FH", "onlineStatus 变更: " + statusCode);
 //            if (statusCode == StatusCode.PWD_ERROR) {
 //                if (!TextUtils.isEmpty(currentAccount)){
