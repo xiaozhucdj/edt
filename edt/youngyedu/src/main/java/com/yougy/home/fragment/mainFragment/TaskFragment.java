@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,18 +21,14 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.homework.PageableRecyclerView;
 import com.yougy.homework.bean.HomeworkBookSummary;
-import com.yougy.task.Task;
+import com.yougy.task.bean.Task;
 import com.yougy.task.TaskListActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.AdapterFragmentHomeworkBinding;
 import com.yougy.ui.activity.databinding.FragmentTaskBinding;
 
-import org.litepal.util.LogUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.functions.Action1;
 
 public class TaskFragment extends BFragment {
 
@@ -41,7 +36,8 @@ public class TaskFragment extends BFragment {
     private FragmentTaskBinding binding;
     private PageableRecyclerView.Adapter<TaskHolder> adapter;
 
-    private List<Task> tasks = new ArrayList<>();
+    //    private List<Task> tasks = new ArrayList<>();
+    private List<HomeworkBookSummary> bookList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -78,11 +74,12 @@ public class TaskFragment extends BFragment {
 
     private void freshUI(List<HomeworkBookSummary> beans) {
         if (beans != null && beans.size() > 0) {
-            for (HomeworkBookSummary bean : beans) {
-                Task task = new Task();
-                task.setTaskName(bean.getHomeworkFitSubjectName());
-                tasks.add(task);
-            }
+//            for (HomeworkBookSummary bean : beans) {
+//                Task task = new Task();
+//                task.setTaskName(bean.getHomeworkFitSubjectName());
+//                tasks.add(task);
+//            }
+            bookList = beans;
             binding.pageableRecycler.notifyDataSetChanged();
             binding.resultEmpty.setVisibility(View.GONE);
         } else {
@@ -105,12 +102,12 @@ public class TaskFragment extends BFragment {
 
             @Override
             public void onBindViewHolder(TaskHolder holder, int position) {
-                holder.setData(tasks.get(position));
+                holder.setData(bookList.get(position));
             }
 
             @Override
             public int getItemCount() {
-                return tasks.size();
+                return bookList.size();
             }
         });
     }
@@ -125,9 +122,14 @@ public class TaskFragment extends BFragment {
             this.binding = binding;
         }
 
-        public void setData(Task task) {
-            binding.tvMyTitle.setText(task.getTaskName());
-            binding.getRoot().setOnClickListener(v -> context.startActivity(new Intent(context, TaskListActivity.class)));
+        public void setData(HomeworkBookSummary book) {
+            binding.tvMyTitle.setText(book.getHomeworkFitSubjectName());
+            binding.getRoot().setOnClickListener(v -> {
+                Intent intent = new Intent(context, TaskListActivity.class);
+                intent.putExtra("contentBookLink",book.getCourseBookId());
+                intent.putExtra("courseBookTitle",book.getCourseBookTitle());
+                context.startActivity(intent);
+            });
         }
 
     }

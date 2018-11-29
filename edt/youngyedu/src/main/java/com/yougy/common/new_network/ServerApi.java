@@ -39,7 +39,8 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
-import com.yougy.task.TaskSummary;
+import com.yougy.task.bean.Task;
+import com.yougy.task.bean.TaskSummary;
 
 import java.util.List;
 
@@ -579,7 +580,8 @@ public interface ServerApi {
 
     @FormUrlEncoded
     @POST("classRoom")
-    Observable<BaseResult<TaskSummary>> queryTasks(@Field("userId") int userId, @Field("page") int page);
+    @DefaultField(keys = {"m"}, values = {"queryTaskContent"})
+    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentCourseLink") int contentCourseLink, @Field("pn") int pn, @Field("ps") int ps);
 
     /**
      * 获取组信息

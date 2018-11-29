@@ -152,7 +152,7 @@
     <string name="temporary_no_sign">暂不签字</string>
     <string name="is_finished_task">是否确认已经完成任务</string>
     <string name="parent_sign">家长签字</string>
-
+    <string name="task_complete_time">完成时间：%1$s~%2$s</string>
 
     <string-array name="titles">
         <item>课本</item>

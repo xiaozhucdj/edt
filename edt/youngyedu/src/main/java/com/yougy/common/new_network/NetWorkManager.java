@@ -50,7 +50,8 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
-import com.yougy.task.TaskSummary;
+import com.yougy.task.bean.Task;
+import com.yougy.task.bean.TaskSummary;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -653,10 +654,10 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<TaskSummary> queryTasks(int userId,int page){
-        return getInstance().getServerApi().queryTasks(userId,page)
+    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentCourseLink, int pn, int ps){
+        return getInstance().getServerApi().queryTasks(homeworkId,contentCourseLink,pn,ps)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
     }
 
     public static Observable<TeamBean> querySchoolTeamByStudentAndExam(String studentId, String examId) {
