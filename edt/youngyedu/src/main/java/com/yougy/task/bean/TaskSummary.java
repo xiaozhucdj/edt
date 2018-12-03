@@ -1,11 +1,14 @@
-package com.yougy.task;
+package com.yougy.task.bean;
+
+import com.google.gson.annotations.SerializedName;
+import com.yougy.common.model.BaseData;
 
 import java.util.List;
 
-public class TaskSummary {
-
+public class TaskSummary extends BaseData {
+    @SerializedName("count")
     private int taskCount;
-
+    @SerializedName("data")
     private List<Task> tasks;
 
     public int getTaskCount() {
