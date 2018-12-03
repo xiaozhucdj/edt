@@ -242,7 +242,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     private void refreshCircleProgressBar() {
         if (isScoring) {
             binding.textScoreTitle.setText("分数");
-            if (examTotalPoints == 0){
+            if (examTotalPoints <= 0){
                 binding.circleProgressBar.setProgress(0);
             }
             else {
