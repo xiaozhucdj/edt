@@ -517,9 +517,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
             }
         });
-
-
-        imageRefresh.setOnClickListener(v -> loadData());
     }
 
 
@@ -701,7 +698,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (examPaperContentList != null && examPaperContentList.size() > 0) {
 
             isFirstComeInHomeWork = true;
-            homeWorkPageNumAdapter.onItemClickListener.onItemClick1(0);
+            homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
 
         }
 
@@ -983,7 +980,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private static long lastClickTime;
 
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
-            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title})
+            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title,R.id.image_refresh})
     public void onClick(View view) {
 
         long time = System.currentTimeMillis();
@@ -1212,6 +1209,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     judgeAnswerList.set(0, "false");
                 }
                 break;
+
+            case R.id.image_refresh:
+                saveLastHomeWorkData(showHomeWorkPosition, false);
+                loadData();
+                break;
         }
     }
 
@@ -1323,6 +1325,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 得到之前保存的数据，用于回显
      */
     private void getShowHomeWorkData(int position) {
+
+        bytesList.clear();
+        cgBytes.clear();
+        pathList.clear();
+        checkedAnswerList.clear();
+        judgeAnswerList.clear();
 
         //回显之前存储在sp中的手写笔记数据（如果有）
 
