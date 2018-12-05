@@ -147,6 +147,9 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                         replyList.clear();
                         replyList.addAll(replySummaries);
                         scoreList.clear();
+                        //scoreList的结构是:不同的人对一份作业的批改分数的列表再组成一个列表
+                        //批改分数列表的首个元素是批改者的id.
+                        //形如于{{批改者id1 , 题1批改结果1,题2批改结果1...} , {批改者id2 , 题1批改结果2,题2批改结果2...} ...}
                         for (int i = 0; i < replyList.size(); i++) {
                             QuestionReplySummary replySummary = replyList.get(i);
                             for (int j = 0 , k = 0; j < replySummary.getReplyCommented().size(); j++ , k++) {
@@ -156,24 +159,41 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                                     if (j + 1 > scoreList.size()){
                                         scoreList.add(new ArrayList<Integer>(){
                                             {
+                                                //这里在新建一个批改者对这份作业的批改列表,首元素设为批改者id
                                                 add(replyCommentedBean.getReplyCommentator());
                                             }
                                         });
                                     }
                                 }
                                 ArrayList<Integer> list = scoreList.get(k);
+                                //由于会存在有的人没有批完整份作业,导致有的题目批改结果为-1,这种直接这个人对这份作业的批改列表的position=1的元素设为null
                                 if (replyCommentedBean.getReplyScore() == -1){
                                     list.add(1 , null);
                                 }
                                 else {
                                     list.add(replyCommentedBean.getReplyScore());
                                 }
+                                //到最后一道题的时候检查一下,如果position=1的元素为null,说明这个人没有批完整个作业,他的批改直接作废,从scoreList里拿掉
                                 if (i + 1 == replyList.size()){
                                     if (list.get(1) == null){
                                         scoreList.remove(list);
                                         k--;
                                     }
                                 }
+                            }
+                        }
+                        //如果互评的作业学生没有批,老师批了,就在这里把外层老师批改的结果作为结果.
+                        if (scoreList.size() == 0){
+                            for (int i = 0; i < replyList.size(); i++) {
+                                QuestionReplySummary replySummary = replyList.get(i);
+                                if (i == 0){
+                                    scoreList.add(new ArrayList<Integer>(){
+                                        {
+                                            add(replySummary.getReplyCommentator());
+                                        }
+                                    });
+                                }
+                                scoreList.get(0).add(replySummary.getReplyScore());
                             }
                         }
                         refreshCommentChooseBar();
@@ -222,7 +242,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         if (currentSelectCommentIndex + 1 > scoreList.size()){
             currentSelectCommentIndex = scoreList.size() - 1;
         }
-        if (currentSelectCommentIndex == 0){
+        if (currentSelectCommentIndex <= 0){
             binding.lastCommentBtn.setEnabled(false);
         }
         else {
@@ -234,7 +254,12 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         else {
             binding.nextCommentBtn.setEnabled(true);
         }
-        binding.commentNameTextview.setText("批改结果" + (currentSelectCommentIndex + 1));
+        if (scoreList.size() == 0){
+            binding.commentNameTextview.setText("无批改结果");
+        }
+        else {
+            binding.commentNameTextview.setText("批改结果" + (currentSelectCommentIndex + 1));
+        }
     }
     /**
      * 更新圆形进度条的文字
@@ -242,7 +267,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     private void refreshCircleProgressBar() {
         if (isScoring) {
             binding.textScoreTitle.setText("分数");
-            if (examTotalPoints == 0){
+            if (examTotalPoints <= 0){
                 binding.circleProgressBar.setProgress(0);
             }
             else {

@@ -123,7 +123,7 @@ public class ExerciseBookFragment extends BFragment {
                     case CHECKED:
                         homeworkSummary = checkedList.get(position);
                         HomeworkSummary.ExtraBean extraBean = homeworkSummary.getExtra();
-                        if (extraBean.getExamTotalPoints() != 0) {
+                        if (extraBean.getExamTotalPoints() > 0) {
                             //计分作业
                             holder.binding.textRateScore.setText("分数：" + extraBean.getTotalPoints());
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
@@ -173,7 +173,7 @@ public class ExerciseBookFragment extends BFragment {
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                             intent.putExtra("examId", holder.getData().getExam());
                             intent.putExtra("examName", holder.getData().getExtra().getName());
-                            if (holder.getData().getExtra().getExamTotalPoints() != 0) {
+                            if (holder.getData().getExtra().getExamTotalPoints() > 0) {
                                 //是否为计分作业
                                 intent.putExtra("isScoring", true);
                                 intent.putExtra("getExamTotalPoints", holder.getData().getExtra().getExamTotalPoints());
