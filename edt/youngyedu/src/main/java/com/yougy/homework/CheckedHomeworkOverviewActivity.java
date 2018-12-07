@@ -211,6 +211,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
                         ToastUtil.showCustomToast(getApplicationContext() , "获取每题分数数据失败");
+                        finish();
                     }
                 });
         NetWorkManager.sumReplyStudent(examId , SpUtils.getUserId())
@@ -231,6 +232,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
                         ToastUtil.showCustomToast(getApplicationContext() , "获取总分失败");
+                        finish();
                     }
                 });
     }
