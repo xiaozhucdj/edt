@@ -259,6 +259,9 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         if (scoreList.size() == 0){
             binding.commentNameTextview.setText("无批改结果");
         }
+        else if (scoreList.size() == 1){
+            binding.commentNameTextview.setText("批改结果");
+        }
         else {
             binding.commentNameTextview.setText("批改结果" + (currentSelectCommentIndex + 1));
         }
