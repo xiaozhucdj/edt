@@ -8,11 +8,13 @@ import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.onyx.android.sdk.common.request.WakeLockHolder;
 import com.onyx.android.sdk.utils.NetworkUtil;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.yolanda.nohttp.Logger;
@@ -100,6 +102,7 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     private long lastReceiverTime;
     private String lastExamId;//上次收到作业的时间，主要解决待机重启后，短时间内收到多条相同布置的作业的消息的过滤判断
+    private WakeLockHolder mHolder;
 
 
     @Override
@@ -114,9 +117,9 @@ public class YoungyApplicationManager extends LitePalApplication {
         //其他的正常初始化需要区分进程,只在主进程里初始化
         if (inMainProcess(this)) {
             //申请wakeLock,保证不进入睡眠
-            android.os.PowerManager powerManager = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
-            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK, "leke:myWakeLock");
-            wakeLock.acquire();
+//            android.os.PowerManager powerManager = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
+//            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK, "leke:myWakeLock");
+//            wakeLock.acquire();
 
             //       watcher = LeakCanary.install(this);
             mContext = this;
@@ -334,6 +337,10 @@ public class YoungyApplicationManager extends LitePalApplication {
         }
 //        checkAnr();
         LogUtils.setOpenLog(BuildConfig.DEBUG);
+        changeSystemConfigIntegerValue();
+         mHolder = new WakeLockHolder() ;
+         mHolder.acquireWakeLock(mContext,"onyx-framework");
+
     }
 
     @Override
@@ -341,6 +348,9 @@ public class YoungyApplicationManager extends LitePalApplication {
         super.onTerminate();
         NetManager.getInstance().unregisterReceiver(this);
         PowerManager.getInstance().unregisterReceiver(this);
+        if (mHolder!=null){
+            mHolder.releaseWakeLock();
+        }
     }
 
     private void checkAnr() {
@@ -507,5 +517,14 @@ public class YoungyApplicationManager extends LitePalApplication {
         return false;
     }
 
+
+    public static boolean changeSystemConfigIntegerValue() {
+        try {
+            return Settings.System.putInt(mContext.getContentResolver(), "close_wifi_delay", -1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }

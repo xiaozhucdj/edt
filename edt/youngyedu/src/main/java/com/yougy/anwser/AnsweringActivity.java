@@ -251,8 +251,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
-
-
                     }
                 });
         startClock();
@@ -1382,10 +1380,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     private void setLogMsg(String msg) {
-        mBuilder.append(DateUtils.getCalendarAndTimeString());
-        mBuilder.append(msg);
-        mBuilder.append("\r\n");
-
+        if (mBuilder!=null){
+            mBuilder.append(DateUtils.getCalendarAndTimeString()) ;
+            mBuilder.append(msg);
+            mBuilder.append("\r\n");
+        }
     }
 
     private void saveAnsweringLog() {

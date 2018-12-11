@@ -237,25 +237,6 @@
         <!-- 云信进程间通信 Receiver -->
         <receiver android:name="com.netease.nimlib.service.ResponseReceiver" >
         </receiver>
-
-        <!-- 安卓保活配置 -->
-        <service
-            android:name="com.netease.cosine.core.CosineService"
-            android:process=":cosine" >
-        </service>
-
-        <receiver
-            android:name="com.netease.cosine.target.CosineReceiver"
-            android:exported="true"
-            android:process=":cosine" >
-        </receiver>
-
-        <meta-data
-            android:name="com.netease.cosine.target"
-            android:value="" />
-        <meta-data
-            android:name="com.netease.cosine.target.receiver"
-            android:value="com.netease.nimlib.service.NimReceiver" />
         <!--===================云信相关end===================-->
 
         <!--AutoLayout中需要使用到的设计图大小-->

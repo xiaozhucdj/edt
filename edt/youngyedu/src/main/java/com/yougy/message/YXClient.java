@@ -281,7 +281,7 @@ public class YXClient {
         @Override
         public void onEvent(StatusCode statusCode) {
             currentOnlineStatus = statusCode;
-            LogUtils.e("QQQQQ" , "观察到在线状态变化 : " + statusCode);
+            LogUtils.e("YUANYE 观察到在线状态变化 ."+statusCode);
             LogUtils.e("FH", "onlineStatus 变更: " + statusCode);
 //            if (statusCode == StatusCode.PWD_ERROR) {
 //                if (!TextUtils.isEmpty(currentAccount)){
@@ -1288,7 +1288,9 @@ public class YXClient {
                                 loadingDialog.dismiss();
                             }
                             //成功一次,则跳转到成功逻辑
-                            callback.onSuccess(null);
+                            if (callback != null){
+                                callback.onSuccess(null);
+                            }
                             doBreak();
                         } else {
                             String reason;
@@ -1324,7 +1326,9 @@ public class YXClient {
                                 if (loadingDialog != null && loadingDialog.isShowing()) {
                                     loadingDialog.dismiss();
                                 }
-                                callback.onFailed(code);
+                                if (callback != null){
+                                    callback.onFailed(code);
+                                }
                             }
                         }
                     }
