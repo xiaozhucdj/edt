@@ -22,6 +22,8 @@ import com.yougy.ui.activity.databinding.ItemQuestionGridview2Binding;
 import com.yougy.ui.activity.databinding.ItemQuestionGridviewBinding;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.OnClick;
@@ -38,7 +40,9 @@ import rx.functions.Action1;
 public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     ActivityCheckedHomeworkDetailBinding binding;
     ArrayList<QuestionReplySummary> replyList = new ArrayList<QuestionReplySummary>();
-    ArrayList<ArrayList<Integer>> scoreList = new ArrayList<ArrayList<Integer>>();
+    HashMap<Integer , Integer> commentatorValidMap = new HashMap<Integer, Integer>();
+    ArrayList<HashMap<Integer , Integer>> scoreMapList = new ArrayList<HashMap<Integer, Integer>>();
+
     int examId;
     String examName;
 
@@ -106,18 +110,17 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 } else {
                     holder.itemBinding2.textview.setText("" + (position + 1));
                 }
-                holder.setData(
-                        scoreList.get(currentSelectCommentIndex).get(position + 1)
-                        , replyList.get(position).getReplyItemWeight());
-//                        , 100);
+                Integer currentCommentator = ((Integer) commentatorValidMap.keySet().toArray()[currentSelectCommentIndex]);
+                Integer score = scoreMapList.get(position).get(currentCommentator);
+                if (score == null){
+                    score = scoreMapList.get(position).get(1);
+                }
+                holder.setData(score , replyList.get(position).getReplyItemWeight());
             }
 
             @Override
             public int getItemCount() {
-                if (scoreList.size() == 0){
-                    return 0;
-                }
-                return scoreList.get(currentSelectCommentIndex).size() - 1;
+                return scoreMapList.size();
             }
         });
         binding.mainRecyclerview.addOnItemTouchListener(new OnRecyclerItemClickListener(binding.mainRecyclerview.getRealRcyView()) {
@@ -131,7 +134,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 intent.putExtra("isStudentLook", true);
                 intent.putExtra("isStudentCheck" , isStudentCheck);
                 intent.putExtra("replyCreator" , (long) SpUtils.getUserId());
-                intent.putExtra("replyCommentator" , String.valueOf(scoreList.get(currentSelectCommentIndex).get(0)));
+                intent.putExtra("replyCommentator" ,
+                        ((Integer) commentatorValidMap.keySet().toArray()[currentSelectCommentIndex]).toString());
                 startActivity(intent);
 
             }
@@ -146,56 +150,78 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     public void call(List<QuestionReplySummary> replySummaries) {
                         replyList.clear();
                         replyList.addAll(replySummaries);
-                        scoreList.clear();
+                        commentatorValidMap.clear();
+                        scoreMapList.clear();
                         //scoreList的结构是:不同的人对一份作业的批改分数的列表再组成一个列表
                         //批改分数列表的首个元素是批改者的id.
                         //形如于{{批改者id1 , 题1批改结果1,题2批改结果1...} , {批改者id2 , 题1批改结果2,题2批改结果2...} ...}
                         for (int i = 0; i < replyList.size(); i++) {
                             QuestionReplySummary replySummary = replyList.get(i);
-                            for (int j = 0 , k = 0; j < replySummary.getReplyCommented().size(); j++ , k++) {
-                                QuestionReplySummary.ReplyCommentedBean replyCommentedBean
-                                        = replySummary.getReplyCommented().get(j);
-                                if (i == 0){
-                                    if (j + 1 > scoreList.size()){
-                                        scoreList.add(new ArrayList<Integer>(){
-                                            {
-                                                //这里在新建一个批改者对这份作业的批改列表,首元素设为批改者id
-                                                add(replyCommentedBean.getReplyCommentator());
-                                            }
-                                        });
-                                    }
-                                }
-                                ArrayList<Integer> list = scoreList.get(k);
-                                //由于会存在有的人没有批完整份作业,导致有的题目批改结果为-1,这种直接这个人对这份作业的批改列表的position=1的元素设为null
-                                if (replyCommentedBean.getReplyScore() == -1){
-                                    list.add(1 , null);
-                                }
-                                else {
-                                    list.add(replyCommentedBean.getReplyScore());
-                                }
-                                //到最后一道题的时候检查一下,如果position=1的元素为null,说明这个人没有批完整个作业,他的批改直接作废,从scoreList里拿掉
-                                if (i + 1 == replyList.size()){
-                                    if (list.get(1) == null){
-                                        scoreList.remove(list);
-                                        k--;
-                                    }
-                                }
-                            }
-                        }
-                        //如果互评的作业学生没有批,老师批了,就在这里把外层老师批改的结果作为结果.
-                        if (scoreList.size() == 0){
-                            for (int i = 0; i < replyList.size(); i++) {
-                                QuestionReplySummary replySummary = replyList.get(i);
-                                if (i == 0){
-                                    scoreList.add(new ArrayList<Integer>(){
-                                        {
-                                            add(replySummary.getReplyCommentator());
+                            //学生批改结果(互评,含分数)
+                            List<QuestionReplySummary.ReplyCommentedBean> replyCommented = replySummary.getReplyCommented();
+                            //教师批改结果(不含分数)
+                            List<Object> replyComment = replySummary.getReplyComment();
+                            //教师批改的分数,或者客观题自动批改的分数,或者如果没有自动批也没有老师评,就是学生批改的分数,如果学生也没评,就是-1.
+                            int tempScore = replySummary.getReplyScore();
+                            int tempCommentator = replySummary.getReplyCommentator();
+                            HashMap<Integer , Integer> replyScoreMap = new HashMap<Integer, Integer>();
+                            for (int j = 0; j < replyCommented.size(); j++) {
+                                QuestionReplySummary.ReplyCommentedBean replyCommentedBean = replyCommented.get(j);
+                                if (replyCommentedBean.getReplyCommentator() > 1){
+                                    if (replyCommentedBean.getReplyScore() >= 0){
+                                        replyScoreMap.put(replyCommentedBean.getReplyCommentator() , replyCommentedBean.getReplyScore());
+                                        if (commentatorValidMap.get(replyCommentedBean.getReplyCommentator()) == null){
+                                            commentatorValidMap.put(replyCommentedBean.getReplyCommentator() , 1);
                                         }
-                                    });
+                                    }
+                                    else {
+                                        commentatorValidMap.put(replyCommentedBean.getReplyCommentator() , -1);
+                                    }
                                 }
-                                scoreList.get(0).add(replySummary.getReplyScore());
+                            }
+                            if (replyComment.size() > 0
+                                    && tempScore >= 0
+                                    && tempCommentator > 1){
+                                replyScoreMap.put(tempCommentator , tempScore);
+                                commentatorValidMap.put(tempCommentator , 0);
+                            }
+                            else if (replyComment.size() == 0
+                                    && replyCommented.size() == 0
+                                    && tempScore >= 0
+                                    && tempCommentator == 1){
+                                replyScoreMap.put(tempCommentator , tempScore);
+                                commentatorValidMap.put(tempCommentator , 1);
+                            }
+                            scoreMapList.add(replyScoreMap);
+                        }
+
+                        Iterator<Integer> keyIterator = commentatorValidMap.keySet().iterator();
+                        while (keyIterator.hasNext()){
+                            Integer commentator = keyIterator.next();
+                            if (commentatorValidMap.get(commentator) == 0){
+                                boolean allChecked = true;
+                                for (int i = 0 ; i < scoreMapList.size() ; i++) {
+                                    Integer score = scoreMapList.get(i).get(commentator);
+                                    if (score == null || score == -1){
+                                        score = scoreMapList.get(i).get(1);
+                                        if (score == null || score == -1){
+                                            allChecked = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!allChecked){
+                                    commentatorValidMap.remove(commentator);
+                                }
+                            }
+                            else if (commentatorValidMap.get(commentator) == -1){
+                                commentatorValidMap.remove(commentator);
                             }
                         }
+                        if (commentatorValidMap.size() > 1){
+                            commentatorValidMap.remove(1);
+                        }
+
                         refreshCommentChooseBar();
                         binding.mainRecyclerview.notifyDataSetChanged();
                         binding.questionNumTv.setText("习题数量 : " + replyList.size());
@@ -237,12 +263,13 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 });
     }
 
+
     /**
      * 刷新批改结果选择条
      */
     private void refreshCommentChooseBar(){
-        if (currentSelectCommentIndex + 1 > scoreList.size()){
-            currentSelectCommentIndex = scoreList.size() - 1;
+        if (currentSelectCommentIndex + 1 > commentatorValidMap.keySet().size()){
+            currentSelectCommentIndex = commentatorValidMap.keySet().size() - 1;
         }
         if (currentSelectCommentIndex <= 0){
             binding.lastCommentBtn.setEnabled(false);
@@ -250,16 +277,16 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         else {
             binding.lastCommentBtn.setEnabled(true);
         }
-        if (currentSelectCommentIndex + 1 == scoreList.size()){
+        if (currentSelectCommentIndex + 1 == commentatorValidMap.keySet().size()){
             binding.nextCommentBtn.setEnabled(false);
         }
         else {
             binding.nextCommentBtn.setEnabled(true);
         }
-        if (scoreList.size() == 0){
+        if (commentatorValidMap.keySet().size() == 0){
             binding.commentNameTextview.setText("无批改结果");
         }
-        else if (scoreList.size() == 1){
+        else if (commentatorValidMap.keySet().size() == 1){
             binding.commentNameTextview.setText("批改结果");
         }
         else {

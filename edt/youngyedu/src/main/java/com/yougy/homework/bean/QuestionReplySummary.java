@@ -30,11 +30,15 @@ public class QuestionReplySummary implements Parcelable {
     private String replyCreatorName;
     private String replyCommentTime;
     private String replyCreateTime;
+
+    private List<ReplyCommentedBean> replyCommented = new ArrayList<ReplyCommentedBean>();
+    private List<Object> replyComment;
+
     //学生回答原始数据
     private List<Object> replyContent;
     //解析后的回答数据
     private List<Content_new> parsedContentList = new ArrayList<Content_new>();
-    private List<ReplyCommentedBean> replyCommented = new ArrayList<ReplyCommentedBean>();
+
 
 
     public String getReplyStatus() {
@@ -158,6 +162,15 @@ public class QuestionReplySummary implements Parcelable {
         return this;
     }
 
+    public List<Object> getReplyComment() {
+        return replyComment;
+    }
+
+    public QuestionReplySummary setReplyComment(List<Object> replyComment) {
+        this.replyComment = replyComment;
+        return this;
+    }
+
     public int getReplyItemWeight() {
         return replyItemWeight;
     }
@@ -278,6 +291,7 @@ public class QuestionReplySummary implements Parcelable {
         dest.writeList(this.replyContent);
         dest.writeTypedList(this.parsedContentList);
         dest.writeTypedList(this.replyCommented);
+        dest.writeList(this.replyComment);
     }
 
     public QuestionReplySummary() {
@@ -301,6 +315,8 @@ public class QuestionReplySummary implements Parcelable {
         in.readList(this.replyContent, Object.class.getClassLoader());
         this.parsedContentList = in.createTypedArrayList(Content_new.CREATOR);
         this.replyCommented = in.createTypedArrayList(ReplyCommentedBean.CREATOR);
+        in.readList(this.replyComment , Object.class.getClassLoader());
+
     }
 
     public static final Parcelable.Creator<QuestionReplySummary> CREATOR = new Parcelable.Creator<QuestionReplySummary>() {

@@ -132,7 +132,7 @@ public class ExerciseBookFragment extends BFragment {
                         } else {
                             if (isMutualEvaluation(homeworkSummary)){
                                 holder.binding.statusTv.setVisibility(View.GONE);
-                                holder.binding.textRateScore.setText("正确率：" + (extraBean.getAccuracy()*100) + "%");
+                                holder.binding.textRateScore.setText("正确率：" + (int)(extraBean.getAccuracy()*100) + "%");
                             }
                             else {
                                 holder.binding.statusTv.setVisibility(View.GONE);
