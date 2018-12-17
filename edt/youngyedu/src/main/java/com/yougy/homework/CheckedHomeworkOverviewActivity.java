@@ -179,18 +179,15 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                                     }
                                 }
                             }
-                            if (replyComment.size() > 0
-                                    && tempScore >= 0
-                                    && tempCommentator > 1){
-                                replyScoreMap.put(tempCommentator , tempScore);
-                                commentatorValidMap.put(tempCommentator , 0);
-                            }
-                            else if (replyComment.size() == 0
-                                    && replyCommented.size() == 0
-                                    && tempScore >= 0
-                                    && tempCommentator == 1){
-                                replyScoreMap.put(tempCommentator , tempScore);
-                                commentatorValidMap.put(tempCommentator , 1);
+                            if (tempScore >= 0){
+                                if (replyComment.size() > 0){
+                                    replyScoreMap.put(tempCommentator , tempScore);
+                                    commentatorValidMap.put(tempCommentator , 0);
+                                }
+                                else {
+                                    replyScoreMap.put(1, tempScore);
+                                    commentatorValidMap.put(1 , 1);
+                                }
                             }
                             scoreMapList.add(replyScoreMap);
                         }
