@@ -137,6 +137,13 @@
     <string name="student">学生</string>
 
 
+    <string name="down_media_error">音频下载失败 ,请重新下载?</string>
+    <string name="down_media_loading">语音包下载中%1$s</string>
+
+
+
+
+
     <string-array name="titles">
         <item>课本</item>
         <item>辅导书</item>

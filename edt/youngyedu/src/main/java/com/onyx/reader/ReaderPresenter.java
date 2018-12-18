@@ -21,14 +21,19 @@ import com.onyx.android.sdk.reader.host.wrapper.Reader;
 import com.onyx.android.sdk.reader.utils.PagePositionUtils;
 import com.onyx.data.DrmCertificateFactory;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.media.MediaBean;
+import com.yougy.common.media.ReaderFile;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Collections;
 
 /**
  * Created by ming on 2017/4/1.
@@ -40,12 +45,13 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     private Reader reader;
     private int mPags;
     private String path;
-    private boolean mIsInit ;
+    private boolean mIsInit;
     private int mPage;
-    private boolean mIsCropPage ;
+    private boolean mIsCropPage;
+    private String mBookId;
 
-    public void setCropPage(boolean isCropPage){
-        mIsCropPage = isCropPage ;
+    public void setCropPage(boolean isCropPage) {
+        mIsCropPage = isCropPage;
     }
 
     public ReaderPresenter(ReaderContract.ReaderView readerView) {
@@ -54,7 +60,8 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
 
     @Override
     public void openDocument(final String documentPath, String bookId) {
-        mIsInit  =false ;
+        mBookId = bookId;
+        mIsInit = false;
         path = documentPath;
         DrmCertificateFactory factory = new DrmCertificateFactory(readerView.getViewContext());
         if (!StringUtils.isEmpty(bookId)) {
@@ -62,7 +69,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             if (!StringUtils.isEmpty(keys) && keys.contains(bookId)) {
                 try {
                     JSONObject object = new JSONObject(keys);
-                    String key = object.getString(bookId) ;
+                    String key = object.getString(bookId);
 //                    System.out.println("object.getString(bookId) ...."+bookId+"...."+key.substring(key.length()-50 ,key.length()));
                     factory.setKey(key);
                 } catch (JSONException e) {
@@ -142,16 +149,16 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
 
     @Override
     public void gotoPage(final int page) {
-        mPage = page ;
+        mPage = page;
         LogUtils.e(getClass().getName(), "gotoPage..............." + page);
         GotoPageRequest gotoPageRequest = new GotoPageRequest(page);
         getReader().submitRequest(getContext(), gotoPageRequest, new BaseCallback() {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    if (mIsInit){
-                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap()) ;
-                    }else{
+                    if (mIsInit) {
+                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(),getMeDiaben(page));
+                    } else {
                         gamma(page);
                     }
                 } else {
@@ -173,11 +180,11 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
 
-                    if (mIsCropPage){
+                    if (mIsCropPage) {
                         cropPage();
-                    }else{
-                        mIsInit = true ;
-                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap());
+                    } else {
+                        mIsInit = true;
+                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(),getMeDiaben(page));
                     }
                 } else {
                     readerView.showThrowable(throwable);
@@ -189,33 +196,33 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     @Override
     public void nextScreen() {
         LogUtils.e(getClass().getName(), "nextScreen...............");
-        final NextScreenRequest nextScreenRequest = new NextScreenRequest();
-        getReader().submitRequest(getContext(), nextScreenRequest, new BaseCallback() {
-            @Override
-            public void done(BaseRequest baseRequest, Throwable throwable) {
-                if (throwable == null) {
-                    readerView.updatePage(getCurrentPage(nextScreenRequest), getReader().getViewportBitmap().getBitmap());
-                } else {
-                    readerView.showThrowable(throwable);
-                }
-            }
-        });
+//        final NextScreenRequest nextScreenRequest = new NextScreenRequest();
+//        getReader().submitRequest(getContext(), nextScreenRequest, new BaseCallback() {
+//            @Override
+//            public void done(BaseRequest baseRequest, Throwable throwable) {
+//                if (throwable == null) {
+//                    readerView.updatePage(getCurrentPage(nextScreenRequest), getReader().getViewportBitmap().getBitmap());
+//                } else {
+//                    readerView.showThrowable(throwable);
+//                }
+//            }
+//        });
     }
 
     @Override
     public void prevScreen() {
         LogUtils.e(getClass().getName(), "prevScreen...............");
-        final PreviousScreenRequest nextScreenRequest = new PreviousScreenRequest();
-        getReader().submitRequest(getContext(), nextScreenRequest, new BaseCallback() {
-            @Override
-            public void done(BaseRequest baseRequest, Throwable throwable) {
-                if (throwable == null) {
-                    readerView.updatePage(getCurrentPage(nextScreenRequest), getReader().getViewportBitmap().getBitmap());
-                } else {
-                    readerView.showThrowable(throwable);
-                }
-            }
-        });
+//        final PreviousScreenRequest nextScreenRequest = new PreviousScreenRequest();
+//        getReader().submitRequest(getContext(), nextScreenRequest, new BaseCallback() {
+//            @Override
+//            public void done(BaseRequest baseRequest, Throwable throwable) {
+//                if (throwable == null) {
+//                    readerView.updatePage(getCurrentPage(nextScreenRequest), getReader().getViewportBitmap().getBitmap());
+//                } else {
+//                    readerView.showThrowable(throwable);
+//                }
+//            }
+//        });
     }
 
     public String getCurrentPageName(final BaseReaderRequest request) {
@@ -252,7 +259,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     @Override
     public void close() {
         final CloseRequest closeRequest = new CloseRequest();
-        if (reader != null){
+        if (reader != null) {
             reader.submitRequest(getContext(), closeRequest, new BaseCallback() {
                 @Override
                 public void done(BaseRequest baseRequest, Throwable throwable) {
@@ -282,21 +289,39 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     }
 
 
-
-    /**裁剪*/
+    /**
+     * 裁剪
+     */
     private void cropPage() {
-        final ScaleToPageCropRequest request = new ScaleToPageCropRequest((mPage+""));
+        final ScaleToPageCropRequest request = new ScaleToPageCropRequest((mPage + ""));
         getReader().submitRequest(getContext(), request, new BaseCallback() {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    mIsInit = true ;
-                    readerView.updatePage(mPage, getReader().getViewportBitmap().getBitmap());
+                    mIsInit = true;
+                    readerView.updatePage(mPage, getReader().getViewportBitmap().getBitmap(),getMeDiaben(mPage));
                 } else {
                     readerView.showThrowable(throwable);
                 }
             }
         });
+    }
+
+
+    private MediaBean getMeDiaben(final int page) {
+        MediaBean bean = null;
+        int index = page + 1;
+        if (FileUtils.exists(FileUtils.getMediaFilesDir() + mBookId + "/" + index + ".txt")) {
+            String json = ReaderFile.readerJsonFile(FileUtils.getMediaFilesDir() + mBookId + "/" + index + ".txt");
+            if (!StringUtils.isEmpty(json)) {
+                LogUtils.e("media  ..json ==" + json);
+                bean = GsonUtil.fromJson(json, MediaBean.class);
+                if (bean.getCutterPageInfos() != null && bean.getCutterPageInfos().size() > 0) {
+                    Collections.sort(bean.getCutterPageInfos());
+                }
+            }
+        }
+        return bean;
     }
 }
 

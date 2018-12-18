@@ -7,7 +7,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.zip.ZipException;
 
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
 /**
  * Created by Administrator on 2016/7/13.
  * 文件操作
@@ -17,6 +22,7 @@ public class FileUtils {
     public static final String TEXT_BOOK = "text_book";
     public static final String TEXT_BOOK_ICON = "text_book_icon";
     public static final String TEXT_BOOK_PROBATION = "text_book_probation";
+    public static final String MEDIA_FILES = "media_files";
     public static String mAnsweringFileAbsPath = FileUtils.getAppFilesDir();
 
     /**
@@ -340,5 +346,206 @@ public class FileUtils {
             return "";
         }
         return filePath.substring(filePath.lastIndexOf("."));
+    }
+
+
+    public static String getMediaFilesDir() {
+        return getAppFilesDir() + MEDIA_FILES + "/";
+    }
+
+
+
+    public static boolean unZip1(String strZipPath, String strOutputFolderPath) {
+        ZipFile zf = null;
+        try {
+            zf = new ZipFile(strZipPath, "GBK");
+            for (@SuppressWarnings("unchecked")
+                 Enumeration entries = zf.getEntries();
+                 entries.hasMoreElements(); ) {
+                final ZipEntry entry = (ZipEntry) entries.nextElement();
+                final File file = new File(strOutputFolderPath + File.separator + entry.getName());
+                if (entry.isDirectory()) {
+                    file.mkdirs();
+                } else {
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                    } catch (Exception e) {
+                        File fileParent = file.getParentFile();
+                        if (!fileParent.exists()) {
+                            if (fileParent.mkdirs()) {
+                                fos = new FileOutputStream(file);
+                            }
+                        }
+                    }
+
+                    if (fos != null) {
+                        InputStream is = null;
+                        try {
+                            is = zf.getInputStream(entry);
+                            int nReadLength = -1;
+                            final byte buffer[] = new byte[4096];
+                            while ((nReadLength = is.read(buffer)) != -1) {
+                                fos.write(buffer, 0, nReadLength);
+                            }
+                        } finally {
+                            fos.close();
+                            is.close();
+                        }
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (zf != null) {
+                try {
+                    zf.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 解压缩zip文件
+     * @param srcPath  需要被解压的文件路径
+     * @param destPath 被解压后的文件存放的目录路径
+     * @return 是否解压成功
+     */
+    public static boolean unZip2(String srcPath, String destPath) {
+        return unZip2(new File(srcPath), new File(destPath));
+    }
+
+    /**
+     * 解压缩zip文件
+     * @param srcFile  需要被解压的文件
+     * @param destFile 被解压后的文件存放的目录
+     * @return 是否解压成功
+     */
+    @SuppressWarnings("resource")
+    public static boolean unZip2(File srcFile, File destFile) {
+        boolean res = false;
+        if (null == srcFile || null == destFile || !srcFile.exists() || !srcFile.canRead()) {
+            return false;
+        }
+        FileOutputStream fos = null;
+        InputStream is = null;
+        try {
+            ZipFile  zipFile= new ZipFile(srcFile, "GBK");
+            Enumeration<? extends java.util.zip.ZipEntry> entries = zipFile.getEntries();
+            byte[] buffer = new byte[1024 * 8];
+            int len = 0;
+            while (entries.hasMoreElements()) {
+                final ZipEntry zipEntry = (ZipEntry) entries.nextElement();
+                String entryName = zipEntry.getName();
+                String unZipFileName = destFile.getAbsolutePath() + File.separator + entryName;
+                if (zipEntry.isDirectory()) { // 没有执行此代码
+                    new File(unZipFileName).mkdirs();
+                } else { // 总是执行该代码.因为压缩的时候是对每个文件进行压缩的.
+                    new File(unZipFileName).getParentFile().mkdirs();
+                }
+                File unZipedFile = new File(unZipFileName);
+                if (unZipedFile.isDirectory()) {
+                    File[] files = unZipedFile.listFiles();
+                    for (File file : files) {
+                        fos = new FileOutputStream(file);
+                        is = zipFile.getInputStream(zipEntry);
+                        while ((len = is.read(buffer)) != -1) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                } else {
+                    fos = new FileOutputStream(unZipedFile);
+                    is = zipFile.getInputStream(zipEntry);
+                    while ((len = is.read(buffer)) != -1) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+            }
+            fos.flush();
+            res = true;
+        } catch (ZipException e) {
+            LogUtils.e(e);
+        } catch (IOException e) {
+            LogUtils.e(e);
+        } finally {
+            IOUtils.close(fos);
+            IOUtils.close(is);
+        }
+        return res;
+    }
+
+
+    /**
+     * 解压缩zip文件
+     * @param srcPath  需要被解压的文件路径
+     * @param destPath 被解压后的文件存放的目录路径
+     * @return 是否解压成功
+     */
+    public static boolean unZip3(String srcPath, String destPath) {
+        return unZip3(new File(srcPath), new File(destPath));
+    }
+
+    /**
+     * 解压缩zip文件
+     * @param srcFile  需要被解压的文件
+     * @param destFile 被解压后的文件存放的目录
+     * @return 是否解压成功
+     */
+    @SuppressWarnings("resource")
+    public static boolean unZip3(File srcFile, File destFile) {
+        boolean res = false;
+        if (null == srcFile || null == destFile || !srcFile.exists() || !srcFile.canRead()) {
+            return false;
+        }
+        FileOutputStream fos = null;
+        InputStream is = null;
+        try {
+            java.util.zip.ZipFile zipFile = new java.util.zip.ZipFile(srcFile);
+            Enumeration<? extends java.util.zip.ZipEntry> entries = zipFile.entries();
+            byte[] buffer = new byte[1024 * 8];
+            int len = 0;
+            while (entries.hasMoreElements()) {
+                java.util.zip.ZipEntry zipEntry = entries.nextElement();
+                String entryName = zipEntry.getName();
+                String unZipFileName = destFile.getAbsolutePath() + File.separator + entryName;
+                if (zipEntry.isDirectory()) { // 没有执行此代码
+                    new File(unZipFileName).mkdirs();
+                } else { // 总是执行该代码.因为压缩的时候是对每个文件进行压缩的.
+                    new File(unZipFileName).getParentFile().mkdirs();
+                }
+                File unZipedFile = new File(unZipFileName);
+                if (unZipedFile.isDirectory()) {
+                    File[] files = unZipedFile.listFiles();
+                    for (File file : files) {
+                        fos = new FileOutputStream(file);
+                        is = zipFile.getInputStream(zipEntry);
+                        while ((len = is.read(buffer)) != -1) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                } else {
+                    fos = new FileOutputStream(unZipedFile);
+                    is = zipFile.getInputStream(zipEntry);
+                    while ((len = is.read(buffer)) != -1) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+            }
+            fos.flush();
+            res = true;
+        } catch (ZipException e) {
+            LogUtils.e(e);
+        } catch (IOException e) {
+            LogUtils.e(e);
+        } finally {
+            IOUtils.close(fos);
+            IOUtils.close(is);
+        }
+        return res;
     }
 }

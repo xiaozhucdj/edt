@@ -210,6 +210,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
     private boolean mIsUserPen = true;
     protected FrameLayout base_opt_layout;
+    protected TextView tv_media;
 
     private String generatePicturePath() {
         picturePath = fileName + "-" + "picture" + "-" + position + "-" + pictureCount;
@@ -479,6 +480,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 }
             }
         });
+
+        tv_media = mRoot.findViewById(R.id.tv_media);
+        tv_media.setOnClickListener(this);
+
     }
 
     @NonNull
@@ -869,6 +874,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 saveContent(false);
                 getActivity().onBackPressed();
                 break;
+
+            case  R.id.tv_media:
+                cliclMedia();
+                break;
+
         }
 //        if (null != view && isNeedHide && view != mPaintDrawIv && mPaintChoose.getVisibility() == View.VISIBLE) {
 //            outAnimator();
@@ -888,6 +898,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 //            mPaintDrawIv.setSelected(!mIsIntercept);
 //        }
     }
+
+    public void cliclMedia(){
+
+    }
+
 
     public void leaveScribbleMode(boolean needFreshUI) {
         if (null != mNoteBookView) {

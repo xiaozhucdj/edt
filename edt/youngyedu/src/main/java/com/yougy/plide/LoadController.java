@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
 import com.onyx.reader.ReaderPresenter;
+import com.yougy.common.media.MediaBean;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.plide.pipe.Ball;
@@ -293,7 +294,7 @@ public class LoadController implements ReaderContract.ReaderView{
     }
 
     @Override
-    public void updatePage(int page, Bitmap bitmap) {
+    public void updatePage(int page, Bitmap bitmap,MediaBean bean) {
         lv("updatePage page=" + page + "  bitmap=" + bitmap + " threadId : " + Thread.currentThread().getId());
         lv("____________________________________!!!!!!!!!!!!!!!!!!!_______________________________" + bitmap
                 + " recycle " + bitmap.isRecycled());
@@ -305,6 +306,8 @@ public class LoadController implements ReaderContract.ReaderView{
         }
         callLoadListener(100);
     }
+
+
 
     @Override
     public View getContentView() {

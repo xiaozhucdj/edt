@@ -60,7 +60,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     public String tag;
     public ViewGroup mRootView;
     protected boolean mIsRefresh;
-
+    public String  mMediasBookIDs = "103010007 ,103030023" ;
     public void loadIntent(Class<?> cls) {
         Intent intent = new Intent(getActivity(), cls);
         startActivity(intent);

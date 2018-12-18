@@ -143,6 +143,9 @@ public class YoungyApplicationManager extends LitePalApplication {
             //创建试读PDF 文件夹
             FileUtils.createDirs(FileUtils.getProbationBookFilesDir());
 
+            //创建 媒体文件夹
+            FileUtils.createDirs(FileUtils.getMediaFilesDir());
+
             if (!BuildConfig.DEBUG) {
                 //处理异常
                 String logFile = FileUtils.getLogFilesDir() + DateUtils.getCurrentTimeSimpleYearMonthDayString() + "/" + "Error_Log.txt";
