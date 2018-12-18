@@ -10,6 +10,7 @@ import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.nohttp.DownInfo;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.DownBookDialog;
@@ -56,6 +57,12 @@ public class MediaDownUtils implements DownBookDialog.DownBookListener {
                 mDownUrl = url;
                 break;
             }
+        }
+
+
+        if (StringUtils.isEmpty(mDownUrl)){
+            UIUtils.showToastSafe("下载地址不存在。。。。");
+            return;
         }
         if (mProReadDialog == null) {
             mProReadDialog = new DownBookDialog(context);
