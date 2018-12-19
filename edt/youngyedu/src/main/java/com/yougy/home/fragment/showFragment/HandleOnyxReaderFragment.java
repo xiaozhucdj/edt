@@ -47,7 +47,6 @@ import com.yougy.home.bean.DirectoryModel;
 import com.yougy.home.bean.Note;
 import com.yougy.rx_subscriber.BaseSubscriber;
 import com.yougy.ui.activity.R;
-import com.yougy.view.controlView.ControlView;
 import com.yougy.view.dialog.BookMarksDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.OpenBookErrorDialog;
@@ -127,7 +126,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private MediaHelper mMediaHelper;
     private AudioMngHelper mAudioMngHelper;
     private MediaBean mMediaBean;
-
+    private ImageButton mImgBtnMedia;
 
     @Nullable
     @Override
@@ -221,6 +220,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         img_btn_hide.setOnClickListener(this);
         backScription2 = RxView.clicks(img_page_back).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getBackSubscriber());
         nextScription2 = RxView.clicks(img_page_next).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getNextSubscriber());
+        mImgBtnMedia = mRoot.findViewById(R.id.img_btn_media);
+        mImgBtnMedia.setOnClickListener(this);
+        mImgBtnMedia.setSelected(false);
         //解析PDF
         initPDF();
     }
@@ -289,10 +291,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         }
         mMediaBean = bean;
         if (bean != null) {
-            tv_media.setVisibility(View.VISIBLE);
-            tv_media.setText("播放音频");
+            mImgBtnMedia.setVisibility(View.VISIBLE);
+            mImgBtnMedia.setSelected(false);
         } else {
-            tv_media.setVisibility(View.GONE);
+            mImgBtnMedia.setVisibility(View.GONE);
         }
 
         if (mloadingDialog != null && mloadingDialog.isShowing()) {
@@ -582,7 +584,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         if (mMediaHelper != null) {
             mMediaIndex = 0;
             mMediaHelper.player_reset();
-            tv_media.setText("播放音频");
+            mImgBtnMedia.setSelected(false);
         }
         mSeekbarPage.setClickable(false);
         mSeekbarPage.setEnabled(false);
@@ -616,6 +618,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 break;
             case R.id.img_btn_hide:
                 onBackListener();
+                break;
+
+            case R.id.img_btn_media:
+                cliclMedia();
                 break;
         }
     }
@@ -1024,23 +1030,21 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     private int mMediaIndex = 0;
 
-    @Override
-    public void cliclMedia() {
-        super.cliclMedia();
+    private void cliclMedia() {
         LogUtils.e("media", "cliclMedia ...");
-        if (tv_media.getText().toString().trim().equals("播放音频")) {
+        if (!mImgBtnMedia.isSelected()) {
             if (mMediaBean != null && mMediaHelper != null) {
                 LogUtils.e("media", "1111111111 ...");
                 if (mMediaBean.getCutterPageInfos() != null && mMediaBean.getCutterPageInfos().size() > 0 && mMediaIndex <= mMediaBean.getCutterPageInfos().size() - 1) {
                     LogUtils.e("media", "222222222222222 ...");
                     LogUtils.e("media", "mMediaIndex ..." + mMediaIndex);
                     MediaBean.CutterPageInfosBean playerInfo = mMediaBean.getCutterPageInfos().get(mMediaIndex);
-                    tv_media.setText("暂停音频");
+                    mImgBtnMedia.setSelected(true);
                     mMediaHelper.player_start(FileUtils.getMediaFilesDir() + mControlActivity.mBookId + "/" + playerInfo.getUrl(), playerInfo.getStart(), playerInfo.getEnd());
                 }
             }
         } else {
-            tv_media.setText("播放音频");
+            mImgBtnMedia.setSelected(false);
             mMediaHelper.player_pause();
         }
     }
@@ -1048,7 +1052,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     @Override
     public void onCompletionPlayerListener() {
         mMediaIndex++;
-        tv_media.setText("播放音频");
+        mImgBtnMedia.setSelected(false);
         if (mMediaIndex > mMediaBean.getCutterPageInfos().size() - 1) {
             mMediaIndex = 0;
             mMediaHelper.player_reset();
