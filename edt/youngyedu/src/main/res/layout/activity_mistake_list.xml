@@ -17,10 +17,10 @@
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16px"
             android:paddingLeft="30px"
+            android:paddingTop="16px"
             android:paddingRight="30px"
-            android:paddingTop="16px">
+            android:paddingBottom="16px">
 
             <ImageView
                 android:id="@+id/back_btn"
@@ -208,7 +208,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/tv_result"
                         android:onClick="@{myOnClick}"
-                        android:src="@drawable/img_timu_last_black" />
+                        android:src="@drawable/last_comment_btn_bg_selector" />
 
                     <ImageView
                         android:id="@+id/iv_next_people"
@@ -217,7 +217,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/tv_result"
                         android:onClick="@{myOnClick}"
-                        android:src="@drawable/img_timu_next_black" />
+                        android:src="@drawable/next_comment_btn_bg_selector" />
 
                     <View
                         android:layout_width="match_parent"
@@ -239,9 +239,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_marginBottom="10px"
                         android:layout_marginLeft="20px"
                         android:layout_marginTop="10px"
+                        android:layout_marginBottom="10px"
                         android:layout_weight="3"
                         android:text="来源于：%s"
                         android:textColor="@color/black"
@@ -251,9 +251,9 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10px"
                         android:layout_marginLeft="20px"
                         android:layout_marginTop="10px"
+                        android:layout_marginBottom="10px"
                         android:layout_weight="2">
 
                         <TextView
@@ -319,8 +319,8 @@
                             android:layout_width="20px"
                             android:layout_height="20px"
                             android:layout_alignParentRight="true"
-                            android:layout_marginRight="30px"
                             android:layout_marginTop="20px"
+                            android:layout_marginRight="30px"
                             android:background="@drawable/img_quxiao"
                             android:onClick="@{myOnClick}" />
 
@@ -344,8 +344,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="30px"
-                            android:layout_marginRight="30px"
                             android:layout_marginTop="80px"
+                            android:layout_marginRight="30px"
                             android:textColor="@color/black"
                             android:textSize="22px" />
 
@@ -405,8 +405,8 @@
                     android:id="@+id/page_btn_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="15dp" />
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp" />
 
                 <RelativeLayout
                     android:id="@+id/ll_control_bottom"
@@ -416,8 +416,8 @@
                     android:background="@drawable/bmp_bg_blue"
                     android:onClick="@{myOnClick}"
                     android:orientation="horizontal"
-                    android:paddingBottom="16px"
-                    android:paddingTop="16px">
+                    android:paddingTop="16px"
+                    android:paddingBottom="16px">
 
                     <TextView
                         android:id="@+id/start_practice_btn"
@@ -462,10 +462,10 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/shape_rectangle_black_border"
-                android:paddingBottom="85px"
                 android:paddingLeft="100px"
-                android:paddingRight="100px"
                 android:paddingTop="85px"
+                android:paddingRight="100px"
+                android:paddingBottom="85px"
                 android:text="该章节还没有错题哦!继续努力!"
                 android:textColor="@color/black"
                 android:textSize="28px"

@@ -27,7 +27,6 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="30px"
             android:layout_toRightOf="@+id/btn_left"
-            android:onClick="back"
             android:src="@drawable/icon_shuaxin" />
 
         <TextView

@@ -394,42 +394,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                             setHomeWorkNumberView();
                             questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
 
-                            checkerNames.clear();
-                            //1.查看是否有教师批改结果
-                            List<LinkedTreeMap> replyCommetnList = questionReplyDetail.getReplyComment();
-                            if (replyCommetnList != null && replyCommetnList.size() > 0) {
-
-                                List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
-                                if (replyCommentedList != null && replyCommentedList.size() > 0) {
-
-                                    //有老师，有学生批改，说明是互评
-                                    binding.rlOtherCheckBar.setVisibility(View.VISIBLE);
-
-                                    checkerNames.add("批改结果（教师）");
-                                    for (ReplyCommented replyCommented : replyCommentedList) {
-                                        checkerNames.add("批改结果（" + replyCommented.getReplyCommentatorName() + "）");
-                                    }
-                                    setOtherCheckNames();
-                                } else {
-                                    //只有教师批改，说明是老师批改
-                                    binding.rlOtherCheckBar.setVisibility(View.GONE);
-                                }
-
-                            } else {
-                                List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
-                                if (replyCommentedList != null && replyCommentedList.size() > 0) {
-
-                                    //只有学生批改，说明是互评，或者自评
-                                    binding.rlOtherCheckBar.setVisibility(View.VISIBLE);
-                                    for (ReplyCommented replyCommented : replyCommentedList) {
-                                        checkerNames.add("批改结果（" + replyCommented.getReplyCommentatorName() + "）");
-                                    }
-                                    setOtherCheckNames();
-                                } else {
-                                    //没有教师和学生批改，异常数据，错题本中的题目必须已经批改了
-                                }
-                            }
-
+                            setIsHasOtherCheckData();
                             refreshQuestion();
                         }
                     }
@@ -816,6 +781,8 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 }
 
                 questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+
+                setIsHasOtherCheckData();
                 refreshQuestion();
 
                 homeWorkPageNumAdapter.notifyDataSetChanged();
@@ -825,6 +792,44 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
     }
 
+    private void setIsHasOtherCheckData(){
+        checkerNames.clear();
+        //1.查看是否有教师批改结果
+        List<LinkedTreeMap> replyCommetnList = questionReplyDetail.getReplyComment();
+        if (replyCommetnList != null && replyCommetnList.size() > 0) {
+
+            List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
+            if (replyCommentedList != null && replyCommentedList.size() > 0) {
+
+                //有老师，有学生批改，说明是互评
+                binding.rlOtherCheckBar.setVisibility(View.VISIBLE);
+
+                checkerNames.add("批改结果（教师）");
+                for (ReplyCommented replyCommented : replyCommentedList) {
+                    checkerNames.add("批改结果（" + replyCommented.getReplyCommentatorName() + "）");
+                }
+                setOtherCheckNames();
+            } else {
+                //只有教师批改，说明是老师批改
+                binding.rlOtherCheckBar.setVisibility(View.GONE);
+            }
+
+        } else {
+            List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
+            if (replyCommentedList != null && replyCommentedList.size() > 0) {
+
+                //只有学生批改，说明是互评，或者自评
+                binding.rlOtherCheckBar.setVisibility(View.VISIBLE);
+                for (ReplyCommented replyCommented : replyCommentedList) {
+                    checkerNames.add("批改结果（" + replyCommented.getReplyCommentatorName() + "）");
+                }
+                setOtherCheckNames();
+            } else {
+                //没有教师和学生批改，异常数据，错题本中的题目必须已经批改了
+                binding.rlOtherCheckBar.setVisibility(View.GONE);
+            }
+        }
+    }
 
     /*顶部页面的adapter相关*/
     class HomeWorkPageNumViewHolder extends RecyclerView.ViewHolder {

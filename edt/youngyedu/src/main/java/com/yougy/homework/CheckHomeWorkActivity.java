@@ -1744,9 +1744,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
                                             ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
                                         }
                                     });
+                        } else {
+                            back();
                         }
-
-
                     }
                 }, new Action1<Throwable>() {
                     @Override
