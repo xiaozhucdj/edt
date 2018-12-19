@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -50,8 +51,10 @@ import com.yougy.message.MyEdittext;
 import com.yougy.message.SizeUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.HomeworkRemindAttachment;
+import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.shop.activity.ShopBookDetailsActivity;
 import com.yougy.shop.globle.ShopGloble;
+import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
@@ -68,7 +71,7 @@ import rx.functions.Action1;
  * Created by FH on 2017/3/22.
  */
 
-public class ChattingActivity extends MessageBaseActivity implements YXClient.OnErrorListener<IMMessage>{
+public class ChattingActivity extends MessageBaseActivity implements YXClient.OnErrorListener<IMMessage> {
     ArrayList<IMMessage> messageList = new ArrayList<IMMessage>();
     String id;
     SessionTypeEnum type;
@@ -78,12 +81,12 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     ChattingAdapter adapter = new ChattingAdapter();
     ActivityChattingBinding binding;
 
-    private boolean isMyMessage(IMMessage message){
+    private boolean isMyMessage(IMMessage message) {
         if ((message.getSessionType() == type) && message.getSessionId().equals(id)) {
             LogUtils.e("FH", message.toString() + "是我的消息");
             return true;
         }
-       LogUtils.e("FH", message.toString() + "不是我的消息");
+        LogUtils.e("FH", message.toString() + "不是我的消息");
         return false;
     }
 
@@ -110,7 +113,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     @Override
     protected void onStart() {
         super.onStart();
-        YXClient.checkNetAndRefreshLogin(this , null);
+        YXClient.checkNetAndRefreshLogin(this, null);
     }
 
     @Override
@@ -118,42 +121,42 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         type = getIntent().getStringExtra("type") == null ? null : SessionTypeEnum.valueOf(getIntent().getStringExtra("type"));
         id = getIntent().getStringExtra("id");
         name = getIntent().getStringExtra("name");
-        if (TextUtils.isEmpty(id) || type == null || TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(id) || type == null || TextUtils.isEmpty(name)) {
             UIUtils.showToastSafe("获取消息发送对象失败");
             finish();
         }
-        YXClient.getInstance().clearUnreadMsgCount(id , type);
+        YXClient.getInstance().clearUnreadMsgCount(id, type);
         YXClient.getInstance().callOnRecentContactChangeLiseners();
     }
 
     @Override
     public void loadData() {
         //查询历史消息
-        YXClient.getInstance().queryHistoryMsgList(type , id , 9999 , System.currentTimeMillis() + 3600000
+        YXClient.getInstance().queryHistoryMsgList(type, id, 9999, System.currentTimeMillis() + 3600000
                 , new RequestCallbackWrapper<List<IMMessage>>() {
-            @Override
-            public void onResult(int code, List<IMMessage> result, Throwable exception) {
-                if (code == ResponseCode.RES_SUCCESS) {
-                    UIUtils.showToastSafe("获取历史消息成功 " + result.size());
-                    for (IMMessage message : result) {
-                       LogUtils.e("FH" , "查询到消息为 " +  message.getMsgType() + " " + message.getContent());
-                        if (message.getMsgType() == MsgTypeEnum.text || message.getMsgType() == MsgTypeEnum.file
-                                || message.getMsgType() == MsgTypeEnum.custom) {
-                            messageList.add(message);
+                    @Override
+                    public void onResult(int code, List<IMMessage> result, Throwable exception) {
+                        if (code == ResponseCode.RES_SUCCESS) {
+                            UIUtils.showToastSafe("获取历史消息成功 " + result.size());
+                            for (IMMessage message : result) {
+                                LogUtils.e("FH", "查询到消息为 " + message.getMsgType() + " " + message.getContent());
+                                if (message.getMsgType() == MsgTypeEnum.text || message.getMsgType() == MsgTypeEnum.file
+                                        || message.getMsgType() == MsgTypeEnum.custom) {
+                                    messageList.add(message);
+                                }
+                            }
+                            scrollToBottom(300);
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            LogUtils.e("FH", "获取历史消息失败 : " + code + "  " + exception);
+                            UIUtils.showToastSafe("获取历史消息失败 : " + code + "  " + exception);
                         }
                     }
-                    scrollToBottom(300);
-                    adapter.notifyDataSetChanged();
-                } else {
-                   LogUtils.e("FH", "获取历史消息失败 : " + code + "  " + exception);
-                    UIUtils.showToastSafe("获取历史消息失败 : " + code + "  " + exception);
-                }
-            }
-        });
+                });
         YXClient.getInstance().with(this).addOnNewMessageListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage newMessage) {
-               LogUtils.e("FH", "ChattingActivity接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType());
+                LogUtils.e("FH", "ChattingActivity接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType());
                 if (isMyMessage(newMessage)
                         && (newMessage.getMsgType() == MsgTypeEnum.text || newMessage.getMsgType() == MsgTypeEnum.file
                         || newMessage.getMsgType() == MsgTypeEnum.custom)) {
@@ -177,8 +180,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.getInstance().with(this).addOnMsgStatusChangedListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage message) {
-               LogUtils.e("FH" , "ChattingActivity message 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
-                if (isMyMessage(message)){
+                LogUtils.e("FH", "ChattingActivity message 状态更新  sid : " + message.getSessionId() + " sstype: " + message.getSessionType() + " content : " + message.getContent() + "  status : " + message.getStatus() + " attstatus : " + message.getAttachStatus());
+                if (isMyMessage(message)) {
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -186,28 +189,26 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     }
 
 
-
-    public void initChattingListview(){
+    public void initChattingListview() {
         binding.chattingListview.setAdapter(adapter);
         binding.chattingListview.setDividerHeight(0);
         binding.chattingListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 IMMessage message = messageList.get(position);
-                if (message.getAttachment() != null && message.getMsgType() != MsgTypeEnum.custom){
-                    if (message.getAttachStatus() != AttachStatusEnum.transferred){
-                        YXClient.getInstance().downloadAttachment(message , false);
-                    }
-                    else {
+                if (message.getAttachment() != null && message.getMsgType() != MsgTypeEnum.custom) {
+                    if (message.getAttachStatus() != AttachStatusEnum.transferred) {
+                        YXClient.getInstance().downloadAttachment(message, false);
+                    } else {
                         FileAttachment fileAttachment = (FileAttachment) message.getAttachment();
-                        openFile("file://" + fileAttachment.getPathForSave() , fileAttachment.getDisplayName());
+                        openFile("file://" + fileAttachment.getPathForSave(), fileAttachment.getDisplayName());
                     }
                 }
             }
         });
     }
 
-    public void initInputEdittext(){
+    public void initInputEdittext() {
         binding.messageEdittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -224,30 +225,28 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
 
             @Override
             public void onFocusChanged(boolean focused) {
-                if (focused){
-                    if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)){
-                        binding.bottomBarLayout.setPadding(0 , 0 , 0, 500);
-                    }
-                    else {
-                        binding.bottomBarLayout.setPadding(0 , 0 , 0, 320);
+                if (focused) {
+                    if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
+                        binding.bottomBarLayout.setPadding(0, 0, 0, 500);
+                    } else {
+                        binding.bottomBarLayout.setPadding(0, 0, 0, 320);
                     }
                     scrollToBottom(100);
-                }
-                else {
-                    binding.bottomBarLayout.setPadding(0 , 0 , 0, 0);
+                } else {
+                    binding.bottomBarLayout.setPadding(0, 0, 0, 0);
                 }
             }
         });
     }
 
-    private void send(){
-        binding.bottomBarLayout.setPadding(0 , 0 , 0, 0);
+    private void send() {
+        binding.bottomBarLayout.setPadding(0, 0, 0, 0);
         binding.messageEdittext.clearFocus();
         YXClient.checkNetAndRefreshLogin(this, new Runnable() {
             @Override
             public void run() {
-                if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")){
-                    YXClient.getInstance().sendTestMessage(id, type, "109010001", "2", new ArrayList<String>(){{
+                if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")) {
+                    YXClient.getInstance().sendTestMessage(id, type, "109010001", "2", new ArrayList<String>() {{
                         add("1420");
                         add("1421");
                     }}, new RequestCallback<Void>() {
@@ -269,8 +268,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     });
                     return;
                 }
-                IMMessage message = YXClient.getInstance().sendTextMessage(id ,
-                        type , binding.messageEdittext.getText().toString() , ChattingActivity.this);
+                IMMessage message = YXClient.getInstance().sendTextMessage(id,
+                        type, binding.messageEdittext.getText().toString(), ChattingActivity.this);
                 if (message != null) {
                     messageList.add(message);
                     binding.messageEdittext.setText("");
@@ -282,15 +281,15 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     }
 
 
-
-    public void scrollToBottom(long delay){
+    public void scrollToBottom(long delay) {
         YoungyApplicationManager.getMainThreadHandler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 binding.chattingListview.setSelection(adapter.getCount() - 1);
             }
-        } , delay);
+        }, delay);
     }
+
     @Override
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
         rightBtn.setVisibility(View.GONE);
@@ -299,13 +298,14 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
 
     /**
      * 发送消息失败会回调到这里
+     *
      * @param code
      * @param data
      */
     @Override
     public void onError(int code, IMMessage data) {
-        if (code == 802){
-            new HintDialog(this , "发送失败:可能您已经不在这个群中").show();
+        if (code == 802) {
+            new HintDialog(this, "发送失败:可能您已经不在这个群中").show();
         }
     }
 
@@ -328,23 +328,22 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null){
-                convertView = LayoutInflater.from(ChattingActivity.this).inflate(R.layout.item_chatting , null);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(ChattingActivity.this).inflate(R.layout.item_chatting, null);
                 AutoUtils.auto(convertView);
                 convertView.setTag(DataBindingUtil.bind(convertView));
             }
             ItemChattingBinding chattingItembinding = (ItemChattingBinding) convertView.getTag();
             final IMMessage imMessage = messageList.get(position);
             //是否显示时间
-            if (shouldShowTime(imMessage , (position - 1 < 0 ? null : messageList.get(position - 1)))){
+            if (shouldShowTime(imMessage, (position - 1 < 0 ? null : messageList.get(position - 1)))) {
                 chattingItembinding.timeTv.setVisibility(View.VISIBLE);
-                chattingItembinding.timeTv.setText(DateUtils.convertTimeMillis2StrRelativeNow(imMessage.getTime() , false));
-            }
-            else {
+                chattingItembinding.timeTv.setText(DateUtils.convertTimeMillis2StrRelativeNow(imMessage.getTime(), false));
+            } else {
                 chattingItembinding.timeTv.setVisibility(View.GONE);
             }
 
-            if (imMessage.getDirect() == MsgDirectionEnum.Out){
+            if (imMessage.getDirect() == MsgDirectionEnum.Out) {
                 chattingItembinding.leftAvatarImv.setVisibility(View.GONE);
                 chattingItembinding.leftMessageBodyLayout.setVisibility(View.GONE);
                 chattingItembinding.leftMessageStatusTv.setVisibility(View.GONE);
@@ -352,7 +351,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 chattingItembinding.rightMessageBodyLayout.setVisibility(View.VISIBLE);
                 chattingItembinding.rightMessageStatusTv.setVisibility(View.VISIBLE);
                 //显示头像
-                switch (SpUtils.getSex()){
+                switch (SpUtils.getSex()) {
                     case "女":
                         chattingItembinding.rightAvatarImv.setImageResource(R.drawable.icon_avatar_student_famale_74px);
                         break;
@@ -360,13 +359,13 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                         chattingItembinding.rightAvatarImv.setImageResource(R.drawable.icon_avatar_student_male_74px);
                         break;
                 }
-                switch (imMessage.getStatus()){
+                switch (imMessage.getStatus()) {
                     case sending:
                         chattingItembinding.rightMessageStatusTv.setText("正在发送...");
                         break;
                     case success:
-                        if (imMessage.getAttachment() != null && imMessage.getMsgType() != MsgTypeEnum.custom){
-                            switch (imMessage.getAttachStatus()){
+                        if (imMessage.getAttachment() != null && imMessage.getMsgType() != MsgTypeEnum.custom) {
+                            switch (imMessage.getAttachStatus()) {
                                 case def:
                                     chattingItembinding.rightMessageStatusTv.setText("附件未传送");
                                     break;
@@ -381,8 +380,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                                     chattingItembinding.rightMessageStatusTv.setText("附件传送失败");
                                     break;
                             }
-                        }
-                        else {
+                        } else {
 //                                    chattingItembinding.rightMessageStatusTv.setText("发送成功");
                             chattingItembinding.rightMessageStatusTv.setText("");
                         }
@@ -391,27 +389,25 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                         chattingItembinding.rightMessageStatusTv.setText("发送失败");
                         break;
                 }
-                if (imMessage.getMsgType() == MsgTypeEnum.text){
+                if (imMessage.getMsgType() == MsgTypeEnum.text) {
                     chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
                     chattingItembinding.rightTextTv.setText(imMessage.getContent());
-                }
-                else if (imMessage.getMsgType() == MsgTypeEnum.file){
+                } else if (imMessage.getMsgType() == MsgTypeEnum.file) {
                     chattingItembinding.rightTextTv.setVisibility(View.GONE);
                     chattingItembinding.rightFileDialogLayout.setVisibility(View.VISIBLE);
-                    chattingItembinding.rightFileNameTv.setText(((FileAttachment)imMessage.getAttachment()).getDisplayName());
+                    chattingItembinding.rightFileNameTv.setText(((FileAttachment) imMessage.getAttachment()).getDisplayName());
                     chattingItembinding.rightFileSizeTv.setText(SizeUtil.convertSizeLong2String(
-                            ((FileAttachment)imMessage.getAttachment()).getSize() ,
-                            2 ,
+                            ((FileAttachment) imMessage.getAttachment()).getSize(),
+                            2,
                             BigDecimal.ROUND_HALF_UP
                     ));
-                }
-                else if (imMessage.getMsgType() == MsgTypeEnum.custom){
-                    if (imMessage.getAttachment() instanceof BookRecommandAttachment){
+                } else if (imMessage.getMsgType() == MsgTypeEnum.custom) {
+                    if (imMessage.getAttachment() instanceof BookRecommandAttachment) {
                         chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
                         chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
-                        final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();
-                        if(attachment != null){
+                        final BookRecommandAttachment attachment = (BookRecommandAttachment) imMessage.getAttachment();
+                        if (attachment != null) {
                             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                             spannableStringBuilder.append("向您推荐图书 : 《");
                             SpannableString spannableString = new SpannableString(attachment.bookName);
@@ -431,12 +427,11 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                             chattingItembinding.rightTextTv.setText(spannableStringBuilder);
                             chattingItembinding.rightTextTv.setMovementMethod(LinkMovementMethod.getInstance());
                         }
-                    }
-                    else if (imMessage.getAttachment() instanceof HomeworkRemindAttachment){
+                    } else if (imMessage.getAttachment() instanceof HomeworkRemindAttachment) {
                         chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
                         chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
-                        final HomeworkRemindAttachment attachment = (HomeworkRemindAttachment)imMessage.getAttachment();
-                        if(attachment != null){
+                        final HomeworkRemindAttachment attachment = (HomeworkRemindAttachment) imMessage.getAttachment();
+                        if (attachment != null) {
                             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                             spannableStringBuilder.append("今天的家庭作业还没有完成哦！请点击：");
                             SpannableString spannableString = new SpannableString(attachment.examName);
@@ -451,13 +446,13 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                             chattingItembinding.rightTextTv.setText(spannableStringBuilder);
                             chattingItembinding.rightTextTv.setMovementMethod(LinkMovementMethod.getInstance());
                         }
+                    } else if (imMessage.getAttachment() instanceof TaskRemindAttachment) {
+                        chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
+                        chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
+                        receiveTaskRemind(chattingItembinding,imMessage);
                     }
                 }
-                else {
-
-                }
-            }
-            else {
+            } else {
                 chattingItembinding.leftAvatarImv.setVisibility(View.VISIBLE);
                 chattingItembinding.leftMessageBodyLayout.setVisibility(View.VISIBLE);
                 chattingItembinding.leftMessageStatusTv.setVisibility(View.VISIBLE);
@@ -466,22 +461,20 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 chattingItembinding.rightMessageStatusTv.setVisibility(View.GONE);
                 //显示头像
                 GenderEnum userGender = YXClient.getInstance().getUserGenderByID(id);
-                if (userGender == null){
+                if (userGender == null) {
                     chattingItembinding.leftAvatarImv.setImageBitmap(null);
-                }
-                else if (userGender == GenderEnum.MALE){
+                } else if (userGender == GenderEnum.MALE) {
                     chattingItembinding.leftAvatarImv.setImageResource(R.drawable.icon_avatar_teacher_male_76px);
-                }
-                else {
+                } else {
                     chattingItembinding.leftAvatarImv.setImageResource(R.drawable.icon_avatar_teacher_famale_74px);
                 }
-                switch (imMessage.getStatus()){
+                switch (imMessage.getStatus()) {
                     case sending:
                         chattingItembinding.leftMessageStatusTv.setText("正在接收...");
                         break;
                     case success:
-                        if (imMessage.getAttachment() != null && imMessage.getMsgType() != MsgTypeEnum.custom){
-                            switch (imMessage.getAttachStatus()){
+                        if (imMessage.getAttachment() != null && imMessage.getMsgType() != MsgTypeEnum.custom) {
+                            switch (imMessage.getAttachStatus()) {
                                 case def:
                                     chattingItembinding.leftMessageStatusTv.setText("附件未接收");
                                     break;
@@ -496,8 +489,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                                     chattingItembinding.leftMessageStatusTv.setText("附件接收失败");
                                     break;
                             }
-                        }
-                        else {
+                        } else {
 //                                    chattingItembinding.leftMessageStatusTv.setText("接收成功");
                             chattingItembinding.leftMessageStatusTv.setText("");
                         }
@@ -506,28 +498,26 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                         chattingItembinding.leftMessageStatusTv.setText("接收失败");
                         break;
                 }
-                if (imMessage.getMsgType() == MsgTypeEnum.text){
+                if (imMessage.getMsgType() == MsgTypeEnum.text) {
                     chattingItembinding.leftTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.leftFileDialogLayout.setVisibility(View.GONE);
                     chattingItembinding.leftTextTv.setText(imMessage.getContent());
-                }
-                else if (imMessage.getMsgType() == MsgTypeEnum.file){
-                    FileAttachment fileAttachment = (FileAttachment)imMessage.getAttachment();
+                } else if (imMessage.getMsgType() == MsgTypeEnum.file) {
+                    FileAttachment fileAttachment = (FileAttachment) imMessage.getAttachment();
                     chattingItembinding.leftTextTv.setVisibility(View.GONE);
                     chattingItembinding.leftFileDialogLayout.setVisibility(View.VISIBLE);
                     chattingItembinding.leftFileNameTv.setText(
-                            StringUtils.cutString(fileAttachment.getDisplayName() , 8)
+                            StringUtils.cutString(fileAttachment.getDisplayName(), 8)
                     );
                     chattingItembinding.leftFileSizeTv.setText(
                             SizeUtil.convertSizeLong2String(fileAttachment.getSize())
                     );
                     chattingItembinding.leftFileIconImv.setImageResource(getIconResBaseFileName(fileAttachment.getDisplayName()));
-                }
-                else if (imMessage.getMsgType() == MsgTypeEnum.custom){
+                } else if (imMessage.getMsgType() == MsgTypeEnum.custom) {
                     chattingItembinding.leftTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.leftFileDialogLayout.setVisibility(View.GONE);
-                    if(imMessage.getAttachment() instanceof BookRecommandAttachment){
-                        final BookRecommandAttachment attachment = (BookRecommandAttachment)imMessage.getAttachment();
+                    if (imMessage.getAttachment() instanceof BookRecommandAttachment) {
+                        final BookRecommandAttachment attachment = (BookRecommandAttachment) imMessage.getAttachment();
                         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                         spannableStringBuilder.append("向您推荐图书 : 《");
                         SpannableString spannableString = new SpannableString(attachment.bookName);
@@ -546,9 +536,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                         }
                         chattingItembinding.leftTextTv.setText(spannableStringBuilder);
                         chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
-                    }
-                    else if (imMessage.getAttachment() instanceof HomeworkRemindAttachment){
-                        final HomeworkRemindAttachment attachment = (HomeworkRemindAttachment)imMessage.getAttachment();
+                    } else if (imMessage.getAttachment() instanceof HomeworkRemindAttachment) {
+                        final HomeworkRemindAttachment attachment = (HomeworkRemindAttachment) imMessage.getAttachment();
                         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                         spannableStringBuilder.append("今天的家庭作业还没有完成哦！请点击：");
                         SpannableString spannableString = new SpannableString(attachment.examName);
@@ -562,87 +551,109 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                         spannableStringBuilder.append("尽快完成作业作答！");
                         chattingItembinding.leftTextTv.setText(spannableStringBuilder);
                         chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+                    }else if (imMessage.getAttachment() instanceof TaskRemindAttachment){
+                        receiveTaskRemind(chattingItembinding,imMessage);
                     }
-
-                }
-                else {
 
                 }
             }
             return convertView;
         }
+        private void receiveTaskRemind(ItemChattingBinding chattingItembinding,IMMessage imMessage){
+            final TaskRemindAttachment attachment = (TaskRemindAttachment) imMessage.getAttachment();
+            if (attachment != null) {
+                SpannableStringBuilder ssb = new SpannableStringBuilder();
+                ssb.append("今天的任务还没有完成哦！请点击：");
+                SpannableString ss = new SpannableString(attachment.taskName);
+                ss.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        Intent intent = new Intent(ChattingActivity.this,TaskDetailStudentActivity.class);
+                        intent.putExtra(TaskRemindAttachment.KEY_TASK_ID,attachment.taskId);
+                        intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME,attachment.taskName);
+                        startActivity(intent);
+                    }
+                }, 0, ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                ssb.append(ss);
+                ssb.append("尽快完成任务！");
+                chattingItembinding.rightTextTv.setText(ssb);
+                chattingItembinding.rightTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        }
     }
+
 
     /**
      * 判断此消息提醒的作业是否已经提交，若未完成，则打开作业
+     *
      * @param attachment
      */
-    private void jumpHomework (HomeworkRemindAttachment attachment) {
+    private void jumpHomework(HomeworkRemindAttachment attachment) {
         if (attachment == null) {
             return;
         }
         NetWorkManager.queryReply(Integer.parseInt(attachment.examId), SpUtils.getUserId(), null)
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
-            @Override
-            public void call(List<QuestionReplySummary> questionReplySummaries) {
-                LogUtils.d("questionReplySummaries size = " + questionReplySummaries.size());
-                if (questionReplySummaries.size() == 0) {
-                    Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
-                    intent.putExtra("examId", attachment.examId);
-                    intent.putExtra("examName" , attachment.examName);
-                    intent.putExtra("isTimerWork", attachment.isTimeWork);
-                    intent.putExtra("lifeTime", attachment.lifeTime);
-                    intent.putExtra("isStudentCheck", attachment.isStudentCheck);
-                    if ("onClass".equals(attachment.examOccasion)) {
-                        intent.putExtra("isOnClass", true);
-                    } else {
-                        intent.putExtra("isOnClass", false);
+                    @Override
+                    public void call(List<QuestionReplySummary> questionReplySummaries) {
+                        LogUtils.d("questionReplySummaries size = " + questionReplySummaries.size());
+                        if (questionReplySummaries.size() == 0) {
+                            Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
+                            intent.putExtra("examId", attachment.examId);
+                            intent.putExtra("examName", attachment.examName);
+                            intent.putExtra("isTimerWork", attachment.isTimeWork);
+                            intent.putExtra("lifeTime", attachment.lifeTime);
+                            intent.putExtra("isStudentCheck", attachment.isStudentCheck);
+                            if ("onClass".equals(attachment.examOccasion)) {
+                                intent.putExtra("isOnClass", true);
+                            } else {
+                                intent.putExtra("isOnClass", false);
+                            }
+                            intent.putExtra("teacherID", attachment.teacherId);
+                            startActivity(intent);
+                        } else {
+                            ToastUtil.showCustomToast(ChattingActivity.this, "作业已经提交！");
+                        }
                     }
-                    intent.putExtra("teacherID", attachment.teacherId);
-                    startActivity(intent);
-                } else {
-                    ToastUtil.showCustomToast(ChattingActivity.this, "作业已经提交！");
-                }
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
 
-                LogUtils.d("questionReplySummaries size = " + throwable.getMessage());
-            }
-        });
+                        LogUtils.d("questionReplySummaries size = " + throwable.getMessage());
+                    }
+                });
     }
 
 
-    private int getIconResBaseFileName(String fileName){
-        if (fileName.endsWith(".pdf"))return R.drawable.icon_pdf;
-        if (fileName.endsWith(".ppt") || fileName.endsWith(".pptx"))return R.drawable.icon_ppt;
-        if (fileName.endsWith(".doc") || fileName.endsWith(".docx"))return R.drawable.icon_doc;
-        if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx"))return R.drawable.icon_xsl;
+    private int getIconResBaseFileName(String fileName) {
+        if (fileName.endsWith(".pdf")) return R.drawable.icon_pdf;
+        if (fileName.endsWith(".ppt") || fileName.endsWith(".pptx")) return R.drawable.icon_ppt;
+        if (fileName.endsWith(".doc") || fileName.endsWith(".docx")) return R.drawable.icon_doc;
+        if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) return R.drawable.icon_xsl;
         return R.drawable.img_normal_zuoye;
     }
 
     /**
      * 根据与上一条消息的间隔判断是否要显示时间文字
+     *
      * @return
      */
-    private boolean shouldShowTime(IMMessage thisMessage , IMMessage lastMessage){
-        final long TIME_INTERVAL = 1000*60*2;//2min
+    private boolean shouldShowTime(IMMessage thisMessage, IMMessage lastMessage) {
+        final long TIME_INTERVAL = 1000 * 60 * 2;//2min
         return !(lastMessage != null && thisMessage.getTime() - lastMessage.getTime() < TIME_INTERVAL);
     }
 
-    private void openFile(String path , String displayName){
+    private void openFile(String path, String displayName) {
         if (displayName.endsWith(".pdf")
                 || displayName.endsWith(".ppt") || displayName.endsWith(".pptx")
                 || displayName.endsWith(".doc") || displayName.endsWith(".docx")
-                ||displayName.endsWith(".xls") || displayName.endsWith(".xlsx")){
+                || displayName.endsWith(".xls") || displayName.endsWith(".xlsx")) {
             Intent intent = new Intent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.parse(path), "application/msword");
             startActivity(intent);
-        }
-        else {
+        } else {
             UIUtils.showToastSafe("不支持的文件格式");
         }
     }

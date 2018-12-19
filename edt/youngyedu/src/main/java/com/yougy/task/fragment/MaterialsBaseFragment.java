@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.task.MaterialActivity;
+import com.yougy.task.activity.MaterialActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView2;
 

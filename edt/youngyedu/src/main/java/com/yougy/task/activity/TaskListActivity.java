@@ -1,4 +1,4 @@
-package com.yougy.task;
+package com.yougy.task.activity;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -12,9 +12,8 @@ import android.view.ViewGroup;
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
+import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.task.bean.Task;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.TaskItemBinding;
@@ -64,7 +63,8 @@ public class TaskListActivity extends BaseActivity {
         binding.topLayout.titleTv.setText(courseBookTitle);
         initPageBar();
     }
-    private void initPageBar(){
+
+    private void initPageBar() {
         binding.pageBarTask.setPageBarAdapter(new PageBtnBarAdapterV2(this) {
             @Override
             public int getPageBtnCount() {
@@ -83,6 +83,7 @@ public class TaskListActivity extends BaseActivity {
         });
         binding.pageBarTask.selectPageBtn(0, false);
     }
+
     @Override
     protected void loadData() {
         generateData();
@@ -218,7 +219,12 @@ public class TaskListActivity extends BaseActivity {
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));
             binding.taskExerciseCount.setText(String.valueOf(task.getExerciseCount()));
             binding.taskCompleteTime.setText(getString(R.string.task_complete_time, "2018-11-28 17:48", "2018-11-29 17:00"));
-            itemView.setOnClickListener(v -> startActivity(new Intent(TaskListActivity.this, TaskDetailStudentActivity.class)));
+            itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(TaskListActivity.this, TaskDetailStudentActivity.class);
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID,task.getContentElement());
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME,task.getContentTitle());
+                startActivity(intent);
+            });
         }
     }
 

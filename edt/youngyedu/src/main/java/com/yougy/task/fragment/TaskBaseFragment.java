@@ -13,8 +13,7 @@ import android.view.ViewGroup;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.RefreshUtil;
-import com.yougy.task.TaskDetailStudentActivity;
+import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.view.NoteBookView2;
 
 import java.util.ArrayList;
