@@ -1,19 +1,14 @@
-package com.yougy.task;
+package com.yougy.task.activity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
 
-import com.bumptech.glide.BitmapTypeRequest;
-import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.yougy.anwser.Content_new;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -25,13 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 public class SaveNoteUtils {
 
