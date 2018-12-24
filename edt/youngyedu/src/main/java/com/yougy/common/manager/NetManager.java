@@ -114,7 +114,7 @@ public class NetManager {
             String action = intent.getAction();
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
-                LogUtils.e("yuaye...net..isConnected. com.youngy.ui2."+isConnected);
+                LogUtils.e("YUANYE 当前网络状态 ."+isConnected);
                 if (isConnected) {//当前是已连接状态的时，若网络Dialog打开则关闭
                     DialogManager.newInstance().dissMissUiPromptDialog();
                     isNetOutage = false;
