@@ -190,21 +190,22 @@ public class YoungyApplicationManager extends LitePalApplication {
 
             //注册屏幕开锁广播接收器,每次开锁的时候回跳到本地锁.
             //本广播只会在应用程序启动后注册,未启动应用时,不能检测到开屏广播
-            IntentFilter filter = new IntentFilter();
-            filter.addAction("android.intent.action.SCREEN_ON");
-            registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (BaseActivity.getForegroundActivity() != null
-                            && !(BaseActivity.getForegroundActivity() instanceof LocalLockActivity)
-                            && !TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
-                        Intent newIntent = new Intent(context, LocalLockActivity.class);
-                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        newIntent.putExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, true);
-                        context.startActivity(newIntent);
-                    }
-                }
-            }, filter);
+            //需求变更:本地锁暂时取消
+//            IntentFilter filter = new IntentFilter();
+//            filter.addAction("android.intent.action.SCREEN_ON");
+//            registerReceiver(new BroadcastReceiver() {
+//                @Override
+//                public void onReceive(Context context, Intent intent) {
+//                    if (BaseActivity.getForegroundActivity() != null
+//                            && !(BaseActivity.getForegroundActivity() instanceof LocalLockActivity)
+//                            && !TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
+//                        Intent newIntent = new Intent(context, LocalLockActivity.class);
+//                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        newIntent.putExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, true);
+//                        context.startActivity(newIntent);
+//                    }
+//                }
+//            }, filter);
 
             //初始化云信配置,注册全局性的处理器和解析器等
             YXClient.getInstance().initOption(this);

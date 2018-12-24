@@ -29,12 +29,15 @@ import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
@@ -55,6 +58,7 @@ import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
+import com.yougy.init.activity.LoginActivity;
 import com.yougy.message.YXClient;
 import com.yougy.message.ui.RecentContactListActivity;
 import com.yougy.order.LockerActivity;
@@ -67,13 +71,18 @@ import com.yougy.update.VersionUtils;
 import com.yougy.view.dialog.AppUpdateDialog;
 import com.yougy.view.dialog.DownProgressDialog;
 
+import org.litepal.tablemanager.Connector;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.functions.Action1;
 
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 
 //import com.tencent.bugly.crashreport.CrashReport;
 
@@ -170,6 +179,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Button btn_deviceSize;
     private DeviceYxMsgErrorDialog mDeviceYxMsgErrorDialog;
 
+
+    private static long lastCheckTimeMill = 0;
+    private static CheckRunnable checkRunnable = new CheckRunnable();
+    private boolean initializationNeedNetFinished = false;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        long timeTolastCheck = System.currentTimeMillis() - lastCheckTimeMill;
+        LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck/1000) + "秒");
+        if (System.currentTimeMillis() - lastCheckTimeMill > 60*60*1000){
+//        if (System.currentTimeMillis() - lastCheckTimeMill > 5*1000){
+            LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间过长,启动验证是否解绑流程");
+            YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
+            YoungyApplicationManager.getMainThreadHandler().post(checkRunnable.setActivity(this));
+        }
+        else {
+            LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间在可允许范围内,本次不验证是否解绑");
+        }
+    }
 
     /***************************************************************************/
 
@@ -1023,48 +1052,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             });
         }
         initSysIcon();
-        YXClient.getInstance().checkIfNotLoginThenDoIt(this, new RequestCallback() {
-            @Override
-            public void onSuccess(Object param) {
-                new AsyncTask() {
-                    @Override
-                    protected Object doInBackground(Object[] params) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Object o) {
-                        int totalUnreadMsgCount = 0;
-                        for (RecentContact recentContact : YXClient.getInstance().getRecentContactList()) {
-                            totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId(), recentContact.getSessionType());
-                        }
-                        if (totalUnreadMsgCount != 0) {
-                            mIvMsg.setVisibility(View.VISIBLE);
-//                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
-                        } else {
-                            mIvMsg.setVisibility(View.GONE);
-                        }
-                    }
-                }.execute((Object[]) null);
-            }
-
-            @Override
-            public void onFailed(int code) {
-                ToastUtil.showCustomToast(getApplicationContext() , "连接消息服务器失败!");
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
-
-
         if (SpUtils.getOrder().contains(LOCK_SCREEN) && SpUtils.getOrder().contains(DateUtils.getCalendarString())) {
             Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1301,6 +1288,128 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     //=================================升级相关代码 结束=============================================================
+
+    private static class CheckRunnable implements Runnable{
+        MainActivity activity;
+        public CheckRunnable setActivity(MainActivity activity) {
+            this.activity = activity;
+            return this;
+        }
+
+        @Override
+        public void run() {
+            if (!NetUtils.isNetConnected()) {
+                LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:没有连接网络,尝试打开网络,并在30秒之后再次检查");
+                NetManager.getInstance().changeWiFi(YoungyApplicationManager.getInstance(), true);
+                YoungyApplicationManager.getMainThreadHandler().removeCallbacks(this);
+                YoungyApplicationManager.getMainThreadHandler().postDelayed(this, 30000);
+            } else {
+                NewLoginReq loginReq = new NewLoginReq();
+                loginReq.setDeviceId(Commons.UUID);
+                NetWorkManager.getInstance(true).login(loginReq)
+                        .subscribe(students -> {
+                            LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:没有被解绑,走正常流程");
+                            if (!activity.initializationNeedNetFinished){
+                                downloadDb();
+                                getUnreadMsg();
+                                activity.initializationNeedNetFinished = true;
+                            }
+                            lastCheckTimeMill = System.currentTimeMillis();
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                throwable.printStackTrace();
+                                if (throwable instanceof ApiException
+                                        && ("401".equals(((ApiException) throwable).getCode()))) {
+                                    LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:可能被解绑了,先logout后跳转到login界面");
+                                    ToastUtil.showCustomToast(activity, "您的设备可能已经被解绑了,请重新登录绑定设备!");
+                                    //登录失败,可能是在pc端被解绑了.
+                                    //删除本端的缓存数据并且跳转到login界面
+                                    SpUtils.clearSP();
+                                    SpUtils.changeInitFlag(false);
+                                    Connector.resetHelper();
+                                    activity.deleteDatabase(DATABASE_NAME);
+                                    activity.deleteDatabase(JOURNAL_NAME);
+                                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                                    YXClient.getInstance().logout();
+                                    ThreadManager.getSinglePool().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            DeviceScreensaverUtils.setScreensaver();
+                                        }
+                                    });
+                                    activity.startActivity(new Intent(activity , LoginActivity.class));
+                                    activity.finish();
+                                } else {
+                                    LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:未知,查询是否解绑接口调不通,尝试进行初始化,是否解绑延期至下次进入主界面时做");
+                                    if (!activity.initializationNeedNetFinished){
+                                        downloadDb();
+                                        getUnreadMsg();
+                                        activity.initializationNeedNetFinished = true;
+                                    }
+                                }
+                            }
+                        });
+            }
+        }
+
+        public void downloadDb(){
+            File file = new File(activity.getDatabasePath(SpUtils.getUserId() + ".db").getAbsolutePath());
+            if (!file.exists()) {
+                activity.startService(new Intent(activity, DownloadService.class));
+            }
+        }
+        public void getUnreadMsg(){
+            YXClient.getInstance().checkIfNotLoginThenDoIt(activity, new RequestCallback() {
+                @Override
+                public void onSuccess(Object param) {
+                    new AsyncTask() {
+                        @Override
+                        protected Object doInBackground(Object[] params) {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            int totalUnreadMsgCount = 0;
+                            for (RecentContact recentContact : YXClient.getInstance().getRecentContactList()) {
+                                totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId(), recentContact.getSessionType());
+                            }
+                            if (totalUnreadMsgCount != 0) {
+                                activity.mIvMsg.setVisibility(View.VISIBLE);
+//                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
+                            } else {
+                                activity.mIvMsg.setVisibility(View.GONE);
+                            }
+                        }
+                    }.execute((Object[]) null);
+                }
+
+                @Override
+                public void onFailed(int code) {
+                    ToastUtil.showCustomToast(activity , "连接消息服务器失败!");
+                }
+
+                @Override
+                public void onException(Throwable exception) {
+
+                }
+            });
+        }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
+        checkRunnable.activity = null;
+    }
+
 
 }
 
