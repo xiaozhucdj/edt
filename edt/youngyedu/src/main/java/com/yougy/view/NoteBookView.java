@@ -415,12 +415,12 @@ public class NoteBookView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+
+
         if (mIntercept) {
             return false;
         }
-        if (event.getDeviceId() != 1) {
-            return true;
-        }
+
         if (!isEnabled() || event.getPointerCount() > 1) {
             return false;
         }
