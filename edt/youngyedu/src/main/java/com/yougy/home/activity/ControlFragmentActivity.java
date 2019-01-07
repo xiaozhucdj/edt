@@ -105,6 +105,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
 
     @Override
     protected void init() {
+        mIsCheckStartNet = false ;
         if (getIntent() != null && getIntent().getExtras() != null) {
             LogUtils.i("yuanye ..init");
             Bundle bundle = getIntent().getExtras();

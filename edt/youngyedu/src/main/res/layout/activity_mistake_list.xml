@@ -411,7 +411,6 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="62px"
                 android:background="@color/white"
-                android:padding="30px"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
 
 

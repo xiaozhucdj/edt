@@ -144,7 +144,7 @@ public class NoteBookView2 extends View {
         invalidate();
     }
 
-    public Bitmap getBitmap(){
+    public Bitmap getBitmap() {
         return mBitmap;
     }
 
@@ -170,12 +170,12 @@ public class NoteBookView2 extends View {
         if (mPath != null) {
             float dx = Math.abs(x - mX);
             float dy = Math.abs(mY - y);
-            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-                line.getPoints().add(new Point(x, y));
-                mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
-                mX = x;
-                mY = y;
-            }
+//            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            line.getPoints().add(new Point(x, y));
+            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+            mX = x;
+            mY = y;
+//            }
             mCanvas.drawPath(mPath, dp.paint);
         }
     }
@@ -238,18 +238,15 @@ public class NoteBookView2 extends View {
     }
 
 
-
     private Line line;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-            if (mIntercept){
-                return false ;
-            }
-        if (event.getDeviceId() != 1) {
-            return true;
+        if (mIntercept) {
+            return false;
         }
+
         if (!isEnabled() || event.getPointerCount() > 1) {
             return false;
         }
@@ -388,7 +385,7 @@ public class NoteBookView2 extends View {
         invalidate();
     }
 
-    private boolean mIntercept =false;
+    private boolean mIntercept = false;
 
     public void setIntercept(boolean intercept) {
         mIntercept = intercept;

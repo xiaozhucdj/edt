@@ -149,10 +149,10 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2px"
-            android:background="#666666" />
-
+            android:background="#666666"
+            android:visibility="gone"/>
+        <!--需求变更:取消解绑功能-->
         <TextView
-
             android:id="@+id/unbind_btn"
             android:layout_width="match_parent"
             android:layout_height="60px"
@@ -162,13 +162,16 @@
             android:onClick="unBind"
             android:text="将该账号与设备解绑"
             android:textColor="@color/black"
-            android:textSize="24px" />
+            android:textSize="24px"
+            android:visibility="gone"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2px"
-            android:background="@color/black" />
+            android:background="@color/black"
+            android:visibility="gone"/>
 
+        <!--需求变更:取消本地锁功能,因此取消密码修改功能-->
         <TextView
             android:background="@drawable/change_pwd_btn_bg_normal"
             android:id="@+id/change_pwd_btn"
@@ -179,7 +182,8 @@
             android:onClick="changePwd"
             android:text="修改开机密码"
             android:textColor="@color/white"
-            android:textSize="24px" />
+            android:textSize="24px"
+            android:visibility="gone"/>
 
 
         <View

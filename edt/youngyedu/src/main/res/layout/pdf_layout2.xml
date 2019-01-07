@@ -114,17 +114,25 @@
         android:src="@drawable/img_page_next"
         android:visibility="gone" />
 
-
     <Button
         android:id="@+id/img_btn_hide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="88px"
         android:background="@drawable/img_btn_hide"
         android:gravity="center"
         android:text="隐藏菜单栏"
         android:textColor="@color/white"
         android:textSize="18px" />
+
+    <ImageButton
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="80px"
+        android:id="@+id/img_btn_media"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/btn_media_selector" />
 </RelativeLayout>

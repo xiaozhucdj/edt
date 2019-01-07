@@ -74,6 +74,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mIsCheckStartNet = false ;
         LitePal.getDatabase();
         subscription = new CompositeSubscription();
         tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
@@ -179,20 +180,22 @@ public class SplashActivity extends BaseActivity {
 
 
     private void checkLocalLockAndJump() {
-        if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
-            LogUtils.e("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
-            new HintDialog(SplashActivity.this
-                    , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
-                    , "确定"
-                    , dialog -> {
-                SpUtils.setLocalLockPwd("123456");
-                loadIntent(LocalLockActivity.class);
-                finish();
-            }).show();
-        } else {
-            LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
-            jumpActivity(LocalLockActivity.class);
-        }
+        //需求变更:取消本地锁界面
+        jumpActivity(MainActivity.class);
+//        if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
+//            LogUtils.e("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
+//            new HintDialog(SplashActivity.this
+//                    , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
+//                    , "确定"
+//                    , dialog -> {
+//                SpUtils.setLocalLockPwd("123456");
+//                loadIntent(LocalLockActivity.class);
+//                finish();
+//            }).show();
+//        } else {
+//            LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
+//            jumpActivity(LocalLockActivity.class);
+//        }
     }
 
     private void login() {

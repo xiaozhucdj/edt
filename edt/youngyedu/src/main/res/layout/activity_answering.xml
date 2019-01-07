@@ -25,6 +25,16 @@
                 android:src="@drawable/img_normal_fanhui"
                 android:visibility="gone" />
 
+            <ImageView
+                android:id="@+id/image_refresh"
+                android:layout_width="32px"
+                android:layout_height="30px"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="30px"
+                android:onClick="onClick"
+                android:layout_toRightOf="@+id/btn_left"
+                android:src="@drawable/icon_shuaxin" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

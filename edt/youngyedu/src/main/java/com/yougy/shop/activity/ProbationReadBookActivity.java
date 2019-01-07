@@ -20,6 +20,7 @@ import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
 import com.onyx.reader.ReaderPresenter;
+import com.yougy.common.media.MediaBean;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -399,7 +400,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     }
 
     @Override
-    public void updatePage(int page, Bitmap bitmap) {
+    public void updatePage(int page, Bitmap bitmap, MediaBean bean) {
         EpdController.invalidate(mRootView, UpdateMode.GC);
         mOnyxImgView.setImageBitmap(bitmap);
         mImgPageBack.setEnabled(true);

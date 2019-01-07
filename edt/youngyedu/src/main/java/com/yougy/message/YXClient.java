@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.WindowManager;
@@ -48,15 +47,12 @@ import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
-import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FormatUtils;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.common.utils.StringUtils;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.attachment.CustomAttachParser;
@@ -67,7 +63,6 @@ import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.ReceiveWorkAttachment;
 import com.yougy.message.attachment.ReplyAttachment;
-import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.message.attachment.SubmitHomeworkAttachment;
 import com.yougy.message.attachment.WendaQuestionAddAttachment;
@@ -82,6 +77,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 /**
@@ -102,6 +99,12 @@ public class YXClient {
     static public final String USER_GENDER = "user_gender";
     static public final String TEAM = "team";
     static public final String IS_FETCHING = "is_fetching";
+
+    static public final int ERROR_REASON_NET_BROKEN = -998;
+    static public final int ERROR_REASON_TOKEN_PARSE_ERROR = -997;
+    static public final int ERROR_REASON_NULL_USERID = -996;
+    static public final int ERROR_REASON_WAIT_TIMEOUT = -995;
+    static public final int ERROR_REASON_OTHERS = -994;
 
     private final long UPDATE_THRESHOLD = 1000 * 60 * 60;
 
@@ -163,7 +166,6 @@ public class YXClient {
                             || newMessage.getAttachment() instanceof WendaQuestionAddAttachment
                             || newMessage.getAttachment() instanceof OverallLockAttachment
                             || newMessage.getAttachment() instanceof OverallUnlockAttachment
-                            || newMessage.getAttachment() instanceof RetryAskQuestionAttachment
                             || newMessage.getAttachment() instanceof NeedRefreshHomeworkAttachment
                             || newMessage.getAttachment() instanceof SeatWorkAttachment
                             || newMessage.getAttachment() instanceof ReceiveWorkAttachment
@@ -279,14 +281,15 @@ public class YXClient {
         @Override
         public void onEvent(StatusCode statusCode) {
             currentOnlineStatus = statusCode;
+            LogUtils.e("YUANYE 观察到在线状态变化 ."+statusCode);
             LogUtils.e("FH", "onlineStatus 变更: " + statusCode);
-            if (statusCode == StatusCode.PWD_ERROR) {
+//            if (statusCode == StatusCode.PWD_ERROR) {
 //                if (!TextUtils.isEmpty(currentAccount)){
 //                    getTokenAndLogin(currentAccount , null);
 //                }
-            } else if (statusCode == StatusCode.KICKOUT) {
-
-            }
+//            } else if (statusCode == StatusCode.KICKOUT) {
+//
+//            }
         }
     };
     //最近联系人变更观察者
@@ -421,28 +424,31 @@ public class YXClient {
         }
     };
     //群成员被移除观察者
-    private Observer<TeamMember> teamMemberRemoveObserver = new Observer<TeamMember>() {
+    private Observer<List<TeamMember>> teamMemberRemoveObserver = new Observer<List<TeamMember>>() {
         @Override
-        public void onEvent(final TeamMember teamMember) {
-            lv("收到群成员被移除通知" + teamMember);
-            if (teamMember.getAccount().length() == 6 || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtils.getUserId() + ""))) {
-                //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
-                return;
-            }
-            if (getTeamMemberByID(teamMember.getTid()) != null) {
-                Pair<Long, List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
-                pair.first = System.currentTimeMillis();
-                ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
-                    @Override
-                    public boolean isMatchCondition(TeamMember nodeInList) {
-                        return nodeInList.getAccount().equals(teamMember.getAccount());
+        public void onEvent(final List<TeamMember> teamMemberList) {
+            lv("收到群成员被移除通知" + teamMemberList.toString() + " size=" + teamMemberList.size());
+            for (TeamMember teamMember : teamMemberList) {
+                if (teamMember.getAccount().length() == 6
+                        || (teamMember.getAccount().length() == 10 && !teamMember.getAccount().equals(SpUtils.getUserId() + ""))) {
+                    //需要屏蔽群中其他学生10位ID,和管理员6位ID的成员变化
+                    continue;
+                }
+                if (getTeamMemberByID(teamMember.getTid()) != null) {
+                    Pair<Long, List<TeamMember>> pair = groupMemberMap.get(teamMember.getTid());
+                    pair.first = System.currentTimeMillis();
+                    ListUtil.conditionalRemove(pair.sencond, new ListUtil.ConditionJudger<TeamMember>() {
+                        @Override
+                        public boolean isMatchCondition(TeamMember nodeInList) {
+                            return nodeInList.getAccount().equals(teamMember.getAccount());
+                        }
+                    });
+                    List<TeamMember> list = new ArrayList<TeamMember>() {{
+                        add(teamMember);
+                    }};
+                    for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
+                        listener.onThingChanged(new Pair<String, List<TeamMember>>(teamMember.getTid(), list), DELETE);
                     }
-                });
-                List<TeamMember> list = new ArrayList<TeamMember>() {{
-                    add(teamMember);
-                }};
-                for (OnThingsChangedListener<Pair<String, List<TeamMember>>> listener : onTeamMemberChangedListeners) {
-                    listener.onThingChanged(new Pair<String, List<TeamMember>>(teamMember.getTid(), list), DELETE);
                 }
             }
         }
@@ -615,6 +621,8 @@ public class YXClient {
         NIMClient.getService(SystemMessageObserver.class).observeReceiveSystemMsg(systemMessageObserver, true);
         //注册自定义通知观察者
         NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
+        //注册自定义通知观察者
+        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver, true);
     }
 
     /**
@@ -626,10 +634,9 @@ public class YXClient {
      *                 如果密码错误,会自动联网获取最新密码,并且重新登录.
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
-    public void login(String account, String token, final RequestCallbackWrapper callback) {
+    private void login(String account, String token, final RequestCallbackWrapper callback) {
         LogUtils.e("FH", "yx login " + account + "  " + token);
         currentAccount = account;
-        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver, true);
         LoginInfo loginInfo = new LoginInfo(account, token);
         NIMClient.getService(AuthService.class).login(loginInfo).setCallback(new RequestCallback() {
             @Override
@@ -672,7 +679,7 @@ public class YXClient {
      * @param updateToken 是否要向服务器请求更新一个新的token,此参数用于获取的token无法登录云信(302密码错误)的情况.
      *                    这时就应该传true,服务器会自动生成一个新的token,并将其返回给我们.
      */
-    public void getTokenAndLogin(final String account, final RequestCallbackWrapper callback, boolean updateToken) {
+    private void getTokenAndLogin(final String account, final RequestCallbackWrapper callback, boolean updateToken) {
         if (updateToken) {
             NetWorkManager.getInstance(false).updateToken(account).subscribe(new Action1<Object>() {
                 @Override
@@ -686,7 +693,7 @@ public class YXClient {
                         e.printStackTrace();
                         if (callback != null) {
                             LogUtils.e("FH", "获取token失败,解析错误");
-                            callback.onFailed(-997);
+                            callback.onFailed(ERROR_REASON_TOKEN_PARSE_ERROR);
                         }
                     }
                 }
@@ -696,7 +703,7 @@ public class YXClient {
                     throwable.printStackTrace();
                     LogUtils.e("FH", "获取token失败,可能是网络错误");
                     if (callback != null) {
-                        callback.onFailed(-998);
+                        callback.onFailed(ERROR_REASON_NET_BROKEN);
                     }
                 }
             });
@@ -713,7 +720,7 @@ public class YXClient {
                         e.printStackTrace();
                         if (callback != null) {
                             LogUtils.e("FH", "获取token失败,解析错误");
-                            callback.onFailed(-997);
+                            callback.onFailed(ERROR_REASON_TOKEN_PARSE_ERROR);
                         }
                     }
                 }
@@ -723,7 +730,7 @@ public class YXClient {
                     throwable.printStackTrace();
                     LogUtils.e("FH", "获取token失败,可能是网络错误");
                     if (callback != null) {
-                        callback.onFailed(-998);
+                        callback.onFailed(ERROR_REASON_NET_BROKEN);
                     }
                 }
             });
@@ -753,7 +760,6 @@ public class YXClient {
         NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, false);
         NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(teamMemberRemoveObserver, false);
         NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(teamMemberUpdateObserver, false);
-        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatusObserver, false);
 
         recentContactList.clear();
         userInfoMap.clear();
@@ -1162,31 +1168,108 @@ public class YXClient {
         return returnList;
     }
 
-
-    /**
-     * 检查WiFi是否打开,并且尝试刷新式登录
-     *
-     * @param activity                 上下文环境,必须是activity,用于获取window在出现错误的时候弹出dialog提示.
-     * @param onRefreshSuccessRunnable wifi打开并且刷新式登录成功后的回调
-     */
-    public static void checkNetAndRefreshLogin(Activity activity, Runnable onRefreshSuccessRunnable) {
+    public void checkIfNotLoginThenDoIt(Activity activity, RequestCallback callback) {
         if (SpUtils.getUserId() <= 0) {
+            if (callback != null){
+                callback.onFailed(ERROR_REASON_NULL_USERID);
+            }
             return;
         }
+        StatusCode statusCode = getInstance().getCurrentOnlineStatus();
+        if (statusCode == StatusCode.LOGINED){
+            if (callback != null){
+                callback.onSuccess(null);
+            }
+        }
+        else if (statusCode == null
+                || statusCode == StatusCode.UNLOGIN
+                || statusCode == StatusCode.KICKOUT
+                || statusCode == StatusCode.KICK_BY_OTHER_CLIENT
+                || statusCode == StatusCode.PWD_ERROR
+                || statusCode == StatusCode.INVALID
+                || statusCode == StatusCode.VER_ERROR
+                || statusCode == StatusCode.FORBIDDEN
+                ){
+            standardLoginLogic(callback);
+        }
+        else if (statusCode == StatusCode.NET_BROKEN) {
+            if (callback != null){
+                callback.onFailed(ERROR_REASON_NET_BROKEN);
+            }
+        }
+        else if (statusCode == StatusCode.LOGINING
+                || statusCode == statusCode.CONNECTING
+                || statusCode == StatusCode.SYNCING
+                ){
+            if (loadingDialog == null) {
+                loadingDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
+                loadingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            }
+            if (loadingDialog.isShowing()) {
+                return;
+            } else {
+                loadingDialog.show();
+                loadingDialog.setTitle("正在重连...");
+            }
+            new Thread(){
+                @Override
+                public void run() {
+                    int waitSecond = 0;
+                    while (waitSecond < 15){
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        StatusCode newStatusCode = getCurrentOnlineStatus();
+                        if (newStatusCode != StatusCode.LOGINING
+                                && newStatusCode != StatusCode.CONNECTING
+                                && newStatusCode != StatusCode.SYNCING){
+                            break;
+                        }
+                        else {
+                            waitSecond++;
+                        }
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (loadingDialog != null && loadingDialog.isShowing()){
+                                loadingDialog.dismiss();
+                            }
+                        }
+                    });
+                    if (waitSecond >= 15){
+                        if (callback != null){
+                            callback.onFailed(ERROR_REASON_WAIT_TIMEOUT);
+                        }
+                    }
+                    else if (getCurrentOnlineStatus() == StatusCode.LOGINED){
+                        if (callback != null){
+                            callback.onSuccess(null);
+                        }
+                    }
+                    else {
+                        if (callback != null){
+                            callback.onFailed(ERROR_REASON_OTHERS);
+                        }
+                    }
+                }
+            }.start();
+        }
+    }
 
+    private void standardLoginLogic(RequestCallback callback){
         if (loadingDialog == null) {
             loadingDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
             loadingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
-
         if (loadingDialog.isShowing()) {
             return;
         } else {
             loadingDialog.show();
             loadingDialog.setTitle(R.string.loading_text);
         }
-
-        LogUtils.e("yuanye YX调用。。。。。");
 
         final int MAX_RETRY_TIMES = 3;
         //做MAX _RETRY_TIMES次登录云信请求,如果其中一次成功,则跳转到成功逻辑,失败3次以下,自动重试,3次以上,跳转到失败逻辑.
@@ -1196,23 +1279,6 @@ public class YXClient {
             @Override
             public void run(int currentLooopTimes) {
                 LogUtils.e("FH!", "刷新式登录云信 : 第" + currentLooopTimes + "次");
-                if (!NetUtils.isNetConnected()) {
-                    //无网络,直接失败,不重试.
-                    if (loadingDialog != null && loadingDialog.isShowing()) {
-                        loadingDialog.dismiss();
-                    }
-                    LogUtils.e("FH", "wifi未连接");
-/*                    new ConfirmDialog(activity, "当前的wifi没有打开,无法接收新的消息,是否打开wifi?", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent("android.intent.action.WIFI_ENABLE");
-                            activity.startActivity(intent);
-                            dialog.dismiss();
-                        }
-                    }, "打开").show();*/
-                    return;
-                }
-
                 RequestCallbackWrapper requestCallbackWrapper = new RequestCallbackWrapper() {
                     @Override
                     public void onResult(int code, Object result, Throwable exception) {
@@ -1222,15 +1288,18 @@ public class YXClient {
                                 loadingDialog.dismiss();
                             }
                             //成功一次,则跳转到成功逻辑
+                            if (callback != null){
+                                callback.onSuccess(null);
+                            }
                             doBreak();
                         } else {
                             String reason;
-                            if (code == -998) {
+                            if (code == ERROR_REASON_NET_BROKEN) {
                                 reason = "获取token失败!可能是网络原因";
-                            } else if (code == -997) {
+                            } else if (code == ERROR_REASON_TOKEN_PARSE_ERROR) {
                                 reason = "获取token失败!解析失败";
                             } else {
-                                if (code == 302){
+                                if (code == ResponseCode.RES_EUIDPASS){
                                     if (localTokenWrong){
                                         remoteTokenWrong = true;
                                         LogUtils.e("FH", "标记remoteToken为无效");
@@ -1257,17 +1326,8 @@ public class YXClient {
                                 if (loadingDialog != null && loadingDialog.isShowing()) {
                                     loadingDialog.dismiss();
                                 }
-                                if (mMsgFail == null || !mMsgFail.isShowing()) {
-                                    mMsgFail = new ConfirmDialog(BaseActivity.getCurrentActivity(), "当前网络有问题,是否重连?", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                            checkNetAndRefreshLogin(BaseActivity.getCurrentActivity(), onRefreshSuccessRunnable);
-                                        }
-                                    }, "重新连接");
-                                }
-                                if (!mMsgFail.isShowing()) {
-                                    mMsgFail.show();
+                                if (callback != null){
+                                    callback.onFailed(code);
                                 }
                             }
                         }
@@ -1294,15 +1354,10 @@ public class YXClient {
                 }
             }
 
-            @Override
-            public void onAfterLoop(boolean beenBreak) {
-                //成功逻辑
-                if (onRefreshSuccessRunnable != null) {
-                    onRefreshSuccessRunnable.run();
-                }
-            }
         });
     }
+
+
 
     /**
      * 获取当前在线状态
@@ -2005,19 +2060,6 @@ public class YXClient {
         void onNewMessage(IMMessage message);
     }
 
-    public interface KeyPointController {
-        void before();
-
-        void onSuccess();
-
-        /**
-         * @param code -999 wifi没有连接
-         *             -998 获取token失败,网络原因
-         *             -997 获取token失败,解析原因
-         */
-        void onFail(int code);
-    }
-
     /**
      * 错误监听器
      *
@@ -2069,5 +2111,24 @@ public class YXClient {
             return false;
         }
 
+    }
+
+    /**
+     * 工具方法,在主线程里执行代码
+     * @param runnable
+     */
+    protected static void runOnUiThread(Runnable runnable){
+        Observable.empty()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new rx.Observer<Object>() {
+                    @Override
+                    public void onCompleted() {
+                        runnable.run();
+                    }
+                    @Override
+                    public void onError(Throwable e) {}
+                    @Override
+                    public void onNext(Object o) {}
+                });
     }
 }

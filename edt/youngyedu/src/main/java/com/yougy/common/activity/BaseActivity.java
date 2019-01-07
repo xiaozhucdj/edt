@@ -202,6 +202,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
     @Override
     protected void onPause() {
         LogUtils.e(getClass().getName(), "activity on pause...............");
+        DialogManager.newInstance().dissMissUiPromptDialog();
         mForegroundActivity = null;
 //        if (mWakeLock != null) {
 //            mWakeLock.release();
@@ -1032,6 +1033,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
         mDownDialog.show();
         mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
         mDownDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+        mDownDialog.runConfirmClick();
     }
 
     /**
@@ -1149,8 +1151,12 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
         queryBookDownLoadSyn(bookId);
     }
 
+    public boolean mIsCheckStartNet = true;
     @Override
     protected void onStart() {
         super.onStart();
+        if (mIsCheckStartNet) {
+            DialogManager.newInstance().showNetConnDialog(this);
+        }
     }
 }

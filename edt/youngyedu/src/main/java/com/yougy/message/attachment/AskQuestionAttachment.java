@@ -63,4 +63,14 @@ public class AskQuestionAttachment extends CustomAttachment{
         }
         return returnJsonObj;
     }
+
+    @Override
+    public String toString() {
+        return "AskQuestionAttachment{" +
+                "examID=" + examID +
+                ", itemId=" + itemId +
+                ", from='" + from + '\'' +
+                ", questionType='" + questionType + '\'' +
+                '}';
+    }
 }

@@ -33,9 +33,9 @@ android {
         applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
-        versionName "2.2.0_v2"
+        versionName "20181210_test_3.0"
         multiDexEnabled true
-        versionCode 14
+        versionCode 16
 
 //        ndk {
 //            // 设置支持的SO库架构
@@ -128,7 +128,7 @@ dependencies {
     implementation 'com.zhy:autolayout:1.4.5'
 
     // 网易云信 基础功能 (必需)
-    implementation 'com.netease.nimlib:basesdk:3.3.0'
+    implementation 'com.netease.nimlib:basesdk:5.7.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     implementation "com.jakewharton:disklrucache:2.0.2"
     implementation "com.trello:rxlifecycle:${rxlifecycle_need_version}"
