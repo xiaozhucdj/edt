@@ -53,4 +53,9 @@ public class Constant {
     public final static String ICCODE_03 = "IC03";//问答
     public final static String ICCODE_04 = "IC04";//判断
 
+    public static final String TASK_SRCODE_01 = "SR01";//内容
+    public static final String TASK_SRCODE_02 = "SR02";//资料
+    public static final String TASK_SRCODE_03 = "SR03";//练习
+    public static final String TASK_SRCODE_04 = "SR04";//签字
+
 }

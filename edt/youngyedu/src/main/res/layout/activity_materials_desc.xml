@@ -25,7 +25,7 @@
         android:layout_height="@dimen/y1134"
         app:layout_constraintTop_toBottomOf="@id/view_line"
         app:layout_constraintBottom_toTopOf="@id/material_pageBar">
-        <com.yougy.anwser.ContentDisplayerV2
+        <com.yougy.task.ContentDisPlayer
             android:id="@+id/material_content_display"
             android:layout_width="@dimen/x960"
             android:layout_height="@dimen/y1134"/>

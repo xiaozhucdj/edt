@@ -8,12 +8,12 @@ import android.widget.TextView;
 
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
-import com.yougy.anwser.ContentDisplayerAdapterV2;
-import com.yougy.anwser.ContentDisplayerV2;
-import com.yougy.anwser.Content_new;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.task.ContentDisPlayer;
+import com.yougy.task.ContentDisPlayerAdapter;
+import com.yougy.task.bean.StageTaskBean;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView2;
 
@@ -40,7 +40,7 @@ public class MaterialActivity extends BaseActivity {
     @BindView(R.id.top_title)
     TextView mTopTitle;
     @BindView(R.id.material_content_display)
-    ContentDisplayerV2 mMaterialContentDisplay;
+    ContentDisPlayer mMaterialContentDisplay;
     @BindView(R.id.material_pageBar)
     PageBtnBarV2 mMaterialPageBar;
     @BindView(R.id.material_content_display_layout)
@@ -50,7 +50,7 @@ public class MaterialActivity extends BaseActivity {
     private int mCurrentPosition = 0;//资料中这个变量没用
     private int mPageCount = 0;//资料总页
     private int mPageIndex = 0;//资料当前页
-    private List<Content_new> testUrl = new ArrayList<>();
+    private List<StageTaskBean.StageContent> testUrl = new ArrayList<>();
 
     private NoteBookView2 mNoteBookView2;
     private ArrayList<String> pathLists = new ArrayList<>();
@@ -68,7 +68,11 @@ public class MaterialActivity extends BaseActivity {
 
     @Override
     public void init() {
-        testUrl.add(new Content_new(Content_new.Type.PDF, 1, "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", null));
+//        testUrl.add(new Content_new(Content_new.Type.PDF, 1, "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", null));
+//        testUrl.add(new Content_new(Content_new.Type.IMG_URL, 1, "http://la.lovewanwan.top/1.png", null));
+
+        StageTaskBean.StageContent stageContent = new StageTaskBean.StageContent("http://la.lovewanwan.top/1.png", 1000, "IMG", null, null, null, 01.f);
+        testUrl.add(stageContent);
         initContentDisPlayer ();
         initPageBar();
     }
@@ -82,7 +86,8 @@ public class MaterialActivity extends BaseActivity {
     @Override
     public void loadData() {
         mPageIndex = 0;
-        mMaterialContentDisplay.getContentAdapter().updateDataList(PAGE_TYPE_KEY, testUrl);
+        ContentDisPlayerAdapter contentAdapter = mMaterialContentDisplay.getContentAdapter();
+        contentAdapter.updateDataList(PAGE_TYPE_KEY, testUrl.get(0).getValue(), "IMG");
         mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
         mMaterialPageBar.selectPageBtn(mPageIndex, false);
         for (int i = 0; i < mMeterialCount; i++) {
@@ -102,7 +107,7 @@ public class MaterialActivity extends BaseActivity {
         super.onPause();
         LogUtils.d("NoteView onOnPause.");
         SaveNoteUtils.getInstance(this).saveNoteViewData(mNoteBookView2,SaveNoteUtils.TASK_FILE_DIR,mMaterialId + CACHE_KEY + mPageIndex
-            , mMaterialId + BITMAP_KEY + mPageIndex, true, mCurrentPosition, pathLists , isMultiPage);
+            , mMaterialId + BITMAP_KEY + mPageIndex);
     }
 
     @Override
@@ -125,7 +130,7 @@ public class MaterialActivity extends BaseActivity {
     }
 
     private void initContentDisPlayer() {
-        mMaterialContentDisplay.setContentAdapter(new ContentDisplayerAdapterV2() {
+        mMaterialContentDisplay.setContentAdapter(new ContentDisPlayerAdapter() {
             @Override
             public void afterPageCountChanged(String typeKey) {
                 mPageCount = getPageCount(typeKey);
@@ -152,7 +157,7 @@ public class MaterialActivity extends BaseActivity {
                 mNoteBookView2.leaveScribbleMode();
                 if (btnIndex != mPageIndex)
                     SaveNoteUtils.getInstance(MaterialActivity.this).saveNoteViewData(mNoteBookView2, SaveNoteUtils.TASK_FILE_DIR,mMaterialId + CACHE_KEY + mPageIndex
-                            , mMaterialId + BITMAP_KEY + mPageIndex, true,mCurrentPosition, pathLists , isMultiPage);
+                            , mMaterialId + BITMAP_KEY + mPageIndex);
                 mPageIndex = btnIndex;
                 mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, true, mStatusChangeListener);
                 mNoteBookView2.clearAll();
@@ -166,7 +171,7 @@ public class MaterialActivity extends BaseActivity {
         });
     }
 
-    private ContentDisplayerV2.StatusChangeListener mStatusChangeListener = (newStatus, typeKey, pageIndex, url, errorType, errorMsg) -> {
+    private ContentDisPlayer.StatusChangeListener mStatusChangeListener = (newStatus, typeKey, url, errorType, errorMsg) -> {
         switch (newStatus) {
             case DOWNLOADING:
             case LOADING:

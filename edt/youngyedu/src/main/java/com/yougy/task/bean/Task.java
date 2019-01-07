@@ -2,9 +2,10 @@ package com.yougy.task.bean;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Task {
+public class Task implements Serializable {
 
     private int homeworkId;
     private int contentElement;

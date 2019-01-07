@@ -50,8 +50,11 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.bean.OOSReplyBean;
+import com.yougy.task.bean.StageTaskBean;
+import com.yougy.task.bean.SubmitReplyBean;
+import com.yougy.task.bean.SubmitTaskBean;
 import com.yougy.task.bean.Task;
-import com.yougy.task.bean.TaskSummary;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -665,4 +668,38 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    /**
+     *  查询任务内容  练习  资料 签字  详情
+     * @param dramaId
+     * @param stageTypeCode
+     *      SR01 内容
+            SR02 资料
+            SR03 练习
+            SR04 签字
+     * @return
+     */
+    public static Observable<List<StageTaskBean>> queryStageTask (String dramaId, String stageTypeCode) {
+        return getInstance().getServerApi().queryStageTask(dramaId, stageTypeCode)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    /**
+     * OOS 上传
+     * @param userId
+     * @return
+     */
+    public static Observable<STSbean> uploadTaskPracticeOOS (Integer userId) {
+        return getInstance().getServerApi().uploadTaskPracticeOOS(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<SubmitReplyBean> submitTaskPracticeServer (Integer userId, String data) {
+        return getInstance().getServerApi().submitTaskPracticeServer(userId, data)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 }

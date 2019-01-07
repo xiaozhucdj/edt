@@ -39,8 +39,11 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.bean.OOSReplyBean;
+import com.yougy.task.bean.SubmitReplyBean;
+import com.yougy.task.bean.SubmitTaskBean;
 import com.yougy.task.bean.Task;
-import com.yougy.task.bean.TaskSummary;
+import com.yougy.task.bean.StageTaskBean;
 
 import java.util.List;
 
@@ -590,5 +593,21 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"querySchoolTeamByStudentAndExam"})
     Observable<BaseResult<TeamBean>> querySchoolTeamByStudentAndExam(@Field("studentId") String studentId, @Field("examId") String examId);
+
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryStage"})
+    Observable<BaseResult<List<StageTaskBean>>> queryStageTask (@Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode);
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postSceneRequest"})
+    Observable<BaseResult<STSbean>> uploadTaskPracticeOOS (@Field("userId") Integer userId);
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"insertScene"})
+    Observable<BaseResult<SubmitReplyBean>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
 
 }

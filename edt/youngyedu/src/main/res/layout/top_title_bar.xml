@@ -7,20 +7,20 @@
 
     <ImageView
         android:id="@+id/image_back"
-        android:layout_width="@dimen/x30"
-        android:layout_height="@dimen/y30"
+        android:layout_width="@dimen/x60"
+        android:layout_height="@dimen/y64"
         android:src="@drawable/back_btn_selector"
-        android:layout_marginLeft="30px"
+        android:paddingLeft="@dimen/x30"
         android:layout_centerVertical="true"/>
 
     <ImageView
         android:id="@+id/image_refresh"
         android:layout_toRightOf="@+id/image_back"
-        android:layout_width="@dimen/x32"
-        android:layout_height="@dimen/y30"
+        android:layout_width="@dimen/x62"
+        android:layout_height="@dimen/y64"
         android:src="@drawable/icon_shuaxin"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="30px"/>
+        android:paddingLeft="@dimen/x30"/>
 
     <TextView
         android:id="@+id/top_title"

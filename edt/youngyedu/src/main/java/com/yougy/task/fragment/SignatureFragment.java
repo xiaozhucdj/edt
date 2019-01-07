@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.task.activity.SaveNoteUtils;
 import com.yougy.ui.activity.R;
@@ -23,14 +24,12 @@ public class SignatureFragment extends TaskBaseFragment {
     @BindView(R.id.signature_noteView)
     NoteBookView2 mNoteBookViewSignature;
 
-    private String mCurrentCacheName = "";
-
+    public static final String CACHE_SIGNATURE_KEY = "signature_stu_";
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.activity_signature,container , false);
         mUnbinder = ButterKnife.bind(this, mRootView);
-        mCurrentCacheName = "_signature_stu_";
         mNoteBookViewSignature.setIntercept(true);
         return super.initView(inflater, container, savedInstanceState);
     }
@@ -83,8 +82,8 @@ public class SignatureFragment extends TaskBaseFragment {
      */
     private void saveSignatureBitmap () {
         ArrayList<String> pathLists = new ArrayList<>();
+        pathLists.add(null);
         SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature, SaveNoteUtils.TASK_FILE_DIR,
-                mCurrentCacheName, mCurrentCacheName,
-                true, 0,  pathLists, false);
+                CACHE_SIGNATURE_KEY + SpUtils.getUserId(), CACHE_SIGNATURE_KEY + + SpUtils.getUserId());
     }
 }

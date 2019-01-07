@@ -15,8 +15,10 @@ import android.widget.TextView;
 
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
+import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.ui.activity.R;
 
 import butterknife.BindView;
@@ -36,51 +38,49 @@ public class TaskContentBaseFragment extends TaskBaseFragment {
     private int mPageCount;//页数
     private int mTextMaxLines;
     private int mLines;
-    private String mTaskContent = "   sad睡觉的啦几点啦是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "!\r\n   sad睡觉的啦几点啦。\r\n  是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大！方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票。\r\n   是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开。发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发，怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡\r\n  咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕，开发怕是肯定怕是快递发浦发卡皮。肤科啊疯狂泡咖\r\n   啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科？啊疯狂泡咖啡怕送\r\n  滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风!"+
-            "!\r\n   sad睡觉的啦几点啦。\r\n  是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大！方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票。\r\n   是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开。发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发，怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡\r\n  咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕，开发怕是肯定怕是快递发浦发卡皮。肤科啊疯狂泡咖\r\n   啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科？啊疯狂泡咖啡怕送\r\n  滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风!"+
-            "!\r\n   sad睡觉的啦几点啦。\r\n  是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大！方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票。\r\n   是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开。发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发，怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡\r\n  咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕，开发怕是肯定怕是快递发浦发卡皮。肤科啊疯狂泡咖\r\n   啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科？啊疯狂泡咖啡怕送\r\n  滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风!" +
-            "!\r\n   sad睡觉的啦几点啦。\r\n  是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大！方可怕开发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票。\r\n   是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开。发怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发，怕是肯定怕是快递发浦发卡皮肤科啊疯狂泡\r\n  咖啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕，开发怕是肯定怕是快递发浦发卡皮。肤科啊疯狂泡咖\r\n   啡怕送滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风" +
-            "sad睡觉的啦几点啦是大方可怕开发怕是肯定怕是快递发浦发卡皮肤科？啊疯狂泡咖啡怕送\r\n  滴哦菩萨道发票是咖啡泼阿斯顿啊发破伤风!";
+    private String mTaskContent = "任务内容为空！";//任务内容不能为空。
 
 
 
     private ConstraintSet applyConstraintSet = new ConstraintSet();
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        LogUtils.d(TAG + " TaskTest onEventMainThread :" + event.getType());
+        String type = event.getType();
+        if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
+            mIsServerFail = false;
+            mStageTaskBeans.clear();
+            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
+            loadData();
+        } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
+            mIsServerFail = true;
+            mServerFailMsg = (String) event.getExtraData();
+            loadData();
+        }
+    }
+
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_task_content, container, false);
         mUnbinder = ButterKnife.bind(this, mRootView);
         applyConstraintSet.clone(mConstraintLayout);
-        mTextMaxLines = mTextViewContent.getMaxLines();
-        setCurrentContent ();
-        initPageBar ();
         return mRootView;
     }
 
     @Override
     public void loadData() {
         Log.i(TAG, "loadData: ");
+        if (mStageTaskBeans.size() > 0) {
+            if (mStageTaskBeans.get(0).getStageContent() != null)
+                mTaskContent = mStageTaskBeans.get(0).getStageContent().get(0).getValue();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mTextMaxLines = mTextViewContent.getMaxLines();
+        }
+        setCurrentContent ();
+        initPageBar ();
     }
 
     private void initPageBar () {

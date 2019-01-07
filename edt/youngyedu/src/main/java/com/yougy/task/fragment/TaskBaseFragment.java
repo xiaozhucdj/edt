@@ -10,13 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.task.activity.TaskDetailStudentActivity;
+import com.yougy.task.bean.StageTaskBean;
 import com.yougy.view.NoteBookView2;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Unbinder;
 
@@ -30,32 +31,22 @@ public class TaskBaseFragment extends BFragment {
     protected Unbinder mUnbinder;
 
     public NoteBookView2 mNoteBookView2;
+
+    public ArrayList<String> getPathLists() {
+        return pathLists;
+    }
     protected ArrayList<String> pathLists = new ArrayList<>();//path  用'#'连接多页
-    protected String mCurrentCacheName = ""; //当前路径是否有本地轨迹文件，判断。
+//    protected String mCurrentCacheName = ""; //当前路径是否有本地轨迹文件，判断。
     protected boolean isMultiPage = false;
 
-    protected boolean isHadCommit = false;
-
-    @Override
-    public void onEventMainThread(BaseEvent event) {
-        super.onEventMainThread(event);
-        LogUtils.d("TaskTest onEventMainThread :" + event.getType());
-        String type = event.getType();
-        if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
-            loadData();
-        } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_SCRIBBLE_MODE)) {
-            if (mNoteBookView2 != null && !isHadCommit){
-                boolean scribbleMode = (boolean) event.getExtraData();
-                leaveScribbleMode(scribbleMode, false);
-            }
-        }
-    }
+    protected List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
+    protected boolean mIsServerFail = true;//服务器请求失败
+    protected String mServerFailMsg = "加载中...";//失败信息
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof TaskDetailStudentActivity) mTaskDetailStudentActivity = (TaskDetailStudentActivity) context;
-        isHadCommit = mTaskDetailStudentActivity.isHadCommit();
         mContext = context;
         init();
         Log.i(TAG, "onAttach: ");
@@ -120,15 +111,20 @@ public class TaskBaseFragment extends BFragment {
         mNoteBookView2 = noteBookView2;
     }
 
+    protected boolean isLoadSuccess = false;
     public void leaveScribbleMode (boolean isPen, boolean isClear) {
-        if (isHadCommit) return;
-        if (mNoteBookView2 == null) return;
+        if (!isLoadSuccess) return;
         if (isClear) mNoteBookView2.clearAll();
+        if (isCommited()) return;
+        if (mNoteBookView2 == null) return;
         LogUtils.d("TaskTest isPen = " + isPen +  "   isClear = " + isClear + "  isHandPaintedPattern = " + TaskDetailStudentActivity.isHandPaintedPattern);
         if (TaskDetailStudentActivity.isHandPaintedPattern == isPen) return;
         TaskDetailStudentActivity.isHandPaintedPattern = isPen;
-        if (isPen) mNoteBookView2.leaveScribbleMode(isPen);
-        else mNoteBookView2.leaveScribbleMode();
+        if (isPen) {
+            mNoteBookView2.leaveScribbleMode(isPen);
+        } else {
+            mNoteBookView2.leaveScribbleMode();
+        }
         TaskDetailStudentActivity.isIntercept = isPen;
         if (mNoteBookView2 != null) mNoteBookView2.setIntercept(!isPen);
     }
@@ -159,4 +155,30 @@ public class TaskBaseFragment extends BFragment {
 
     }
 
+
+    protected boolean checkCurrentPosition (int position, List arrayList) {
+        if (position >= 0 && position < arrayList.size()) {
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean isBottomBtnShow () {
+        return mTaskDetailStudentActivity.isBottomBtnShow();
+    }
+
+    protected void setLayoutParams (View view, int w, int h) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.width = w;
+        layoutParams.height = h;
+        view.setLayoutParams(layoutParams);
+    }
+
+    protected boolean isCommited (){
+        return mTaskDetailStudentActivity.isHadCommit();
+    }
+
+    protected boolean isFirstPage (int page){
+        return page == 0;
+    }
 }

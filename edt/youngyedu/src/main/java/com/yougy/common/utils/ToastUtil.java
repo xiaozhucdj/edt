@@ -14,7 +14,7 @@ import com.yougy.ui.activity.R;
  * Created by jiangliang on 2016/7/14.
  */
 public class ToastUtil {
-    private static Toast mToast = null;
+    public static Toast mToast = null;
     private static View mView;
     private static TextView mText;
 

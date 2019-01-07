@@ -11,6 +11,7 @@ import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,11 @@ import android.widget.Toast;
 
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
+import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.task.activity.MaterialActivity;
+import com.yougy.task.activity.TaskDetailStudentActivity;
+import com.yougy.task.bean.StageTaskBean;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView2;
 
@@ -46,22 +50,34 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
 
     private MyRecyclerAdapter mMyRecyclerAdapter;
 
-    private List<String> testDatas = new ArrayList<>();
-    private List<String> currentDatas = new ArrayList<>();
-
     private int currentPage = 0;//当前显示页
     private int PAGE_COUNT = 9;
-    private int mTotalMaterials = 10 * 9 + 5;//总共的资料数
+    private int mTotalMaterials = 0;//总共的资料数
+    private List<StageTaskBean> currentDatas = new ArrayList<>();
+
+
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        LogUtils.d("TaskTest onEventMainThread :" + event.getType());
+        String type = event.getType();
+        if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
+            mIsServerFail = false;
+            mStageTaskBeans.clear();
+            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
+            loadData();
+        } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
+            mIsServerFail = true;
+            mServerFailMsg = (String) event.getExtraData();
+            loadData();
+        }
+    }
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        for (int i = 0; i < mTotalMaterials; i++) {
-            testDatas.add("Materials" + i);
-        }
-        calculateCurrentLists(0);
         mRootView = inflater.inflate(R.layout.fragment_task_materials, container, false);
         mUnbinder = ButterKnife.bind(this, mRootView);
-        initRecyclerView ();
+        initRecyclerView();
         initPageBar ();
         return mRootView;
     }
@@ -121,31 +137,53 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
 
             }
         });
-        mPageBtnBarV2.selectPageBtn(0, false);
     }
 
     @Override
     protected void initNoteView(NoteBookView2 noteBookView2) {
-        mCurrentCacheName = "_material_stu_";
+
     }
 
     @Override
     public void loadData() {
         super.loadData();
         Log.i(TAG, "loadData: ");
-//        showDataEmpty(View.VISIBLE);
+        calculateCurrentLists(0);
+        if (mIsServerFail) {
+            handlerRequestFail();
+        } else {
+            handlerRequestSuccess();
+        }
+    }
+
+    @Override
+    protected void handlerRequestSuccess() {
+        super.handlerRequestSuccess();
+        showDataEmpty(View.GONE);
+        mMyRecyclerAdapter.notifyDataSetChanged();
+        mPageBtnBarV2.selectPageBtn(0, false);
+    }
+
+    @Override
+    protected void handlerRequestFail() {
+        super.handlerRequestFail();
+        showDataEmpty(View.VISIBLE);
     }
 
     @Override
     protected void showDataEmpty(int visibility) {
         super.showDataEmpty(visibility);
+        String textStr = mContext.getString(R.string.str_task_materials_empty);
+        if (mIsServerFail) {
+            if (!TextUtils.isEmpty(mServerFailMsg))
+                textStr = mServerFailMsg;
+        }
         if (mDataEmptyView == null) {
             mDataEmptyView = mTaskMaterialViewStub.inflate();
-            TextView text = mDataEmptyView.findViewById(R.id.text_empty);
-            text.setText(mContext.getString(R.string.str_task_materials_empty));
-        } else {
-            mDataEmptyView.setVisibility(visibility);
         }
+        TextView text = mDataEmptyView.findViewById(R.id.text_empty);
+        text.setText(textStr);
+        mDataEmptyView.setVisibility(visibility);
     }
 
     @Override
@@ -166,7 +204,7 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.mTextView.setText(currentDatas.get(position));
+//            holder.mTextView.setText(currentDatas.get(position).getStageContent().get(position).getValue());
             holder.itemView.setOnClickListener(v -> handlerClickItem(holder, position));
         }
 
@@ -206,7 +244,7 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
 
     private void calculateCurrentLists (int page) {
         currentPage = page;
-        int size = testDatas.size();
+        int size = mStageTaskBeans.size();
         if (size > PAGE_COUNT) {
             if ((currentPage + 1) * PAGE_COUNT > size) {
                 size =  size - currentPage  * PAGE_COUNT;
@@ -215,7 +253,7 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
             }
         }
         currentDatas.clear();
-        currentDatas.addAll(testDatas.subList(currentPage * PAGE_COUNT , currentPage * PAGE_COUNT + size));
+        currentDatas.addAll(mStageTaskBeans.subList(currentPage * PAGE_COUNT , currentPage * PAGE_COUNT + size));
     }
 
 }

@@ -89,7 +89,7 @@
         app:layout_constraintLeft_toRightOf="@id/guide_line_vertical"
         app:layout_constraintTop_toBottomOf="@id/signature_noteView"
         android:layout_marginTop="@dimen/x42"
-        android:layout_marginStart="@dimen/x111"
-        android:layout_marginLeft="@dimen/x111"/>
+        android:layout_marginStart="@dimen/x151"
+        android:layout_marginLeft="@dimen/x151"/>
 
 </android.support.constraint.ConstraintLayout>

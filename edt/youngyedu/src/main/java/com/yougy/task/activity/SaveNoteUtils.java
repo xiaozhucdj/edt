@@ -12,6 +12,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.view.NoteBookView2;
 
@@ -41,35 +42,34 @@ public class SaveNoteUtils {
      * @param noteBookView2
      * @param cacheKey
      * @param bitmapKey
-     * @param isSaveBitmap
-     * @param questionIndex
-     * @param pathLists
-     * @param isMultiPage
      */
-    public void saveNoteViewData (NoteBookView2 noteBookView2, String fileDir,  String cacheKey, String bitmapKey, boolean isSaveBitmap
-                        ,int questionIndex,  ArrayList<String> pathLists, boolean isMultiPage) {
+    public void saveNoteViewData (NoteBookView2 noteBookView2, String fileDir, String cacheKey, String bitmapKey) {
+
+        if (!NetUtils.isNetConnected()) {
+            LogUtils.w("NoteView Net is not connected, saveNoteViewData return.");
+            return;
+        }
         if (noteBookView2 == null) {
             throw new NullPointerException("NoteView is NullPoint Exception, please init.");
         }
         if (StringUtils.isEmpty(cacheKey)) {
             throw new NullPointerException("NoteView cacheKey is NullPoint Exception, please init.");
         }
-        LogUtils.d("NoteView saveNoteViewData cacheKey = " + cacheKey + "   bitmapKey : " + bitmapKey
-                        + "   isMultiPage = " + isMultiPage + "  size = " + pathLists.size());
+        LogUtils.d("NoteView saveNoteViewData cacheKey = " + cacheKey + "   bitmapKey : " + bitmapKey);
         DataCacheUtils.putObject(mContext,  cacheKey, noteBookView2.bitmap2Bytes());
-        DataCacheUtils.putObject(mContext, bitmapKey, pathLists);
+//        DataCacheUtils.putObject(mContext, bitmapKey, pathLists);
 
         Bitmap bitmap = noteBookView2.getBitmap();
         String path = saveBitmapToFile (bitmap ,bitmapKey, fileDir);
         LogUtils.d("NoteView Save Path = " + path);
-        if (isSaveBitmap && !StringUtils.isEmpty(bitmapKey) && questionIndex < pathLists.size()) {
+        /*if (isSaveBitmap && !StringUtils.isEmpty(bitmapKey) && questionIndex < pathLists.size()) {
             if (isMultiPage) {
                 if (pathLists.get(questionIndex) != null && !pathLists.get(questionIndex).contains(path)) {
                     path = pathLists.get(questionIndex) + "#" + path;
                 }
             }
             pathLists.set(questionIndex, path);
-        }
+        }*/
     }
 
 
