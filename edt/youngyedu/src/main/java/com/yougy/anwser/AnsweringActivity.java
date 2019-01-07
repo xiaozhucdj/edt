@@ -203,7 +203,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     }
 
 
-                                    new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
+                                    /*new HintDialog(AnsweringActivity.this, "老师已经结束本次问答", "确定", new DialogInterface.OnDismissListener() {
                                         @Override
                                         public void onDismiss(DialogInterface dialog) {
                                             if (timedTask != null) {
@@ -212,7 +212,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                             dialog.dismiss();
                                             myFinish();
                                         }
-                                    }).show();
+                                    }).show();*/
+
+                                    //  这里因为要做问答自评互评功能，这里需要当老师结束问答时，强制提交学生问答结果。 （这里有个问题，选择判断题，学生提交时会判断，但是当前自动提交时不能判断）
+                                    saveHomeWorkData();
+                                    getUpLoadInfo();
+                                    
                                 }
                             }
                         }
