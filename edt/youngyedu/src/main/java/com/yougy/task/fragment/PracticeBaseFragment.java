@@ -23,13 +23,11 @@ import android.widget.TextView;
 import com.yougy.anwser.ContentDisplayerAdapterV2;
 import com.yougy.anwser.ContentDisplayerV2;
 import com.yougy.anwser.Content_new;
-import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.task.SaveNoteUtils;
-import com.yougy.task.TaskDetailStudentActivity;
+import com.yougy.task.activity.SaveNoteUtils;
 import com.yougy.task.bean.TaskPracticeBean;
 import com.yougy.ui.activity.R;
 import com.yougy.view.ContentPdfImageView;
@@ -42,7 +40,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import de.greenrobot.event.EventBus;
 
 public class PracticeBaseFragment extends TaskBaseFragment {
 

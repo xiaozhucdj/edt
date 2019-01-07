@@ -1,4 +1,4 @@
-package com.yougy.task;
+package com.yougy.task.activity;
 
 
 import android.support.constraint.ConstraintLayout;

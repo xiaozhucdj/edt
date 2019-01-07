@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yougy.common.utils.UIUtils;
-import com.yougy.task.SaveNoteUtils;
+import com.yougy.task.activity.SaveNoteUtils;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView2;
 
