@@ -308,7 +308,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             binding.textScoreTitle.setText("正确率");
             if (isStudentCheck == 2){//互评
                 binding.circleProgressBar.setProgress(((int) scoreAvg));
-                binding.textScore.setText(scoreAvg + "%");
+                binding.textScore.setText((int)scoreAvg + "%");
             }
             else {
                 binding.circleProgressBar.setProgress(correctCount * 100 / itemCount);
