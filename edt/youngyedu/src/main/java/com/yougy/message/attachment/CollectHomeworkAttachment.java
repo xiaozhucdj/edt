@@ -11,16 +11,16 @@ import org.json.JSONObject;
  * @modify date: 2018/7/12 15:10
  * @modify desc:
  */
-public class ReceiveWorkAttachment extends CustomAttachment {
+public class CollectHomeworkAttachment extends CustomAttachment {
     public String examId, examName;
     final String KEY_EXAM_ID = "examID";
     final String KEY_EXAM_NAME = "examName";
 
-    protected ReceiveWorkAttachment(String clue, double version) {
+    protected CollectHomeworkAttachment(String clue, double version) {
         super(clue, version);
     }
 
-    public ReceiveWorkAttachment(String examId, String examName) {
+    public CollectHomeworkAttachment(String examId, String examName) {
         super(CustomAttachParser.CLUE_END_SEATWORK , 1);
         this.examId = examId;
         this.examName = examName;

@@ -171,10 +171,10 @@ public class NoteBookView2 extends View {
             float dx = Math.abs(x - mX);
             float dy = Math.abs(mY - y);
 //            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            line.getPoints().add(new Point(x, y));
-            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
-            mX = x;
-            mY = y;
+                line.getPoints().add(new Point(x, y));
+                mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+                mX = x;
+                mY = y;
 //            }
             mCanvas.drawPath(mPath, dp.paint);
         }

@@ -75,6 +75,18 @@ public class HomeworkSummary {
         private int correctCount;//正确的题目
         private int examSponsor;//teacher id
         private int exam;//id
+        private String eval;//作业批改类型(IKXX)
+        private String teamName;//如果是分组作业,这里是组名
+        private int team;//如果是分组作业,这里是小组id
+        private long replyCreator;
+
+        public long getReplyCreator() {
+            return replyCreator;
+        }
+
+        public void setReplyCreator(long replyCreator) {
+            this.replyCreator = replyCreator;
+        }
 
         public int getExam() {
             return exam;
@@ -202,6 +214,32 @@ public class HomeworkSummary {
 
         public void setExamSponsor(int exmaSponsor) {
             this.examSponsor = exmaSponsor;
+        }
+
+        public String getEval() {
+            return eval;
+        }
+        public ExtraBean setEval(String eval) {
+            this.eval = eval;
+            return this;
+        }
+
+        public String getTeamName() {
+            return teamName;
+        }
+
+        public ExtraBean setTeamName(String teamName) {
+            this.teamName = teamName;
+            return this;
+        }
+
+        public int getTeam() {
+            return team;
+        }
+
+        public ExtraBean setTeam(int team) {
+            this.team = team;
+            return this;
         }
     }
 }

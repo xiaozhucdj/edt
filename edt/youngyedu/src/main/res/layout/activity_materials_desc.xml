@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include
+        android:id="@+id/material_top_bar"
+        layout="@layout/top_title_bar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/view_line"/>
+
+    <View
+        android:id="@+id/view_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/y2"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/material_top_bar"
+        app:layout_constraintBottom_toTopOf="@id/material_content_display_layout"/>
+
+    <FrameLayout
+        android:id="@+id/material_content_display_layout"
+        android:layout_width="@dimen/x960"
+        android:layout_height="@dimen/y1134"
+        app:layout_constraintTop_toBottomOf="@id/view_line"
+        app:layout_constraintBottom_toTopOf="@id/material_pageBar">
+        <com.yougy.task.ContentDisPlayer
+            android:id="@+id/material_content_display"
+            android:layout_width="@dimen/x960"
+            android:layout_height="@dimen/y1134"/>
+    </FrameLayout>
+
+
+    <com.frank.etude.pageable.PageBtnBarV2
+        android:id="@+id/material_pageBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x60"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:layout_marginBottom="@dimen/y20"/>
+
+</android.support.constraint.ConstraintLayout>

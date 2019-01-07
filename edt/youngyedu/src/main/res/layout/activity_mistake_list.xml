@@ -17,10 +17,10 @@
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16px"
             android:paddingLeft="30px"
+            android:paddingTop="16px"
             android:paddingRight="30px"
-            android:paddingTop="16px">
+            android:paddingBottom="16px">
 
             <ImageView
                 android:id="@+id/back_btn"
@@ -181,6 +181,54 @@
                     android:layout_height="2px"
                     android:background="@color/black" />
 
+
+                <!-- 左右 批改结果 -->
+                <RelativeLayout
+                    android:id="@+id/rl_other_check_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_result"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="30px"
+                        android:layout_marginRight="30px"
+                        android:text="批改结果"
+                        android:textColor="@color/black"
+                        android:textSize="24sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_last_people"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/tv_result"
+                        android:onClick="@{myOnClick}"
+                        android:src="@drawable/last_comment_btn_bg_selector" />
+
+                    <ImageView
+                        android:id="@+id/iv_next_people"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/tv_result"
+                        android:onClick="@{myOnClick}"
+                        android:src="@drawable/next_comment_btn_bg_selector" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2px"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/black" />
+
+                </RelativeLayout>
+
+
+                <!--来源于 -  分数-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -191,26 +239,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_marginBottom="8dp"
                         android:layout_marginLeft="20px"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10px"
+                        android:layout_marginBottom="10px"
                         android:layout_weight="3"
                         android:text="来源于：%s"
                         android:textColor="@color/black"
                         android:textSize="24sp" />
 
-                    <View
-                        android:layout_width="2px"
-                        android:layout_height="match_parent"
-                        android:background="@color/black" />
-
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
                         android:layout_marginLeft="20px"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10px"
+                        android:layout_marginBottom="10px"
                         android:layout_weight="2">
 
                         <TextView
@@ -241,13 +284,9 @@
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2px"
-                    android:background="@color/black" />
-
             </LinearLayout>
 
+            <!-- 中间显示作业区域 内容，批注，选项 。。。 -->
             <LinearLayout
                 android:id="@+id/question_layout"
                 android:layout_width="match_parent"
@@ -280,8 +319,8 @@
                             android:layout_width="20px"
                             android:layout_height="20px"
                             android:layout_alignParentRight="true"
-                            android:layout_marginRight="30px"
                             android:layout_marginTop="20px"
+                            android:layout_marginRight="30px"
                             android:background="@drawable/img_quxiao"
                             android:onClick="@{myOnClick}" />
 
@@ -305,8 +344,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="30px"
-                            android:layout_marginRight="30px"
                             android:layout_marginTop="80px"
+                            android:layout_marginRight="30px"
                             android:textColor="@color/black"
                             android:textSize="22px" />
 
@@ -366,8 +405,8 @@
                     android:id="@+id/page_btn_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="15dp" />
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp" />
 
                 <RelativeLayout
                     android:id="@+id/ll_control_bottom"
@@ -377,8 +416,8 @@
                     android:background="@drawable/bmp_bg_blue"
                     android:onClick="@{myOnClick}"
                     android:orientation="horizontal"
-                    android:paddingBottom="16px"
-                    android:paddingTop="16px">
+                    android:paddingTop="16px"
+                    android:paddingBottom="16px">
 
                     <TextView
                         android:id="@+id/start_practice_btn"
@@ -404,6 +443,7 @@
 
             </LinearLayout>
 
+            <!--选题列表-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rcv_all_homework_page"
                 android:layout_width="match_parent"
@@ -421,10 +461,10 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/shape_rectangle_black_border"
-                android:paddingBottom="85px"
                 android:paddingLeft="100px"
-                android:paddingRight="100px"
                 android:paddingTop="85px"
+                android:paddingRight="100px"
+                android:paddingBottom="85px"
                 android:text="该章节还没有错题哦!继续努力!"
                 android:textColor="@color/black"
                 android:textSize="28px"

@@ -2,15 +2,15 @@ package com.yougy.homework.bean;
 
 public class HomeworkSummarySumInfo {
 
-    private int score;
+    private double scoreAvg;
     private int correctCount;
 
-    public int getScore() {
-        return score;
+    public double getScoreAvg() {
+        return scoreAvg;
     }
 
-    public HomeworkSummarySumInfo setScore(int score) {
-        this.score = score;
+    public HomeworkSummarySumInfo setScoreAvg(double scoreAvg) {
+        this.scoreAvg = scoreAvg;
         return this;
     }
 

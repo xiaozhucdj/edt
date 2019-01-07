@@ -43,6 +43,7 @@
         </activity>
         <activity android:name="com.yougy.TestImgActivity">
         </activity>
+        <activity android:name="com.yougy.task.activity.TaskListActivity"/>
         <activity
             android:name="com.yougy.home.activity.MainActivity"
             android:launchMode="singleTask"
@@ -187,6 +188,9 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
+
+        <activity android:name="com.yougy.task.activity.TaskDetailStudentActivity"/>
+        <activity android:name="com.yougy.task.activity.MaterialActivity"/>
 
 
         <service android:name="com.yougy.common.service.DownloadService" >

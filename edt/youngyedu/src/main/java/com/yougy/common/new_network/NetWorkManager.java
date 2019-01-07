@@ -24,6 +24,7 @@ import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.PromotionReq;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
@@ -33,6 +34,7 @@ import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.init.bean.Student;
 import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
@@ -48,6 +50,11 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.bean.OOSReplyBean;
+import com.yougy.task.bean.StageTaskBean;
+import com.yougy.task.bean.SubmitReplyBean;
+import com.yougy.task.bean.SubmitTaskBean;
+import com.yougy.task.bean.Task;
 import com.yougy.ui.activity.BuildConfig;
 import com.yougy.view.dialog.LoadingProgressDialog;
 
@@ -64,6 +71,8 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 
+import static com.yougy.common.global.Constant.*;
+
 /**
  */
 public final class NetWorkManager {
@@ -78,8 +87,8 @@ public final class NetWorkManager {
 
     MyHttpLoggingInterceptor interceptor;
 
-    public void openBODY(){
-        if (interceptor!=null){
+    public void openBODY() {
+        if (interceptor != null) {
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         }
     }
@@ -250,7 +259,7 @@ public final class NetWorkManager {
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail(Integer homeworkId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内作业(考试)列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]", true)
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, StringUtils.smartCombineStrings("[", "]", "\"", "\"", ",", IICODE_02, IICODE_03), true)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -267,7 +276,7 @@ public final class NetWorkManager {
 
     public static Observable<List<HomeworkBookDetail>> queryHomeworkBookDetail_Anwser(Integer homeworkId) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本内问答列表:queryHomeworkBookDetail");
-        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, "[\"II01\",\"II51\",\"II52\",\"II53\",\"II61\"]", true)
+        return getInstance().getServerApi().queryHomeworkBookDetail(homeworkId, StringUtils.smartCombineStrings("[", "]", "\"", "\"", ",", IICODE_01), true)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -293,9 +302,10 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReplyDetail());
     }
-    public static Observable<List<QuestionReplyDetail>> queryReplyDetail2(Integer examId, Integer itemId, String replyCommentator) {
+
+    public static Observable<List<QuestionReplyDetail>> queryReplyDetail2(Integer examId, Integer itemId, String replyCommentator, long replyCreator) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询学生互评解答详情:queryReplyDetail");
-        return getInstance().getServerApi().reviewComment2(examId, itemId, replyCommentator)
+        return getInstance().getServerApi().reviewComment2(examId, itemId, replyCommentator, replyCreator)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReplyDetail());
@@ -307,13 +317,6 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseHomeworkQuestion());
-    }
-
-    public static Observable<List<QuestionReplySummary>> queryReplySummary(Integer examId, Integer userId) {
-        LogUtils.e("FH", "!!!!!调用ServerApi查询学生解答摘要:queryReplySummary");
-        return getInstance().getServerApi().queryReply(examId, userId, null)
-                .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
     public static Observable<List<HomeworkSummarySumInfo>> sumReplyStudent(Integer examId, Integer studentId) {
@@ -555,8 +558,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(null));
     }
 
-    public static Observable<Object> postComment(String replyId, String score, String content, String replyCommentator) {
-        return getInstance().getServerApi().postComment(replyId, score, content, replyCommentator)
+    public static Observable<Object> postComment(String replyId, String score, String content, String replyCommentator, String originalReplyCommentator) {
+        return getInstance().getServerApi().postComment(replyId, score, content, replyCommentator, originalReplyCommentator)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
@@ -654,5 +657,49 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentCourseLink, int pn, int ps){
+        return getInstance().getServerApi().queryTasks(homeworkId,contentCourseLink,pn,ps)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
+    }
+
+    public static Observable<TeamBean> querySchoolTeamByStudentAndExam(String studentId, String examId) {
+        return getInstance().getServerApi().querySchoolTeamByStudentAndExam(studentId, examId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    /**
+     *  查询任务内容  练习  资料 签字  详情
+     * @param dramaId
+     * @param stageTypeCode
+     *      SR01 内容
+            SR02 资料
+            SR03 练习
+            SR04 签字
+     * @return
+     */
+    public static Observable<List<StageTaskBean>> queryStageTask (String dramaId, String stageTypeCode) {
+        return getInstance().getServerApi().queryStageTask(dramaId, stageTypeCode)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    /**
+     * OOS 上传
+     * @param userId
+     * @return
+     */
+    public static Observable<STSbean> uploadTaskPracticeOOS (Integer userId) {
+        return getInstance().getServerApi().uploadTaskPracticeOOS(userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<SubmitReplyBean> submitTaskPracticeServer (Integer userId, String data) {
+        return getInstance().getServerApi().submitTaskPracticeServer(userId, data)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
 
 }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/half_transparent">
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_line"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/y330"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_line_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/y80"/>
+
+
+    <FrameLayout
+        android:layout_width="@dimen/x800"
+        android:layout_height="@dimen/y620"
+        android:background="@android:color/white"
+        app:layout_constraintLeft_toRightOf="@id/guide_line_vertical"
+        app:layout_constraintTop_toBottomOf="@id/guide_line"/>
+
+    <TextView
+        android:id="@+id/text_signature"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/y50"
+        android:textSize="@dimen/x28"
+        android:textColor="@android:color/black"
+        android:text="家长签字"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="@dimen/x20"
+        android:layout_marginStart="@dimen/x20"
+        app:layout_constraintTop_toBottomOf="@id/guide_line"
+        app:layout_constraintLeft_toRightOf="@id/guide_line_vertical"/>
+    
+    <View
+        android:id="@+id/view_line"
+        android:layout_width="@dimen/x800"
+        android:layout_height="@dimen/y2"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/text_signature"
+        app:layout_constraintLeft_toRightOf="@id/guide_line_vertical"/>
+
+    <com.yougy.view.NoteBookView2
+        android:id="@+id/signature_noteView"
+        android:layout_width="@dimen/x722"
+        android:layout_height="@dimen/y402"
+        android:layout_marginLeft="@dimen/x2"
+        android:background="@drawable/img_task_signature"
+        app:layout_constraintLeft_toRightOf="@id/guide_line_vertical"
+        android:layout_marginStart="@dimen/x39"
+        app:layout_constraintTop_toBottomOf="@id/view_line"
+        android:layout_marginTop="@dimen/y40"/>
+
+
+    <TextView
+        android:id="@+id/btn_submit"
+        android:layout_width="@dimen/x200"
+        android:layout_height="@dimen/y48"
+        android:text="@string/confirm"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/x24"
+        android:background="@drawable/bmp_bg_green"
+        android:gravity="center"
+        app:layout_constraintLeft_toRightOf="@id/btn_cancel"
+        android:layout_marginLeft="@dimen/x101"
+        android:layout_marginStart="@dimen/x101"
+        app:layout_constraintTop_toBottomOf="@id/signature_noteView"
+        android:layout_marginTop="@dimen/x42"/>
+
+    <TextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="@dimen/x200"
+        android:layout_height="@dimen/y48"
+        android:text="@string/cancel"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/x24"
+        android:gravity="center"
+        android:background="@drawable/text_border_task_material"
+        app:layout_constraintLeft_toRightOf="@id/guide_line_vertical"
+        app:layout_constraintTop_toBottomOf="@id/signature_noteView"
+        android:layout_marginTop="@dimen/x42"
+        android:layout_marginStart="@dimen/x151"
+        android:layout_marginLeft="@dimen/x151"/>
+
+</android.support.constraint.ConstraintLayout>
