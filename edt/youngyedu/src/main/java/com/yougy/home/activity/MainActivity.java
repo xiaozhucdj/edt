@@ -560,15 +560,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public static boolean changeSystemConfigIntegerValue(Context context, String dataKey, int value) {
-        try {
-            return Settings.System.putInt(context.getContentResolver(), dataKey, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     private void gotoMyMessage() {
         if (!NetUtils.isNetConnected()) {
             showCancelAndDetermineDialog(R.string.jump_to_net);
