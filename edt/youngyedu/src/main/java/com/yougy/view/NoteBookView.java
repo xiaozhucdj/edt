@@ -179,7 +179,7 @@ public class NoteBookView extends View {
 
         //适用于设备PL107
 
-          EpdController.setStrokeColor(0xff000000);
+        EpdController.setStrokeColor(0xff000000);
 //        EpdController.setStrokeStyle(1);
 //        EpdController.setStrokeWidth(2.0f);
     }
@@ -192,7 +192,7 @@ public class NoteBookView extends View {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-           userOutPen();
+        userOutPen();
     }
 
     public void drawBitmap(Bitmap bitmap) {
@@ -405,13 +405,14 @@ public class NoteBookView extends View {
     private float currentX;
     private float currentY;
     private Line line;
-    private int mSystenPenType = 0 ;
+    private int mSystenPenType = 0;
 
     private boolean mIntercept;
 
     public void setIntercept(boolean intercept) {
         mIntercept = intercept;
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -426,17 +427,17 @@ public class NoteBookView extends View {
         }
 
         if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {  //4
-           useInEraser();
+            useInEraser();
         } else {
             if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_PL107)) {
-                mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN ;
-            }else{
-                mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS ;
+                mSystenPenType = MotionEvent.TOOL_TYPE_UNKNOWN;
+            } else {
+                mSystenPenType = MotionEvent.TOOL_TYPE_STYLUS;
             }
             if (event.getToolType(0) == mSystenPenType) {
                 if (!flagOfErase) {
-                  userOutPen();
-                }else {
+                    userOutPen();
+                } else {
                     useOutEraser();
                 }
             }
@@ -447,7 +448,9 @@ public class NoteBookView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //如果flag为true，则说明进行了undo、redo操作，这时再进行按下操作时应将索引后面的path清除掉
-                EpdController.enterScribbleMode(this);
+                if (!isEraser(event)) {
+                    EpdController.enterScribbleMode(this);
+                }
                 if (flag) {
                     int size = savePath.size();
                     for (int i = size - 1; i > index; i--) {
@@ -471,26 +474,33 @@ public class NoteBookView extends View {
                 line.setStart(new Point(x, y));
                 touch_start(x, y);
                 float dst[] = mapPoint(x, y);
-                EpdController.moveTo(dst[0], dst[1], mPaint.getStrokeWidth());
+                if (!isEraser(event)) {
+                    EpdController.moveTo(dst[0], dst[1], mPaint.getStrokeWidth());
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (x >= 0 && x <= getWidth() && y >= 0 && y <= getHeight()) {
                     touch_move(x, y);
-                    LogUtils.e(TAG, "action move......(x,y) : " + x + "," + y);
+                    LogUtils.e(TAG, "action move......(x,y) : " + x + "," + y );
                     currentX = x;
                     currentY = y;
                     preX = currentX;
                     preY = currentY;
-                    long start = System.currentTimeMillis();
-                    int n = event.getHistorySize();
-                    for (int i = 0; i < n; i++) {
-                        dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
+                    if (!isEraser(event)) {
+                        long start = System.currentTimeMillis();
+                        int n = event.getHistorySize();
+                        for (int i = 0; i < n; i++) {
+                            dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
+                            EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
+                        }
+                        long end = System.currentTimeMillis();
+                        LogUtils.e(TAG, " take time : " + (end - start));
+                        dst = mapPoint(event.getX(), event.getY());
                         EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
+                    }else{
+                        EpdController.leaveScribbleMode(this);
+                        invalidate();
                     }
-                    long end = System.currentTimeMillis();
-                    LogUtils.e(TAG, " take time : " + (end - start));
-                    dst = mapPoint(event.getX(), event.getY());
-                    EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -506,6 +516,13 @@ public class NoteBookView extends View {
                 break;
         }
         return true;
+    }
+
+    /**
+     * 用于判断是否使用橡皮擦，使用橡皮擦时不调用手写包
+     */
+    private boolean isEraser(MotionEvent event) {
+        return (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) | flagOfErase;
     }
 
     private boolean redoNeedUpdate() {
@@ -602,14 +619,14 @@ public class NoteBookView extends View {
 
 */
 
-    private float mOutSetPenSize =2.0f;
+    private float mOutSetPenSize = 2.0f;
 
     public void outSetPenSize(int outSetPenSize) {
         mOutSetPenSize = (float) outSetPenSize;
         flagOfErase = false;
     }
 
-    private float mOutSetEraserSize =2.0f;
+    private float mOutSetEraserSize = 2.0f;
 
     public void outSetEraserSize(int outSetEraserSize) {
         mOutSetEraserSize = (float) outSetEraserSize;
@@ -619,9 +636,9 @@ public class NoteBookView extends View {
     private boolean flagOfErase = false;
 
     private void userOutPen() {
-        LogUtils.i("yuanye  userOutPen ...."+mOutSetPenSize);
+        LogUtils.i("yuanye  userOutPen ...." + mOutSetPenSize);
         mPaint.setXfermode(null);
-        mPaint.setStrokeWidth(mOutSetPenSize-0.2f);
+        mPaint.setStrokeWidth(mOutSetPenSize - 0.2f);
         mPaint.setColor(Color.BLACK);
         EpdController.setStrokeColor(0xff000000);
         EpdController.setStrokeWidth(mOutSetPenSize);
@@ -645,21 +662,21 @@ public class NoteBookView extends View {
         EpdController.setStrokeWidth(20.0f);
     }
 
-    public void recycle(){
-        if (mBitmap!=null){
+    public void recycle() {
+        if (mBitmap != null) {
             mBitmap.recycle();
-            mBitmap= null ;
+            mBitmap = null;
         }
 
-        if (mSrcBitmp!=null){
+        if (mSrcBitmp != null) {
             mSrcBitmp.recycle();
-            mSrcBitmp = null ;
+            mSrcBitmp = null;
         }
 
         Runtime.getRuntime().gc();
     }
 
-    public void leaveScribbleMode(){
+    public void leaveScribbleMode() {
         EpdController.leaveScribbleMode(this);
         invalidate();
     }
