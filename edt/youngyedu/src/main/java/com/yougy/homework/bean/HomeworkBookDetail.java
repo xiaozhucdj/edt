@@ -31,6 +31,15 @@ public class HomeworkBookDetail {
     private String homeworkStatusCode;
     private List<HomeworkSummary> homeworkContent;
     private List<MistakeSummary> homeworkExcerpt;
+    private List<HomeworkSummary.ExtraBean> homeworkRemarks;//待批改
+
+    public List<HomeworkSummary.ExtraBean> getHomeworkRemarks() {
+        return homeworkRemarks;
+    }
+
+    public void setHomeworkRemarks(List<HomeworkSummary.ExtraBean> homeworkRemarks) {
+        this.homeworkRemarks = homeworkRemarks;
+    }
 
     public String getHomeworkStatus() {
         return homeworkStatus;

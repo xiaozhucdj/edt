@@ -17,23 +17,6 @@ import java.util.List;
 
 public class QuestionReplySummary implements Parcelable {
 
-    /**
-     * replyStatus : 已评完
-     * replyItem : 59
-     * replyStatusCode : IG04
-     * replyContent : []
-     * replyCreator : 1000001795
-     * replyExam : 536
-     * replyUseTime : 00:00:51
-     * replyId : 272
-     * replyCommentator : 10000001
-     * replyComment : []
-     * replyScore : 0
-     * replyCreatorName : 李媛媛
-     * replyCommentTime : 0000-00-00 00:00:00
-     * replyCreateTime : 2017-11-16 13:41:15
-     */
-
     private String replyStatus;
     private int replyItem;
     private String replyStatusCode;
@@ -47,10 +30,16 @@ public class QuestionReplySummary implements Parcelable {
     private String replyCreatorName;
     private String replyCommentTime;
     private String replyCreateTime;
+
+    private List<ReplyCommentedBean> replyCommented = new ArrayList<ReplyCommentedBean>();
+    private List<Object> replyComment;
+
     //学生回答原始数据
     private List<Object> replyContent;
     //解析后的回答数据
     private List<Content_new> parsedContentList = new ArrayList<Content_new>();
+
+
 
     public String getReplyStatus() {
         return replyStatus;
@@ -164,6 +153,24 @@ public class QuestionReplySummary implements Parcelable {
         this.parsedContentList = parsedContentList;
     }
 
+    public List<ReplyCommentedBean> getReplyCommented() {
+        return replyCommented;
+    }
+
+    public QuestionReplySummary setReplyCommented(List<ReplyCommentedBean> replyCommented) {
+        this.replyCommented = replyCommented;
+        return this;
+    }
+
+    public List<Object> getReplyComment() {
+        return replyComment;
+    }
+
+    public QuestionReplySummary setReplyComment(List<Object> replyComment) {
+        this.replyComment = replyComment;
+        return this;
+    }
+
     public int getReplyItemWeight() {
         return replyItemWeight;
     }
@@ -206,6 +213,60 @@ public class QuestionReplySummary implements Parcelable {
         return this;
     }
 
+    public static class ReplyCommentedBean implements Parcelable {
+        private int replyScore;
+        private int replyCommentator;
+
+        public int getReplyScore() {
+            return replyScore;
+        }
+
+        public ReplyCommentedBean setReplyScore(int replyScore) {
+            this.replyScore = replyScore;
+            return this;
+        }
+
+        public int getReplyCommentator() {
+            return replyCommentator;
+        }
+
+        public ReplyCommentedBean setReplyCommentator(int replyCommentator) {
+            this.replyCommentator = replyCommentator;
+            return this;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.replyScore);
+            dest.writeInt(this.replyCommentator);
+        }
+
+        public ReplyCommentedBean() {
+        }
+
+        protected ReplyCommentedBean(Parcel in) {
+            this.replyScore = in.readInt();
+            this.replyCommentator = in.readInt();
+        }
+
+        public static final Parcelable.Creator<ReplyCommentedBean> CREATOR = new Parcelable.Creator<ReplyCommentedBean>() {
+            @Override
+            public ReplyCommentedBean createFromParcel(Parcel source) {
+                return new ReplyCommentedBean(source);
+            }
+
+            @Override
+            public ReplyCommentedBean[] newArray(int size) {
+                return new ReplyCommentedBean[size];
+            }
+        };
+    }
+
 
     @Override
     public int describeContents() {
@@ -229,6 +290,8 @@ public class QuestionReplySummary implements Parcelable {
         dest.writeString(this.replyCreateTime);
         dest.writeList(this.replyContent);
         dest.writeTypedList(this.parsedContentList);
+        dest.writeTypedList(this.replyCommented);
+        dest.writeList(this.replyComment);
     }
 
     public QuestionReplySummary() {
@@ -251,9 +314,12 @@ public class QuestionReplySummary implements Parcelable {
         this.replyContent = new ArrayList<Object>();
         in.readList(this.replyContent, Object.class.getClassLoader());
         this.parsedContentList = in.createTypedArrayList(Content_new.CREATOR);
+        this.replyCommented = in.createTypedArrayList(ReplyCommentedBean.CREATOR);
+        in.readList(this.replyComment , Object.class.getClassLoader());
+
     }
 
-    public static final Creator<QuestionReplySummary> CREATOR = new Creator<QuestionReplySummary>() {
+    public static final Parcelable.Creator<QuestionReplySummary> CREATOR = new Parcelable.Creator<QuestionReplySummary>() {
         @Override
         public QuestionReplySummary createFromParcel(Parcel source) {
             return new QuestionReplySummary(source);

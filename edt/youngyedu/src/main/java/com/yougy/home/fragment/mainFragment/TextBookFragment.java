@@ -21,9 +21,12 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
+import com.yougy.common.media.MediaDownUtils;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
+import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
@@ -38,6 +41,8 @@ import com.yougy.view.CustomGridLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 import static android.content.ContentValues.TAG;
 import static com.yougy.common.global.FileContonst.PAGE_COUNTS;
@@ -100,30 +105,43 @@ public class TextBookFragment extends BFragment {
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
-
-        LogUtils.i("yuanye ..." + info.getBookId());
-        LogUtils.i("yuanye ..." + FileUtils.getTextBookFilesDir());
-        LogUtils.i("yuanye ..." + StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir)));
+        LogUtils.i("yuanye ..图书id" + info.getBookId());
+        LogUtils.i("yuanye ...图书上级文件夹" + FileUtils.getTextBookFilesDir());
+        LogUtils.i("yuanye ..图书全路径" + FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir));
+        LogUtils.i("yuanye ..音频文件是否存在" + FileUtils.exists(FileUtils.getMediaFilesDir() + info.getBookId()));
+        LogUtils.i("yuanye ..音频文件ZIP是否存在" + FileUtils.exists(FileUtils.getMediaFilesDir() + info.getBookId() + ".zip"));
         if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
-            Bundle extras = new Bundle();
-            //课本进入
-            extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
-            //笔记创建者
-            extras.putInt(FileContonst.NOTE_CREATOR, -1);
-            //分类码
-            extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
-            //笔记类型
-            extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
-            extras.putInt(FileContonst.NOTE_SUBJECT_ID, info.getBookFitSubjectId());
-            extras.putString(FileContonst.NOTE_SUBJECT_NAME, info.getBookFitSubjectName());
-            //作业ID
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
-            //笔记id
-            extras.putInt(FileContonst.NOTE_ID, info.getBookFitNoteId());
-            //图书id
-            extras.putInt(FileContonst.BOOK_ID, info.getBookId());
-            extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
-            loadIntentWithExtras(ControlFragmentActivity.class, extras);
+            //判断是否有音频文件
+            if (mMediasBookIDs.contains((info.getBookId() + ""))) {
+                if (FileUtils.exists(FileUtils.getMediaFilesDir() + info.getBookId())) {
+                    jumpBundle();
+                }else {
+                    if (NetUtils.isNetConnected()) { //去下载音频文件
+//                        UIUtils.showToastSafe("需要下载音频");
+                        LogUtils.i("yuanye ..需要下载音频" );
+                        MediaDownUtils downUtils = new MediaDownUtils();
+                        downUtils.setMediaDownUtilsListener(new MediaDownUtils.MediaDownUtilsListener() {
+                            @Override
+                            public void onMediaCancelListener() {
+                                jumpBundle();
+                            }
+
+                            @Override
+                            public void onMediaDownFinishListener() {
+                                jumpBundle();
+                            }
+                        });
+
+                        downUtils.downMediaZipFile(getActivity(), info.getBookId() + "");
+
+                    } else {
+                        showCancelAndDetermineDialog(R.string.jump_to_net);
+                    }
+                }
+            } else {
+                jumpBundle();
+            }
+
         } else {
             if (NetUtils.isNetConnected()) {
                 downBookTask(info.getBookId());
@@ -132,6 +150,31 @@ public class TextBookFragment extends BFragment {
             }
         }
     }
+
+
+    private void jumpBundle() {
+        BookInfo info = mBooks.get(mDownPosition);
+        Bundle extras = new Bundle();
+        //课本进入
+        extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
+        //笔记创建者
+        extras.putInt(FileContonst.NOTE_CREATOR, -1);
+        //分类码
+        extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
+        //笔记类型
+        extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
+        extras.putInt(FileContonst.NOTE_SUBJECT_ID, info.getBookFitSubjectId());
+        extras.putString(FileContonst.NOTE_SUBJECT_NAME, info.getBookFitSubjectName());
+        //作业ID
+        extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
+        //笔记id
+        extras.putInt(FileContonst.NOTE_ID, info.getBookFitNoteId());
+        //图书id
+        extras.putInt(FileContonst.BOOK_ID, info.getBookId());
+        extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
+        loadIntentWithExtras(ControlFragmentActivity.class, extras);
+    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -178,7 +221,22 @@ public class TextBookFragment extends BFragment {
             req.setBookFitGradeName();
             req.setBookCategoryMatch(10000);
             NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
-                    .subscribe(this::freshUI, throwable -> freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_COACH_BOOK)));
+                    .subscribe(new Action1<List<BookInfo>>() {
+                        @Override
+                        public void call(List<BookInfo> bookInfos) {
+                            TextBookFragment.this.freshUI(bookInfos);
+                            if (bookInfos!=null && bookInfos.size()>0){
+                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK,  GsonUtil.toJson(bookInfos));
+                            }else{
+                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK, "");
+                            }
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            TextBookFragment.this.freshUI(TextBookFragment.this.getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));
+                        }
+                    });
         } else {
             LogUtils.e(TAG, "query book from database...");
             freshUI(getCacheBooks(NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK));

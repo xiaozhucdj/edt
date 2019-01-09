@@ -171,6 +171,7 @@ public class SettingMainActivity extends BaseActivity {
         initSysIcon();
         binding.avatarImv.setOnLongClickListener(v -> {
             LogUtils.setOpenLog(true);
+            NetWorkManager.getInstance(false).openBODY();
             return true;
         });
     }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/material_constrain_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/page_recycler_view"
+        android:layout_width="@dimen/x870"
+        android:layout_height="@dimen/y942"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="@dimen/y40"/>
+
+    <com.frank.etude.pageable.PageBtnBarV2
+        android:id="@+id/pageBar_materials"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/page_recycler_view"
+        android:layout_marginTop="@dimen/y25"/>
+
+    <ViewStub
+        android:id="@+id/task_material_viewStub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/task_data_empty"
+        android:visibility="gone"/>
+
+</android.support.constraint.ConstraintLayout>

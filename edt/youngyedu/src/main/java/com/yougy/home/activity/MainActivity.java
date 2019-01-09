@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import com.artifex.mupdfdemo.pdf.task.AsyncTask;
 import com.bumptech.glide.Glide;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
@@ -27,12 +29,15 @@ import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.service.UploadService;
 import com.yougy.common.utils.DateUtils;
@@ -41,7 +46,6 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.fragment.mainFragment.AllCoachBookFragment;
@@ -53,7 +57,9 @@ import com.yougy.home.fragment.mainFragment.FolderFragment;
 import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
+import com.yougy.home.fragment.mainFragment.TaskFragment;
 import com.yougy.home.fragment.mainFragment.TextBookFragment;
+import com.yougy.init.activity.LoginActivity;
 import com.yougy.message.YXClient;
 import com.yougy.message.ui.RecentContactListActivity;
 import com.yougy.order.LockerActivity;
@@ -64,16 +70,20 @@ import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
 import com.yougy.view.dialog.AppUpdateDialog;
-import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownProgressDialog;
+
+import org.litepal.tablemanager.Connector;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.functions.Action1;
 
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 
 //import com.tencent.bugly.crashreport.CrashReport;
 
@@ -103,7 +113,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private NotesFragment mNotesFragment;
     private ReferenceBooksFragment mReferenceBooksFragment;
     private TextBookFragment mTextBookFragment;
-
+    private TaskFragment mTaskFragment;
 
     private AllTextBookFragment mAllTextBookFragment;
     private AllCoachBookFragment mAllCoachBookFragment;
@@ -117,6 +127,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView mTvCoachBook;
     private TextView mTvTextBook;
 
+    private Button mBtnTask;
     private Button mBtnBookStore;
     private Button mBtnCurrentBook;
     private Button mBtnAllBook;
@@ -168,12 +179,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private boolean isStScreensaver;
     private AppUpdateDialog mAppUpdateDialog;
     private Button btn_deviceSize;
+    private DeviceYxMsgErrorDialog mDeviceYxMsgErrorDialog;
 
+
+    private static long lastCheckTimeMill = 0;
+    private static CheckRunnable checkRunnable = new CheckRunnable();
+    private boolean initializationNeedNetFinished = false;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        long timeTolastCheck = System.currentTimeMillis() - lastCheckTimeMill;
+        LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck/1000) + "秒");
+        if (System.currentTimeMillis() - lastCheckTimeMill > 60*60*1000){
+//        if (System.currentTimeMillis() - lastCheckTimeMill > 5*1000){
+            LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间过长,启动验证是否解绑流程");
+            YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
+            YoungyApplicationManager.getMainThreadHandler().post(checkRunnable.setActivity(this));
+        }
+        else {
+            LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间在可允许范围内,本次不验证是否解绑");
+        }
+    }
 
     /***************************************************************************/
 
     @Override
     protected void init() {
+        mIsCheckStartNet = false;
         setPressTwiceToExit(true);
         YXClient.getInstance().with(this).addOnRecentContactListChangeListener(new YXClient.OnThingsChangedListener<List<RecentContact>>() {
             @Override
@@ -197,6 +230,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentTransaction.remove(mNotesFragment);
         fragmentTransaction.remove(mReferenceBooksFragment);
         fragmentTransaction.remove(mTextBookFragment);
+        fragmentTransaction.remove(mTaskFragment);
         fragmentTransaction.remove(mAllTextBookFragment);
         fragmentTransaction.remove(mAllCoachBookFragment);
         fragmentTransaction.remove(mAllNotesFragment);
@@ -213,7 +247,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mNotesFragment = null;
         mReferenceBooksFragment = null;
         mTextBookFragment = null;
-
+        mTaskFragment = null;
 
         mAllTextBookFragment = null;
         mAllCoachBookFragment = null;
@@ -246,6 +280,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mTvTextBook = (TextView) findViewById(R.id.tv_text_book);
         mTvTextBook.setOnClickListener(this);
 
+        mBtnTask = findViewById(R.id.btn_task);
+        mBtnTask.setOnClickListener(this);
         //有侧边栏显示按钮
         mImgBtnShowRight = (ImageButton) this.findViewById(R.id.imgBtn_showRight);
         mImgBtnShowRight.setOnClickListener(this);
@@ -304,10 +340,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
+        btn_deviceSize.setVisibility(View.VISIBLE);
         if (BuildConfig.DEBUG) {
-            testVersion.setVisibility(View.VISIBLE);
-            testVersion.setText(UIUtils.getString(R.string.app_name));
-            btn_deviceSize.setVisibility(View.VISIBLE);
+//            testVersion.setVisibility(View.VISIBLE);
+//            testVersion.setText(UIUtils.getString(R.string.app_name));
+//            btn_deviceSize.setVisibility(View.VISIBLE);
         }
 
         String sex = SpUtils.getSex();
@@ -384,7 +421,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_NOTES_FRAGMENT : FragmentDisplayOption.NOTES_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
-
             case R.id.tv_reference_books:
                 refreshTabBtnState(clickedViewId);
                 bringFragmentToFrontInner(FragmentDisplayOption.REFERENCE_BOOKS_FRAGMENT);
@@ -402,7 +438,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 bringFragmentToFrontInner(mIsAll == true ? FragmentDisplayOption.ALL_TEXT_BOOK_FRAGMENT : FragmentDisplayOption.TEXT_BOOK_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
                 break;
-
+            case R.id.btn_task:
+                refreshTabBtnState(clickedViewId);
+                bringFragmentToFrontInner(FragmentDisplayOption.TASK_FRAGMENT);
+                break;
             case R.id.imgBtn_showRight:
 //                mFlRight.setVisibility(View.VISIBLE);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
@@ -472,8 +511,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_msg:
-                LogUtils.e(getClass().getName(), "我的消息");
-                gotoMyMessage();
+                changeSystemConfigIntegerValue(getApplicationContext() , "close_wifi_delay" , -1);
+//                LogUtils.e(getClass().getName(), "我的消息");
+//                gotoMyMessage();
                 break;
             case R.id.btn_account:
                 LogUtils.i("账号设置");
@@ -508,7 +548,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.btn_deviceSize:
-                UIUtils.showToastSafe("W--"+UIUtils.getScreenWidth() +"H--"+UIUtils.getScreenHeight());
+//                UIUtils.showToastSafe("W--"+UIUtils.getScreenWidth() +"H--"+UIUtils.getScreenHeight());
+                if (mDeviceYxMsgErrorDialog == null) {
+                    mDeviceYxMsgErrorDialog = new DeviceYxMsgErrorDialog(this);
+                }
+
+                mDeviceYxMsgErrorDialog.show();
+
             default:
                 break;
         }
@@ -584,7 +630,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Fragment whichToBack7 = null;
         Fragment whichToBack8 = null;
         Fragment whichToBack9 = null;
-
+        Fragment whichToBack10 = null;
 
         switch (fragmentDisplayOption) {
             case TEXT_BOOK_FRAGMENT:
@@ -599,6 +645,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
             case ALL_TEXT_BOOK_FRAGMENT:
                 //显示 全部 课本
@@ -612,6 +659,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case COACH_BOOK_FRAGMENT:
@@ -626,6 +674,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case ALL_COACH_BOOK_FRAGMENT:
@@ -640,6 +689,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case REFERENCE_BOOKS_FRAGMENT:
@@ -654,6 +704,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case NOTES_FRAGMENT:
@@ -668,6 +719,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case ALL_NOTES_FRAGMENT:
@@ -683,6 +735,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
             case HOMEWORK_FRAGMENT:
                 //作业
@@ -696,6 +749,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mAllHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
             case ALL_HOMEWORK_FRAGMENT:
                 //全部作业
@@ -710,6 +764,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mHomeworkFragment;
                 whichToBack9 = mFolderFragment;
+                whichToBack10 = mTaskFragment;
                 break;
 
             case FOLDER_FRAGMENT:
@@ -723,6 +778,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mHomeworkFragment;
                 whichToBack9 = mAllHomeworkFragment;
+                whichToBack10 = mTaskFragment;
+                break;
+            case TASK_FRAGMENT:
+                whichToFront = mTaskFragment;
+                whichToBack1 = mTextBookFragment;
+                whichToBack2 = mAllTextBookFragment;
+                whichToBack3 = mCoachBookFragment;
+                whichToBack4 = mAllCoachBookFragment;
+                whichToBack5 = mReferenceBooksFragment;
+                whichToBack6 = mNotesFragment;
+                whichToBack7 = mAllNotesFragment;
+                whichToBack8 = mHomeworkFragment;
+                whichToBack9 = mAllHomeworkFragment;
+                whichToBack10 = mFolderFragment;
                 break;
             default:
                 break;
@@ -740,6 +809,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .hide(whichToBack7)
                 .hide(whichToBack8)
                 .hide(whichToBack9)
+                .hide(whichToBack10)
                 .commitAllowingStateLoss();
 
 
@@ -849,7 +919,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         // 笔记
         mNotesFragment = new NotesFragment();
         mAllNotesFragment = new AllNotesFragment();
-
+        mTaskFragment = new TaskFragment();
 
         //作业
         mHomeworkFragment = new HomeworkFragment();
@@ -872,7 +942,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //作业
                 .add(R.id.fl_content_layout, mHomeworkFragment).add(R.id.fl_content_layout, mAllHomeworkFragment)
                 //文件夹
-                .add(R.id.fl_content_layout, mFolderFragment)
+                .add(R.id.fl_content_layout, mFolderFragment).add(R.id.fl_content_layout,mTaskFragment)
 
                 /***
                  * hide 全部fragment
@@ -887,7 +957,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //作业
                 .hide(mHomeworkFragment).hide(mAllHomeworkFragment)
                 //文件夹
-                .hide(mFolderFragment)
+                .hide(mFolderFragment).hide(mTaskFragment)
                 //提交事务
                 .commitAllowingStateLoss();
 
@@ -974,12 +1044,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         /**
          * 文件夹
          */
-        FOLDER_FRAGMENT
+        FOLDER_FRAGMENT,
+        /**
+         * 任务
+         */
+        TASK_FRAGMENT
+    }
+
+//    key是 "close_wifi_delay",  永不关闭传值:-1
+    public static boolean changeSystemConfigIntegerValue(Context context, String dataKey, int value) {
+        try {
+            return Settings.System.putInt(context.getContentResolver(), dataKey, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (!NetUtils.isNetConnected()) {
+            if (NetUtils.isNetAvailable()) {
+                NetManager.getInstance().changeWiFi(this, true);
+            }
+        }
+
+//        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
+
+
+
 
         if (!isStScreensaver) {
             ThreadManager.getSinglePool().execute(new Runnable() {
@@ -993,38 +1088,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             });
         }
         initSysIcon();
-        YXClient.checkNetAndRefreshLogin(this, new Runnable() {
-            @Override
-            public void run() {
-                new AsyncTask() {
-                    @Override
-                    protected Object doInBackground(Object[] params) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Object o) {
-                        int totalUnreadMsgCount = 0;
-                        for (RecentContact recentContact : YXClient.getInstance().getRecentContactList()) {
-                            totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId(), recentContact.getSessionType());
-                        }
-                        if (totalUnreadMsgCount != 0) {
-                            mIvMsg.setVisibility(View.VISIBLE);
-//                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
-                        } else {
-                            mIvMsg.setVisibility(View.GONE);
-                        }
-                    }
-                }.execute((Object[]) null);
-            }
-        });
-
-
         if (SpUtils.getOrder().contains(LOCK_SCREEN) && SpUtils.getOrder().contains(DateUtils.getCalendarString())) {
             Intent newIntent = new Intent(getApplicationContext(), LockerActivity.class);
             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1261,6 +1324,128 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     //=================================升级相关代码 结束=============================================================
+
+    private static class CheckRunnable implements Runnable{
+        MainActivity activity;
+        public CheckRunnable setActivity(MainActivity activity) {
+            this.activity = activity;
+            return this;
+        }
+
+        @Override
+        public void run() {
+            if (!NetUtils.isNetConnected()) {
+                LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:没有连接网络,尝试打开网络,并在30秒之后再次检查");
+                NetManager.getInstance().changeWiFi(YoungyApplicationManager.getInstance(), true);
+                YoungyApplicationManager.getMainThreadHandler().removeCallbacks(this);
+                YoungyApplicationManager.getMainThreadHandler().postDelayed(this, 30000);
+            } else {
+                NewLoginReq loginReq = new NewLoginReq();
+                loginReq.setDeviceId(Commons.UUID);
+                NetWorkManager.getInstance(true).login(loginReq)
+                        .subscribe(students -> {
+                            LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:没有被解绑,走正常流程");
+                            if (!activity.initializationNeedNetFinished){
+                                downloadDb();
+                                getUnreadMsg();
+                                activity.initializationNeedNetFinished = true;
+                            }
+                            lastCheckTimeMill = System.currentTimeMillis();
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                throwable.printStackTrace();
+                                if (throwable instanceof ApiException
+                                        && ("401".equals(((ApiException) throwable).getCode()))) {
+                                    LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:可能被解绑了,先logout后跳转到login界面");
+                                    ToastUtil.showCustomToast(activity, "您的设备可能已经被解绑了,请重新登录绑定设备!");
+                                    //登录失败,可能是在pc端被解绑了.
+                                    //删除本端的缓存数据并且跳转到login界面
+                                    SpUtils.clearSP();
+                                    SpUtils.changeInitFlag(false);
+                                    Connector.resetHelper();
+                                    activity.deleteDatabase(DATABASE_NAME);
+                                    activity.deleteDatabase(JOURNAL_NAME);
+                                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                                    YXClient.getInstance().logout();
+                                    ThreadManager.getSinglePool().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            DeviceScreensaverUtils.setScreensaver();
+                                        }
+                                    });
+                                    activity.startActivity(new Intent(activity , LoginActivity.class));
+                                    activity.finish();
+                                } else {
+                                    LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:未知,查询是否解绑接口调不通,尝试进行初始化,是否解绑延期至下次进入主界面时做");
+                                    if (!activity.initializationNeedNetFinished){
+                                        downloadDb();
+                                        getUnreadMsg();
+                                        activity.initializationNeedNetFinished = true;
+                                    }
+                                }
+                            }
+                        });
+            }
+        }
+
+        public void downloadDb(){
+            File file = new File(activity.getDatabasePath(SpUtils.getUserId() + ".db").getAbsolutePath());
+            if (!file.exists()) {
+                activity.startService(new Intent(activity, DownloadService.class));
+            }
+        }
+        public void getUnreadMsg(){
+            YXClient.getInstance().checkIfNotLoginThenDoIt(activity, new RequestCallback() {
+                @Override
+                public void onSuccess(Object param) {
+                    new AsyncTask() {
+                        @Override
+                        protected Object doInBackground(Object[] params) {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            int totalUnreadMsgCount = 0;
+                            for (RecentContact recentContact : YXClient.getInstance().getRecentContactList()) {
+                                totalUnreadMsgCount += YXClient.getUnreadMsgCount(recentContact.getContactId(), recentContact.getSessionType());
+                            }
+                            if (totalUnreadMsgCount != 0) {
+                                activity.mIvMsg.setVisibility(View.VISIBLE);
+//                            unreadMsgCountTextview1.setText("" + totalUnreadMsgCount);
+                            } else {
+                                activity.mIvMsg.setVisibility(View.GONE);
+                            }
+                        }
+                    }.execute((Object[]) null);
+                }
+
+                @Override
+                public void onFailed(int code) {
+                    ToastUtil.showCustomToast(activity , "连接消息服务器失败!");
+                }
+
+                @Override
+                public void onException(Throwable exception) {
+
+                }
+            });
+        }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
+        checkRunnable.activity = null;
+    }
+
 
 }
 

@@ -8,11 +8,13 @@ import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.onyx.android.sdk.common.request.WakeLockHolder;
 import com.onyx.android.sdk.utils.NetworkUtil;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.yolanda.nohttp.Logger;
@@ -35,7 +37,6 @@ import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
-import com.yougy.message.attachment.RetryAskQuestionAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.order.LockerActivity;
 import com.yougy.ui.activity.BuildConfig;
@@ -66,6 +67,9 @@ import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENT
  */
 public class YoungyApplicationManager extends LitePalApplication {
 
+    public static String lastAnsMsg = "无消息";
+    public static String start_net = "无消息";
+    public static String end_net = "无消息";
     private final int REQUEST_TIME = 15 * 1000;
     public static final boolean DEBUG = true;
 
@@ -98,6 +102,8 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     private long lastReceiverTime;
     private String lastExamId;//上次收到作业的时间，主要解决待机重启后，短时间内收到多条相同布置的作业的消息的过滤判断
+    private WakeLockHolder mHolder;
+
 
     @Override
     public void onCreate() {
@@ -111,9 +117,9 @@ public class YoungyApplicationManager extends LitePalApplication {
         //其他的正常初始化需要区分进程,只在主进程里初始化
         if (inMainProcess(this)) {
             //申请wakeLock,保证不进入睡眠
-            android.os.PowerManager powerManager = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
-            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK, "leke");
-            wakeLock.acquire();
+//            android.os.PowerManager powerManager = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
+//            android.os.PowerManager.WakeLock wakeLock = powerManager.newWakeLock(android.os.PowerManager.FULL_WAKE_LOCK, "leke:myWakeLock");
+//            wakeLock.acquire();
 
             //       watcher = LeakCanary.install(this);
             mContext = this;
@@ -136,6 +142,9 @@ public class YoungyApplicationManager extends LitePalApplication {
             FileUtils.createDirs(FileUtils.getTextBookIconFilesDir());
             //创建试读PDF 文件夹
             FileUtils.createDirs(FileUtils.getProbationBookFilesDir());
+
+            //创建 媒体文件夹
+            FileUtils.createDirs(FileUtils.getMediaFilesDir());
 
             if (!BuildConfig.DEBUG) {
                 //处理异常
@@ -187,21 +196,22 @@ public class YoungyApplicationManager extends LitePalApplication {
 
             //注册屏幕开锁广播接收器,每次开锁的时候回跳到本地锁.
             //本广播只会在应用程序启动后注册,未启动应用时,不能检测到开屏广播
-            IntentFilter filter = new IntentFilter();
-            filter.addAction("android.intent.action.SCREEN_ON");
-            registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (BaseActivity.getForegroundActivity() != null
-                            && !(BaseActivity.getForegroundActivity() instanceof LocalLockActivity)
-                            && !TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
-                        Intent newIntent = new Intent(context, LocalLockActivity.class);
-                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        newIntent.putExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, true);
-                        context.startActivity(newIntent);
-                    }
-                }
-            }, filter);
+            //需求变更:本地锁暂时取消
+//            IntentFilter filter = new IntentFilter();
+//            filter.addAction("android.intent.action.SCREEN_ON");
+//            registerReceiver(new BroadcastReceiver() {
+//                @Override
+//                public void onReceive(Context context, Intent intent) {
+//                    if (BaseActivity.getForegroundActivity() != null
+//                            && !(BaseActivity.getForegroundActivity() instanceof LocalLockActivity)
+//                            && !TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
+//                        Intent newIntent = new Intent(context, LocalLockActivity.class);
+//                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        newIntent.putExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, true);
+//                        context.startActivity(newIntent);
+//                    }
+//                }
+//            }, filter);
 
             //初始化云信配置,注册全局性的处理器和解析器等
             YXClient.getInstance().initOption(this);
@@ -210,31 +220,43 @@ public class YoungyApplicationManager extends LitePalApplication {
                 @Override
                 public void onNewMessage(IMMessage message) {
                     if (message.getAttachment() instanceof AskQuestionAttachment) {
-                        Calendar now = Calendar.getInstance();
-                        Calendar messageTime = Calendar.getInstance();
-                        messageTime.setTime(new Date(message.getTime()));
-                        if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
-                            int examId = ((AskQuestionAttachment) message.getAttachment()).examID;
-                            if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
-                                @Override
-                                public boolean isMatchCondition(Integer nodeInList) {
-                                    return nodeInList.intValue() == examId;
+                        lastAnsMsg = "服务器发送结果：" + "接收时间" + DateUtils.getTimeString() + "消息内容" + message.getAttachment().toString();
+                        getMainThreadHandler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Calendar now = Calendar.getInstance();
+                                Calendar messageTime = Calendar.getInstance();
+                                messageTime.setTime(new Date(message.getTime()));
+                                if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+                                        && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
+                                    int examId = ((AskQuestionAttachment) message.getAttachment()).examID;
+                                    if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
+                                        @Override
+                                        public boolean isMatchCondition(Integer nodeInList) {
+                                            return nodeInList.intValue() == examId;
+                                        }
+                                    })) {
+                                        Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
+                                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
+                                        newIntent.putExtra("from", ((AskQuestionAttachment) message.getAttachment()).from);
+                                        newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
+                                        startActivity(newIntent);
+                                        AnsweringActivity.handledExamIdList.add(examId);
+                                    }
                                 }
-                            })) {
-                                LogUtils.e("FHHHHH------------3");
-                                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
-                                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                newIntent.putExtra("itemId", ((AskQuestionAttachment) message.getAttachment()).itemId + "");
-                                newIntent.putExtra("from", ((AskQuestionAttachment) message.getAttachment()).from);
-                                newIntent.putExtra("examId", ((AskQuestionAttachment) message.getAttachment()).examID);
-                                startActivity(newIntent);
-                                AnsweringActivity.handledExamIdList.add(examId);
-                            } else {
-                                LogUtils.e("FHHHHH------------4");
                             }
+                        } , 1000);
+                    }
+                    else if (message.getAttachment() instanceof EndQuestionAttachment) {
+                        if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
+                            @Override
+                            public boolean isMatchCondition(Integer nodeInList) {
+                                return nodeInList.intValue() == ((EndQuestionAttachment) message.getAttachment()).examID;
+                            }
+                        })){
+                            AnsweringActivity.handledExamIdList.add(((EndQuestionAttachment) message.getAttachment()).examID);
                         }
-                    } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         rxBus.send(message);
                     } else if (message.getAttachment() instanceof OverallLockAttachment) {
                         //TODO 全局锁屏
@@ -255,32 +277,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
                             EventBus.getDefault().post(baseEvent);
                         }
-                    } else if (message.getAttachment() instanceof RetryAskQuestionAttachment) {
-                        Calendar now = Calendar.getInstance();
-                        Calendar messageTime = Calendar.getInstance();
-                        messageTime.setTime(new Date(message.getTime()));
-                        if ((messageTime.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-                                && (messageTime.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR))) {
-                            int examId = ((RetryAskQuestionAttachment) message.getAttachment()).examId;
-                            if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
-                                @Override
-                                public boolean isMatchCondition(Integer nodeInList) {
-                                    return nodeInList.intValue() == examId;
-                                }
-                            })) {
-                                LogUtils.e("FHHHHH------------1");
-                                Intent newIntent = new Intent(getApplicationContext(), AnsweringActivity.class);
-                                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                newIntent.putExtra("itemId", ((RetryAskQuestionAttachment) message.getAttachment()).itemId + "");
-                                newIntent.putExtra("from", ((RetryAskQuestionAttachment) message.getAttachment()).userId + "");
-                                newIntent.putExtra("examId", examId);
-                                startActivity(newIntent);
-                                AnsweringActivity.handledExamIdList.add(examId);
-                            } else {
-                                LogUtils.e("FHHHHH------------2");
-                            }
-                        }
-                    } else if (message.getAttachment() instanceof SeatWorkAttachment) {
+                    }  else if (message.getAttachment() instanceof SeatWorkAttachment) {
                         //判断是否在写作业界面
                         SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
                         if (BaseActivity.getForegroundActivity() instanceof WriteHomeWorkActivity) {
@@ -344,6 +341,10 @@ public class YoungyApplicationManager extends LitePalApplication {
         }
 //        checkAnr();
         LogUtils.setOpenLog(BuildConfig.DEBUG);
+        changeSystemConfigIntegerValue();
+         mHolder = new WakeLockHolder() ;
+         mHolder.acquireWakeLock(mContext,"onyx-framework");
+
     }
 
     @Override
@@ -351,6 +352,9 @@ public class YoungyApplicationManager extends LitePalApplication {
         super.onTerminate();
         NetManager.getInstance().unregisterReceiver(this);
         PowerManager.getInstance().unregisterReceiver(this);
+        if (mHolder!=null){
+            mHolder.releaseWakeLock();
+        }
     }
 
     private void checkAnr() {
@@ -500,19 +504,31 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     /**
      * 应用是否在前台
+     *
      * @return
      */
-    public boolean isForegroundApp () {
+    public boolean isForegroundApp() {
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runnings = am.getRunningAppProcesses();
-        for(ActivityManager.RunningAppProcessInfo running : runnings){
-            if(running.processName.equals(getPackageName())){
-                if(running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                        || running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE){
+        for (ActivityManager.RunningAppProcessInfo running : runnings) {
+            if (running.processName.equals(getPackageName())) {
+                if (running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                        || running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE) {
                     return true;
                 }
             }
         }
         return false;
     }
+
+
+    public static boolean changeSystemConfigIntegerValue() {
+        try {
+            return Settings.System.putInt(mContext.getContentResolver(), "close_wifi_delay", -1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

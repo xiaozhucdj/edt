@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent">
+
+    <RelativeLayout
+        android:layout_width="600px"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_rounded_rectangle_all_white"
+        android:paddingLeft="53px"
+        android:paddingTop="30px"
+        android:paddingRight="53px"
+        android:paddingBottom="30px">
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设备信息!"
+            android:textColor="@color/black"
+            android:textSize="26px"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/content_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_tv"
+            android:layout_marginTop="30px"
+            android:layout_marginBottom="30px"
+            android:minHeight="300px"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_net_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="网络是是否链接:"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <TextView
+            android:layout_marginTop="20px"
+            android:id="@+id/tv_out_net_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="外网是否可用:"
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
+
+            <TextView
+                android:layout_marginTop="20px"
+                android:id="@+id/tv_yx_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="消息状态state:"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <TextView
+                android:layout_marginTop="20px"
+                android:id="@+id/tv_last_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最后一条消息:"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <TextView
+                android:layout_marginTop="20px"
+                android:id="@+id/tv_start_net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="联网开始时间:"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+            <TextView
+                android:layout_marginTop="20px"
+                android:id="@+id/tv_end_net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="断网时间:"
+                android:textColor="@color/black"
+                android:textSize="24px" />
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_below="@id/content_tv"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="1px"
+            android:layout_marginRight="1px"
+            android:background="@drawable/bind_confirm_btn_bg"
+            android:text="关闭对话框"
+            android:textColor="@color/white"
+            android:textSize="24px" />
+
+
+        <Button
+            android:id="@+id/btn_test"
+            android:layout_width="200px"
+            android:layout_height="48px"
+            android:layout_below="@id/content_tv"
+            android:layout_marginTop="1px"
+            android:layout_marginRight="1px"
+            android:background="@drawable/bind_cancel_btn_bg"
+            android:text="测试"
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
+    </RelativeLayout>
+</RelativeLayout>
+
+

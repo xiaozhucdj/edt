@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.functions.Action1;
+
+import static com.yougy.common.global.Constant.*;
 
 /**
  * Created by FH on 2016/7/14.
@@ -83,36 +86,31 @@ public class ExerciseBookFragment extends BFragment {
 
             @Override
             public void onBindViewHolder(MyHolder holder, int position) {
-
+                HomeworkSummary homeworkSummary;
                 switch (currentStatus) {
                     case DOING:
-                        HomeworkSummary doingHomeworkSummary = doingList.get(position);
-                        if (!StringUtils.isEmpty(doingHomeworkSummary.getExtra().getLifeTime())) {
-                            holder.binding.statusTv.setText("限\n\n时");
+                        homeworkSummary = doingList.get(position);
+                        if (!StringUtils.isEmpty(homeworkSummary.getExtra().getLifeTime())) {
+                            holder.binding.statusTv.setText("限\n时");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
-                            holder.binding.textLifetime.setText("限时：" + doingHomeworkSummary.getExtra().getLifeTime());
+                            holder.binding.textLifetime.setText("限时：" + homeworkSummary.getExtra().getLifeTime());
                             holder.binding.textLifetime.setVisibility(View.VISIBLE);
                         } else {
                             holder.binding.statusTv.setVisibility(View.GONE);
                             holder.binding.textLifetime.setVisibility(View.GONE);
                         }
                         holder.binding.textRateScore.setVisibility(View.GONE);
-                        holder.setData(doingHomeworkSummary);
+                        holder.setData(homeworkSummary);
                         break;
                     case WAIT_FOR_CHECK:
-                        HomeworkSummary uncheckedHomeworkSummary = waitForCheckList.get(position);
-                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode()) ||
-                                (("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
-                                        || "IH04".equals(uncheckedHomeworkSummary.getExtra().getStatusCode()))
-                                        && ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                        || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())))) {
-                            holder.binding.statusTv.setText("自\n\n评");
+                        homeworkSummary = waitForCheckList.get(position);
+                        if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())){
+                            holder.binding.statusTv.setText("自\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
-                        } else if ("II55".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
-                                || "II58".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())) {
-                            holder.binding.statusTv.setText("互\n\n评");
+                        } else if (isMutualEvaluation(homeworkSummary)) {
+                            holder.binding.statusTv.setText("互\n评");
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else {
@@ -120,24 +118,30 @@ public class ExerciseBookFragment extends BFragment {
                         }
                         holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.GONE);
-                        holder.setData(waitForCheckList.get(position));
+                        holder.setData(homeworkSummary);
                         break;
                     case CHECKED:
-                        HomeworkSummary checkedHomeworkSummary = checkedList.get(position);
-                        HomeworkSummary.ExtraBean extraBean = checkedHomeworkSummary.getExtra();
-                        if (extraBean.getExamTotalPoints() != 0) {
+                        homeworkSummary = checkedList.get(position);
+                        HomeworkSummary.ExtraBean extraBean = homeworkSummary.getExtra();
+                        if (extraBean.getExamTotalPoints() > 0) {
                             //计分作业
                             holder.binding.textRateScore.setText("分数：" + extraBean.getTotalPoints());
                             holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
-                            holder.binding.statusTv.setText("计\n\n分");
+                            holder.binding.statusTv.setText("计\n分");
                             holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else {
-                            holder.binding.statusTv.setVisibility(View.GONE);
-                            holder.binding.textRateScore.setText("正确率：" + extraBean.getCorrectCount() + "/" + extraBean.getItemCount());
+                            if (isMutualEvaluation(homeworkSummary)){
+                                holder.binding.statusTv.setVisibility(View.GONE);
+                                holder.binding.textRateScore.setText("正确率：" + (int)(extraBean.getAccuracy()*100) + "%");
+                            }
+                            else {
+                                holder.binding.statusTv.setVisibility(View.GONE);
+                                holder.binding.textRateScore.setText("正确率：" + extraBean.getCorrectCount() + "/" + extraBean.getItemCount());
+                            }
                         }
                         holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.VISIBLE);
-                        holder.setData(checkedHomeworkSummary);
+                        holder.setData(homeworkSummary);
                         break;
                 }
             }
@@ -162,54 +166,59 @@ public class ExerciseBookFragment extends BFragment {
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 Intent intent;
                 MyHolder holder = (MyHolder) vh;
+                HomeworkSummary homeworkSummary = holder.getData();
                 switch (currentStatus) {
                     case CHECKED:
-                       /* if (holder.getData().getExtra().getStatusCode().equals("IH51")){
-                            ToastUtil.showCustomToast(getActivity() , "本次作业您未提交,无法查看");
-                        }*/
-                        if (holder.getData().getExtra().getStatusCode().equals("IH05")) {
+                        if (IHCODE_05.equals(holder.getData().getExtra().getStatusCode())) {
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                             intent.putExtra("examId", holder.getData().getExam());
                             intent.putExtra("examName", holder.getData().getExtra().getName());
-                            if (holder.getData().getExtra().getExamTotalPoints() != 0) {
+                            if (holder.getData().getExtra().getExamTotalPoints() > 0) {
                                 //是否为计分作业
                                 intent.putExtra("isScoring", true);
                                 intent.putExtra("getExamTotalPoints", holder.getData().getExtra().getExamTotalPoints());
-                                intent.putExtra("getTotalPoints", holder.getData().getExtra().getTotalPoints());
-                            } else {
-                                intent.putExtra("getItemCount", holder.getData().getExtra().getItemCount());
-                                intent.putExtra("getCorrectCount", holder.getData().getExtra().getCorrectCount());
                             }
-                            intent.putExtra("getAccuracy", holder.getData().getExtra().getAccuracy());
+                            intent.putExtra("getItemCount", holder.getData().getExtra().getItemCount());
+                            //isStudentCheck  0   默认不传  1 自评   2 互评
+                            if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())) {
+                                intent.putExtra("isStudentCheck", 1);
+                            } else if (isMutualEvaluation(homeworkSummary))  {
+                                intent.putExtra("isStudentCheck", 2);
+                            }
                             startActivity(intent);
                         }
+//                        else if (IHCODE_51.equals(holder.getData().getExtra().getStatusCode())){
+//                            ToastUtil.showCustomToast(getActivity() , "本次作业您未提交,无法查看");
+//                        }
                         break;
                     case WAIT_FOR_CHECK:
-                        HomeworkSummary uncheckedHomeworkSummary = holder.getData();
-                        if ("IH52".equals(uncheckedHomeworkSummary.getExtra().getStatusCode()) ||
-                                (
-                                        ("IH03".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
-                                                || "IH04".equals(uncheckedHomeworkSummary.getExtra().getStatusCode())
-                                        )
-                                                && ("II54".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                                || "II57".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                                || "II55".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                                || "II58".equals(uncheckedHomeworkSummary.getExtra().getTypeCode())
-                                        )
-                                )
-                                ) {
+                        if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())){
                             intent = new Intent(getActivity(), CheckHomeWorkActivity.class);
-                            intent.putExtra("examId", uncheckedHomeworkSummary.getExam());
+                            intent.putExtra("isStudentCheck", 1);
+                            intent.putExtra("examId", homeworkSummary.getExtra().getExam());
+                            intent.putExtra("teamId", homeworkSummary.getExtra().getTeam());
+                            intent.putExtra("replyCreator", homeworkSummary.getExtra().getReplyCreator());
                             intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
                             startActivity(intent);
+                        }
+                        else if (isMutualEvaluation(homeworkSummary)) {
+                            intent = new Intent(getActivity(), CheckHomeWorkActivity.class);
+                            intent.putExtra("isStudentCheck", 2);
+                            intent.putExtra("examId", homeworkSummary.getExtra().getExam());
+                            intent.putExtra("teamId", homeworkSummary.getExtra().getTeam());
+                            intent.putExtra("replyCreator", homeworkSummary.getExtra().getReplyCreator());
+                            intent.putExtra("teacherID", ((MyHolder) vh).getData().getExtra().getExamSponsor());
+                            startActivity(intent);
+                        } else {
+                            ToastUtil.showCustomToast(getActivity(),"作业不是自评或者互评作业！不能查看！  status Code: "
+                                    + homeworkSummary.getExtra().getStatusCode() + "   type Code :" + homeworkSummary.getExtra().getTypeCode());
                         }
                         break;
                     case DOING:
                         intent = new Intent(getActivity(), WriteHomeWorkActivity.class);
-                        HomeworkSummary.ExtraBean extraBean = ((MyHolder) vh).getData().getExtra();
-                        intent.putExtra("examId", ((MyHolder) vh).getData().getExam() + "");
+                        HomeworkSummary.ExtraBean extraBean = homeworkSummary.getExtra();
+                        intent.putExtra("examId", homeworkSummary.getExam() + "");
                         intent.putExtra("mHomewrokId", mControlActivity.mHomewrokId);
-
                         intent.putExtra("examName", extraBean.getName());
                         //传参是否定时作业
                         if (!StringUtils.isEmpty(extraBean.getLifeTime())) {
@@ -217,16 +226,17 @@ public class ExerciseBookFragment extends BFragment {
                             intent.putExtra("lifeTime", extraBean.getLifeTime());
                         }
                         String typeCode = extraBean.getTypeCode();
-                        if ("II02".equals(typeCode) || "II54".equals(typeCode) || "II55".equals(typeCode)
-                                || "II56".equals(typeCode) || "II61".equals(typeCode)) {
-                            //课堂作业
+                        if (IICODE_02.equals(typeCode)) {//课堂作业
                             intent.putExtra("isOnClass", true);
                         } else {
                             intent.putExtra("isOnClass", false);
                         }
-                        //TODO  互评逻辑暂时未加
-                        if ("II54".equals(typeCode) || "II57".equals(typeCode) || "IH52".equals(extraBean.getStatusCode())) {
-                            intent.putExtra("isStudentCheck", true);
+                        //isStudentCheck  0   默认不传  1 自评   2 互评
+                        LogUtils.d("isStudentCheck：：typeCode： " +  typeCode);
+                        if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())) {
+                            intent.putExtra("isStudentCheck", 1);
+                        } else if (isMutualEvaluation(homeworkSummary))  {
+                            intent.putExtra("isStudentCheck", 2);
                         }
                         intent.putExtra("teacherID", extraBean.getExamSponsor());
                         startActivity(intent);
@@ -270,6 +280,7 @@ public class ExerciseBookFragment extends BFragment {
                 refreshData();
             }
         });
+
         binding.mistakesBookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -318,20 +329,11 @@ public class ExerciseBookFragment extends BFragment {
             }
         });
 
-
         return binding.getRoot();
     }
 
     @Override
     protected void handleEvent() {
-//        subscription.add(tapEventEmitter.subscribe(new Action1<Object>() {
-//            @Override
-//            public void call(Object o) {
-//                if (o instanceof String || o.equals("refreshHomeworkList")){
-//                    refreshData();
-//                }
-//            }
-//        }));
         super.handleEvent();
     }
 
@@ -359,20 +361,18 @@ public class ExerciseBookFragment extends BFragment {
         if (mControlActivity.mBookId <= 0) {
             binding.switch2bookBtn.setEnabled(false);
         }
-        // IH01  不显示
-        String statusCode = "IH01";
-        String examTypeCode = "[\"II02\",\"II03\",\"II54\",\"II55\",\"II56\",\"II57\",\"II58\",\"II59\",\"II61\",\"II62\"]";
+        // 不显示IH01未开始的作业
+        String statusCode = null;
+        String examTypeCode = StringUtils.smartCombineStrings("[" , "]" , "\"" , "\"" , "," , IICODE_02 , IICODE_03);
         switch (currentStatus) {
             case DOING:
-                statusCode = "[\"IH02\",\"IH51\"]";
+                statusCode = StringUtils.smartCombineStrings("[" , "]" , "\"" , "\"" , "," , IHCODE_02 , IHCODE_51);
                 break;
             case WAIT_FOR_CHECK:
-                statusCode = "[\"IH03\",\"IH04\",\"IH52\"]";
-//                statusCode = "[\"IH03\",\"IH52\"]";
-//                examTypeCode = "[\"II54\",\"II55\",\"II57\",\"II58\"]";
+                statusCode = StringUtils.smartCombineStrings("[" , "]" , "\"" , "\"" , "," , IHCODE_03 , IHCODE_04);
                 break;
             case CHECKED:
-                statusCode = "IH05";
+                statusCode = IHCODE_05;
                 break;
         }
         NetWorkManager.queryHomeworkBookDetail_New(mControlActivity.mHomewrokId, examTypeCode, statusCode)
@@ -385,20 +385,6 @@ public class ExerciseBookFragment extends BFragment {
                             switch (currentStatus) {
                                 case DOING:
                                     doingList.clear();
-//                                for (HomeworkSummary homeworkSummary : homeworkSummaryList) {
-//                                    if ("IH01".equals(homeworkSummary.getExtra().getStatusCode())) {
-//                                        //如果作业开始时间已经早于现在的时间,说明作业已经开始了,
-//                                        //但是如果此时这个作业的状态还是IH01未开始,则调一次刷新接口刷新整个作业本,这样这个作业的状态就可以更正了.
-//                                        long startTime = DateUtils.convertTimeStrToTimeStamp(homeworkSummary.getExtra().getStartTime() , "yyyy-MM-dd HH:mm:ss");
-//                                        long currentTime = System.currentTimeMillis();
-//                                        if (startTime < currentTime){
-//                                            LogUtils.e("ERROR retry, 考试状态不对,刷新考试列表.");
-//                                            ToastUtil.showCustomToast(getActivity() , "发现有考试状态不对,刷新考试列表");
-//                                            refreshData();
-//                                            return;
-//                                        }
-//                                    }
-//                                }
                                     doingList.addAll(homeworkSummaryList);
                                     if (doingList.size() == 0) {
                                         binding.emptyHintLayout.setVisibility(View.VISIBLE);
@@ -409,19 +395,13 @@ public class ExerciseBookFragment extends BFragment {
                                     break;
                                 case WAIT_FOR_CHECK:
                                     waitForCheckList.clear();
-                                    for (HomeworkSummary h : homeworkSummaryList) {
-                                        if ("IH52".equals(h.getExtra().getStatusCode())) {
-                                            waitForCheckList.add(h);
-                                        } else {
-                                            if ("II54".equals(h.getExtra().getTypeCode())
-                                                    || "II55".equals(h.getExtra().getTypeCode())
-                                                    || "II57".equals(h.getExtra().getTypeCode())
-                                                    || "II58".equals(h.getExtra().getTypeCode())) {
-                                                waitForCheckList.add(h);
-                                            }
-                                        }
+                                    int size = homeworkBookDetails.get(0).getHomeworkRemarks().size();
+                                    for (int i = 0; i < size; i++) {
+                                        HomeworkSummary homeworkSummary = new HomeworkSummary();
+                                        HomeworkSummary.ExtraBean extraBean = homeworkBookDetails.get(0).getHomeworkRemarks().get(i);
+                                        homeworkSummary.setExtra(extraBean);
+                                        waitForCheckList.add(homeworkSummary);
                                     }
-//                                waitForCheckList.addAll(homeworkSummaryList);
                                     if (waitForCheckList.size() == 0) {
                                         binding.emptyHintLayout.setVisibility(View.VISIBLE);
                                         binding.emptyHintTv.setText("您还没有待批改的作业哦");
@@ -440,18 +420,13 @@ public class ExerciseBookFragment extends BFragment {
                                     }
                                     break;
                             }
-
                         }
-
                         binding.mainRecyclerview.setCurrentPage(0);
                         binding.mainRecyclerview.notifyDataSetChanged();
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        LogUtils.d("homeworkBookDetails throwable " + throwable.getMessage());
-                    }
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    LogUtils.d("homeworkBookDetails throwable " + throwable.getMessage());
                 });
     }
 
@@ -489,6 +464,13 @@ public class ExerciseBookFragment extends BFragment {
             } else {
                 binding.timeTv.setVisibility(View.GONE);
             }
+            if (!TextUtils.isEmpty(data.getExtra().getTeamName())){
+                binding.groupNameTv.setVisibility(View.VISIBLE);
+                binding.groupNameTv.setText("组名 : " + data.getExtra().getTeamName());
+            }
+            else {
+                binding.groupNameTv.setVisibility(View.GONE);
+            }
         }
 
         public HomeworkSummary getData() {
@@ -498,6 +480,18 @@ public class ExerciseBookFragment extends BFragment {
         public ItemHomeworkListBinding getBinding() {
             return binding;
         }
+    }
+
+    /**
+     * 是否互评
+     * @return  true 互评
+     */
+    private boolean isMutualEvaluation (HomeworkSummary uncheckedHomeworkSummary) {
+        if (IKCODE_02.equals(uncheckedHomeworkSummary.getExtra().getEval())
+                || IJCODE_03.equals(uncheckedHomeworkSummary.getExtra().getEval())) {
+            return true;
+        }
+        return false;
     }
 
     //TODO:袁野
@@ -525,5 +519,9 @@ public class ExerciseBookFragment extends BFragment {
     protected void onDownBookFinish() {
         super.onDownBookFinish();
         mControlActivity.switch2TextBookFragment();
+    }
+
+    public void onBackListener() {
+        getActivity().finish();
     }
 }

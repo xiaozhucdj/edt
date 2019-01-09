@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/x200"
+    android:layout_height="@dimen/y260"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/text_border_task_material">
+
+    <ImageView
+        android:layout_width="@dimen/x198"
+        android:layout_height="@dimen/y258"
+        android:src="@drawable/img_task_material"
+        android:scaleType="fitXY"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/item_text_materials"
+        android:layout_width="@dimen/x180"
+        android:layout_height="@dimen/y80"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/y1"
+        android:lineSpacingMultiplier="1"
+        android:textSize="@dimen/x22"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        android:layout_marginBottom="@dimen/y25"
+        android:text="@string/str_task_materials_empty"/>
+
+</android.support.constraint.ConstraintLayout>

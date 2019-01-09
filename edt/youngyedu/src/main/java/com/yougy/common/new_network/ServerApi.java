@@ -6,7 +6,6 @@ import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.model.Version;
-import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.protocol.request.NewDeleteNoteReq;
@@ -21,8 +20,10 @@ import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkBookSummary;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.HomeworkSummarySumInfo;
 import com.yougy.homework.bean.QuestionReplyDetail;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.init.bean.Student;
 import com.yougy.shop.AllowOrderRequestObj;
 import com.yougy.shop.CreateOrderRequestObj;
@@ -38,6 +39,11 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.bean.OOSReplyBean;
+import com.yougy.task.bean.SubmitReplyBean;
+import com.yougy.task.bean.SubmitTaskBean;
+import com.yougy.task.bean.Task;
+import com.yougy.task.bean.StageTaskBean;
 
 import java.util.List;
 
@@ -87,6 +93,15 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postReply"})
     Observable<BaseResult<Object>> postReply(@Field("userId") String userId, @Field("data") String data);
+
+
+    /**
+     * 互评作业分配接口
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"allocationMutualHomework"})
+    Observable<BaseResult<Object>> allocationMutualHomework(@Field("examId") String examId);
 
     /**
      * 按userId查询云信token
@@ -165,6 +180,14 @@ public interface ServerApi {
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("userId") String userId);
 
+    /**
+     * 查询学生互评解答详情
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"reviewComment"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
+            , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator, @Field("replyCreator") long replyCreator);
 
     /**
      * 查询错题列表
@@ -192,6 +215,17 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"queryReply"})
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
             , @Field("userId") Integer userId, @Field("replyId") String replyId);
+
+
+    /**
+     * 查询某次考试总分情况
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"sumReplyStudent"})
+    Observable<BaseResult<List<HomeworkSummarySumInfo>>> sumReplyStudent(@Field("examId") Integer examId
+            , @Field("studentId") Integer studentId);
+
 
     /**
      * 作业本错题移除
@@ -456,7 +490,7 @@ public interface ServerApi {
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postComment"})
     Observable<BaseResult<Object>> postComment(@Field("replyId") String replyId, @Field("score") String score
-            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator);
+            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator, @Field("originalReplyCommentator") String originalReplyCommentator);
 
     /**
      * 添加单个收藏夹
@@ -546,5 +580,34 @@ public interface ServerApi {
 
     @POST("classRoom")
     Observable<BaseResult<List<com.yougy.init.bean.BookInfo>>> getBookShelf(@Body NewBookShelfReq req);
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryTaskContent"})
+    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentCourseLink") int contentCourseLink, @Field("pn") int pn, @Field("ps") int ps);
+
+    /**
+     * 获取组信息
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"querySchoolTeamByStudentAndExam"})
+    Observable<BaseResult<TeamBean>> querySchoolTeamByStudentAndExam(@Field("studentId") String studentId, @Field("examId") String examId);
+
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryStage"})
+    Observable<BaseResult<List<StageTaskBean>>> queryStageTask (@Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode);
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postSceneRequest"})
+    Observable<BaseResult<STSbean>> uploadTaskPracticeOOS (@Field("userId") Integer userId);
+
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"insertScene"})
+    Observable<BaseResult<SubmitReplyBean>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
 
 }

@@ -209,6 +209,8 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     private int mCutterEraserSize = 2;
 
     private boolean mIsUserPen = true;
+    protected FrameLayout base_opt_layout;
+//    protected TextView tv_media;
 
     private String generatePicturePath() {
         picturePath = fileName + "-" + "picture" + "-" + position + "-" + pictureCount;
@@ -420,6 +422,7 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 
         // Seekbar 根VIEW
         mRl_page = mRoot.findViewById(R.id.rl_page);
+        base_opt_layout = mRoot.findViewById(R.id.base_opt_layout);
 
         //替换布局的  ViewStub
         mStub = mRoot.findViewById(R.id.view_stub);
@@ -477,6 +480,10 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 }
             }
         });
+
+//       tv_media = mRoot.findViewById(R.id.tv_media);
+//        tv_media.setOnClickListener(this);
+
     }
 
     @NonNull
@@ -867,6 +874,11 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 saveContent(false);
                 getActivity().onBackPressed();
                 break;
+//
+//            case  R.id.tv_media:
+//                cliclMedia();
+//                break;
+
         }
 //        if (null != view && isNeedHide && view != mPaintDrawIv && mPaintChoose.getVisibility() == View.VISIBLE) {
 //            outAnimator();
@@ -886,6 +898,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
 //            mPaintDrawIv.setSelected(!mIsIntercept);
 //        }
     }
+
+
+
 
     public void leaveScribbleMode(boolean needFreshUI) {
         if (null != mNoteBookView) {

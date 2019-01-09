@@ -19,7 +19,6 @@ import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
 import com.yougy.message.attachment.BookRecommandAttachment;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.HomeworkRemindAttachment;
-import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityRecentContactBinding;
 import com.yougy.ui.activity.databinding.ItemRecentContactListBinding;
@@ -66,7 +65,7 @@ public class RecentContactListActivity extends MessageBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        YXClient.checkNetAndRefreshLogin(this , null);
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this , null);
     }
 
     public void initListView(){

@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -34,8 +33,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
-import com.yougy.anwser.ContentDisplayer;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.anwser.ContentDisplayerAdapterV2;
 import com.yougy.anwser.ContentDisplayerV2;
 import com.yougy.anwser.Content_new;
@@ -68,9 +66,10 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnItemClickListener;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
 import com.yougy.homework.bean.HomeworkDetail;
+import com.yougy.homework.bean.TeamBean;
 import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
-import com.yougy.message.attachment.ReceiveWorkAttachment;
+import com.yougy.message.attachment.CollectHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
@@ -206,7 +205,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private int saveQuestionPage = 0;
 
     private String examName;
-    private boolean isStudentCheck;
+    //isStudentCheck  0   默认 不传  1 自评   2 互评
+    private int isStudentCheck;
     private String examId = "550";
     //是否添加了手写板
     private boolean isAddAnswerBoard;
@@ -250,7 +250,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     protected void init() {
 
         examId = getIntent().getStringExtra("examId");
-        isStudentCheck = getIntent().getBooleanExtra("isStudentCheck", false);
+        isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
         if (TextUtils.isEmpty(examId)) {
             ToastUtil.showCustomToast(getBaseContext(), "作业id为空");
             mIsFinish = true;
@@ -296,15 +296,18 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 收作业消息
      */
     private void initReceiveHomeworkMsg() {
-        receiverMsg = message -> {
-            if (message.getAttachment() instanceof ReceiveWorkAttachment) {
-                ReceiveWorkAttachment receiveWorkAttachment = (ReceiveWorkAttachment) message.getAttachment();
-                LogUtils.d("examId = " + examId + "   receiveWorkAttachment.examId = " + receiveWorkAttachment.examId);
-                if (examId.equals(receiveWorkAttachment.examId)) {
-                    LogUtils.w("teacher receive homework , auto submit.");
-                    WriteHomeWorkActivity.this.autoSubmitHomeWork();
-                } else {
-                    LogUtils.w("current examId is not receive examId. not submit.");
+        receiverMsg = new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                if (message.getAttachment() instanceof CollectHomeworkAttachment) {
+                    CollectHomeworkAttachment collectHomeworkAttachment = (CollectHomeworkAttachment) message.getAttachment();
+                    LogUtils.d("examId = " + examId + "   collectHomeworkAttachment.examId = " + collectHomeworkAttachment.examId);
+                    if (examId.equals(collectHomeworkAttachment.examId)) {
+                        LogUtils.w("teacher receive homework , auto submit.");
+                        WriteHomeWorkActivity.this.autoSubmitHomeWork();
+                    } else {
+                        LogUtils.w("current examId is not receive examId. not submit.");
+                    }
                 }
             }
         };
@@ -514,9 +517,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }
             }
         });
-
-
-        imageRefresh.setOnClickListener(v -> loadData());
     }
 
 
@@ -698,7 +698,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
         if (examPaperContentList != null && examPaperContentList.size() > 0) {
 
             isFirstComeInHomeWork = true;
-            homeWorkPageNumAdapter.onItemClickListener.onItemClick1(0);
+            homeWorkPageNumAdapter.onItemClickListener.onItemClick1(showHomeWorkPosition);
 
         }
 
@@ -980,7 +980,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private static long lastClickTime;
 
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
-            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title})
+            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title,R.id.image_refresh})
     public void onClick(View view) {
 
         long time = System.currentTimeMillis();
@@ -1209,6 +1209,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     judgeAnswerList.set(0, "false");
                 }
                 break;
+
+            case R.id.image_refresh:
+                saveLastHomeWorkData(showHomeWorkPosition, false);
+                loadData();
+                break;
         }
     }
 
@@ -1320,6 +1325,12 @@ public class WriteHomeWorkActivity extends BaseActivity {
      * 得到之前保存的数据，用于回显
      */
     private void getShowHomeWorkData(int position) {
+
+        bytesList.clear();
+        cgBytes.clear();
+        pathList.clear();
+        checkedAnswerList.clear();
+        judgeAnswerList.clear();
 
         //回显之前存储在sp中的手写笔记数据（如果有）
 
@@ -1479,12 +1490,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
 
-                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
-                        if (isStudentCheck) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
-                        } else {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
-                        }
+                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
+//                        if (isStudentCheck == 0) {
+//                            homeWorkResultbean.setReplyCommentator(teacherId);
+//                        } else if (isStudentCheck == 1) {
+//                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+//                        } else {
+//                            homeWorkResultbean.setReplyCommentator(0);
+//                        }
                         homeWorkResultbean.setPicContent(stsResultbeanArrayList);
                         homeWorkResultbean.setUseTime(useTime);
                         homeWorkResultbean.setTxtContent(tmpJudgeAnswerList.size() > 0 ? tmpJudgeAnswerList : tmpCheckedAnswerList);
@@ -1507,12 +1520,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         int itemId = examPaperContentList.get(i).getPaperItem();
                         homeWorkResultbean.setItemId(itemId);
                         homeWorkResultbean.setReplyCreateTime(DateUtils.getCalendarAndTimeString());
-                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评暂传老师id by后台马国东要求
-                        if (isStudentCheck) {
-                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
-                        } else {
-                            homeWorkResultbean.setReplyCommentator(teacherId);
-                        }
+                        //postReply 接口 有新增字段 replyCommentator 如果是自评作业传学生自己，老师批改的传教师id ，互评0 by后台马国东定义
+//                        if (isStudentCheck == 0) {
+//                            homeWorkResultbean.setReplyCommentator(teacherId);
+//                        } else if (isStudentCheck == 1) {
+//                            homeWorkResultbean.setReplyCommentator(SpUtils.getUserId());
+//                        } else {
+//                            homeWorkResultbean.setReplyCommentator(0);
+//                        }
                         homeWorkResultbeanList.add(homeWorkResultbean);
 
                     }
@@ -1599,26 +1614,26 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
                         //发送消息
                         if (teacherId != 0) {
-                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId), SessionTypeEnum.P2P, SpUtils.getAccountId(), SpUtils.getAccountName()
-                                    , teacherId, new RequestCallback<Void>() {
+                            sendFinishMsgToTeacher();
+                        }
+                        mIsSubmit = true;
 
+                        //国东添加接口：互评作业分配接口
+                        if (isStudentCheck == 2) {
+                            NetWorkManager.allocationMutualHomework(examId)
+                                    .subscribe(new Action1<Object>() {
                                         @Override
-                                        public void onSuccess(Void param) {
-                                            LogUtils.d("提交消息通知教师成功！");
+                                        public void call(Object o) {
+
                                         }
-
+                                    }, new Action1<Throwable>() {
                                         @Override
-                                        public void onFailed(int code) {
-                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
-                                        }
-
-                                        @Override
-                                        public void onException(Throwable exception) {
-                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                        public void call(Throwable throwable) {
+                                            throwable.printStackTrace();
+                                            ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
                                         }
                                     });
                         }
-                        mIsSubmit = true;
                         onBackPressed();
 
                     }
@@ -1642,6 +1657,74 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         } else {
                             ToastUtil.showCustomToast(getBaseContext(), "提交失败，请重试");
                         }
+                    }
+                });
+    }
+
+
+    //完成作业后发送消息给教师端
+    private void sendFinishMsgToTeacher() {
+
+        NetWorkManager.querySchoolTeamByStudentAndExam(SpUtils.getUserId() + "", examId)
+                .subscribe(new Action1<TeamBean>() {
+                    @Override
+                    public void call(TeamBean teamBean) {
+                        if (teamBean != null) {
+
+                            YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
+                                    , SessionTypeEnum.P2P
+                                    , SpUtils.getAccountId()
+                                    , SpUtils.getAccountName()
+                                    , teacherId
+                                    , teamBean.getTeamId()
+                                    , new RequestCallback<Void>() {
+
+                                        @Override
+                                        public void onSuccess(Void param) {
+                                            LogUtils.d("提交消息通知教师成功！");
+                                        }
+
+                                        @Override
+                                        public void onFailed(int code) {
+                                            LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                        }
+
+                                        @Override
+                                        public void onException(Throwable exception) {
+                                            LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                        }
+                                    });
+
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                        //如果不是分组作业这里获取的话服务器返回400，
+                        YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
+                                , SessionTypeEnum.P2P
+                                , SpUtils.getAccountId()
+                                , SpUtils.getAccountName()
+                                , teacherId
+                                , 0
+                                , new RequestCallback<Void>() {
+
+                                    @Override
+                                    public void onSuccess(Void param) {
+                                        LogUtils.d("提交消息通知教师成功！");
+                                    }
+
+                                    @Override
+                                    public void onFailed(int code) {
+                                        LogUtils.d("提交消息通知教师失败！ code = " + code);
+                                    }
+
+                                    @Override
+                                    public void onException(Throwable exception) {
+                                        LogUtils.d("提交消息通知教师异常！ " + exception.getMessage());
+                                    }
+                                });
                     }
                 });
     }

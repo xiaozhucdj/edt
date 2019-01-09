@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
 import com.onyx.reader.ReaderPresenter;
+import com.yougy.common.media.MediaBean;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -72,6 +74,18 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     @BindView(R.id.cart_count_tv)
     TextView cartCountTV;
 
+    @BindView(R.id.ll_title)
+    RelativeLayout ll_title;
+    @BindView(R.id.buttom_bar)
+    RelativeLayout buttom_bar;
+    @BindView(R.id.img_page_back)
+    ImageView img_page_back;
+    @BindView(R.id.img_page_next)
+    ImageView img_page_next;
+    @BindView(R.id.img_btn_hide)
+    Button img_btn_hide;
+
+
     private BookInfo mBookInfo;
 
     /////////////////////////////////Files///////////////////////////
@@ -90,6 +104,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     private int mTagForNoNet = 1;
     private int mTagForRequestDetailsFail = 2;
     private int mTagForQueryNoNet = 3;
+    private Subscription nextScription2;
+    private Subscription backScription2;
 
     @Override
     public void init() {
@@ -179,7 +195,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                 });
     }
 
-    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, R.id.btn_buy})
+    @OnClick({R.id.imgbtn_back, R.id.imgbtn_jumpCar, R.id.imgbtn_addCar, R.id.imgbtn_favor, R.id.btn_buy, R.id.img_btn_hide})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgbtn_back:
@@ -264,7 +280,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         add(new BookIdObj(mBookInfo.getBookId()));
                     }
                 };
-                NetWorkManager.allowOrder(new AllowOrderRequestObj(SpUtils.getUserId() , bookIdList))
+                NetWorkManager.allowOrder(new AllowOrderRequestObj(SpUtils.getUserId(), bookIdList))
                         .subscribe(new Action1<Object>() {
                             @Override
                             public void call(Object o) {
@@ -291,10 +307,14 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                         }, new Action1<Throwable>() {
                             @Override
                             public void call(Throwable throwable) {
-                                ToastUtil.showCustomToast(getApplicationContext() , "下单失败!\r\n无法购买之前已经下过单的图书");
+                                ToastUtil.showCustomToast(getApplicationContext(), "下单失败!\r\n无法购买之前已经下过单的图书");
                                 throwable.printStackTrace();
                             }
                         });
+                break;
+
+            case R.id.img_btn_hide:
+                onBackListener();
                 break;
         }
     }
@@ -304,7 +324,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
      */
     private void initPDF() {
 //        mProbationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
-        mProbationUrl = FileUtils.getBookFileName(mBookInfo.getBookId() ,FileUtils.bookProbation) ;
+        mProbationUrl = FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookProbation);
         LogUtils.i("mProbationUrl ......" + mProbationUrl);
         mOnyxImgView = new ImageView(this);
         mOnyxImgView.setLayoutParams(new LinearLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
@@ -320,6 +340,8 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         nextScription = RxView.clicks(mImgPageNext).throttleFirst(50, TimeUnit.MILLISECONDS).subscribe(getNextSubscriber());
         backScription = RxView.clicks(mImgPageBack).throttleFirst(50, TimeUnit.MILLISECONDS).subscribe(getBackSubscriber());
 
+        nextScription2 = RxView.clicks(img_page_next).throttleFirst(50, TimeUnit.MILLISECONDS).subscribe(getNextSubscriber());
+        backScription2 = RxView.clicks(img_page_back).throttleFirst(50, TimeUnit.MILLISECONDS).subscribe(getBackSubscriber());
     }
 
     private Action1<? super Void> getBackSubscriber() {
@@ -352,6 +374,13 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         if (nextScription != null) {
             nextScription.unsubscribe();
         }
+
+        if (backScription2 != null) {
+            backScription2.unsubscribe();
+        }
+        if (nextScription2 != null) {
+            nextScription2.unsubscribe();
+        }
         getReaderPresenter().close();
     }
 
@@ -371,7 +400,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     }
 
     @Override
-    public void updatePage(int page, Bitmap bitmap) {
+    public void updatePage(int page, Bitmap bitmap, MediaBean bean) {
         EpdController.invalidate(mRootView, UpdateMode.GC);
         mOnyxImgView.setImageBitmap(bitmap);
         mImgPageBack.setEnabled(true);
@@ -471,5 +500,23 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         if (getUiPromptDialog().getTag() == mTagForRequestDetailsFail || getUiPromptDialog().getTag() == mTagForQueryNoNet) {
             this.finish();
         }
+    }
+
+    public void onBackListener() {
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) img_btn_hide.getLayoutParams();
+        if (ll_title.getVisibility() == View.VISIBLE) {
+            ll_title.setVisibility(View.INVISIBLE);
+            buttom_bar.setVisibility(View.INVISIBLE);
+            img_page_next.setVisibility(View.VISIBLE);
+            img_page_back.setVisibility(View.VISIBLE);
+            img_btn_hide.setText("显示菜单栏");
+        }else{
+            ll_title.setVisibility(View.VISIBLE);
+            buttom_bar.setVisibility(View.VISIBLE);
+            img_page_next.setVisibility(View.GONE);
+            img_page_back.setVisibility(View.GONE);
+            img_btn_hide.setText("隐藏菜单栏");
+        }
+        img_btn_hide.setLayoutParams(params);
     }
 }

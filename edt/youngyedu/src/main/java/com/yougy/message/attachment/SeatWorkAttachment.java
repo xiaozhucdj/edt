@@ -12,7 +12,7 @@ public class SeatWorkAttachment extends CustomAttachment {
     public boolean isTimeWork;
     public String lifeTime;
     public int teacherId;
-    public boolean isStudentCheck;//是否自评
+    public int isStudentCheck;//是否自评
     public String sendDate;//发送日期
 
     final String KEY_EXAM_ID = "examID";
@@ -27,7 +27,7 @@ public class SeatWorkAttachment extends CustomAttachment {
         super(clue , version);
     }
     public SeatWorkAttachment(String examId , String examName , boolean isTimeWork, String lifeTime, int teacherId
-            , boolean isStudentCheck, String sendDate) {
+            , int isStudentCheck, String sendDate) {
         super(CustomAttachParser.CLUE_SEND_SEATWORK , 1);
         this.examId = examId;
         this.examName = examName;
@@ -50,7 +50,7 @@ public class SeatWorkAttachment extends CustomAttachment {
         isTimeWork = introJsonObj.getBoolean(KEY_IS_TIME_LIMITED_WORK);
         lifeTime = introJsonObj.getString(KEY_IS_TIME_LIFETIEM);
         teacherId = introJsonObj.getInt(KEY_TEACHERID);
-        isStudentCheck = introJsonObj.getBoolean(KEY_IS_STUDENTCHECK);
+        isStudentCheck = introJsonObj.getInt(KEY_IS_STUDENTCHECK);
         sendDate = introJsonObj.getString(KEY_SEND_DATE);
     }
 

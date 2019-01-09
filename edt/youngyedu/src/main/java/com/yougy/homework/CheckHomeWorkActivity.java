@@ -58,7 +58,6 @@ import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
-import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -86,6 +85,8 @@ import rx.schedulers.Schedulers;
 public class CheckHomeWorkActivity extends BaseActivity {
 
     private int examId, studentId, toShowPosition;
+    //isStudentCheck  0   默认 不传  1 自评   2 互评
+    private int isStudentCheck;
     private boolean isCheckOver, isStudentLook;
     private String studentName;
     @BindView(R.id.rcv_all_question_page)
@@ -202,18 +203,28 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private boolean isBrowse = false;
     //教师端是否是重批模式
     private boolean isCheckChange = false;
+    private long replyCreator;
+    private String replyCommentator;
+    private int teamId;
+
 
     @Override
     public void init() {
         studentId = SpUtils.getUserId();
-        examId = getIntent().getIntExtra("examId", -1);
+        examId = getIntent().getIntExtra("examId", 0);
+        teamId = getIntent().getIntExtra("teamId", 0);
+
         toShowPosition = getIntent().getIntExtra("toShowPosition", 0);
         isCheckOver = getIntent().getBooleanExtra("isCheckOver", false);
         isStudentLook = getIntent().getBooleanExtra("isStudentLook", false);
+        replyCreator = getIntent().getLongExtra("replyCreator", 0);
+        replyCommentator = getIntent().getStringExtra("replyCommentator");
 
         studentName = SpUtils.getAccountName();
         teacherId = getIntent().getIntExtra("teacherID", 0);
         titleTextview.setText(studentName);
+        isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
+
     }
 
     @Override
@@ -353,19 +364,20 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         break;
                 }
 
-                if (newStatus == WriteableContentDisplayer.LOADING_STATUS.SUCCESS) {
+                if (questionBodyBtn.isSelected() && llHomeWorkCheckOption.getVisibility() == View.VISIBLE) {
+                    if (newStatus == WriteableContentDisplayer.LOADING_STATUS.SUCCESS) {
 
-                    myLeaveScribbleMode();
-                    UIUtils.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            wcdContentDisplayer.getLayer2().setIntercept(false);
-                        }
-                    }, 600);
-                } else {
-                    wcdContentDisplayer.getLayer2().setIntercept(true);
+                        myLeaveScribbleMode();
+                        UIUtils.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                wcdContentDisplayer.getLayer2().setIntercept(false);
+                            }
+                        }, 600);
+                    } else {
+                        wcdContentDisplayer.getLayer2().setIntercept(true);
+                    }
                 }
-
             }
         });
     }
@@ -500,49 +512,105 @@ public class CheckHomeWorkActivity extends BaseActivity {
     public void loadData() {
 
         showNoNetDialog();
-        NetWorkManager.queryReplyDetail(examId, null, String.valueOf(studentId))
-                .subscribe(new Action1<List<QuestionReplyDetail>>() {
-                    @Override
-                    public void call(List<QuestionReplyDetail> questionReplyDetails) {
-                        mQuestionReplyDetails = questionReplyDetails;
-                        replyScoreList.clear();
-                        pageSize = mQuestionReplyDetails.size();
 
-                        if (pageSize == 0) {
-                            new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    finish();
+        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2,学生自评逻辑和互评逻辑一样，批改结果在内层，如果自评被老师重批了，那么是覆盖了内层，外层仍然没有数据
+        if (isStudentCheck == 2 || isStudentCheck == 1) {
+
+            if (isCheckOver) {//批改完毕，查看批改的作业
+                //查看批改作业，直接用intent传递过来的replyCommentator
+            } else {//自评，或者互评
+                replyCommentator = String.valueOf(studentId);
+            }
+
+            NetWorkManager.queryReplyDetail2(examId, null, replyCommentator, replyCreator)
+                    .subscribe(new Action1<List<QuestionReplyDetail>>() {
+                        @Override
+                        public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                            mQuestionReplyDetails = questionReplyDetails;
+                            replyScoreList.clear();
+                            pageSize = mQuestionReplyDetails.size();
+
+                            if (pageSize == 0) {
+                                new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        finish();
+                                    }
+                                }).show();
+                                return;
+                            }
+
+                            setPageNumberView();
+                            questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                            //先赋值，因为这里如果直接从学生结果中去分数，如果后面的题目没有批改，则取不出来数据，导致异常。
+                            for (int i = 0; i < pageSize; i++) {
+                                replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                            }
+                            //再赋学生互评结果值，如果有的话，没有就不用管
+                            for (int i = 0; i < pageSize; i++) {
+                                if (mQuestionReplyDetails.get(i).getReplyCommented().size() > 0) {
+                                    replyScoreList.set(i, mQuestionReplyDetails.get(i).getReplyCommented().get(0).getReplyScore());
                                 }
-                            }).show();
-                            return;
+                            }
+
+                            refreshQuestion();
+                            refreshLastAndNextQuestionBtns();
+
+                            //学生查看已批改作业，点击某一题进入时直接进入当前题目。
+                            if (toShowPosition != 0) {
+                                pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            }
+
                         }
-
-                        setPageNumberView();
-                        questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
-                        for (int i = 0; i < pageSize; i++) {
-                            replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
                         }
+                    });
+        } else {
+            NetWorkManager.queryReplyDetail(examId, null, String.valueOf(studentId))
+                    .subscribe(new Action1<List<QuestionReplyDetail>>() {
+                        @Override
+                        public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                            mQuestionReplyDetails = questionReplyDetails;
+                            replyScoreList.clear();
+                            pageSize = mQuestionReplyDetails.size();
 
-                        refreshQuestion();
-                        refreshLastAndNextQuestionBtns();
+                            if (pageSize == 0) {
+                                new HintDialog(getBaseContext(), "改作业题获取结果为0！", "返回", new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        finish();
+                                    }
+                                }).show();
+                                return;
+                            }
 
-                        //学生查看已批改作业，点击某一题进入时直接进入当前题目。
-                        if (toShowPosition != 0) {
-                            pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            setPageNumberView();
+                            questionReplyDetail = mQuestionReplyDetails.get(currentShowQuestionIndex);
+                            for (int i = 0; i < pageSize; i++) {
+                                replyScoreList.add(mQuestionReplyDetails.get(i).getReplyScore());
+                            }
+
+                            refreshQuestion();
+                            refreshLastAndNextQuestionBtns();
+
+                            //学生查看已批改作业，点击某一题进入时直接进入当前题目。
+                            if (toShowPosition != 0) {
+                                pageNumAdapter.onItemClickListener.onItemClick1(toShowPosition);
+                            }
+
                         }
-
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
-                    }
-                });
-
-//        btnRight.setVisibility(View.VISIBLE);
-//        btnRight.setImageResource(R.drawable.icon_gengduo);
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取数据失败");
+                        }
+                    });
+        }
 
     }
 
@@ -757,18 +825,30 @@ public class CheckHomeWorkActivity extends BaseActivity {
         //先清空集合数据（避免其他题目数据传入）
         textCommentList.clear();
 
-        List<Content_new> replyCommentList = questionReplyDetail.getParsedReplyCommentList();
-        for (int i = 0; i < replyCommentList.size(); i++) {
+        List<Content_new> replyCommentList = null;
+        //判断当前是否是学生互评逻辑，互评时 isStudentCheck 值为2 ， 自评同样取内层数据
+        if (isStudentCheck == 2 || isStudentCheck == 1) {
+            //互评的话，取学生评论内部的结果
+            if (questionReplyDetail.getReplyCommented().size() > 0) {
+                replyCommentList = questionReplyDetail.getReplyCommented().get(0).parse().getParsedReplyCommentList();
+            }
+        } else {
+            //教师评，取外层结果
+            replyCommentList = questionReplyDetail.getParsedReplyCommentList();
+        }
+        if (replyCommentList != null) {
+            for (int i = 0; i < replyCommentList.size(); i++) {
 
-            Content_new content_new = replyCommentList.get(i);
-            if (content_new != null) {
-                if (content_new.getType() == Content_new.Type.IMG_URL) {
-                    imgCommentList.add(content_new);
-                } else if (content_new.getType() == Content_new.Type.TEXT) {
-                    textCommentList.add(content_new);
+                Content_new content_new = replyCommentList.get(i);
+                if (content_new != null) {
+                    if (content_new.getType() == Content_new.Type.IMG_URL) {
+                        imgCommentList.add(content_new);
+                    } else if (content_new.getType() == Content_new.Type.TEXT) {
+                        textCommentList.add(content_new);
+                    }
+                } else {
+                    imgCommentList.add(null);
                 }
-            } else {
-                imgCommentList.add(null);
             }
         }
 
@@ -1522,7 +1602,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
         String content = new Gson().toJson(stsResultbeanArrayList);
 
-        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "")
+        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", SpUtils.getUserId() + "")
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
@@ -1617,11 +1697,20 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
-                        back();
+                        if (isStudentCheck == 2) {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业互评完毕");
+                        } else {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业自评完毕");
+                        }
+
                         if (teacherId != 0) {
-                            YXClient.getInstance().sendSubmitHomeworkMsg(examId, SessionTypeEnum.P2P, studentId, studentName,
-                                    teacherId, new RequestCallback<Void>() {
+                            YXClient.getInstance().sendSubmitHomeworkMsg(examId
+                                    , SessionTypeEnum.P2P
+                                    , studentId
+                                    , studentName
+                                    , teacherId
+                                    , teamId
+                                    , new RequestCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void param) {
                                             LogUtils.v("自评发送消息成功 ！");
@@ -1639,12 +1728,35 @@ public class CheckHomeWorkActivity extends BaseActivity {
                                     });
                         }
 
+
+                        //国东添加接口：互评作业分配接口
+                        if (isStudentCheck == 2) {
+                            NetWorkManager.allocationMutualHomework(examId + "")
+                                    .subscribe(new Action1<Object>() {
+                                        @Override
+                                        public void call(Object o) {
+                                            back();
+                                        }
+                                    }, new Action1<Throwable>() {
+                                        @Override
+                                        public void call(Throwable throwable) {
+                                            throwable.printStackTrace();
+                                            ToastUtil.showCustomToast(getBaseContext(), "allocationMutualHomework接口错误");
+                                        }
+                                    });
+                        } else {
+                            back();
+                        }
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                        if (isStudentCheck == 2) {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业互评提交错误了");
+                        } else {
+                            ToastUtil.showCustomToast(getBaseContext(), "该作业自评提交错误了");
+                        }
                     }
                 });
     }
@@ -1719,7 +1831,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     public void refreshLastAndNextQuestionBtns() {
 
         RefreshUtil.invalidate(llControlBottom);
-        titleTextview.setText(studentName + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
+        titleTextview.setText(questionReplyDetail.getReplyExamName() + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
 
         if (currentShowQuestionIndex > 0) {
 //            lastHomeworkBtn.setBackgroundResource(R.drawable.bmp_bg_blue);

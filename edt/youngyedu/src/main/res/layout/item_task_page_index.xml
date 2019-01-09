@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:layout_width="@dimen/x40"
+          android:layout_height="@dimen/y40"
+          android:id="@+id/item_practice_page_index"
+          android:background="@drawable/bg_page_index_green_null"
+          android:text="1"
+          android:textColor="@drawable/textcolor_black_write"
+          android:textSize="@dimen/x22"
+          android:gravity="center">
+</TextView>

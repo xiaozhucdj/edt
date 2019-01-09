@@ -8,28 +8,28 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 
-import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.init.activity.LoginActivity;
 import com.yougy.message.YXClient;
-import com.yougy.ui.activity.R;
-import com.yougy.view.dialog.UiPromptDialog;
 
 import de.greenrobot.event.EventBus;
 
-import static android.net.wifi.WifiManager.WIFI_STATE_CHANGED_ACTION;
 
 /**
  * Created by Administrator on 2017/4/26.
  */
 
 public class NetManager {
+    private boolean isNetOutage = false;
     private static NetManager sInstance;
     private final NetReceiver mNetReceiver;
+
+    private long mStartRetryConnTime;//网络断开尝试重连的开始时间
+    public static final int RETRY_CONNECT_TIME_SPACE = 1000 * 3;
+    public static final int RETRY_CONNECT_TOTAL_TIME = 1000 * 30;
 
     private NetManager() {
         mNetReceiver = new NetReceiver();
@@ -112,16 +112,21 @@ public class NetManager {
         public void onReceive(Context context, Intent intent) {
             mContext = context;
             String action = intent.getAction();
-            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ) {
+            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean isConnected = NetManager.getInstance().isWifiConnected(context);
-                if (isConnected && SpUtils.getUserId() > 0 ) {
-                    YXClient.checkNetAndRefreshLogin(null, null);
+                LogUtils.e("YUANYE 当前网络状态 ."+isConnected);
+                if (isConnected) {//当前是已连接状态的时，若网络Dialog打开则关闭
+                    DialogManager.newInstance().dissMissUiPromptDialog();
+                    isNetOutage = false;
+                } else {
+                    isNetOutage = true;
+                    YoungyApplicationManager.end_net =  YoungyApplicationManager.end_net+":"+DateUtils.getTimeHHMMString() ;
+                    NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
+                    YoungyApplicationManager.getMainThreadHandler().removeCallbacks(netRetryConnRunnable);
+                    YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 30000);
                 }
-                NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
-                YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 2 * 60 * 1000);
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_WIIF, "");
                 EventBus.getDefault().post(baseEvent);
-                DialogManager.newInstance().showNetConnDialog(context);
             }
         }
     }
@@ -133,16 +138,28 @@ public class NetManager {
     private Runnable netRetryConnRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mContext != null) {
-                if (!isWifiConnected(mContext)) {
-                    NetManager.getInstance().changeWiFi(mContext, true);
-                    YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, 2 * 60 * 1000);
-                } else {
-                    YoungyApplicationManager.getMainThreadHandler().removeCallbacks(netRetryConnRunnable);
-                }
-            } else {
-                LogUtils.e("mContext is Null, not received broadcast.");
+            boolean isConnected = isWifiConnected(mContext);
+
+            if (!isConnected) {
+                DialogManager.newInstance().showNetConnDialog(mContext);
             }
+
+//            LogUtils.w("runnable retry connect net ,current connected = " + isConnected
+//                    + "had connected time = " + (System.currentTimeMillis() - mStartRetryConnTime));
+//            if (mContext != null) {
+//                if (!isConnected && System.currentTimeMillis() - mStartRetryConnTime > RETRY_CONNECT_TOTAL_TIME) {
+//                    if (!isConnected) {
+//                        NetManager.getInstance().changeWiFi(mContext, true);
+//                        YoungyApplicationManager.getMainThreadHandler().postDelayed(netRetryConnRunnable, RETRY_CONNECT_TIME_SPACE);
+//                    } else {
+//                        YoungyApplicationManager.getMainThreadHandler().removeCallbacks(netRetryConnRunnable);
+//                    }
+//                } else {
+//                    DialogManager.newInstance().showNetConnDialog(mContext);
+//                }
+//            } else {
+//                LogUtils.e("mContext is Null, not received broadcast.");
+//            }
         }
     };
 }

@@ -120,7 +120,7 @@ public class AnswerBookStructureActivity extends AnswerBaseActivity {
                         else {
                             node = ((MyAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).nodeList.get(position - 1);
                         }
-                        Intent intent = new Intent(getApplicationContext() , AnswerRecordListActivity.class);
+                        Intent intent = new Intent(getApplicationContext() , AnswerRecordListDetailActivity.class);
                         ArrayList<Integer> list = examNumSumMap.get(String.valueOf(node.getId()));
                         intent.putExtra("itemIdList" , list);
                         intent.putExtra("bookName" , bookName);

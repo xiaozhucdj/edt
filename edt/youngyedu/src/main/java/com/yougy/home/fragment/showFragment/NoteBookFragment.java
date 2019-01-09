@@ -204,6 +204,7 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
                 dialog = new LoadingProgressDialog(getActivity());
                 dialog.show();
                 dialog.setTitle("数据加载中...");
+                dialog.setCancelable(true);
             }
 
             @Override
@@ -826,5 +827,11 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
         }
+    }
+
+    public  void onBackListener(){
+        mNoteBookView.leaveScribbleMode();
+        mRl_page.setVisibility(mRl_page.getVisibility() == View.VISIBLE ?View.INVISIBLE:View.VISIBLE);
+        base_opt_layout.setVisibility(base_opt_layout.getVisibility() == View.VISIBLE ?View.INVISIBLE:View.VISIBLE);
     }
 }

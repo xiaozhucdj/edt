@@ -13,19 +13,37 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
+import com.yougy.common.manager.DialogManager;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
+import com.yougy.common.manager.ThreadManager;
+import com.yougy.common.new_network.ApiException;
+import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.service.DownloadService;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.DeviceScreensaverUtils;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
+import com.yougy.home.activity.SplashActivity;
 import com.yougy.init.bean.Student;
+import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLocalLockBinding;
 import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
+
+import org.litepal.tablemanager.Connector;
+
+import rx.functions.Action1;
+
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 
 /**
  * Created by FH on 2017/6/22.
@@ -35,11 +53,16 @@ public class LocalLockActivity extends BaseActivity {
     static public final String NOT_GOTO_HOMEPAGE_ON_ENTER = "not_goto_homepage";
     ActivityLocalLockBinding binding;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DialogManager.newInstance().dissMissUiPromptDialog();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mIsCheckStartNet = false ;
     }
 
     @Override
@@ -151,10 +174,66 @@ public class LocalLockActivity extends BaseActivity {
         }
         LogUtils.e("FH", "edittext : " + binding.localLockEdittext.getText().toString() + " local : " + SpUtils.getLocalLockPwd());
         if (binding.localLockEdittext.getText().toString().equals(SpUtils.getLocalLockPwd())) {
-            finish();
-            if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)) {
-                startService(new Intent(this, DownloadService.class));
-                loadIntent(MainActivity.class);
+            long currentTimeMillis = System.currentTimeMillis();
+            LogUtils.e("FH", "本地锁输入密码正确! 上一次验证解绑时间 : " +  + SplashActivity.lastLogInSuccessedTimeStamp + "当前时间 : " + currentTimeMillis);
+            if (System.currentTimeMillis() - SplashActivity.lastLogInSuccessedTimeStamp > 3600*1000){
+                LogUtils.e("FH", "本地锁进入主界面前验证是否被解绑");
+                NewLoginReq loginReq = new NewLoginReq();
+                loginReq.setDeviceId(Commons.UUID);
+                NetWorkManager.getInstance(true).login(loginReq)
+                        .compose(bindToLifecycle())
+                        .subscribe(students -> {
+                            LogUtils.e("FH", "本地锁进入主界面前验证是否被解绑-------结果:没有被解绑,走正常流程");
+                            finish();
+                            if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)) {
+                                startService(new Intent(this, DownloadService.class));
+                                loadIntent(MainActivity.class);
+                            }
+                            SplashActivity.lastLogInSuccessedTimeStamp = currentTimeMillis;
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                throwable.printStackTrace();
+                                if (throwable instanceof ApiException
+                                        && ("401".equals(((ApiException) throwable).getCode()))) {
+                                    LogUtils.e("FH", "本地锁进入主界面前验证是否被解绑-------结果:可能被解绑了,先logout后跳转到login界面");
+                                    ToastUtil.showCustomToast(getApplicationContext() , "您的设备可能已经被解绑了,请重新登录绑定设备!");
+                                    //登录失败,可能是在pc端被解绑了.
+                                    //删除本端的缓存数据并且跳转到login界面
+                                    SpUtils.clearSP();
+                                    SpUtils.changeInitFlag(false);
+                                    Connector.resetHelper();
+                                    deleteDatabase(DATABASE_NAME);
+                                    deleteDatabase(JOURNAL_NAME);
+                                    FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                                    YXClient.getInstance().logout();
+                                    ThreadManager.getSinglePool().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            DeviceScreensaverUtils.setScreensaver();
+                                        }
+                                    });
+                                    startActivity(new Intent(getThisActivity() , LoginActivity.class));
+                                    finish();
+                                }
+                                else {
+                                    LogUtils.e("FH", "本地锁进入主界面前验证是否被解绑-------结果:未知,可能是网络不通畅,验证勉强算成功,走正常逻辑");
+                                    finish();
+                                    if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)) {
+                                        startService(new Intent(LocalLockActivity.this, DownloadService.class));
+                                        loadIntent(MainActivity.class);
+                                    }
+                                }
+                            }
+                        });
+            }
+            else {
+                LogUtils.e("FH", "由于距离上一次验证是否被解绑的时间过于近,本次不验证,直接走正常流程");
+                finish();
+                if (!getIntent().getBooleanExtra(NOT_GOTO_HOMEPAGE_ON_ENTER, false)) {
+                    startService(new Intent(this, DownloadService.class));
+                    loadIntent(MainActivity.class);
+                }
             }
         } else {
             new HintDialog(getThisActivity(), "密码不正确").show();

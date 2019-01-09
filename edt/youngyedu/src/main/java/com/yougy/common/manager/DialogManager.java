@@ -3,6 +3,7 @@ package com.yougy.common.manager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -92,7 +93,7 @@ public class DialogManager {
         }
     }
 
-    private void dissMissUiPromptDialog () {
+    public void dissMissUiPromptDialog () {
         if (mNetConnStatusDialog != null && mNetConnStatusDialog.isShowing()) {
             mNetConnStatusDialog.dismiss();
             mNetConnStatusDialog = null;
@@ -105,5 +106,51 @@ public class DialogManager {
         context.startActivity(intent);
     }
     /*************************************网络连接对话框*******************************************/
+
+
+
+    private UiPromptDialog mConfirmTask;
+    public void showSubmitConfirmDialog (Context context, String title, int confirm , int cancel, DialogCallBack dialogCallBack) {
+        if (mConfirmTask == null)  mConfirmTask = new UiPromptDialog(context);
+        mConfirmTask.setTag(0);
+        mConfirmTask.setListener(new UiPromptDialog.Listener() {
+            @Override
+            public void onUiCancelListener() {
+                LogUtils.d("onUiCancelListener...");
+                dismissSubmitConfirmDialog ();
+                if (dialogCallBack != null) dialogCallBack.cancel();
+            }
+
+            @Override
+            public void onUiDetermineListener() {
+                dismissSubmitConfirmDialog ();
+                if (dialogCallBack != null) dialogCallBack.confirm();
+            }
+
+            @Override
+            public void onUiCenterDetermineListener() {
+                dismissSubmitConfirmDialog ();
+            }
+        });
+        if (!mConfirmTask.isShowing()) mConfirmTask.show();
+        mConfirmTask.setTitle(title);
+        mConfirmTask.setConfirm(confirm);
+        mConfirmTask.setCancel(cancel);
+        mConfirmTask.setDialogStyle(false);
+
+}
+
+    public void dismissSubmitConfirmDialog () {
+        if (mConfirmTask == null || !mConfirmTask.isShowing())  return;
+        mConfirmTask.dismiss();
+        mConfirmTask = null;
+    }
+
+
+    public abstract static class DialogCallBack {
+        public abstract void confirm();
+        public void cancel () {
+        }
+    }
 
 }

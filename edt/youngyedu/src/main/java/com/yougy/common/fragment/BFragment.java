@@ -60,6 +60,8 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     public String tag;
     public ViewGroup mRootView;
     protected boolean mIsRefresh;
+    //  英语（四年级104030010，三年级，103030023）  ，语文 （四年级 104010002 ，三年级103010007）
+    public String mMediasBookIDs = "103010007 ,103030023,104030010,104010002";
 
     public void loadIntent(Class<?> cls) {
         Intent intent = new Intent(getActivity(), cls);
@@ -94,7 +96,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden && mRootView!=null) {
+        if (!hidden && mRootView != null) {
             invalidateDelayed(mRootView);
         }
 
@@ -388,6 +390,7 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
         mDownDialog.show();
         mDownDialog.getBtnConfirm().setVisibility(View.VISIBLE);
         mDownDialog.setTitle(UIUtils.getString(R.string.down_book_defult));
+        mDownDialog.runConfirmClick();
     }
 
     /**

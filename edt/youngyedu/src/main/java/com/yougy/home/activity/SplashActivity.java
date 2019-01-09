@@ -17,6 +17,7 @@ import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewLoginReq;
 import com.yougy.common.utils.DeviceScreensaverUtils;
@@ -28,6 +29,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
+import com.yougy.message.YXClient;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -37,14 +39,19 @@ import com.yougy.view.dialog.DownProgressDialog;
 import com.yougy.view.dialog.HintDialog;
 
 import org.litepal.LitePal;
+import org.litepal.tablemanager.Connector;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
+
+import static com.yougy.common.utils.AliyunUtil.DATABASE_NAME;
+import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 
 /**
  * Created by FH on 2016/8/25.
@@ -62,9 +69,12 @@ public class SplashActivity extends BaseActivity {
     private AppUpdateDialog mAppUpdateDialog;
 //    private PowerManager.WakeLock mWakeLock;
 
+    public static long lastLogInSuccessedTimeStamp = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mIsCheckStartNet = false ;
         LitePal.getDatabase();
         subscription = new CompositeSubscription();
         tapEventEmitter = YoungyApplicationManager.getRxBus(this).toObserverable().publish();
@@ -170,27 +180,29 @@ public class SplashActivity extends BaseActivity {
 
 
     private void checkLocalLockAndJump() {
-        if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
-            LogUtils.e("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
-            new HintDialog(SplashActivity.this
-                    , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
-                    , "确定"
-                    , dialog -> {
-                SpUtils.setLocalLockPwd("123456");
-                loadIntent(LocalLockActivity.class);
-                finish();
-            }).show();
-        } else {
-            LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
-            jumpActivity(LocalLockActivity.class);
-        }
+        //需求变更:取消本地锁界面
+        jumpActivity(MainActivity.class);
+//        if (TextUtils.isEmpty(SpUtils.getLocalLockPwd())) {
+//            LogUtils.e("FH", "没有发现localLock的本地储存密码,重置密码并通知用户");
+//            new HintDialog(SplashActivity.this
+//                    , "我们已为您设置了本机的开机密码为:123456,\n您可以随后在账号设置下进行修改"
+//                    , "确定"
+//                    , dialog -> {
+//                SpUtils.setLocalLockPwd("123456");
+//                loadIntent(LocalLockActivity.class);
+//                finish();
+//            }).show();
+//        } else {
+//            LogUtils.e("FH", "发现存在localLock的本地储存密码,跳转到LocalLockActivity");
+//            jumpActivity(LocalLockActivity.class);
+//        }
     }
 
     private void login() {
         LogUtils.e(tag, "login...................");
         NewLoginReq loginReq = new NewLoginReq();
         loginReq.setDeviceId(Commons.UUID);
-        NetWorkManager.login(loginReq)
+        NetWorkManager.getInstance(false).login(loginReq)
                 .compose(bindToLifecycle())
                 .subscribe(students -> {
                     Student student = students.get(0);
@@ -208,13 +220,35 @@ public class SplashActivity extends BaseActivity {
 //                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
                     }
-                }, throwable -> {
-                    if (-1 == SpUtils.getAccountId()) {
-                        LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
-                        jumpActivity(LoginActivity.class);
-                    } else {
-                        LogUtils.e("FH", "自动登录失败,有之前的登录信息");
-                        checkLocalLockAndJump();
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        if (throwable instanceof ApiException
+                                && ("401".equals(((ApiException) throwable).getCode()))) {
+                            //登录失败,可能是在pc端被解绑了.
+                            //删除本端的缓存数据并且跳转到login界面
+                            SpUtils.clearSP();
+                            SpUtils.changeInitFlag(false);
+                            Connector.resetHelper();
+                            deleteDatabase(DATABASE_NAME);
+                            deleteDatabase(JOURNAL_NAME);
+                            FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
+                            YXClient.getInstance().logout();
+                            ThreadManager.getSinglePool().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DeviceScreensaverUtils.setScreensaver();
+                                }
+                            });
+                            SplashActivity.this.jumpActivity(LoginActivity.class);
+                        }
+                        else if (-1 == SpUtils.getAccountId()) {
+                            LogUtils.e("FH", "自动登录失败,没有之前的登录信息,跳转到登录");
+                            SplashActivity.this.jumpActivity(LoginActivity.class);
+                        } else {
+                            LogUtils.e("FH", "自动登录失败,有之前的登录信息");
+                            SplashActivity.this.checkLocalLockAndJump();
+                        }
                     }
                 });
     }

@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/base_opt_layout"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -166,7 +167,6 @@
             android:layout_marginLeft="30px"
             android:background="@color/black" />
     </LinearLayout>
-
 
 
 
@@ -361,6 +361,21 @@
             android:maxHeight="8px"
             android:progressDrawable="@drawable/seekbar_pen_bg_selector"
             android:thumb="@drawable/seekbar_huihua_thumb_selector" />
+
+
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_media"
+            android:layout_toRightOf="@id/seek_pen_or_eraser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30px"
+            android:text="播放音频"
+            android:textColor="@color/black"
+            android:textSize="24px" />
+
 
         <View
             android:layout_width="match_parent"

@@ -22,14 +22,14 @@ public class HomeworkRemindAttachment extends CustomAttachment{
     public String lifeTime;
     public int teacherId;
     public String examOccasion;
-    public boolean isStudentCheck;//是否自评
+    public int isStudentCheck;//是否自评
 
     public HomeworkRemindAttachment(String clue , double version) {
         super(clue , version);
     }
 
     public HomeworkRemindAttachment(String examName, String examId, boolean isTimeWork, String lifeTime, int teacherId
-            ,String typeCode, boolean isStudentCheck) {
+            ,String typeCode, int isStudentCheck) {
         super(CustomAttachParser.CLUE_HOMEWORK_REMIND , 0.1);
         this.examName = examName;
         this.examId = examId;
@@ -53,7 +53,7 @@ public class HomeworkRemindAttachment extends CustomAttachment{
         lifeTime = introJsonObj.getString(KEY_EXAM_LIFTTIME);
         teacherId = introJsonObj.getInt(KEY_EXAM_TEACHERID);
         examOccasion = introJsonObj.getString(KEY_EXAM_TYPECODE);
-        isStudentCheck = introJsonObj.getBoolean(KEY_IS_STUDENTCHECK);
+        isStudentCheck = introJsonObj.getInt(KEY_IS_STUDENTCHECK);
     }
 
     /**
