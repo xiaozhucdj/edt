@@ -30,6 +30,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
 import com.yougy.message.YXClient;
+import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivitySettingBinding;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -153,6 +154,11 @@ public class SettingMainActivity extends BaseActivity {
     @Override
     protected void initLayout() {
 
+        if (BuildConfig.DEBUG) {
+            binding.unbindBtn.setVisibility(View.VISIBLE);
+        } else {
+            binding.unbindBtn.setVisibility(View.GONE);
+        }
     }
 
     @Override

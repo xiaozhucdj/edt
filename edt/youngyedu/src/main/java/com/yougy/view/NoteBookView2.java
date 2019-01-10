@@ -259,7 +259,7 @@ public class NoteBookView2 extends View {
         if (event.getToolType(0) == mSystenPenType) {
             setPen();
         }
-        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
+        if (isEraser(event)) {
             useEraser();
         }
 
@@ -273,7 +273,9 @@ public class NoteBookView2 extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //如果flag为true，则说明进行了undo、redo操作，这时再进行按下操作时应将索引后面的path清除掉
-                EpdController.enterScribbleMode(this);
+                if (!isEraser(event)) {
+                    EpdController.enterScribbleMode(this);
+                }
                 if (flag) {
                     int size = savePath.size();
                     for (int i = size - 1; i > index; i--) {
@@ -295,29 +297,36 @@ public class NoteBookView2 extends View {
                 line.setStart(new Point(x, y));
                 touch_start(x, y);
                 float dst[] = mapPoint(x, y);
-                EpdController.moveTo(dst[0], dst[1], mPaint.getStrokeWidth());
+                if (!isEraser(event)) {
+                    EpdController.moveTo(dst[0], dst[1], mPaint.getStrokeWidth());
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (x >= 0 && x <= getWidth() && y >= 0 && y <= getHeight()) {
                     touch_move(x, y);
                     LogUtils.e(TAG, "action move......(x,y) : " + x + "," + y);
-                    long start = System.currentTimeMillis();
-                    int n = event.getHistorySize();
-                    for (int i = 0; i < n; i++) {
-                        dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
+                    if (!isEraser(event)) {
+                        long start = System.currentTimeMillis();
+                        int n = event.getHistorySize();
+                        for (int i = 0; i < n; i++) {
+                            dst = mapPoint(event.getHistoricalX(i), event.getHistoricalY(i));
+                            EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
+                        }
+                        long end = System.currentTimeMillis();
+                        LogUtils.e(TAG, " take time : " + (end - start));
+                        dst = mapPoint(event.getX(), event.getY());
                         EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
+                    }else{
+                        EpdController.leaveScribbleMode(this);
+                        invalidate();
                     }
-                    long end = System.currentTimeMillis();
-                    LogUtils.e(TAG, " take time : " + (end - start));
-                    dst = mapPoint(event.getX(), event.getY());
-                    EpdController.quadTo(dst[0], dst[1], UpdateMode.DU);
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 if (line != null) {
                     line.setEnd(new Point(x, y));
                     lines.add(line);
-                    if (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
+                    if (isEraser(event)) {
                         EpdController.leaveScribbleMode(this);
                         invalidate();
                     }
@@ -328,6 +337,12 @@ public class NoteBookView2 extends View {
         return true;
     }
 
+    /**
+     * 用于判断是否使用橡皮擦，使用橡皮擦时不调用手写包
+     */
+    private boolean isEraser(MotionEvent event) {
+        return (event.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER);
+    }
 
     float[] mapPoint(float x, float y) {
         int viewLocation[] = {0, 0};
