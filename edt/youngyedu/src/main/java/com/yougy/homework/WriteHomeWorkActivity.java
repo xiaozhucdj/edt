@@ -755,34 +755,49 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         if (position < contentDisplayer.getContentAdapter().getPageCount("question")) {
             //切换当前题目的分页
-            contentDisplayer.toPage("question", position, false, new ContentDisplayerV2.StatusChangeListener() {
-                @Override
-                public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
-                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS){
-                        if (position + 1 == contentDisplayer.getContentAdapter().getPageCount("question")){
-                            Bitmap bitmap = ((BitmapDrawable) contentDisplayer.getPdfImageView().getDrawable()).getBitmap();
-                            for (int y = bitmap.getHeight() - 1 ; y >= 0; y--) {
-                                for (int x = 0; x < bitmap.getWidth(); x++) {
-                                    if (bitmap.getPixel(x , y) != -1){
-                                        lineImgview.setVisibility(View.VISIBLE);
-                                        lineImgview.setPadding(30 , y + 1 , 0 , 0);
-                                        return;
+            ContentDisplayerV2.StatusChangeListener specificListener = null;
+            if (questionList.get(0) != null
+                    && ("问答".equals(questionList.get(0).getExtraData()))){
+                specificListener = new ContentDisplayerV2.StatusChangeListener() {
+                    @Override
+                    public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
+                        if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS){
+                            if (position + 1 == contentDisplayer.getContentAdapter().getPageCount("question")){
+                                Bitmap bitmap = ((BitmapDrawable) contentDisplayer.getPdfImageView().getDrawable()).getBitmap();
+                                for (int y = bitmap.getHeight() - 1 ; y >= 0; y--) {
+                                    for (int x = 0; x < bitmap.getWidth(); x++) {
+                                        if (bitmap.getPixel(x , y) != -1){
+                                            lineImgview.setVisibility(View.VISIBLE);
+                                            lineImgview.setPadding(30 , y + 1 , 0 , 0);
+                                            return;
+                                        }
                                     }
                                 }
                             }
-                        }
-                        else {
-                            lineImgview.setVisibility(View.GONE);
+                            else {
+                                lineImgview.setVisibility(View.GONE);
+                            }
                         }
                     }
-                }
-            });
+                };
+            }
+            else {
+                lineImgview.setVisibility(View.GONE);
+            }
+            contentDisplayer.toPage("question", position, false , specificListener);
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
             contentDisplayer.setVisibility(View.GONE);
-            lineImgview.setVisibility(View.VISIBLE);
-            lineImgview.setPadding(30 , 0 , 0 , 0);
+            //新需求:在问答题加白纸上需要显示横线背景
+            if (questionList.get(0) != null
+                    && ("问答".equals(questionList.get(0).getExtraData()))){
+                lineImgview.setVisibility(View.VISIBLE);
+                lineImgview.setPadding(30 , 0 , 0 , 0);
+            }
+            else {
+                lineImgview.setVisibility(View.GONE);
+            }
         }
         if (questionList.get(0) != null) {
             if ("选择".equals(questionList.get(0).getExtraData())) {
