@@ -69,6 +69,10 @@ public class ContentDisplayerV2 extends RelativeLayout{
     //展示pdf用的imageView
     private ImageView pdfImageView;
 
+    public ImageView getPdfImageView() {
+        return pdfImageView;
+    }
+
     //遮盖在在主显示控件上层的提示文字显示控件,用来在主显示控件无法正常显示时提供提示文字,并提供点击逻辑.
     //次要作用是在scrollEnable为false的时候显示为透明层,遮挡在主显示控件上屏蔽主显示控件的滑动.
     private TextView clickOrHintLayer;

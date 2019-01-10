@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -114,6 +115,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
     LinearLayout llChooeseItem;
     @BindView(R.id.content_displayer)
     ContentDisplayerV2 contentDisplayer;
+    @BindView(R.id.lines_bg_imv)
+    ImageView lineImgview;
     @BindView(R.id.rl_answer)
     RelativeLayout rlAnswer;
     @BindView(R.id.tv_submit_homework)
@@ -476,7 +479,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         contentDisplayer.setLoadingStatusListener(new ContentDisplayerV2.StatusChangeListener() {
             @Override
-            public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
+            public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey,
+                                        int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
                 if (questionList == null) {
                     return;
                 }
@@ -542,8 +546,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 throwable.printStackTrace();
             }
         });
-
-
     }
 
     //填充数据
@@ -753,12 +755,34 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         if (position < contentDisplayer.getContentAdapter().getPageCount("question")) {
             //切换当前题目的分页
-            contentDisplayer.toPage("question", position, false, null);
+            contentDisplayer.toPage("question", position, false, new ContentDisplayerV2.StatusChangeListener() {
+                @Override
+                public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
+                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS){
+                        if (position + 1 == contentDisplayer.getContentAdapter().getPageCount("question")){
+                            Bitmap bitmap = ((BitmapDrawable) contentDisplayer.getPdfImageView().getDrawable()).getBitmap();
+                            for (int y = bitmap.getHeight() - 1 ; y >= 0; y--) {
+                                for (int x = 0; x < bitmap.getWidth(); x++) {
+                                    if (bitmap.getPixel(x , y) != -1){
+                                        lineImgview.setVisibility(View.VISIBLE);
+                                        lineImgview.setPadding(30 , y + 1 , 0 , 0);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            lineImgview.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
             contentDisplayer.setVisibility(View.GONE);
-
+            lineImgview.setVisibility(View.VISIBLE);
+            lineImgview.setPadding(30 , 0 , 0 , 0);
         }
         if (questionList.get(0) != null) {
             if ("选择".equals(questionList.get(0).getExtraData())) {
