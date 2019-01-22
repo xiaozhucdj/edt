@@ -116,6 +116,10 @@ public class FileContonst {
 
     public final static String IS_REFERENCE_BOOK = "is_reference_book";
 
+    public final static String IS_OPEN_VOICE = "is_open_voice";
+
+    public final static String IS_OPEN_SELF_ADAPTER = "is_open_self_adapter";
+
     public static int withS = 150;
     public static int withL = 200;
 
@@ -131,9 +135,9 @@ public class FileContonst {
     /***
      * 消息锁屏
      */
-    public final static String  LOCK_SCREEN= "lock_screen";
+    public final static String LOCK_SCREEN = "lock_screen";
 
-    public final static String  NO_LOCK_SCREEN= "unlocking_screen";
+    public final static String NO_LOCK_SCREEN = "unlocking_screen";
 
     static {
         if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_EDU)) {
@@ -141,19 +145,19 @@ public class FileContonst {
             heightS = 200;
             withL = 200;
             heightL = 266;
-            serverDevice = DEVICE_TYPE_EDU ;
+            serverDevice = DEVICE_TYPE_EDU;
         } else if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_PL107)) {
             withS = 150;
             heightS = 200;
             withL = 200;
             heightL = 266;
-            serverDevice = DEVICE_TYPE_PL107 ;
-        } else if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_N96) ){
+            serverDevice = DEVICE_TYPE_PL107;
+        } else if (SystemUtils.getDeviceModel().contains(DEVICE_TYPE_N96)) {
             withS = 150;
             heightS = 200;
             withL = 200;
             heightL = 266;
-            serverDevice = DEVICE_TYPE_N96 ;
+            serverDevice = DEVICE_TYPE_N96;
         }
     }
 }

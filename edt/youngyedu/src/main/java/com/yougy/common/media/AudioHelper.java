@@ -3,14 +3,17 @@ package com.yougy.common.media;
 import android.content.Context;
 import android.media.AudioManager;
 
-public class AudioMngHelper {
+/**
+ *  媒体音量
+ */
+public class AudioHelper {
 
     private final AudioManager mAudioManager;
     private final int maxVolume;
     private int stepVolume;
     private int curVolume;
 
-    public AudioMngHelper(Context context) {
+    public AudioHelper(Context context) {
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         // 初始化音量大概为最大音量的1/2
@@ -23,7 +26,7 @@ public class AudioMngHelper {
     /**
      * 放大 音量
      */
-    public void  setEnlargeVoice(){
+    public void setEnlargeVoice() {
         curVolume += stepVolume;
         if (curVolume >= maxVolume) {
             curVolume = maxVolume;
@@ -34,13 +37,14 @@ public class AudioMngHelper {
     /**
      * 减小音量
      */
-    public void setReduceVoice(){
+    public void setReduceVoice() {
         curVolume -= stepVolume;
         if (curVolume <= 0) {
             curVolume = 0;
         }
         adjustVolume();
     }
+
     /**
      * 调整音量
      */
@@ -49,12 +53,11 @@ public class AudioMngHelper {
                 AudioManager.FLAG_PLAY_SOUND);
     }
 
-    public void setMaxVolume(){
-        mAudioManager.setSpeakerphoneOn(true);
-        mAudioManager.setMode(AudioManager.MODE_NORMAL);
-        adjustVolumeMax() ;
+    public void setMaxVolume() {
+        adjustVolumeMax();
     }
-    public void  adjustVolumeMax(){
+
+    public void adjustVolumeMax() {
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume,
                 AudioManager.FLAG_PLAY_SOUND);
     }

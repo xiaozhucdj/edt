@@ -1,28 +1,25 @@
 package com.onyx.reader;
 
 import android.content.Context;
+import android.graphics.RectF;
 
 import com.onyx.android.sdk.common.request.BaseCallback;
 import com.onyx.android.sdk.common.request.BaseRequest;
-import com.onyx.android.sdk.data.ReaderTextStyle;
 import com.onyx.android.sdk.reader.common.BaseReaderRequest;
 import com.onyx.android.sdk.reader.host.options.BaseOptions;
-import com.onyx.android.sdk.reader.host.request.ChangeStyleRequest;
 import com.onyx.android.sdk.reader.host.request.CloseRequest;
 import com.onyx.android.sdk.reader.host.request.CreateViewRequest;
 import com.onyx.android.sdk.reader.host.request.GammaCorrectionRequest;
 import com.onyx.android.sdk.reader.host.request.GetTableOfContentRequest;
 import com.onyx.android.sdk.reader.host.request.GotoPageRequest;
-import com.onyx.android.sdk.reader.host.request.NextScreenRequest;
 import com.onyx.android.sdk.reader.host.request.OpenRequest;
-import com.onyx.android.sdk.reader.host.request.PreviousScreenRequest;
+import com.onyx.android.sdk.reader.host.request.ScaleByRectRequest;
 import com.onyx.android.sdk.reader.host.request.ScaleToPageCropRequest;
 import com.onyx.android.sdk.reader.host.wrapper.Reader;
 import com.onyx.android.sdk.reader.utils.PagePositionUtils;
 import com.onyx.data.DrmCertificateFactory;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.media.MediaBean;
-import com.yougy.common.media.ReaderFile;
+import com.yougy.common.media.BookVoiceBean;
 import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
@@ -45,14 +42,24 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     private Reader reader;
     private int mPags;
     private String path;
-    private boolean mIsInit;
     private int mPage;
-    private boolean mIsCropPage;
     private String mBookId;
 
-    public void setCropPage(boolean isCropPage) {
-        mIsCropPage = isCropPage;
-    }
+    /**
+     * 自适应 放大 ，裁边
+     */
+    private boolean isSelfAdapter = false;
+
+    /**
+     * 是否使用 语音点读
+     */
+    private boolean mIsUserVoice = false;
+
+    /**
+     * 是否使用gama值
+     */
+    private boolean mIsSetGama = false;
+    private RectF viewportInDoc;
 
     public ReaderPresenter(ReaderContract.ReaderView readerView) {
         this.readerView = readerView;
@@ -61,7 +68,6 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     @Override
     public void openDocument(final String documentPath, String bookId) {
         mBookId = bookId;
-        mIsInit = false;
         path = documentPath;
         DrmCertificateFactory factory = new DrmCertificateFactory(readerView.getViewContext());
         if (!StringUtils.isEmpty(bookId)) {
@@ -70,7 +76,6 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
                 try {
                     JSONObject object = new JSONObject(keys);
                     String key = object.getString(bookId);
-//                    System.out.println("object.getString(bookId) ...."+bookId+"...."+key.substring(key.length()-50 ,key.length()));
                     factory.setKey(key);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -104,12 +109,14 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    if (FileUtils.getDownBookSuffix(path).equalsIgnoreCase(FileUtils.epub)) {
-                        setChangeStyleReqest();
-                    } else {
-                        mPags = getReader().getNavigator().getTotalPage();
-                        readerView.openDocumentFinsh();
-                    }
+//                    if (FileUtils.getDownBookSuffix(path).equalsIgnoreCase(FileUtils.epub)) {
+//                        setChangeStyleReqest();
+//                    } else {
+//                        mPags = getReader().getNavigator().getTotalPage();
+//                        readerView.openDocumentFinsh();
+//                    }
+                    mPags = getReader().getNavigator().getTotalPage();
+                    readerView.openDocumentFinsh();
                 } else {
                     readerView.showThrowable(throwable);
                 }
@@ -118,34 +125,34 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     }
 
 
-    /**
-     * 设置epub格式
-     */
-    private void setChangeStyleReqest() {
-
-        ReaderTextStyle style = ReaderTextStyle.defaultStyle();
-        //设置字体大小
-        style.setFontSize(ReaderTextStyle.SPUnit.create(23.0F));
-        //设置边距
-        ReaderTextStyle.Percentage left = new ReaderTextStyle.Percentage(130);
-        ReaderTextStyle.Percentage bottom = new ReaderTextStyle.Percentage(160);
-        ReaderTextStyle.Percentage right = new ReaderTextStyle.Percentage(130);
-        ReaderTextStyle.Percentage top = new ReaderTextStyle.Percentage(160);
-        style.setPageMargin(new ReaderTextStyle.PageMargin(left, bottom, right, top));
-//        //对齐方式 ,两边对齐
-//        style.setAlignment(ReaderTextStyle.Alignment.ALIGNMENT_NONE);
-//        //设置行间距
-//        style.setLineSpacing(new ReaderTextStyle.Percentage(120));
-
-        ChangeStyleRequest request = new ChangeStyleRequest(style);
-        getReader().submitRequest(getContext(), request, new BaseCallback() {
-            @Override
-            public void done(BaseRequest baseRequest, Throwable throwable) {
-                mPags = getReader().getNavigator().getTotalPage();
-                readerView.openDocumentFinsh();
-            }
-        });
-    }
+//    /**
+//     * 设置epub格式
+//     */
+//    private void setChangeStyleReqest() {
+//
+//        ReaderTextStyle style = ReaderTextStyle.defaultStyle();
+//        //设置字体大小
+//        style.setFontSize(ReaderTextStyle.SPUnit.create(23.0F));
+//        //设置边距
+//        ReaderTextStyle.Percentage left = new ReaderTextStyle.Percentage(130);
+//        ReaderTextStyle.Percentage bottom = new ReaderTextStyle.Percentage(160);
+//        ReaderTextStyle.Percentage right = new ReaderTextStyle.Percentage(130);
+//        ReaderTextStyle.Percentage top = new ReaderTextStyle.Percentage(160);
+//        style.setPageMargin(new ReaderTextStyle.PageMargin(left, bottom, right, top));
+////        //对齐方式 ,两边对齐
+////        style.setAlignment(ReaderTextStyle.Alignment.ALIGNMENT_NONE);
+////        //设置行间距
+////        style.setLineSpacing(new ReaderTextStyle.Percentage(120));
+//
+//        ChangeStyleRequest request = new ChangeStyleRequest(style);
+//        getReader().submitRequest(getContext(), request, new BaseCallback() {
+//            @Override
+//            public void done(BaseRequest baseRequest, Throwable throwable) {
+//                mPags = getReader().getNavigator().getTotalPage();
+//                readerView.openDocumentFinsh();
+//            }
+//        });
+//    }
 
     @Override
     public void gotoPage(final int page) {
@@ -156,10 +163,12 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    if (mIsInit) {
-                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(),getMeDiaben(page));
+                    if (isSelfAdapter) {
+                        setCropPage(-0.02f);
+                    } else if (!mIsSetGama) {
+                        setGama(page);
                     } else {
-                        gamma(page);
+                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(), getBookVice());
                     }
                 } else {
                     readerView.showThrowable(throwable);
@@ -168,7 +177,44 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
         });
     }
 
-    private void gamma(final int page) {
+    private void setCropPage(final float delta) {
+        final ScaleToPageCropRequest request = new ScaleToPageCropRequest((mPage + ""));
+        getReader().submitRequest(readerView.getViewContext(), request, new BaseCallback() {
+            @Override
+            public void done(BaseRequest baseRequest, Throwable throwable) {
+                if (throwable == null) {
+                    viewportInDoc = request.getReaderViewInfo().viewportInDoc;
+                    final RectF rect = new RectF();
+                    float offset = viewportInDoc.width() * delta;
+                    rect.set(viewportInDoc.left + offset,
+                            viewportInDoc.top + offset,
+                            viewportInDoc.right - offset,
+                            viewportInDoc.bottom - offset);
+
+
+                    final ScaleByRectRequest request = new ScaleByRectRequest(mPage + "", rect);
+                    getReader().submitRequest(readerView.getViewContext(), request, new BaseCallback() {
+                        @Override
+                        public void done(BaseRequest baseRequest, Throwable throwable) {
+                            if (throwable == null) {
+                                if (!mIsSetGama) {
+                                    setGama(mPage);
+                                } else {
+                                    readerView.updatePage(mPage, getReader().getViewportBitmap().getBitmap(), getBookVice());
+                                }
+                            } else {
+                                readerView.showThrowable(throwable);
+                            }
+                        }
+                    });
+                } else {
+                    readerView.showThrowable(throwable);
+                }
+            }
+        });
+    }
+
+    private void setGama(final int page) {
         int defaultGamma = 100; // gamma correction ranges between [100, 200], 100 means no gamma correction, 200 is max gamma correction
         int globalGamma = defaultGamma; // globalGamma is not used yet
         int imageGamma = 200; // imageGamma works only when textGamma is not set
@@ -179,13 +225,8 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-
-                    if (mIsCropPage) {
-                        cropPage();
-                    } else {
-                        mIsInit = true;
-                        readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(),getMeDiaben(page));
-                    }
+                    mIsSetGama = true;
+                    readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(), getBookVice());
                 } else {
                     readerView.showThrowable(throwable);
                 }
@@ -289,39 +330,33 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     }
 
 
-    /**
-     * 裁剪
-     */
-    private void cropPage() {
-        final ScaleToPageCropRequest request = new ScaleToPageCropRequest((mPage + ""));
-        getReader().submitRequest(getContext(), request, new BaseCallback() {
-            @Override
-            public void done(BaseRequest baseRequest, Throwable throwable) {
-                if (throwable == null) {
-                    mIsInit = true;
-                    readerView.updatePage(mPage, getReader().getViewportBitmap().getBitmap(),getMeDiaben(mPage));
-                } else {
-                    readerView.showThrowable(throwable);
-                }
-            }
-        });
-    }
-
-
-    private MediaBean getMeDiaben(final int page) {
-        MediaBean bean = null;
-        int index = page + 1;
-        if (FileUtils.exists(FileUtils.getMediaFilesDir() + mBookId + "/" + index + ".txt")) {
-            String json = ReaderFile.readerJsonFile(FileUtils.getMediaFilesDir() + mBookId + "/" + index + ".txt");
+    private BookVoiceBean getBookVice() {
+        if (!mIsUserVoice) {
+            return null;
+        }
+        BookVoiceBean bean = null;
+        //文件角标1开始 ，pdf角标0开始
+        int index = mPage + 1;
+        String filePath = FileUtils.getMediaJsonPath() + mBookId + "/" + index + ".txt";
+        if (FileUtils.exists(filePath)) {
+            String json = FileUtils.readerFile(filePath);
             if (!StringUtils.isEmpty(json)) {
                 LogUtils.e("media  ..json ==" + json);
-                bean = GsonUtil.fromJson(json, MediaBean.class);
-                if (bean.getCutterPageInfos() != null && bean.getCutterPageInfos().size() > 0) {
-                    Collections.sort(bean.getCutterPageInfos());
+                bean = GsonUtil.fromJson(json, BookVoiceBean.class);
+                if (bean.getVoiceInfos() != null && bean.getVoiceInfos().size() > 0) {
+                    Collections.sort(bean.getVoiceInfos());
                 }
             }
         }
         return bean;
+    }
+
+    public void setSelfAdapter(boolean selfAdapter) {
+        isSelfAdapter = selfAdapter;
+    }
+
+    public void setmIsUserVoice(boolean mIsUserVoice) {
+        this.mIsUserVoice = mIsUserVoice;
     }
 }
 

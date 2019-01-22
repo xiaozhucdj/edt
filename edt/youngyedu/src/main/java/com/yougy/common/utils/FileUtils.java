@@ -3,11 +3,13 @@ package com.yougy.common.utils;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.zip.ZipException;
 
@@ -22,8 +24,11 @@ public class FileUtils {
     public static final String TEXT_BOOK = "text_book";
     public static final String TEXT_BOOK_ICON = "text_book_icon";
     public static final String TEXT_BOOK_PROBATION = "text_book_probation";
-    public static final String MEDIA_FILES = "media_files";
+    public static final String MEDIA_FILES = "voice";
     public static String mAnsweringFileAbsPath = FileUtils.getAppFilesDir();
+
+    private static final String MEDIA_JSON = "json";
+    private static final String MEDIA_MP3 = "mp3";
 
     /**
      * 判断是否有存储卡，有返回TRUE，否则FALSE
@@ -353,6 +358,16 @@ public class FileUtils {
         return getAppFilesDir() + MEDIA_FILES + "/";
     }
 
+    public static String getMediaJsonPath() {
+        return getMediaFilesDir() + MEDIA_JSON + "/";
+    }
+
+    public static String getMediaMp3Path() {
+        return getMediaFilesDir() + MEDIA_MP3 + "/";
+    }
+
+
+
 
 
     public static boolean unZip1(String strZipPath, String strOutputFolderPath) {
@@ -547,5 +562,24 @@ public class FileUtils {
             IOUtils.close(is);
         }
         return res;
+    }
+
+    public static String readerFile(String filePath) {
+        String result = "";
+        try {
+            InputStreamReader isr = new InputStreamReader(new FileInputStream(filePath), "UTF-8");
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            StringBuilder builder = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                builder.append(line);
+            }
+            br.close();
+            isr.close();
+            result = builder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
