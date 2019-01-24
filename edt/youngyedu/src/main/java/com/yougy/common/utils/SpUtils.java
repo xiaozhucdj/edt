@@ -67,6 +67,11 @@ public class SpUtils {
 
     private static final String UUID = "UUID";
 
+    //(问答)上一次选择的章节在书章节列表(flat后的)中的index
+    private static final String LAST_WENDA_CHOSEN_NODE_INDEX = "last_wenda_chosen_node_index";
+    //(问答)上一次选择的题目在该章节所有题目中的index
+    private static final String LAST_WENDA_CHOSEN_QUESTION_INDEX = "last_wenda_chosen_question_index";
+
     private static final SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE,Context.MODE_PRIVATE);
 
     public static void saveLableLocation(int x, int y) {
@@ -472,6 +477,31 @@ public class SpUtils {
     //锁屏相关,此处order=命令
     public static boolean getDeviceScreen() {
         return sp.getBoolean("devicescreen", false);
+    }
+
+    /**
+     * 查询(问答)上一次选择的章节在书章节列表(flat后的)中的index
+     */
+    public static int getWendaLastNodeIndex(){
+        return othersSp.getInt(LAST_WENDA_CHOSEN_NODE_INDEX, -1);
+    }
+    /**
+     * 写入(问答)上一次选择的章节在书章节列表(flat后的)中的index
+     */
+    public static void setWendaLastNodeIndex(int index){
+        othersSp.edit().putInt(LAST_WENDA_CHOSEN_NODE_INDEX, index).commit();
+    }
+    /**
+     * 查询(问答)上一次选择的题目在该章节所有题目中的index
+     */
+    public static int getWendaLastQuestionIndex(){
+        return othersSp.getInt(LAST_WENDA_CHOSEN_QUESTION_INDEX, -1);
+    }
+    /**
+     * 写入(问答)上一次选择的题目在该章节所有题目中的index
+     */
+    public static void setWendaLastQuestionIndex(int index){
+        othersSp.edit().putInt(LAST_WENDA_CHOSEN_QUESTION_INDEX, index).commit();
     }
 
 }

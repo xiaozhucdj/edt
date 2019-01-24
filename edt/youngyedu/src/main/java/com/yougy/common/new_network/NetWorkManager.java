@@ -26,6 +26,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
+import com.yougy.home.bean.DataCountInBookNode;
 import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
@@ -698,6 +699,17 @@ public final class NetWorkManager {
 
     public static Observable<SubmitReplyBean> submitTaskPracticeServer (Integer userId, String data) {
         return getInstance().getServerApi().submitTaskPracticeServer(userId, data)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    /**
+     * 统计作业本中作业和问答的数量并且按章节统计返回
+     * homeworkId 作业本Id
+     * examTypeCode 作业类型（可以传数组）　II0x
+     */
+    public static Observable<List<DataCountInBookNode>> getItemCountBaseOnBookNode(Integer homeworkId, String examTypeCode) {
+        return getInstance().getServerApi().countQuestionCount4Cursor(homeworkId, examTypeCode)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
