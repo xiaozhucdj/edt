@@ -58,6 +58,7 @@ public class SpUtils {
 
     private static final String LOCAL_LOCK_PWD = "LOCAL_LOCK_PWD";
     private static final String LOCAL_YX_TOKEN = "LOCAL_YX_TOKEN";
+    private static final String SCHOOL_TYPE = "school_type";
 
     /**
      * 当前学期学科
@@ -127,6 +128,7 @@ public class SpUtils {
         editor.putString(SUBJECT_NAMES , student.getSubjectNames());
         editor.putString(CLASS_ID , student.getClassId());
         editor.putString(USER_GENDER , student.getUserGender());
+        editor.putInt(SCHOOL_TYPE,student.getSchoolType());
         editor.apply();
     }
 
@@ -146,6 +148,7 @@ public class SpUtils {
         student.setSubjectNames(sp.getString(SUBJECT_NAMES , ""));
         student.setClassId(sp.getString(CLASS_ID , ""));
         student.setUserGender(sp.getString(USER_GENDER , ""));
+        student.setSchoolType(sp.getInt(SCHOOL_TYPE,0));
         return student;
     }
 
