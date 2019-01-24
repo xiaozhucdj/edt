@@ -524,6 +524,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 } else if (imMessage.getMsgType() == MsgTypeEnum.custom) {
                     chattingItembinding.leftTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.leftFileDialogLayout.setVisibility(View.GONE);
+                    LogUtils.e(tag,"attach ment is : " + imMessage.getAttachment());
                     if (imMessage.getAttachment() instanceof BookRecommandAttachment) {
                         final BookRecommandAttachment attachment = (BookRecommandAttachment) imMessage.getAttachment();
                         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
@@ -583,9 +584,9 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     }
                 }, 0, ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 ssb.append(ss);
-                ssb.append("尽快完成任务！");
-                chattingItembinding.rightTextTv.setText(ssb);
-                chattingItembinding.rightTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+                ssb.append("。尽快完成任务！");
+                chattingItembinding.leftTextTv.setText(ssb);
+                chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
             }
         }
     }

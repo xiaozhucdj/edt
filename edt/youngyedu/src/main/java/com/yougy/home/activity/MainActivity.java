@@ -513,7 +513,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btn_msg:
                 changeSystemConfigIntegerValue(getApplicationContext() , "close_wifi_delay" , -1);
 //                LogUtils.e(getClass().getName(), "我的消息");
-//                gotoMyMessage();
+                gotoMyMessage();
                 break;
             case R.id.btn_account:
                 LogUtils.i("账号设置");
