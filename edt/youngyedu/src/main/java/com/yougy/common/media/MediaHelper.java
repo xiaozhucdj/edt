@@ -39,12 +39,9 @@ import java.io.IOException;
  * setAudioStreamType()方法用于指定播放流媒体的类型，它传递的是一个int类型的数据，均以常量定义在AudioManager类中， 一般我们播放音频文件，设置为AudioManager.STREAM_MUSIC即可。
  */
 public class MediaHelper {
-    private String tag = "MediaHelper";
     // 播放音频控件
     private MediaPlayer mMediaPlayer;
-
     private String mUrl;
-
     private Activity mActivity;
     //资源是否准备完成
     private boolean isPrepare;
@@ -52,10 +49,12 @@ public class MediaHelper {
     private int mStartTime;
     private int mEndTime;
     private LoopCutterRunnale mLoopCutterRunnale;
+    // 防止多次回调函数,导致播放错误
+    private boolean mIsLoperStop = false;
+    // 判断是点读还是整页读,回调给UI做业务处理
 
-    /***
-     * 初始化
-     */
+    private int mVoicePs = 1;
+
     public void init(Activity activity) {
         mActivity = activity;
         mMediaPlayer = new MediaPlayer();
@@ -68,7 +67,7 @@ public class MediaHelper {
                 mp.reset();
                 mLoopCutterRunnale.stop();
                 if (mListener != null) {
-                    mListener.onCompletionPlayerListener();
+                    mListener.onCompletionPlayerListener(mVoicePs);
                 }
             }
         });
@@ -134,6 +133,7 @@ public class MediaHelper {
             mMediaPlayer.start();
     }
 
+
     private void seekTo(int position) {
         if (position < 0 || position > mMediaPlayer.getDuration()) return;
         mMediaPlayer.seekTo(position);
@@ -168,7 +168,7 @@ public class MediaHelper {
             if (!mIsStart) {
                 mIsStart = true;
                 UIUtils.removeCallbacks(this);
-                UIUtils.postDelayed(this, DURATION_LOOP_CUTTER);
+                UIUtils.post(this);
             }
         }
 
@@ -187,15 +187,16 @@ public class MediaHelper {
                     public void run() {
                         if (isPrepare && isPlay()) {
 
-                            LogUtils.e(tag, "getCurrentPosition ...." + getCurrentPosition());
-                            if (getCurrentPosition() >= mEndTime) {
+//                            LogUtils.e(tag, "getCurrentPosition ...." + getCurrentPosition());
+                            if (getCurrentPosition() >= mEndTime && !mIsLoperStop) {
+                                mIsLoperStop = true;
                                 pause();
                                 mLoopCutterRunnale.stop();
                                 if (mListener != null) {
                                     UIUtils.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            mListener.onCompletionPlayerListener();
+                                            mListener.onCompletionPlayerListener(mVoicePs);
                                         }
                                     });
 
@@ -210,39 +211,44 @@ public class MediaHelper {
     }
 
 
-    public void player_start(String url, int startTime, int endTime) {
+    public void player_start(String url, int startTime, int endTime, int voicePs) {
+        mVoicePs = voicePs;
+        if (endTime <= startTime) {
+            UIUtils.showToastSafe("播放错误 ，结束时间<开始时间");
+            return;
+        }
+        mIsLoperStop = false;
 
-        if (!FileUtils.exists(url)) {
-            LogUtils.e(tag, "语音文件不存在 ...."+url);
+        if (StringUtils.isEmpty(url) || !FileUtils.exists(url)) {
+            UIUtils.showToastSafe("播放错误 ，语音文件不存在");
             return;
         }
 
-        // 第一次播放 mUrl ==""
-        LogUtils.e(tag, "url ...." + url);
+
         if (StringUtils.isEmpty(mUrl)) {
             this.mUrl = url;
             this.mStartTime = startTime;
             this.mEndTime = endTime;
-            LogUtils.e(tag, "start ....");
             start();
+            LogUtils.e("第一次打开 音频文件....之前播放的 mUrl === null");
         } else {
             if (isPrepare()) { // 初始化完成 ，说明当前为暂停状态。
                 if (mUrl.equalsIgnoreCase(url)) { //URL 一致 播放和页码没有变化 ，进行继续播放
 
                     if (endTime == mEndTime) {//当前是用户自动暂停操作
-                        LogUtils.e(tag, "continuePlay ....");
+                        LogUtils.e("continuePlay ....");
                         continuePlay();
                         mLoopCutterRunnale.start();
                     } else {//时间戳暂停
                         this.mStartTime = startTime;
                         this.mEndTime = endTime;
                         continuePlay();
-                        LogUtils.e(tag, "seekTo ....");
+                        LogUtils.e("seekTo ....");
                         seekTo(startTime);
                         mLoopCutterRunnale.start();
                     }
                 } else {// URL不一样 可能出现 音频和页码变化
-                    LogUtils.e(tag, "changeUrl ....1");
+                    LogUtils.e("changeUrl ....1");
                     this.mUrl = url;
                     this.mStartTime = startTime;
                     this.mEndTime = endTime;
@@ -251,7 +257,7 @@ public class MediaHelper {
                 }
 
             } else { //未进行初始化 ，说明当前 文件播放完成  或者切换页码了。
-                LogUtils.e(tag, "changeUrl ....2");
+                LogUtils.e("changeUrl ....2");
                 this.mUrl = url;
                 this.mStartTime = startTime;
                 this.mEndTime = endTime;
@@ -269,6 +275,7 @@ public class MediaHelper {
     public void player_reset() {
         isPrepare = false;//进入资源为准备状态
         mMediaPlayer.reset();//初始化
+        mIsLoperStop = true;
         mLoopCutterRunnale.stop();
     }
 
@@ -280,13 +287,18 @@ public class MediaHelper {
         }
     }
 
+
+    public void player_continue() {
+        continuePlay();
+    }
+
     public CompletionPlayerListener mListener;
 
-    public void setListener(CompletionPlayerListener listener) {
+    public void setCompletionListener(CompletionPlayerListener listener) {
         mListener = listener;
     }
 
     public interface CompletionPlayerListener {
-        void onCompletionPlayerListener();
+        void onCompletionPlayerListener(int voicePs);
     }
 }

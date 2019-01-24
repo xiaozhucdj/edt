@@ -32,8 +32,9 @@ import com.onyx.reader.ReaderContract;
 import com.onyx.reader.ReaderPresenter;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
-import com.yougy.common.media.AudioMngHelper;
-import com.yougy.common.media.MediaBean;
+import com.yougy.common.global.FileContonst;
+import com.yougy.common.media.AudioHelper;
+import com.yougy.common.media.BookVoiceBean;
 import com.yougy.common.media.MediaHelper;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
@@ -97,7 +98,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     /**
      * 是否隐藏seekbar整体
      */
-    private boolean mRlPageVisible = true;
     private View viewItemDirectory;
     private View viewItemBookmarks;
 
@@ -111,7 +111,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private ImageView mBackPageNext;
     private ImageView mBackPageBack;
     private boolean mHide;
-    private long start, end;
     private Subscription mSubDb;
     private ImageView mOnyxImgView;
     private ReaderPresenter mReaderPresenter;
@@ -124,29 +123,31 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private Subscription backScription2;
     private Subscription nextScription2;
     private MediaHelper mMediaHelper;
-    private AudioMngHelper mAudioMngHelper;
-    private MediaBean mMediaBean;
-    private ImageButton mImgBtnMedia;
+    private boolean mIsOpenSelfAdapter;
+    private boolean mIsOpenVoice;
+    private FrameLayout fm_voice;
+    private RelativeLayout rl_reader;
+    private ImageButton btn_reader_page;
+    private ImageButton btn_reader_pause;
+
+    private String mVoiceBaseURL;
+    private BookVoiceBean mVoiceBean;
+    private Map<Integer, ImageView> mImgVoices = new HashMap<>();
+    private boolean mIsPageReader;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (getArguments() != null) {
-            mIsReferenceBook = getArguments().getBoolean("MISREFERENCEBOOK");
+            mIsReferenceBook = getArguments().getBoolean(FileContonst.IS_REFERENCE_BOOK);
+            mIsOpenSelfAdapter = getArguments().getBoolean(FileContonst.IS_OPEN_SELF_ADAPTER);
+            mIsOpenVoice = getArguments().getBoolean(FileContonst.IS_OPEN_VOICE);
+
+//            mIsOpenSelfAdapter = true;
+//            mIsOpenVoice = true;
+
         }
         return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    private void printTakeTimes(String job) {
-        LogUtils.e(TAG, job + " takes " + (end - start));
-    }
-
-    private void startTime() {
-        start = System.currentTimeMillis();
-    }
-
-    private void endTime() {
-        end = System.currentTimeMillis();
     }
 
     /**
@@ -175,7 +176,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
      **/
     private void initView() {
         //替换布局
-
         mloadingDialog = new LoadingProgressDialog(getActivity());
         mloadingDialog.show();
         mloadingDialog.setTitle("请稍后...");
@@ -220,9 +220,28 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         img_btn_hide.setOnClickListener(this);
         backScription2 = RxView.clicks(img_page_back).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getBackSubscriber());
         nextScription2 = RxView.clicks(img_page_next).throttleFirst(DURATION, TimeUnit.SECONDS).subscribe(getNextSubscriber());
-        mImgBtnMedia = mRoot.findViewById(R.id.img_btn_media);
-        mImgBtnMedia.setOnClickListener(this);
-        mImgBtnMedia.setSelected(false);
+
+
+        btn_reader_page = (ImageButton) mRoot.findViewById(R.id.btn_reader_page);
+        btn_reader_page.setOnClickListener(this);
+        btn_reader_page.setVisibility(View.GONE);
+
+
+        btn_reader_pause = (ImageButton) mRoot.findViewById(R.id.btn_reader_pause);
+        btn_reader_pause.setOnClickListener(this);
+        btn_reader_pause.setVisibility(View.GONE);
+
+        fm_voice = (FrameLayout) mRoot.findViewById(R.id.fm_voice);
+        fm_voice.setVisibility(View.GONE);
+        rl_reader = (RelativeLayout) mRoot.findViewById(R.id.rl_reader);
+        rl_reader.setVisibility(View.GONE);
+
+
+        btn_reader_page.setTag("连读");
+        btn_reader_page.setSelected(false);
+
+        btn_reader_pause.setTag("是否暂停");
+        btn_reader_pause.setSelected(false);
         //解析PDF
         initPDF();
     }
@@ -235,29 +254,15 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         mControlView = mRoot.findViewById(R.id.rl_pdf);
         mOnyxImgView = new ImageView(getContext());
         //设置显示PDF 大小
-        if (mIsReferenceBook) {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight() - 76 - 78);
-            params.setMargins(0, 76, 0, 78);
-            mOnyxImgView.setLayoutParams(params);
-        } else {
-            mOnyxImgView.setLayoutParams(new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
-        }
+        mOnyxImgView.setLayoutParams(new FrameLayout.LayoutParams(UIUtils.getScreenWidth(), UIUtils.getScreenHeight()));
         mControlView.addView(mOnyxImgView, 0);
-//        getReaderPresenter().openDocument(mPdfFile, mControlActivity.mBookId + "");
-
-        mMediaHelper = new MediaHelper();
-        mMediaHelper.setListener(this);
-        mMediaHelper.init(getActivity());
-        mAudioMngHelper = new AudioMngHelper(getActivity());
-        mAudioMngHelper.setMaxVolume();
-
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        LogUtils.e("HandleOnyxReaderFragment onStart------");
+        LogUtils.e("HandleOnyxReaderFragment onStart------" + mControlActivity.mBookId);
+        mVoiceBaseURL = FileUtils.getMediaMp3Path() + mControlActivity.mBookId + "/";
         getReaderPresenter().openDocument(mPdfFile, mControlActivity.mBookId + "");
     }
 
@@ -267,13 +272,13 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private ReaderContract.ReaderPresenter getReaderPresenter() {
         if (mReaderPresenter == null) {
             mReaderPresenter = new ReaderPresenter(this);
-            if (mIsReferenceBook) {
-                mReaderPresenter.setCropPage(true);
-            }
+            //TODO: 设置  语音朗读 和 自身适应 大小 104010002
+            mReaderPresenter.setmIsUserVoice(mIsOpenVoice);
+            mReaderPresenter.setSelfAdapter(mIsOpenSelfAdapter);
+
         }
         return mReaderPresenter;
     }
-
 
     @Override
     public Context getViewContext() {
@@ -281,22 +286,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     }
 
     @Override
-    public void updatePage(int page, Bitmap bitmap, MediaBean bean) {
-        if (bean != null) {
-            if (bean.getCutterPageInfos() != null && bean.getCutterPageInfos().size() > 0) {
-                for (MediaBean.CutterPageInfosBean cutter : bean.getCutterPageInfos()) {
-                    LogUtils.e(tag, "updatePage .. cutter  index == " + cutter.getPostion());
-                }
-            }
-        }
-        mMediaBean = bean;
-        if (bean != null) {
-            mImgBtnMedia.setVisibility(View.VISIBLE);
-            mImgBtnMedia.setSelected(false);
-        } else {
-            mImgBtnMedia.setVisibility(View.GONE);
-        }
-
+    public void updatePage(int page, Bitmap bitmap, BookVoiceBean bean) {
         if (mloadingDialog != null && mloadingDialog.isShowing()) {
             mloadingDialog.dismiss();
         }
@@ -307,14 +297,89 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         EpdController.invalidate(mRoot, UpdateMode.GC);
         mOnyxImgView.setImageBitmap(bitmap);
         restViewState();
+
+        if (mIsOpenVoice) {
+            mVoiceBean = bean;
+            fm_voice.removeAllViews();
+            if (bean == null) {
+                fm_voice.setVisibility(View.GONE);
+                rl_reader.setVisibility(View.GONE);
+                return;
+            }
+            fm_voice.setVisibility(View.VISIBLE);
+            rl_reader.setVisibility(View.VISIBLE);
+            btn_reader_page.setVisibility(View.VISIBLE);
+            addVoiceItem();
+        }
         if (mRunThread == null) {
             mRunThread = new NoteBookDelayedRun();
         }
-
         UIUtils.getMainThreadHandler().postDelayed(mRunThread, 500);
     }
 
+    private void addVoiceItem() {
+        FrameLayout.LayoutParams params = null;
+        if (mVoiceBean == null || mVoiceBean.getVoiceInfos() == null || mVoiceBean.getVoiceInfos().size() == 0) {
+            return;
+        } else {
+            for (final BookVoiceBean.VoiceBean bean : mVoiceBean.getVoiceInfos()) {
+                params = createLayoutParams();
+                params.topMargin = bean.getViewTop();
+                params.leftMargin = bean.getViewLeft();
+                final ImageView imageView = new ImageView(getActivity());
+                mImgVoices.put(bean.getPostion(), imageView);
+                imageView.setImageResource(R.drawable.img_sound_select);
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (mImgVoices.size() != 0) {
+                            for (Map.Entry<Integer, ImageView> entry : mImgVoices.entrySet()) {
+                                entry.getKey();
+                                entry.getValue().setSelected(false);
+                            }
+                        }
+                        imageView.setSelected(true);
+                        LogUtils.e("bean.toString() ===" + bean.toString());
+                        btn_reader_pause.setTag("是否暂停");
+                        btn_reader_pause.setSelected(false);
+//                        getMediaHelper().player_continue();
+                        getMediaHelper().player_reset();
+                        getMediaHelper().player_start(mVoiceBaseURL + bean.getUrl(), bean.getStart(), bean.getEnd(), bean.getPostion());
+                    }
+                });
+                fm_voice.addView(imageView, params);
+            }
+        }
+    }
+
     private NoteBookDelayedRun mRunThread;
+
+    @Override
+    public void onCompletionPlayerListener(int voicePs) {
+        mImgVoices.get(voicePs).setSelected(false);
+        if (mIsPageReader) {
+            voicePs = voicePs + 1;
+            if (mVoiceBean.getVoiceInfos().size() < voicePs) {
+                UIUtils.showToastSafe("本页音频文件全部播放完成");
+                getMediaHelper().player_reset();
+                mIsPageReader = false;
+                btn_reader_page.setTag("连读");
+                btn_reader_page.setSelected(false);
+                btn_reader_pause.setVisibility(View.GONE);
+                btn_reader_pause.setTag("是否暂停");
+                btn_reader_pause.setSelected(false);
+            } else {
+
+                btn_reader_pause.setTag("是否暂停");
+                btn_reader_pause.setSelected(false);
+                getMediaHelper().player_continue();
+
+                mImgVoices.get(voicePs).setSelected(true);
+                BookVoiceBean.VoiceBean bean = mVoiceBean.getVoiceInfos().get(voicePs - 1);
+                getMediaHelper().player_start(mVoiceBaseURL + bean.getUrl(), bean.getStart(), bean.getEnd(), bean.getPostion());
+            }
+        }
+    }
 
 
     private class NoteBookDelayedRun implements Runnable {
@@ -581,16 +646,24 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         }
         mCurrentMarksPage = position;
         isSuccesspdf = true;
-        if (mMediaHelper != null) {
-            mMediaIndex = 0;
-            mMediaHelper.player_reset();
-            mImgBtnMedia.setSelected(false);
-        }
         mSeekbarPage.setClickable(false);
         mSeekbarPage.setEnabled(false);
         mSeekbarPage.setFocusable(false);
         mBackPageBack.setEnabled(false);
         mBackPageNext.setEnabled(false);
+
+        if (mIsOpenVoice) {
+            mIsPageReader = false;
+            mImgVoices.clear();
+
+            btn_reader_page.setTag("连读");
+            btn_reader_page.setSelected(false);
+
+            btn_reader_pause.setTag("是否暂停");
+            btn_reader_pause.setSelected(false);
+            getMediaHelper().player_reset();
+        }
+
         getReaderPresenter().gotoPage(position);
     }
 
@@ -620,8 +693,62 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 onBackListener();
                 break;
 
-            case R.id.img_btn_media:
-                cliclMedia();
+            case R.id.btn_reader_page:
+                if (mVoiceBean == null || mVoiceBean.getVoiceInfos() == null || mVoiceBean.getVoiceInfos().size() == 0) {
+                    UIUtils.showToastSafe("没有播放文件");
+                    break;
+                }
+
+                mIsPageReader = !mIsPageReader;
+                if (mIsPageReader) {
+                    btn_reader_page.setTag("停止");
+                    btn_reader_page.setSelected(true);
+                    btn_reader_pause.setVisibility(View.VISIBLE);
+                    btn_reader_pause.setTag("是否暂停");
+                    btn_reader_pause.setSelected(false);
+                    if (mImgVoices.size() != 0) {
+                        for (Map.Entry<Integer, ImageView> entry : mImgVoices.entrySet()) {
+                            entry.getKey();
+                            entry.getValue().setSelected(false);
+                        }
+                    }
+
+                    BookVoiceBean.VoiceBean bean = mVoiceBean.getVoiceInfos().get(0);
+                    if (mImgVoices.size() > 0) {
+                        mImgVoices.get(bean.getPostion()).setSelected(true);
+                    }
+
+                    btn_reader_pause.setTag("是否暂停");
+                    btn_reader_pause.setSelected(false);
+//                    getMediaHelper().player_continue();
+                    getMediaHelper().player_start(mVoiceBaseURL + bean.getUrl(), bean.getStart(), bean.getEnd(), bean.getPostion());
+                } else {
+
+                    if (mImgVoices.size() != 0) {
+                        for (Map.Entry<Integer, ImageView> entry : mImgVoices.entrySet()) {
+                            entry.getKey();
+                            entry.getValue().setSelected(false);
+                        }
+                    }
+                    btn_reader_page.setTag("连读");
+                    btn_reader_page.setSelected(false);
+                    btn_reader_pause.setVisibility(View.GONE);
+                    getMediaHelper().player_reset();
+                    btn_reader_pause.setTag("是否暂停");
+                    btn_reader_pause.setSelected(false);
+                }
+                break;
+
+            case R.id.btn_reader_pause:
+                if (btn_reader_pause.getTag().toString().trim().equalsIgnoreCase("是否暂停")) {
+                    btn_reader_pause.setTag("已暂停");
+                    btn_reader_pause.setSelected(true);
+                    getMediaHelper().player_pause();
+                } else {
+                    btn_reader_pause.setTag("是否暂停");
+                    btn_reader_pause.setSelected(false);
+                    getMediaHelper().player_continue();
+                }
                 break;
         }
     }
@@ -824,6 +951,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             UIUtils.getMainThreadHandler().removeCallbacks(mRunThread);
         }
         mRunThread = null;
+        getMediaHelper().player_release();
         Runtime.getRuntime().gc();
     }
 
@@ -911,7 +1039,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         });
     }
 
-
     /**
      * 移除图层
      */
@@ -964,14 +1091,11 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         addLayerLayout();
         moveLayerLayout();
         initSeekbarAndTextNumber();
-
         mSeekbarPage.setClickable(true);
         mSeekbarPage.setEnabled(true);
         mSeekbarPage.setFocusable(true);
         mBackPageBack.setEnabled(true);
         mBackPageNext.setEnabled(true);
-
-
     }
 
     private void initSeekbarAndTextNumber() {
@@ -1028,36 +1152,14 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         img_btn_hide.setLayoutParams(params);
     }
 
-    private int mMediaIndex = 0;
-
-    private void cliclMedia() {
-        LogUtils.e("media", "cliclMedia ...");
-        if (!mImgBtnMedia.isSelected()) {
-            if (mMediaBean != null && mMediaHelper != null) {
-                LogUtils.e("media", "1111111111 ...");
-                if (mMediaBean.getCutterPageInfos() != null && mMediaBean.getCutterPageInfos().size() > 0 && mMediaIndex <= mMediaBean.getCutterPageInfos().size() - 1) {
-                    LogUtils.e("media", "222222222222222 ...");
-                    LogUtils.e("media", "mMediaIndex ..." + mMediaIndex);
-                    MediaBean.CutterPageInfosBean playerInfo = mMediaBean.getCutterPageInfos().get(mMediaIndex);
-                    mImgBtnMedia.setSelected(true);
-                    mMediaHelper.player_start(FileUtils.getMediaFilesDir() + mControlActivity.mBookId + "/" + playerInfo.getUrl(), playerInfo.getStart(), playerInfo.getEnd());
-                }
-            }
-        } else {
-            mImgBtnMedia.setSelected(false);
-            mMediaHelper.player_pause();
+    ///////////////////////////////////voice///////////////////////////////////////////////////////////
+    private MediaHelper getMediaHelper() {
+        if (mMediaHelper == null) {
+            new AudioHelper(getActivity()).setMaxVolume();
+            mMediaHelper = new MediaHelper();
+            mMediaHelper.setCompletionListener(this);
+            mMediaHelper.init(getActivity());
         }
-    }
-
-    @Override
-    public void onCompletionPlayerListener() {
-        mMediaIndex++;
-        mImgBtnMedia.setSelected(false);
-        if (mMediaIndex > mMediaBean.getCutterPageInfos().size() - 1) {
-            mMediaIndex = 0;
-            mMediaHelper.player_reset();
-        } else {
-            cliclMedia();
-        }
+        return mMediaHelper;
     }
 }
