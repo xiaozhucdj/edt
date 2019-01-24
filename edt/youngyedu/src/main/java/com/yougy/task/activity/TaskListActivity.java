@@ -52,7 +52,7 @@ public class TaskListActivity extends BaseActivity {
         Intent intent = getIntent();
         contentBookLink = intent.getIntExtra("contentBookLink", -1);
         courseBookTitle = intent.getStringExtra("courseBookTitle");
-        homeworkId = intent.getIntExtra("homeworkId",-1);
+        homeworkId = intent.getIntExtra("homeworkId", -1);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class TaskListActivity extends BaseActivity {
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn, int lastSelectPageBtnIndex) {
-                LogUtils.e(tag,"onPageBtnClick........."+btnIndex);
+                LogUtils.e(tag, "onPageBtnClick........." + btnIndex);
                 refreshTask(btnIndex);
             }
 
@@ -96,7 +96,7 @@ public class TaskListActivity extends BaseActivity {
     }
 
     private void generateData() {
-        LogUtils.e(tag,"homeworkId is : " + homeworkId+",contentBookLink is : " + contentBookLink);
+        LogUtils.e(tag, "homeworkId is : " + homeworkId + ",contentBookLink is : " + contentBookLink);
         NetWorkManager.queryTasks(homeworkId, contentBookLink, tasks.size(), MAX_SIZE_PER_PAGE)
                 .compose(bindToLifecycle())
                 .subscribe(taskSummary -> {
@@ -105,7 +105,7 @@ public class TaskListActivity extends BaseActivity {
 
                     if (null != taskList && taskList.size() > 0) {
                         for (Task task : taskList) {
-                            LogUtils.e(tag,"task is complete : " + task.isComplete());
+                            LogUtils.e(tag, "task is complete : " + task.isComplete());
                             if (task.isComplete()) {
                                 completedTasks.add(task);
                             } else {
@@ -124,7 +124,7 @@ public class TaskListActivity extends BaseActivity {
                             end = tasks.size();
                         }
                         currentTasks.addAll(tasks.subList(start, end));
-                        LogUtils.e(tag,"task list's size is : " + taskList.size()+", current tasks'size is : " + currentTasks.size() + ",tasks'size is : " + tasks.size() + ",umcompletetasks'size is : "+unCompleteTasks.size());
+                        LogUtils.e(tag, "task list's size is : " + taskList.size() + ", current tasks'size is : " + currentTasks.size() + ",tasks'size is : " + tasks.size() + ",umcompletetasks'size is : " + unCompleteTasks.size());
                         adapter.notifyDataSetChanged();
                         binding.pageBarTask.refreshPageBar();
                     }
@@ -137,7 +137,7 @@ public class TaskListActivity extends BaseActivity {
     private void refreshTask(int index) {
         currentTasks.clear();
         currentPage = index;
-        if (index!=0 && (index + 1) * MAX_PAGE_COUNT > tasks.size()) {
+        if (index != 0 && (index + 1) * MAX_PAGE_COUNT > tasks.size() && tasksCount > tasks.size()) {
             generateData();
         } else {
             tasks.clear();
@@ -199,8 +199,8 @@ public class TaskListActivity extends BaseActivity {
             binding.taskCompleteTime.setText(getString(R.string.task_complete_time, "2018-11-28 17:48", "2018-11-29 17:00"));
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(TaskListActivity.this, TaskDetailStudentActivity.class);
-                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID,task.getContentElement());
-                intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME,task.getContentTitle());
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, task.getContentElement());
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
                 startActivity(intent);
             });
         }
@@ -212,13 +212,15 @@ public class TaskListActivity extends BaseActivity {
         isComplete = false;
         tasks.clear();
         currentTasks.clear();
-        tasks.addAll(unCompleteTasks);
-        int start = currentPage * MAX_PAGE_COUNT;
-        int end = start + MAX_PAGE_COUNT;
-        if (end > tasks.size() - 1) {
-            end = tasks.size();
+        if (unCompleteTasks.size()>0) {
+            tasks.addAll(unCompleteTasks);
+            int start = currentPage * MAX_PAGE_COUNT;
+            int end = start + MAX_PAGE_COUNT;
+            if (end > tasks.size() - 1) {
+                end = tasks.size();
+            }
+            currentTasks.addAll(tasks.subList(start, end));
         }
-        currentTasks.addAll(tasks.subList(start, end));
         adapter.notifyDataSetChanged();
         binding.pageBarTask.refreshPageBar();
     }
@@ -229,13 +231,15 @@ public class TaskListActivity extends BaseActivity {
         isComplete = true;
         tasks.clear();
         currentTasks.clear();
-        tasks.addAll(completedTasks);
-        int start = currentPage * MAX_PAGE_COUNT;
-        int end = start + MAX_PAGE_COUNT;
-        if (end > tasks.size() - 1) {
-            end = tasks.size();
+        if (completedTasks.size() > 0) {
+            tasks.addAll(completedTasks);
+            int start = currentPage * MAX_PAGE_COUNT;
+            int end = start + MAX_PAGE_COUNT;
+            if (end > tasks.size() - 1) {
+                end = tasks.size();
+            }
+            currentTasks.addAll(tasks.subList(start, end));
         }
-        currentTasks.addAll(tasks.subList(start, end));
         adapter.notifyDataSetChanged();
         binding.pageBarTask.refreshPageBar();
     }
