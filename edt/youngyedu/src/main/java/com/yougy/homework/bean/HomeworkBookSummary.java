@@ -48,6 +48,16 @@ public class HomeworkBookSummary {
     private int homeworkId;
     private String homeworkTitle;
     private List<?> homeworkContent;
+    private int homeworkOwner;
+
+
+    public int getHomeworkOwner() {
+        return homeworkOwner;
+    }
+
+    public void setHomeworkOwner(int homeworkOwner) {
+        this.homeworkOwner = homeworkOwner;
+    }
 
     public String getHomeworkStatus() {
         return homeworkStatus;
@@ -200,5 +210,30 @@ public class HomeworkBookSummary {
 
     public void setHomeworkContent(List<?> homeworkContent) {
         this.homeworkContent = homeworkContent;
+    }
+
+    @Override
+    public String toString() {
+        return "HomeworkBookSummary{" +
+                "homeworkStatus='" + homeworkStatus + '\'' +
+                ", userId=" + userId +
+                ", homeworkType=" + homeworkType +
+                ", homeworkCreateTime='" + homeworkCreateTime + '\'' +
+                ", homeworkCreator=" + homeworkCreator +
+                ", homeworkFitSubjectName='" + homeworkFitSubjectName + '\'' +
+                ", courseId=" + courseId +
+                ", homeworkFitGradeId=" + homeworkFitGradeId +
+                ", homeworkStatusCode='" + homeworkStatusCode + '\'' +
+                ", courseBookTitle='" + courseBookTitle + '\'' +
+                ", homeworkFitGradeName='" + homeworkFitGradeName + '\'' +
+                ", homeworkFitNoteTitle='" + homeworkFitNoteTitle + '\'' +
+                ", homeworkFitNoteStyle=" + homeworkFitNoteStyle +
+                ", homeworkFitSubjectId=" + homeworkFitSubjectId +
+                ", homeworkFitNoteId=" + homeworkFitNoteId +
+                ", courseBookId=" + courseBookId +
+                ", homeworkId=" + homeworkId +
+                ", homeworkTitle='" + homeworkTitle + '\'' +
+                ", homeworkContent=" + homeworkContent +
+                '}';
     }
 }

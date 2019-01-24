@@ -156,9 +156,12 @@
 
     <string name="down_media_error">音频下载失败 ,请重新下载?</string>
     <string name="down_media_loading">语音包下载中%1$s</string>
-
-
-
+    <string name="add2shopcart">加入购物车</string>
+    <string name="add2favorite">加入收藏夹</string>
+    <string name="read_online">在线试读</string>
+    <string name="read_promptly">立即阅读</string>
+    <string name="add2bookshelf">加入书架</string>
+    <string name="already_in_bookshelf">已在书架</string>
 
 
     <string-array name="titles">

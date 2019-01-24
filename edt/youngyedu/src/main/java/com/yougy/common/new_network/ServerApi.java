@@ -584,7 +584,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryTaskContent"})
-    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentCourseLink") int contentCourseLink, @Field("pn") int pn, @Field("ps") int ps);
+    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentBookLink") int contentBookLink, @Field("pn") int pn, @Field("ps") int ps);
 
     /**
      * 获取组信息

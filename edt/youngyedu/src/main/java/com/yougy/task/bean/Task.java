@@ -21,7 +21,7 @@ public class Task implements Serializable {
     private String performEndTime;
     private String contentStatus;
     private String contentCourseLinkName;
-    private boolean isComplete = true;
+    private boolean isComplete;
     @SerializedName("SR03")
     private int exerciseCount;
     @SerializedName("SR02")
