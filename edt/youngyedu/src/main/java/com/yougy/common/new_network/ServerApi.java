@@ -15,6 +15,7 @@ import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.PromotionReq;
+import com.yougy.home.bean.DataCountInBookNode;
 import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
@@ -610,4 +611,14 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"insertScene"})
     Observable<BaseResult<SubmitReplyBean>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
 
+    /**
+     * 统计作业本中作业和问答的数量并且按章节统计返回
+     * homeworkId 作业本Id
+     * examTypeCode 作业类型（可以传数组）　II0x
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"getExamCount4CursorByHomework"})
+    Observable<BaseResult<List<DataCountInBookNode>>> countQuestionCount4Cursor (@Field("homeworkId") Integer homeworkId
+            , @Field("examTypeCode") String examTypeCode);
 }

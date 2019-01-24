@@ -148,7 +148,7 @@
                 />
 
             <TextView
-                android:id="@+id/tv_folder"
+                android:id="@+id/tv_answer"
                 android:layout_width="120px"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="6px"
