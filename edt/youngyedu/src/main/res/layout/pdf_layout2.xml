@@ -8,6 +8,45 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
+    <FrameLayout
+        android:id="@+id/fm_voice"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_reader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30px"
+        android:layout_marginRight="20px">
+
+        <ImageButton
+            android:id="@+id/btn_reader_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/img_continu_select"
+            android:text="连读"
+            android:textColor="@android:color/black"
+            android:textSize="20px" />
+
+
+        <ImageButton
+            android:id="@+id/btn_reader_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn_reader_page"
+            android:layout_marginTop="20px"
+            android:background="@null"
+            android:src="@drawable/img_start_select"
+            android:text="暂停"
+            android:textColor="@android:color/black"
+            android:textSize="20px" />
+    </RelativeLayout>
+
+
     <RelativeLayout
         android:id="@+id/rl_directory"
         android:layout_width="match_parent"
@@ -127,12 +166,4 @@
         android:textColor="@color/white"
         android:textSize="18px" />
 
-    <ImageButton
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="80px"
-        android:id="@+id/img_btn_media"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:src="@drawable/btn_media_selector" />
 </RelativeLayout>

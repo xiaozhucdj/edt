@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="100px"
+        android:layout_height="100px">
+
+        <ImageView
+            android:id="@+id/bg_imv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/question_choose_item_bg_selector" />
+
+        <TextView
+            android:id="@+id/number_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="10"
+            android:textColor="@drawable/color_selector_press_white_normal_black"
+            android:textSize="20px" />
+    </RelativeLayout>
+</layout>

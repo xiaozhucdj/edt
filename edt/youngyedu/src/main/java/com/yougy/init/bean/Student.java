@@ -73,6 +73,16 @@ public class Student {
     private String userMobile;
     private String userEmail;
 
+    private int schoolType;
+
+    public int getSchoolType() {
+        return schoolType;
+    }
+
+    public void setSchoolType(int schoolType) {
+        this.schoolType = schoolType;
+    }
+
     public String getUserNum() {
         return userNum;
     }

@@ -181,6 +181,11 @@
         <!--问答记录题目列表-->
         <activity android:name="com.yougy.anwser.AnswerRecordListDetailActivity" >
         </activity>
+        <activity android:name="com.yougy.anwser.AnswerRecordListDetailNewActivity" >
+        </activity>
+        <activity android:name="com.yougy.anwser.AnswerBookNodeChooseActivity" >
+        </activity>
+
         <!--问答记录某次问答详情界面-->
         <activity android:name="com.yougy.anwser.AnswerRecordDetailActivity">
         </activity>

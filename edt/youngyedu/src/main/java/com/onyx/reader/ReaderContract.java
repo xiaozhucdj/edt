@@ -7,7 +7,7 @@ import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.android.sdk.reader.host.wrapper.Reader;
 import com.onyx.base.BasePresenter;
 import com.onyx.base.BaseView;
-import com.yougy.common.media.MediaBean;
+import com.yougy.common.media.BookVoiceBean;
 
 /**
  * Created by ming on 2017/4/1.
@@ -16,7 +16,7 @@ import com.yougy.common.media.MediaBean;
 public interface ReaderContract {
 
     interface ReaderView extends BaseView<ReaderPresenter> {
-        void updatePage(final int page, final Bitmap bitmap, MediaBean bean);
+        void updatePage(final int page, final Bitmap bitmap, BookVoiceBean bean);
         View getContentView();
         void showThrowable(final Throwable throwable);
         void openDocumentFinsh();

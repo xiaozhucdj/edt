@@ -144,7 +144,8 @@ public class YoungyApplicationManager extends LitePalApplication {
             FileUtils.createDirs(FileUtils.getProbationBookFilesDir());
 
             //创建 媒体文件夹
-            FileUtils.createDirs(FileUtils.getMediaFilesDir());
+            FileUtils.createDirs(FileUtils.getMediaJsonPath());
+            FileUtils.createDirs(FileUtils.getMediaMp3Path());
 
             if (!BuildConfig.DEBUG) {
                 //处理异常

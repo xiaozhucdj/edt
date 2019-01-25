@@ -61,8 +61,8 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
     public ViewGroup mRootView;
     protected boolean mIsRefresh;
     //  英语（四年级104030010，三年级，103030023）  ，语文 （四年级 104010002 ，三年级103010007）
-    public String mMediasBookIDs = "103010007 ,103030023,104030010,104010002";
-
+//    public String mMediasBookIDs = "103010007 ,103030023,104030010,104010002";
+    public String mMediasBookIDs = "12345";
     public void loadIntent(Class<?> cls) {
         Intent intent = new Intent(getActivity(), cls);
         startActivity(intent);

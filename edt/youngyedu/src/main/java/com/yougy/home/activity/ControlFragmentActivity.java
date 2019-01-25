@@ -66,7 +66,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     /**
      * 图书id
      */
-    public int mBookId =-1;
+    public int mBookId = -1;
     /**
      * 关联分类编码
      */
@@ -101,11 +101,14 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     public long mNoteMark = -1;
     public int mHomewrokId;
 
-    public  boolean mIsReferenceBook ;
+    public boolean mIsReferenceBook;
+    private boolean mIsOpenSelfAdapter;
+    private boolean mIsOpenVoice;
+
 
     @Override
     protected void init() {
-        mIsCheckStartNet = false ;
+        mIsCheckStartNet = false;
         if (getIntent() != null && getIntent().getExtras() != null) {
             LogUtils.i("yuanye ..init");
             Bundle bundle = getIntent().getExtras();
@@ -131,6 +134,8 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             params.put(FileContonst.NOTE_BOOK_ID, mBookId + "");
             mHomewrokId = bundle.getInt(FileContonst.HOME_WROK_ID, -1);
             mIsReferenceBook = bundle.getBoolean(FileContonst.IS_REFERENCE_BOOK);
+            mIsOpenSelfAdapter = bundle.getBoolean(FileContonst.IS_OPEN_SELF_ADAPTER);
+            mIsOpenVoice = bundle.getBoolean(FileContonst.IS_OPEN_VOICE);
         }
     }
 
@@ -163,6 +168,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
      * 跳转至笔记本界面
      */
     private NoteBookFragment mNoteBookFragment;
+
     private void toTextBookFragment() {
         //跳转判断条件 根据服务器接口定义
         LogUtils.i("mBookId===" + mBookId);
@@ -172,11 +178,15 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         if (mBookId > 0 /***&& mNoteCreator != Integer.parseInt(SpUtils.getAccountId()) && mCategoryId > 0*/) {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            if (FileContonst.OPEN_ONYX_READER){
+            if (FileContonst.OPEN_ONYX_READER) {
                 if (null == mHandleOnyxReader) {
                     mHandleOnyxReader = new HandleOnyxReaderFragment();
                     Bundle args = new Bundle();
-                    args.putBoolean("MISREFERENCEBOOK", mIsReferenceBook);
+
+                    args.putBoolean(FileContonst.IS_REFERENCE_BOOK, mIsReferenceBook);
+                    args.putBoolean(FileContonst.IS_OPEN_SELF_ADAPTER, mIsOpenSelfAdapter);
+                    args.putBoolean(FileContonst.IS_OPEN_VOICE, mIsOpenVoice);
+
                     mHandleOnyxReader.setArguments(args);
 
                     if (params.size() > 0) {
@@ -193,7 +203,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
                 }
                 mFragment = mHandleOnyxReader;
 
-            }else{
+            } else {
                 if (null == mTextBookFragment) {
                     mTextBookFragment = new TextBookFragment();
                     if (params.size() > 0) {
@@ -289,7 +299,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
 
     @Override
     public void onBackPressed() {
-        LogUtils.e(tag,"onBackPressed");
+        LogUtils.e(tag, "onBackPressed");
         if (mTextBookFragment != null) {
             mTextBookFragment.leaveScribbleMode(false);
         }
@@ -308,13 +318,12 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         LogUtils.i("yuanye ..mJump==" + keyCode);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mFragment!=null){
-                if (mFragment instanceof HandleOnyxReaderFragment){
+            if (mFragment != null) {
+                if (mFragment instanceof HandleOnyxReaderFragment) {
                     mHandleOnyxReader.onBackListener();
-                }else if (mFragment instanceof NoteBookFragment){
+                } else if (mFragment instanceof NoteBookFragment) {
                     mNoteBookFragment.onBackListener();
-                }
-                else if (mFragment instanceof ExerciseBookFragment){
+                } else if (mFragment instanceof ExerciseBookFragment) {
                     mExerciseBookFragment.onBackListener();
                 }
             }
@@ -323,7 +332,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         return super.onKeyDown(keyCode, event);
     }
 
-    private void jump(){
+    private void jump() {
         LogUtils.i("yuanye ..mJump==" + mJump);
         switch (mJump) {
             case FileContonst.JUMP_TEXT_BOOK:
@@ -376,7 +385,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         mNoteBookFragment = null;
         mTextBookFragment = null;
         mHandleOnyxReader = null;
-        mExerciseBookFragment = null ;
+        mExerciseBookFragment = null;
         Runtime.getRuntime().gc();
     }
 
@@ -384,7 +393,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     protected void onPause() {
         super.onPause();
         if (isFinishing()) {
-            LogUtils.e(tag,"onPause......");
+            LogUtils.e(tag, "onPause......");
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             if (mNoteBookFragment != null) {
                 transaction.remove(mNoteBookFragment);
