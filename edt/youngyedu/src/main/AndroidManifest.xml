@@ -173,11 +173,7 @@
         <activity android:name="com.yougy.shop.activity.ShopPromotionActivity">
         </activity>
         <!--问答图书章节列表-->
-        <activity android:name="com.yougy.anwser.AnswerBookStructureActivity" >
-        </activity>
         <!--问答记录题目列表-->
-        <activity android:name="com.yougy.anwser.AnswerRecordListDetailActivity" >
-        </activity>
         <activity android:name="com.yougy.anwser.AnswerRecordListDetailNewActivity" >
         </activity>
         <activity android:name="com.yougy.anwser.AnswerBookNodeChooseActivity" >
