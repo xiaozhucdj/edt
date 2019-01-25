@@ -24,6 +24,7 @@ import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.task.activity.MaterialActivity;
 import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.task.bean.StageTaskBean;
@@ -204,7 +205,7 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//            holder.mTextView.setText(currentDatas.get(position).getStageContent().get(position).getValue());
+            holder.mTextView.setText(currentDatas.get(position).getStageContent().get(position).getValue());
             holder.itemView.setOnClickListener(v -> handlerClickItem(holder, position));
         }
 
@@ -237,8 +238,9 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
      */
     private void handlerClickItem (ViewHolder viewHolder, int position) {
         Toast.makeText(mContext, "click position = " + position, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(mContext, MaterialActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(mContext, ControlFragmentActivity.class);
+//        intent.putExtra("taskID", mTaskDetailStudentActivity.dramaId);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 

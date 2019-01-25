@@ -24,13 +24,18 @@ import java.util.ArrayList;
 
 public class SaveNoteUtils {
 
-    public static  String TASK_FILE_DIR ;
+    private String TASK_FILE_DIR ;
 
     private static Context mContext;
-    private SaveNoteUtils (){}
+    private SaveNoteUtils (){
+        TASK_FILE_DIR = FileUtils.getAppFilesDir() + "task";
+    }
+
+    public String getTaskFileDir () {
+        return TASK_FILE_DIR;
+    }
     public static SaveNoteUtils getInstance (Context context) {
         mContext = context;
-        TASK_FILE_DIR = FileUtils.getAppFilesDir() + "student/task";
         return Inner.instance;
     }
     public static class Inner {
@@ -43,7 +48,8 @@ public class SaveNoteUtils {
      * @param cacheKey
      * @param bitmapKey
      */
-    public void saveNoteViewData (NoteBookView2 noteBookView2, String fileDir, String cacheKey, String bitmapKey) {
+    public void saveNoteViewData (NoteBookView2 noteBookView2, String fileDir, String cacheKey, String bitmapKey, String taskID
+                , int stageId) {
 
         if (!NetUtils.isNetConnected()) {
             LogUtils.w("NoteView Net is not connected, saveNoteViewData return.");
@@ -60,7 +66,7 @@ public class SaveNoteUtils {
 //        DataCacheUtils.putObject(mContext, bitmapKey, pathLists);
 
         Bitmap bitmap = noteBookView2.getBitmap();
-        String path = saveBitmapToFile (bitmap ,bitmapKey, fileDir);
+        String path = saveBitmapToFile (bitmap ,bitmapKey, fileDir + "/" + taskID + "/" + stageId);
         LogUtils.d("NoteView Save Path = " + path);
         /*if (isSaveBitmap && !StringUtils.isEmpty(bitmapKey) && questionIndex < pathLists.size()) {
             if (isMultiPage) {

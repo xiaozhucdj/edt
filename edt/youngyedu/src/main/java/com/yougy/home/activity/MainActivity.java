@@ -25,6 +25,7 @@ import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
+import com.yougy.anwser.AnswerCheckActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
@@ -189,14 +190,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         long timeTolastCheck = System.currentTimeMillis() - lastCheckTimeMill;
-        LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck/1000) + "秒");
-        if (System.currentTimeMillis() - lastCheckTimeMill > 60*60*1000){
+        LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck / 1000) + "秒");
+        if (System.currentTimeMillis() - lastCheckTimeMill > 60 * 60 * 1000) {
 //        if (System.currentTimeMillis() - lastCheckTimeMill > 5*1000){
             LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间过长,启动验证是否解绑流程");
             YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
             YoungyApplicationManager.getMainThreadHandler().post(checkRunnable.setActivity(this));
-        }
-        else {
+        } else {
             LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间在可允许范围内,本次不验证是否解绑");
         }
     }
@@ -510,7 +510,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_msg:
-                changeSystemConfigIntegerValue(getApplicationContext() , "close_wifi_delay" , -1);
+                changeSystemConfigIntegerValue(getApplicationContext(), "close_wifi_delay", -1);
 //                LogUtils.e(getClass().getName(), "我的消息");
                 gotoMyMessage();
                 break;
@@ -544,6 +544,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.onyx.android.settings", "com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
+
+
+                startActivity(new Intent(this, AnswerCheckActivity.class));
                 break;
 
             case R.id.btn_deviceSize:
@@ -1055,7 +1058,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         TASK_FRAGMENT
     }
 
-//    key是 "close_wifi_delay",  永不关闭传值:-1
+    //    key是 "close_wifi_delay",  永不关闭传值:-1
     public static boolean changeSystemConfigIntegerValue(Context context, String dataKey, int value) {
         try {
             return Settings.System.putInt(context.getContentResolver(), dataKey, value);
@@ -1076,8 +1079,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
 //        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
-
-
 
 
         if (!isStScreensaver) {
@@ -1329,8 +1330,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //=================================升级相关代码 结束=============================================================
 
-    private static class CheckRunnable implements Runnable{
+    private static class CheckRunnable implements Runnable {
         MainActivity activity;
+
         public CheckRunnable setActivity(MainActivity activity) {
             this.activity = activity;
             return this;
@@ -1349,7 +1351,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 NetWorkManager.getInstance(true).login(loginReq)
                         .subscribe(students -> {
                             LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:没有被解绑,走正常流程");
-                            if (!activity.initializationNeedNetFinished){
+                            if (!activity.initializationNeedNetFinished) {
                                 downloadDb();
                                 getUnreadMsg();
                                 activity.initializationNeedNetFinished = true;
@@ -1378,11 +1380,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                             DeviceScreensaverUtils.setScreensaver();
                                         }
                                     });
-                                    activity.startActivity(new Intent(activity , LoginActivity.class));
+                                    activity.startActivity(new Intent(activity, LoginActivity.class));
                                     activity.finish();
                                 } else {
                                     LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:未知,查询是否解绑接口调不通,尝试进行初始化,是否解绑延期至下次进入主界面时做");
-                                    if (!activity.initializationNeedNetFinished){
+                                    if (!activity.initializationNeedNetFinished) {
                                         downloadDb();
                                         getUnreadMsg();
                                         activity.initializationNeedNetFinished = true;
@@ -1393,13 +1395,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
 
-        public void downloadDb(){
+        public void downloadDb() {
             File file = new File(activity.getDatabasePath(SpUtils.getUserId() + ".db").getAbsolutePath());
             if (!file.exists()) {
                 activity.startService(new Intent(activity, DownloadService.class));
             }
         }
-        public void getUnreadMsg(){
+
+        public void getUnreadMsg() {
             YXClient.getInstance().checkIfNotLoginThenDoIt(activity, new RequestCallback() {
                 @Override
                 public void onSuccess(Object param) {
@@ -1432,7 +1435,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 @Override
                 public void onFailed(int code) {
-                    ToastUtil.showCustomToast(activity , "连接消息服务器失败!");
+                    ToastUtil.showCustomToast(activity, "连接消息服务器失败!");
                 }
 
                 @Override

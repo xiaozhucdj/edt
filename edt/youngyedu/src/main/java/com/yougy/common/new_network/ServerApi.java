@@ -40,11 +40,9 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
-import com.yougy.task.bean.OOSReplyBean;
-import com.yougy.task.bean.SubmitReplyBean;
-import com.yougy.task.bean.SubmitTaskBean;
-import com.yougy.task.bean.Task;
 import com.yougy.task.bean.StageTaskBean;
+import com.yougy.task.bean.SubmitReplyBean;
+import com.yougy.task.bean.Task;
 
 import java.util.List;
 
@@ -217,6 +215,14 @@ public interface ServerApi {
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
             , @Field("userId") Integer userId, @Field("replyId") String replyId);
 
+
+    /**
+     * 学生查询待批改的问答
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryQuestions2BeMarked"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> queryQuestions2BeMarked(@Field("userId") String userId);
 
     /**
      * 查询某次考试总分情况
@@ -609,7 +615,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"insertScene"})
-    Observable<BaseResult<SubmitReplyBean>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
+    Observable<BaseResult<List<SubmitReplyBean>>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
 
     /**
      * 统计作业本中作业和问答的数量并且按章节统计返回

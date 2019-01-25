@@ -236,7 +236,6 @@ public class RxResultHelper {
         };
     }
 
-
     public static Observable.Transformer<List<QuestionReplyDetail> , List<QuestionReplyDetail>> parseReplyDetail(){
         return new Observable.Transformer<List<QuestionReplyDetail>, List<QuestionReplyDetail>>() {
             @Override
