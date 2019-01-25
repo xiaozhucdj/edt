@@ -1,6 +1,7 @@
 package com.yougy.homework;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -148,6 +149,8 @@ public class CheckHomeWorkActivity extends BaseActivity {
     TextView showCommentBtn;
     @BindView(R.id.comment_tv)
     TextView commentTv;
+    @BindView(R.id.start_practice_btn)
+    TextView startPracticeBtn;
     @BindView(R.id.comment_dialog)
     RelativeLayout commentDialog;
     @BindView(R.id.ll_control_bottom)
@@ -647,6 +650,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
         currentShowReplyPageIndex = 0;
         currentShowAnalysisPageIndex = 0;
 
+        startPracticeBtn.setVisibility(View.GONE);
         Integer itemWeight = questionReplyDetail.getReplyItemWeight();
         //不是记分题
         if (itemWeight == null) {
@@ -659,6 +663,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     break;
                 case 0://判错
+                    if (isCheckOver) {
+                        startPracticeBtn.setVisibility(View.VISIBLE);
+                    }
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_cuowu);
@@ -678,6 +685,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     break;
                 case 50://判半对
+                    if (isCheckOver) {
+                        startPracticeBtn.setVisibility(View.VISIBLE);
+                    }
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_bandui);
@@ -725,6 +735,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
             } else if (replyScore == 0) {
                 //错误
+                if (isCheckOver) {
+                    startPracticeBtn.setVisibility(View.VISIBLE);
+                }
                 llHomeWorkCheckOption.setVisibility(View.GONE);
                 llCheckAgain.setVisibility(View.VISIBLE);
                 ivCheckResult.setImageResource(R.drawable.img_cuowu);
@@ -762,6 +775,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     }
                 } else {
                     //半对
+                    if (isCheckOver) {
+                        startPracticeBtn.setVisibility(View.VISIBLE);
+                    }
                     llHomeWorkCheckOption.setVisibility(View.GONE);
                     llCheckAgain.setVisibility(View.VISIBLE);
                     ivCheckResult.setImageResource(R.drawable.img_bandui);
@@ -954,7 +970,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     @OnClick({R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_homework_error, R.id.tv_homework_half_right, R.id.tv_homework_right,
             R.id.question_body_btn, R.id.analysis_btn, R.id.img_btn_right, R.id.iv_check_change, R.id.image_refresh, R.id.close_btn, R.id.show_comment_btn, R.id.tv_comment_cancle,
             R.id.tv_score_0, R.id.tv_score_1, R.id.tv_score_2, R.id.tv_score_3, R.id.tv_score_4, R.id.tv_score_5, R.id.tv_score_6,
-            R.id.tv_score_7, R.id.tv_score_8, R.id.tv_score_9, R.id.tv_score_clear, R.id.tv_score_confirm})
+            R.id.tv_score_7, R.id.tv_score_8, R.id.tv_score_9, R.id.tv_score_clear, R.id.tv_score_confirm, R.id.start_practice_btn})
     public void onClick(View view) {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
@@ -1187,6 +1203,21 @@ public class CheckHomeWorkActivity extends BaseActivity {
                 break;
             case R.id.tv_comment_cancle:
                 commentDialog.setVisibility(View.GONE);
+                break;
+            case R.id.start_practice_btn:
+
+                Intent intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
+                intent.putExtra("HOMEWORKID", getIntent().getIntExtra("HOMEWORKID", -1));
+                intent.putExtra("BOOKTITLE", questionReplyDetail.getHomeworkExcerpt().getCursorName());
+
+                intent.putExtra("PARSEDQUESTIONITEM", questionReplyDetail.getParsedQuestionItem());
+                intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
+                intent.putExtra("REPLYID", questionReplyDetail.getReplyId());
+
+                intent.putExtra("REPLYITEMWEIGHT", questionReplyDetail.getReplyItemWeight());
+                intent.putExtra("REPLYSCORE", questionReplyDetail.getReplyScore());
+
+                startActivity(intent);
                 break;
         }
     }
