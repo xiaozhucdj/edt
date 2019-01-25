@@ -190,9 +190,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         showOrHideCaoGaoLayout(false, false);
 
         if (isCommited()) return; //未提交，保存
-        String[] cacheBitmapKey = getCacheBitmapKey(currentSelectPosition, currentPage);
-        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.TASK_FILE_DIR,
-                cacheBitmapKey[0], cacheBitmapKey[1]);
+        saveCurrentPractice();
         leaveScribbleMode(false, true);
     }
 
@@ -202,17 +200,17 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         LogUtils.d("TaskTest handlerRequestSuccess...");
         showDataEmpty(View.GONE);
         practiceTotalCount = mStageTaskBeans.size();
-        if (practiceTotalCount > 0 ) {
-            List<StageTaskBean.StageContent> stageContents = new ArrayList<>();
-//            stageContents.add(new StageTaskBean.StageContent("http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/2bef61b7-6bae-443d-ac00-890713ecb723/abc.pdf", 1000, "PDF", null,
-//                        "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/2bef61b7-6bae-443d-ac00-890713ecb723/abc.pdf", null, 0.1f));
-            stageContents.add(new StageTaskBean.StageContent("http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", 1000, "PDF", null,
-                        "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", null, 0.1f));
-            StageTaskBean stageTaskBean = new StageTaskBean(0, null, 0, 0,
-                    0, stageContents, null, null, null);
-            mStageTaskBeans.add(stageTaskBean);
-            practiceTotalCount ++;
-        }
+//        if (practiceTotalCount > 0 ) {
+//            List<StageTaskBean.StageContent> stageContents = new ArrayList<>();
+////            stageContents.add(new StageTaskBean.StageContent("http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/2bef61b7-6bae-443d-ac00-890713ecb723/abc.pdf", 1000, "PDF", null,
+////                        "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/2bef61b7-6bae-443d-ac00-890713ecb723/abc.pdf", null, 0.1f));
+//            stageContents.add(new StageTaskBean.StageContent("http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", 1000, "PDF", null,
+//                        "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", null, 0.1f));
+//            StageTaskBean stageTaskBean = new StageTaskBean(0, null, 0, 0,
+//                    0, stageContents, null, null, null);
+//            mStageTaskBeans.add(stageTaskBean);
+//            practiceTotalCount ++;
+//        }
         change(currentSelectPosition);
         if (!isCommited()) UIUtils.postDelayed(() -> PracticeBaseFragment.this.leaveScribbleMode(true, false), 500);
     }
@@ -339,12 +337,13 @@ public class PracticeBaseFragment extends TaskBaseFragment {
      */
     private void clickPageIndex () {
         String[] cacheBitmapKey = getCacheBitmapKey(prevSavePosition, prevPage);
-        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.TASK_FILE_DIR, cacheBitmapKey[0], cacheBitmapKey[1]);
+        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
+                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.dramaId),mStageTaskBeans.get(prevSavePosition).getStageId());
         LogUtils.d("TaskLog cacheKey " + cacheBitmapKey[0] + "\n bitmapKey = " + cacheBitmapKey[1]);
         leaveScribbleMode(false, true);
         showPracticeOrAddPage (currentPage);
         cacheBitmapKey = getCacheBitmapKey(prevSavePosition, currentPage);
-        SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookView2, cacheBitmapKey[0], cacheBitmapKey[1], SaveNoteUtils.TASK_FILE_DIR);
+        SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookView2, cacheBitmapKey[0], cacheBitmapKey[1], SaveNoteUtils.getInstance(mContext).getTaskFileDir());
         leaveScribbleMode(true, false);
         prevPage = currentPage;
     }
@@ -407,7 +406,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
                 mTaskPageAdapter.notifyDataSetChanged();
 
                 String[] cacheBitmapKey = getCacheBitmapKey(currentSelectPosition, currentPage);
-                SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookView2,cacheBitmapKey[0], cacheBitmapKey[1], SaveNoteUtils.TASK_FILE_DIR);
+                SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookView2,cacheBitmapKey[0], cacheBitmapKey[1], SaveNoteUtils.getInstance(mContext).getTaskFileDir());
 
                 prevSavePosition = currentSelectPosition;
                 prevPage = currentPage;
@@ -643,11 +642,18 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     private void setCurrentPracticeInfo() {
         if (!isCommited() && prevSavePosition != currentSelectPosition) {
             String[] cacheBitmapKey = getCacheBitmapKey(prevSavePosition, prevPage);
-            SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.TASK_FILE_DIR, cacheBitmapKey[0],cacheBitmapKey[1]);
+            SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
+                    cacheBitmapKey[0],cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.dramaId), mStageTaskBeans.get(prevSavePosition).getStageId());
         }
         loadPracticeQuestion ();
     }
 
+
+    public void saveCurrentPractice () {
+        String[] cacheBitmapKey = getCacheBitmapKey(currentSelectPosition, currentPage);
+        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
+                cacheBitmapKey[0],cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.dramaId), mStageTaskBeans.get(currentSelectPosition).getStageId());
+    }
 
     private void loadPracticeQuestion () {
         LogUtils.d("isHandPaintedPattern = " + TaskDetailStudentActivity.isHandPaintedPattern);
@@ -780,8 +786,9 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     private String[] getCacheBitmapKey (int position, int page) {
         if(checkCurrentPosition(position, mStageTaskBeans)){
             int currentId = mStageTaskBeans.get(position).getStageId();
-            String cacheKey = currentId + CACHE_KEY + position + "_" + page;
-            String bitmapKey = currentId + BITMAP_KEY + position + "_" + page;
+            int taskId = mStageTaskBeans.get(position).getStageAttach();
+            String cacheKey = taskId + "_" + currentId + CACHE_KEY + position + "_" + page;
+            String bitmapKey = taskId + "_" + currentId + BITMAP_KEY + position + "_" + page;
             return new String[]{cacheKey, bitmapKey};
         }
         LogUtils.w("TaskTest cacheKey is Null, position IndexOfArray Exception.");
