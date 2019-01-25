@@ -118,13 +118,14 @@ public class TaskListActivity extends BaseActivity {
                         } else {
                             tasks.addAll(unCompleteTasks);
                         }
-                        int start = currentPage * MAX_PAGE_COUNT;
-                        int end = start + MAX_PAGE_COUNT;
-                        if (end > tasks.size() - 1) {
-                            end = tasks.size();
+                        if (tasks.size()>0) {
+                            int start = currentPage * MAX_PAGE_COUNT;
+                            int end = start + MAX_PAGE_COUNT;
+                            if (end > tasks.size() - 1) {
+                                end = tasks.size();
+                            }
+                            currentTasks.addAll(tasks.subList(start, end));
                         }
-                        currentTasks.addAll(tasks.subList(start, end));
-                        LogUtils.e(tag, "task list's size is : " + taskList.size() + ", current tasks'size is : " + currentTasks.size() + ",tasks'size is : " + tasks.size() + ",umcompletetasks'size is : " + unCompleteTasks.size());
                         adapter.notifyDataSetChanged();
                         binding.pageBarTask.refreshPageBar();
                     }
@@ -146,12 +147,14 @@ public class TaskListActivity extends BaseActivity {
             } else {
                 tasks.addAll(unCompleteTasks);
             }
-            int start = index * MAX_PAGE_COUNT;
-            int end = start + MAX_PAGE_COUNT;
-            if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-                end = tasks.size();
+            if (tasks.size()>0) {
+                int start = index * MAX_PAGE_COUNT;
+                int end = start + MAX_PAGE_COUNT;
+                if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
+                    end = tasks.size();
+                }
+                currentTasks.addAll(tasks.subList(start, end));
             }
-            currentTasks.addAll(tasks.subList(start, end));
             adapter.notifyDataSetChanged();
         }
     }
