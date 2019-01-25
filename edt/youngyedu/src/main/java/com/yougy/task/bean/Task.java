@@ -22,7 +22,6 @@ public class Task implements Serializable {
     private String contentStatus;
     private String contentCourseLinkName;
     private String sceneStatusCode;
-    private boolean isComplete;
     @SerializedName("SR03")
     private int exerciseCount;
     @SerializedName("SR02")
@@ -49,10 +48,6 @@ public class Task implements Serializable {
 
     public boolean isComplete() {
         return sceneStatusCode.equals("SV02");
-    }
-
-    public void setComplete(boolean complete) {
-        isComplete = complete;
     }
 
     public String getPerformStartTime() {
@@ -204,7 +199,8 @@ public class Task implements Serializable {
                 ", performEndTime='" + performEndTime + '\'' +
                 ", contentStatus='" + contentStatus + '\'' +
                 ", contentCourseLinkName='" + contentCourseLinkName + '\'' +
-                ", isComplete=" + isComplete +
+                ", sceneStatusCode='" + sceneStatusCode + '\'' +
+                ", isComplete=" + isComplete() +
                 ", exerciseCount=" + exerciseCount +
                 ", dataCount=" + dataCount +
                 ", signCount=" + signCount +

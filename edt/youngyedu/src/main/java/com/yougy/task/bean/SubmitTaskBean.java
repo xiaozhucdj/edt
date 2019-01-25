@@ -1,8 +1,12 @@
 package com.yougy.task.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.yougy.anwser.STSResultbean;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
 * [
@@ -27,51 +31,133 @@ import java.util.ArrayList;
 
 
 * */
-public class SubmitTaskBean {
-    private int performId;
-    private int stageId;
-    private ArrayList<STSResultbean> picContent;
-    private String sceneCreateTime;
-    private String[] textContent;
+public class SubmitTaskBean implements Parcelable {
 
-    public ArrayList<STSResultbean> getPicContent() {
-        return picContent;
+    private ArrayList<SubmitTask> mSubmitTasks;
+
+    public ArrayList<SubmitTask> getSubmitTasks() {
+        return mSubmitTasks;
     }
 
-    public void setPicContent(ArrayList<STSResultbean> picContent) {
-        this.picContent = picContent;
+    public void setSubmitTasks(ArrayList<SubmitTask> submitTasks) {
+        mSubmitTasks = submitTasks;
+    }
+
+    public static class SubmitTask implements Parcelable {
+        private int performId;
+        private int stageId;
+        private ArrayList<STSResultbean> picContent;
+        private String sceneCreateTime;
+        private String[] textContent = new String[0];
+
+        public ArrayList<STSResultbean> getPicContent() {
+            return picContent;
+        }
+
+        public void setPicContent(ArrayList<STSResultbean> picContent) {
+            this.picContent = picContent;
+        }
+
+
+        public int getPerformId() {
+            return performId;
+        }
+
+        public void setPerformId(int performId) {
+            this.performId = performId;
+        }
+
+        public int getStageId() {
+            return stageId;
+        }
+
+        public void setStageId(int stageId) {
+            this.stageId = stageId;
+        }
+
+        public String getSceneCreateTime() {
+            return sceneCreateTime;
+        }
+
+        public void setSceneCreateTime(String sceneCreateTime) {
+            this.sceneCreateTime = sceneCreateTime;
+        }
+
+        public String[] getTextContent() {
+            return textContent;
+        }
+
+        public void setTextContent(String[] textContent) {
+            this.textContent = textContent;
+        }
+
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.performId);
+            dest.writeInt(this.stageId);
+            dest.writeList(this.picContent);
+            dest.writeString(this.sceneCreateTime);
+            dest.writeStringArray(this.textContent);
+        }
+
+        public SubmitTask() {
+        }
+
+        protected SubmitTask(Parcel in) {
+            this.performId = in.readInt();
+            this.stageId = in.readInt();
+            this.picContent = new ArrayList<STSResultbean>();
+            in.readList(this.picContent, STSResultbean.class.getClassLoader());
+            this.sceneCreateTime = in.readString();
+            this.textContent = in.createStringArray();
+        }
+
+        public static final Creator<SubmitTask> CREATOR = new Creator<SubmitTask>() {
+            @Override
+            public SubmitTask createFromParcel(Parcel source) {
+                return new SubmitTask(source);
+            }
+
+            @Override
+            public SubmitTask[] newArray(int size) {
+                return new SubmitTask[size];
+            }
+        };
     }
 
 
-    public int getPerformId() {
-        return performId;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setPerformId(int performId) {
-        this.performId = performId;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(this.mSubmitTasks);
     }
 
-    public int getStageId() {
-        return stageId;
+    public SubmitTaskBean() {
     }
 
-    public void setStageId(int stageId) {
-        this.stageId = stageId;
+    protected SubmitTaskBean(Parcel in) {
+        this.mSubmitTasks = in.createTypedArrayList(SubmitTask.CREATOR);
     }
 
-    public String getSceneCreateTime() {
-        return sceneCreateTime;
-    }
+    public static final Creator<SubmitTaskBean> CREATOR = new Creator<SubmitTaskBean>() {
+        @Override
+        public SubmitTaskBean createFromParcel(Parcel source) {
+            return new SubmitTaskBean(source);
+        }
 
-    public void setSceneCreateTime(String sceneCreateTime) {
-        this.sceneCreateTime = sceneCreateTime;
-    }
-
-    public String[] getTextContent() {
-        return textContent;
-    }
-
-    public void setTextContent(String[] textContent) {
-        this.textContent = textContent;
-    }
+        @Override
+        public SubmitTaskBean[] newArray(int size) {
+            return new SubmitTaskBean[size];
+        }
+    };
 }

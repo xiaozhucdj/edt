@@ -60,6 +60,8 @@ public class MaterialActivity extends BaseActivity {
     public static final String PAGE_TYPE_KEY = "MaterialDesc";
     private boolean isMultiPage = false;
 
+    private int taskID ;
+
     @Override
     protected void setContentView() {
         View view = LayoutInflater.from(this).inflate(R.layout.activity_materials_desc, null);
@@ -70,6 +72,8 @@ public class MaterialActivity extends BaseActivity {
     public void init() {
 //        testUrl.add(new Content_new(Content_new.Type.PDF, 1, "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", null));
 //        testUrl.add(new Content_new(Content_new.Type.IMG_URL, 1, "http://la.lovewanwan.top/1.png", null));
+
+        taskID = getIntent().getIntExtra("taskID", 0);
 
         StageTaskBean.StageContent stageContent = new StageTaskBean.StageContent("http://la.lovewanwan.top/1.png", 1000, "IMG", null, null, null, 01.f);
         testUrl.add(stageContent);
@@ -106,8 +110,8 @@ public class MaterialActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         LogUtils.d("NoteView onOnPause.");
-        SaveNoteUtils.getInstance(this).saveNoteViewData(mNoteBookView2,SaveNoteUtils.TASK_FILE_DIR,mMaterialId + CACHE_KEY + mPageIndex
-            , mMaterialId + BITMAP_KEY + mPageIndex);
+        SaveNoteUtils.getInstance(this).saveNoteViewData(mNoteBookView2,SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),mMaterialId + CACHE_KEY + mPageIndex
+            , mMaterialId + BITMAP_KEY + mPageIndex, String.valueOf(taskID), mMaterialId);
     }
 
     @Override
@@ -156,8 +160,8 @@ public class MaterialActivity extends BaseActivity {
                 LogUtils.d("NoteView page Index = " + btnIndex + "   mPageIndex = " + mPageIndex);
                 mNoteBookView2.leaveScribbleMode();
                 if (btnIndex != mPageIndex)
-                    SaveNoteUtils.getInstance(MaterialActivity.this).saveNoteViewData(mNoteBookView2, SaveNoteUtils.TASK_FILE_DIR,mMaterialId + CACHE_KEY + mPageIndex
-                            , mMaterialId + BITMAP_KEY + mPageIndex);
+                    SaveNoteUtils.getInstance(MaterialActivity.this).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),mMaterialId + CACHE_KEY + mPageIndex
+                            , mMaterialId + BITMAP_KEY + mPageIndex, String.valueOf(taskID), mMaterialId);
                 mPageIndex = btnIndex;
                 mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, true, mStatusChangeListener);
                 mNoteBookView2.clearAll();
@@ -186,7 +190,7 @@ public class MaterialActivity extends BaseActivity {
                 mMaterialPageBar.refreshPageBar();
                 if (mNoteBookView2.getVisibility() ==View.GONE) {}
                 SaveNoteUtils.getInstance(MaterialActivity.this).resetNoteView(mNoteBookView2, mMaterialId + CACHE_KEY + mPageIndex,
-                        mMaterialId + BITMAP_KEY + mPageIndex, SaveNoteUtils.TASK_FILE_DIR);
+                        mMaterialId + BITMAP_KEY + mPageIndex, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir());
                 break;
 
         }

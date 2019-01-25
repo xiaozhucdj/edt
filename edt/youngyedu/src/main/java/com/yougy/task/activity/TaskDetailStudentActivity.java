@@ -36,11 +36,14 @@ import com.yougy.common.manager.DialogManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.homework.WriteHomeWorkActivity;
+import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.task.bean.OOSReplyBean;
 import com.yougy.task.bean.StageTaskBean;
 import com.yougy.task.bean.SubmitReplyBean;
@@ -52,6 +55,7 @@ import com.yougy.task.fragment.SignatureFragment;
 import com.yougy.task.fragment.TaskContentBaseFragment;
 import com.yougy.task.fragment.TaskBaseFragment;
 import com.yougy.ui.activity.R;
+import com.yougy.view.dialog.LoadingProgressDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -96,7 +100,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     @BindView(R.id.frame_signature)
     FrameLayout mFrameSignature;
 
-    private int dramaId = 160;
+    public int dramaId = 160;
 
     public static boolean isIntercept = false;//是否可写状态
     public static boolean isHandPaintedPattern = false;//是否手绘模式
@@ -106,7 +110,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public static final String EVENT_TYPE_LOAD_DATA_FAIL = "event_type_load_data_fail";
     public static final String EVENT_TYPE_COMMIT_STATE = "event_type_commit_state";
 
-    private Task mTask;
 
     private String currentTitleStr = "任务详情";
     /*是否家长签字任务*/
@@ -131,9 +134,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     private Unbinder mUnbinder;
     private boolean isNetConnected = true;
-
-    private int mPracticeCount = 7; //从外面传入
-    private int mTaskId;
 
     private List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
 
@@ -163,9 +163,12 @@ public class TaskDetailStudentActivity extends BaseActivity {
     @Override
     public void init() {
 //        mTask = (Task) getIntent().getSerializableExtra("taskBean");
-//        currentTitleStr = mTask.getContentTitle();
-//        dramaId = mTask.getContentDrama();
+        currentTitleStr = getIntent().getStringExtra(TaskRemindAttachment.KEY_TASK_NAME);
+        dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID, 0);
         mTopTitle.setText(currentTitleStr);
+        // SV01 进行中   SV02 已完成   SV03 已检查
+        isHadCommit = getIntent().getStringExtra("SceneStatusCode").equals("SV02");
+        isSignatureTask = getIntent().getBooleanExtra("isSign", false);
         initContentFragment();
     }
 
@@ -202,11 +205,14 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public void loadData() {
         Log.i(TaskBaseFragment.TAG, "loadData: activity : "  + currentTab);
         NetWorkManager.queryStageTask(String.valueOf(dramaId), getStageTypeCode())
-                .subscribe(stageTaskBeans -> {
-                            mStageTaskBeans.clear();
-                            mStageTaskBeans.addAll(stageTaskBeans);
-                            EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA));
-                        },
+                .subscribe(new Action1<List<StageTaskBean>>() {
+                               @Override
+                               public void call(List<StageTaskBean> stageTaskBeans) {
+                                   mStageTaskBeans.clear();
+                                   mStageTaskBeans.addAll(stageTaskBeans);
+                                   EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA));
+                               }
+                           },
                         throwable -> {
                             mStageTaskBeans.clear();
                             if (throwable!=null) {
@@ -348,6 +354,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
                     @Override
                     public void confirm() {
+                        if (currentTab.equals(TAB_PRACTICE)) {
+                            mPracticeFragment.saveCurrentPractice();
+                        }
                         oosUpload();
                     }
 
@@ -362,17 +371,23 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     private void oosUpload () {
         NetWorkManager.uploadTaskPracticeOOS(SpUtils.getUserId())
-                .subscribe(stSbean -> {
-                    if (stSbean == null) {
-                        ToastUtil.showCustomToast(getApplicationContext(), "获取上传信息失败");
-                    } else {
-                        uploadPic(stSbean);
+                .subscribe(new Action1<STSbean>() {
+                    @Override
+                    public void call(STSbean stSbean) {
+                        if (stSbean == null) {
+                            ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getApplicationContext(), "获取上传信息失败");
+                        } else {
+                            LogUtils.d("TaskTest upload oos success.");
+                            TaskDetailStudentActivity.this.uploadPic(stSbean);
+                        }
                     }
                 }, throwable -> LogUtils.e("TaskTest 获取上传信息失败!"));
     }
 
     private void uploadPic (STSbean stSbean) {
         String endpoint = Commons.ENDPOINT;
+
+        LogUtils.d("TaskTest uploadPic  :" + stSbean.getAccessKeyId() );
 
         OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {
             @Override
@@ -389,58 +404,128 @@ public class TaskDetailStudentActivity extends BaseActivity {
         OSSLog.enableLog();
         OSS oss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, credentialProvider, conf);
 
+        LogUtils.d("TaskTest submit server.");
+
         SubmitTaskBean submitTaskBean = new SubmitTaskBean();
         Observable.create(subscriber -> {
-            File file = new File(SaveNoteUtils.TASK_FILE_DIR);
+            File file = new File(SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir() + "/" + dramaId);
             File[] files = file.listFiles();
-            List<File> files1 = Arrays.asList(files);
-            LogUtils.d("TaskTest mPracticeCount : " + mPracticeCount + "  size = " + files1.size());
-            ArrayList<STSResultbean> picContent = new ArrayList<>();
-            for (File file1 : files1) {
-                String picPath = file1.getAbsolutePath();
-                if (!picPath.contains(mTaskId + "")) {
-                    continue;
+            List<File> fileLists = Arrays.asList(files);
+            LogUtils.d("TaskTest path :" + file.getAbsolutePath() + "  size = " + fileLists.size() + "files length = " + files.length);
+            ArrayList<SubmitTaskBean.SubmitTask> submitTasks = new ArrayList<>();
+            for (int i = 0; i < fileLists.size(); i++) {
+                File f1 = fileLists.get(i);
+                File[] files1 = f1.listFiles();
+                List<File> files2 = Arrays.asList(files1);
+
+                ArrayList<STSResultbean> picContent = new ArrayList<>();
+                for (File file1 : files2) {
+                    String picPath = file1.getAbsolutePath();
+                    String picName = picPath.substring(picPath.lastIndexOf("/"));
+                    LogUtils.d("TaskTest picName = " + picName);
+                    PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                    try {
+                        oss.putObject(put);
+                        STSResultbean stsResultbean = new STSResultbean();
+                        stsResultbean.setBucket(stSbean.getBucketName());
+                        stsResultbean.setRemote(stSbean.getPath() + picName);
+                        stsResultbean.setSize(file1.length());
+                        picContent.add(stsResultbean);
+                        //上传后清理掉本地图片文件
+                        file1.delete();
+                    } catch (ClientException e) {
+                        e.printStackTrace();
+                        Log.e("TaskTest UPLOAD OOS", "call: error message:  " + e.getMessage());
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                        Log.e("TaskTest UPLOAD OOS", "call: error Code:  " + e.getErrorCode() + " message:" + e.getRawMessage());
+                    }
                 }
-                String picName = picPath.substring(picPath.lastIndexOf("/"));
-                LogUtils.d("TaskTest picName = " + picName);
-                PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
-                try {
-                    oss.putObject(put);
-                    STSResultbean stsResultbean = new STSResultbean();
-                    stsResultbean.setBucket(stSbean.getBucketName());
-                    stsResultbean.setRemote(stSbean.getPath() + picName);
-                    stsResultbean.setSize(file1.length());
-                    picContent.add(stsResultbean);
-                    //上传后清理掉本地图片文件
-                    file1.delete();
-                } catch (ClientException e) {
-                    e.printStackTrace();
-                    Log.e("TaskTest UPLOAD OOS", "call: error message:  " + e.getMessage());
-                } catch (ServiceException e) {
-                    e.printStackTrace();
-                    Log.e("TaskTest UPLOAD OOS", "call: error Code:  " + e.getErrorCode() + " message:" + e.getRawMessage());
+                int size = picContent.size();
+                LogUtils.d("TaskTest picContent " + size);
+                for (int j = 0; j < size; j ++ ) {
+                    SubmitTaskBean.SubmitTask submitTask = new SubmitTaskBean.SubmitTask();
+                    submitTask.setPicContent(picContent);
+                    String remote = picContent.get(0).getRemote();
+                    LogUtils.d("TaskTest remote :" + remote);//138201/1000002607/2019/569_4274_task_practice_bitmap_0_0.png
+                    String[] strings = remote.split("_");
+                    if (strings.length > 1) {
+                        int stageId = Integer.parseInt(strings[1]);
+                        LogUtils.d(  "stageId = " + stageId);
+                        submitTask.setPerformId(dramaId);
+                        submitTask.setStageId(stageId);
+                        submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
+                        submitTasks.add(submitTask);
+                    } else {
+                        LogUtils.e("TaskTest remote :" + remote);
+                    }
                 }
             }
-            submitTaskBean.setPicContent(picContent);
+            submitTaskBean.setSubmitTasks(submitTasks);
+            subscriber.onNext(new Object());//将执行结果返回
+            subscriber.onCompleted();//结束异步任务
+
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> TaskDetailStudentActivity.this.submitToServer(submitTaskBean),
-                        throwable -> LogUtils.e("TaskTest oos error msg : " + throwable.getMessage()));
+                .subscribe(new Subscriber<Object>() {
+                    LoadingProgressDialog loadingProgressDialog;
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        if (loadingProgressDialog == null) {
+                            loadingProgressDialog = new LoadingProgressDialog(TaskDetailStudentActivity.this);
+                            loadingProgressDialog.show();
+                            loadingProgressDialog.setTitle("任务提交中...");
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                       LogUtils.d("TaskTest submitToServer.");
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                       TaskDetailStudentActivity.this.submitToServer(submitTaskBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("OOS", "onError: oos upload fail. " + e.getMessage());
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        if (loadingProgressDialog != null) {
+                            loadingProgressDialog.dismiss();
+                            loadingProgressDialog = null;
+                        }
+                    }
+               });
 
     }
 
     private void submitToServer (SubmitTaskBean submitTaskBean) {
-        String toJson = new Gson().toJson(submitTaskBean);
+        String toJson = new Gson().toJson(submitTaskBean.getSubmitTasks());
         LogUtils.d("TaskTest  json : " + toJson);
         NetWorkManager.submitTaskPracticeServer(SpUtils.getUserId(),toJson)
-                .subscribe(submitReplyBean -> {
+                .subscribe(submitReplyBeans -> {
+                    LogUtils.d(" size = " + submitReplyBeans.size());
+                    File file = new File(SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir()
+                            + "/" + dramaId);
+                    boolean delete = file.delete();
+                    LogUtils.d("task upload success, file delete." + delete);
                     isHadCommit = true;
-                    ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
+                    ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
                     if (isSignatureTask) {
                         mTextFinish.setText(R.string.parent_sign);
                         EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
                     } else {
-                        finish();
+                        TaskDetailStudentActivity.this.finish();
                     }
                 }, throwable -> {
                     if (throwable instanceof ApiException) {
@@ -488,6 +573,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public void signatureSubmit () {
         LogUtils.d("signatureSubmit");
         //提交 家长签字
+        oosUpload();
         signatureCancel();
         finish();
     }

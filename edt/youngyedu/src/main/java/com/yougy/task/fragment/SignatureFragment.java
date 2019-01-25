@@ -3,28 +3,35 @@ package com.yougy.task.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.task.activity.SaveNoteUtils;
+import com.yougy.task.bean.StageTaskBean;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView2;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.functions.Action1;
 
 public class SignatureFragment extends TaskBaseFragment {
 
     @BindView(R.id.signature_noteView)
     NoteBookView2 mNoteBookViewSignature;
 
-    public static final String CACHE_SIGNATURE_KEY = "signature_stu_";
+
+    private int stageId;
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,11 +46,22 @@ public class SignatureFragment extends TaskBaseFragment {
 
     }
 
+    @Override
+    public void loadData() {
+        super.loadData();
+        NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04").subscribe(stageTaskBeans -> {
+            Log.i(TAG, "call: " + stageTaskBeans.size());
+            if (stageTaskBeans.size() > 0) {
+                stageId = stageTaskBeans.get(0).getStageId();
+            }
+        }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
+    }
 
     @OnClick({R.id.btn_submit, R.id.btn_cancel})
     public void onClick (View view){
         switch (view.getId()) {
             case R.id.btn_submit:
+                saveSignatureBitmap();
                 mTaskDetailStudentActivity.signatureSubmit();
                 break;
             case R.id.btn_cancel:
@@ -70,20 +88,17 @@ public class SignatureFragment extends TaskBaseFragment {
         mNoteBookViewSignature.leaveScribbleMode();
     }
 
-    /**
-     * 提交签名  Server   //todo  提交成功 finish   提交失败  提示，暂存。重试.
-     */
-    private void submitSignature () {
 
-    }
-
+    public static final String CACHE_KEY = "_task_sign_cache_";
+    public static final String BITMAP_KEY = "_task_sign_bmp_";
     /**
      * 保存签字bitmap
      */
     private void saveSignatureBitmap () {
-        ArrayList<String> pathLists = new ArrayList<>();
-        pathLists.add(null);
-        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature, SaveNoteUtils.TASK_FILE_DIR,
-                CACHE_SIGNATURE_KEY + SpUtils.getUserId(), CACHE_SIGNATURE_KEY + + SpUtils.getUserId());
+        String cacheKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + CACHE_KEY ;
+        String bitmapKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + BITMAP_KEY ;
+        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature,
+                SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
+                cacheKey, bitmapKey , String.valueOf(mTaskDetailStudentActivity.dramaId), stageId);
     }
 }

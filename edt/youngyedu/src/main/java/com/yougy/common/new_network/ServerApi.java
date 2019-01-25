@@ -605,17 +605,17 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryStage"})
-    Observable<BaseResult<List<StageTaskBean>>> queryStageTask(@Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode);
+    Observable<BaseResult<List<StageTaskBean>>> queryStageTask (@Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode);
 
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postSceneRequest"})
-    Observable<BaseResult<STSbean>> uploadTaskPracticeOOS(@Field("userId") Integer userId);
+    Observable<BaseResult<STSbean>> uploadTaskPracticeOOS (@Field("userId") Integer userId);
 
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"insertScene"})
-    Observable<BaseResult<SubmitReplyBean>> submitTaskPracticeServer(@Field("userId") Integer userId, @Field("data") String data);
+    Observable<BaseResult<List<SubmitReplyBean>>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
 
     /**
      * 统计作业本中作业和问答的数量并且按章节统计返回

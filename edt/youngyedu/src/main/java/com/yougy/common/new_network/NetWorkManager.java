@@ -705,7 +705,7 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<SubmitReplyBean> submitTaskPracticeServer (Integer userId, String data) {
+    public static Observable<List<SubmitReplyBean>> submitTaskPracticeServer (Integer userId, String data) {
         return getInstance().getServerApi().submitTaskPracticeServer(userId, data)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
