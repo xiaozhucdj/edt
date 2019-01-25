@@ -204,6 +204,7 @@ public class Task implements Serializable {
                 ", performEndTime='" + performEndTime + '\'' +
                 ", contentStatus='" + contentStatus + '\'' +
                 ", contentCourseLinkName='" + contentCourseLinkName + '\'' +
+                ", sceneStatusCode='" + sceneStatusCode + '\'' +
                 ", isComplete=" + isComplete +
                 ", exerciseCount=" + exerciseCount +
                 ", dataCount=" + dataCount +
