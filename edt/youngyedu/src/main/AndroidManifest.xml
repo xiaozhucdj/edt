@@ -141,6 +141,9 @@
         <!--问答中界面-->
         <activity android:name="com.yougy.anwser.AnsweringActivity" >
         </activity>
+        <!--问答自评、互评批改页面-->
+        <activity android:name="com.yougy.anwser.AnswerCheckActivity" >
+        </activity>
 
         <!--错题本图书章节选择界面-->
         <activity
