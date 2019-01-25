@@ -52,7 +52,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
     BookInfo.BookContentsBean.NodesBean topNode, currentNode;
     ArrayList<BookInfo.BookContentsBean.NodesBean> nodeTree = new ArrayList<BookInfo.BookContentsBean.NodesBean>();
     private int homeworkId, bookId;
-    //当前学生作业中的所有错题数据集合（提出了我已学会的）
+    //当前学生作业中的所有错题数据集合（提出了我已学会的），20190125 功能调整，我已学会不移除，在ui上提示我已学会。
     private List<QuestionReplyDetail> mQuestionReplyDetails = new ArrayList<>();
     //模拟一共有多少题
     private int pageSize = 0;
@@ -373,10 +373,10 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
                             QuestionReplyDetail questionReplyDetail = questionReplyDetails.get(i);
                             MistakeSummary homeworkExcerpt = questionReplyDetail.getHomeworkExcerpt();
-                            //被标记为"我已学会"的错题不算作错题,排除
-                            if (!homeworkExcerpt.getExtra().isDeleted()) {
-                                mQuestionReplyDetails.add(questionReplyDetail);
-                            }
+//                            //被标记为"我已学会"的错题不算作错题,排除
+//                            if (!homeworkExcerpt.getExtra().isDeleted()) {
+                            mQuestionReplyDetails.add(questionReplyDetail);
+//                            }
                         }
                         questionReplyDetails.clear();
 
@@ -648,6 +648,13 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
         /***********填充所有需要展示的3层数据资源 end***************/
 
+        //是否展示我已学会ui
+        if (questionReplyDetail.getHomeworkExcerpt().getExtra().isDeleted()) {
+            binding.tvXuehui.setVisibility(View.VISIBLE);
+        } else {
+            binding.tvXuehui.setVisibility(View.GONE);
+        }
+
         refreshLastAndNextQuestionBtns();
     }
 
@@ -792,7 +799,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
     }
 
-    private void setIsHasOtherCheckData(){
+    private void setIsHasOtherCheckData() {
         checkerNames.clear();
         //1.查看是否有教师批改结果
         List<LinkedTreeMap> replyCommetnList = questionReplyDetail.getReplyComment();
