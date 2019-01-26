@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.frank.etude.pageable.PageBtnBar;
 import com.frank.etude.pageable.PageBtnBarAdapter;
-import com.yougy.anwser.AnswerBookStructureActivity;
+import com.yougy.anwser.AnswerRecordListDetailNewActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
@@ -39,9 +39,9 @@ import rx.functions.Action1;
 
 /**
  * Created by Administrator on 2016/7/12.
- * 文件夹
+ * 问答课本选择
  */
-public class FolderFragment extends BFragment {
+public class AnswerBookChooseFragment extends BFragment {
     /**
      * 适配器 数据
      */
@@ -100,8 +100,8 @@ public class FolderFragment extends BFragment {
             ToastUtil.showCustomToast(getActivity() , "该学科还没有教材");
             return;
         }
-        Intent intent = new Intent(getActivity(), AnswerBookStructureActivity.class);
-        intent.putExtra("bookName", info.getCourseBookTitle());
+        Intent intent = new Intent(getActivity(), AnswerRecordListDetailNewActivity.class);
+//        intent.putExtra("bookName", info.getCourseBookTitle());
         intent.putExtra("bookId", info.getCourseBookId());
         intent.putExtra("homeworkId", info.getHomeworkId());
         startActivity(intent);

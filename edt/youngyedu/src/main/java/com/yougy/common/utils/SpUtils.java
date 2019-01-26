@@ -54,7 +54,7 @@ public class SpUtils {
     private static final String CLASS_NAME = "class_name";
     private static final String CLASS_ID = "class_Id";
     private static final String REAL_NAME = "real_name";
-    private static String GRADE_DISPLAY = "gradeDisplay";
+    private static String GRADE_DISPLAY = "gradeDisplay" ;
 
     private static final String LOCAL_LOCK_PWD = "LOCAL_LOCK_PWD";
     private static final String LOCAL_YX_TOKEN = "LOCAL_YX_TOKEN";

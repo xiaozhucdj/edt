@@ -53,11 +53,11 @@ public class TaskFragment extends BFragment {
 //            tasks.add(task);
 //        }
 //        binding.pageableRecycler.notifyDataSetChanged();
-
+        LogUtils.e(tag,"TaskFragment load data ........ ");
         if (NetUtils.isNetConnected()) {
             NetWorkManager.queryHomeworkBookList(SpUtils.getUserId() + "", SpUtils.getGradeName())
                     .subscribe(homeworkBookInfos -> freshUI(homeworkBookInfos), throwable -> {
-                        ToastUtil.showCustomToast(getContext(), "获取作业本数据失败,请点击刷新重新获取");
+                        ToastUtil.showCustomToast(getContext(), "获取任务数据失败,请点击刷新重新获取");
                         throwable.printStackTrace();
                     });
         } else {
@@ -122,11 +122,13 @@ public class TaskFragment extends BFragment {
         }
 
         public void setData(HomeworkBookSummary book) {
+            LogUtils.e(tag,"task is : " + book);
             binding.tvMyTitle.setText(book.getHomeworkFitSubjectName());
             binding.getRoot().setOnClickListener(v -> {
                 Intent intent = new Intent(context, TaskListActivity.class);
                 intent.putExtra("contentBookLink",book.getCourseBookId());
                 intent.putExtra("courseBookTitle",book.getCourseBookTitle());
+                intent.putExtra("homeworkId",book.getHomeworkId());
                 context.startActivity(intent);
             });
         }

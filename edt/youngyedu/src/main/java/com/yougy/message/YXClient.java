@@ -65,6 +65,7 @@ import com.yougy.message.attachment.CollectHomeworkAttachment;
 import com.yougy.message.attachment.ReplyAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.message.attachment.SubmitHomeworkAttachment;
+import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.message.attachment.WendaQuestionAddAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -281,7 +282,7 @@ public class YXClient {
         @Override
         public void onEvent(StatusCode statusCode) {
             currentOnlineStatus = statusCode;
-            LogUtils.e("YUANYE 观察到在线状态变化 ."+statusCode);
+            LogUtils.e("YUANYE 观察到在线状态变化 ." + statusCode);
             LogUtils.e("FH", "onlineStatus 变更: " + statusCode);
 //            if (statusCode == StatusCode.PWD_ERROR) {
 //                if (!TextUtils.isEmpty(currentAccount)){
@@ -802,22 +803,25 @@ public class YXClient {
                                                 || (
                                                 !(nodeInList.getAttachment() instanceof BookRecommandAttachment)
                                                         && !(nodeInList.getAttachment() instanceof HomeworkRemindAttachment)
+                                                        && !(nodeInList.getAttachment() instanceof TaskRemindAttachment)
                                         )
                                 );
                             }
                         });
                         callback.onSuccess(param);
+                        LogUtils.e("YXClient", "onSuccess..........");
                     }
 
                     @Override
                     public void onFailed(int code) {
                         callback.onFailed(code);
-
+                        LogUtils.e("YXClient", "onFailed..........");
                     }
 
                     @Override
                     public void onException(Throwable exception) {
                         callback.onException(exception);
+                        LogUtils.e("YXClient", "onException.........." + exception);
                     }
                 });
     }
@@ -1043,6 +1047,7 @@ public class YXClient {
 
     /**
      * 发送提交作业消息给教师端
+     *
      * @param examId
      * @param typeEnum
      * @param studentId
@@ -1051,15 +1056,15 @@ public class YXClient {
      * @return
      */
     public IMMessage sendSubmitHomeworkMsg(int examId, SessionTypeEnum typeEnum
-            , int studentId, String studentName, int teacherId,  int subGroupId , RequestCallback<Void> requestCallback) {
+            , int studentId, String studentName, int teacherId, int subGroupId, RequestCallback<Void> requestCallback) {
         LogUtils.d("homeworkTeacherIds teacherId = " + teacherId);
         final IMMessage message;
         switch (typeEnum) {
             case P2P:
-                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.P2P, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId , subGroupId));
+                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.P2P, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId, subGroupId));
                 break;
             case Team:
-                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId , subGroupId));
+                message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId, subGroupId));
                 break;
             default:
                 lv("发送对象的type不支持,取消发送,type=" + typeEnum);
@@ -1170,18 +1175,17 @@ public class YXClient {
 
     public void checkIfNotLoginThenDoIt(Activity activity, RequestCallback callback) {
         if (SpUtils.getUserId() <= 0) {
-            if (callback != null){
+            if (callback != null) {
                 callback.onFailed(ERROR_REASON_NULL_USERID);
             }
             return;
         }
         StatusCode statusCode = getInstance().getCurrentOnlineStatus();
-        if (statusCode == StatusCode.LOGINED){
-            if (callback != null){
+        if (statusCode == StatusCode.LOGINED) {
+            if (callback != null) {
                 callback.onSuccess(null);
             }
-        }
-        else if (statusCode == null
+        } else if (statusCode == null
                 || statusCode == StatusCode.UNLOGIN
                 || statusCode == StatusCode.KICKOUT
                 || statusCode == StatusCode.KICK_BY_OTHER_CLIENT
@@ -1189,18 +1193,16 @@ public class YXClient {
                 || statusCode == StatusCode.INVALID
                 || statusCode == StatusCode.VER_ERROR
                 || statusCode == StatusCode.FORBIDDEN
-                ){
+                ) {
             standardLoginLogic(callback);
-        }
-        else if (statusCode == StatusCode.NET_BROKEN) {
-            if (callback != null){
+        } else if (statusCode == StatusCode.NET_BROKEN) {
+            if (callback != null) {
                 callback.onFailed(ERROR_REASON_NET_BROKEN);
             }
-        }
-        else if (statusCode == StatusCode.LOGINING
+        } else if (statusCode == StatusCode.LOGINING
                 || statusCode == statusCode.CONNECTING
                 || statusCode == StatusCode.SYNCING
-                ){
+                ) {
             if (loadingDialog == null) {
                 loadingDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
                 loadingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
@@ -1211,11 +1213,11 @@ public class YXClient {
                 loadingDialog.show();
                 loadingDialog.setTitle("正在重连...");
             }
-            new Thread(){
+            new Thread() {
                 @Override
                 public void run() {
                     int waitSecond = 0;
-                    while (waitSecond < 15){
+                    while (waitSecond < 15) {
                         try {
                             sleep(1000);
                         } catch (InterruptedException e) {
@@ -1224,33 +1226,30 @@ public class YXClient {
                         StatusCode newStatusCode = getCurrentOnlineStatus();
                         if (newStatusCode != StatusCode.LOGINING
                                 && newStatusCode != StatusCode.CONNECTING
-                                && newStatusCode != StatusCode.SYNCING){
+                                && newStatusCode != StatusCode.SYNCING) {
                             break;
-                        }
-                        else {
+                        } else {
                             waitSecond++;
                         }
                     }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (loadingDialog != null && loadingDialog.isShowing()){
+                            if (loadingDialog != null && loadingDialog.isShowing()) {
                                 loadingDialog.dismiss();
                             }
                         }
                     });
-                    if (waitSecond >= 15){
-                        if (callback != null){
+                    if (waitSecond >= 15) {
+                        if (callback != null) {
                             callback.onFailed(ERROR_REASON_WAIT_TIMEOUT);
                         }
-                    }
-                    else if (getCurrentOnlineStatus() == StatusCode.LOGINED){
-                        if (callback != null){
+                    } else if (getCurrentOnlineStatus() == StatusCode.LOGINED) {
+                        if (callback != null) {
                             callback.onSuccess(null);
                         }
-                    }
-                    else {
-                        if (callback != null){
+                    } else {
+                        if (callback != null) {
                             callback.onFailed(ERROR_REASON_OTHERS);
                         }
                     }
@@ -1259,7 +1258,7 @@ public class YXClient {
         }
     }
 
-    private void standardLoginLogic(RequestCallback callback){
+    private void standardLoginLogic(RequestCallback callback) {
         if (loadingDialog == null) {
             loadingDialog = new LoadingProgressDialog(YoungyApplicationManager.getInstance().getApplicationContext());
             loadingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
@@ -1276,6 +1275,7 @@ public class YXClient {
         RecursiveLooper.recursiveRun(MAX_RETRY_TIMES, new RecursiveLooper.RecursiveLoopRunnable() {
             boolean localTokenWrong = false;
             boolean remoteTokenWrong = false;
+
             @Override
             public void run(int currentLooopTimes) {
                 LogUtils.e("FH!", "刷新式登录云信 : 第" + currentLooopTimes + "次");
@@ -1288,7 +1288,7 @@ public class YXClient {
                                 loadingDialog.dismiss();
                             }
                             //成功一次,则跳转到成功逻辑
-                            if (callback != null){
+                            if (callback != null) {
                                 callback.onSuccess(null);
                             }
                             doBreak();
@@ -1299,17 +1299,15 @@ public class YXClient {
                             } else if (code == ERROR_REASON_TOKEN_PARSE_ERROR) {
                                 reason = "获取token失败!解析失败";
                             } else {
-                                if (code == ResponseCode.RES_EUIDPASS){
-                                    if (localTokenWrong){
+                                if (code == ResponseCode.RES_EUIDPASS) {
+                                    if (localTokenWrong) {
                                         remoteTokenWrong = true;
                                         LogUtils.e("FH", "标记remoteToken为无效");
-                                    }
-                                    else {
+                                    } else {
                                         localTokenWrong = true;
                                         LogUtils.e("FH", "标记localToken为无效");
                                     }
-                                }
-                                else {
+                                } else {
                                     LogUtils.e("FH", "标记localToken为有效");
                                     localTokenWrong = false;
                                 }
@@ -1326,7 +1324,7 @@ public class YXClient {
                                 if (loadingDialog != null && loadingDialog.isShowing()) {
                                     loadingDialog.dismiss();
                                 }
-                                if (callback != null){
+                                if (callback != null) {
                                     callback.onFailed(code);
                                 }
                             }
@@ -1334,29 +1332,26 @@ public class YXClient {
                     }
                 };
                 String localToken = SpUtils.getLocalYXToken();
-                if (TextUtils.isEmpty(localToken)){
+                if (TextUtils.isEmpty(localToken)) {
                     LogUtils.e("FH", "标记localToken为无效");
                     localTokenWrong = true;
                 }
-                if (!localTokenWrong){
+                if (!localTokenWrong) {
                     LogUtils.e("FH", "本地token有效,使用本地token登录云信");
-                    YXClient.getInstance().login(SpUtils.getUserId() + "" , localToken , requestCallbackWrapper);
-                }
-                else {
-                    if (remoteTokenWrong){
+                    YXClient.getInstance().login(SpUtils.getUserId() + "", localToken, requestCallbackWrapper);
+                } else {
+                    if (remoteTokenWrong) {
                         LogUtils.e("FH", "本地token无效,远程token无效,更新远程token再登录云信");
-                        YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper , true);
-                    }
-                    else {
+                        YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper, true);
+                    } else {
                         LogUtils.e("FH", "本地token无效,远程token有效,请求远程token登录云信");
-                        YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper , false);
+                        YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper, false);
                     }
                 }
             }
 
         });
     }
-
 
 
     /**
@@ -1488,10 +1483,10 @@ public class YXClient {
             if (nimUserInfo != null) {
                 if (bundle != null) {
                     boolean isFetching = bundle.getBoolean(IS_FETCHING);
-                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar() , nimUserInfo.getGenderEnum());
+                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar(), nimUserInfo.getGenderEnum());
                     bundle.putBoolean(IS_FETCHING, isFetching);
                 } else {
-                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar() , nimUserInfo.getGenderEnum());
+                    bundle = makeUserInfoBundle(id, nimUserInfo.getName(), nimUserInfo.getAvatar(), nimUserInfo.getGenderEnum());
                 }
                 userInfoMap.put(id, bundle);
                 lv("从sdk载入用户资料成功,id=" + id + " userName=" + nimUserInfo.getName() + " userAvatarPath=" + nimUserInfo.getAvatar());
@@ -1511,7 +1506,7 @@ public class YXClient {
                 String userAvatarPath = param.get(0).getAvatar();
                 GenderEnum userGender = param.get(0).getGenderEnum();
                 lv("后台网络更新用户资料成功,id=" + id + " userName=" + userName + " userAvatarPath=" + userAvatarPath + " userGender=" + userGender);
-                Bundle tempBundle = makeUserInfoBundle(id, userName, userAvatarPath , userGender);
+                Bundle tempBundle = makeUserInfoBundle(id, userName, userAvatarPath, userGender);
                 userInfoMap.put(id, tempBundle);
                 for (OnThingsChangedListener<Bundle> listener : onUserInfoChangeListeners) {
                     listener.onThingChanged(tempBundle, ALL);
@@ -1583,13 +1578,13 @@ public class YXClient {
      * <p>用户性别 使用bundle.getSerializable({@link YXClient#USER_GENDER})
      * <p>该条用户资料最后更新时间戳 使用bundle.getLong({@link YXClient#LAST_UPDATE})获取
      */
-    private Bundle makeUserInfoBundle(String id, String userName, String avatarPath , GenderEnum userGender) {
+    private Bundle makeUserInfoBundle(String id, String userName, String avatarPath, GenderEnum userGender) {
         Bundle bundle = new Bundle();
         bundle.putString(ID, id);
         bundle.putString(USER_NAME, userName);
         bundle.putString(USER_AVATAR, avatarPath);
         bundle.putLong(LAST_UPDATE, System.currentTimeMillis());
-        bundle.putSerializable(USER_GENDER , userGender);
+        bundle.putSerializable(USER_GENDER, userGender);
         return bundle;
     }
 
@@ -1597,7 +1592,7 @@ public class YXClient {
         Bundle bundle = userInfoMap.get(id);
         if (isFetching) {
             if (bundle == null) {
-                bundle = makeUserInfoBundle(null, null, null , null);
+                bundle = makeUserInfoBundle(null, null, null, null);
                 userInfoMap.put(id, bundle);
             }
             bundle.putBoolean(IS_FETCHING, isFetching);
@@ -2115,9 +2110,10 @@ public class YXClient {
 
     /**
      * 工具方法,在主线程里执行代码
+     *
      * @param runnable
      */
-    protected static void runOnUiThread(Runnable runnable){
+    protected static void runOnUiThread(Runnable runnable) {
         Observable.empty()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new rx.Observer<Object>() {
@@ -2125,10 +2121,14 @@ public class YXClient {
                     public void onCompleted() {
                         runnable.run();
                     }
+
                     @Override
-                    public void onError(Throwable e) {}
+                    public void onError(Throwable e) {
+                    }
+
                     @Override
-                    public void onNext(Object o) {}
+                    public void onNext(Object o) {
+                    }
                 });
     }
 }

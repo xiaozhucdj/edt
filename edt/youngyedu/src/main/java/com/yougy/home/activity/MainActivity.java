@@ -25,6 +25,7 @@ import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
+import com.yougy.anwser.AnswerCheckActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
@@ -53,7 +54,7 @@ import com.yougy.home.fragment.mainFragment.AllHomeworkFragment;
 import com.yougy.home.fragment.mainFragment.AllNotesFragment;
 import com.yougy.home.fragment.mainFragment.AllTextBookFragment;
 import com.yougy.home.fragment.mainFragment.CoachBookFragment;
-import com.yougy.home.fragment.mainFragment.FolderFragment;
+import com.yougy.home.fragment.mainFragment.AnswerBookChooseFragment;
 import com.yougy.home.fragment.mainFragment.HomeworkFragment;
 import com.yougy.home.fragment.mainFragment.NotesFragment;
 import com.yougy.home.fragment.mainFragment.ReferenceBooksFragment;
@@ -92,7 +93,6 @@ import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
  * V1
  * Created by Administrator on 2016/8/24.
  * <p/>
- * 显示 文件夹
  * 作业
  * 笔记
  * 课外书
@@ -109,7 +109,7 @@ import static com.yougy.common.utils.AliyunUtil.JOURNAL_NAME;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     private CoachBookFragment mCoachBookFragment;
     private HomeworkFragment mHomeworkFragment;
-    private FolderFragment mFolderFragment;
+    private AnswerBookChooseFragment mAnswerBookChooseFragment;
     private NotesFragment mNotesFragment;
     private ReferenceBooksFragment mReferenceBooksFragment;
     private TextBookFragment mTextBookFragment;
@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private AllNotesFragment mAllNotesFragment;
     private AllHomeworkFragment mAllHomeworkFragment;
 
-    private TextView mTvFolder;
+    private TextView mTvAnswer;
     private TextView mTvHomework;
     private TextView mTvNotes;
     private TextView mTvReferenceBooks;
@@ -190,14 +190,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         long timeTolastCheck = System.currentTimeMillis() - lastCheckTimeMill;
-        LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck/1000) + "秒");
-        if (System.currentTimeMillis() - lastCheckTimeMill > 60*60*1000){
+        LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck / 1000) + "秒");
+        if (System.currentTimeMillis() - lastCheckTimeMill > 60 * 60 * 1000) {
 //        if (System.currentTimeMillis() - lastCheckTimeMill > 5*1000){
             LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间过长,启动验证是否解绑流程");
             YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
             YoungyApplicationManager.getMainThreadHandler().post(checkRunnable.setActivity(this));
-        }
-        else {
+        } else {
             LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间在可允许范围内,本次不验证是否解绑");
         }
     }
@@ -226,7 +225,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.remove(mCoachBookFragment);
         fragmentTransaction.remove(mHomeworkFragment);
-        fragmentTransaction.remove(mFolderFragment);
+        fragmentTransaction.remove(mAnswerBookChooseFragment);
         fragmentTransaction.remove(mNotesFragment);
         fragmentTransaction.remove(mReferenceBooksFragment);
         fragmentTransaction.remove(mTextBookFragment);
@@ -243,7 +242,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Glide.get(this).clearMemory();
         mCoachBookFragment = null;
         mHomeworkFragment = null;
-        mFolderFragment = null;
+        mAnswerBookChooseFragment = null;
         mNotesFragment = null;
         mReferenceBooksFragment = null;
         mTextBookFragment = null;
@@ -262,8 +261,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mRootView = UIUtils.inflate(R.layout.activity_main_ui);
         setContentView(mRootView);
 
-        mTvFolder = (TextView) findViewById(R.id.tv_folder);
-        mTvFolder.setOnClickListener(this);
+        mTvAnswer = (TextView) findViewById(R.id.tv_answer);
+        mTvAnswer.setOnClickListener(this);
 
         mTvHomework = (TextView) findViewById(R.id.tv_homework);
         mTvHomework.setOnClickListener(this);
@@ -401,9 +400,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(newIntent);
 
                 break;
-            case R.id.tv_folder:
+            case R.id.tv_answer:
                 refreshTabBtnState(clickedViewId);
-                bringFragmentToFrontInner(FragmentDisplayOption.FOLDER_FRAGMENT);
+                bringFragmentToFrontInner(FragmentDisplayOption.ANSWER_FRAGMENT);
 //                EpdController.invalidate(mRootView, UpdateMode.GC);
 //                startActivity(new Intent(this, AnsweringActivity.class));
                 break;
@@ -511,9 +510,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_msg:
-                changeSystemConfigIntegerValue(getApplicationContext() , "close_wifi_delay" , -1);
+                changeSystemConfigIntegerValue(getApplicationContext(), "close_wifi_delay", -1);
 //                LogUtils.e(getClass().getName(), "我的消息");
-//                gotoMyMessage();
+                gotoMyMessage();
                 break;
             case R.id.btn_account:
                 LogUtils.i("账号设置");
@@ -545,6 +544,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.onyx.android.settings", "com.onyx.android.libsetting.view.activity.DeviceMainSettingActivity"));
                 startActivity(intent);
+
+
+                startActivity(new Intent(this, AnswerCheckActivity.class));
                 break;
 
             case R.id.btn_deviceSize:
@@ -604,7 +606,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 type = EventBusConstant.all_home_work;
                 break;
 
-            case FOLDER_FRAGMENT:
+            case ANSWER_FRAGMENT:
                 type = EventBusConstant.answer_event;
                 break;
         }
@@ -644,7 +646,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mAllNotesFragment;
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
             case ALL_TEXT_BOOK_FRAGMENT:
@@ -658,7 +660,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mAllNotesFragment;
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
 
@@ -673,7 +675,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mAllNotesFragment;
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
 
@@ -688,7 +690,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mAllNotesFragment;
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
 
@@ -703,7 +705,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mAllNotesFragment;
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
 
@@ -718,7 +720,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mAllNotesFragment;
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
 
@@ -734,7 +736,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mNotesFragment;
                 whichToBack7 = mHomeworkFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
             case HOMEWORK_FRAGMENT:
@@ -748,7 +750,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mNotesFragment;
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mAllHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
             case ALL_HOMEWORK_FRAGMENT:
@@ -763,12 +765,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack6 = mNotesFragment;
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mHomeworkFragment;
-                whichToBack9 = mFolderFragment;
+                whichToBack9 = mAnswerBookChooseFragment;
                 whichToBack10 = mTaskFragment;
                 break;
 
-            case FOLDER_FRAGMENT:
-                whichToFront = mFolderFragment;
+            case ANSWER_FRAGMENT:
+                //问答
+                whichToFront = mAnswerBookChooseFragment;
                 whichToBack1 = mTextBookFragment;
                 whichToBack2 = mAllTextBookFragment;
                 whichToBack3 = mCoachBookFragment;
@@ -791,7 +794,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 whichToBack7 = mAllNotesFragment;
                 whichToBack8 = mHomeworkFragment;
                 whichToBack9 = mAllHomeworkFragment;
-                whichToBack10 = mFolderFragment;
+                whichToBack10 = mAnswerBookChooseFragment;
                 break;
             default:
                 break;
@@ -897,7 +900,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mBtnAllBook.setSelected(true);
                 mBtnAllBook.setEnabled(false);
                 break;
-            case FOLDER_FRAGMENT:
+            case ANSWER_FRAGMENT:
                 mBtnCurrentBook.setVisibility(View.GONE);
                 mBtnAllBook.setVisibility(View.GONE);
                 break;
@@ -924,8 +927,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //作业
         mHomeworkFragment = new HomeworkFragment();
         mAllHomeworkFragment = new AllHomeworkFragment();
-        //文件夹
-        mFolderFragment = new FolderFragment();
+        //问答
+        mAnswerBookChooseFragment = new AnswerBookChooseFragment();
         android.support.v4.app.FragmentManager mChildFragmentManager = getSupportFragmentManager();
         mChildFragmentManager.beginTransaction()
                 /***
@@ -941,8 +944,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .add(R.id.fl_content_layout, mNotesFragment).add(R.id.fl_content_layout, mAllNotesFragment)
                 //作业
                 .add(R.id.fl_content_layout, mHomeworkFragment).add(R.id.fl_content_layout, mAllHomeworkFragment)
-                //文件夹
-                .add(R.id.fl_content_layout, mFolderFragment).add(R.id.fl_content_layout,mTaskFragment)
+                //问答
+                .add(R.id.fl_content_layout, mAnswerBookChooseFragment)
+                //任务
+                .add(R.id.fl_content_layout,mTaskFragment)
 
                 /***
                  * hide 全部fragment
@@ -956,8 +961,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .hide(mNotesFragment).hide(mAllNotesFragment)
                 //作业
                 .hide(mHomeworkFragment).hide(mAllHomeworkFragment)
-                //文件夹
-                .hide(mFolderFragment).hide(mTaskFragment)
+                //问答
+                .hide(mAnswerBookChooseFragment)
+                //任务
+                .hide(mTaskFragment)
                 //提交事务
                 .commitAllowingStateLoss();
 
@@ -976,7 +983,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         boolean isCoachBookFragment = clickedViewId == R.id.tv_coach_book;
         boolean isHomeworkFragment = clickedViewId == R.id.tv_homework;
-        boolean isFolderFragment = clickedViewId == R.id.tv_folder;
+        boolean isAnswerFragment = clickedViewId == R.id.tv_answer;
         boolean isNotesFragment = clickedViewId == R.id.tv_notes;
         boolean isReferenceBooksFragment = clickedViewId == R.id.tv_reference_books;
         boolean isTextBookFragment = clickedViewId == R.id.tv_text_book;
@@ -987,9 +994,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //isCoachBookFragment
         mTvCoachBook.setSelected(isCoachBookFragment);
 //        mViewCoachBook.setVisibility(isCoachBookFragment == true ? showView : hideView);
-        //isFolderFragment
-        mTvFolder.setSelected(isFolderFragment);
-//        mViewFolder.setVisibility(isFolderFragment == true ? showView : hideView);
+        //isAnswerFragment
+        mTvAnswer.setSelected(isAnswerFragment);
+//        mViewAnswer.setVisibility(isAnswerFragment == true ? showView : hideView);
         //isHomeworkFragment
         mTvHomework.setSelected(isHomeworkFragment);
 //        mViewHomework.setVisibility(isHomeworkFragment == true ? showView : hideView);
@@ -1042,16 +1049,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
          */
         ALL_HOMEWORK_FRAGMENT,
         /**
-         * 文件夹
+         * 问答
          */
-        FOLDER_FRAGMENT,
+        ANSWER_FRAGMENT,
         /**
          * 任务
          */
         TASK_FRAGMENT
     }
 
-//    key是 "close_wifi_delay",  永不关闭传值:-1
+    //    key是 "close_wifi_delay",  永不关闭传值:-1
     public static boolean changeSystemConfigIntegerValue(Context context, String dataKey, int value) {
         try {
             return Settings.System.putInt(context.getContentResolver(), dataKey, value);
@@ -1072,8 +1079,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
 //        changeSystemConfigIntegerValue(this,"close_wifi_delay" ,-1) ;
-
-
 
 
         if (!isStScreensaver) {
@@ -1325,8 +1330,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //=================================升级相关代码 结束=============================================================
 
-    private static class CheckRunnable implements Runnable{
+    private static class CheckRunnable implements Runnable {
         MainActivity activity;
+
         public CheckRunnable setActivity(MainActivity activity) {
             this.activity = activity;
             return this;
@@ -1345,7 +1351,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 NetWorkManager.getInstance(true).login(loginReq)
                         .subscribe(students -> {
                             LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:没有被解绑,走正常流程");
-                            if (!activity.initializationNeedNetFinished){
+                            if (!activity.initializationNeedNetFinished) {
                                 downloadDb();
                                 getUnreadMsg();
                                 activity.initializationNeedNetFinished = true;
@@ -1374,11 +1380,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                             DeviceScreensaverUtils.setScreensaver();
                                         }
                                     });
-                                    activity.startActivity(new Intent(activity , LoginActivity.class));
+                                    activity.startActivity(new Intent(activity, LoginActivity.class));
                                     activity.finish();
                                 } else {
                                     LogUtils.e("FH", "主界面onResume验证是否被解绑-------结果:未知,查询是否解绑接口调不通,尝试进行初始化,是否解绑延期至下次进入主界面时做");
-                                    if (!activity.initializationNeedNetFinished){
+                                    if (!activity.initializationNeedNetFinished) {
                                         downloadDb();
                                         getUnreadMsg();
                                         activity.initializationNeedNetFinished = true;
@@ -1389,13 +1395,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
 
-        public void downloadDb(){
+        public void downloadDb() {
             File file = new File(activity.getDatabasePath(SpUtils.getUserId() + ".db").getAbsolutePath());
             if (!file.exists()) {
                 activity.startService(new Intent(activity, DownloadService.class));
             }
         }
-        public void getUnreadMsg(){
+
+        public void getUnreadMsg() {
             YXClient.getInstance().checkIfNotLoginThenDoIt(activity, new RequestCallback() {
                 @Override
                 public void onSuccess(Object param) {
@@ -1428,7 +1435,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 @Override
                 public void onFailed(int code) {
-                    ToastUtil.showCustomToast(activity , "连接消息服务器失败!");
+                    ToastUtil.showCustomToast(activity, "连接消息服务器失败!");
                 }
 
                 @Override

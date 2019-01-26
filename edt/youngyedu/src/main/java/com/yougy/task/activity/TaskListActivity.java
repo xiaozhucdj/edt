@@ -12,12 +12,15 @@ import android.view.ViewGroup;
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.task.bean.Task;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.TaskItemBinding;
 import com.yougy.ui.activity.databinding.TaskListLayoutBinding;
+
+import org.litepal.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +36,10 @@ public class TaskListActivity extends BaseActivity {
     private int tasksCount;
     private List<Task> completedTasks = new ArrayList<>();
     private List<Task> unCompleteTasks = new ArrayList<>();
-    private boolean isComplete = true;
-    private int contentCourseLink;
+    private boolean isComplete = false;
+    private int contentBookLink;
     private String courseBookTitle;
+    private int homeworkId;
 
 
     @Override
@@ -46,13 +50,14 @@ public class TaskListActivity extends BaseActivity {
     @Override
     protected void init() {
         Intent intent = getIntent();
-        contentCourseLink = intent.getIntExtra("contentBookLink", -1);
+        contentBookLink = intent.getIntExtra("contentBookLink", -1);
         courseBookTitle = intent.getStringExtra("courseBookTitle");
+        homeworkId = intent.getIntExtra("homeworkId", -1);
     }
 
     @Override
     protected void initLayout() {
-        binding.completedTv.setSelected(true);
+        binding.uncompleteTv.setSelected(true);
         binding.tasksRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {
@@ -73,6 +78,7 @@ public class TaskListActivity extends BaseActivity {
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn, int lastSelectPageBtnIndex) {
+                LogUtils.e(tag, "onPageBtnClick........." + btnIndex);
                 refreshTask(btnIndex);
             }
 
@@ -90,13 +96,16 @@ public class TaskListActivity extends BaseActivity {
     }
 
     private void generateData() {
-        NetWorkManager.queryTasks(13253, 8292, tasks.size(), MAX_SIZE_PER_PAGE)
+        LogUtils.e(tag, "homeworkId is : " + homeworkId + ",contentBookLink is : " + contentBookLink);
+        NetWorkManager.queryTasks(homeworkId, contentBookLink, tasks.size(), MAX_SIZE_PER_PAGE)
                 .compose(bindToLifecycle())
                 .subscribe(taskSummary -> {
                     tasksCount = taskSummary.getCount();
                     List<Task> taskList = taskSummary.getData();
+
                     if (null != taskList && taskList.size() > 0) {
                         for (Task task : taskList) {
+                            LogUtils.e(tag, "task is complete : " + task.isComplete());
                             if (task.isComplete()) {
                                 completedTasks.add(task);
                             } else {
@@ -109,57 +118,27 @@ public class TaskListActivity extends BaseActivity {
                         } else {
                             tasks.addAll(unCompleteTasks);
                         }
-                        int start = currentPage * MAX_PAGE_COUNT;
-                        int end = start + MAX_PAGE_COUNT;
-                        if (end > tasks.size() - 1) {
-                            end = tasks.size();
+                        if (tasks.size()>0) {
+                            int start = currentPage * MAX_PAGE_COUNT;
+                            int end = start + MAX_PAGE_COUNT;
+                            if (end > tasks.size() - 1) {
+                                end = tasks.size();
+                            }
+                            currentTasks.addAll(tasks.subList(start, end));
                         }
-                        currentTasks.addAll(tasks.subList(start, end));
                         adapter.notifyDataSetChanged();
-//                        initPageBar();
                         binding.pageBarTask.refreshPageBar();
                     }
                 }, throwable -> {
                     throwable.printStackTrace();
                     ToastUtil.showCustomToast(TaskListActivity.this, "获取任务失败");
                 });
-
-
-//        int size = tasks.size();
-//        for (int i = size; i < size + 20; i++) {
-//            Task task = new Task();
-//            task.setContentTitle(courseBookTitle + i);
-//            task.setContentCourseLinkName("背诵并默写伤仲永：" + i);
-//            task.setComplete(i % 2 == 0);
-//            task.setSignCount(i % 3 == 0 ? 1 : 0);
-//            task.setDataCount(i + 3);
-//            task.setExerciseCount(i + 5);
-//            if (task.isComplete()) {
-//                completedTasks.add(task);
-//            } else {
-//                unCompleteTasks.add(task);
-//            }
-//        }
-//
-//        if (isComplete) {
-//            tasks.addAll(completedTasks);
-//        } else {
-//            tasks.addAll(unCompleteTasks);
-//        }
-//
-//        int start = currentPage * MAX_PAGE_COUNT;
-//        int end = start + MAX_PAGE_COUNT;
-//        if (end > tasks.size() - 1) {
-//            end = tasks.size();
-//        }
-//        currentTasks.addAll(tasks.subList(start, end));
-//        adapter.notifyDataSetChanged();
     }
 
     private void refreshTask(int index) {
         currentTasks.clear();
         currentPage = index;
-        if ((index + 1) * MAX_PAGE_COUNT > tasks.size()) {
+        if (index != 0 && (index + 1) * MAX_PAGE_COUNT > tasks.size() && tasksCount > tasks.size()) {
             generateData();
         } else {
             tasks.clear();
@@ -168,12 +147,14 @@ public class TaskListActivity extends BaseActivity {
             } else {
                 tasks.addAll(unCompleteTasks);
             }
-            int start = index * MAX_PAGE_COUNT;
-            int end = start + MAX_PAGE_COUNT;
-            if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-                end = tasks.size();
+            if (tasks.size()>0) {
+                int start = index * MAX_PAGE_COUNT;
+                int end = start + MAX_PAGE_COUNT;
+                if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
+                    end = tasks.size();
+                }
+                currentTasks.addAll(tasks.subList(start, end));
             }
-            currentTasks.addAll(tasks.subList(start, end));
             adapter.notifyDataSetChanged();
         }
     }
@@ -221,8 +202,10 @@ public class TaskListActivity extends BaseActivity {
             binding.taskCompleteTime.setText(getString(R.string.task_complete_time, "2018-11-28 17:48", "2018-11-29 17:00"));
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(TaskListActivity.this, TaskDetailStudentActivity.class);
-                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID,task.getContentElement());
-                intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME,task.getContentTitle());
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, task.getContentDrama());
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
+                intent.putExtra("isSign", task.isNeedSignature());
+                intent.putExtra("SceneStatusCode", task.getSceneStatusCode());
                 startActivity(intent);
             });
         }
@@ -232,12 +215,38 @@ public class TaskListActivity extends BaseActivity {
         binding.uncompleteTv.setSelected(true);
         binding.completedTv.setSelected(false);
         isComplete = false;
+        tasks.clear();
+        currentTasks.clear();
+        if (unCompleteTasks.size() > 0) {
+            tasks.addAll(unCompleteTasks);
+            int start = currentPage * MAX_PAGE_COUNT;
+            int end = start + MAX_PAGE_COUNT;
+            if (end > tasks.size() - 1) {
+                end = tasks.size();
+            }
+            currentTasks.addAll(tasks.subList(start, end));
+        }
+        adapter.notifyDataSetChanged();
+        binding.pageBarTask.refreshPageBar();
     }
 
     public void complete(View view) {
         binding.uncompleteTv.setSelected(false);
         binding.completedTv.setSelected(true);
         isComplete = true;
+        tasks.clear();
+        currentTasks.clear();
+        if (completedTasks.size() > 0) {
+            tasks.addAll(completedTasks);
+            int start = currentPage * MAX_PAGE_COUNT;
+            int end = start + MAX_PAGE_COUNT;
+            if (end > tasks.size() - 1) {
+                end = tasks.size();
+            }
+            currentTasks.addAll(tasks.subList(start, end));
+        }
+        adapter.notifyDataSetChanged();
+        binding.pageBarTask.refreshPageBar();
     }
 
 }

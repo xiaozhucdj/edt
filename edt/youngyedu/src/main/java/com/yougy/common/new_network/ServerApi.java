@@ -16,6 +16,7 @@ import com.yougy.common.protocol.request.NewQueryNoteReq;
 import com.yougy.common.protocol.request.NewUnBindDeviceReq;
 import com.yougy.common.protocol.request.NewUpdateNoteReq;
 import com.yougy.common.protocol.request.PromotionReq;
+import com.yougy.home.bean.DataCountInBookNode;
 import com.yougy.home.bean.InsertNoteId;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.homework.bean.HomeworkBookDetail;
@@ -40,11 +41,9 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
-import com.yougy.task.bean.OOSReplyBean;
-import com.yougy.task.bean.SubmitReplyBean;
-import com.yougy.task.bean.SubmitTaskBean;
-import com.yougy.task.bean.Task;
 import com.yougy.task.bean.StageTaskBean;
+import com.yougy.task.bean.SubmitReplyBean;
+import com.yougy.task.bean.Task;
 
 import java.util.List;
 
@@ -228,6 +227,14 @@ public interface ServerApi {
     Observable<BaseResult<List<QuestionReplySummary>>> queryReply(@Field("examId") Integer examId
             , @Field("userId") Integer userId, @Field("replyId") String replyId);
 
+
+    /**
+     * 学生查询待批改的问答
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"queryQuestions2BeMarked"})
+    Observable<BaseResult<List<QuestionReplyDetail>>> queryQuestions2BeMarked(@Field("userId") String userId);
 
     /**
      * 查询某次考试总分情况
@@ -596,7 +603,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryTaskContent"})
-    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentCourseLink") int contentCourseLink, @Field("pn") int pn, @Field("ps") int ps);
+    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentBookLink") int contentBookLink, @Field("pn") int pn, @Field("ps") int ps);
 
     /**
      * 获取组信息
@@ -620,6 +627,16 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"insertScene"})
-    Observable<BaseResult<SubmitReplyBean>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
+    Observable<BaseResult<List<SubmitReplyBean>>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
 
+    /**
+     * 统计作业本中作业和问答的数量并且按章节统计返回
+     * homeworkId 作业本Id
+     * examTypeCode 作业类型（可以传数组）　II0x
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"getExamCount4CursorByHomework"})
+    Observable<BaseResult<List<DataCountInBookNode>>> countQuestionCount4Cursor (@Field("homeworkId") Integer homeworkId
+            , @Field("examTypeCode") String examTypeCode);
 }
