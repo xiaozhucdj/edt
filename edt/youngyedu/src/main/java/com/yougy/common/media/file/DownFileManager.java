@@ -7,7 +7,6 @@ import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.yougy.common.global.FileContonst;
-import com.yougy.common.manager.DownloadManager;
 import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
@@ -18,6 +17,7 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
 import org.json.JSONObject;
@@ -66,10 +66,9 @@ public class DownFileManager {
     }
 
 
-    //    public void  requestDownFile(BookInfo info ){
-//        requestDownFile(info.g);
-//
-//    }
+    public void requestDownFile(BookInfo info) {
+        requestDownFile(info.getBookId(), info.getBookStatusCode(), info.getBookAudio(), info.getBookAudioConfig());
+    }
 
     public void requestDownFile(int booId, String bookStatusCode, String bookAudio, String bookAudioConfig) {
         mOssBean = null;
@@ -236,8 +235,22 @@ public class DownFileManager {
                         requestOssFile();
                     }
                 } else {
-                    mDialog.setTitle(UIUtils.getContext().getResources().getString(R.string.down_book_error));
-                    mDialog.setBtnConfirmVisibility(View.VISIBLE);
+                    // 服务器没有资源
+                    switch (mType) {
+                        case FILE_BOOK:
+                            mDialog.dismiss();
+                            mListener.onDownFileListenerCallBack(mListener.STATE_SERVER_NO_BOOK_SOURCE);
+                            break;
+                        case FILE_AUDIO:
+                            mDialog.dismiss();
+                            mListener.onDownFileListenerCallBack(mListener.STATE_SERVER_NO_AUDIO_SOURCE);
+                            break;
+                        case FILE_CONFIG:
+                            mDialog.dismiss();
+                            mListener.onDownFileListenerCallBack(mListener.STATE_SERVER_NO_CONFIG_SOURCE);
+                            break;
+                    }
+
                 }
             }
         }, new Action1<Throwable>() {
@@ -248,10 +261,8 @@ public class DownFileManager {
                     String errorCode = ((ApiException) throwable).getCode();
                     LogUtils.i("resultCode" + errorCode);
                     if (errorCode.equals("404")) {
-                        msg = "没有找到该图书";
+                        msg = "服务器没有上传文件";
                     }
-                } else {
-                    msg = "下载失败";
                 }
                 mDialog.setTitle(msg);
                 mDialog.setBtnConfirmVisibility(View.VISIBLE);
@@ -350,10 +361,10 @@ public class DownFileManager {
                                         requestDownFile(mBookId, mBookStatusCode, mBookAudio, mBookAudioConfig);
                                     } else {
                                         //解压失败
-                                        mListener.onDownFileListenerCallBack(mType.equals(FILE_AUDIO)?mListener.STATE_ERROR_AUDIO_ZIP:mListener.STATE_ERROR_CONFIG_ZIP);
+                                        mListener.onDownFileListenerCallBack(mType.equals(FILE_AUDIO) ? mListener.STATE_ERROR_AUDIO_ZIP : mListener.STATE_ERROR_CONFIG_ZIP);
                                     }
                                 }
-                            }) ;
+                            });
                         }
                     });
                 }

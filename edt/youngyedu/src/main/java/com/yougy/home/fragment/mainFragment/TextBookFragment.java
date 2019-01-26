@@ -21,7 +21,8 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.media.MediaDownUtils;
+import com.yougy.common.media.file.DownFileListener;
+import com.yougy.common.media.file.DownFileManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.utils.DataCacheUtils;
@@ -31,6 +32,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -39,7 +41,6 @@ import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
 
-import org.apache.commons.collections4.functors.IfClosure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,18 +105,36 @@ public class TextBookFragment extends BFragment {
         return mRootView;
     }
 
+    DownFileManager mDownFileManager;
+
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
-        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
-            jumpBundle();
+
+        if (NetUtils.isNetConnected()) {
+
+            if (mDownFileManager == null) {
+                mDownFileManager = new DownFileManager(getActivity(), new DownFileListener() {
+                    @Override
+                    public void onDownFileListenerCallBack(int state) {
+
+                        LogUtils.e("text book state.." + state);
+                        if (state != STATE_NO_SUPPORT_BOOK  && state != STATE_SERVER_NO_BOOK_SOURCE){
+                            jumpBundle();
+                        }
+                    }
+                });
+            }
+            mDownFileManager.requestDownFile(info);
+
         } else {
-            if (NetUtils.isNetConnected()) {
-                downBookTask(info.getBookId());
+            if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
+                jumpBundle();
             } else {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
         }
+
     }
 
 
