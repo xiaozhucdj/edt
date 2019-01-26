@@ -160,4 +160,6 @@ public class FileContonst {
             serverDevice = DEVICE_TYPE_N96;
         }
     }
+
+    public static final String  BOOK_STATU_SCODE = "BA01,BA02,BA03,BA04,BA11,BA12";
 }

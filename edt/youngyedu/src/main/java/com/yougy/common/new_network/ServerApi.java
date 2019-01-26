@@ -5,6 +5,7 @@ import com.yougy.anwser.CourseInfo;
 import com.yougy.anwser.OriginQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
+import com.yougy.common.media.file.OssInfoBean;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
@@ -126,6 +127,17 @@ public interface ServerApi {
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"downloadBook"})
     Observable<BaseResult<List<DownloadInfo>>> downloadBook(@Field("userId") String userId, @Field("bookId") String bookId);
+
+
+
+    /**
+     * 图书下载2
+     */
+    @FormUrlEncoded
+    @POST("bookStore")
+    @DefaultField(keys = {"m"}, values = {"downloadBookAudio"})
+    Observable<BaseResult<List<OssInfoBean>>> downloadFile(@Field("bookId") String bookId , @Field("atchTypeCode") String atchTypeCode );
+
 
     /**
      * 作业本列表接口
