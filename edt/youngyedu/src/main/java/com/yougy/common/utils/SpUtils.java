@@ -37,12 +37,12 @@ public class SpUtils {
     private static final String SP_DIALOG_NOT_SHOW_AGAIN_TAG_FILE_NAME = "dialog_not_show_again_tag";
 
     private static final SharedPreferences unReadMsgSp = UIUtils.getContext()
-            .getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME, Context.MODE_PRIVATE);
+            .getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE);
     private static final SharedPreferences othersSp = UIUtils.getContext()
             .getSharedPreferences(SP_OTHERS, Context.MODE_PRIVATE);
 
     //新订单数量
-    private static final String NEW_ORDER_COUNT = "newOrderCount";
+    private static final String NEW_ORDER_COUNT= "newOrderCount";
 
     /**
      * 年级
@@ -67,7 +67,12 @@ public class SpUtils {
 
     private static final String UUID = "UUID";
 
-    private static final SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE, Context.MODE_PRIVATE);
+    //(问答)上一次选择的章节在书章节列表(flat后的)中的index
+    private static final String LAST_WENDA_CHOSEN_NODE_INDEX = "last_wenda_chosen_node_index";
+    //(问答)上一次选择的题目在该章节所有题目中的index
+    private static final String LAST_WENDA_CHOSEN_QUESTION_INDEX = "last_wenda_chosen_question_index";
+
+    private static final SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE,Context.MODE_PRIVATE);
 
     public static void saveLableLocation(int x, int y) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
@@ -106,41 +111,41 @@ public class SpUtils {
         return sp.getString(LABEL_CONTENT, "");
     }
 
-    public static void saveStudent(Student student) {
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE, Context.MODE_PRIVATE);
+    public static void saveStudent(Student student){
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(STUDENT_ID, student.getUserId());
-        LogUtils.e("SpUtils", "saveStudent user id : " + student.getUserId());
-        editor.putString(STUDENT_NAME, student.getUserName());
-        editor.putString(STUDENT_CODE, student.getUserNum());
-        editor.putString(STUDENT_SCHOOL, student.getSchoolName());
-        editor.putString(STUDENT_SUBJECT, student.getSubjectNames());
-        editor.putString(GRADE_NAME, student.getGradeName());
-        editor.putString(CLASS_NAME, student.getClassName());
-        editor.putString(REAL_NAME, student.getUserRealName());
-        editor.putString(GRADE_DISPLAY, student.getGradeDisplay());
-        editor.putString(SUBJECT_NAMES, student.getSubjectNames());
-        editor.putString(CLASS_ID, student.getClassId());
-        editor.putString(USER_GENDER, student.getUserGender());
+        editor.putInt(STUDENT_ID,student.getUserId());
+        LogUtils.e("SpUtils","saveStudent user id : " + student.getUserId());
+        editor.putString(STUDENT_NAME,student.getUserName());
+        editor.putString(STUDENT_CODE,student.getUserNum());
+        editor.putString(STUDENT_SCHOOL,student.getSchoolName());
+        editor.putString(STUDENT_SUBJECT,student.getSubjectNames());
+        editor.putString(GRADE_NAME , student.getGradeName());
+        editor.putString(CLASS_NAME , student.getClassName());
+        editor.putString(REAL_NAME , student.getUserRealName());
+        editor.putString(GRADE_DISPLAY , student.getGradeDisplay());
+        editor.putString(SUBJECT_NAMES , student.getSubjectNames());
+        editor.putString(CLASS_ID , student.getClassId());
+        editor.putString(USER_GENDER , student.getUserGender());
         editor.apply();
     }
 
-    public static Student getStudent() {
+    public static Student getStudent(){
         Student student = new Student();
-        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE, Context.MODE_PRIVATE);
-        student.setUserId(sp.getInt(STUDENT_ID, -1));
-        LogUtils.e("SpUtils", "getStudent user id : " + sp.getInt(STUDENT_ID, -1));
-        student.setUserName(sp.getString(STUDENT_NAME, ""));
-        student.setUserNum(sp.getString(STUDENT_CODE, "-1"));
-        student.setSchoolName(sp.getString(STUDENT_SCHOOL, ""));
-        student.setSubjectNames(sp.getString(STUDENT_SUBJECT, ""));
-        student.setGradeDisplay(sp.getString(GRADE_DISPLAY, ""));
-        student.setClassName(sp.getString(CLASS_NAME, ""));
-        student.setUserRealName(sp.getString(REAL_NAME, ""));
-        student.setGradeName(sp.getString(GRADE_NAME, ""));
-        student.setSubjectNames(sp.getString(SUBJECT_NAMES, ""));
-        student.setClassId(sp.getString(CLASS_ID, ""));
-        student.setUserGender(sp.getString(USER_GENDER, ""));
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(USER_FILE,Context.MODE_PRIVATE);
+        student.setUserId(sp.getInt(STUDENT_ID,-1));
+        LogUtils.e("SpUtils","getStudent user id : " + sp.getInt(STUDENT_ID,-1));
+        student.setUserName(sp.getString(STUDENT_NAME,""));
+        student.setUserNum(sp.getString(STUDENT_CODE,"-1"));
+        student.setSchoolName(sp.getString(STUDENT_SCHOOL,""));
+        student.setSubjectNames(sp.getString(STUDENT_SUBJECT,""));
+        student.setGradeDisplay(sp.getString(GRADE_DISPLAY ,""));
+        student.setClassName(sp.getString(CLASS_NAME,""));
+        student.setUserRealName(sp.getString(REAL_NAME , ""));
+        student.setGradeName(sp.getString(GRADE_NAME,""));
+        student.setSubjectNames(sp.getString(SUBJECT_NAMES , ""));
+        student.setClassId(sp.getString(CLASS_ID , ""));
+        student.setUserGender(sp.getString(USER_GENDER , ""));
         return student;
     }
 
@@ -251,14 +256,14 @@ public class SpUtils {
 
     public static void clearSP() {
         sp.edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE).edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(HISTORY_RECORD, Context.MODE_PRIVATE).edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(CONTENT_CHANGED, Context.MODE_PRIVATE).edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(INIT_DOWN, Context.MODE_PRIVATE).edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(HISTORY_RECORD, Context.MODE_PRIVATE).edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(UUID, Context.MODE_PRIVATE).edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME, Context.MODE_PRIVATE).edit().clear().apply();
-        UIUtils.getContext().getSharedPreferences(SP_OTHERS, Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(LABEL_LOCATION , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(HISTORY_RECORD , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(CONTENT_CHANGED , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(INIT_DOWN , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(HISTORY_RECORD , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(UUID , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(SP_MSG_UNREAD_COUNT_FILE_NAME , Context.MODE_PRIVATE).edit().clear().apply();
+        UIUtils.getContext().getSharedPreferences(SP_OTHERS , Context.MODE_PRIVATE).edit().clear().apply();
     }
 
     /**
@@ -322,13 +327,12 @@ public class SpUtils {
         return sp.getString(UUID, null);
     }
 
-    public static String getLocalLockPwd() {
-        return rot13(sp.getString(LOCAL_LOCK_PWD, ""));
+    public static String getLocalLockPwd(){
+        return rot13(sp.getString(LOCAL_LOCK_PWD , ""));
     }
-
-    public static void setLocalLockPwd(String pwd) {
+    public static void setLocalLockPwd(String pwd){
         pwd = rot13(pwd);
-        sp.edit().putString(LOCAL_LOCK_PWD, pwd).apply();
+        sp.edit().putString(LOCAL_LOCK_PWD , pwd).apply();
     }
 
     public static String getLocalYXToken() {
@@ -341,56 +345,57 @@ public class SpUtils {
     }
 
 
-    public static int getUnreadMsgCount(String ssid) {
-        LogUtils.e("FH", "getUnreadMsgCount ssid=" + ssid);
-        if (!TextUtils.isEmpty(ssid)) {
-            return unReadMsgSp.getInt(ssid, 0);
+    public static int getUnreadMsgCount (String ssid){
+        LogUtils.e("FH" , "getUnreadMsgCount ssid=" + ssid);
+        if (!TextUtils.isEmpty(ssid)){
+            return unReadMsgSp.getInt(ssid , 0);
         }
         return 0;
     }
 
-    public static void clearUnreadMsgCount(String ssid) {
-        LogUtils.e("FH", "clearUnreadMsgCount ssid=" + ssid);
+    public static void clearUnreadMsgCount (String ssid){
+        LogUtils.e("FH" , "clearUnreadMsgCount ssid=" + ssid);
         unReadMsgSp.edit().remove(ssid).apply();
     }
 
-    public static void addUnreadMsgCount(String ssid) {
-        LogUtils.e("FH", "addUnreadMsgCount ssid=" + ssid);
+    public static void addUnreadMsgCount (String ssid){
+        LogUtils.e("FH" , "addUnreadMsgCount ssid=" + ssid);
         int current = getUnreadMsgCount(ssid);
-        unReadMsgSp.edit().putInt(ssid, ++current).apply();
+        unReadMsgSp.edit().putInt(ssid , ++current).apply();
     }
 
-    public static void clearAllUnreadMsgCount() {
-        LogUtils.e("FH", "clearAllUnreadMsgCount");
+    public static void clearAllUnreadMsgCount (){
+        LogUtils.e("FH" , "clearAllUnreadMsgCount");
         unReadMsgSp.edit().clear().apply();
     }
 
-    public static boolean isThisDialogNotShowAgain(String tag) {
-        if (TextUtils.isEmpty(tag)) {
+    public static boolean isThisDialogNotShowAgain(String tag){
+        if (TextUtils.isEmpty(tag)){
             return false;
         }
         SharedPreferences sp = UIUtils.getContext()
                 .getSharedPreferences(SP_DIALOG_NOT_SHOW_AGAIN_TAG_FILE_NAME, Context.MODE_PRIVATE);
-        return sp.getBoolean(tag, false);
+        return sp.getBoolean(tag , false);
     }
 
-    public static void setNotSHowAgainDialogTag(String tag, boolean notShow) {
-        if (!TextUtils.isEmpty(tag)) {
+    public static void setNotSHowAgainDialogTag(String tag , boolean notShow){
+        if (!TextUtils.isEmpty(tag)){
             UIUtils.getContext().getSharedPreferences(SP_DIALOG_NOT_SHOW_AGAIN_TAG_FILE_NAME, Context.MODE_PRIVATE)
-                    .edit().putBoolean(tag, notShow).apply();
+                    .edit().putBoolean(tag , notShow).apply();
         }
     }
 
-    public static String rot13(String str) {
-        if (TextUtils.isEmpty(str)) {
+    public static String rot13 (String str){
+        if (TextUtils.isEmpty(str)){
             return null;
         }
         StringBuffer stringBuffer = new StringBuffer();
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0 ; i < str.length() ; i++){
             char c = str.charAt(i);
-            if (c >= 'a' && c <= 'z') {
+            if(c >= 'a' && c <= 'z'){
                 c = (char) ('a' + (c - 'a' + 13) % 26);
-            } else if (c >= 'A' && c <= 'Z') {
+            }
+            else if(c >= 'A' && c <= 'Z'){
                 c = (char) ('A' + (c - 'A' + 13) % 26);
             }
             stringBuffer.append(c);
@@ -401,10 +406,9 @@ public class SpUtils {
     /**
      * 返回当前用户的account
      * TODO 本方法仅用于调试,正式版需要换成返回当前用户名的正式方法
-     *
      * @return
      */
-    public static String justForTest() {
+    public static String justForTest(){
         return "test10";
     }
 
@@ -418,28 +422,29 @@ public class SpUtils {
 
     public static String getVersion() {
         String v = sp.getString("version", "");
-        if (StringUtils.isEmpty(v)) {
-            v = "1";
+        if (StringUtils.isEmpty(v)){
+            v= "1";
         }
-        return v;
+        return v ;
     }
 
 
     /**
      * 获取新订单数量(只统计本机发起的新订单数量,在其他端取消和下单造成的新订单改变不会在这个值中体现)
      */
-    public static int getNewOrderCount() {
-        return othersSp.getInt(NEW_ORDER_COUNT, -1);
+    public static int getNewOrderCount(){
+        return othersSp.getInt(NEW_ORDER_COUNT , -1);
     }
 
     /**
      * 新订单数量+1
      */
-    public static void newOrderCountPlusOne() {
+    public static void newOrderCountPlusOne(){
         int originalNewOrderCount = getNewOrderCount();
-        if (originalNewOrderCount == -1) {
+        if (originalNewOrderCount == -1){
             setNewOrderCount(1);
-        } else {
+        }
+        else {
             setNewOrderCount(originalNewOrderCount + 1);
         }
     }
@@ -447,20 +452,21 @@ public class SpUtils {
     /**
      * 设置新订单数量
      */
-    public static void setNewOrderCount(int newOrderCount) {
-        othersSp.edit().putInt(NEW_ORDER_COUNT, newOrderCount).commit();
+    public static void setNewOrderCount(int newOrderCount){
+        othersSp.edit().putInt(NEW_ORDER_COUNT , newOrderCount).commit();
     }
+
+
 
 
     //锁屏相关,此处order=命令
     public static void setOrder(String order) {
         sp.edit().putString("order", order).apply();
     }
-
     //锁屏相关,此处order=命令
     public static String getOrder() {
         String v = sp.getString("order", NO_LOCK_SCREEN);
-        return v;
+        return v ;
     }
 
     //锁屏相关,此处order=命令
@@ -471,6 +477,31 @@ public class SpUtils {
     //锁屏相关,此处order=命令
     public static boolean getDeviceScreen() {
         return sp.getBoolean("devicescreen", false);
+    }
+
+    /**
+     * 查询(问答)上一次选择的章节在书章节列表(flat后的)中的index
+     */
+    public static int getWendaLastNodeIndex(){
+        return othersSp.getInt(LAST_WENDA_CHOSEN_NODE_INDEX, -1);
+    }
+    /**
+     * 写入(问答)上一次选择的章节在书章节列表(flat后的)中的index
+     */
+    public static void setWendaLastNodeIndex(int index){
+        othersSp.edit().putInt(LAST_WENDA_CHOSEN_NODE_INDEX, index).commit();
+    }
+    /**
+     * 查询(问答)上一次选择的题目在该章节所有题目中的index
+     */
+    public static int getWendaLastQuestionIndex(){
+        return othersSp.getInt(LAST_WENDA_CHOSEN_QUESTION_INDEX, -1);
+    }
+    /**
+     * 写入(问答)上一次选择的题目在该章节所有题目中的index
+     */
+    public static void setWendaLastQuestionIndex(int index){
+        othersSp.edit().putInt(LAST_WENDA_CHOSEN_QUESTION_INDEX, index).commit();
     }
 
 
@@ -485,6 +516,4 @@ public class SpUtils {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences("media", Context.MODE_PRIVATE);
         return sp.getString(key, "");
     }
-
-
 }
