@@ -77,6 +77,10 @@ public class DownFileManager {
         mBookAudio = bookAudio;
         mBookAudioConfig = bookAudioConfig;
         //判断语音文件是否有更新：
+        LogUtils.e(TAG, "bookStatusCode  bookStatusCode...." + bookStatusCode);
+        LogUtils.e(TAG, "图书path" + FileUtils.getBookFileName(booId, FileUtils.bookDir));
+        LogUtils.e(TAG, "  图书是否存在." + StringUtils.isEmpty(FileUtils.getBookFileName(booId, FileUtils.bookDir)));
+
         if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.BOOK_STATU_SCODE.contains(bookStatusCode)) {
             LogUtils.e(TAG, "判断语音文件是否有更新：");
 
@@ -101,15 +105,19 @@ public class DownFileManager {
             }
         }
 
-        if (!StringUtils.isEmpty(FileUtils.getBookFileName(booId, FileUtils.bookDir))) {
+
+        if (StringUtils.isEmpty(FileUtils.getBookFileName(booId, FileUtils.bookDir))) {
             mType = FILE_BOOK; //下载图书
+            LogUtils.e(TAG, "下载图书：");
             showDownFileDialog();
 
         } else if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.BOOK_STATU_SCODE.contains(bookStatusCode)) {
             if (!FileUtils.exists(FileUtils.getMediaMp3Path() + mBookId + "/") && !StringUtils.isEmpty(mBookAudio)) {
+                LogUtils.e(TAG, "下载音频：");
                 mType = FILE_AUDIO; //下载音频
                 showDownFileDialog();
             } else if (!FileUtils.exists(FileUtils.getMediaJsonPath() + mBookId + "/") && !StringUtils.isEmpty(mBookAudioConfig)) {
+                LogUtils.e(TAG, "下载配置文件：");
                 mType = FILE_CONFIG; //下载配置文件
                 showDownFileDialog();
             } else {
@@ -117,12 +125,14 @@ public class DownFileManager {
                     mDialog.dismiss();
                 }
                 //进入阅读
+                LogUtils.e(TAG, "没有下载的 音频文件 和配置 进入 进入阅读");
                 mListener.onDownFileListenerCallBack(mListener.STATE_NORMAL);
             }
         } else {
             if (mDialog != null && mDialog.isShowing()) {
                 mDialog.dismiss();
             }
+            LogUtils.e(TAG, " 当前课本  不支持 点读。。进入阅读");
             //进入阅读
             mListener.onDownFileListenerCallBack(mListener.STATE_NORMAL);
         }
@@ -132,20 +142,22 @@ public class DownFileManager {
     private void showDownFileDialog() {
         if (mDialog == null) {
             mDialog = new DownFileDialog(mContext);
-            mDialog.setListener(new DownFileDialog.ClickListener() {
-                @Override
-                public void onBtnConfirmListener() {
-                    //请求网络 获取 下载 地址
-                    httpGetFileUrl();
-                }
 
-                @Override
-                public void onBtnCancelListener() {
-                    //取消下载
-                    cancelDownFile();
-                }
-            });
         }
+
+        mDialog.setListener(new DownFileDialog.ClickListener() {
+            @Override
+            public void onBtnConfirmListener() {
+                //请求网络 获取 下载 地址
+                httpGetFileUrl();
+            }
+
+            @Override
+            public void onBtnCancelListener() {
+                //取消下载
+                cancelDownFile();
+            }
+        });
 
         if (!mDialog.isShowing()) {
             mDialog.show();
@@ -262,6 +274,8 @@ public class DownFileManager {
                     LogUtils.i("resultCode" + errorCode);
                     if (errorCode.equals("404")) {
                         msg = "服务器没有上传文件";
+                    } else if (errorCode.equals("602")) {
+                        msg = "请求参数错误";
                     }
                 }
                 mDialog.setTitle(msg);
@@ -273,7 +287,9 @@ public class DownFileManager {
 
     private void cancelDownFile() {
         mDialog.dismiss();
-        DownOssManager.getInstance().cancel(mOssBean.getBookId(), mType);
+        if (mOssBean != null) {
+            DownOssManager.getInstance().cancel(mOssBean.getBookId(), mType);
+        }
     }
 
 
@@ -323,13 +339,23 @@ public class DownFileManager {
 
             @Override
             public void onFinish() {
+
+
                 LogUtils.e("下载....onFinish");
                 if (mType.equals(FILE_BOOK)) {
+                    LogUtils.e("下载....FILE_BOOK");
                     requestDownFile(mBookId, mBookStatusCode, mBookAudio, mBookAudioConfig);
                 } else {
                     //解压文件
-                    mDialog.setTitle("正在解压文件，不要操作");
-                    mDialog.setBtnCancelVisibility(View.GONE);
+                    LogUtils.e("....解压文件");
+                    try {
+                        mDialog.setTitle("正在解压文件，不要操作");
+                        mDialog.setBtnCancelVisibility(View.GONE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    LogUtils.e("....解压文件2");
                     ThreadManager.getShortPool().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -368,7 +394,6 @@ public class DownFileManager {
                         }
                     });
                 }
-
             }
 
             @Override
