@@ -116,7 +116,13 @@ public class DownOssManager {
 
                         listener.onSuccess((int) (total * rate));
                     }
-                    listener.onFinish();
+                    UIUtils.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onFinish();
+                        }
+                    });
+
                 } catch (IOException e) {
                     FileUtils.deleteFile(info.getSaveFilePath());
                     mListener.onFailure(request, null, null);

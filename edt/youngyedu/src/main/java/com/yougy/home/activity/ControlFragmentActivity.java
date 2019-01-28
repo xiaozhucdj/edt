@@ -12,6 +12,7 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.home.bean.NoteInfo;
 import com.yougy.home.fragment.showFragment.BaseFragment;
 import com.yougy.home.fragment.showFragment.ExerciseBookFragment;
@@ -102,8 +103,11 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
     public int mHomewrokId;
 
     public boolean mIsReferenceBook;
-    private boolean mIsOpenSelfAdapter;
-    private boolean mIsOpenVoice;
+    public boolean mIsOpenSelfAdapter;
+    public boolean mIsOpenVoice;
+    public String mBookStatusCode;
+    public String mBookAudio;
+    public String mBookAudioConfig;
 
 
     @Override
@@ -135,7 +139,14 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             mHomewrokId = bundle.getInt(FileContonst.HOME_WROK_ID, -1);
             mIsReferenceBook = bundle.getBoolean(FileContonst.IS_REFERENCE_BOOK);
             mIsOpenSelfAdapter = bundle.getBoolean(FileContonst.IS_OPEN_SELF_ADAPTER);
-            mIsOpenVoice = bundle.getBoolean(FileContonst.IS_OPEN_VOICE);
+
+            mBookStatusCode = bundle.getString(FileContonst.LOACL_BOOK_STATU_SCODE);
+            mBookAudio = bundle.getString(FileContonst.LOACL_BOOK_BOOK_AUDIO);
+            mBookAudioConfig = bundle.getString(FileContonst.LOACL_BOOK_BOOK_AUDIO_CONFIG);
+
+            if (!StringUtils.isEmpty(mBookStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(mBookStatusCode)) {
+                mIsOpenVoice = true;
+            }
         }
     }
 
