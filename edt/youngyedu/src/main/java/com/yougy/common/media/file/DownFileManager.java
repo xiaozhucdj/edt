@@ -81,7 +81,7 @@ public class DownFileManager {
         LogUtils.e(TAG, "图书path" + FileUtils.getBookFileName(booId, FileUtils.bookDir));
         LogUtils.e(TAG, "  图书是否存在." + StringUtils.isEmpty(FileUtils.getBookFileName(booId, FileUtils.bookDir)));
 
-        if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.BOOK_STATU_SCODE.contains(bookStatusCode)) {
+        if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(bookStatusCode)) {
             LogUtils.e(TAG, "判断语音文件是否有更新：");
 
             String localAudio = SpUtils.getMediaString(booId + AUDIO_TAG);
@@ -111,7 +111,7 @@ public class DownFileManager {
             LogUtils.e(TAG, "下载图书：");
             showDownFileDialog();
 
-        } else if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.BOOK_STATU_SCODE.contains(bookStatusCode)) {
+        } else if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(bookStatusCode)) {
             if (!FileUtils.exists(FileUtils.getMediaMp3Path() + mBookId + "/") && !StringUtils.isEmpty(mBookAudio)) {
                 LogUtils.e(TAG, "下载音频：");
                 mType = FILE_AUDIO; //下载音频

@@ -32,7 +32,6 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
-import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.home.adapter.BookAdapter;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
@@ -110,23 +109,20 @@ public class TextBookFragment extends BFragment {
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
-
         if (NetUtils.isNetConnected()) {
-
             if (mDownFileManager == null) {
                 mDownFileManager = new DownFileManager(getActivity(), new DownFileListener() {
                     @Override
                     public void onDownFileListenerCallBack(int state) {
-
                         LogUtils.e("text book state.." + state);
-                        if (state != STATE_NO_SUPPORT_BOOK  && state != STATE_SERVER_NO_BOOK_SOURCE){
+                        if (state != STATE_NO_SUPPORT_BOOK && state != STATE_SERVER_NO_BOOK_SOURCE) {
+                            mBookAdapter.notifyItemChanged(mDownPosition);
                             jumpBundle();
                         }
                     }
                 });
             }
             mDownFileManager.requestDownFile(info);
-
         } else {
             if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
                 jumpBundle();
@@ -159,9 +155,11 @@ public class TextBookFragment extends BFragment {
         extras.putInt(FileContonst.BOOK_ID, info.getBookId());
         extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
         extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
-        if (!StringUtils.isEmpty(info.getBookStatusCode()) && FileContonst.BOOK_STATU_SCODE.contains(info.getBookStatusCode())) {
-            extras.putBoolean(FileContonst.IS_OPEN_VOICE, true);
-        }
+
+        extras.putString(FileContonst.LOACL_BOOK_STATU_SCODE, info.getBookStatusCode());
+        extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO, info.getBookAudio());
+        extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO_CONFIG, info.getBookAudioConfig());
+
         loadIntentWithExtras(ControlFragmentActivity.class, extras);
     }
 
