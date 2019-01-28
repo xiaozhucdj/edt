@@ -33,22 +33,22 @@ import rx.functions.Action1;
  * Created by FH on 2017/11/6.
  * <p>
  * 单个已批改作业整体概览界面,统计正确率,每道题的对错,等等
- *
+ * <p>
  * modify by zhangyc on 2018/0704  添加计分作业显示逻辑
  */
 
 public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     ActivityCheckedHomeworkDetailBinding binding;
     ArrayList<QuestionReplySummary> replyList = new ArrayList<QuestionReplySummary>();
-    HashMap<Integer , Integer> commentatorValidMap = new HashMap<Integer, Integer>();
-    ArrayList<HashMap<Integer , Integer>> scoreMapList = new ArrayList<HashMap<Integer, Integer>>();
+    HashMap<Integer, Integer> commentatorValidMap = new HashMap<Integer, Integer>();
+    ArrayList<HashMap<Integer, Integer>> scoreMapList = new ArrayList<HashMap<Integer, Integer>>();
 
     int examId;
     String examName;
 
     private boolean isScoring = false;// 是否计分作业
-    private int examTotalPoints ;//exam 总分
-    private double scoreAvg ;//平均总得分
+    private int examTotalPoints;//exam 总分
+    private double scoreAvg;//平均总得分
     private int itemCount;//总题数
     private int correctCount;//正确的题目
     private int currentSelectCommentIndex = 0;
@@ -71,8 +71,8 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         examName = getIntent().getStringExtra("examName");
         isScoring = getIntent().getBooleanExtra("isScoring", false);
         examTotalPoints = getIntent().getIntExtra("getExamTotalPoints", 0);
-        itemCount = getIntent().getIntExtra("getItemCount", 0 );
-        isStudentCheck = getIntent().getIntExtra("isStudentCheck" , 0);
+        itemCount = getIntent().getIntExtra("getItemCount", 0);
+        isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
         binding.titleTv.setText(examName);
     }
 
@@ -80,8 +80,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     protected void initLayout() {
         if (isScoring) {
             binding.mainRecyclerview.setMaxItemNumInOnePage(24);
-        }
-        else {
+        } else {
             binding.mainRecyclerview.setMaxItemNumInOnePage(36);
         }
         binding.mainRecyclerview.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6) {
@@ -94,13 +93,13 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             @Override
             public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 //计分
-                ItemQuestionGridviewBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()),R.layout.item_question_gridview, parent, false);
+                ItemQuestionGridviewBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.item_question_gridview, parent, false);
                 //不计分
-                ItemQuestionGridview2Binding binding2 = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()),R.layout.item_question_gridview2, parent, false);
+                ItemQuestionGridview2Binding binding2 = DataBindingUtil.inflate(LayoutInflater.from(getApplicationContext()), R.layout.item_question_gridview2, parent, false);
                 if (isScoring) {
                     return new MyHolder(binding);
                 }
-                return  new MyHolder(binding2);
+                return new MyHolder(binding2);
             }
 
             @Override
@@ -112,10 +111,10 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                 }
                 Integer currentCommentator = ((Integer) commentatorValidMap.keySet().toArray()[currentSelectCommentIndex]);
                 Integer score = scoreMapList.get(position).get(currentCommentator);
-                if (score == null){
+                if (score == null) {
                     score = scoreMapList.get(position).get(1);
                 }
-                holder.setData(score , replyList.get(position).getReplyItemWeight());
+                holder.setData(score, replyList.get(position).getReplyItemWeight());
             }
 
             @Override
@@ -127,14 +126,15 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
                 MyHolder holder = (MyHolder) vh;
-                Intent intent = new Intent(CheckedHomeworkOverviewActivity.this , CheckHomeWorkActivity.class);
-                intent.putExtra("examId" , examId);
+                Intent intent = new Intent(CheckedHomeworkOverviewActivity.this, CheckHomeWorkActivity.class);
+                intent.putExtra("examId", examId);
                 intent.putExtra("toShowPosition", holder.getPosition());
                 intent.putExtra("isCheckOver", true);
                 intent.putExtra("isStudentLook", true);
-                intent.putExtra("isStudentCheck" , isStudentCheck);
-                intent.putExtra("replyCreator" , (long) SpUtils.getUserId());
-                intent.putExtra("replyCommentator" ,
+                intent.putExtra("isStudentCheck", isStudentCheck);
+                intent.putExtra("HOMEWORKID", getIntent().getIntExtra("HOMEWORKID", -1));
+                intent.putExtra("replyCreator", (long) SpUtils.getUserId());
+                intent.putExtra("replyCommentator",
                         ((Integer) commentatorValidMap.keySet().toArray()[currentSelectCommentIndex]).toString());
                 startActivity(intent);
 
@@ -144,7 +144,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     @Override
     protected void loadData() {
-        NetWorkManager.queryReply(examId, SpUtils.getUserId() , null)
+        NetWorkManager.queryReply(examId, SpUtils.getUserId(), null)
                 .subscribe(new Action1<List<QuestionReplySummary>>() {
                     @Override
                     public void call(List<QuestionReplySummary> replySummaries) {
@@ -164,58 +164,55 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                             //教师批改的分数,或者客观题自动批改的分数,或者如果没有自动批也没有老师评,就是学生批改的分数,如果学生也没评,就是-1.
                             int tempScore = replySummary.getReplyScore();
                             int tempCommentator = replySummary.getReplyCommentator();
-                            HashMap<Integer , Integer> replyScoreMap = new HashMap<Integer, Integer>();
+                            HashMap<Integer, Integer> replyScoreMap = new HashMap<Integer, Integer>();
                             for (int j = 0; j < replyCommented.size(); j++) {
                                 QuestionReplySummary.ReplyCommentedBean replyCommentedBean = replyCommented.get(j);
-                                if (replyCommentedBean.getReplyCommentator() > 1){
-                                    if (replyCommentedBean.getReplyScore() >= 0){
-                                        replyScoreMap.put(replyCommentedBean.getReplyCommentator() , replyCommentedBean.getReplyScore());
-                                        if (commentatorValidMap.get(replyCommentedBean.getReplyCommentator()) == null){
-                                            commentatorValidMap.put(replyCommentedBean.getReplyCommentator() , 1);
+                                if (replyCommentedBean.getReplyCommentator() > 1) {
+                                    if (replyCommentedBean.getReplyScore() >= 0) {
+                                        replyScoreMap.put(replyCommentedBean.getReplyCommentator(), replyCommentedBean.getReplyScore());
+                                        if (commentatorValidMap.get(replyCommentedBean.getReplyCommentator()) == null) {
+                                            commentatorValidMap.put(replyCommentedBean.getReplyCommentator(), 1);
                                         }
-                                    }
-                                    else {
-                                        commentatorValidMap.put(replyCommentedBean.getReplyCommentator() , -1);
+                                    } else {
+                                        commentatorValidMap.put(replyCommentedBean.getReplyCommentator(), -1);
                                     }
                                 }
                             }
-                            if (tempScore >= 0){
-                                if (replyComment.size() > 0){
-                                    replyScoreMap.put(tempCommentator , tempScore);
-                                    commentatorValidMap.put(tempCommentator , 0);
-                                }
-                                else {
+                            if (tempScore >= 0) {
+                                if (replyComment.size() > 0) {
+                                    replyScoreMap.put(tempCommentator, tempScore);
+                                    commentatorValidMap.put(tempCommentator, 0);
+                                } else {
                                     replyScoreMap.put(1, tempScore);
-                                    commentatorValidMap.put(1 , 1);
+                                    commentatorValidMap.put(1, 1);
                                 }
                             }
                             scoreMapList.add(replyScoreMap);
                         }
 
                         Iterator<Integer> keyIterator = commentatorValidMap.keySet().iterator();
-                        while (keyIterator.hasNext()){
+                        while (keyIterator.hasNext()) {
                             Integer commentator = keyIterator.next();
-                            if (commentatorValidMap.get(commentator) == 0){
+                            if (commentatorValidMap.get(commentator) == 0) {
                                 boolean allChecked = true;
-                                for (int i = 0 ; i < scoreMapList.size() ; i++) {
+                                for (int i = 0; i < scoreMapList.size(); i++) {
                                     Integer score = scoreMapList.get(i).get(commentator);
-                                    if (score == null || score == -1){
+                                    if (score == null || score == -1) {
                                         score = scoreMapList.get(i).get(1);
-                                        if (score == null || score == -1){
+                                        if (score == null || score == -1) {
                                             allChecked = false;
                                             break;
                                         }
                                     }
                                 }
-                                if (!allChecked){
+                                if (!allChecked) {
                                     commentatorValidMap.remove(commentator);
                                 }
-                            }
-                            else if (commentatorValidMap.get(commentator) == -1){
+                            } else if (commentatorValidMap.get(commentator) == -1) {
                                 commentatorValidMap.remove(commentator);
                             }
                         }
-                        if (commentatorValidMap.size() > 1){
+                        if (commentatorValidMap.size() > 1) {
                             commentatorValidMap.remove(1);
                         }
 
@@ -233,18 +230,17 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getApplicationContext() , "获取每题分数数据失败");
+                        ToastUtil.showCustomToast(getApplicationContext(), "获取每题分数数据失败");
                         finish();
                     }
                 });
-        NetWorkManager.sumReplyStudent(examId , SpUtils.getUserId())
+        NetWorkManager.sumReplyStudent(examId, SpUtils.getUserId())
                 .subscribe(new Action1<List<HomeworkSummarySumInfo>>() {
                     @Override
                     public void call(List<HomeworkSummarySumInfo> homeworkSummarySumInfos) {
-                        if (homeworkSummarySumInfos == null || homeworkSummarySumInfos.size() == 0){
-                            ToastUtil.showCustomToast(getApplicationContext() , "获取总分失败,查不到数据");
-                        }
-                        else {
+                        if (homeworkSummarySumInfos == null || homeworkSummarySumInfos.size() == 0) {
+                            ToastUtil.showCustomToast(getApplicationContext(), "获取总分失败,查不到数据");
+                        } else {
                             scoreAvg = homeworkSummarySumInfos.get(0).getScoreAvg();
                             correctCount = homeworkSummarySumInfos.get(0).getCorrectCount();
                             refreshCircleProgressBar();
@@ -254,7 +250,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
-                        ToastUtil.showCustomToast(getApplicationContext() , "获取总分失败");
+                        ToastUtil.showCustomToast(getApplicationContext(), "获取总分失败");
                         finish();
                     }
                 });
@@ -264,53 +260,48 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
     /**
      * 刷新批改结果选择条
      */
-    private void refreshCommentChooseBar(){
-        if (currentSelectCommentIndex + 1 > commentatorValidMap.keySet().size()){
+    private void refreshCommentChooseBar() {
+        if (currentSelectCommentIndex + 1 > commentatorValidMap.keySet().size()) {
             currentSelectCommentIndex = commentatorValidMap.keySet().size() - 1;
         }
-        if (currentSelectCommentIndex <= 0){
+        if (currentSelectCommentIndex <= 0) {
             binding.lastCommentBtn.setEnabled(false);
-        }
-        else {
+        } else {
             binding.lastCommentBtn.setEnabled(true);
         }
-        if (currentSelectCommentIndex + 1 == commentatorValidMap.keySet().size()){
+        if (currentSelectCommentIndex + 1 == commentatorValidMap.keySet().size()) {
             binding.nextCommentBtn.setEnabled(false);
-        }
-        else {
+        } else {
             binding.nextCommentBtn.setEnabled(true);
         }
-        if (commentatorValidMap.keySet().size() == 0){
+        if (commentatorValidMap.keySet().size() == 0) {
             binding.commentNameTextview.setText("无批改结果");
-        }
-        else if (commentatorValidMap.keySet().size() == 1){
+        } else if (commentatorValidMap.keySet().size() == 1) {
             binding.commentNameTextview.setText("批改结果");
-        }
-        else {
+        } else {
             binding.commentNameTextview.setText("批改结果" + (currentSelectCommentIndex + 1));
         }
     }
+
     /**
      * 更新圆形进度条的文字
      */
     private void refreshCircleProgressBar() {
         if (isScoring) {
             binding.textScoreTitle.setText("分数");
-            if (examTotalPoints <= 0){
+            if (examTotalPoints <= 0) {
                 binding.circleProgressBar.setProgress(0);
-            }
-            else {
+            } else {
                 binding.circleProgressBar.setProgress(((int) (scoreAvg * 100 / examTotalPoints)));
             }
             binding.circleProgressBar.setIsDrawCenterText(false);
             binding.textScore.setText(scoreAvg + "分");
         } else { //不计分作业
             binding.textScoreTitle.setText("正确率");
-            if (isStudentCheck == 2){//互评
+            if (isStudentCheck == 2) {//互评
                 binding.circleProgressBar.setProgress(((int) scoreAvg));
-                binding.textScore.setText((int)scoreAvg + "%");
-            }
-            else {
+                binding.textScore.setText((int) scoreAvg + "%");
+            } else {
                 binding.circleProgressBar.setProgress(correctCount * 100 / itemCount);
                 binding.textScore.setText(correctCount + "/" + itemCount);
             }
@@ -327,7 +318,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         finish();
     }
 
-    @OnClick({R.id.image_refresh , R.id.last_comment_btn , R.id.next_comment_btn})
+    @OnClick({R.id.image_refresh, R.id.last_comment_btn, R.id.next_comment_btn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.image_refresh:
@@ -360,12 +351,11 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             this.itemBinding2 = binding;
         }
 
-        public MyHolder setData(int score , int replyItemWeight) {
+        public MyHolder setData(int score, int replyItemWeight) {
             if (isScoring) {
                 if (score == 0) {
                     itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_cuowu);
-                }
-                else {
+                } else {
                     if (score == replyItemWeight) {
                         itemBinding.icon.setBackgroundResource(R.drawable.img_fenzhi_zhengque);
                     } else {

@@ -21,6 +21,8 @@ import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.common.media.file.DownFileListener;
+import com.yougy.common.media.file.DownFileManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.utils.DataCacheUtils;
@@ -126,6 +128,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     private LinearLayout llTerm;
     private int mDownPosition;
     private PageBtnBar mPageBtnBar;
+    private DownFileManager mDownFileManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -288,33 +291,62 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
-        LogUtils.i("book id ....." + info.toString());
-        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
-            Bundle extras = new Bundle();
-            //课本进入
-            extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
-            //笔记创建者
-            extras.putInt(FileContonst.NOTE_CREATOR, -1);
-            //笔记id
-            extras.putInt(FileContonst.NOTE_ID, info.getBookFitNoteId());
-            //图书id
-            extras.putInt(FileContonst.BOOK_ID, info.getBookId());
-            //分类码
-            extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
-            //笔记类型
-            extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
-            extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
-            extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
-            loadIntentWithExtras(ControlFragmentActivity.class, extras);
-        } else {
 
-            if (NetUtils.isNetConnected()) {
-                downBookTask(info.getBookId());
+        if (NetUtils.isNetConnected()) {
+
+            if (mDownFileManager == null) {
+                mDownFileManager = new DownFileManager(getActivity(), new DownFileListener() {
+                    @Override
+                    public void onDownFileListenerCallBack(int state) {
+                        LogUtils.e("text book state.." + state);
+                        if (state != STATE_NO_SUPPORT_BOOK && state != STATE_SERVER_NO_BOOK_SOURCE) {
+                            mAdaptetFragmentAllTextBook.notifyItemChanged(mDownPosition);
+                            jumpBundle();
+                        }
+                    }
+                });
+            }
+            mDownFileManager.requestDownFile(info);
+
+        } else {
+            if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
+                jumpBundle();
             } else {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
         }
     }
+
+
+    private void jumpBundle() {
+        BookInfo info = mBooks.get(mDownPosition);
+        Bundle extras = new Bundle();
+        //课本进入
+        extras.putString(FileContonst.JUMP_FRAGMENT, FileContonst.JUMP_TEXT_BOOK);
+        //笔记创建者
+        extras.putInt(FileContonst.NOTE_CREATOR, -1);
+        //分类码
+        extras.putInt(FileContonst.CATEGORY_ID, info.getBookCategory());
+        //笔记类型
+        extras.putInt(FileContonst.NOTE_Style, info.getNoteStyle());
+        extras.putInt(FileContonst.NOTE_SUBJECT_ID, info.getBookFitSubjectId());
+        extras.putString(FileContonst.NOTE_SUBJECT_NAME, info.getBookFitSubjectName());
+        //作业ID
+        extras.putInt(FileContonst.HOME_WROK_ID, info.getBookFitHomeworkId());
+        //笔记id
+        extras.putInt(FileContonst.NOTE_ID, info.getBookFitNoteId());
+        //图书id
+        extras.putInt(FileContonst.BOOK_ID, info.getBookId());
+        extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
+        extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
+
+        extras.putString(FileContonst.LOACL_BOOK_STATU_SCODE, info.getBookStatusCode());
+        extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO, info.getBookAudio());
+        extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO_CONFIG, info.getBookAudioConfig());
+
+        loadIntentWithExtras(ControlFragmentActivity.class, extras);
+    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -352,10 +384,10 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
                         @Override
                         public void call(List<BookInfo> bookInfos) {
                             AllTextBookFragment.this.freshUI(bookInfos);
-                            if (bookInfos!=null && bookInfos.size()>0){
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK,  GsonUtil.toJson(bookInfos));
-                            }else{
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK, "");
+                            if (bookInfos != null && bookInfos.size() > 0) {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK, GsonUtil.toJson(bookInfos));
+                            } else {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.ALL_CODE_CURRENT_BOOK, "");
                             }
 
 

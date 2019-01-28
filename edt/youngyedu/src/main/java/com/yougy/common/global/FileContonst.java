@@ -160,4 +160,13 @@ public class FileContonst {
             serverDevice = DEVICE_TYPE_N96;
         }
     }
+
+    public static final String SERVER_BOOK_STATU_SCODE = "BA01,BA02,BA03,BA04,BA11,BA12";
+
+    public static final String  LOACL_BOOK_STATU_SCODE = "loacl_book_statu_scode" ;
+
+    public static final String  LOACL_BOOK_BOOK_AUDIO= "loacl_book_book_audio";
+
+    public static final String  LOACL_BOOK_BOOK_AUDIO_CONFIG= "loacl_book_book_audio_config";
+
 }

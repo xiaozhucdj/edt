@@ -174,13 +174,32 @@ public class BookInfo extends DataSupport implements Parcelable {
      */
     private int courseId;
 
-
     /**
      * 图书密码
      */
     private String bookDownloadKey = "";
 
     private PromotionResult bookCoupon;
+
+    private String bookAudio;
+    private String bookAudioConfig;
+
+
+    public String getBookAudio() {
+        return bookAudio;
+    }
+
+    public void setBookAudio(String bookAudio) {
+        this.bookAudio = bookAudio;
+    }
+
+    public String getBookAudioConfig() {
+        return bookAudioConfig;
+    }
+
+    public void setBookAudioConfig(String bookAudioConfig) {
+        this.bookAudioConfig = bookAudioConfig;
+    }
 
     public String getDownloadkey() {
         return bookDownloadKey;
@@ -554,6 +573,12 @@ public class BookInfo extends DataSupport implements Parcelable {
     public void setBookFitHomeworkTitle(String bookFitHomeworkTitle) {
         this.bookFitHomeworkTitle = bookFitHomeworkTitle;
     }
+
+
+    public String getBookStatusCode() {
+        return bookStatusCode;
+    }
+
     /////////////////////////////////序列化 start ///////////////////////////
     @Override
     public int describeContents() {

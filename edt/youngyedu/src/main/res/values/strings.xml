@@ -48,7 +48,11 @@
     <string name="search_error_title">很抱歉,没有找到与\&#034;%1$s\&#034;相关的课外书</string>
     <string name="down_book_defult">该书尚未下载 ,现在开始下载 ?</string>
     <string name="down_book_error">该书下载失败 ,请重新下载?</string>
+    <string name="down_audio_error">音频下载失败 ,请重新下载?</string>
+    <string name="down_config_error">配置下载失败 ,请重新下载?</string>
     <string name="down_book_loading">图书下载中%1$s</string>
+    <string name="down_audio_loading">音频下载中%1$s</string>
+    <string name="down_config_loading">配置下载中%1$s</string>
     <string name="search">搜索</string>
     <item name="is_scale_size_tag" type="id" />
     <item name="is_scale_font_tag" type="id" />
@@ -156,6 +160,8 @@
 
     <string name="down_media_error">音频下载失败 ,请重新下载?</string>
     <string name="down_media_loading">语音包下载中%1$s</string>
+
+
     <string name="add2shopcart">加入购物车</string>
     <string name="add2favorite">加入收藏夹</string>
     <string name="read_online">在线试读</string>

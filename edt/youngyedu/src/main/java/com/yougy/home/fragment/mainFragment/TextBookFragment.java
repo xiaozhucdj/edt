@@ -21,7 +21,8 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.NewProtocolManager;
-import com.yougy.common.media.MediaDownUtils;
+import com.yougy.common.media.file.DownFileListener;
+import com.yougy.common.media.file.DownFileManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBookShelfReq;
 import com.yougy.common.utils.DataCacheUtils;
@@ -38,6 +39,7 @@ import com.yougy.home.bean.NoteInfo;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 import com.yougy.view.CustomGridLayoutManager;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,53 +104,33 @@ public class TextBookFragment extends BFragment {
         return mRootView;
     }
 
+    DownFileManager mDownFileManager;
+
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
-        LogUtils.i("yuanye ..图书id" + info.getBookId());
-        LogUtils.i("yuanye ...图书上级文件夹" + FileUtils.getTextBookFilesDir());
-        LogUtils.i("yuanye ..图书全路径" + FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir));
-        LogUtils.i("yuanye ..音频文件是否存在" + FileUtils.exists(FileUtils.getMediaFilesDir() + info.getBookId()));
-        LogUtils.i("yuanye ..音频文件ZIP是否存在" + FileUtils.exists(FileUtils.getMediaFilesDir() + info.getBookId() + ".zip"));
-        if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
-            //判断是否有音频文件
-            if (mMediasBookIDs.contains((info.getBookId() + ""))) {
-                if (FileUtils.exists(FileUtils.getMediaFilesDir() + info.getBookId())) {
-                    jumpBundle();
-                }else {
-                    if (NetUtils.isNetConnected()) { //去下载音频文件
-//                        UIUtils.showToastSafe("需要下载音频");
-                        LogUtils.i("yuanye ..需要下载音频" );
-                        MediaDownUtils downUtils = new MediaDownUtils();
-                        downUtils.setMediaDownUtilsListener(new MediaDownUtils.MediaDownUtilsListener() {
-                            @Override
-                            public void onMediaCancelListener() {
-                                jumpBundle();
-                            }
-
-                            @Override
-                            public void onMediaDownFinishListener() {
-                                jumpBundle();
-                            }
-                        });
-
-                        downUtils.downMediaZipFile(getActivity(), info.getBookId() + "");
-
-                    } else {
-                        showCancelAndDetermineDialog(R.string.jump_to_net);
+        if (NetUtils.isNetConnected()) {
+            if (mDownFileManager == null) {
+                mDownFileManager = new DownFileManager(getActivity(), new DownFileListener() {
+                    @Override
+                    public void onDownFileListenerCallBack(int state) {
+                        LogUtils.e("text book state.." + state);
+                        if (state != STATE_NO_SUPPORT_BOOK && state != STATE_SERVER_NO_BOOK_SOURCE) {
+                            mBookAdapter.notifyItemChanged(mDownPosition);
+                            jumpBundle();
+                        }
                     }
-                }
-            } else {
-                jumpBundle();
+                });
             }
-
+            mDownFileManager.requestDownFile(info);
         } else {
-            if (NetUtils.isNetConnected()) {
-                downBookTask(info.getBookId());
+            if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
+                jumpBundle();
             } else {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
         }
+
     }
 
 
@@ -172,6 +154,12 @@ public class TextBookFragment extends BFragment {
         //图书id
         extras.putInt(FileContonst.BOOK_ID, info.getBookId());
         extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
+        extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
+
+        extras.putString(FileContonst.LOACL_BOOK_STATU_SCODE, info.getBookStatusCode());
+        extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO, info.getBookAudio());
+        extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO_CONFIG, info.getBookAudioConfig());
+
         loadIntentWithExtras(ControlFragmentActivity.class, extras);
     }
 
@@ -209,7 +197,7 @@ public class TextBookFragment extends BFragment {
     }
 
     private void loadData() {
-        LogUtils.e("loadData ..."+tag);
+        LogUtils.e("loadData ..." + tag);
         if (NetUtils.isNetConnected()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
@@ -220,15 +208,15 @@ public class TextBookFragment extends BFragment {
             //设置年级
             req.setBookFitGradeName();
             req.setBookCategoryMatch(10000);
-            NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity) context).bindToLifecycle())
                     .subscribe(new Action1<List<BookInfo>>() {
                         @Override
                         public void call(List<BookInfo> bookInfos) {
                             TextBookFragment.this.freshUI(bookInfos);
-                            if (bookInfos!=null && bookInfos.size()>0){
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK,  GsonUtil.toJson(bookInfos));
-                            }else{
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK, "");
+                            if (bookInfos != null && bookInfos.size() > 0) {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK, GsonUtil.toJson(bookInfos));
+                            } else {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_CURRENT_BOOK, "");
                             }
                         }
                     }, new Action1<Throwable>() {
