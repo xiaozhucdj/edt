@@ -601,7 +601,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
      * 增加提交次数发送给服务器
      */
     public void submitNum() {
-        NetWorkManager.setMistakeExcerpt(homeworkId, getIntent().getIntExtra("REPLYID", -1) + "", "submitNum", getIntent().getIntExtra("SUBMITNUM", 0) + 1)
+        NetWorkManager.setMistakeExcerpt(homeworkId, getIntent().getIntExtra("REPLYID", -1) + "", "submitNum", (getIntent().getIntExtra("SUBMITNUM", 0) + 1))
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
