@@ -312,6 +312,7 @@ public class MistakeListActivity extends HomeworkBaseActivity {
 
                 intent.putExtra("PARSEDQUESTIONITEM", questionReplyDetail.getParsedQuestionItem());
                 intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
+                intent.putExtra("SUBMITNUM", questionReplyDetail.getHomeworkExcerpt().getExtra().getSubmitNum());
                 intent.putExtra("REPLYID", questionReplyDetail.getReplyId());
 
                 intent.putExtra("REPLYITEMWEIGHT", questionReplyDetail.getReplyItemWeight());

@@ -351,14 +351,16 @@
 
                     </RelativeLayout>
 
-
                     <TextView
                         android:id="@+id/tv_xuehui"
-                        android:layout_width="wrap_content"
-                        android:background="@android:color/holo_red_light"
-                        android:text="我已学会"
-                        android:layout_alignParentRight="true"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="46px"
+                        android:layout_height="106px"
+                        android:background="@drawable/img_answer_status_bg_green"
+                        android:gravity="center"
+                        android:text="我\n已\n学\n会"
+                        android:textColor="@color/white"
+                        android:textSize="20px" />
+
 
                 </RelativeLayout>
 

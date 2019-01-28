@@ -72,6 +72,15 @@ public class MistakeSummary implements Parcelable {
         private String name;
         private boolean deleted;
         private int lastScore = -1;
+        private int submitNum = 0;
+
+        public int getSubmitNum() {
+            return submitNum;
+        }
+
+        public void setSubmitNum(int submitNum) {
+            this.submitNum = submitNum;
+        }
 
         public int getExam() {
             return exam;

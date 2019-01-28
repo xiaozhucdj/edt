@@ -1208,10 +1208,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                 Intent intent = new Intent(getApplicationContext(), WriteErrorHomeWorkActivity.class);
                 intent.putExtra("HOMEWORKID", getIntent().getIntExtra("HOMEWORKID", -1));
-                intent.putExtra("BOOKTITLE", questionReplyDetail.getHomeworkExcerpt().getCursorName());
+                intent.putExtra("BOOKTITLE", questionReplyDetail.getReplyExamName());
 
                 intent.putExtra("PARSEDQUESTIONITEM", questionReplyDetail.getParsedQuestionItem());
                 intent.putExtra("LASTSCORE", questionReplyDetail.getHomeworkExcerpt().getExtra().getLastScore());
+                intent.putExtra("SUBMITNUM", questionReplyDetail.getHomeworkExcerpt().getExtra().getSubmitNum());
                 intent.putExtra("REPLYID", questionReplyDetail.getReplyId());
 
                 intent.putExtra("REPLYITEMWEIGHT", questionReplyDetail.getReplyItemWeight());

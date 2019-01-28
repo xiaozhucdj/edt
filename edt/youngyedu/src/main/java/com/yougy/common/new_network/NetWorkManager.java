@@ -119,7 +119,7 @@ public final class NetWorkManager {
                 newBuilder.header("Content-Type", "application/json");
                 newBuilder.header("Accept", "application/json");
                 newBuilder.method(orignaRequest.method(), orignaRequest.body());
-                newBuilder.addHeader("X-Device-Model",SystemUtils.getDeviceModel());
+                newBuilder.addHeader("X-Device-Model", SystemUtils.getDeviceModel());
 //                if (Commons.isRelase) {
                 newBuilder.addHeader("X-Auth-Options", "1e7904f32c4fcfd59b8a524d1bad1d8a.qg0J9zG*FIkBk^vo");
 //                }
@@ -348,6 +348,15 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<Object> setMistakeExcerpt(Integer homeworkId, String replyId, String key, int value) {
+        LogUtils.e("FH", "!!!!!调用ServerApi设置错题新增参数key"+key);
+        return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
+                , "{\"reply\":" + replyId + ",\"extra\":{\"" + key + "\":" + value + "}}")
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
     public static Observable<List<CourseInfo>> queryCourse(Integer userId) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询课程:queryCourse");
@@ -666,8 +675,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentBookLink, int pn, int ps){
-        return getInstance().getServerApi().queryTasks(homeworkId,contentBookLink,pn,ps)
+    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentBookLink, int pn, int ps) {
+        return getInstance().getServerApi().queryTasks(homeworkId, contentBookLink, pn, ps)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
     }
@@ -679,16 +688,16 @@ public final class NetWorkManager {
     }
 
     /**
-     *  查询任务内容  练习  资料 签字  详情
+     * 查询任务内容  练习  资料 签字  详情
+     *
      * @param dramaId
-     * @param stageTypeCode
-     *      SR01 内容
-            SR02 资料
-            SR03 练习
-            SR04 签字
+     * @param stageTypeCode SR01 内容
+     *                      SR02 资料
+     *                      SR03 练习
+     *                      SR04 签字
      * @return
      */
-    public static Observable<List<StageTaskBean>> queryStageTask (String dramaId, String stageTypeCode) {
+    public static Observable<List<StageTaskBean>> queryStageTask(String dramaId, String stageTypeCode) {
         return getInstance().getServerApi().queryStageTask(dramaId, stageTypeCode)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
@@ -696,16 +705,17 @@ public final class NetWorkManager {
 
     /**
      * OOS 上传
+     *
      * @param userId
      * @return
      */
-    public static Observable<STSbean> uploadTaskPracticeOOS (Integer userId) {
+    public static Observable<STSbean> uploadTaskPracticeOOS(Integer userId) {
         return getInstance().getServerApi().uploadTaskPracticeOOS(userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<List<SubmitReplyBean>> submitTaskPracticeServer (Integer userId, String data) {
+    public static Observable<List<SubmitReplyBean>> submitTaskPracticeServer(Integer userId, String data) {
         return getInstance().getServerApi().submitTaskPracticeServer(userId, data)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
