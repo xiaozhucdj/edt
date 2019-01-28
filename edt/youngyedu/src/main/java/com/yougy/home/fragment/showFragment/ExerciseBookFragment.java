@@ -172,6 +172,7 @@ public class ExerciseBookFragment extends BFragment {
                         if (IHCODE_05.equals(holder.getData().getExtra().getStatusCode())) {
                             intent = new Intent(getActivity(), CheckedHomeworkOverviewActivity.class);
                             intent.putExtra("examId", holder.getData().getExam());
+                            intent.putExtra("HOMEWORKID", mControlActivity.mHomewrokId);
                             intent.putExtra("examName", holder.getData().getExtra().getName());
                             if (holder.getData().getExtra().getExamTotalPoints() > 0) {
                                 //是否为计分作业

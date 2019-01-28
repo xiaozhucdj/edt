@@ -187,7 +187,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"}, values = {"reviewComment"})
+    @DefaultField(keys = {"m","extraParameter"}, values = {"reviewComment","1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("userId") String userId);
 
@@ -196,7 +196,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"}, values = {"reviewComment"})
+    @DefaultField(keys = {"m","extraParameter"}, values = {"reviewComment","1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator, @Field("replyCreator") long replyCreator);
 

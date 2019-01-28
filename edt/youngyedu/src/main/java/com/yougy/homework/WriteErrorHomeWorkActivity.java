@@ -22,6 +22,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.RefreshUtil;
@@ -48,6 +49,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.functions.Action1;
 
 /**
  * Created by cdj
@@ -180,6 +182,13 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 ivZpResult.setVisibility(View.GONE);
                 break;
         }
+
+        if (getIntent().getBooleanExtra("ISDELETED", false)) {
+            tvZpResult.setText("上次自评结果 : 已学会");
+            ivZpResult.setVisibility(View.GONE);
+        }
+
+
         ContentDisplayer.ContentAdapter contentAdapter = new ContentDisplayer.ContentAdapter() {
 
             @Override
@@ -519,8 +528,9 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_submit_homework:
-                saveHomeWorkData();
-                gotoMistakeGradeActivity();
+
+                submitNum();
+
                 break;
             case R.id.tv_clear_write:
                 mNbvAnswerBoard.clearAll();
@@ -585,6 +595,25 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 break;
 
         }
+    }
+
+    /**
+     * 增加提交次数发送给服务器
+     */
+    public void submitNum() {
+        NetWorkManager.setMistakeExcerpt(homeworkId, getIntent().getIntExtra("REPLYID", -1) + "", "submitNum", getIntent().getIntExtra("SUBMITNUM", 0) + 1)
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        saveHomeWorkData();
+                        gotoMistakeGradeActivity();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        ToastUtil.showCustomToast(getApplicationContext(), "提交失败，服务器异常，请稍后重试");
+                    }
+                });
     }
 
 
