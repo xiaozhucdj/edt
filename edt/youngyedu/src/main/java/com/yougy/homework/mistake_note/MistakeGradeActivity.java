@@ -174,8 +174,29 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
                 });
     }
 
-    //我已学会
+    //我已学会 new方法，不在提示移除错题本，已学会的题目也可以继续练习
     public void onHasLearnedBtnCLick(View view) {
+        if (!showNoNetDialog()) {
+
+            NetWorkManager.deleteMistake(homeworkId, replyId + "").subscribe(new Action1<Object>() {
+                @Override
+                public void call(Object o) {
+                    ToastUtil.showCustomToast(getApplicationContext(), "该错题已学会");
+                    finish();
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    throwable.printStackTrace();
+                    ToastUtil.showCustomToast(getApplicationContext(), "已学会提交失败，服务器异常，请稍后重试");
+                }
+            });
+
+        }
+    }
+
+    //我已学会  old方法，提示是否移除错题本
+    public void onHasLearnedBtnCLick1(View view) {
         if (!showNoNetDialog()) {
             new FullScreenHintDialog(this, "hasLearned")
                     .setIconResId(R.drawable.icon_caution_big)
