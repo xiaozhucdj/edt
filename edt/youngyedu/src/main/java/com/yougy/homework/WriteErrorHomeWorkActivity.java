@@ -182,6 +182,13 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 ivZpResult.setVisibility(View.GONE);
                 break;
         }
+
+        if (getIntent().getBooleanExtra("ISDELETED", false)) {
+            tvZpResult.setText("上次自评结果 : 已学会");
+            ivZpResult.setVisibility(View.GONE);
+        }
+
+
         ContentDisplayer.ContentAdapter contentAdapter = new ContentDisplayer.ContentAdapter() {
 
             @Override
