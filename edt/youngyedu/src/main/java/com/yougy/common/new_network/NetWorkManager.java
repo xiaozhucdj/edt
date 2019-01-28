@@ -11,6 +11,7 @@ import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.common.media.file.OssInfoBean;
 import com.yougy.common.model.Version;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
 import com.yougy.common.protocol.request.NewBookShelfReq;
@@ -242,6 +243,14 @@ public final class NetWorkManager {
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
+
+    public static Observable<List<OssInfoBean>> downloadFile(String bookId, String atchTypeCode) {
+        LogUtils.e("FH", "!!!!!调用ServerApi下载图书:downloadBook2");
+        return getInstance().getServerApi().downloadFile(bookId, atchTypeCode)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
 
     public static Observable<List<HomeworkBookSummary>> queryHomeworkBookList(String userId, String homeworkFitGradeName) {
         LogUtils.e("FH", "!!!!!调用ServerApi获取作业本列表:queryHomeworkBookList");

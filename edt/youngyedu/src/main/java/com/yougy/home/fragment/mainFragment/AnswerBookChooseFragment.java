@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.frank.etude.pageable.PageBtnBar;
 import com.frank.etude.pageable.PageBtnBarAdapter;
-import com.yougy.anwser.AnswerBookStructureActivity;
 import com.yougy.anwser.AnswerRecordListDetailNewActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
