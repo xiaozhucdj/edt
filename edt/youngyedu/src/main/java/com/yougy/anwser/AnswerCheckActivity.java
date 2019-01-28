@@ -133,8 +133,8 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         DialogManager.newInstance().showNetConnDialog(getBaseContext());
 
         NetWorkManager
-//                .queryQuestions2BeMarked(SpUtils.getUserId() + "")
-                .queryQuestions2BeMarked("1000002597")
+                .queryQuestions2BeMarked(SpUtils.getUserId() + "")
+//                .queryQuestions2BeMarked("1000002597")
                 .compose(bindToLifecycle())
                 .subscribe(new Action1<List<QuestionReplyDetail>>() {
                                @Override
