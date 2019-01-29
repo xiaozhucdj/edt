@@ -29,7 +29,7 @@ import rx.functions.Action1;
 /**
  * Created by FH on 2018/3/9.
  * 学生点击提交问答后学生查看答案和题干的界面也复用这个界面
- *
+ * <p>
  * 学生问答记录某一条记录的详情界面（这个页面已经调整为AnswerRecordListDetailActivity，用来展示问答结果列表页面）
  */
 
@@ -250,58 +250,69 @@ public class AnswerRecordDetailActivity extends BaseActivity {
     protected void loadData() {
         NetWorkManager.queryReplyDetail(examId, null, SpUtils.getUserId() + "")
                 .subscribe(new Action1<List<QuestionReplyDetail>>() {
-                    @Override
-                    public void call(List<QuestionReplyDetail> questionReplyDetails) {
-                        QuestionReplyDetail questionReplyDetail = questionReplyDetails.get(questionReplyDetails.size() - 1);
-                        //显示选择或判断的选项
-                        textReplyList.clear();
-                        List<Content_new> originContentList = questionReplyDetail.getParsedReplyContentList();
-                        List<Content_new> imageContentList = new ArrayList<Content_new>();
-                        for (Content_new contentNew : originContentList) {
-                            if (contentNew != null) {
-                                if (contentNew.getType() == Content_new.Type.TEXT) {
-                                    textReplyList.add(contentNew);
-                                } else {
-                                    imageContentList.add(contentNew);
-                                }
-                            } else {
-                                imageContentList.add(null);
+                               @Override
+                               public void call(List<QuestionReplyDetail> questionReplyDetails) {
+                                   QuestionReplyDetail questionReplyDetail = questionReplyDetails.get(questionReplyDetails.size() - 1);
+                                   //显示选择或判断的选项
+                                   textReplyList.clear();
+                                   List<Content_new> originContentList = questionReplyDetail.getParsedReplyContentList();
+                                   List<Content_new> imageContentList = new ArrayList<Content_new>();
+                                   for (Content_new contentNew : originContentList) {
+                                       if (contentNew != null) {
+                                           if (contentNew.getType() == Content_new.Type.TEXT) {
+                                               textReplyList.add(contentNew);
+                                           } else {
+                                               imageContentList.add(contentNew);
+                                           }
+                                       } else {
+                                           imageContentList.add(null);
+                                       }
+                                   }
+                                   AnswerRecordDetailActivity.this.showJudgeOrSelect();
+
+                                   //显示分数
+                                   int replyScore = questionReplyDetail.getReplyScore();
+                                   switch (replyScore) {
+                                       case 100:
+                                           binding.buttomIcon.setImageResource(R.drawable.img_zhengque);
+                                           break;
+                                       case 0:
+                                           binding.buttomIcon.setImageResource(R.drawable.img_cuowu);
+                                           break;
+                                       default:
+                                           binding.buttomIcon.setImageResource(R.drawable.img_bandui);
+                                           break;
+                                   }
+                                   //设置1,2层不可写
+                                   binding.contentDisplayer.getLayer1().setIntercept(true);
+                                   binding.contentDisplayer.getLayer2().setIntercept(true);
+                                   //填充数据
+                                   binding.contentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
+                                   binding.contentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+                                   if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
+                                       binding.contentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
+                                   } else {
+                                       binding.contentDisplayer.getContentAdapter().deleteDataList("question", 2);
+                                   }
+                                   binding.contentDisplayer.getContentAdapter().updateDataList("question", 1, imageContentList);
+
+                                   //设置用时
+                                   binding.spendTimeTv.setText("用时 : " + questionReplyDetail.getReplyUseTime());
+
+                                   binding.questionBodyBtn.performClick();
+                               }
+                           }
+                        , new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                throwable.printStackTrace();
+                                ToastUtil.showCustomToast(getBaseContext(), "获取数据失败，服务器异常，请稍后重试");
+
                             }
                         }
-                        AnswerRecordDetailActivity.this.showJudgeOrSelect();
 
-                        //显示分数
-                        int replyScore = questionReplyDetail.getReplyScore();
-                        switch (replyScore) {
-                            case 100:
-                                binding.buttomIcon.setImageResource(R.drawable.img_zhengque);
-                                break;
-                            case 0:
-                                binding.buttomIcon.setImageResource(R.drawable.img_cuowu);
-                                break;
-                            default:
-                                binding.buttomIcon.setImageResource(R.drawable.img_bandui);
-                                break;
-                        }
-                        //设置1,2层不可写
-                        binding.contentDisplayer.getLayer1().setIntercept(true);
-                        binding.contentDisplayer.getLayer2().setIntercept(true);
-                        //填充数据
-                        binding.contentDisplayer.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
-                        binding.contentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
-                        if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
-                            binding.contentDisplayer.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
-                        } else {
-                            binding.contentDisplayer.getContentAdapter().deleteDataList("question", 2);
-                        }
-                        binding.contentDisplayer.getContentAdapter().updateDataList("question", 1, imageContentList);
 
-                        //设置用时
-                        binding.spendTimeTv.setText("用时 : " + questionReplyDetail.getReplyUseTime());
-
-                        binding.questionBodyBtn.performClick();
-                    }
-                });
+                );
     }
 
     /**

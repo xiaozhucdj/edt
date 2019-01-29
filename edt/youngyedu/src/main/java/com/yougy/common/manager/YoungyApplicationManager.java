@@ -37,6 +37,7 @@ import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.EndQuestionAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
+import com.yougy.message.attachment.PullAnswerCheckAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.order.LockerActivity;
 import com.yougy.ui.activity.BuildConfig;
@@ -309,6 +310,9 @@ public class YoungyApplicationManager extends LitePalApplication {
                         intent.putExtra("isOnClass", true);
                         intent.putExtra("isStudentCheck", attachment.isStudentCheck);
                         startActivity(intent);
+                    }
+                    else if (message.getAttachment() instanceof PullAnswerCheckAttachment){
+
                     }
                 }
             });

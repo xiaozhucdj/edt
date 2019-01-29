@@ -546,7 +546,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
 
 
-                startActivity(new Intent(this, AnswerCheckActivity.class));
                 break;
 
             case R.id.btn_deviceSize:
