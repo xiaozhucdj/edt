@@ -203,6 +203,11 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     }
 
     private void itemClick(int position) {
+
+
+
+
+
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
         if (NetUtils.isNetConnected()) {

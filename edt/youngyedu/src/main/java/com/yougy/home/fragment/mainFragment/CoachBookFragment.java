@@ -81,12 +81,13 @@ public class CoachBookFragment extends BFragment {
         }
         return mAddBook;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_book, null);
         mRecyclerView = mRootView.findViewById(R.id.recycler_View);
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.adaper_divider_img_normal));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.adaper_divider_img_normal));
         mRecyclerView.addItemDecoration(divider);
 
         CustomGridLayoutManager layout = new CustomGridLayoutManager(getActivity(), FileContonst.PAGE_LINES);
@@ -109,28 +110,38 @@ public class CoachBookFragment extends BFragment {
     private void itemClick(int position) {
         mDownPosition = position;
         BookInfo info = mBooks.get(position);
-        if (NetUtils.isNetConnected()) {
-            if (mDownFileManager == null) {
-                mDownFileManager = new DownFileManager(getActivity(), new DownFileListener() {
-                    @Override
-                    public void onDownFileListenerCallBack(int state) {
-                        LogUtils.e("text book state.." + state);
-                        if (state != STATE_NO_SUPPORT_BOOK && state != STATE_SERVER_NO_BOOK_SOURCE) {
-                            mBookAdapter.notifyItemChanged(mDownPosition);
-                            jumpBundle();
-                        }
-                    }
-                });
-            }
-            mDownFileManager.requestDownFile(info);
-        } else {
-            if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
-                jumpBundle();
+
+        if (info.getBookId() == -1) {
+            if (NetUtils.isNetConnected()) {
+                Intent intent = new Intent(getActivity(), BookShopActivityDB.class);
+                intent.putExtra(BookShopActivityDB.CLASSIFY_POSITION, BookShopActivityDB.CLASSIFY_POSITION_GUID);
+                startActivity(intent);
             } else {
                 showCancelAndDetermineDialog(R.string.jump_to_net);
             }
+        } else {
+            if (NetUtils.isNetConnected()) {
+                if (mDownFileManager == null) {
+                    mDownFileManager = new DownFileManager(getActivity(), new DownFileListener() {
+                        @Override
+                        public void onDownFileListenerCallBack(int state) {
+                            LogUtils.e("text book state.." + state);
+                            if (state != STATE_NO_SUPPORT_BOOK && state != STATE_SERVER_NO_BOOK_SOURCE) {
+                                mBookAdapter.notifyItemChanged(mDownPosition);
+                                jumpBundle();
+                            }
+                        }
+                    });
+                }
+                mDownFileManager.requestDownFile(info);
+            } else {
+                if (!StringUtils.isEmpty(FileUtils.getBookFileName(info.getBookId(), FileUtils.bookDir))) {
+                    jumpBundle();
+                } else {
+                    showCancelAndDetermineDialog(R.string.jump_to_net);
+                }
+            }
         }
-
     }
 
 
@@ -164,7 +175,6 @@ public class CoachBookFragment extends BFragment {
     }
 
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -187,7 +197,7 @@ public class CoachBookFragment extends BFragment {
     }
 
     private void loadData() {
-        LogUtils.e("loadData ..."+tag);
+        LogUtils.e("loadData ..." + tag);
         if (YoungyApplicationManager.isWifiAvailable()) {
             NewBookShelfReq req = new NewBookShelfReq();
             //设置学生ID
@@ -197,15 +207,15 @@ public class CoachBookFragment extends BFragment {
             //设置年级
             req.setBookFitGradeName();
             req.setBookCategoryMatch(20000);
-            NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity) context).bindToLifecycle())
                     .subscribe(new Action1<List<BookInfo>>() {
                         @Override
                         public void call(List<BookInfo> bookInfos) {
                             CoachBookFragment.this.freshUI(bookInfos);
-                            if (bookInfos!=null && bookInfos.size()>0){
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_COACH_BOOK,  GsonUtil.toJson(bookInfos));
-                            }else{
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_COACH_BOOK, "");
+                            if (bookInfos != null && bookInfos.size() > 0) {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_COACH_BOOK, GsonUtil.toJson(bookInfos));
+                            } else {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_COACH_BOOK, "");
                             }
 
                         }
@@ -297,7 +307,7 @@ public class CoachBookFragment extends BFragment {
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn) {
-                refreshAdapterData(btnIndex+1);
+                refreshAdapterData(btnIndex + 1);
             }
         });
         mPageBtnBar.setCurrentSelectPageIndex(0);
@@ -308,7 +318,7 @@ public class CoachBookFragment extends BFragment {
     private void freshUI(List<BookInfo> bookInfos) {
         mIsRefresh = false;
         mCountBooks.clear();
-        mCountBooks.add(0,getAddBook());
+        mCountBooks.add(0, getAddBook());
         if (bookInfos != null && bookInfos.size() > 0) {
             mCountBooks.addAll(bookInfos);
         }
@@ -355,7 +365,7 @@ public class CoachBookFragment extends BFragment {
     @Override
     protected void onDownBookFinish() {
         super.onDownBookFinish();
-        mBookAdapter .notifyItemChanged(mDownPosition);
+        mBookAdapter.notifyItemChanged(mDownPosition);
         itemClick(mDownPosition);
     }
 }
