@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
@@ -144,7 +145,13 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             mBookAudio = bundle.getString(FileContonst.LOACL_BOOK_BOOK_AUDIO);
             mBookAudioConfig = bundle.getString(FileContonst.LOACL_BOOK_BOOK_AUDIO_CONFIG);
 
+            // 课本跳入进来的
             if (!StringUtils.isEmpty(mBookStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(mBookStatusCode)) {
+                mIsOpenVoice = true;
+            }
+
+            //笔记 作业跳转 进来的
+            if (StringUtils.isEmpty(mBookStatusCode) && FileUtils.exists(FileUtils.getMediaJsonPath() + mBookId + "/") && FileUtils.exists(FileUtils.getMediaMp3Path() + mBookId + "/")) {
                 mIsOpenVoice = true;
             }
         }
