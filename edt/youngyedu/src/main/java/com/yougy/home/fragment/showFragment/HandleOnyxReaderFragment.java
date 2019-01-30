@@ -291,7 +291,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         if (mloadingDialog != null && mloadingDialog.isShowing()) {
             mloadingDialog.dismiss();
         }
-
         LogUtils.i("updatePage");
         position = page;
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
@@ -305,13 +304,13 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             if (bean == null) {
                 fm_voice.setVisibility(View.GONE);
                 rl_reader.setVisibility(View.GONE);
-                return;
+            } else {
+                fm_voice.setVisibility(View.VISIBLE);
+                rl_reader.setVisibility(View.VISIBLE);
+                btn_reader_page.setVisibility(View.VISIBLE);
+                btn_reader_pause.setVisibility(View.GONE);
+                addVoiceItem();
             }
-            fm_voice.setVisibility(View.VISIBLE);
-            rl_reader.setVisibility(View.VISIBLE);
-            btn_reader_page.setVisibility(View.VISIBLE);
-            btn_reader_pause.setVisibility(View.GONE);
-            addVoiceItem();
         }
         if (mRunThread == null) {
             mRunThread = new NoteBookDelayedRun();
