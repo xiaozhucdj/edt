@@ -509,7 +509,11 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
                                                 } else {
                                                     if (replyCommentedList != null && replyCommentedList.size() != 0) {
                                                         ReplyCommented replyCommented = replyCommentedList.get(0);
-                                                        binding.mainContentDisplay.getContentAdapter().updateDataList("question", 2, replyCommented.parse().getParsedReplyCommentList());
+                                                        if (replyCommented.parse().getParsedReplyCommentList().size() != 0) {
+                                                            binding.mainContentDisplay.getContentAdapter().updateDataList("question", 2, replyCommented.parse().getParsedReplyCommentList());
+                                                        } else {
+                                                            binding.mainContentDisplay.getContentAdapter().deleteDataList("question", 2);
+                                                        }
                                                     } else {
                                                         binding.mainContentDisplay.getContentAdapter().deleteDataList("question", 2);
                                                     }
