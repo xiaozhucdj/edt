@@ -130,6 +130,7 @@ public class MediaHelper {
 
     private void continuePlay() {
         if (!isPlay())
+            mLoopCutterRunnale.start();
             mMediaPlayer.start();
     }
 
