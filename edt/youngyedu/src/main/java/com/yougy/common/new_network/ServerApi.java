@@ -134,7 +134,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("bookStore")
-    @DefaultField(keys = {"m"}, values = {"downloadBookAudio"})
+    @DefaultField(keys = {"m"}, values = {"downloadBook"})
     Observable<BaseResult<List<OssInfoBean>>> downloadFile(@Field("bookId") String bookId , @Field("atchTypeCode") String atchTypeCode );
 
 

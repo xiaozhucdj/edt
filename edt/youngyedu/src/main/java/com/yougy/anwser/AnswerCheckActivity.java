@@ -133,14 +133,14 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         DialogManager.newInstance().showNetConnDialog(getBaseContext());
 
         NetWorkManager
-//                .queryQuestions2BeMarked(SpUtils.getUserId() + "")
-                .queryQuestions2BeMarked("1000002597")
+                .queryQuestions2BeMarked(SpUtils.getUserId() + "")
+//                .queryQuestions2BeMarked("1000002597")
                 .compose(bindToLifecycle())
                 .subscribe(new Action1<List<QuestionReplyDetail>>() {
                                @Override
                                public void call(List<QuestionReplyDetail> questionReplyDetails) {
                                    if (questionReplyDetails == null || questionReplyDetails.size() == 0) {
-                                       ToastUtil.showCustomToast(getBaseContext(), "没有需要批改的问答");
+                                       ToastUtil.showCustomToast(getBaseContext(), "已经没有需要批改的问答");
                                        finish();
                                        return;
                                    }
@@ -663,13 +663,8 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                     public void call(Object o) {
 
                         ToastUtil.showCustomToast(getBaseContext(), "该问答已批改完毕");
-                        onBackPressed();
-                        return;
-
-                       /* ToastUtil.showCustomToast(getBaseContext(), "当前学生批改完毕，请批改下一个学生");
-                        mPosition++;
-                        setData();*/
-
+                        //再次刷新查看是否任然有需要自评、互评的问答。如果没有，会在setdata方法中finish该界面。
+                        setData();
                     }
                 }, new Action1<Throwable>() {
                     @Override

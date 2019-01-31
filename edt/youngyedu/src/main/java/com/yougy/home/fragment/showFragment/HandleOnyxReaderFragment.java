@@ -39,6 +39,7 @@ import com.yougy.common.media.MediaHelper;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.BookMarkAdapter;
 import com.yougy.home.adapter.HandlerDirAdapter;
@@ -290,7 +291,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         if (mloadingDialog != null && mloadingDialog.isShowing()) {
             mloadingDialog.dismiss();
         }
-
         LogUtils.i("updatePage");
         position = page;
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
@@ -304,12 +304,13 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             if (bean == null) {
                 fm_voice.setVisibility(View.GONE);
                 rl_reader.setVisibility(View.GONE);
-                return;
+            } else {
+                fm_voice.setVisibility(View.VISIBLE);
+                rl_reader.setVisibility(View.VISIBLE);
+                btn_reader_page.setVisibility(View.VISIBLE);
+                btn_reader_pause.setVisibility(View.GONE);
+                addVoiceItem();
             }
-            fm_voice.setVisibility(View.VISIBLE);
-            rl_reader.setVisibility(View.VISIBLE);
-            btn_reader_page.setVisibility(View.VISIBLE);
-            addVoiceItem();
         }
         if (mRunThread == null) {
             mRunThread = new NoteBookDelayedRun();
@@ -338,6 +339,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                                 entry.getValue().setSelected(false);
                             }
                         }
+                        leaveScribbleMode(true);
                         imageView.setSelected(true);
                         LogUtils.e("bean.toString() ===" + bean.toString());
                         btn_reader_pause.setTag("是否暂停");
@@ -356,11 +358,13 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
     @Override
     public void onCompletionPlayerListener(int voicePs) {
+        LogUtils.e("onCompletionPlayerListener..............");
+
         mImgVoices.get(voicePs).setSelected(false);
         if (mIsPageReader) {
             voicePs = voicePs + 1;
             if (mVoiceBean.getVoiceInfos().size() < voicePs) {
-                UIUtils.showToastSafe("本页音频文件全部播放完成");
+//                UIUtils.showToastSafe("本页音频文件全部播放完成");
                 getMediaHelper().player_reset();
                 mIsPageReader = false;
                 btn_reader_page.setTag("连读");
