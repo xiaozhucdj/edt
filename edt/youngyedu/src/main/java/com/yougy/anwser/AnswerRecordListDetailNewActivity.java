@@ -21,6 +21,7 @@ import com.yougy.home.bean.DataCountInBookNode;
 import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkDetail;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.homework.bean.ReplyCommented;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerDetailListBinding;
 import com.yougy.ui.activity.databinding.ItemQuestionChooseBinding;
@@ -500,11 +501,24 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
                                                 //填充数据
                                                 binding.mainContentDisplay.getContentAdapter().updateDataList("analysis", 0, questionReplyDetail.getParsedQuestionItem().analysisContentList);
                                                 binding.mainContentDisplay.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
-                                                if (questionReplyDetail.getParsedReplyCommentList() != null && questionReplyDetail.getParsedReplyCommentList().size() != 0) {
+
+                                                List<Content_new> parsedReplyCommentList = questionReplyDetail.getParsedReplyCommentList();
+                                                List<ReplyCommented> replyCommentedList = questionReplyDetail.getReplyCommented();
+                                                if (parsedReplyCommentList != null && parsedReplyCommentList.size() != 0) {
                                                     binding.mainContentDisplay.getContentAdapter().updateDataList("question", 2, questionReplyDetail.getParsedReplyCommentList());
                                                 } else {
-                                                    binding.mainContentDisplay.getContentAdapter().deleteDataList("question", 2);
+                                                    if (replyCommentedList != null && replyCommentedList.size() != 0) {
+                                                        ReplyCommented replyCommented = replyCommentedList.get(0);
+                                                        if (replyCommented.parse().getParsedReplyCommentList().size() != 0) {
+                                                            binding.mainContentDisplay.getContentAdapter().updateDataList("question", 2, replyCommented.parse().getParsedReplyCommentList());
+                                                        } else {
+                                                            binding.mainContentDisplay.getContentAdapter().deleteDataList("question", 2);
+                                                        }
+                                                    } else {
+                                                        binding.mainContentDisplay.getContentAdapter().deleteDataList("question", 2);
+                                                    }
                                                 }
+
                                                 binding.mainContentDisplay.getContentAdapter().updateDataList("question", 1, imageContentList);
 
                                                 //设置用时

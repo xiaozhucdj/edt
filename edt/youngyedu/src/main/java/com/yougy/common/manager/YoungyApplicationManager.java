@@ -1,10 +1,8 @@
 package com.yougy.common.manager;
 
 import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +17,7 @@ import com.onyx.android.sdk.utils.NetworkUtil;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
+import com.yougy.anwser.AnswerCheckActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
@@ -30,7 +29,6 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.homework.WriteHomeWorkActivity;
-import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.AskQuestionAttachment;
@@ -60,7 +58,6 @@ import de.greenrobot.event.EventBus;
 
 import static com.yougy.common.global.FileContonst.LOCK_SCREEN;
 import static com.yougy.common.global.FileContonst.NO_LOCK_SCREEN;
-import static com.yougy.init.activity.LocalLockActivity.NOT_GOTO_HOMEPAGE_ON_ENTER;
 
 
 /**
@@ -105,7 +102,14 @@ public class YoungyApplicationManager extends LitePalApplication {
     private String lastExamId;//上次收到作业的时间，主要解决待机重启后，短时间内收到多条相同布置的作业的消息的过滤判断
     private WakeLockHolder mHolder;
 
-
+    Runnable pullAnswerCheckRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Intent intent = new Intent(getApplicationContext(), AnswerCheckActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    };
     @Override
     public void onCreate() {
         super.onCreate();
@@ -312,7 +316,8 @@ public class YoungyApplicationManager extends LitePalApplication {
                         startActivity(intent);
                     }
                     else if (message.getAttachment() instanceof PullAnswerCheckAttachment){
-
+                        getMainThreadHandler().removeCallbacks(pullAnswerCheckRunnable);
+                        getMainThreadHandler().postDelayed(pullAnswerCheckRunnable , 3000);
                     }
                 }
             });
