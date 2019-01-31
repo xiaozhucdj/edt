@@ -55,7 +55,7 @@ public class SpUtils {
     private static final String CLASS_ID = "class_Id";
     private static final String REAL_NAME = "real_name";
     private static String GRADE_DISPLAY = "gradeDisplay" ;
-
+    private static final String SCHOOL_LEVEL = "school_level";
     private static final String LOCAL_LOCK_PWD = "LOCAL_LOCK_PWD";
     private static final String LOCAL_YX_TOKEN = "LOCAL_YX_TOKEN";
 
@@ -127,6 +127,7 @@ public class SpUtils {
         editor.putString(SUBJECT_NAMES , student.getSubjectNames());
         editor.putString(CLASS_ID , student.getClassId());
         editor.putString(USER_GENDER , student.getUserGender());
+        editor.putInt(SCHOOL_LEVEL,student.getSchoolLevel());
         editor.apply();
     }
 
@@ -146,6 +147,7 @@ public class SpUtils {
         student.setSubjectNames(sp.getString(SUBJECT_NAMES , ""));
         student.setClassId(sp.getString(CLASS_ID , ""));
         student.setUserGender(sp.getString(USER_GENDER , ""));
+        student.setSchoolLevel(sp.getInt(SCHOOL_LEVEL,0));
         return student;
     }
 

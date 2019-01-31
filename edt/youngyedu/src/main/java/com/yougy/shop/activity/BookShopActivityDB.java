@@ -12,31 +12,21 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.frank.etude.pageable.PageBtnBarAdapter;
-import com.yougy.anwser.BaseResult;
-import com.yougy.common.bean.Result;
-import com.yougy.common.manager.NewProtocolManager;
 import com.yougy.common.new_network.BookStoreQueryBookInfoReq;
 import com.yougy.common.new_network.NetWorkManager;
-import com.yougy.common.protocol.request.BookStoreCategoryReq;
 import com.yougy.common.protocol.request.BookStoreHomeReq;
-import com.yougy.common.protocol.request.NewBookStoreBookReq;
-import com.yougy.common.protocol.request.NewBookStoreCategoryReq;
-import com.yougy.common.protocol.request.NewBookStoreHomeReq;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.ResultUtils;
 import com.yougy.common.utils.SpUtils;
-import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.OnRecyclerItemClickListener;
-import com.yougy.rx_subscriber.ShopSubscriber;
 import com.yougy.shop.adapter.BookAdapter;
 import com.yougy.shop.adapter.BookShopAdapter;
 import com.yougy.shop.adapter.RecyclerAdapter;
@@ -49,19 +39,10 @@ import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.decoration.GridSpacingItemDecoration;
 import com.yougy.view.decoration.SpaceItemDecoration;
 
-import org.litepal.util.LogUtil;
-
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindArray;
-import okhttp3.Response;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static rx.Observable.create;
 
@@ -124,7 +105,7 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
         });
     }
 
-    private void showNetErrorDialog(){
+    private void showNetErrorDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("网络访问失败，请检查路由器是否正确连接！");
         builder.setNegativeButton("取消", (dialog, which) -> {
@@ -225,6 +206,16 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
 
     @Override
     protected void initLayout() {
+        boolean flag = (SpUtils.getStudent().getSchoolLevel() > 0);
+        binding.orderBtn.setVisibility(flag ? View.VISIBLE : View.GONE);
+        binding.newOrderCountTv.setVisibility(flag ? View.VISIBLE : View.GONE);
+        binding.cartGo.setVisibility(flag ? View.VISIBLE : View.GONE);
+        binding.cartCountTv.setVisibility(flag ? View.VISIBLE : View.GONE);
+        if (!flag) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.favorite.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            binding.favorite.setLayoutParams(params);
+        }
         binding.allClassifyRecycler.addItemDecoration(new SpaceItemDecoration(UIUtils.px2dip(15)));
         binding.allClassifyRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.singleClassifyRecycler.addItemDecoration(new GridSpacingItemDecoration(SPAN_COUNT, UIUtils.px2dip(32), false));

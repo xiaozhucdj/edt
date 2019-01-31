@@ -116,6 +116,7 @@
                 style="@style/bookDetailStyle"
                 android:layout_alignTop="@id/book_author_tv"
                 android:layout_marginLeft="300px"
+                android:layout_marginTop="0px"
                 android:layout_toRightOf="@id/book_cover_imv" />
 
             <TextView
@@ -130,6 +131,7 @@
                 android:id="@+id/book_publish_time_tv"
                 android:layout_width="match_parent"
                 style="@style/bookDetailStyle"
+                android:layout_marginTop="0px"
                 android:layout_alignTop="@id/book_download_size_tv"
                 android:layout_alignLeft="@id/book_publisher_tv"
                 android:layout_below="@id/book_publisher_tv"
@@ -171,19 +173,20 @@
             <Button
                 android:id="@+id/add_car_btn"
                 style="@style/bookOperateStyle"
-                android:text="加入购物车"
+                android:text="@string/add2shopcart"
+                android:layout_marginLeft="0px"
                 android:onClick="addCart"/>
 
             <Button
                 android:id="@+id/add_favor_btn"
                 style="@style/bookOperateStyle"
-                android:text="加入收藏夹"
+                android:text="@string/add2favorite"
                 android:onClick="addFavor"/>
 
             <Button
                 android:id="@+id/try_read_btn"
                 style="@style/bookOperateStyle"
-                android:text="在线试读"
+                android:text="@string/read_online"
                 android:onClick="read"
                 />
 

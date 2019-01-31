@@ -73,14 +73,14 @@ public class Student {
     private String userMobile;
     private String userEmail;
 
-    private int schoolType;
+    private int schoolLevel;
 
-    public int getSchoolType() {
-        return schoolType;
+    public int getSchoolLevel() {
+        return schoolLevel;
     }
 
-    public void setSchoolType(int schoolType) {
-        this.schoolType = schoolType;
+    public void setSchoolLevel(int schoolLevel) {
+        this.schoolLevel = schoolLevel;
     }
 
     public String getUserNum() {

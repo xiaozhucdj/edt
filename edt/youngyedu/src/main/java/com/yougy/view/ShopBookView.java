@@ -13,6 +13,7 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.shop.activity.ShopBookDetailsActivity;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.shop.globle.ShopGloble;
@@ -56,13 +57,16 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
         mInfo = info;
         mBookIv.setImageResource(R.drawable.cart_book);
         mBookNameTv.setText(info.getBookTitle());
-        mBookPriceTv.setText(String.format(YoungyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSpotPrice() + ""));
-        if (info.getBookSpotPrice() < info.getBookSalePrice()) {
-            mBookPrePriceTv.setVisibility(View.VISIBLE);
-            mBookPrePriceTv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            mBookPrePriceTv.setText(String.format(getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookSalePrice())));
+        int schoolType = SpUtils.getStudent().getSchoolLevel();
+        if (schoolType > 0) {
+            mBookPriceTv.setText(String.format(YoungyApplicationManager.getInstance().getResources().getString(R.string.book_price), info.getBookSpotPrice() + ""));
+            if (info.getBookSpotPrice() < info.getBookSalePrice()) {
+                mBookPrePriceTv.setVisibility(View.VISIBLE);
+                mBookPrePriceTv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                mBookPrePriceTv.setText(String.format(getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookSalePrice())));
+            }
+            refreshImg(mBookIv, info.getBookCoverS());
         }
-        refreshImg(mBookIv, info.getBookCoverS());
     }
 
 
@@ -79,7 +83,7 @@ public class ShopBookView extends LinearLayout implements View.OnClickListener {
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                FileContonst.withS ,
+                FileContonst.withS,
                 FileContonst.heightS,
                 view);
     }

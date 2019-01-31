@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class=".ShopBinding">
 
@@ -67,13 +67,96 @@
                 android:layout_below="@+id/classify_layout"
                 android:background="@color/black" />
 
+            <!--<android.support.constraint.ConstraintLayout-->
+            <!--android:id="@+id/top_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/shop_top_layout_height">-->
 
+            <!--<ImageView-->
+            <!--android:id="@+id/schoolbag"-->
+            <!--style="@style/shopImgStyle"-->
+            <!--android:layout_marginLeft="@dimen/shop_img_padding"-->
+            <!--android:onClick="@{activity.clickShoolBag}"-->
+            <!--android:src="@drawable/shubao_selector"-->
+            <!--app:layout_constraintBottom_toBottomOf="@+id/top_layout"-->
+            <!--app:layout_constraintLeft_toLeftOf="@+id/top_layout"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/top_layout" />-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/order_btn"-->
+            <!--style="@style/shopImgStyle"-->
+            <!--app:layout_constraintRight_toRightOf="@+id/top_layout"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/top_layout"-->
+            <!--app:layout_constraintBottom_toBottomOf="@+id/top_layout"-->
+            <!--android:layout_marginRight="@dimen/shop_img_padding"-->
+            <!--android:onClick="@{activity.clickOrderBtn}"-->
+            <!--android:src="@drawable/order_btn_selector" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/new_order_count_tv"-->
+            <!--android:layout_width="20px"-->
+            <!--android:layout_height="20px"-->
+            <!--app:layout_constraintLeft_toLeftOf="@+id/order_btn"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/order_btn"-->
+            <!--android:layout_marginLeft="40px"-->
+            <!--android:layout_marginTop="18px"-->
+            <!--android:background="@drawable/black_dot"-->
+            <!--android:gravity="center"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="12px" />-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/cart_go"-->
+            <!--style="@style/shopImgStyle"-->
+            <!--android:layout_marginRight="@dimen/shop_img_padding"-->
+            <!--app:layout_constraintRight_toLeftOf="@+id/order_btn"-->
+            <!--android:onClick="@{activity.clickCartGo}"-->
+            <!--android:src="@drawable/gouwuche_selector" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/cart_count_tv"-->
+            <!--android:layout_width="20px"-->
+            <!--android:layout_height="20px"-->
+            <!--app:layout_constraintLeft_toLeftOf="@+id/cart_go"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/cart_go"-->
+            <!--android:layout_marginLeft="40px"-->
+            <!--android:layout_marginTop="18px"-->
+            <!--android:background="@drawable/black_dot"-->
+            <!--android:gravity="center"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="12px" />-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/favorite"-->
+            <!--style="@style/shopImgStyle"-->
+            <!--android:layout_marginLeft="@dimen/shop_img_padding"-->
+            <!--app:layout_constraintRight_toLeftOf="@+id/cart_go"-->
+            <!--android:onClick="@{activity.clickFavorite}"-->
+            <!--android:src="@drawable/shoucang_ic_selector"/>-->
+            <!--<TextView-->
+            <!--android:id="@+id/search"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginLeft="@dimen/shop_img_padding"-->
+            <!--app:layout_constraintRight_toLeftOf="@+id/favorite"-->
+            <!--app:layout_constraintLeft_toRightOf="@+id/schoolbag"-->
+            <!--android:background="@drawable/img_bg_sousuo"-->
+            <!--android:drawableLeft="@drawable/icon_sousuo"-->
+            <!--android:drawablePadding="@dimen/search_drawable_padding"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:onClick="@{activity.search}"-->
+            <!--android:paddingLeft="@dimen/search_icon_padding_left"-->
+            <!--android:text="@string/search"-->
+            <!--android:textColor="@color/search_color"-->
+            <!--android:textSize="@dimen/shop_search_text_size" />-->
+            <!--</android.support.constraint.ConstraintLayout>-->
             <RelativeLayout
                 android:id="@+id/top_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/shop_top_layout_height"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:gravity="center">
 
@@ -82,8 +165,7 @@
                     style="@style/shopImgStyle"
                     android:layout_marginLeft="@dimen/shop_img_padding"
                     android:onClick="@{activity.clickShoolBag}"
-                    android:src="@drawable/shubao_selector"
-                    />
+                    android:src="@drawable/shubao_selector" />
 
                 <ImageView
                     android:id="@+id/order_btn"
@@ -91,8 +173,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/shop_img_padding"
                     android:onClick="@{activity.clickOrderBtn}"
-                    android:src="@drawable/order_btn_selector"
-                    />
+                    android:src="@drawable/order_btn_selector" />
+
                 <TextView
                     android:id="@+id/new_order_count_tv"
                     android:layout_width="20px"
@@ -109,11 +191,11 @@
                 <ImageView
                     android:id="@+id/cart_go"
                     style="@style/shopImgStyle"
-                    android:layout_toLeftOf="@id/order_btn"
                     android:layout_marginRight="@dimen/shop_img_padding"
+                    android:layout_toLeftOf="@id/order_btn"
                     android:onClick="@{activity.clickCartGo}"
-                    android:src="@drawable/gouwuche_selector"
-                    />
+                    android:src="@drawable/gouwuche_selector" />
+
                 <TextView
                     android:id="@+id/cart_count_tv"
                     android:layout_width="20px"
@@ -130,11 +212,10 @@
                 <ImageView
                     android:id="@+id/favorite"
                     style="@style/shopImgStyle"
+                    android:layout_marginLeft="@dimen/shop_img_padding"
                     android:layout_toLeftOf="@+id/cart_go"
                     android:onClick="@{activity.clickFavorite}"
-                    android:src="@drawable/shoucang_ic_selector"
-                    android:layout_marginLeft="@dimen/shop_img_padding"
-                    />
+                    android:src="@drawable/shoucang_ic_selector" />
 
                 <TextView
                     android:id="@+id/search"
@@ -208,14 +289,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="40px"
-                        android:drawablePadding="10px"
                         android:drawableRight="@drawable/filtrate_img"
+                        android:drawablePadding="10px"
                         android:gravity="center"
                         android:onClick="@{activity.filtrate}"
                         android:text="@string/text_filtrate"
                         android:textColor="@color/text_color_black"
-                        android:textSize="24px"
-                        />
+                        android:textSize="24px" />
                 </LinearLayout>
 
                 <View
@@ -244,8 +324,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingLeft="30px"
-                android:paddingRight="30px"
                 android:paddingTop="15px"
+                android:paddingRight="30px"
                 android:visibility="gone">
 
                 <TextView
@@ -273,14 +353,14 @@
                         android:layout_height="200px"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="200px"
-                        android:visibility="gone"
                         android:background="@drawable/img_search_error_gb"
-                        android:text="@string/no_filtrate_result_text"
                         android:gravity="center"
                         android:paddingLeft="50px"
                         android:paddingRight="50px"
+                        android:text="@string/no_filtrate_result_text"
                         android:textColor="#666666"
-                        android:textSize="24px" />
+                        android:textSize="24px"
+                        android:visibility="gone" />
                 </FrameLayout>
 
                 <com.frank.etude.pageable.PageBtnBar
@@ -333,8 +413,8 @@
                     android:layout_below="@+id/subject_layout"
                     android:background="@color/text_color_white"
                     android:orientation="horizontal"
-                    android:paddingBottom="30px"
                     android:paddingLeft="30px"
+                    android:paddingBottom="30px"
                     android:visibility="gone">
 
                     <TextView
@@ -349,8 +429,7 @@
                     <com.yougy.view.showView.AutoWrapLineLayout
                         android:id="@+id/version_wrap"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <View
@@ -438,8 +517,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="30px"
                     android:layout_marginTop="25px"
+                    android:layout_marginRight="30px"
                     android:includeFontPadding="false"
                     android:onClick="@{activity.clearHistoryRecord}"
                     android:text="@string/clear_record"
@@ -462,13 +541,14 @@
                     android:background="@color/black" />
             </RelativeLayout>
         </RelativeLayout>
+
         <FrameLayout
             android:id="@+id/stage_recycler_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:clickable="true"
             android:onClick="@{activity.hideStageRecyclerLayout}"
-            android:clickable="true">
+            android:visibility="gone">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/stage_recycler"
@@ -477,10 +557,9 @@
                 android:layout_marginLeft="30px"
                 android:layout_marginTop="181px"
                 android:background="@drawable/identity_list_bg"
-                android:paddingBottom="5px"
                 android:paddingLeft="5px"
                 android:paddingTop="5px"
-                />
+                android:paddingBottom="5px" />
         </FrameLayout>
 
         <FrameLayout
@@ -488,9 +567,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
-            android:visibility="gone"
             android:onClick="@{activity.hideClassifyRecyclerLayout}"
-            >
+            android:visibility="gone">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/classify_recycler"
@@ -498,8 +576,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30px"
                 android:layout_marginTop="181px"
-                android:background="@drawable/identity_list_bg"
-                />
+                android:background="@drawable/identity_list_bg" />
         </FrameLayout>
     </RelativeLayout>
 </layout>
