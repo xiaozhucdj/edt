@@ -20,6 +20,7 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -80,6 +81,15 @@ public class DownFileManager {
         LogUtils.e(TAG, "bookStatusCode  bookStatusCode...." + bookStatusCode);
         LogUtils.e(TAG, "图书path" + FileUtils.getBookFileName(booId, FileUtils.bookDir));
         LogUtils.e(TAG, "  图书是否存在." + StringUtils.isEmpty(FileUtils.getBookFileName(booId, FileUtils.bookDir)));
+
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(booId, FileUtils.bookDir))) {
+            String keys = DataCacheUtils.getBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
+            if (StringUtils.isEmpty(keys) || !keys.contains(booId + "")) {
+                // 本地图书 没秘钥 删除
+                LogUtils.e("本地图书 没秘钥 删除");
+                FileUtils.deleteFile((FileUtils.getTextBookFilesDir() + booId + ".pdf"));
+            }
+        }
 
         if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(bookStatusCode)) {
             LogUtils.e(TAG, "判断语音文件是否有更新：");
