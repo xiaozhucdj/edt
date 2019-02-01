@@ -169,6 +169,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         // SV01 进行中   SV02 已完成   SV03 已检查
         isHadCommit = getIntent().getStringExtra("SceneStatusCode").equals("SV02");
         isSignatureTask = getIntent().getBooleanExtra("isSign", false);
+        LogUtils.e(tag,"dramaId : " + dramaId);
         initContentFragment();
     }
 

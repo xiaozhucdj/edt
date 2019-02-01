@@ -23,7 +23,8 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@drawable/shop_color_btn_selector</item>
         <item name="android:textSize">24px</item>
-        <item name="android:layout_marginRight">32px</item>
+        <item name="android:layout_marginLeft">32px</item>
+        <item name="android:layout_weight">1</item>
     </style>
 
     <style name="classfyTextStyle">

@@ -13,6 +13,7 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.shop.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
@@ -72,20 +73,28 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
         }
 
         public void bindView(BookInfo info) {
-            LogUtils.e("BookAdapter","book info : " + info);
+            LogUtils.e("BookAdapter", "book info : " + info);
             searchResultImg.setImageResource(R.drawable.cart_book);
             searchResultName.setText(info.getBookTitle());
-            searchResultPrice.setText(String.format(YoungyApplicationManager.getInstance().getResources().getString(R.string.book_price), String.valueOf(info.getBookSpotPrice())));
-            if (info.getBookSpotPrice() < info.getBookSalePrice()) {
+            int schoolType = SpUtils.getStudent().getSchoolLevel();
+            if (schoolType > 0) {
+                searchResultPrice.setVisibility(View.VISIBLE);
                 searchResultPrePrice.setVisibility(View.VISIBLE);
-                searchResultPrePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                searchResultPrePrice.setText(String.format(searchResultPrice.getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookSalePrice())));
+                searchResultPrice.setText(String.format(YoungyApplicationManager.getInstance().getResources().getString(R.string.book_price), String.valueOf(info.getBookSpotPrice())));
+                if (info.getBookSpotPrice() < info.getBookSalePrice()) {
+                    searchResultPrePrice.setVisibility(View.VISIBLE);
+                    searchResultPrePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    searchResultPrePrice.setText(String.format(searchResultPrice.getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookSalePrice())));
+                }
+            } else {
+                searchResultPrice.setVisibility(View.GONE);
+                searchResultPrePrice.setVisibility(View.GONE);
             }
             ImageLoaderManager.getInstance().loadImageContext(mContext,
                     info.getBookCoverS(),
                     R.drawable.img_book_cover,
                     R.drawable.img_book_cover,
-                    FileContonst.withS ,
+                    FileContonst.withS,
                     FileContonst.heightS,
                     searchResultImg);
         }
