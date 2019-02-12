@@ -110,7 +110,7 @@ public class TaskListActivity extends BaseActivity {
         NetWorkManager.queryTasks(homeworkId, contentBookLink, tasks.size(), MAX_SIZE_PER_PAGE)
                 .compose(bindToLifecycle())
                 .subscribe(taskSummary -> {
-                    tasksCount = taskSummary.getCount();
+
                     List<Task> taskList = taskSummary.getData();
 
                     if (null != taskList && taskList.size() > 0) {
@@ -123,12 +123,13 @@ public class TaskListActivity extends BaseActivity {
                             }
                         }
                         tasks.clear();
+                        tasksCount = taskSummary.getCount() - completedTasks.size();
                         if (isComplete) {
                             tasks.addAll(completedTasks);
                         } else {
                             tasks.addAll(unCompleteTasks);
                         }
-                        if (tasks.size()>0) {
+                        if (tasks.size() > 0) {
                             int start = currentPage * MAX_PAGE_COUNT;
                             int end = start + MAX_PAGE_COUNT;
                             if (end > tasks.size() - 1) {
@@ -157,7 +158,7 @@ public class TaskListActivity extends BaseActivity {
             } else {
                 tasks.addAll(unCompleteTasks);
             }
-            if (tasks.size()>0) {
+            if (tasks.size() > 0) {
                 int start = index * MAX_PAGE_COUNT;
                 int end = start + MAX_PAGE_COUNT;
                 if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
@@ -237,6 +238,7 @@ public class TaskListActivity extends BaseActivity {
             currentTasks.addAll(tasks.subList(start, end));
         }
         adapter.notifyDataSetChanged();
+        tasksCount = unCompleteTasks.size();
         binding.pageBarTask.refreshPageBar();
     }
 
@@ -256,6 +258,7 @@ public class TaskListActivity extends BaseActivity {
             currentTasks.addAll(tasks.subList(start, end));
         }
         adapter.notifyDataSetChanged();
+        tasksCount = completedTasks.size();
         binding.pageBarTask.refreshPageBar();
     }
 
