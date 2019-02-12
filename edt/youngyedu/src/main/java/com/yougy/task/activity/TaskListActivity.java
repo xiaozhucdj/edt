@@ -95,6 +95,16 @@ public class TaskListActivity extends BaseActivity {
         generateData();
     }
 
+    @Override
+    public void refresh(View view) {
+        super.refresh(view);
+        tasks.clear();
+        completedTasks.clear();
+        unCompleteTasks.clear();
+        currentTasks.clear();
+        generateData();
+    }
+
     private void generateData() {
         LogUtils.e(tag, "homeworkId is : " + homeworkId + ",contentBookLink is : " + contentBookLink);
         NetWorkManager.queryTasks(homeworkId, contentBookLink, tasks.size(), MAX_SIZE_PER_PAGE)
