@@ -31,8 +31,12 @@ public class TaskRemindAttachment extends CustomAttachment{
         JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
         taskId = introJsonObj.getInt(KEY_TASK_ID);
         taskName = introJsonObj.getString(KEY_TASK_NAME);
-        isSign = introJsonObj.getBoolean(IS_SIGN);
-        sceneStatusCode = introJsonObj.getString(SCENE_STATUS_CODE);
+        try {
+            isSign = introJsonObj.getBoolean(IS_SIGN);
+            sceneStatusCode = introJsonObj.getString(SCENE_STATUS_CODE);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

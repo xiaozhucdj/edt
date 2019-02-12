@@ -167,7 +167,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID, 0);
         mTopTitle.setText(currentTitleStr);
         // SV01 进行中   SV02 已完成   SV03 已检查
-        isHadCommit = getIntent().getStringExtra("SceneStatusCode").equals("SV02");
+        isHadCommit = ("SV02").equals(getIntent().getStringExtra("SceneStatusCode"));
         isSignatureTask = getIntent().getBooleanExtra("isSign", false);
         LogUtils.e(tag,"dramaId : " + dramaId);
         initContentFragment();
