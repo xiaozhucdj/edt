@@ -53,10 +53,10 @@
         android:id="@+id/iv_home_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_below="@id/rl_system"
-        android:layout_marginRight="27px"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="16px"
+        android:layout_marginRight="27px"
         android:background="@null"
         android:src="@drawable/home_tabs_icon_msg_normal" />
 
@@ -66,10 +66,10 @@
         android:layout_width="match_parent"
         android:layout_height="48px"
         android:layout_below="@id/rl_system"
-        android:layout_marginBottom="14px"
         android:layout_marginLeft="60px"
+        android:layout_marginTop="14px"
         android:layout_marginRight="30px"
-        android:layout_marginTop="14px">
+        android:layout_marginBottom="14px">
 
         <ImageButton
             android:id="@+id/imgBtn_showRight"
@@ -94,10 +94,9 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/home_tabs_tv_bg_selector"
                 android:gravity="center"
-                android:text="课本"
+                android:text="教材"
                 android:textColor="@drawable/tab_title_select"
-                android:textSize="30px"
-                />
+                android:textSize="30px" />
 
             <TextView
                 android:id="@+id/tv_coach_book"
@@ -109,7 +108,7 @@
                 android:text="辅导书"
                 android:textColor="@drawable/tab_title_select"
                 android:textSize="30px"
-                />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_reference_books"
@@ -118,10 +117,9 @@
                 android:layout_marginLeft="36px"
                 android:background="@drawable/home_tabs_tv_bg_selector"
                 android:gravity="center"
-                android:text="课外书"
+                android:text="阅读"
                 android:textColor="@drawable/tab_title_select"
-                android:textSize="30px"
-                />
+                android:textSize="30px" />
 
             <TextView
                 android:id="@+id/tv_notes"
@@ -132,8 +130,7 @@
                 android:gravity="center"
                 android:text="笔记"
                 android:textColor="@drawable/tab_title_select"
-                android:textSize="30px"
-                />
+                android:textSize="30px" />
 
             <TextView
                 android:id="@+id/tv_homework"
@@ -144,8 +141,7 @@
                 android:gravity="center"
                 android:text="作业"
                 android:textColor="@drawable/tab_title_select"
-                android:textSize="30px"
-                />
+                android:textSize="30px" />
 
             <TextView
                 android:id="@+id/tv_answer"
@@ -156,8 +152,18 @@
                 android:gravity="center"
                 android:text="问答"
                 android:textColor="@drawable/tab_title_select"
-                android:textSize="30px"
-                />
+                android:textSize="30px" />
+
+            <TextView
+                android:id="@+id/btn_task"
+                android:layout_width="120px"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="6px"
+                android:background="@drawable/home_tabs_tv_bg_selector"
+                android:gravity="center"
+                android:text="任务"
+                android:textColor="@drawable/tab_title_select"
+                android:textSize="30px" />
 
         </LinearLayout>
 
@@ -175,6 +181,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/view_line"
+        android:layout_marginTop="0dp"
         android:background="@android:color/transparent" />
 
     <FrameLayout
@@ -210,11 +217,9 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="22px"
                     android:background="@null"
-                    android:scaleType="fitXY"
-                    />
+                    android:scaleType="fitXY" />
 
                 <TextView
-                    android:visibility="gone"
                     android:id="@+id/test_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -222,7 +227,8 @@
                     android:layout_marginTop="20px"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="24px" />
+                    android:textSize="24px"
+                    android:visibility="gone" />
 
 
                 <TextView
@@ -265,6 +271,7 @@
                     android:textSize="24px" />
 
                 <View
+                    android:id="@+id/line_currentBook"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />
@@ -292,12 +299,12 @@
                     android:textSize="24px" />
 
                 <View
+                    android:id="@+id/line_allBook"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />>
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/btn_bookStore"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
@@ -306,22 +313,23 @@
                     android:gravity="center"
                     android:text="书城"
                     android:textColor="@drawable/tab_title_select"
-                    android:textSize="24px" />
+                    android:textSize="24px"
+                    android:visibility="gone" />
 
                 <View
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
-                    android:background="@color/black" />
+                    android:background="@color/black"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btn_msg"
-                    android:text="我的消息"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
+                    android:text="我的消息"
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
@@ -332,12 +340,12 @@
 
                 <Button
                     android:id="@+id/btn_account"
-                    android:text="账号设置"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
+                    android:text="账号设置"
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
@@ -348,27 +356,30 @@
 
                 <Button
                     android:id="@+id/btn_refresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
                     android:text="刷新"
-                    android:layout_width="match_parent"
-                    android:layout_height="50px"
-                    android:background="@drawable/home_tabs_btn_bg_selector"
-                    android:clickable="false"
-                    android:gravity="center"
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
                 <View
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />
+
                 <Button
-                    android:id="@+id/btn_task"
-                    android:text="任务"
+                    android:visibility="gone"
+                    android:id="@+id/btn_task2"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
+                    android:text="任务"
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
@@ -376,14 +387,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="2px"
                     android:background="@color/black" />
+
                 <Button
                     android:id="@+id/btn_sysSeeting"
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
                     android:text="系统设置"
-                    android:layout_width="match_parent"
-                    android:layout_height="50px"
-                    android:background="@drawable/home_tabs_btn_bg_selector"
-                    android:clickable="false"
-                    android:gravity="center"
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
@@ -393,81 +405,81 @@
                     android:background="@color/black" />
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/btn_upload"
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:background="@drawable/home_tabs_btn_bg_selector"
+                    android:clickable="false"
+                    android:gravity="center"
                     android:text="上传"
-                    android:layout_width="match_parent"
-                    android:layout_height="50px"
-                    android:background="@drawable/home_tabs_btn_bg_selector"
-                    android:clickable="false"
-                    android:gravity="center"
                     android:textColor="@drawable/tab_title_select"
-                    android:textSize="24px" />
+                    android:textSize="24px"
+                    android:visibility="gone" />
 
                 <View
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
-                    android:background="@color/black" />
+                    android:background="@color/black"
+                    android:visibility="gone" />
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/btn_download"
-                    android:text="下载"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
+                    android:text="下载"
                     android:textColor="@drawable/tab_title_select"
-                    android:textSize="24px" />
+                    android:textSize="24px"
+                    android:visibility="gone" />
 
                 <View
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
-                    android:background="@color/black" />
+                    android:background="@color/black"
+                    android:visibility="gone" />
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/btn_test_img"
-                    android:text="测试图片"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
+                    android:text="测试图片"
                     android:textColor="@drawable/tab_title_select"
-                    android:textSize="24px" />
+                    android:textSize="24px"
+                    android:visibility="gone" />
 
                 <View
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="2px"
-                    android:background="@color/black" />
+                    android:background="@color/black"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btn_check_update"
-                    android:text="检测升级"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
+                    android:text="检测升级"
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/btn_deviceSize"
-                    android:text="测试消息"
                     android:layout_width="match_parent"
                     android:layout_height="50px"
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
+                    android:text="测试消息"
                     android:textColor="@drawable/tab_title_select"
-                    android:textSize="24px" />
+                    android:textSize="24px"
+                    android:visibility="gone" />
 
                 <View
                     android:layout_width="match_parent"
