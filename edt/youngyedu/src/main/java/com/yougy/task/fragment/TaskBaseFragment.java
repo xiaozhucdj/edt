@@ -40,6 +40,10 @@ public class TaskBaseFragment extends BFragment {
     protected boolean isMultiPage = false;
 
     protected List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
+
+    protected List<StageTaskBean.StageScene> mStageScenes = new ArrayList<>();
+    protected List<StageTaskBean.StageScene.SceneContent> mSceneContents = new ArrayList<>();
+
     protected boolean mIsServerFail = true;//服务器请求失败
     protected String mServerFailMsg = "加载中...";//失败信息
 

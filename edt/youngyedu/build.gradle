@@ -33,9 +33,9 @@ android {
         applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
-        versionName "20181210_test_3.0"
+        versionName "student_20-v1"
+        versionCode 20
         multiDexEnabled true
-        versionCode 16
 
 //        ndk {
 //            // 设置支持的SO库架构

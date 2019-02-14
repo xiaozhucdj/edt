@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView mTvCoachBook;
     private TextView mTvTextBook;
 
-    private Button mBtnTask;
+    private TextView mBtnTask;
     private Button mBtnBookStore;
     private Button mBtnCurrentBook;
     private Button mBtnAllBook;
@@ -185,6 +185,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static long lastCheckTimeMill = 0;
     private static CheckRunnable checkRunnable = new CheckRunnable();
     private boolean initializationNeedNetFinished = false;
+    private View line_allBook;
+    private View line_currentBook;
 
     @Override
     protected void onResume() {
@@ -321,6 +323,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mTvSysTime = (TextView) this.findViewById(R.id.tv_time);
         mBtnSysSeeting = (Button) this.findViewById(R.id.btn_sysSeeting);
         mBtnSysSeeting.setOnClickListener(this);
+        line_allBook = (View) this.findViewById(R.id.line_allBook);
+        line_currentBook = (View) this.findViewById(R.id.line_currentBook);
+
         //初始化fragment
         initFragment();
         mBtnRefresh = (Button) this.findViewById(R.id.btn_refresh);
@@ -608,6 +613,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case ANSWER_FRAGMENT:
                 type = EventBusConstant.answer_event;
                 break;
+            case TASK_FRAGMENT:
+                type = EventBusConstant.task_event;
+                break ;
         }
 
         LogUtils.i("刷新" + type);
@@ -839,17 +847,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnCurrentBook.setVisibility(View.VISIBLE);
         mBtnAllBook.setVisibility(View.VISIBLE);
 
+        line_allBook.setVisibility(View.VISIBLE);
+        line_currentBook.setVisibility(View.VISIBLE);
+
+
         switch (mDisplayOption) {
             case TEXT_BOOK_FRAGMENT:
-                mBtnCurrentBook.setText("本学期课本");
-                mBtnAllBook.setText("全部课本");
+                mBtnCurrentBook.setText("本学期教材");
+                mBtnAllBook.setText("全部教材");
                 mBtnCurrentBook.setSelected(true);
                 mBtnCurrentBook.setEnabled(false);
                 break;
 
             case ALL_TEXT_BOOK_FRAGMENT:
-                mBtnCurrentBook.setText("本学期课本");
-                mBtnAllBook.setText("全部课本");
+                mBtnCurrentBook.setText("本学期教材");
+                mBtnAllBook.setText("全部教材");
                 mBtnAllBook.setSelected(true);
                 mBtnAllBook.setEnabled(false);
                 break;
@@ -900,6 +912,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mBtnAllBook.setEnabled(false);
                 break;
             case ANSWER_FRAGMENT:
+                line_allBook.setVisibility(View.GONE);
+                line_currentBook.setVisibility(View.GONE);
+                mBtnCurrentBook.setVisibility(View.GONE);
+                mBtnAllBook.setVisibility(View.GONE);
+                break;
+
+            case TASK_FRAGMENT:
+                line_allBook.setVisibility(View.GONE);
+                line_currentBook.setVisibility(View.GONE);
                 mBtnCurrentBook.setVisibility(View.GONE);
                 mBtnAllBook.setVisibility(View.GONE);
                 break;
@@ -946,7 +967,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //问答
                 .add(R.id.fl_content_layout, mAnswerBookChooseFragment)
                 //任务
-                .add(R.id.fl_content_layout,mTaskFragment)
+                .add(R.id.fl_content_layout, mTaskFragment)
 
                 /***
                  * hide 全部fragment
@@ -986,9 +1007,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         boolean isNotesFragment = clickedViewId == R.id.tv_notes;
         boolean isReferenceBooksFragment = clickedViewId == R.id.tv_reference_books;
         boolean isTextBookFragment = clickedViewId == R.id.tv_text_book;
+        boolean isTaskFragment = clickedViewId == R.id.btn_task;
 
-        int hideView = View.INVISIBLE;
-        int showView = View.VISIBLE;
 
         //isCoachBookFragment
         mTvCoachBook.setSelected(isCoachBookFragment);
@@ -1008,6 +1028,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //isTextBookFragment
         mTvTextBook.setSelected(isTextBookFragment);
 //        mViewTextBook.setVisibility(isTextBookFragment == true ? showView : hideView);
+        mBtnTask.setSelected(isTaskFragment);
+
     }
 
     public enum FragmentDisplayOption {

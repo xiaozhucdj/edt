@@ -95,12 +95,22 @@ public class TaskListActivity extends BaseActivity {
         generateData();
     }
 
+    @Override
+    public void refresh(View view) {
+        super.refresh(view);
+        tasks.clear();
+        completedTasks.clear();
+        unCompleteTasks.clear();
+        currentTasks.clear();
+        generateData();
+    }
+
     private void generateData() {
         LogUtils.e(tag, "homeworkId is : " + homeworkId + ",contentBookLink is : " + contentBookLink);
         NetWorkManager.queryTasks(homeworkId, contentBookLink, tasks.size(), MAX_SIZE_PER_PAGE)
                 .compose(bindToLifecycle())
                 .subscribe(taskSummary -> {
-                    tasksCount = taskSummary.getCount();
+
                     List<Task> taskList = taskSummary.getData();
 
                     if (null != taskList && taskList.size() > 0) {
@@ -113,12 +123,13 @@ public class TaskListActivity extends BaseActivity {
                             }
                         }
                         tasks.clear();
+                        tasksCount = taskSummary.getCount() - completedTasks.size();
                         if (isComplete) {
                             tasks.addAll(completedTasks);
                         } else {
                             tasks.addAll(unCompleteTasks);
                         }
-                        if (tasks.size()>0) {
+                        if (tasks.size() > 0) {
                             int start = currentPage * MAX_PAGE_COUNT;
                             int end = start + MAX_PAGE_COUNT;
                             if (end > tasks.size() - 1) {
@@ -147,7 +158,7 @@ public class TaskListActivity extends BaseActivity {
             } else {
                 tasks.addAll(unCompleteTasks);
             }
-            if (tasks.size()>0) {
+            if (tasks.size() > 0) {
                 int start = index * MAX_PAGE_COUNT;
                 int end = start + MAX_PAGE_COUNT;
                 if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
@@ -202,7 +213,9 @@ public class TaskListActivity extends BaseActivity {
             binding.taskCompleteTime.setText(getString(R.string.task_complete_time, "2018-11-28 17:48", "2018-11-29 17:00"));
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(TaskListActivity.this, TaskDetailStudentActivity.class);
-                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, task.getContentDrama());
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, task.getContentElement());
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID_DEST, task.getContentDrama());
+                intent.putExtra("hadCompleted", task.isNeedSignature());
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
                 intent.putExtra("isSign", task.isNeedSignature());
                 intent.putExtra("SceneStatusCode", task.getSceneStatusCode());
@@ -227,6 +240,7 @@ public class TaskListActivity extends BaseActivity {
             currentTasks.addAll(tasks.subList(start, end));
         }
         adapter.notifyDataSetChanged();
+        tasksCount = unCompleteTasks.size();
         binding.pageBarTask.refreshPageBar();
     }
 
@@ -246,6 +260,7 @@ public class TaskListActivity extends BaseActivity {
             currentTasks.addAll(tasks.subList(start, end));
         }
         adapter.notifyDataSetChanged();
+        tasksCount = completedTasks.size();
         binding.pageBarTask.refreshPageBar();
     }
 

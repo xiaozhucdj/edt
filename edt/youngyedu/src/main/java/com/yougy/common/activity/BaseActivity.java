@@ -434,6 +434,10 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
         finish();
     }
 
+    public void refresh(View view){
+
+    }
+
     /**
      * 关闭所有Activity 除了参数传递的className
      */

@@ -36,7 +36,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
     final static String CLUE_SEND_SEATWORK = "sendSeatwork";
     final static String CLUE_END_SEATWORK = "endSeatwork";
     final static String CLUE_SUBMITE_HOMEWORK = "submitHomework";
-    final static String CLUE_TASK_REMIND = "taskRemind";
+    final static String CLUE_TASK_REMIND = "remindDoTask";
 
     // 根据解析到的消息类型，确定附件对象类型
     @Override

@@ -48,7 +48,7 @@ public class SubmitTaskBean implements Parcelable {
         private int stageId;
         private ArrayList<STSResultbean> picContent;
         private String sceneCreateTime;
-        private String[] textContent = new String[0];
+        private String[] txtContent = new String[0];
 
         public ArrayList<STSResultbean> getPicContent() {
             return picContent;
@@ -83,12 +83,12 @@ public class SubmitTaskBean implements Parcelable {
             this.sceneCreateTime = sceneCreateTime;
         }
 
-        public String[] getTextContent() {
-            return textContent;
+        public String[] getTxtContent() {
+            return txtContent;
         }
 
-        public void setTextContent(String[] textContent) {
-            this.textContent = textContent;
+        public void setTxtContent(String[] textContent) {
+            this.txtContent = textContent;
         }
 
 
@@ -103,7 +103,7 @@ public class SubmitTaskBean implements Parcelable {
             dest.writeInt(this.stageId);
             dest.writeList(this.picContent);
             dest.writeString(this.sceneCreateTime);
-            dest.writeStringArray(this.textContent);
+            dest.writeStringArray(this.txtContent);
         }
 
         public SubmitTask() {
@@ -115,7 +115,7 @@ public class SubmitTaskBean implements Parcelable {
             this.picContent = new ArrayList<STSResultbean>();
             in.readList(this.picContent, STSResultbean.class.getClassLoader());
             this.sceneCreateTime = in.readString();
-            this.textContent = in.createStringArray();
+            this.txtContent = in.createStringArray();
         }
 
         public static final Creator<SubmitTask> CREATOR = new Creator<SubmitTask>() {

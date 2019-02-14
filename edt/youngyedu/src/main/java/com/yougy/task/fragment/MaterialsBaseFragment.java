@@ -26,6 +26,7 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.task.activity.MaterialActivity;
+import com.yougy.task.activity.MaterialActivity2;
 import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.task.bean.StageTaskBean;
 import com.yougy.ui.activity.R;
@@ -205,8 +206,8 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.mTextView.setText(currentDatas.get(position).getStageContent().get(position).getValue());
-            holder.itemView.setOnClickListener(v -> handlerClickItem(holder, position));
+            holder.mTextView.setText(currentDatas.get(position).getStageContent().get(0).getAtchName());
+            holder.itemView.setOnClickListener(v -> handlerClickItem(position));
         }
 
         @Override
@@ -231,17 +232,22 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         }
     }
 
+
+    public static StageTaskBean sStageTaskBean;
     /**
      * recyclerView Item Click
-     * @param viewHolder
      * @param position
      */
-    private void handlerClickItem (ViewHolder viewHolder, int position) {
-        Toast.makeText(mContext, "click position = " + position, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(mContext, ControlFragmentActivity.class);
-//        intent.putExtra("taskID", mTaskDetailStudentActivity.dramaId);
+    private void handlerClickItem (int position) {
+        Intent intent = new Intent(mTaskDetailStudentActivity, MaterialActivity2.class);
+        sStageTaskBean = currentDatas.get(position);
+        intent.putExtra("isHadComplete", mTaskDetailStudentActivity.isHadCommit());
+//        intent.putExtra("stageTaskBean", stageTaskBean);
+//        String remote = stageTaskBean.getStageScene().get(0).getSceneContents().get(0).getRemote();
+//        LogUtils.i("TaskTest : " + remote +
+//                "    stageTaskBean: " + stageTaskBean.toString());
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        mTaskDetailStudentActivity.startActivity(intent);
     }
 
     private void calculateCurrentLists (int page) {
@@ -255,7 +261,9 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
             }
         }
         currentDatas.clear();
+        LogUtils.d("calculateCurrentLists stage size = " + mStageTaskBeans.size() + "  currentPage = " + currentPage);
         currentDatas.addAll(mStageTaskBeans.subList(currentPage * PAGE_COUNT , currentPage * PAGE_COUNT + size));
+        LogUtils.d("calculateCurrentLists currentDatas size = " + currentDatas.size());
     }
 
 }
