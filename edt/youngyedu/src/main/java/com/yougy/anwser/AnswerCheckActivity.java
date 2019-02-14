@@ -193,7 +193,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                                    }
 
 
-                                   binding.tvTitle.setText("问答由" + questionReplyDetail.getReplyCreatorName() + "批改");
+                                   binding.tvTitle.setText("问答由" + SpUtils.getAccountName() + "批改");
                                    int replyScore = questionReplyDetail.getReplyScore();
                                    //是否批改过了
                                    if (replyScore == -1) {
@@ -224,10 +224,11 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                             public void call(Throwable throwable) {
                                 LogUtils.e("FH", "刷新答题情况失败" + throwable.getMessage());
                                 throwable.printStackTrace();
+
+                                ToastUtil.showCustomToast(getBaseContext(), "已经没有需要批改的问答");
+                                finish();
                             }
                         });
-
-
     }
 
 
