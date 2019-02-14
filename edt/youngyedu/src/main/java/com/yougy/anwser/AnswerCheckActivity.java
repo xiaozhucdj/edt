@@ -193,7 +193,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                                    }
 
 
-                                   binding.tvTitle.setText("问答由" + questionReplyDetail.getReplyCreatorName() + "批改");
+                                   binding.tvTitle.setText("问答由" + SpUtils.getAccountName() + "批改");
                                    int replyScore = questionReplyDetail.getReplyScore();
                                    //是否批改过了
                                    if (replyScore == -1) {
