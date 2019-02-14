@@ -149,8 +149,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     public void init() {
-        initFileLog();
-        setLogMsg("init 初始化 start");
         LogUtils.e("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
 //        itemId = "2499";//填空
@@ -183,7 +181,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
         if (startTimeMill == -1) {
             startTimeMill = System.currentTimeMillis();
         }
-        setLogMsg("init 初始化 参数" + "itemId ==" + itemId + "fromUserId ==" + fromUserId + "examId ==" + examId);
     }
 
     @Override
@@ -224,7 +221,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     //  这里因为要做问答自评互评功能，这里需要当老师结束问答时，强制提交学生问答结果。 （这里有个问题，选择判断题，学生提交时会判断，但是当前自动提交时不能判断）
                                     saveHomeWorkData();
                                     getUpLoadInfo();
-                                    
+
                                 }
                             }
                         }
@@ -235,8 +232,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     public void loadData() {
         showNoNetDialog();
-        setLogMsg("进入 loadData函数");
-
+        bytesList.clear();
+        pathList.clear();
+        cgBytes.clear();
         NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
@@ -245,8 +243,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             questionItem = parsedQuestionItems.get(0);
                             fillData();
                         } else {
-                            setLogMsg("queryQuestionItemList 接口...获取到的题目为空,开始问答失败");
-                            saveAnsweringLog();
                             ToastUtil.showCustomToast(getApplicationContext(), "获取到的题目为空,开始问答失败");
                             LogUtils.e("FH", "获取到的题目为空,开始问答失败");
                             myFinish();
@@ -499,17 +495,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     //填充数据
     private void fillData() {
-        setLogMsg("fillData  start");
 
         if (questionItem == null) {
             ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
-            setLogMsg("fillData  该题可能已经被删除");
-            saveAnsweringLog();
             return;
         }
         questionList = questionItem.questionContentList;
         binding.questionTypeTextview.setText("题目类型 : " + questionItem.questionContentList.get(0).getExtraData());
-        setLogMsg("fillData  题目类型 questionItem.questionContentList.get(0).getExtraData()==" + questionItem.questionContentList.get(0).getExtraData());
 
         binding.contentDisplayer.getContentAdapter().updateDataList("question", (ArrayList<Content_new>) questionList);
         if (questionList != null && questionList.size() > 0) {
@@ -527,9 +519,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 @Override
                 public void onItemClick1(int position) {
 //                    ToastUtil.showCustomToast(AnsweringActivity.this, position + 1 + "页");
-                    setLogMsg("fillData onItemClick1  position ===" + position);
-
-                    setLogMsg("fillData  onItemClick1");
                     //离开手绘模式，并刷新界面ui
                     if (mNbvAnswerBoard != null) {
                         mNbvAnswerBoard.leaveScribbleMode(true);
@@ -541,13 +530,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
 
                     if (isFirstComeInQuestion) {
-                        setLogMsg("fillData  isFirstComeInQuestion === false");
                         isFirstComeInQuestion = false;
                     } else {
-                        setLogMsg("fillData  isFirstComeInQuestion === true");
                         //如果草稿纸打开着，需要先将草稿纸隐藏。用于截图
                         if (binding.llCaogaoControl.getVisibility() == View.VISIBLE) {
-                            setLogMsg("fillData  binding.llCaogaoControl.getVisibility() == View.VISIBLE");
                             cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
 
                             binding.tvCaogaoText.setText("草稿纸");
@@ -556,20 +542,16 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             mNbvAnswerBoard.setIntercept(false);
                         }
 
-                        setLogMsg("fillData  binding.llCaogaoControl.getVisibility() == View.GONE");
                         //如果 mNbvAnswerBoard是显示的说明是非选择题，需要保持笔记
                         if (mNbvAnswerBoard.getVisibility() == View.VISIBLE) {
                             //保存上一个题目多页数据中的某一页手写笔记。
                             bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
-                            setLogMsg("fillData  binding.mNbvAnswerBoard.getVisibility() ==VISIBLE");
                         }
 
-                        setLogMsg("fillData  是否是选择题。都需要截屏保存图片");
                         //是否是选择题。都需要截屏保存图片
                         pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
                     }
 
-                    setLogMsg("fillData   mNbvAnswerBoard.clearAll()");
                     mNbvAnswerBoard.clearAll();
 
                     //将本页设置为选中页
@@ -580,35 +562,27 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         //切换当前题目的分页
                         binding.contentDisplayer.getContentAdapter().toPage("question", position, false);
                         binding.contentDisplayer.setVisibility(View.VISIBLE);
-                        setLogMsg("fillData    //切换当前题目的分页)");
                     } else {
                         //加白纸
                         binding.contentDisplayer.setVisibility(View.GONE);
-                        setLogMsg("fillData   加白纸");
 
                     }
                     if (questionList.get(0) != null) {
-                        setLogMsg("fillData   questionList.get(0) != null");
                         if ("选择".equals(questionList.get(0).getExtraData())) {
-                            setLogMsg("fillData   选择.equals(questionList.get(0).getExtraData()");
                             if (isAddAnswerBoard) {
-                                setLogMsg("fillData    binding.rlAnswer.removeView(mNbvAnswerBoard);");
                                 binding.rlAnswer.removeView(mNbvAnswerBoard);
                                 isAddAnswerBoard = false;
                             }
-                            setLogMsg("fillData    isAddAnswerBoard  ==false");
                             binding.rcvChooeseItem.setVisibility(View.VISIBLE);
                             binding.llChooeseItem.setVisibility(View.GONE);
                             //选择题不能加页
                             binding.tvAddPage.setVisibility(View.GONE);
                             binding.tvClearWrite.setVisibility(View.GONE);
                             chooeseAnswerList = questionItem.answerList;
-                            setLogMsg("fillData    setChooeseResult ");
                             setChooeseResult();
 
                             //刷新当前选择结果的reciv
                             if (binding.rcvChooeseItem.getAdapter() != null) {
-                                setLogMsg("fillData    binding.rcvChooeseItem.getAdapter() != null");
                                 binding.rcvChooeseItem.getAdapter().notifyDataSetChanged();
                             }
 //                            if (saveQuestionPage == 0) {
@@ -617,14 +591,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //                                binding.rcvChooeseItem.setVisibility(View.GONE);
 //                            }
                         } else if ("判断".equals(questionList.get(0).getExtraData())) {
-                            setLogMsg("fillData   判断.equals(questionList.get(0).getExtraData()) ");
                             if (isAddAnswerBoard) {
-                                setLogMsg("fillData isAddAnswerBoard == true");
                                 binding.rlAnswer.removeView(mNbvAnswerBoard);
                                 isAddAnswerBoard = false;
                             }
 
-                            setLogMsg("fillData isAddAnswerBoard == fale");
                             binding.rcvChooeseItem.setVisibility(View.GONE);
                             binding.llChooeseItem.setVisibility(View.VISIBLE);
                             //选择题不能加页
@@ -638,12 +609,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
 //                            }
 
                         } else {
-                            setLogMsg("fillData  不是 判断和选择题");
                             if (!isAddAnswerBoard) {
-                                setLogMsg("fillData (!isAddAnswerBoard) == !isAddAnswerBoard");
                                 RelativeLayout.LayoutParams layer1LayoutParam = new RelativeLayout.LayoutParams(960, 920);
                                 binding.rlAnswer.addView(mNbvAnswerBoard, layer1LayoutParam);
-                                setLogMsg("fill  add mNbvAnswerBoard ");
                                 isAddAnswerBoard = true;
                             }
                             binding.rcvChooeseItem.setVisibility(View.GONE);
@@ -658,7 +626,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                     mNbvAnswerBoard.drawBitmap(BitmapFactory.decodeByteArray(tmpBytes, 0, tmpBytes.length));
                                 }
                             }
-                            setLogMsg("fillData  //从之前bytesList中回显之前保存的手写笔记，如果有的话");
                         }
                     }
                     questionPageNumAdapter.notifyDataSetChanged();
@@ -666,8 +633,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                     //以下逻辑为调整列表中角标位置。
                     if (questionPageSize <= PAGE_SHOW_SIZE) {
-                        setLogMsg("fillData  questionPageSize <= PAGE_SHOW_SIZE");
-                        saveAnsweringLog();
                         return;
                     }
 
@@ -679,7 +644,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     moveToPosition(linearLayoutManager, pageDeviationNum);
                 }
             });
-            setLogMsg("fillData 开始执行for 循环");
 
             for (int i = 0; i < questionPageSize; i++) {
                 bytesList.add(null);
@@ -688,15 +652,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
             }
 
             isFirstComeInQuestion = true;
-            setLogMsg("fillData    questionPageNumAdapter.onItemClickListener.onItemClick1(0)");
             questionPageNumAdapter.onItemClickListener.onItemClick1(0);
         } else {
-            setLogMsg("fillData  该题可能已经被删除");
-            saveAnsweringLog();
             ToastUtil.showCustomToast(getBaseContext(), "该题可能已经被删除");
         }
-
-        saveAnsweringLog();
     }
 
     /**
@@ -715,7 +674,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
      * 设置选择题的结果界面
      */
     private void setChooeseResult() {
-        setLogMsg("setChooeseResult    setChooeseResult ");
         //清理掉其他题中的作业结果。
 //        checkedAnswerList.clear();
 
@@ -1368,35 +1326,5 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_PUASE, "");
         EventBus.getDefault().post(baseEvent);
-    }
-
-
-    StringBuilder mBuilder;
-
-    private void initFileLog() {
-        try {
-            mFile = new RandomAccessFile(FileUtils.mAnsweringFileAbsPath + "answerLog" + ".txt", "rw");
-            long fileLen = mFile.length();
-            mFile.seek(fileLen);
-            mBuilder = new StringBuilder();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setLogMsg(String msg) {
-        if (mBuilder!=null){
-            mBuilder.append(DateUtils.getCalendarAndTimeString()) ;
-            mBuilder.append(msg);
-            mBuilder.append("\r\n");
-        }
-    }
-
-    private void saveAnsweringLog() {
-        try {
-            mFile.write(mBuilder.toString().getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
