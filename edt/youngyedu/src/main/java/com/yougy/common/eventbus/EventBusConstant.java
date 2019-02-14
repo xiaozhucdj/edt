@@ -44,7 +44,7 @@ public class EventBusConstant {
     public static final String  add_note = "add_note";
     public static final String  need_refresh = "need_refresh";
     public static final String  answer_event = "answer_event";
-
+    public static final String  task_event = "task_event";
 
 
     /***********************************************问答****************************************************/

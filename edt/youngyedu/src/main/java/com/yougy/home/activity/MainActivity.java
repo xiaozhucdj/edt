@@ -613,6 +613,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case ANSWER_FRAGMENT:
                 type = EventBusConstant.answer_event;
                 break;
+            case TASK_FRAGMENT:
+                type = EventBusConstant.task_event;
+                break ;
         }
 
         LogUtils.i("刷新" + type);
