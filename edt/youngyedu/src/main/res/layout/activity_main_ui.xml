@@ -294,7 +294,7 @@
                     android:background="@drawable/home_tabs_btn_bg_selector"
                     android:clickable="false"
                     android:gravity="center"
-                    android:text="搜索本地课外书"
+                    android:text="搜索本地阅读"
                     android:textColor="@drawable/tab_title_select"
                     android:textSize="24px" />
 
