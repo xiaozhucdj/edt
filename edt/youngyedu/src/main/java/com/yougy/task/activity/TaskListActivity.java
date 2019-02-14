@@ -40,6 +40,7 @@ public class TaskListActivity extends BaseActivity {
     private int contentBookLink;
     private String courseBookTitle;
     private int homeworkId;
+    private static final int REQUEST_CODE = 1000;
 
 
     @Override
@@ -205,6 +206,7 @@ public class TaskListActivity extends BaseActivity {
         }
 
         public void setData(Task task) {
+            clickedTask = task;
             binding.taskTitle.setText(task.getContentTitle());
             binding.taskSignature.setVisibility(task.isNeedSignature() ? View.VISIBLE : View.GONE);
             binding.taskChapter.setText(task.getContentCourseLinkName());
@@ -219,8 +221,32 @@ public class TaskListActivity extends BaseActivity {
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
                 intent.putExtra("isSign", task.isNeedSignature());
                 intent.putExtra("SceneStatusCode", task.getSceneStatusCode());
-                startActivity(intent);
+                startActivityForResult(intent,REQUEST_CODE);
             });
+        }
+    }
+
+    private Task clickedTask;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 10000){
+            unCompleteTasks.remove(clickedTask);
+            tasks.clear();
+            currentTasks.clear();
+            if (unCompleteTasks.size() > 0) {
+                tasks.addAll(unCompleteTasks);
+                int start = currentPage * MAX_PAGE_COUNT;
+                int end = start + MAX_PAGE_COUNT;
+                if (end > tasks.size() - 1) {
+                    end = tasks.size();
+                }
+                currentTasks.addAll(tasks.subList(start, end));
+            }
+            adapter.notifyDataSetChanged();
+            tasksCount = unCompleteTasks.size();
+            binding.pageBarTask.refreshPageBar();
         }
     }
 
