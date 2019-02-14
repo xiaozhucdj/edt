@@ -6,6 +6,7 @@ import org.json.JSONObject;
 public class TaskRemindAttachment extends CustomAttachment{
 
     public static final String KEY_TASK_ID = "taskId";
+    public static final String KEY_TASK_ID_DEST = "taskId_dest";
     public static final String KEY_TASK_NAME = "taskName";
     public static final String IS_SIGN = "isSign";
     public static final String SCENE_STATUS_CODE = "SceneStatusCode";

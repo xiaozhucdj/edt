@@ -101,6 +101,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     FrameLayout mFrameSignature;
 
     public int dramaId = 160;
+    public int mTaskId ;
 
     public static boolean isIntercept = false;//是否可写状态
     public static boolean isHandPaintedPattern = false;//是否手绘模式
@@ -164,7 +165,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public void init() {
 //        mTask = (Task) getIntent().getSerializableExtra("taskBean");
         currentTitleStr = getIntent().getStringExtra(TaskRemindAttachment.KEY_TASK_NAME);
-        dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID, 0);
+        mTaskId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID, 0);
+        dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID_DEST, 0);
+        hadSignature = getIntent().getBooleanExtra("hadCompleted", false);
         mTopTitle.setText(currentTitleStr);
         // SV01 进行中   SV02 已完成   SV03 已检查
         isHadCommit = ("SV02").equals(getIntent().getStringExtra("SceneStatusCode"));
@@ -256,7 +259,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     private void back() {
         if (isHadCommit) {//已经提交
-            if (isSignatureTask) {
+            if (isSignatureTask && !hadSignature) {
                 DialogManager.newInstance().showSubmitConfirmDialog(this, getString(R.string.unable_sign_temporary),
                         R.string.now_sign,
                         R.string.temporary_no_sign, new DialogManager.DialogCallBack() {
@@ -453,7 +456,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     if (strings.length > 1) {
                         int stageId = Integer.parseInt(strings[1]);
                         LogUtils.d(  "stageId = " + stageId);
-                        submitTask.setPerformId(dramaId);
+                        submitTask.setPerformId(mTaskId);
                         submitTask.setStageId(stageId);
                         submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
                         submitTasks.add(submitTask);
@@ -523,8 +526,13 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     isHadCommit = true;
                     ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
                     if (isSignatureTask) {
-                        mTextFinish.setText(R.string.parent_sign);
-                        EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
+                        if (hadSignature) {
+                            signatureCancel();
+                            finish();
+                        } else {
+                            mTextFinish.setText(R.string.parent_sign);
+                            EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
+                        }
                     } else {
                         TaskDetailStudentActivity.this.finish();
                     }
@@ -575,8 +583,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
         LogUtils.d("signatureSubmit");
         //提交 家长签字
         oosUpload();
-        signatureCancel();
-        finish();
     }
 
 

@@ -201,6 +201,10 @@ public class NoteBookView extends View {
         invalidate();
     }
 
+    public Bitmap getBitmap() {
+        return mBitmap;
+    }
+
     private List<Line> historyLines = new ArrayList<>();
 
     public void drawLines(List<Line> lines, boolean flag) {
@@ -394,7 +398,7 @@ public class NoteBookView extends View {
         lines.clear();
     }
 
-    private byte[] bitmap2Bytes() {
+    public byte[] bitmap2Bytes() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         mBitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
         return bos.toByteArray();
@@ -679,5 +683,13 @@ public class NoteBookView extends View {
     public void leaveScribbleMode() {
         EpdController.leaveScribbleMode(this);
         invalidate();
+    }
+
+    public void leaveScribbleMode(boolean isPen) {
+        if (isPen) {
+            userOutPen();
+            EpdController.leaveScribbleMode(this);
+            invalidate();
+        }
     }
 }

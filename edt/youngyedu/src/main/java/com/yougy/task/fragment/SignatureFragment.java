@@ -12,6 +12,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.task.LoadAnswer;
 import com.yougy.task.activity.SaveNoteUtils;
 import com.yougy.task.bean.StageTaskBean;
 import com.yougy.ui.activity.R;
@@ -30,8 +31,9 @@ public class SignatureFragment extends TaskBaseFragment {
     @BindView(R.id.signature_noteView)
     NoteBookView2 mNoteBookViewSignature;
 
-
     private int stageId;
+
+    private LoadAnswer mLoadAnswer;
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,7 +45,7 @@ public class SignatureFragment extends TaskBaseFragment {
 
     @Override
     protected void init() {
-
+        mLoadAnswer = new LoadAnswer(mTaskDetailStudentActivity);
     }
 
     @Override
@@ -52,7 +54,9 @@ public class SignatureFragment extends TaskBaseFragment {
         NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04").subscribe(stageTaskBeans -> {
             Log.i(TAG, "call: " + stageTaskBeans.size());
             if (stageTaskBeans.size() > 0) {
-                stageId = stageTaskBeans.get(0).getStageId();
+                StageTaskBean stageTaskBean = stageTaskBeans.get(0);
+                stageId = stageTaskBean.getStageId();
+                mLoadAnswer.loadAnswer(mNoteBookViewSignature, stageTaskBean,0 , 0 );
             }
         }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
     }
@@ -95,10 +99,21 @@ public class SignatureFragment extends TaskBaseFragment {
      * 保存签字bitmap
      */
     private void saveSignatureBitmap () {
-        String cacheKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + CACHE_KEY ;
-        String bitmapKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + BITMAP_KEY ;
-        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature,
-                SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
-                cacheKey, bitmapKey , String.valueOf(mTaskDetailStudentActivity.dramaId), stageId);
+        String[] cacheBitmapKey = getCacheBitmapKey(0, 0);
+        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
+                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId),stageId);
+
+//        String cacheKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + CACHE_KEY ;
+//        String bitmapKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + BITMAP_KEY ;
+//        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature,
+//                SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
+//                cacheKey, bitmapKey , String.valueOf(mTaskDetailStudentActivity.dramaId), stageId);
+    }
+
+    private String[] getCacheBitmapKey (int position, int page) {
+        String cacheKey = mTaskDetailStudentActivity.mTaskId + "_" + stageId + CACHE_KEY + position + "_" + page;
+        String bitmapKey = mTaskDetailStudentActivity.mTaskId + "_" + stageId + BITMAP_KEY + position + "_" + page;
+        LogUtils.w("TaskTest cacheKey is Null, position IndexOfArray Exception.");
+        return new String[]{cacheKey, bitmapKey};
     }
 }

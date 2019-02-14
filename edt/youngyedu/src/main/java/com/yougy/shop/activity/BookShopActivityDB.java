@@ -94,12 +94,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     protected void loadData() {
         getCategoryInfo().subscribe(categoryInfos -> {
             handleCategoryInfo(categoryInfos);
-            int position = getIntent().getIntExtra(CLASSIFY_POSITION, CLASSIFY_POSITION_ALL);
-            if (position == CLASSIFY_POSITION_GUID) {
-                guidebookSelected();
-            } else {
-                extrabookSelected();
-            }
+//            int position = getIntent().getIntExtra(CLASSIFY_POSITION, CLASSIFY_POSITION_ALL);
+//            if (position == CLASSIFY_POSITION_GUID) {
+//                guidebookSelected();
+//            } else {
+//                extrabookSelected();
+//            }
+            extrabookSelected();
         }, throwable -> {
             showNetErrorDialog();
         });
