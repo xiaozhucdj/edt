@@ -1,9 +1,14 @@
 package com.yougy.task.fragment;
 
 
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -19,15 +24,18 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.task.ContentDisPlayer;
 import com.yougy.task.ContentDisPlayerAdapter;
+import com.yougy.task.LoadAnswer;
 import com.yougy.task.activity.SaveNoteUtils;
 import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.task.bean.StageTaskBean;
@@ -40,10 +48,13 @@ import com.yougy.view.NoteBookView2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static java.lang.String.format;
 
 public class PracticeBaseFragment extends TaskBaseFragment {
 
@@ -106,6 +117,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     /*草稿纸是否显示*/
     private boolean isCaoGaoShow  = false;
 
+    private LoadAnswer mLoadAnswer;
 
 
     @Override
@@ -140,10 +152,12 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     @Override
     protected void init() {
         super.init();
+        mLoadAnswer = new LoadAnswer(mTaskDetailStudentActivity);
     }
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        LogUtils.d("TaskTest initView :");
         mRootView = inflater.inflate(R.layout.fragment_task_practice, container, false);
         mUnbinder = ButterKnife.bind(this, mRootView);
         initContentDisPlayer();
@@ -245,6 +259,9 @@ public class PracticeBaseFragment extends TaskBaseFragment {
 
 
     private void initPageBar() {
+        mTaskPageAdapter = new TaskPageAdapter();
+        mTaskPracticePageBar.setAdapter(mTaskPageAdapter);
+
         // 如果Bottom  Button  没显示  PageBarV2;   显示 recyclerView, 布局改变影响
         if (!judgeBottomBtnShow()) return;
 
@@ -256,9 +273,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         CustomItemDecoration.Builder builder = new CustomItemDecoration.Builder();
         CustomItemDecoration itemDecoration = builder.isOffsets(true).setItemMargin(10, 0, 10, 0).build();
         mTaskPracticePageBar.addItemDecoration(itemDecoration);
-
-        mTaskPageAdapter = new TaskPageAdapter();
-        mTaskPracticePageBar.setAdapter(mTaskPageAdapter);
     }
 
     /**
@@ -404,10 +418,15 @@ public class PracticeBaseFragment extends TaskBaseFragment {
                 isLoadSuccess = true;
                 mContentDisplayer.setHintText(null);//隐藏
                 mTaskPageAdapter.notifyDataSetChanged();
-
-                String[] cacheBitmapKey = getCacheBitmapKey(currentSelectPosition, currentPage);
-                SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookView2,cacheBitmapKey[0], cacheBitmapKey[1], SaveNoteUtils.getInstance(mContext).getTaskFileDir());
-
+                //"http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + answerContentTreeMap.get("remote");
+                if (mTaskDetailStudentActivity.isHadCommit()) {
+                    StageTaskBean stageTaskBean = mStageTaskBeans.get(currentSelectPosition);
+                    LogUtils.i("TaskTest state stageTaskBean = " + stageTaskBean.toString());
+                    mLoadAnswer.loadAnswer(mNoteBookView, stageTaskBean, currentSelectPosition, currentPage);
+                } else {
+                    String[] cacheBitmapKey = getCacheBitmapKey(currentSelectPosition, currentPage);
+                    SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookView2,cacheBitmapKey[0], cacheBitmapKey[1], SaveNoteUtils.getInstance(mContext).getTaskFileDir());
+                }
                 prevSavePosition = currentSelectPosition;
                 prevPage = currentPage;
 
@@ -651,14 +670,16 @@ public class PracticeBaseFragment extends TaskBaseFragment {
 
     public void saveCurrentPractice () {
         String[] cacheBitmapKey = getCacheBitmapKey(currentSelectPosition, currentPage);
+        if (mStageTaskBeans.size() <= 0) return;
         SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
                 cacheBitmapKey[0],cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.dramaId), mStageTaskBeans.get(currentSelectPosition).getStageId());
     }
 
     private void loadPracticeQuestion () {
+        //"http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + answerContentTreeMap.get("remote");
         LogUtils.d("isHandPaintedPattern = " + TaskDetailStudentActivity.isHandPaintedPattern);
         leaveScribbleMode(false, true);
-        mSelectPractice.setText(String.format(mContext.getString(R.string.str_select_practice) + "(" + (currentSelectPosition + 1) + "/" + practiceTotalCount + ")" ));
+        mSelectPractice.setText(format(mContext.getString(R.string.str_select_practice) + "(" + (currentSelectPosition + 1) + "/" + practiceTotalCount + ")" ));
         mContentDisplayer.getContentAdapter().deleteDataList(TAG_KEY);
         mContentDisplayer.getContentAdapter().updateDataList(TAG_KEY, mStageTaskBeans.get(currentSelectPosition).getStageContent().get(0)
                         .getValue(), mStageTaskBeans.get(currentSelectPosition).getStageContent().get(0).getFormat() );

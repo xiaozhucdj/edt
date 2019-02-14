@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/x64"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/image_back"
+        android:layout_width="@dimen/x40"
+        android:layout_height="@dimen/y44"
+        android:src="@drawable/back_btn_selector"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="@dimen/y10"
+        app:layout_constraintLeft_toRightOf="parent"
+        android:layout_marginLeft="@dimen/x30"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/x30"
+        android:contentDescription="@null"/>
+
+
+    <ImageView
+        android:id="@+id/paint_draw"
+        android:layout_width="@dimen/x40"
+        android:layout_height="@dimen/y40"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="@dimen/y10"
+        app:layout_constraintLeft_toRightOf="@id/image_back"
+        android:layout_marginLeft="@dimen/x30"
+        android:layout_marginStart="@dimen/x30"
+        android:src="@drawable/edu_img_pen_select"
+        android:contentDescription="@null"/>
+
+    <ImageView
+        android:id="@+id/eraser"
+        android:layout_width="@dimen/x40"
+        android:layout_height="@dimen/y40"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="@dimen/y10"
+        app:layout_constraintLeft_toRightOf="@id/paint_draw"
+        android:layout_marginLeft="@dimen/x32"
+        android:layout_marginStart="@dimen/x32"
+        android:background="@null"
+        android:src="@drawable/edu_img_eraser_select"
+        android:contentDescription="@null"/>
+
+
+    <View
+        android:id="@+id/view_line"
+        android:layout_width="@dimen/x2"
+        android:layout_height="@dimen/y50"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="@dimen/y10"
+        android:layout_marginLeft="@dimen/x30"
+        android:layout_marginStart="@dimen/x30"
+        android:background="@color/black"
+        app:layout_constraintLeft_toRightOf="@id/eraser"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/undo"
+        android:layout_width="@dimen/x46"
+        android:layout_height="@dimen/y40"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="@dimen/y10"
+        app:layout_constraintLeft_toRightOf="@id/view_line"
+        android:layout_marginLeft="@dimen/x30"
+        android:layout_marginStart="@dimen/x30"
+        android:src="@drawable/edu_img_undo_select"
+        android:text="@string/undo_text"
+        android:contentDescription="@null"
+        android:visibility="gone"/>
+
+
+    <ImageView
+        android:id="@+id/redo"
+        android:layout_width="@dimen/x46"
+        android:layout_height="@dimen/y40"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="@dimen/y10"
+        app:layout_constraintLeft_toRightOf="@id/undo"
+        android:layout_marginLeft="@dimen/x30"
+        android:layout_marginStart="@dimen/x30"
+        android:src="@drawable/edu_img_redo_select"
+        android:text="@string/redo_text"
+        android:contentDescription="@null"
+        android:visibility="gone"/>
+
+</android.support.constraint.ConstraintLayout>

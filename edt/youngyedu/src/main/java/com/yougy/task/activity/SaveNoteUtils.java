@@ -14,6 +14,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.view.NoteBookView;
 import com.yougy.view.NoteBookView2;
 
 import java.io.File;
@@ -50,6 +51,36 @@ public class SaveNoteUtils {
      */
     public void saveNoteViewData (NoteBookView2 noteBookView2, String fileDir, String cacheKey, String bitmapKey, String taskID
                 , int stageId) {
+
+        if (!NetUtils.isNetConnected()) {
+            LogUtils.w("NoteView Net is not connected, saveNoteViewData return.");
+            return;
+        }
+        if (noteBookView2 == null) {
+            throw new NullPointerException("NoteView is NullPoint Exception, please init.");
+        }
+        if (StringUtils.isEmpty(cacheKey)) {
+            throw new NullPointerException("NoteView cacheKey is NullPoint Exception, please init.");
+        }
+        LogUtils.d("NoteView saveNoteViewData cacheKey = " + cacheKey + "   bitmapKey : " + bitmapKey);
+        DataCacheUtils.putObject(mContext,  cacheKey, noteBookView2.bitmap2Bytes());
+//        DataCacheUtils.putObject(mContext, bitmapKey, pathLists);
+
+        Bitmap bitmap = noteBookView2.getBitmap();
+        String path = saveBitmapToFile (bitmap ,bitmapKey, fileDir + "/" + taskID + "/" + stageId);
+        LogUtils.d("NoteView Save Path = " + path);
+        /*if (isSaveBitmap && !StringUtils.isEmpty(bitmapKey) && questionIndex < pathLists.size()) {
+            if (isMultiPage) {
+                if (pathLists.get(questionIndex) != null && !pathLists.get(questionIndex).contains(path)) {
+                    path = pathLists.get(questionIndex) + "#" + path;
+                }
+            }
+            pathLists.set(questionIndex, path);
+        }*/
+    }
+
+    public void saveNoteViewData (NoteBookView noteBookView2, String fileDir, String cacheKey, String bitmapKey, String taskID
+            , int stageId) {
 
         if (!NetUtils.isNetConnected()) {
             LogUtils.w("NoteView Net is not connected, saveNoteViewData return.");
@@ -132,6 +163,28 @@ public class SaveNoteUtils {
         }
     }
 
+    public void resetNoteView (NoteBookView noteBookView2, String cacheKey, String bitmapKey, String fileDir) {
+        if (noteBookView2 == null) {
+            throw new NullPointerException("NoteView is NullPoint Exception, please init.");
+        }
+        if (StringUtils.isEmpty(cacheKey)) {
+            throw new NullPointerException("NoteView cacheKey is NullPoint Exception, please init.");
+        }
+        LogUtils.d("NoteView resetNoteView cacheKey = " + cacheKey);
+        byte[] buffer = (byte[]) DataCacheUtils.getObject(mContext, cacheKey);
+        if (buffer != null && buffer.length > 0) {
+            LogUtils.d("NoteView resetNoteView cacheKey = " + cacheKey);
+            noteBookView2.drawBitmap(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
+            noteBookView2.setVisibility(View.VISIBLE);
+        } else {
+            LogUtils.d("NoteView buffer null or length is zero, check local file.");
+            File f = new File(fileDir, URLEncoder.encode(bitmapKey + ".png"));
+            if (f.exists()) {
+                loadLocalNoteViewBitmap(noteBookView2, f);
+            }
+        }
+    }
+
     /**
      * 上传服务器成功后，删除缓存和文件
      * @param cacheKey
@@ -150,6 +203,25 @@ public class SaveNoteUtils {
 
 
     private synchronized void loadLocalNoteViewBitmap (NoteBookView2 noteBookView2, File file) {
+        SimpleTarget<Bitmap> mSimpleTarget = new SimpleTarget<Bitmap>() {
+
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                if (resource != null)
+                    noteBookView2.drawBitmap(resource);
+                else
+                    LogUtils.d("NoteView resource is Null.");
+            }
+        };
+        SimpleTarget<Bitmap> into = Glide.with(mContext)
+                .load(file)
+                .asBitmap()
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(mSimpleTarget);
+    }
+
+    private synchronized void loadLocalNoteViewBitmap (NoteBookView noteBookView2, File file) {
         SimpleTarget<Bitmap> mSimpleTarget = new SimpleTarget<Bitmap>() {
 
             @Override
