@@ -32,6 +32,7 @@
                 android:layout_height="@dimen/classify_layout_height"
                 android:layout_below="@+id/search_first_line"
                 android:gravity="center_vertical"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <TextView
@@ -60,12 +61,12 @@
                     android:text="@string/extra_book" />
             </LinearLayout>
 
-            <View
-                android:id="@+id/search_second_line"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/line_small_height"
-                android:layout_below="@+id/classify_layout"
-                android:background="@color/black" />
+            <!--<View-->
+                <!--android:id="@+id/search_second_line"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="@dimen/line_small_height"-->
+                <!--android:layout_below="@+id/classify_layout"-->
+                <!--android:background="@color/black" />-->
 
             <!--<android.support.constraint.ConstraintLayout-->
             <!--android:id="@+id/top_layout"-->
