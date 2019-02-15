@@ -30,7 +30,7 @@ import rx.functions.Action1;
  * Created by FH on 2018/3/9.
  * 学生点击提交问答后学生查看答案和题干的界面也复用这个界面
  * <p>
- * 学生问答记录某一条记录的详情界面（这个页面已经调整为AnswerRecordListDetailActivity，用来展示问答结果列表页面）
+ * 学生问答记录某一条记录的详情界面
  */
 
 public class AnswerRecordDetailActivity extends BaseActivity {
