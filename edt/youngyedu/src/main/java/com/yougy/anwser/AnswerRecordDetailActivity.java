@@ -182,6 +182,32 @@ public class AnswerRecordDetailActivity extends BaseActivity {
                 }
             }
         });
+        binding.contentDisplayer.getHintLayer().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.contentDisplayer.refresh();
+            }
+        });
+        binding.contentDisplayer.getHintLayer().setClickable(false);
+        binding.contentDisplayer.setStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
+            @Override
+            public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
+                switch (newStatus) {
+                    case LOADING:
+                        binding.contentDisplayer.setHintText("加载中");
+                        binding.contentDisplayer.getHintLayer().setClickable(false);
+                        break;
+                    case ERROR:
+                        binding.contentDisplayer.setHintText("加载失败,请点击屏幕刷新");
+                        binding.contentDisplayer.getHintLayer().setClickable(true);
+                        break;
+                    case SUCCESS:
+                        binding.contentDisplayer.setHintText(null);//设置为null该view会gone
+                        binding.contentDisplayer.getHintLayer().setClickable(false);
+                        break;
+                }
+            }
+        });
         binding.contentDisplayer.setContentAdapter(new WriteableContentDisplayerAdapter() {
             @Override
             public void afterPageCountChanged(String typeKey) {
