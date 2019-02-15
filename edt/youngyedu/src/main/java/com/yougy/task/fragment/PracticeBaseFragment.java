@@ -132,7 +132,8 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
             mIsServerFail = true;
-            mServerFailMsg = (String) event.getExtraData();
+//            mServerFailMsg = (String) event.getExtraData();
+            mServerFailMsg = "服务器请求失败！";
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_SCRIBBLE_MODE)) {
             if (mNoteBookView2 != null && !mTaskDetailStudentActivity.isHadCommit()){

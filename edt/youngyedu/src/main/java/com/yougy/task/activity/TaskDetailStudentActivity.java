@@ -425,7 +425,8 @@ public class TaskDetailStudentActivity extends BaseActivity {
             if (!file.exists()) {
                 LogUtils.e("not exits.");
                 boolean mkdirs = file.mkdirs();
-                File fi = new File(file.getAbsolutePath() + "/empty.png");
+                File fi = new File(file.getAbsolutePath() +"/" + dramaId + "/" + mTaskId + "_" + dramaId
+                            + "_empty.png");
                 boolean mkdir = fi.mkdir();
                 LogUtils.d("TaskTest empty mkdirs." + mkdirs + "  mkdir = " + mkdir);
             }
@@ -471,7 +472,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     String[] strings = remote.split("_");
                     if (strings.length > 1) {
                         int stageId = Integer.parseInt(strings[1]);
-                        LogUtils.d(  "stageId = " + stageId);
+                        LogUtils.d(  "TaskTest stageId = " + stageId);
                         submitTask.setPerformId(mTaskId);
                         submitTask.setStageId(stageId);
                         submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
