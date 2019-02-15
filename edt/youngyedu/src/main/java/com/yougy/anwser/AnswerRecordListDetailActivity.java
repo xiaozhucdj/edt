@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,10 +36,11 @@ import java.util.List;
 import rx.functions.Action1;
 
 /**
- *
+ * created by fh on 2019/2/15
+ * 问答列表界面,选择作业本后进的就是这个界面.
  */
 
-public class AnswerRecordListDetailNewActivity extends BaseActivity {
+public class AnswerRecordListDetailActivity extends BaseActivity {
     public static final int REQUEST_CODE = 10101;
     ActivityAnswerDetailListBinding binding;
     int bookId, homeworkId;
@@ -60,6 +63,25 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answer_detail_list, null, false);
         setContentView(binding.getRoot());
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //用来在点击其他地方时隐藏[题目选择recyclerview].
+        if (ev.getAction() == MotionEvent.ACTION_DOWN
+                && binding.questionChooseRcv.getVisibility() == View.VISIBLE){
+            Rect rect = new Rect();
+            binding.questionChooseRcv.getGlobalVisibleRect(rect);
+            if (ev.getRawX() < rect.left
+                    || ev.getRawX() > rect.right
+                    || ev.getRawY() < rect.top
+                    || ev.getRawY() > rect.bottom
+            ){
+                binding.questionChooseRcv.setVisibility(View.GONE);
+                return true;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
@@ -212,7 +234,6 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-                binding.questionChooseRcv.setVisibility(View.GONE);
             }
         });
         //刷新
@@ -220,14 +241,12 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 loadData();
-                binding.questionChooseRcv.setVisibility(View.GONE);
             }
         });
         //上一个章节/问答按钮
         binding.lastBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.questionChooseRcv.setVisibility(View.GONE);
                 if ("上一个章节".equals(binding.lastBtnText.getText())) {
                     currentSelectedNodeIndex--;
                     currentSelectedQuestionIndex = currentBookExamCountInfoList.get(currentSelectedNodeIndex).getCount() - 1;
@@ -242,7 +261,6 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
         binding.nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.questionChooseRcv.setVisibility(View.GONE);
                 if ("下一个章节".equals(binding.nextBtnText.getText())) {
                     currentSelectedNodeIndex++;
                     currentSelectedQuestionIndex = 0;
@@ -269,7 +287,6 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
         binding.toBookStructureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.questionChooseRcv.setVisibility(View.GONE);
                 Intent intent = new Intent(getThisActivity(), AnswerBookNodeChooseActivity.class);
                 intent.putExtra(AnswerBookNodeChooseActivity.KEY_BOOK_ID, bookId);
                 intent.putExtra(AnswerBookNodeChooseActivity.KEY_HOMEWORK_ID, homeworkId);
@@ -280,7 +297,6 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
         binding.questionBodyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.questionChooseRcv.setVisibility(View.GONE);
                 if (!binding.questionBodyBtn.isSelected()) {
                     binding.questionBodyBtn.setSelected(true);
                     binding.answerAnalysisBtn.setSelected(false);
@@ -304,7 +320,6 @@ public class AnswerRecordListDetailNewActivity extends BaseActivity {
         binding.answerAnalysisBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.questionChooseRcv.setVisibility(View.GONE);
                 if (!binding.answerAnalysisBtn.isSelected()) {
                     binding.questionBodyBtn.setSelected(false);
                     binding.answerAnalysisBtn.setSelected(true);

@@ -24,6 +24,7 @@ import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.home.activity.ControlFragmentActivity;
 import com.yougy.task.activity.MaterialActivity;
 import com.yougy.task.activity.MaterialActivity2;
@@ -70,7 +71,8 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
             mIsServerFail = true;
-            mServerFailMsg = (String) event.getExtraData();
+//            mServerFailMsg = (String) event.getExtraData();
+            mServerFailMsg = "服务器请求失败！";
             loadData();
         }
     }
@@ -150,10 +152,10 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
     public void loadData() {
         super.loadData();
         Log.i(TAG, "loadData: ");
-        calculateCurrentLists(0);
         if (mIsServerFail) {
             handlerRequestFail();
         } else {
+            calculateCurrentLists(0);
             handlerRequestSuccess();
         }
     }
@@ -239,9 +241,22 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
      * @param position
      */
     private void handlerClickItem (int position) {
-        Intent intent = new Intent(mTaskDetailStudentActivity, MaterialActivity2.class);
         sStageTaskBean = currentDatas.get(position);
+        boolean flag = true;
+        if (sStageTaskBean.getStageContent().size() > 0 ) {
+            String stageFormat = sStageTaskBean.getStageContent().get(0).getFormat();
+            if (stageFormat.contains("pdf") || stageFormat.contains("PDF")  || stageFormat.contains("PNG")
+                    || stageFormat.contains("png") || stageFormat.contains("txt")) {
+                flag = false;
+            }
+        }
+        if (flag) {
+            ToastUtil.showCustomToast(mContext, "资料格式不支持！");
+            return;
+        }
+        Intent intent = new Intent(mTaskDetailStudentActivity, MaterialActivity2.class);
         intent.putExtra("isHadComplete", mTaskDetailStudentActivity.isHadCommit());
+        intent.putExtra("mTaskId", mTaskDetailStudentActivity.mTaskId);
 //        intent.putExtra("stageTaskBean", stageTaskBean);
 //        String remote = stageTaskBean.getStageScene().get(0).getSceneContents().get(0).getRemote();
 //        LogUtils.i("TaskTest : " + remote +

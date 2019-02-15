@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:text="TITLE"
+                android:text="问答"
                 android:textColor="@android:color/black"
                 android:textSize="28px" />
         </RelativeLayout>

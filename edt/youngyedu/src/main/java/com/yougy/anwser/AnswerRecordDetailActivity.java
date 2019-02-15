@@ -30,7 +30,7 @@ import rx.functions.Action1;
  * Created by FH on 2018/3/9.
  * 学生点击提交问答后学生查看答案和题干的界面也复用这个界面
  * <p>
- * 学生问答记录某一条记录的详情界面（这个页面已经调整为AnswerRecordListDetailActivity，用来展示问答结果列表页面）
+ * 学生问答记录某一条记录的详情界面
  */
 
 public class AnswerRecordDetailActivity extends BaseActivity {
@@ -179,6 +179,32 @@ public class AnswerRecordDetailActivity extends BaseActivity {
                 } else if (binding.answerAnalysisBtn.isSelected()) {
                     currentShowAnalysisPageIndex = btnIndex;
                     binding.contentDisplayer.toPage("analysis", currentShowAnalysisPageIndex, true);
+                }
+            }
+        });
+        binding.contentDisplayer.getHintLayer().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.contentDisplayer.refresh();
+            }
+        });
+        binding.contentDisplayer.getHintLayer().setClickable(false);
+        binding.contentDisplayer.setStatusChangeListener(new WriteableContentDisplayer.StatusChangeListener() {
+            @Override
+            public void onStatusChanged(WriteableContentDisplayer.LOADING_STATUS newStatus, String typeKey, int pageIndex, WriteableContentDisplayer.ERROR_TYPE errorType, String errorMsg) {
+                switch (newStatus) {
+                    case LOADING:
+                        binding.contentDisplayer.setHintText("加载中");
+                        binding.contentDisplayer.getHintLayer().setClickable(false);
+                        break;
+                    case ERROR:
+                        binding.contentDisplayer.setHintText("加载失败,请点击屏幕刷新");
+                        binding.contentDisplayer.getHintLayer().setClickable(true);
+                        break;
+                    case SUCCESS:
+                        binding.contentDisplayer.setHintText(null);//设置为null该view会gone
+                        binding.contentDisplayer.getHintLayer().setClickable(false);
+                        break;
                 }
             }
         });

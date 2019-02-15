@@ -99,7 +99,7 @@ public class AnswerBookNodeChooseActivity extends BaseActivity {
             @Override
             public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 ListView listView = new ListView(getThisActivity());
-                RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(430, 900);
+                RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(430, 1060);
                 params.leftMargin = 25;
                 params.rightMargin = 25;
                 listView.setLayoutParams(params);
@@ -224,7 +224,6 @@ public class AnswerBookNodeChooseActivity extends BaseActivity {
                     @Override
                     public void call(List<BookInfo> bookInfoList) {
                         if (bookInfoList.size() > 0 && bookInfoList.get(0).getBookContents().getNodes().size() > 0){
-                            binding.titleTextview.setText(bookInfoList.get(0).getBookTitle());
                             bookStructureNodeList.clear();
                             bookStructureNodeList.addAll(bookInfoList.get(0).getBookContents().getNodes());
                             binding.mainRecyclerview.notifyDataSetChanged();

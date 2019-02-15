@@ -147,6 +147,7 @@ public class TaskBaseFragment extends BFragment {
     }
 
     protected void unInit (){
+        mDataEmptyView = null;
         if (mNoteBookView2 != null) {
             mNoteBookView2.setIntercept(true);
             mNoteBookView2.setVisibility(View.GONE);
