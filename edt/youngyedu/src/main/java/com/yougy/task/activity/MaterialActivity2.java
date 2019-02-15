@@ -83,25 +83,20 @@ public class MaterialActivity2 extends BaseActivity {
 
     @Override
     public void init() {
-//        testUrl.add(new Content_new(Content_new.Type.PDF, 1, "http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/ae6a8ad6-529d-450f-909e-5e840ae13be6/sqs.pdf", null));
-//        testUrl.add(new Content_new(Content_new.Type.IMG_URL, 1, "http://la.lovewanwan.top/1.png", null));
         mLoadAnswer = new LoadAnswer(this);
-//        mStageTaskBean = getIntent().getParcelableExtra("stageTaskBean");
         mStageTaskBean = MaterialsBaseFragment.sStageTaskBean;
         isHadComplete = getIntent().getBooleanExtra("isHadComplete", false);
         if (mStageTaskBean == null) {
-            ToastUtil.showCustomToast( getApplicationContext(),"任务资料打开失败！");
+            ToastUtil.showCustomToast(getApplicationContext(),"任务资料打开失败！");
             return;
         }
-        LogUtils.i("TaskTest material : " + mStageTaskBean.toString());
         stageId = mStageTaskBean.getStageId();
-        taskID = mStageTaskBean.getStageAttach();
+        taskID = getIntent().getIntExtra("mTaskId", 0);
+        LogUtils.i("TaskTest material : taskID =  " + taskID + "" + "  stageId = " + stageId);
         stageContent = mStageTaskBean.getStageContent().get(0);
         String bucket = stageContent.getBucket();
         String remote = stageContent.getRemote();
         mCurrentUrl = "http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + remote;
-//        StageTaskBean.StageContent stageContent = new StageTaskBean.StageContent("http://la.lovewanwan.top/1.png", 1000, "IMG", null, null, null, 01.f);
-//        testUrl.add(stageContent);
         initContentDisPlayer ();
         initPageBar();
     }
@@ -119,13 +114,19 @@ public class MaterialActivity2 extends BaseActivity {
         mPageIndex = 0;
         ContentDisPlayerAdapter contentAdapter = mMaterialContentDisplay.getContentAdapter();
 //        contentAdapter.updateDataList(PAGE_TYPE_KEY, "http://la.lovewanwan.top/1.png", "IMG");
-        String format = "PDF";
-        if (!stageContent.getFormat().contains("pdf")) {
-            format = "IMG";
+        if (mStageTaskBean.getStageContent().size() > 0 ) {
+            String format = mStageTaskBean.getStageContent().get(0).getFormat();
+            if (format.contains("pdf") || format.contains("PDF")) {
+                format = "PDF";
+            } else if (format.contains("txt")){
+                format = "TEXT";
+            } else {
+                format = "IMG";
+            }
+            contentAdapter.updateDataList(PAGE_TYPE_KEY, mCurrentUrl, format);
+            mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
+            mMaterialPageBar.selectPageBtn(mPageIndex, false);
         }
-        contentAdapter.updateDataList(PAGE_TYPE_KEY, mCurrentUrl, format);
-        mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
-        mMaterialPageBar.selectPageBtn(mPageIndex, false);
     }
 
     @Override
@@ -142,7 +143,7 @@ public class MaterialActivity2 extends BaseActivity {
         LogUtils.d("NoteView onOnPause.");
         String[] cacheBitmapKey = getCacheBitmapKey(0, mPageIndex);
         SaveNoteUtils.getInstance(getApplicationContext()).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),
-                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID),stageId);
+                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID), stageId);
     }
 
 
