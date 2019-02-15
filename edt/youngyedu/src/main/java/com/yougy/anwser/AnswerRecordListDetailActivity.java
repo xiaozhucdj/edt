@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -66,13 +67,15 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        //用来在点击其他地方时隐藏[题目选择recyclerview].
         if (ev.getAction() == MotionEvent.ACTION_DOWN
                 && binding.questionChooseRcv.getVisibility() == View.VISIBLE){
-            if (ev.getX() < binding.questionChooseRcv.getLeft()
-                    || ev.getX() > binding.questionChooseRcv.getRight()
-                    || ev.getY() < binding.questionChooseRcv.getTop()
-                    || ev.getY() > binding.questionChooseRcv.getBottom()
-
+            Rect rect = new Rect();
+            binding.questionChooseRcv.getGlobalVisibleRect(rect);
+            if (ev.getRawX() < rect.left
+                    || ev.getRawX() > rect.right
+                    || ev.getRawY() < rect.top
+                    || ev.getRawY() > rect.bottom
             ){
                 binding.questionChooseRcv.setVisibility(View.GONE);
                 return true;
