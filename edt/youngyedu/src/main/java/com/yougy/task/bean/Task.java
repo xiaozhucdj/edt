@@ -47,7 +47,7 @@ public class Task implements Serializable {
     }
 
     public boolean isComplete() {
-        return sceneStatusCode.equals("SV02");
+        return contentStatusCode.equals("SV02");
     }
 
     public String getPerformStartTime() {

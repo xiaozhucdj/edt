@@ -684,8 +684,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentBookLink, int pn, int ps) {
-        return getInstance().getServerApi().queryTasks(homeworkId, contentBookLink, pn, ps)
+    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentBookLink, int pn, int ps,String contentStatusCode) {
+        return getInstance().getServerApi().queryTasks(homeworkId, contentBookLink, pn, ps,contentStatusCode)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
     }

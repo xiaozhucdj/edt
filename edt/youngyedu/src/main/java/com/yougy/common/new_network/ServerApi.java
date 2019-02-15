@@ -128,14 +128,13 @@ public interface ServerApi {
     Observable<BaseResult<List<DownloadInfo>>> downloadBook(@Field("userId") String userId, @Field("bookId") String bookId);
 
 
-
     /**
      * 图书下载2
      */
     @FormUrlEncoded
     @POST("bookStore")
     @DefaultField(keys = {"m"}, values = {"downloadBook"})
-    Observable<BaseResult<List<OssInfoBean>>> downloadFile(@Field("bookId") String bookId , @Field("atchTypeCode") String atchTypeCode );
+    Observable<BaseResult<List<OssInfoBean>>> downloadFile(@Field("bookId") String bookId, @Field("atchTypeCode") String atchTypeCode);
 
 
     /**
@@ -187,7 +186,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m","extraParameter"}, values = {"reviewComment","1"})
+    @DefaultField(keys = {"m", "extraParameter"}, values = {"reviewComment", "1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("userId") String userId);
 
@@ -196,7 +195,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m","extraParameter"}, values = {"reviewComment","1"})
+    @DefaultField(keys = {"m", "extraParameter"}, values = {"reviewComment", "1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator, @Field("replyCreator") long replyCreator);
 
@@ -603,7 +602,7 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryTaskContent"})
-    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentBookLink") int contentBookLink, @Field("pn") int pn, @Field("ps") int ps);
+    Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentBookLink") int contentBookLink, @Field("pn") int pn, @Field("ps") int ps, @Field("contentStatusCode") String contentStatusCode);
 
     /**
      * 获取组信息
@@ -617,17 +616,17 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryStage"})
-    Observable<BaseResult<List<StageTaskBean>>> queryStageTask (@Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode);
+    Observable<BaseResult<List<StageTaskBean>>> queryStageTask(@Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode);
 
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postSceneRequest"})
-    Observable<BaseResult<STSbean>> uploadTaskPracticeOOS (@Field("userId") Integer userId);
+    Observable<BaseResult<STSbean>> uploadTaskPracticeOOS(@Field("userId") Integer userId);
 
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"insertScene"})
-    Observable<BaseResult<List<SubmitReplyBean>>> submitTaskPracticeServer (@Field("userId") Integer userId, @Field("data") String data);
+    Observable<BaseResult<List<SubmitReplyBean>>> submitTaskPracticeServer(@Field("userId") Integer userId, @Field("data") String data);
 
     /**
      * 统计作业本中作业和问答的数量并且按章节统计返回
@@ -637,6 +636,6 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"getExamCount4CursorByHomework"})
-    Observable<BaseResult<List<DataCountInBookNode>>> countQuestionCount4Cursor (@Field("homeworkId") Integer homeworkId
+    Observable<BaseResult<List<DataCountInBookNode>>> countQuestionCount4Cursor(@Field("homeworkId") Integer homeworkId
             , @Field("examTypeCode") String examTypeCode);
 }
