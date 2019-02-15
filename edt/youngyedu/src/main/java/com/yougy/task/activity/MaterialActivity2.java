@@ -1,6 +1,5 @@
 package com.yougy.task.activity;
 
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,7 +11,9 @@ import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.task.ContentDisPlayer;
 import com.yougy.task.ContentDisPlayerAdapter;
@@ -21,9 +22,6 @@ import com.yougy.task.bean.StageTaskBean;
 import com.yougy.task.fragment.MaterialsBaseFragment;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -69,10 +67,13 @@ public class MaterialActivity2 extends BaseActivity {
 
     private boolean isHadComplete = false;
     private StageTaskBean mStageTaskBean;
+    private StageTaskBean.StageContent stageContent;
     private LoadAnswer mLoadAnswer;
 
     private int taskID;
     private int stageId;
+
+    private String mCurrentUrl = "";
 
     @Override
     protected void setContentView() {
@@ -88,12 +89,17 @@ public class MaterialActivity2 extends BaseActivity {
 //        mStageTaskBean = getIntent().getParcelableExtra("stageTaskBean");
         mStageTaskBean = MaterialsBaseFragment.sStageTaskBean;
         isHadComplete = getIntent().getBooleanExtra("isHadComplete", false);
+        if (mStageTaskBean == null) {
+            ToastUtil.showCustomToast( getApplicationContext(),"任务资料打开失败！");
+            return;
+        }
         LogUtils.i("TaskTest material : " + mStageTaskBean.toString());
-        LogUtils.i("TaskTest material : " + mStageTaskBean.getStageScene().get(0).getSceneContents().get(0).getRemote());
         stageId = mStageTaskBean.getStageId();
         taskID = mStageTaskBean.getStageAttach();
-
-
+        stageContent = mStageTaskBean.getStageContent().get(0);
+        String bucket = stageContent.getBucket();
+        String remote = stageContent.getRemote();
+        mCurrentUrl = "http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + remote;
 //        StageTaskBean.StageContent stageContent = new StageTaskBean.StageContent("http://la.lovewanwan.top/1.png", 1000, "IMG", null, null, null, 01.f);
 //        testUrl.add(stageContent);
         initContentDisPlayer ();
@@ -112,8 +118,12 @@ public class MaterialActivity2 extends BaseActivity {
     public void loadData() {
         mPageIndex = 0;
         ContentDisPlayerAdapter contentAdapter = mMaterialContentDisplay.getContentAdapter();
-        contentAdapter.updateDataList(PAGE_TYPE_KEY, "http://la.lovewanwan.top/1.png", "IMG");
-//        contentAdapter.updateDataList(PAGE_TYPE_KEY, stageContent.getRemote(), stageContent.getFormat());
+//        contentAdapter.updateDataList(PAGE_TYPE_KEY, "http://la.lovewanwan.top/1.png", "IMG");
+        String format = "PDF";
+        if (!stageContent.getFormat().contains("pdf")) {
+            format = "IMG";
+        }
+        contentAdapter.updateDataList(PAGE_TYPE_KEY, mCurrentUrl, format);
         mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
         mMaterialPageBar.selectPageBtn(mPageIndex, false);
     }
@@ -133,8 +143,6 @@ public class MaterialActivity2 extends BaseActivity {
         String[] cacheBitmapKey = getCacheBitmapKey(0, mPageIndex);
         SaveNoteUtils.getInstance(getApplicationContext()).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),
                 cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID),stageId);
-//        SaveNoteUtils.getInstance(this).saveNoteViewData(mNoteBookView,SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),mMaterialId + CACHE_KEY + mPageIndex
-//                , mMaterialId + BITMAP_KEY + mPageIndex, String.valueOf(taskID), mMaterialId);
     }
 
 
@@ -272,8 +280,6 @@ public class MaterialActivity2 extends BaseActivity {
                     SaveNoteUtils.getInstance(getApplicationContext()).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),
                             cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID),stageId);
                 }
-//                    SaveNoteUtils.getInstance(MaterialActivity2.this).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),mMaterialId + CACHE_KEY + mPageIndex
-//                            , mMaterialId + BITMAP_KEY + mPageIndex, String.valueOf(taskID), mMaterialId);
                 mPageIndex = btnIndex;
                 mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, true, mStatusChangeListener);
                 mNoteBookView.clear();

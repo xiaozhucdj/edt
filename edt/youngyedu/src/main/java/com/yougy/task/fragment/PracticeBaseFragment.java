@@ -352,7 +352,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     private void clickPageIndex () {
         String[] cacheBitmapKey = getCacheBitmapKey(prevSavePosition, prevPage);
         SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
-                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.dramaId),mStageTaskBeans.get(prevSavePosition).getStageId());
+                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId),mStageTaskBeans.get(prevSavePosition).getStageId());
         LogUtils.d("TaskLog cacheKey " + cacheBitmapKey[0] + "\n bitmapKey = " + cacheBitmapKey[1]);
         leaveScribbleMode(false, true);
         showPracticeOrAddPage (currentPage);
@@ -662,7 +662,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         if (!isCommited() && prevSavePosition != currentSelectPosition) {
             String[] cacheBitmapKey = getCacheBitmapKey(prevSavePosition, prevPage);
             SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
-                    cacheBitmapKey[0],cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.dramaId), mStageTaskBeans.get(prevSavePosition).getStageId());
+                    cacheBitmapKey[0],cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId), mStageTaskBeans.get(prevSavePosition).getStageId());
         }
         loadPracticeQuestion ();
     }
@@ -672,7 +672,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         String[] cacheBitmapKey = getCacheBitmapKey(currentSelectPosition, currentPage);
         if (mStageTaskBeans.size() <= 0) return;
         SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
-                cacheBitmapKey[0],cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.dramaId), mStageTaskBeans.get(currentSelectPosition).getStageId());
+                cacheBitmapKey[0],cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId), mStageTaskBeans.get(currentSelectPosition).getStageId());
     }
 
     private void loadPracticeQuestion () {

@@ -40,7 +40,7 @@ public class TaskListActivity extends BaseActivity {
     private int contentBookLink;
     private String courseBookTitle;
     private int homeworkId;
-    private static final int REQUEST_CODE = 1000;
+    public static final int REQUEST_CODE = 1000;
 
 
     @Override
@@ -219,7 +219,6 @@ public class TaskListActivity extends BaseActivity {
                 Intent intent = new Intent(TaskListActivity.this, TaskDetailStudentActivity.class);
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, task.getContentElement());
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_ID_DEST, task.getContentDrama());
-                intent.putExtra("hadCompleted", task.isNeedSignature());
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
                 intent.putExtra("isSign", task.isNeedSignature());
                 intent.putExtra("SceneStatusCode", task.getSceneStatusCode());

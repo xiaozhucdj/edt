@@ -68,7 +68,7 @@ public class SaveNoteUtils {
 
         Bitmap bitmap = noteBookView2.getBitmap();
         String path = saveBitmapToFile (bitmap ,bitmapKey, fileDir + "/" + taskID + "/" + stageId);
-        LogUtils.d("NoteView Save Path = " + path);
+        LogUtils.d("TaskTest NoteView Save Path = " + path);
         /*if (isSaveBitmap && !StringUtils.isEmpty(bitmapKey) && questionIndex < pathLists.size()) {
             if (isMultiPage) {
                 if (pathLists.get(questionIndex) != null && !pathLists.get(questionIndex).contains(path)) {
