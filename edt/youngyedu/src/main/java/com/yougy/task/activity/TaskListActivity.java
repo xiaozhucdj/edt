@@ -74,6 +74,7 @@ public class TaskListActivity extends BaseActivity {
         binding.pageBarTask.setPageBarAdapter(new PageBtnBarAdapterV2(this) {
             @Override
             public int getPageBtnCount() {
+//                int count = isComplete ? completedTasks.size() : unCompleteTasks.size();
                 return (tasksCount + MAX_PAGE_COUNT - 1) / MAX_PAGE_COUNT;
             }
 
@@ -116,7 +117,7 @@ public class TaskListActivity extends BaseActivity {
 
                     if (null != taskList && taskList.size() > 0) {
                         for (Task task : taskList) {
-                            LogUtils.e(tag, "task is complete : " + task.isComplete());
+                            LogUtils.e(tag, "task's sceneStatusCode is : " + task.getSceneStatusCode());
                             if (task.isComplete()) {
                                 completedTasks.add(task);
                             } else {
@@ -154,6 +155,7 @@ public class TaskListActivity extends BaseActivity {
             generateData();
         } else {
             tasks.clear();
+            LogUtils.e(tag, "uncomplete tasks' size is : " + unCompleteTasks.size() + ",complete tasks'size is : " + completedTasks.size());
             if (isComplete) {
                 tasks.addAll(completedTasks);
             } else {
@@ -221,7 +223,7 @@ public class TaskListActivity extends BaseActivity {
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
                 intent.putExtra("isSign", task.isNeedSignature());
                 intent.putExtra("SceneStatusCode", task.getSceneStatusCode());
-                startActivityForResult(intent,REQUEST_CODE);
+                startActivityForResult(intent, REQUEST_CODE);
             });
         }
     }
@@ -231,7 +233,7 @@ public class TaskListActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 10000){
+        if (resultCode == 10000) {
             unCompleteTasks.remove(clickedTask);
             tasks.clear();
             currentTasks.clear();
