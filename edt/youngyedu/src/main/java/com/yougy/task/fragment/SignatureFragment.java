@@ -56,7 +56,9 @@ public class SignatureFragment extends TaskBaseFragment {
             if (stageTaskBeans.size() > 0) {
                 StageTaskBean stageTaskBean = stageTaskBeans.get(0);
                 stageId = stageTaskBean.getStageId();
-                mLoadAnswer.loadAnswer(mNoteBookViewSignature, stageTaskBean,0 , 0 );
+                if (stageTaskBean.getStageScene().size() > 0) {
+                    mLoadAnswer.loadAnswer(mNoteBookViewSignature, stageTaskBean,0 , 0 );
+                }
             }
         }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
     }
@@ -101,7 +103,8 @@ public class SignatureFragment extends TaskBaseFragment {
     private void saveSignatureBitmap () {
         String[] cacheBitmapKey = getCacheBitmapKey(0, 0);
         SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
-                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId),stageId);
+                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId), stageId);
+        LogUtils.d("TaskTest bitmap path : " + cacheBitmapKey[1]);
 
 //        String cacheKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + CACHE_KEY ;
 //        String bitmapKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + BITMAP_KEY ;
