@@ -23,6 +23,7 @@ import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.google.gson.Gson;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.DialogManager;
@@ -33,6 +34,8 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.message.YXClient;
+import com.yougy.message.attachment.ExitAnswerCheckAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerCheckBinding;
 import com.yougy.view.dialog.HintDialog;
@@ -74,6 +77,15 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void init() {
+        YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                if (message.getAttachment() instanceof ExitAnswerCheckAttachment){
+                    finish();
+                }
+            }
+        });
+
         binding.tvTitle.setText("问答自评、互评");
 
         binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getApplicationContext()) {
