@@ -78,6 +78,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
             searchResultName.setText(info.getBookTitle());
             int schoolType = SpUtils.getStudent().getSchoolLevel();
             if (schoolType > 0) {
+                searchResultPrice.setVisibility(View.GONE);
+                searchResultPrePrice.setVisibility(View.GONE);
+            } else {
                 searchResultPrice.setVisibility(View.VISIBLE);
                 searchResultPrePrice.setVisibility(View.VISIBLE);
                 searchResultPrice.setText(String.format(YoungyApplicationManager.getInstance().getResources().getString(R.string.book_price), String.valueOf(info.getBookSpotPrice())));
@@ -86,9 +89,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
                     searchResultPrePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     searchResultPrePrice.setText(String.format(searchResultPrice.getContext().getResources().getString(R.string.book_price), String.valueOf(info.getBookSalePrice())));
                 }
-            } else {
-                searchResultPrice.setVisibility(View.GONE);
-                searchResultPrePrice.setVisibility(View.GONE);
             }
             ImageLoaderManager.getInstance().loadImageContext(mContext,
                     info.getBookCoverS(),
