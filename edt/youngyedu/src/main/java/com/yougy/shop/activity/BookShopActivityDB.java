@@ -208,11 +208,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     @Override
     protected void initLayout() {
         boolean flag = (SpUtils.getStudent().getSchoolLevel() > 0);
-        binding.orderBtn.setVisibility(flag ? View.VISIBLE : View.GONE);
-        binding.newOrderCountTv.setVisibility(flag ? View.VISIBLE : View.GONE);
-        binding.cartGo.setVisibility(flag ? View.VISIBLE : View.GONE);
-        binding.cartCountTv.setVisibility(flag ? View.VISIBLE : View.GONE);
-        if (!flag) {
+        binding.orderBtn.setVisibility(flag ? View.GONE : View.VISIBLE);
+        binding.newOrderCountTv.setVisibility(flag ? View.GONE : View.VISIBLE);
+        binding.cartGo.setVisibility(flag ? View.GONE : View.VISIBLE);
+        binding.cartCountTv.setVisibility(flag ? View.GONE : View.VISIBLE);
+        if (flag) {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.favorite.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             binding.favorite.setLayoutParams(params);

@@ -400,13 +400,12 @@ public class SearchActivity extends ShopBaseActivity {
         req.setBookVersion(bookVersion);
         req.setPs(COUNT_PER_PAGE);
         req.setPn(pageNo);
-        NetWorkManager.queryBookInfo(req).subscribe(new Action1<BaseResult<List<BookInfo>>>() {
-            @Override
-            public void call(BaseResult<List<BookInfo>> result) {
-                LogUtils.e(tag, "bookInfos' size : " + result.getData().size());
-                totalCount = result.getCount();
-                SearchActivity.this.refreshResultView(result.getData());
-            }
+        NetWorkManager.queryBookInfo(req).subscribe(result -> {
+            LogUtils.e(tag, "bookInfos' size : " + result.getData().size());
+            totalCount = result.getCount();
+            SearchActivity.this.refreshResultView(result.getData());
+        }, throwable -> {
+            LogUtils.e(tag,"throwable is : " + throwable.getMessage());
         });
     }
 

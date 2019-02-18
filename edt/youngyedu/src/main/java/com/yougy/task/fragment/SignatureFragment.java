@@ -51,7 +51,7 @@ public class SignatureFragment extends TaskBaseFragment {
     @Override
     public void loadData() {
         super.loadData();
-        NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04").subscribe(stageTaskBeans -> {
+        NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04", SpUtils.getUserId()).subscribe(stageTaskBeans -> {
             Log.i(TAG, "call: " + stageTaskBeans.size());
             if (stageTaskBeans.size() > 0) {
                 StageTaskBean stageTaskBean = stageTaskBeans.get(0);

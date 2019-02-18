@@ -121,6 +121,10 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         //初始化推荐列表
         initRecycler();
         initCouponListview();
+        if (SpUtils.getStudent().getSchoolLevel() > 0) {
+            binding.cartCountTv.setVisibility(View.GONE);
+            binding.toCartBtn.setVisibility(View.GONE);
+        }
     }
 
     @Override

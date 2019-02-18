@@ -706,8 +706,8 @@ public final class NetWorkManager {
      *                      SR04 签字
      * @return
      */
-    public static Observable<List<StageTaskBean>> queryStageTask(String dramaId, String stageTypeCode) {
-        return getInstance().getServerApi().queryStageTask(dramaId, stageTypeCode)
+    public static Observable<List<StageTaskBean>> queryStageTask(String dramaId, String stageTypeCode, int userId) {
+        return getInstance().getServerApi().queryStageTask(dramaId, stageTypeCode, userId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
