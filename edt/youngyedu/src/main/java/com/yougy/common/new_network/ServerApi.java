@@ -616,7 +616,9 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"queryStage"})
-    Observable<BaseResult<List<StageTaskBean>>> queryStageTask(@Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode);
+    Observable<BaseResult<List<StageTaskBean>>> queryStageTask(
+            @Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode
+            ,@Field("userId") Integer userId);
 
     @FormUrlEncoded
     @POST("classRoom")

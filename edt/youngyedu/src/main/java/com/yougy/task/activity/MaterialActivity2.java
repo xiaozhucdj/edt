@@ -1,5 +1,6 @@
 package com.yougy.task.activity;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -22,6 +23,8 @@ import com.yougy.task.bean.StageTaskBean;
 import com.yougy.task.fragment.MaterialsBaseFragment;
 import com.yougy.ui.activity.R;
 import com.yougy.view.NoteBookView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -73,6 +76,13 @@ public class MaterialActivity2 extends BaseActivity {
     private int taskID;
     private int stageId;
 
+    private int mCurrentPosition;
+
+    @Override
+    public void loadIntent(Context packageContext, Class<?> cls) {
+        super.loadIntent(packageContext, cls);
+    }
+
     private String mCurrentUrl = "";
 
     @Override
@@ -86,17 +96,28 @@ public class MaterialActivity2 extends BaseActivity {
         mLoadAnswer = new LoadAnswer(this);
         mStageTaskBean = MaterialsBaseFragment.sStageTaskBean;
         isHadComplete = getIntent().getBooleanExtra("isHadComplete", false);
+        mCurrentPosition = getIntent().getIntExtra("mCurrentPosition", 0);
         if (mStageTaskBean == null) {
             ToastUtil.showCustomToast(getApplicationContext(),"任务资料打开失败！");
+            finish();
             return;
         }
         stageId = mStageTaskBean.getStageId();
         taskID = getIntent().getIntExtra("mTaskId", 0);
         LogUtils.i("TaskTest material : taskID =  " + taskID + "" + "  stageId = " + stageId);
-        stageContent = mStageTaskBean.getStageContent().get(0);
-        String bucket = stageContent.getBucket();
-        String remote = stageContent.getRemote();
+        List<StageTaskBean.StageContent> stageContents = mStageTaskBean.getStageContent();
+        LogUtils.i("TaskTest material size :" + stageContents.size() + "  mCurrentPosition =" + mCurrentPosition);
+        if (stageContents.size() > 0) {
+            this.stageContent = stageContents.get(0);
+        } else {
+            ToastUtil.showCustomToast(getApplicationContext(), "position error!");
+            finish();
+            return;
+        }
+        String bucket = this.stageContent.getBucket();
+        String remote = this.stageContent.getRemote();
         mCurrentUrl = "http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + remote;
+        LogUtils.d("TaskTest bucket = " + bucket + "  remote = " + remote + "  mCurrentUrl = " + mCurrentUrl);
         initContentDisPlayer ();
         initPageBar();
     }
@@ -116,13 +137,12 @@ public class MaterialActivity2 extends BaseActivity {
 //        contentAdapter.updateDataList(PAGE_TYPE_KEY, "http://la.lovewanwan.top/1.png", "IMG");
         if (mStageTaskBean.getStageContent().size() > 0 ) {
             String format = mStageTaskBean.getStageContent().get(0).getFormat();
-            if (format.contains("pdf") || format.contains("PDF")) {
+            if (format.contains("pdf") || format.contains("PDF") || format.contains("txt")) {
                 format = "PDF";
-            } else if (format.contains("txt")){
-                format = "TEXT";
             } else {
                 format = "IMG";
             }
+            LogUtils.d("TaskTest format = " + format  + "  mCurrentUrl = " + mCurrentUrl);
             contentAdapter.updateDataList(PAGE_TYPE_KEY, mCurrentUrl, format);
             mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
             mMaterialPageBar.selectPageBtn(mPageIndex, false);
@@ -141,7 +161,7 @@ public class MaterialActivity2 extends BaseActivity {
     protected void onPause() {
         super.onPause();
         LogUtils.d("NoteView onOnPause.");
-        String[] cacheBitmapKey = getCacheBitmapKey(0, mPageIndex);
+        String[] cacheBitmapKey = getCacheBitmapKey(mCurrentPosition, mPageIndex);
         SaveNoteUtils.getInstance(getApplicationContext()).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),
                 cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID), stageId);
     }
@@ -257,6 +277,7 @@ public class MaterialActivity2 extends BaseActivity {
 
 
     private void initContentDisPlayer() {
+        LogUtils.d("TaskTest initContentDisPlayer.");
         mMaterialContentDisplay.setContentAdapter(new ContentDisPlayerAdapter() {
             @Override
             public void afterPageCountChanged(String typeKey) {
@@ -277,7 +298,7 @@ public class MaterialActivity2 extends BaseActivity {
                 LogUtils.d("NoteView page Index = " + btnIndex + "   mPageIndex = " + mPageIndex);
                 mNoteBookView.leaveScribbleMode();
                 if (btnIndex != mPageIndex){
-                    String[] cacheBitmapKey = getCacheBitmapKey(0, mPageIndex);
+                    String[] cacheBitmapKey = getCacheBitmapKey(mCurrentPosition, mPageIndex);
                     SaveNoteUtils.getInstance(getApplicationContext()).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),
                             cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID),stageId);
                 }
@@ -310,9 +331,9 @@ public class MaterialActivity2 extends BaseActivity {
                 if (isHadComplete) {
                     mLoadAnswer.loadAnswer(mNoteBookView, mStageTaskBean, 0 , mPageIndex);
                 } else {
-                    String[] cacheBitmapKey = getCacheBitmapKey(0, mPageIndex);
+                    String[] cacheBitmapKey = getCacheBitmapKey(mCurrentPosition, mPageIndex);
                     SaveNoteUtils.getInstance(getApplicationContext()).resetNoteView(mNoteBookView, cacheBitmapKey[0], cacheBitmapKey[1],
-                            SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir());
+                        SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir());
 //                    SaveNoteUtils.getInstance(MaterialActivity2.this).resetNoteView(mNoteBookView, taskID + CACHE_KEY + mPageIndex,
 //                            mMaterialId + BITMAP_KEY + mPageIndex, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir());
                 }
