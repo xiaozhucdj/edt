@@ -441,7 +441,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
                 , R.id.img_add_page, R.id.text_hide_caoGao})
     public void onClick(View view) {
         if (mCurrentShowItems && view.getId() != R.id.select_practice) showSelectItem(false);
-
         switch (view.getId()) {
             case R.id.prev_practice:
                 changePractice(false);

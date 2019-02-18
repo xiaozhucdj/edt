@@ -263,7 +263,7 @@ public class TaskListActivity extends BaseActivity {
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_ID_DEST, task.getContentDrama());
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
                 intent.putExtra("isSign", task.isNeedSignature());
-                intent.putExtra("SceneStatusCode", task.getSceneStatusCode());
+                intent.putExtra("ContentStatusCode", task.getContentStatusCode());
                 startActivityForResult(intent, REQUEST_CODE);
             });
         }
