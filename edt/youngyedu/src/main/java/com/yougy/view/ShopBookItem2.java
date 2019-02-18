@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.ImageLoaderManager;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.shop.bean.Favor;
 import com.yougy.ui.activity.R;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -23,7 +24,7 @@ import butterknife.OnClick;
  * Created by FH on 2017/2/13.
  */
 
-public class ShopBookItem2 extends RelativeLayout implements View.OnClickListener{
+public class ShopBookItem2 extends RelativeLayout implements View.OnClickListener {
     @BindView(R.id.shop_book_item_checkbox)
     ImageButton checkbox;
     @BindView(R.id.shop_book_item_book_img)
@@ -43,24 +44,23 @@ public class ShopBookItem2 extends RelativeLayout implements View.OnClickListene
     int position = -1;
 
     @OnClick({R.id.shop_book_item_btn})
-    public void onClick(View view){
-        if (view instanceof ShopBookItem2){
-            if (mOnItemActionListener != null){
+    public void onClick(View view) {
+        if (view instanceof ShopBookItem2) {
+            if (mOnItemActionListener != null) {
                 mOnItemActionListener.onItemClick(position);
             }
-        }
-        else if (view instanceof ImageButton){
+        } else if (view instanceof ImageButton) {
             checkbox.setSelected(!checkbox.isSelected());
-            if (mOnItemActionListener != null){
-                mOnItemActionListener.onCheckedChanged(position , checkbox.isSelected());
+            if (mOnItemActionListener != null) {
+                mOnItemActionListener.onCheckedChanged(position, checkbox.isSelected());
             }
-        }
-        else {
-            if (mOnItemActionListener != null){
+        } else {
+            if (mOnItemActionListener != null) {
                 mOnItemActionListener.onBtnClick(position);
             }
         }
     }
+
     public ShopBookItem2(Context context) {
         super(context);
         mContext = context;
@@ -101,7 +101,11 @@ public class ShopBookItem2 extends RelativeLayout implements View.OnClickListene
                 bookNameTv.setText(bookNameTv.getText() + "(下架)");
             }
             bookAuthorTv.setText("作者:" + favor.getBookAuthor());
-            bookPriceTv.setText("价格:￥" + favor.getBookSalePrice());
+            if (SpUtils.getStudent().getSchoolLevel() > 0) {
+                bookPriceTv.setVisibility(View.INVISIBLE);
+            } else {
+                bookPriceTv.setText("价格:￥" + favor.getBookSalePrice());
+            }
             refreshImg(bookImgview, favor.getBookCoverS());
         }
     }
@@ -126,11 +130,12 @@ public class ShopBookItem2 extends RelativeLayout implements View.OnClickListene
                 url,
                 R.drawable.img_book_cover,
                 R.drawable.img_book_cover,
-                FileContonst.withS ,
+                FileContonst.withS,
                 FileContonst.heightS,
                 view);
     }
-    public void setPosition(int position){
+
+    public void setPosition(int position) {
         this.position = position;
     }
 
@@ -138,27 +143,29 @@ public class ShopBookItem2 extends RelativeLayout implements View.OnClickListene
         this.mOnItemActionListener = mOnItemActionListener;
     }
 
-    public interface OnItemActionListener{
+    public interface OnItemActionListener {
         void onItemClick(int position);
+
         void onCheckedChanged(int position, boolean checked);
+
         void onBtnClick(int position);
     }
 
-    public void setChecked(boolean checked , boolean callListener){
-        if (checkbox.isSelected() != checked){
+    public void setChecked(boolean checked, boolean callListener) {
+        if (checkbox.isSelected() != checked) {
             checkbox.setSelected(checked);
-            if (mOnItemActionListener != null && callListener && position != -1){
-                mOnItemActionListener.onCheckedChanged(position , checkbox.isSelected());
+            if (mOnItemActionListener != null && callListener && position != -1) {
+                mOnItemActionListener.onCheckedChanged(position, checkbox.isSelected());
             }
         }
     }
 
-    public boolean isChecked(){
+    public boolean isChecked() {
         return checkbox.isSelected();
     }
 
-    public void setBtnText(String str){
-        if (str != null){
+    public void setBtnText(String str) {
+        if (str != null) {
             btn.setText(str);
         }
     }
