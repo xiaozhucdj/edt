@@ -616,6 +616,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     binding.bookDownloadSizeTv.setText(getString(R.string.file_size_text, SizeUtil.convertSizeLong2String(mBookInfo.getBookDownloadSize())));
                     //价格
                     if (SpUtils.getStudent().getSchoolLevel() > 0) {
+                        binding.buyBtn.setVisibility(View.GONE);
                         binding.tryReadBtn.setText(R.string.read_promptly);
                     } else {
                         binding.bookOriginPriceTv.setText(getString(R.string.list_price, mBookInfo.getBookSalePrice() + ""));
