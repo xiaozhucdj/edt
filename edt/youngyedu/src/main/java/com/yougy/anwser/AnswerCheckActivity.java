@@ -112,6 +112,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         binding.questionBodyBtn.setOnClickListener(this);
         binding.llLastStudent.setOnClickListener(this);
         binding.llNextStudent.setOnClickListener(this);
+        binding.imageRefresh.setOnClickListener(this);
     }
 
     @Override
@@ -289,6 +290,9 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                 saveCheckData(currentShowReplyPageIndex);
                 score = 0;
                 getUpLoadInfo();
+                break;
+            case R.id.image_refresh:
+                setData();
                 break;
         }
 
