@@ -28,9 +28,10 @@ import java.util.List;
 
 public class TaskListActivity extends BaseActivity {
     private TaskListLayoutBinding binding;
-    private List<Task> tasks = new ArrayList<>();
-    private TaskAdapter adapter;
-    private List<Task> currentTasks = new ArrayList<>();
+    private TaskAdapter unCompleteAdapter;
+    private TaskAdapter completedAdapter;
+    private List<Task> currentCompletedTasks = new ArrayList<>();
+    private List<Task> currentUnCompleteTasks = new ArrayList<>();
     private int currentCompletedPage;
     private int currentUnCompletePage;
     private int completedTasksCount;
@@ -62,29 +63,36 @@ public class TaskListActivity extends BaseActivity {
     @Override
     protected void initLayout() {
         binding.uncompleteTv.setSelected(true);
-        binding.tasksRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+        binding.uncompleteTasksRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
         });
-        binding.tasksRecycler.setAdapter(adapter = new TaskAdapter());
+        binding.uncompleteTasksRecycler.setAdapter(unCompleteAdapter = new TaskAdapter(currentUnCompleteTasks));
+
+        binding.completedTasksRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+        binding.completedTasksRecycler.setAdapter(completedAdapter = new TaskAdapter(currentCompletedTasks));
         binding.topLayout.titleTv.setText(courseBookTitle);
         initPageBar();
     }
 
     private void initPageBar() {
-        binding.pageBarTask.setPageBarAdapter(new PageBtnBarAdapterV2(this) {
+        binding.uncompletePageBarTask.setPageBarAdapter(new PageBtnBarAdapterV2(this) {
             @Override
             public int getPageBtnCount() {
-                int tasksCount = isComplete?completedTasksCount:uncompleteTasksCount;
-                return (tasksCount + MAX_PAGE_COUNT - 1) / MAX_PAGE_COUNT;
+                return (uncompleteTasksCount + MAX_PAGE_COUNT - 1) / MAX_PAGE_COUNT;
             }
 
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn, int lastSelectPageBtnIndex) {
                 LogUtils.e(tag, "onPageBtnClick........." + btnIndex);
-                refreshTask(btnIndex);
+                refreshUnCompleteTask(btnIndex);
             }
 
             @Override
@@ -92,7 +100,26 @@ public class TaskListActivity extends BaseActivity {
 
             }
         });
-        binding.pageBarTask.selectPageBtn(0, false);
+        binding.uncompletePageBarTask.selectPageBtn(0, false);
+
+        binding.completedPageBarTask.setPageBarAdapter(new PageBtnBarAdapterV2(this) {
+            @Override
+            public int getPageBtnCount() {
+                return (completedTasksCount + MAX_PAGE_COUNT - 1) / MAX_PAGE_COUNT;
+            }
+
+            @Override
+            public void onPageBtnClick(View btn, int btnIndex, String textInBtn, int lastSelectPageBtnIndex) {
+                LogUtils.e(tag, "onPageBtnClick........." + btnIndex);
+                refreshCompletedTask(btnIndex);
+            }
+
+            @Override
+            public void onNoPageToShow() {
+
+            }
+        });
+        binding.completedPageBarTask.selectPageBtn(0, false);
     }
 
     @Override
@@ -103,13 +130,14 @@ public class TaskListActivity extends BaseActivity {
     @Override
     public void refresh(View view) {
         super.refresh(view);
-        tasks.clear();
-        completedTasks.clear();
-        unCompleteTasks.clear();
-        currentTasks.clear();
-        unCompleteSparseArray.clear();
-        completeSparseArray.clear();
-        generateData(isComplete?currentCompletedPage:currentUnCompletePage);
+        if (isComplete) {
+            completedTasks.clear();
+            completeSparseArray.clear();
+        } else {
+            unCompleteTasks.clear();
+            unCompleteSparseArray.clear();
+        }
+        generateData(isComplete ? currentCompletedPage : currentUnCompletePage);
     }
 
     private SparseArray<List<Task>> unCompleteSparseArray = new SparseArray<>();
@@ -119,8 +147,9 @@ public class TaskListActivity extends BaseActivity {
     private void generateData(int currentPage) {
         LogUtils.e(tag, "homeworkId is : " + homeworkId + ",contentBookLink is : " + contentBookLink);
         int pageCount = MAX_PAGE_COUNT;
-        if (currentPage == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-            int tasksCount = isComplete?completedTasksCount:uncompleteTasksCount;
+        int pageBtnCount = isComplete ? binding.completedPageBarTask.getPageBarAdapter().getPageBtnCount() : binding.uncompletePageBarTask.getPageBarAdapter().getPageBtnCount();
+        if (currentPage == pageBtnCount - 1) {
+            int tasksCount = isComplete ? completedTasksCount : uncompleteTasksCount;
             pageCount = tasksCount % MAX_PAGE_COUNT == 0 ? MAX_PAGE_COUNT : tasksCount % MAX_PAGE_COUNT;
         }
         NetWorkManager.queryTasks(homeworkId, contentBookLink, currentPage + 1, pageCount, contentStatusCode)
@@ -128,105 +157,59 @@ public class TaskListActivity extends BaseActivity {
                 .subscribe(taskSummary -> {
                     List<Task> taskList = taskSummary.getData();
                     if (isComplete) {
+                        currentCompletedTasks.clear();
+                        currentCompletedTasks.addAll(taskList);
                         completedTasksCount = taskSummary.getCount();
                         completeSparseArray.put(currentPage, taskList);
                         completedTasks.addAll(taskList);
+                        completedAdapter.notifyDataSetChanged();
                     } else {
+                        currentUnCompleteTasks.clear();
+                        currentUnCompleteTasks.addAll(taskList);
                         uncompleteTasksCount = taskSummary.getCount();
                         unCompleteSparseArray.put(currentPage, taskList);
                         unCompleteTasks.addAll(taskList);
+                        unCompleteAdapter.notifyDataSetChanged();
+                        binding.uncompletePageBarTask.refreshPageBar();
                     }
-                    currentTasks.addAll(taskList);
-                    adapter.notifyDataSetChanged();
-                    binding.pageBarTask.refreshPageBar();
-//                    if (null != taskList && taskList.size() > 0) {
-//                        for (Task task : taskList) {
-//                            LogUtils.e(tag, "task's sceneStatusCode is : " + task.getSceneStatusCode());
-//                            if (task.isComplete()) {
-//                                completedTasks.add(task);
-//                            } else {
-//                                unCompleteTasks.add(task);
-//                            }
-//                        }
-//
-//                        tasks.clear();
-//                        tasksCount = taskSummary.getCount() - completedTasks.size();
-//                        if (isComplete) {
-//                            tasks.addAll(completedTasks);
-//                        } else {
-//                            tasks.addAll(unCompleteTasks);
-//                        }
-//                        if (tasks.size() > 0) {
-//                            int start = currentPage * MAX_PAGE_COUNT;
-//                            int end = start + MAX_PAGE_COUNT;
-//                            if (end > tasks.size() - 1) {
-//                                end = tasks.size();
-//                            }
-//                            currentTasks.addAll(tasks.subList(start, end));
-//                        }
-//                        adapter.notifyDataSetChanged();
-//                        binding.pageBarTask.refreshPageBar();
-//                    }
                 }, throwable -> {
                     throwable.printStackTrace();
                     ToastUtil.showCustomToast(TaskListActivity.this, "获取任务失败");
                 });
     }
 
-    private void refreshTask(int index) {
-        currentTasks.clear();
-        if (isComplete) {
-            currentCompletedPage = index;
-            if (completeSparseArray.get(index) != null) {
-//                currentTasks.addAll(completeSparseArray.get(index));
-                int start = index * MAX_PAGE_COUNT;
-                int end = start + MAX_PAGE_COUNT;
-                if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-                    end = completedTasks.size();
-                }
-                currentTasks.addAll(completedTasks.subList(start, end));
-                adapter.notifyDataSetChanged();
-            } else {
-                generateData(index);
+    private void refreshUnCompleteTask(int index) {
+        currentUnCompleteTasks.clear();
+        currentUnCompletePage = index;
+        if (unCompleteSparseArray.get(index) != null) {
+            int start = index * MAX_PAGE_COUNT;
+            int end = start + MAX_PAGE_COUNT;
+            if (index == binding.uncompletePageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
+                end = unCompleteTasks.size();
             }
+            currentUnCompleteTasks.addAll(unCompleteTasks.subList(start, end));
+            unCompleteAdapter.notifyDataSetChanged();
         } else {
-            currentUnCompletePage = index;
-            if (unCompleteSparseArray.get(index) != null) {
-//                currentTasks.addAll(unCompleteSparseArray.get(index));
-                int start = index * MAX_PAGE_COUNT;
-                int end = start + MAX_PAGE_COUNT;
-                if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-                    end = unCompleteTasks.size();
-                }
-                currentTasks.addAll(unCompleteTasks.subList(start, end));
-                adapter.notifyDataSetChanged();
-            } else {
-                generateData(index);
-            }
+            generateData(index);
         }
-
-
-//        if (index != 0 && (index + 1) * MAX_PAGE_COUNT > tasks.size() && tasksCount > tasks.size()) {
-//            generateData();
-//        } else {
-//            tasks.clear();
-//            LogUtils.e(tag, "uncomplete tasks' size is : " + unCompleteTasks.size() + ",complete tasks'size is : " + completedTasks.size());
-//            if (isComplete) {
-//                tasks.addAll(completedTasks);
-//            } else {
-//                tasks.addAll(unCompleteTasks);
-//            }
-//            if (tasks.size() > 0) {
-//                int start = index * MAX_PAGE_COUNT;
-//                int end = start + MAX_PAGE_COUNT;
-//                if (index == binding.pageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-//                    end = tasks.size();
-//                }
-//                currentTasks.addAll(tasks.subList(start, end));
-//            }
-//            adapter.notifyDataSetChanged();
-//        }
     }
+
+    private void refreshCompletedTask(int index) {
+        currentCompletedTasks.clear();
+        currentCompletedPage = index;
+        if (completeSparseArray.get(index) != null) {
+            int start = index * MAX_PAGE_COUNT;
+            int end = start + MAX_PAGE_COUNT;
+            if (index == binding.completedPageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
+                end = completedTasks.size();
+            }
+            currentCompletedTasks.addAll(completedTasks.subList(start, end));
+            completedAdapter.notifyDataSetChanged();
+        } else {
+            generateData(index);
+        }
+    }
+
 
     @Override
     protected void refreshView() {
@@ -234,6 +217,11 @@ public class TaskListActivity extends BaseActivity {
     }
 
     private class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
+        private List<Task> tasks;
+
+        public TaskAdapter(List<Task> tasks) {
+            this.tasks = tasks;
+        }
 
         @NonNull
         @Override
@@ -243,12 +231,12 @@ public class TaskListActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
-            holder.setData(currentTasks.get(position));
+            holder.setData(tasks.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return currentTasks.size();
+            return tasks.size();
         }
     }
 
@@ -291,23 +279,18 @@ public class TaskListActivity extends BaseActivity {
         if (resultCode == 10000) {
             LogUtils.e(tag, "onActivityResult............");
             unCompleteTasks.remove(clickedTask);
-            tasks.clear();
-            currentTasks.clear();
+            currentUnCompleteTasks.clear();
             if (unCompleteTasks.size() > 0) {
-//                tasks.addAll(unCompleteTasks);
                 int start = currentUnCompletePage * MAX_PAGE_COUNT;
                 int end = start + MAX_PAGE_COUNT;
                 if (end > unCompleteTasks.size() - 1) {
                     end = unCompleteTasks.size();
                 }
-                currentTasks.addAll(unCompleteTasks.subList(start, end));
+                currentUnCompleteTasks.addAll(unCompleteTasks.subList(start, end));
             }
-//            List<Task> tasks = unCompleteSparseArray.get(currentUnCompletePage);
-//            tasks.remove(clickedTask);
-//            currentTasks.addAll(tasks);
-            adapter.notifyDataSetChanged();
+            unCompleteAdapter.notifyDataSetChanged();
             uncompleteTasksCount--;
-            binding.pageBarTask.refreshPageBar();
+            binding.uncompletePageBarTask.refreshPageBar();
         }
     }
 
@@ -316,31 +299,10 @@ public class TaskListActivity extends BaseActivity {
         binding.completedTv.setSelected(false);
         isComplete = false;
         contentStatusCode = "SV01";
-        tasks.clear();
-        currentTasks.clear();
-//        if (unCompleteTasks.size() > 0) {
-//            tasks.addAll(unCompleteTasks);
-//            int start = currentPage * MAX_PAGE_COUNT;
-//            int end = start + MAX_PAGE_COUNT;
-//            if (end > tasks.size() - 1) {
-//                end = tasks.size();
-//            }
-//            currentTasks.addAll(tasks.subList(start, end));
-//        }
-        if (unCompleteSparseArray.get(currentUnCompletePage) != null) {
-//            currentTasks.addAll(completeSparseArray.get(currentCompletedPage));
-            int start = currentUnCompletePage * MAX_PAGE_COUNT;
-            int end = start + MAX_PAGE_COUNT;
-            if (end > unCompleteTasks.size() - 1) {
-                end = unCompleteTasks.size();
-            }
-            currentTasks.addAll(unCompleteTasks.subList(start, end));
-        } else {
-            generateData(currentUnCompletePage);
-        }
-        adapter.notifyDataSetChanged();
-        binding.pageBarTask.selectPageBtn(currentUnCompletePage,true);
-        binding.pageBarTask.refreshPageBar();
+        binding.completedPageBarTask.setVisibility(View.GONE);
+        binding.completedTasksRecycler.setVisibility(View.GONE);
+        binding.uncompletePageBarTask.setVisibility(View.VISIBLE);
+        binding.uncompleteTasksRecycler.setVisibility(View.VISIBLE);
     }
 
     public void complete(View view) {
@@ -348,31 +310,13 @@ public class TaskListActivity extends BaseActivity {
         binding.completedTv.setSelected(true);
         isComplete = true;
         contentStatusCode = "SV02";
-        tasks.clear();
-        currentTasks.clear();
-//        if (completedTasks.size() > 0) {
-//            tasks.addAll(completedTasks);
-//            int start = currentPage * MAX_PAGE_COUNT;
-//            int end = start + MAX_PAGE_COUNT;
-//            if (end > tasks.size() - 1) {
-//                end = tasks.size();
-//            }
-//            currentTasks.addAll(tasks.subList(start, end));
-//        }
-        if (completeSparseArray.get(currentCompletedPage) != null) {
-//            currentTasks.addAll(completeSparseArray.get(currentUnCompletePage));
-            int start = currentCompletedPage * MAX_PAGE_COUNT;
-            int end = start + MAX_PAGE_COUNT;
-            if (end > completedTasks.size() - 1) {
-                end = completedTasks.size();
-            }
-            currentTasks.addAll(completedTasks.subList(start, end));
-        } else {
+        binding.uncompletePageBarTask.setVisibility(View.GONE);
+        binding.uncompleteTasksRecycler.setVisibility(View.GONE);
+        binding.completedPageBarTask.setVisibility(View.VISIBLE);
+        binding.completedTasksRecycler.setVisibility(View.VISIBLE);
+        if (completeSparseArray.get(currentCompletedPage) == null) {
             generateData(currentCompletedPage);
         }
-        adapter.notifyDataSetChanged();
-//        binding.pageBarTask.refreshPageBar();
-        binding.pageBarTask.selectPageBtn(currentCompletedPage,true);
     }
 
 }
