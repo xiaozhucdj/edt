@@ -159,7 +159,7 @@ public class YXClient {
             //并且把新建的p2p消息插入云信SDK的本地数据库,这样就方便以后查询p2p历史记录时,可以直接一次性的把群消息和p2p消息都查出来.
             //插入数据库后SDK的最近联系人列表也会自动更新,不需要手动通知.
             for (IMMessage newMessage : imMessages) {
-                LogUtils.e("FH", "接收到新消息" + newMessage + " ssid " + newMessage.getSessionId() + " sstype : " + newMessage.getSessionType() + "  content : " + newMessage.getContent() + "  msgType : " + newMessage.getMsgType() + " attach : " + newMessage.getAttachment());
+                lv("接收到新消息"  + printMessageString(newMessage));
                 if ((newMessage.getMsgType()) == MsgTypeEnum.custom) {
                     if (newMessage.getAttachment() == null) {
                         // 解析有问题的自定义消息attachment为空,滤掉这类消息
@@ -179,9 +179,9 @@ public class YXClient {
                         for (OnMessageListener listener : onNewCommandCustomMsgListenerList) {
                             if (newMessage.getAttachment() instanceof SeatWorkAttachment) {
                                 SeatWorkAttachment seatWorkAttachment = (SeatWorkAttachment) newMessage.getAttachment();
-                                LogUtils.d("assignment homework : attachment.sendDate = " + seatWorkAttachment.sendDate);
+                                lv("assignment homework : attachment.sendDate = " + seatWorkAttachment.sendDate);
                                 if (!FormatUtils.isToday(seatWorkAttachment.sendDate)) {
-                                    LogUtils.w("assignment homework : not today message, return.");
+                                    lv("assignment homework : not today message, return.");
                                     continue;
                                 }
                             }
@@ -193,7 +193,7 @@ public class YXClient {
                     }
                 }
                 if (newMessage.getSessionType() == SessionTypeEnum.Team) {
-                    LogUtils.e("FH", "接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
+                    lv("接到的是Team消息 , 新建同样内容消息后修改为p2p消息插入本地数据库");
                     IMMessage localMessage = null;
                     switch (newMessage.getMsgType()) {
                         case file:
@@ -209,10 +209,10 @@ public class YXClient {
                             localMessage = MessageBuilder.createTextMessage(newMessage.getFromAccount(), SessionTypeEnum.P2P, newMessage.getContent());
                             break;
                         default:
-                            LogUtils.e("FH", "未知类型 " + newMessage.getMsgType() + "新建消息失败");
+                            le("未知类型 " + newMessage.getMsgType() + "新建消息失败");
                     }
                     if (localMessage != null) {
-                        LogUtils.e("FH", "开始插入数据库");
+                        lv("开始插入数据库");
                         localMessage.setFromAccount(newMessage.getFromAccount());
                         localMessage.setDirect(MsgDirectionEnum.In);
                         localMessage.setStatus(MsgStatusEnum.success);
@@ -221,17 +221,17 @@ public class YXClient {
                                 .setCallback(new RequestCallback<Void>() {
                                     @Override
                                     public void onSuccess(Void param) {
-                                        LogUtils.e("FH", "插入数据库成功");
+                                        lv("插入数据库成功");
                                     }
 
                                     @Override
                                     public void onFailed(int code) {
-                                        LogUtils.e("FH", "插入数据库失败 : " + code);
+                                        le("插入数据库失败 : " + code);
                                     }
 
                                     @Override
                                     public void onException(Throwable exception) {
-                                        LogUtils.e("FH", "插入数据库失败 : " + exception.getMessage());
+                                        le("插入数据库失败 : " + exception.getMessage());
                                         exception.printStackTrace();
                                     }
                                 });
@@ -274,7 +274,7 @@ public class YXClient {
     Observer<IMMessage> msgSendStatusObserver = new Observer<IMMessage>() {
         @Override
         public void onEvent(IMMessage newMessage) {
-            lv("message 状态更新  sid : " + newMessage.getSessionId() + " sstype: " + newMessage.getSessionType() + " content : " + newMessage.getContent() + "  status : " + newMessage.getStatus() + " attstatus : " + newMessage.getAttachStatus());
+            lv("message 状态更新  " + printMessageString(newMessage));
             for (OnMessageListener listener : onMsgStatusChangedListenerList) {
                 listener.onNewMessage(newMessage);
             }
@@ -286,8 +286,7 @@ public class YXClient {
         @Override
         public void onEvent(StatusCode statusCode) {
             currentOnlineStatus = statusCode;
-            LogUtils.e("YUANYE 观察到在线状态变化 ." + statusCode);
-            LogUtils.e("FH", "onlineStatus 变更: " + statusCode);
+            lv("onlineStatus 变更: " + statusCode);
 //            if (statusCode == StatusCode.PWD_ERROR) {
 //                if (!TextUtils.isEmpty(currentAccount)){
 //                    getTokenAndLogin(currentAccount , null);
@@ -367,7 +366,6 @@ public class YXClient {
     private Observer<Team> teamRemoveObserver = new Observer<Team>() {
         @Override
         public void onEvent(final Team quitedTeam) {
-            lv("收到退群通知");
             lv("收到退群通知 id " + quitedTeam.getId());
             ListUtil.conditionalRemove(myTeamList, new ListUtil.ConditionJudger<Team>() {
                 @Override
@@ -640,7 +638,7 @@ public class YXClient {
      * @param callback 登录结果回调,如果为null,则不处理回调
      */
     private void login(String account, String token, final RequestCallbackWrapper callback) {
-        LogUtils.e("FH", "yx login " + account + "  " + token);
+        lv("yx login " + account + "  " + token);
         currentAccount = account;
         LoginInfo loginInfo = new LoginInfo(account, token);
         NIMClient.getService(AuthService.class).login(loginInfo).setCallback(new RequestCallback() {
@@ -660,7 +658,7 @@ public class YXClient {
 
             @Override
             public void onFailed(int code) {
-                lv("登录失败!code=" + code);
+                le("登录失败!code=" + code);
                 if (callback != null) {
                     callback.onFailed(code);
                 }
@@ -668,7 +666,7 @@ public class YXClient {
 
             @Override
             public void onException(Throwable exception) {
-                lv("登录失败!exception=" + exception);
+                le("登录失败!exception=" + exception);
                 if (callback != null) {
                     callback.onException(exception);
                 }
@@ -697,7 +695,7 @@ public class YXClient {
                     } catch (Exception e) {
                         e.printStackTrace();
                         if (callback != null) {
-                            LogUtils.e("FH", "获取token失败,解析错误");
+                            le("获取token失败,解析错误");
                             callback.onFailed(ERROR_REASON_TOKEN_PARSE_ERROR);
                         }
                     }
@@ -706,7 +704,7 @@ public class YXClient {
                 @Override
                 public void call(Throwable throwable) {
                     throwable.printStackTrace();
-                    LogUtils.e("FH", "获取token失败,可能是网络错误");
+                    le("获取token失败,可能是网络错误");
                     if (callback != null) {
                         callback.onFailed(ERROR_REASON_NET_BROKEN);
                     }
@@ -724,7 +722,7 @@ public class YXClient {
                     } catch (Exception e) {
                         e.printStackTrace();
                         if (callback != null) {
-                            LogUtils.e("FH", "获取token失败,解析错误");
+                            le("获取token失败,解析错误");
                             callback.onFailed(ERROR_REASON_TOKEN_PARSE_ERROR);
                         }
                     }
@@ -733,7 +731,7 @@ public class YXClient {
                 @Override
                 public void call(Throwable throwable) {
                     throwable.printStackTrace();
-                    LogUtils.e("FH", "获取token失败,可能是网络错误");
+                    le("获取token失败,可能是网络错误");
                     if (callback != null) {
                         callback.onFailed(ERROR_REASON_NET_BROKEN);
                     }
@@ -813,19 +811,16 @@ public class YXClient {
                             }
                         });
                         callback.onSuccess(param);
-                        LogUtils.e("YXClient", "onSuccess..........");
                     }
 
                     @Override
                     public void onFailed(int code) {
                         callback.onFailed(code);
-                        LogUtils.e("YXClient", "onFailed..........");
                     }
 
                     @Override
                     public void onException(Throwable exception) {
                         callback.onException(exception);
-                        LogUtils.e("YXClient", "onException.........." + exception);
                     }
                 });
     }
@@ -1009,7 +1004,7 @@ public class YXClient {
                         , new WendaQuestionAddAttachment(bookId, cursorId, itemIdList));
                 break;
             default:
-                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
+                le("发送对象的type不支持,取消发送,type=" + typeEnum);
                 return null;
         }
         CustomMessageConfig config = new CustomMessageConfig();
@@ -1035,7 +1030,7 @@ public class YXClient {
                 message = MessageBuilder.createCustomMessage(id, SessionTypeEnum.Team, "[自定义消息]", new ReplyAttachment(replyId, examId));
                 break;
             default:
-                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
+                le("发送对象的type不支持,取消发送,type=" + typeEnum);
                 return null;
         }
         CustomMessageConfig config = new CustomMessageConfig();
@@ -1061,7 +1056,6 @@ public class YXClient {
      */
     public IMMessage sendSubmitHomeworkMsg(int examId, SessionTypeEnum typeEnum
             , int studentId, String studentName, int teacherId, int subGroupId, RequestCallback<Void> requestCallback) {
-        LogUtils.d("homeworkTeacherIds teacherId = " + teacherId);
         final IMMessage message;
         switch (typeEnum) {
             case P2P:
@@ -1071,7 +1065,7 @@ public class YXClient {
                 message = MessageBuilder.createCustomMessage(String.valueOf(teacherId), SessionTypeEnum.Team, "[自定义消息]", new SubmitHomeworkAttachment(studentId, studentName, examId, subGroupId));
                 break;
             default:
-                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
+                le("发送对象的type不支持,取消发送,type=" + typeEnum);
                 return null;
         }
         CustomMessageConfig config = new CustomMessageConfig();
@@ -1112,7 +1106,7 @@ public class YXClient {
     public IMMessage sendTextMessage(String id, SessionTypeEnum typeEnum, String msg, final OnErrorListener<IMMessage> onErrorListener) {
         lv("发送文字消息,对方id=" + id + " type=" + typeEnum + " msg=" + msg);
         if (TextUtils.isEmpty(msg)) {
-            lv("要发送的文字消息内容为空,取消发送");
+            le("要发送的文字消息内容为空,取消发送");
             return null;
         }
         final IMMessage message;
@@ -1124,7 +1118,7 @@ public class YXClient {
                 message = MessageBuilder.createTextMessage(id, SessionTypeEnum.Team, msg.trim());
                 break;
             default:
-                lv("发送对象的type不支持,取消发送,type=" + typeEnum);
+                le("发送对象的type不支持,取消发送,type=" + typeEnum);
                 return null;
         }
         CustomMessageConfig config = new CustomMessageConfig();
@@ -1133,7 +1127,6 @@ public class YXClient {
         NIMClient.getService(MsgService.class).sendMessage(message, true).setCallback(new RequestCallbackWrapper<Void>() {
             @Override
             public void onResult(int code, Void result, Throwable exception) {
-                lv("发送消息的回调 : code " + code);
                 if (code == 802) {
                     if (onErrorListener != null) {
                         onErrorListener.onError(code, message);
@@ -1155,7 +1148,7 @@ public class YXClient {
             , final OnErrorListener<IMMessage> onErrorListener) {
         lv("发送文字消息,对方id=" + idList + " msg=" + msg);
         if (TextUtils.isEmpty(msg)) {
-            lv("要发送的文字消息内容为空,取消发送");
+            le("要发送的文字消息内容为空,取消发送");
             return null;
         }
         ArrayList<IMMessage> returnList = new ArrayList<IMMessage>();
@@ -1282,12 +1275,12 @@ public class YXClient {
 
             @Override
             public void run(int currentLooopTimes) {
-                LogUtils.e("FH!", "刷新式登录云信 : 第" + currentLooopTimes + "次");
+                lv("刷新式登录云信 : 第" + currentLooopTimes + "次");
                 RequestCallbackWrapper requestCallbackWrapper = new RequestCallbackWrapper() {
                     @Override
                     public void onResult(int code, Object result, Throwable exception) {
                         if (code == ResponseCode.RES_SUCCESS) {
-                            LogUtils.e("FH", "刷新式登录成功");
+                            lv("刷新式登录成功");
                             if (loadingDialog != null && loadingDialog.isShowing()) {
                                 loadingDialog.dismiss();
                             }
@@ -1306,25 +1299,25 @@ public class YXClient {
                                 if (code == ResponseCode.RES_EUIDPASS) {
                                     if (localTokenWrong) {
                                         remoteTokenWrong = true;
-                                        LogUtils.e("FH", "标记remoteToken为无效");
+                                        lv("标记remoteToken为无效");
                                     } else {
                                         localTokenWrong = true;
-                                        LogUtils.e("FH", "标记localToken为无效");
+                                        lv("标记localToken为无效");
                                     }
                                 } else {
-                                    LogUtils.e("FH", "标记localToken为有效");
+                                    lv("标记localToken为有效");
                                     localTokenWrong = false;
                                 }
                                 reason = "Code " + code;
                             }
-                            LogUtils.e("FH", "刷新式登录失败 :" + reason);
+                            le("刷新式登录失败 :" + reason);
                             if (currentLooopTimes < MAX_RETRY_TIMES) {
                                 //失败次数未达上限,自动重试.
-                                LogUtils.e("FH", "失败次数未达上限" + MAX_RETRY_TIMES + "次,自动重试");
+                                lv("失败次数未达上限" + MAX_RETRY_TIMES + "次,自动重试");
                                 doContinue();
                             } else {
                                 //失败次数达到上限,进入失败逻辑
-                                LogUtils.e("FH", "失败次数达到上限" + MAX_RETRY_TIMES + "次,进入失败逻辑");
+                                lv("失败次数达到上限" + MAX_RETRY_TIMES + "次,进入失败逻辑");
                                 if (loadingDialog != null && loadingDialog.isShowing()) {
                                     loadingDialog.dismiss();
                                 }
@@ -1337,18 +1330,18 @@ public class YXClient {
                 };
                 String localToken = SpUtils.getLocalYXToken();
                 if (TextUtils.isEmpty(localToken)) {
-                    LogUtils.e("FH", "标记localToken为无效");
+                    lv("标记localToken为无效");
                     localTokenWrong = true;
                 }
                 if (!localTokenWrong) {
-                    LogUtils.e("FH", "本地token有效,使用本地token登录云信");
+                    lv("本地token有效,使用本地token登录云信");
                     YXClient.getInstance().login(SpUtils.getUserId() + "", localToken, requestCallbackWrapper);
                 } else {
                     if (remoteTokenWrong) {
-                        LogUtils.e("FH", "本地token无效,远程token无效,更新远程token再登录云信");
+                        lv("本地token无效,远程token无效,更新远程token再登录云信");
                         YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper, true);
                     } else {
-                        LogUtils.e("FH", "本地token无效,远程token有效,请求远程token登录云信");
+                        lv("本地token无效,远程token有效,请求远程token登录云信");
                         YXClient.getInstance().getTokenAndLogin(SpUtils.getUserId() + "", requestCallbackWrapper, false);
                     }
                 }
@@ -1398,7 +1391,7 @@ public class YXClient {
                             }
                             teamDataInitFinish = true;
                         } else {
-                            lv("获取我加入的群列表失败, code : " + code + "  exception : " + exception);
+                            le("获取我加入的群列表失败, code : " + code + "  exception : " + exception);
                             //注销群相关的监听器
                             NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver, false);
                             NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, false);
@@ -1435,7 +1428,7 @@ public class YXClient {
                     }
                     recentContactInitFinish = true;
                 } else {
-                    lv("获取最近联系人列表失败, code : " + code + "  exception : " + exception);
+                    le("获取最近联系人列表失败, code : " + code + "  exception : " + exception);
                     NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactObserver, false);
                 }
             }
@@ -1520,13 +1513,13 @@ public class YXClient {
 
             @Override
             public void onFailed(int code) {
-                lv("后台网络更新用户资料失败,id=" + id + " code=" + code);
+                le("后台网络更新用户资料失败,id=" + id + " code=" + code);
                 changeUserInfoFetchingStatus(id, false);
             }
 
             @Override
             public void onException(Throwable exception) {
-                lv("后台网络更新用户资料失败,id=" + id + " exception=" + exception);
+                le("后台网络更新用户资料失败,id=" + id + " exception=" + exception);
                 changeUserInfoFetchingStatus(id, false);
             }
         });
@@ -1628,13 +1621,13 @@ public class YXClient {
 
             @Override
             public void onFailed(int code) {
-                lv("后台网络更新群资料失败,id=" + id + " code=" + code);
+                le("后台网络更新群资料失败,id=" + id + " code=" + code);
                 changeTeamInfoFetchingStatus(id, false);
             }
 
             @Override
             public void onException(Throwable exception) {
-                lv("后台网络更新群资料失败,id=" + id + " exception=" + exception);
+                le("后台网络更新群资料失败,id=" + id + " exception=" + exception);
                 changeTeamInfoFetchingStatus(id, false);
             }
         });
@@ -1643,7 +1636,7 @@ public class YXClient {
     private void updateTeamInfo(final String id, boolean forceUpdate) {
         lv("调用更新群资料 id=" + id + " forceUpdate=" + forceUpdate);
         if (TextUtils.isEmpty(id)) {
-            lv("调用更新群资料,失败,因为id为空");
+            le("调用更新群资料,失败,因为id为空");
             return;
         }
         if (forceUpdate) {
@@ -1719,7 +1712,11 @@ public class YXClient {
     }
 
     private static void lv(String msg) {
-        LogUtils.e("FHH", msg);
+        LogUtils.v("FH_YXClient", msg);
+    }
+
+    private static void le(String msg) {
+        LogUtils.e("FH_YXClient", msg);
     }
 
 
@@ -2134,5 +2131,23 @@ public class YXClient {
                     public void onNext(Object o) {
                     }
                 });
+    }
+
+    /**
+     * 工具方法,打印Message大致信息
+     */
+    protected static String printMessageString(IMMessage message){
+        return "["
+                + " uuid=" + message.getUuid()
+                + " time=" + message.getTime()
+                + " ssid=" + message.getSessionId()
+                + " sstyype=" + message.getSessionType()
+                + " content=" + message.getContent()
+                + " msgType=" + message.getMsgType()
+                + " msgStatus=" + message.getStatus()
+                + " attachment=" + message.getAttachment()
+                + " attachmentStatus=" + message.getAttachStatus()
+                + " message=" + message
+                + "]";
     }
 }
