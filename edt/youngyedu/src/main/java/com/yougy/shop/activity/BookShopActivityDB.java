@@ -208,11 +208,11 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
     @Override
     protected void initLayout() {
         boolean flag = (SpUtils.getStudent().getSchoolLevel() > 0);
-        binding.orderBtn.setVisibility(flag ? View.VISIBLE : View.GONE);
-        binding.newOrderCountTv.setVisibility(flag ? View.VISIBLE : View.GONE);
-        binding.cartGo.setVisibility(flag ? View.VISIBLE : View.GONE);
-        binding.cartCountTv.setVisibility(flag ? View.VISIBLE : View.GONE);
-        if (!flag) {
+        binding.orderBtn.setVisibility(flag ? View.GONE : View.VISIBLE);
+        binding.newOrderCountTv.setVisibility(flag ? View.GONE : View.VISIBLE);
+        binding.cartGo.setVisibility(flag ? View.GONE : View.VISIBLE);
+        binding.cartCountTv.setVisibility(flag ? View.GONE : View.VISIBLE);
+        if (flag) {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.favorite.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             binding.favorite.setLayoutParams(params);
@@ -332,11 +332,13 @@ public class BookShopActivityDB extends ShopBaseActivity implements BookShopAdap
             recordTv.setIncludeFontPadding(false);
             recordTv.setTextSize(UIUtils.px2dip(24));
             recordTv.setTextColor(getResources().getColor(R.color.text_color_black));
-            recordTv.setOnClickListener(v -> {
-                mSearchKey = record;
-                hideSearchLayout();
-                search();
-            });
+            if (!record.equals(UIUtils.getContext().getResources().getString(R.string.no_history_record))) {
+                recordTv.setOnClickListener(v -> {
+                    mSearchKey = record;
+                    hideSearchLayout();
+                    search();
+                });
+            }
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.bottomMargin = UIUtils.px2dip(20);
             binding.historyRecordLayout.addView(recordTv, params);

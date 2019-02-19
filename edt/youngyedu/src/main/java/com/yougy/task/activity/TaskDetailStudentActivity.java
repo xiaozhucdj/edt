@@ -169,7 +169,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID_DEST, 0);
         mTopTitle.setText(currentTitleStr);
         // SV01 进行中   SV02 已完成   SV03 已检查
-        isHadCommit = ("SV02").equals(getIntent().getStringExtra("SceneStatusCode"));
+        isHadCommit = ("SV02").equals(getIntent().getStringExtra("ContentStatusCode"));
         isSignatureTask = getIntent().getBooleanExtra("isSign", false);
         LogUtils.e(tag,"dramaId : " + dramaId);
         initContentFragment();
@@ -208,7 +208,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public void loadData() {
         Log.i(TaskBaseFragment.TAG, "loadData: activity : "  + currentTab);
         if (isSignatureTask) {
-            NetWorkManager.queryStageTask(String.valueOf(dramaId), "SR04")
+            NetWorkManager.queryStageTask(String.valueOf(dramaId), "SR04", SpUtils.getUserId())
                     .subscribe(stageTaskBeans -> {
                         LogUtils.d("TaskTest  hadSignature :" + stageTaskBeans.size());
                         if (stageTaskBeans.size() > 0) {
@@ -219,7 +219,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             }
                         }
                         initLayout();
-                        NetWorkManager.queryStageTask(String.valueOf(dramaId), getStageTypeCode())
+                        NetWorkManager.queryStageTask(String.valueOf(dramaId), getStageTypeCode(), SpUtils.getUserId())
                                 .subscribe(stageTaskBeans2 -> {
                                             mStageTaskBeans.clear();
                                             mStageTaskBeans.addAll(stageTaskBeans2);
@@ -453,8 +453,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         stsResultbean.setRemote(stSbean.getPath() + picName);
                         stsResultbean.setSize(file1.length());
                         picContent.add(stsResultbean);
-                        //上传后清理掉本地图片文件
-                        deleteDirWihtFile(file);
                     } catch (ClientException e) {
                         e.printStackTrace();
                         Log.e("TaskTest UPLOAD OOS", "call: error message:  " + e.getMessage());
@@ -556,8 +554,12 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     if (!isHadCommit) {
                         isHadCommit = true;
                         mTextFinish.setText(R.string.parent_sign);
+//                        loadData();
+                        showContentFragment(mPracticeFragment, TAB_PRACTICE, true);
                         EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
                     } else {
+                        //上传后清理掉本地图片文件
+                        deleteDirWihtFile(file);
                         setResult(10000);
                         TaskDetailStudentActivity.this.finish();
                     }

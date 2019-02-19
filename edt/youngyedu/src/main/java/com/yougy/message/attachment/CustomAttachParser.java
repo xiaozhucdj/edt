@@ -33,6 +33,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
     final static String CLUE_HOMEWORK_REMIND = "remindDoHomework";
     final static String CLUE_NEED_REFRESH_HOMEWORK = "needRefreshHomework";
     final static String CLUE_PULL_ANSWER_CHECK = "pullAnswerCheck";
+    final static String CLUE_EXIT_ANSWER_CHECK = "exitAnswerCheck";
     final static String CLUE_SEND_SEATWORK = "sendSeatwork";
     final static String CLUE_END_SEATWORK = "endSeatwork";
     final static String CLUE_SUBMITE_HOMEWORK = "submitHomework";
@@ -74,6 +75,9 @@ public class CustomAttachParser implements MsgAttachmentParser {
                     break;
                 case CLUE_PULL_ANSWER_CHECK:
                     attachment = new PullAnswerCheckAttachment(clue , version);
+                    break;
+                case CLUE_EXIT_ANSWER_CHECK:
+                    attachment = new ExitAnswerCheckAttachment(clue , version);
                     break;
                 case CLUE_SEND_SEATWORK:
                     attachment = new SeatWorkAttachment(clue , version);

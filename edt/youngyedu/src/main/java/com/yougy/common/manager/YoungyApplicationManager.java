@@ -316,8 +316,11 @@ public class YoungyApplicationManager extends LitePalApplication {
                         startActivity(intent);
                     }
                     else if (message.getAttachment() instanceof PullAnswerCheckAttachment){
-                        getMainThreadHandler().removeCallbacks(pullAnswerCheckRunnable);
-                        getMainThreadHandler().postDelayed(pullAnswerCheckRunnable , 3000);
+                        if (!(BaseActivity.getForegroundActivity() instanceof AnswerCheckActivity)) {
+                            getMainThreadHandler().removeCallbacks(pullAnswerCheckRunnable);
+                            //此处延迟3000可以避免多个pullAnswerCheck消息同时到来拉起多次
+                            getMainThreadHandler().postDelayed(pullAnswerCheckRunnable , 3000);
+                        }
                     }
                 }
             });

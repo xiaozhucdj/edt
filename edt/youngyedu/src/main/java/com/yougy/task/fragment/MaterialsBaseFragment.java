@@ -257,11 +257,12 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         Intent intent = new Intent(mTaskDetailStudentActivity, MaterialActivity2.class);
         intent.putExtra("isHadComplete", mTaskDetailStudentActivity.isHadCommit());
         intent.putExtra("mTaskId", mTaskDetailStudentActivity.mTaskId);
+        intent.putExtra("mCurrentPosition", position);
 //        intent.putExtra("stageTaskBean", stageTaskBean);
 //        String remote = stageTaskBean.getStageScene().get(0).getSceneContents().get(0).getRemote();
 //        LogUtils.i("TaskTest : " + remote +
 //                "    stageTaskBean: " + stageTaskBean.toString());
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mTaskDetailStudentActivity.startActivity(intent);
     }
 

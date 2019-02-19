@@ -23,6 +23,7 @@ import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.google.gson.Gson;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.DialogManager;
@@ -33,6 +34,8 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.homework.bean.QuestionReplyDetail;
+import com.yougy.message.YXClient;
+import com.yougy.message.attachment.ExitAnswerCheckAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityAnswerCheckBinding;
 import com.yougy.view.dialog.HintDialog;
@@ -74,6 +77,15 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void init() {
+        YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
+            @Override
+            public void onNewMessage(IMMessage message) {
+                if (message.getAttachment() instanceof ExitAnswerCheckAttachment){
+                    finish();
+                }
+            }
+        });
+
         binding.tvTitle.setText("问答自评、互评");
 
         binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getApplicationContext()) {
@@ -112,6 +124,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         binding.questionBodyBtn.setOnClickListener(this);
         binding.llLastStudent.setOnClickListener(this);
         binding.llNextStudent.setOnClickListener(this);
+        binding.imageRefresh.setOnClickListener(this);
     }
 
     @Override
@@ -159,12 +172,12 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                                    binding.contentDisplayer.getContentAdapter().updateDataList("question", 1, (ArrayList<Content_new>) content_news);
 
                                    //设置教师批改数据
-                                   ArrayList<Content_new> replyCommentList = (ArrayList<Content_new>) questionReplyDetail.getParsedReplyCommentList();
+                                   /*ArrayList<Content_new> replyCommentList = (ArrayList<Content_new>) questionReplyDetail.getParsedReplyCommentList();
                                    if (replyCommentList != null && replyCommentList.size() != 0) {
                                        binding.contentDisplayer.getContentAdapter().updateDataList("question", 2, replyCommentList);
                                    } else {
                                        binding.contentDisplayer.getContentAdapter().deleteDataList("question", 2);
-                                   }
+                                   }*/
 
 
                                    binding.pageBtnBar.setCurrentSelectPageIndex(-1);
@@ -195,7 +208,8 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
 
                                    binding.tvTitle.setText("问答由" + SpUtils.getAccountName() + "批改");
                                    int replyScore = questionReplyDetail.getReplyScore();
-                                   //是否批改过了
+
+                                   /*//是否批改过了
                                    if (replyScore == -1) {
 
                                        binding.llControlBottom.setVisibility(View.VISIBLE);
@@ -212,7 +226,11 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                                        } else {
                                            binding.ivCheckResult.setImageResource(R.drawable.img_zhengque);
                                        }
-                                   }
+                                   }*/
+
+                                   //如果教师已经批改，学生收到自评互评时，需要展示出来，让学生进行批改，不过批改的数据提交后服务器不覆盖（20190215老大及产品讨论结果）
+                                   binding.llControlBottom.setVisibility(View.VISIBLE);
+                                   binding.rlControlModifyBottom.setVisibility(View.GONE);
 
                                    setWcdToQuestionMode();
                                    binding.pageBtnBar.refreshPageBar();
@@ -284,6 +302,9 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                 saveCheckData(currentShowReplyPageIndex);
                 score = 0;
                 getUpLoadInfo();
+                break;
+            case R.id.image_refresh:
+                setData();
                 break;
         }
 
@@ -658,7 +679,11 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         //教师批改直接使用oss覆盖上传，不需要上传content了
 //        String content = "";
 
-        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", SpUtils.getUserId() + "")
+        String originalReplyCommentator = SpUtils.getUserId() + "";
+        if (questionReplyDetail.getReplyCommentator() != 0) {
+            originalReplyCommentator = questionReplyDetail.getReplyCommentator() + "";
+        }
+        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", originalReplyCommentator)
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
