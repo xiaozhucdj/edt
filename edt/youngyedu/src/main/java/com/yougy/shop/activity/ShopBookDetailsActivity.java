@@ -159,82 +159,76 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
     public void toCart(View view) {
         //查看购物车
-        if (SpUtils.getStudent().getSchoolLevel() > 0) {
-            //TODO:加入书架
-            NetWorkManager.addBookToBookcase(mBookInfo.getBookId(), SpUtils.getUserId()).subscribe(o -> {
-                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
-                EventBus.getDefault().post(baseEvent);
-            });
-            binding.addCarBtn.setText(R.string.already_in_bookshelf);
-            binding.addCarBtn.setBackgroundResource(R.drawable.shape_rectangle_black_border_gray_fill);
-            binding.addCarBtn.setClickable(false);
-        } else {
-            loadIntent(ShopCartActivity.class);
-        }
+        loadIntent(ShopCartActivity.class);
     }
 
     public void buyBook(View view) {
-        if (SpUtils.getStudent().getSchoolLevel() > 0) {
-            if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
-                jumpToControlFragmentActivity();
-            } else {
-                if (NetUtils.isNetConnected()) {
-                    downBookTask(mBookInfo.getBookId());
-                } else {
-                    showCancelAndDetermineDialog(R.string.jump_to_net);
-                }
-            }
-            if (!mBookInfo.isBookInShelf()) {
-                NetWorkManager.addBookToBookcase(mBookInfo.getBookId(), SpUtils.getUserId()).subscribe(o -> {
-                    BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
-                    EventBus.getDefault().post(baseEvent);
-                });
-            }
-            return;
-        }
         if (mBookInfo.isBookInShelf()) {
-            showReaderForPackage();
+            showReaderForPackage(false);
             return;
         }
-        if (!NetUtils.isNetConnected()) {
-            showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
-            return;
-        }
-        //新建订单
-        List<BookIdObj> bookIdList = new ArrayList<BookIdObj>() {
-            {
-                add(new BookIdObj(mBookInfo.getBookId()));
+        else {
+            if (!NetUtils.isNetConnected()) {
+                showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+                return;
             }
-        };
-        NetWorkManager.allowOrder(new AllowOrderRequestObj(SpUtils.getUserId(), bookIdList))
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object o) {
-                        LogUtils.v("订单查重成功,未查到重复订单");
-                        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList))
-                                .subscribe(new Action1<List<OrderIdObj>>() {
-                                    @Override
-                                    public void call(List<OrderIdObj> orderIdObjList) {
-                                        OrderIdObj orderIdObj = orderIdObjList.get(0);
-                                        Intent intent = new Intent(ShopBookDetailsActivity.this.getApplicationContext(), OrderDetailActivity.class);
-                                        intent.putExtra("orderId", orderIdObj.getOrderId());
-                                        startActivity(intent);
-                                        finish();
-                                        SpUtils.newOrderCountPlusOne();
-                                    }
-                                }, throwable -> {
-                                    UIUtils.showToastSafe(R.string.books_request_order_fail);
-                                    LogUtils.e("FH", "下单失败");
-                                    throwable.printStackTrace();
-                                });
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        ToastUtil.showCustomToast(getApplicationContext(), "下单失败!\r\n无法购买之前已经下过单的图书");
-                        throwable.printStackTrace();
-                    }
-                });
+            //新建订单
+            List<BookIdObj> bookIdList = new ArrayList<BookIdObj>() {
+                {
+                    add(new BookIdObj(mBookInfo.getBookId()));
+                }
+            };
+            if (SpUtils.getStudent().getSchoolLevel() > 0){
+                NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList , SpUtils.getStudent().getSchoolLevel()))
+                        .subscribe(new Action1<List<OrderIdObj>>() {
+                            @Override
+                            public void call(List<OrderIdObj> orderIdObjList) {
+                                showReaderForPackage(false);
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                UIUtils.showToastSafe("添加图书失败,请稍后再试.");
+                                LogUtils.e("FH", "添加图书失败,请稍后再试.");
+                                throwable.printStackTrace();
+                            }
+                        });
+            }
+            else {
+                NetWorkManager.allowOrder(new AllowOrderRequestObj(SpUtils.getUserId(), bookIdList))
+                        .subscribe(new Action1<Object>() {
+                            @Override
+                            public void call(Object o) {
+                                LogUtils.v("订单查重成功,未查到重复订单");
+                                NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList , SpUtils.getStudent().getSchoolLevel()))
+                                        .subscribe(new Action1<List<OrderIdObj>>() {
+                                            @Override
+                                            public void call(List<OrderIdObj> orderIdObjList) {
+                                                OrderIdObj orderIdObj = orderIdObjList.get(0);
+                                                Intent intent = new Intent(ShopBookDetailsActivity.this.getApplicationContext(), OrderDetailActivity.class);
+                                                intent.putExtra("orderId", orderIdObj.getOrderId());
+                                                startActivity(intent);
+                                                finish();
+                                                SpUtils.newOrderCountPlusOne();
+                                            }
+                                        }, new Action1<Throwable>() {
+                                            @Override
+                                            public void call(Throwable throwable) {
+                                                UIUtils.showToastSafe(R.string.books_request_order_fail);
+                                                LogUtils.e("FH", "下单失败");
+                                                throwable.printStackTrace();
+                                            }
+                                        });
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                ToastUtil.showCustomToast(getApplicationContext(), "下单失败!\r\n无法购买之前已经下过单的图书");
+                                throwable.printStackTrace();
+                            }
+                        });
+            }
+        }
     }
 
     public void addFavor(View view) {
@@ -243,15 +237,21 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         } else {
             if (NetUtils.isNetConnected()) {
                 NetWorkManager.appendFavor(SpUtils.getUserId(), mBookInfo.getBookId())
-                        .subscribe(o -> {
-                            LogUtils.e("FH", "添加到收藏夹成功");
-                            UIUtils.showToastSafe(R.string.books_add_collection_success);
-                            mBookInfo.setBookInFavor(true);
-                            setBtnFavorState();
-                        }, throwable -> {
-                            LogUtils.e("FH", "添加到收藏夹失败");
-                            UIUtils.showToastSafe(R.string.books_add_collection_fail);
-                            throwable.printStackTrace();
+                        .subscribe(new Action1<Object>() {
+                            @Override
+                            public void call(Object o) {
+                                LogUtils.e("FH", "添加到收藏夹成功");
+                                UIUtils.showToastSafe(R.string.books_add_collection_success);
+                                mBookInfo.setBookInFavor(true);
+                                ShopBookDetailsActivity.this.setBtnFavorState();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                LogUtils.e("FH", "添加到收藏夹失败");
+                                UIUtils.showToastSafe(R.string.books_add_collection_fail);
+                                throwable.printStackTrace();
+                            }
                         });
             } else {
                 showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
@@ -270,54 +270,69 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 
 
     public void addCart(View view) {
-        if (SpUtils.getStudent().getSchoolLevel() > 0) {
-            if (!NetUtils.isNetConnected()) {
-                showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
-                return;
-            }
-            NetWorkManager.addBookToBookcase(mBookInfo.getBookId(), SpUtils.getUserId()).subscribe(o -> {
-                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
-                EventBus.getDefault().post(baseEvent);
-                binding.addCarBtn.setText(R.string.already_in_bookshelf);
-                binding.addCarBtn.setClickable(false);
-            }, throwable -> {
-                throwable.printStackTrace();
-                UIUtils.showToastSafe("添加图书失败,请稍候再试");
-            });
-        } else {
-            if (mBookInfo.isBookInCart()) {
-                UIUtils.showToastSafe(R.string.books_already_add_car_2);
-            } else if (mBookInfo.isBookInShelf()) {
-                showReaderForPackage();
-            } else {
-                // 加入购物车
-                if (NetUtils.isNetConnected()) {
-                    NetWorkManager.appendCart(SpUtils.getUserId(), mBookInfo.getBookId())
-                            .subscribe(o -> {
-                                UIUtils.showToastSafe(R.string.books_add_car_success);
-                                mBookInfo.setBookInCart(true);
-                                setBtnCarState();
-                                refreshCartCount();
-                            }, throwable -> {
-                                UIUtils.showToastSafe(R.string.books_add_car_fail);
-                                LogUtils.e("FH", "加入购物车失败");
+        if (mBookInfo.isBookInShelf()) {
+            showReaderForPackage(true);
+        }
+        else {
+            if (SpUtils.getStudent().getSchoolLevel() > 0){
+                //新建订单
+                List<BookIdObj> bookIdList = new ArrayList<BookIdObj>() {
+                    {
+                        add(new BookIdObj(mBookInfo.getBookId()));
+                    }
+                };
+                NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList , SpUtils.getStudent().getSchoolLevel()))
+                        .subscribe(new Action1<List<OrderIdObj>>() {
+                            @Override
+                            public void call(List<OrderIdObj> orderIdObjList) {
+                                refreshData();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                UIUtils.showToastSafe("添加图书失败,请稍后再试.");
+                                LogUtils.e("FH", "添加图书失败,请稍后再试.");
                                 throwable.printStackTrace();
-                            });
+                            }
+                        });
+            }
+            else {
+                if (mBookInfo.isBookInCart()) {
+                    UIUtils.showToastSafe(R.string.books_already_add_car_2);
                 } else {
-                    showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+                    // 加入购物车
+                    if (NetUtils.isNetConnected()) {
+                        NetWorkManager.appendCart(SpUtils.getUserId(), mBookInfo.getBookId())
+                                .subscribe(new Action1<Object>() {
+                                    @Override
+                                    public void call(Object o) {
+                                        UIUtils.showToastSafe(R.string.books_add_car_success);
+                                        mBookInfo.setBookInCart(true);
+                                        setBtnCarState();
+                                        refreshCartCount();
+                                    }
+                                }, new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        UIUtils.showToastSafe(R.string.books_add_car_fail);
+                                        LogUtils.e("FH", "加入购物车失败");
+                                        throwable.printStackTrace();
+                                    }
+                                });
+                    } else {
+                        showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
+                    }
                 }
             }
         }
     }
 
-    public void read(View view) {
+    public void tryRead(View view) {
         if (mBookInfo.isBookInShelf()) {
-            showReaderForPackage();
+            showReaderForPackage(true);
             return;
         }
         //跳转在线试读
-//        String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
-
         if (SpUtils.getStudent().getSchoolLevel() > 0) {
             if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
                 jumpToControlFragmentActivity();
@@ -629,9 +644,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                     //文件大小
                     binding.bookDownloadSizeTv.setText(getString(R.string.file_size_text, SizeUtil.convertSizeLong2String(mBookInfo.getBookDownloadSize())));
                     //价格
-                    if (SpUtils.getStudent().getSchoolLevel() > 0) {
-                        binding.buyBtn.setVisibility(View.GONE);
-                        binding.tryReadBtn.setText(R.string.read_promptly);
+                    if (SpUtils.getStudent().getSchoolLevel() > 0 || mBookInfo.isBookInShelf()) {
+                        binding.tryReadBtn.setVisibility(View.GONE);
+                        binding.buyBtn.setText(R.string.read_promptly);
                     } else {
                         binding.bookOriginPriceTv.setText(getString(R.string.list_price, mBookInfo.getBookSalePrice() + ""));
                         binding.bookSalePriceTv.setText(getString(R.string.sale_price, mBookInfo.getBookSpotPrice() + ""));
@@ -687,14 +702,29 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private void setBtnCarState() {
-        if (SpUtils.getStudent().getSchoolLevel() > 0) {
-            binding.addCarBtn.setText(mBookInfo.isBookInShelf() ? R.string.already_in_bookshelf : R.string.add2bookshelf);
-            binding.addCarBtn.setBackgroundResource(mBookInfo.isBookInShelf() ? R.drawable.shape_rectangle_black_border_gray_fill : R.drawable.img_normal_button);
-            binding.addCarBtn.setClickable(!mBookInfo.isBookInShelf());
-        } else {
-            binding.addCarBtn.setText(mBookInfo.isBookInCart() ? R.string.books_already_add_car : R.string.add2shopcart);
-            binding.addCarBtn.setBackgroundResource(mBookInfo.isBookInCart() ? R.drawable.shape_rectangle_black_border_gray_fill : R.drawable.img_normal_button);
-            binding.addCarBtn.setClickable(!mBookInfo.isBookInCart());
+        if (mBookInfo.isBookInShelf()){
+            binding.addCarBtn.setText("已在书架");
+            binding.addCarBtn.setBackgroundResource(R.drawable.btn_selector_rectangle_white_green_gray);
+            binding.addCarBtn.setClickable(true);
+        }
+        else {
+            if (SpUtils.getStudent().getSchoolLevel() > 0) {
+                binding.addCarBtn.setText("加入书架");
+                binding.addCarBtn.setBackgroundResource(R.drawable.btn_selector_rectangle_white_green_gray);
+                binding.addCarBtn.setClickable(true);
+            }
+            else {
+                if (mBookInfo.isBookInCart()){
+                    binding.addCarBtn.setText("已在购物车");
+                    binding.addCarBtn.setBackgroundResource(R.drawable.shape_rectangle_black_border_gray_fill);
+                    binding.addCarBtn.setClickable(false);
+                }
+                else {
+                    binding.addCarBtn.setText("加入购物车");
+                    binding.addCarBtn.setBackgroundResource(R.drawable.btn_selector_rectangle_white_green_gray);
+                    binding.addCarBtn.setClickable(true);
+                }
+            }
         }
     }
 
@@ -705,7 +735,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
             binding.addFavorBtn.setClickable(false);
         } else {
             binding.addFavorBtn.setText("加入收藏夹");
-            binding.addFavorBtn.setBackgroundResource(R.drawable.img_normal_button);
+            binding.addFavorBtn.setBackgroundResource(R.drawable.btn_selector_rectangle_white_green_gray);
             binding.addFavorBtn.setClickable(true);
         }
     }
@@ -725,7 +755,7 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         }
     }
 
-    private void showReaderForPackage() {
+    private void showReaderForPackage(boolean showConfirm) {
         if (!NetUtils.isNetConnected()) {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
             return;
@@ -736,9 +766,10 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 //                UIUtils.showToastSafe("添加图书成功");
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
                 EventBus.getDefault().post(baseEvent);
-                if (SpUtils.getStudent().getSchoolLevel() > 0) {
+                if (!showConfirm) {
                     resolveAfterAdd2BookCase();
-                } else {
+                }
+                else {
                     if (mBookDetailsDialog == null) {
                         mBookDetailsDialog = new BookDetailsDialog(ShopBookDetailsActivity.this);
                         mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {

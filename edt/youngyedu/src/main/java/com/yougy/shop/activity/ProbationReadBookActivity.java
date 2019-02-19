@@ -285,7 +285,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
                             @Override
                             public void call(Object o) {
                                 LogUtils.v("订单查重成功,未查到重复订单");
-                                NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList))
+                                NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList , SpUtils.getStudent().getSchoolLevel()))
                                         .subscribe(new Action1<List<OrderIdObj>>() {
                                             @Override
                                             public void call(List<OrderIdObj> orderIdObjs) {
