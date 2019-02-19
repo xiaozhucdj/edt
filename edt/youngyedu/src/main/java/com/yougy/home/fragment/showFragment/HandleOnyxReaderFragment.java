@@ -36,6 +36,7 @@ import com.yougy.common.global.FileContonst;
 import com.yougy.common.media.AudioHelper;
 import com.yougy.common.media.BookVoiceBean;
 import com.yougy.common.media.MediaHelper;
+import com.yougy.common.media.NewMediaHelper;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -76,7 +77,7 @@ import rx.schedulers.Schedulers;
  * Created by Administrator on 2016/12/23.
  * TextBookFragment 查询数据放入子线程 ,翻页labl放子线程
  */
-public class HandleOnyxReaderFragment extends BaseFragment implements AdapterView.OnItemClickListener, BookMarksDialog.DialogClickFinsihListener, ReaderContract.ReaderView, MediaHelper.CompletionPlayerListener {
+public class HandleOnyxReaderFragment extends BaseFragment implements AdapterView.OnItemClickListener, BookMarksDialog.DialogClickFinsihListener, ReaderContract.ReaderView, NewMediaHelper.CompletionPlayerListener {
 
     private static final String TAG = "TextBookFragment";
     private ViewGroup mRlDirectory;
@@ -123,7 +124,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private Button img_btn_hide;
     private Subscription backScription2;
     private Subscription nextScription2;
-    private MediaHelper mMediaHelper;
+    private NewMediaHelper mMediaHelper;
     private boolean mIsOpenSelfAdapter;
     private boolean mIsOpenVoice;
     private FrameLayout fm_voice;
@@ -344,9 +345,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                         LogUtils.e("bean.toString() ===" + bean.toString());
                         btn_reader_pause.setTag("是否暂停");
                         btn_reader_pause.setSelected(false);
-//                        getMediaHelper().player_continue();
-                        getMediaHelper().player_reset();
-                        getMediaHelper().player_start(mVoiceBaseURL + bean.getUrl(), bean.getStart(), bean.getEnd(), bean.getPostion());
+                        getMediaHelper().start(mVoiceBaseURL + bean.getUrl(), bean.getPostion());
                     }
                 });
                 fm_voice.addView(imageView, params);
@@ -365,7 +364,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             voicePs = voicePs + 1;
             if (mVoiceBean.getVoiceInfos().size() < voicePs) {
 //                UIUtils.showToastSafe("本页音频文件全部播放完成");
-                getMediaHelper().player_reset();
                 mIsPageReader = false;
                 btn_reader_page.setTag("连读");
                 btn_reader_page.setSelected(false);
@@ -376,11 +374,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
                 btn_reader_pause.setTag("是否暂停");
                 btn_reader_pause.setSelected(false);
-                getMediaHelper().player_continue();
-
                 mImgVoices.get(voicePs).setSelected(true);
                 BookVoiceBean.VoiceBean bean = mVoiceBean.getVoiceInfos().get(voicePs - 1);
-                getMediaHelper().player_start(mVoiceBaseURL + bean.getUrl(), bean.getStart(), bean.getEnd(), bean.getPostion());
+                getMediaHelper().start(mVoiceBaseURL + bean.getUrl(), bean.getPostion());
             }
         }
     }
@@ -665,7 +661,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
             btn_reader_pause.setTag("是否暂停");
             btn_reader_pause.setSelected(false);
-            getMediaHelper().player_reset();
+            getMediaHelper().reset();
         }
 
         getReaderPresenter().gotoPage(position);
@@ -724,8 +720,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
                     btn_reader_pause.setTag("是否暂停");
                     btn_reader_pause.setSelected(false);
-//                    getMediaHelper().player_continue();
-                    getMediaHelper().player_start(mVoiceBaseURL + bean.getUrl(), bean.getStart(), bean.getEnd(), bean.getPostion());
+                    getMediaHelper().start(mVoiceBaseURL + bean.getUrl(), bean.getPostion());
                 } else {
 
                     if (mImgVoices.size() != 0) {
@@ -737,7 +732,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                     btn_reader_page.setTag("连读");
                     btn_reader_page.setSelected(false);
                     btn_reader_pause.setVisibility(View.GONE);
-                    getMediaHelper().player_reset();
+                    getMediaHelper().reset();
                     btn_reader_pause.setTag("是否暂停");
                     btn_reader_pause.setSelected(false);
                 }
@@ -747,11 +742,11 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 if (btn_reader_pause.getTag().toString().trim().equalsIgnoreCase("是否暂停")) {
                     btn_reader_pause.setTag("已暂停");
                     btn_reader_pause.setSelected(true);
-                    getMediaHelper().player_pause();
+                    getMediaHelper().pause();
                 } else {
                     btn_reader_pause.setTag("是否暂停");
                     btn_reader_pause.setSelected(false);
-                    getMediaHelper().player_continue();
+                    getMediaHelper().continuePlay();
                 }
                 break;
         }
@@ -955,7 +950,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             UIUtils.getMainThreadHandler().removeCallbacks(mRunThread);
         }
         mRunThread = null;
-        getMediaHelper().player_release();
+        getMediaHelper().playerRelease();
         Runtime.getRuntime().gc();
     }
 
@@ -1157,10 +1152,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     }
 
     ///////////////////////////////////voice///////////////////////////////////////////////////////////
-    private MediaHelper getMediaHelper() {
+    private NewMediaHelper getMediaHelper() {
         if (mMediaHelper == null) {
             new AudioHelper(getActivity()).setMaxVolume();
-            mMediaHelper = new MediaHelper();
+            mMediaHelper = new NewMediaHelper();
             mMediaHelper.setCompletionListener(this);
             mMediaHelper.init(getActivity());
         }
