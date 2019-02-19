@@ -21,16 +21,15 @@
                 android:layout_marginLeft="30px"
                 android:layout_centerVertical="true"
                 />
+
             <ImageButton
                 android:id="@+id/to_cart_btn"
                 android:layout_width="40px"
                 android:layout_height="40px"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/gouwuche_selector"
-                android:onClick="toCart"
-                android:layout_centerVertical="true"
                 android:layout_marginRight="30px"
-                />
+                android:background="@drawable/gouwuche_selector"
+                android:onClick="toCart" />
             <TextView
                 android:id="@+id/cart_count_tv"
                 android:layout_width="20px"

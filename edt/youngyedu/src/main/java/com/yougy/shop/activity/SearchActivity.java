@@ -341,11 +341,13 @@ public class SearchActivity extends ShopBaseActivity {
             recordTv.setIncludeFontPadding(false);
             recordTv.setTextSize(UIUtils.px2dip(24));
             recordTv.setTextColor(getResources().getColor(R.color.text_color_black));
-            recordTv.setOnClickListener(v -> {
-                bookTitle = record;
-                hideSearchLayout();
-                search();
-            });
+            if (!record.equals(UIUtils.getContext().getResources().getString(R.string.no_history_record))) {
+                recordTv.setOnClickListener(v -> {
+                    bookTitle = record;
+                    hideSearchLayout();
+                    search();
+                });
+            }
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.bottomMargin = UIUtils.px2dip(20);
             binding.historyRecordLayout.addView(recordTv, params);
@@ -400,13 +402,12 @@ public class SearchActivity extends ShopBaseActivity {
         req.setBookVersion(bookVersion);
         req.setPs(COUNT_PER_PAGE);
         req.setPn(pageNo);
-        NetWorkManager.queryBookInfo(req).subscribe(new Action1<BaseResult<List<BookInfo>>>() {
-            @Override
-            public void call(BaseResult<List<BookInfo>> result) {
-                LogUtils.e(tag, "bookInfos' size : " + result.getData().size());
-                totalCount = result.getCount();
-                SearchActivity.this.refreshResultView(result.getData());
-            }
+        NetWorkManager.queryBookInfo(req).subscribe(result -> {
+            LogUtils.e(tag, "bookInfos' size : " + result.getData().size());
+            totalCount = result.getCount();
+            SearchActivity.this.refreshResultView(result.getData());
+        }, throwable -> {
+            LogUtils.e(tag,"throwable is : " + throwable.getMessage());
         });
     }
 
