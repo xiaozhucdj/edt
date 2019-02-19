@@ -286,6 +286,8 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
                             @Override
                             public void call(List<OrderIdObj> orderIdObjList) {
                                 refreshData();
+                                BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
+                                EventBus.getDefault().post(baseEvent);
                             }
                         }, new Action1<Throwable>() {
                             @Override
