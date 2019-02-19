@@ -341,11 +341,13 @@ public class SearchActivity extends ShopBaseActivity {
             recordTv.setIncludeFontPadding(false);
             recordTv.setTextSize(UIUtils.px2dip(24));
             recordTv.setTextColor(getResources().getColor(R.color.text_color_black));
-            recordTv.setOnClickListener(v -> {
-                bookTitle = record;
-                hideSearchLayout();
-                search();
-            });
+            if (!record.equals(UIUtils.getContext().getResources().getString(R.string.no_history_record))) {
+                recordTv.setOnClickListener(v -> {
+                    bookTitle = record;
+                    hideSearchLayout();
+                    search();
+                });
+            }
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.bottomMargin = UIUtils.px2dip(20);
             binding.historyRecordLayout.addView(recordTv, params);
