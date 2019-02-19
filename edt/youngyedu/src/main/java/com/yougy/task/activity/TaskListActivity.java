@@ -37,8 +37,8 @@ public class TaskListActivity extends BaseActivity {
     private int completedTasksCount;
     private int uncompleteTasksCount;
 
-    private List<Task> completedTasks = new ArrayList<>();
-    private List<Task> unCompleteTasks = new ArrayList<>();
+    //    private List<Task> completedTasks = new ArrayList<>();
+//    private List<Task> unCompleteTasks = new ArrayList<>();
     private boolean isComplete = false;
     private int contentBookLink;
     private String courseBookTitle;
@@ -130,27 +130,12 @@ public class TaskListActivity extends BaseActivity {
     @Override
     public void refresh(View view) {
         super.refresh(view);
-        if (isComplete) {
-            completedTasks.clear();
-            completeSparseArray.clear();
-        } else {
-            unCompleteTasks.clear();
-        }
         generateData(isComplete ? currentCompletedPage : currentUnCompletePage);
     }
 
-//    private SparseArray<List<Task>> unCompleteSparseArray = new SparseArray<>();
-    private SparseArray<List<Task>> completeSparseArray = new SparseArray<>();
     private String contentStatusCode = "SV01";
 
     private void generateData(int currentPage) {
-        LogUtils.e(tag, "homeworkId is : " + homeworkId + ",contentBookLink is : " + contentBookLink);
-//        int pageCount = MAX_PAGE_COUNT;
-//        int pageBtnCount = isComplete ? binding.completedPageBarTask.getPageBarAdapter().getPageBtnCount() : binding.uncompletePageBarTask.getPageBarAdapter().getPageBtnCount();
-//        if (currentPage == pageBtnCount - 1) {
-//            int tasksCount = isComplete ? completedTasksCount : uncompleteTasksCount;
-//            pageCount = tasksCount % MAX_PAGE_COUNT == 0 ? MAX_PAGE_COUNT : tasksCount % MAX_PAGE_COUNT;
-//        }
         NetWorkManager.queryTasks(homeworkId, contentBookLink, currentPage + 1, MAX_PAGE_COUNT, contentStatusCode)
                 .compose(bindToLifecycle())
                 .subscribe(taskSummary -> {
@@ -159,14 +144,11 @@ public class TaskListActivity extends BaseActivity {
                         currentCompletedTasks.clear();
                         currentCompletedTasks.addAll(taskList);
                         completedTasksCount = taskSummary.getCount();
-                        completeSparseArray.put(currentPage, taskList);
-                        completedTasks.addAll(taskList);
                         completedAdapter.notifyDataSetChanged();
                     } else {
                         currentUnCompleteTasks.clear();
                         currentUnCompleteTasks.addAll(taskList);
                         uncompleteTasksCount = taskSummary.getCount();
-                        unCompleteTasks.addAll(taskList);
                         unCompleteAdapter.notifyDataSetChanged();
                         binding.uncompletePageBarTask.refreshPageBar();
                     }
@@ -179,33 +161,13 @@ public class TaskListActivity extends BaseActivity {
     private void refreshUnCompleteTask(int index) {
         currentUnCompleteTasks.clear();
         currentUnCompletePage = index;
-//        if (unCompleteSparseArray.get(index) != null) {
-//            int start = index * MAX_PAGE_COUNT;
-//            int end = start + MAX_PAGE_COUNT;
-//            if (index == binding.uncompletePageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-//                end = unCompleteTasks.size();
-//            }
-//            currentUnCompleteTasks.addAll(unCompleteTasks.subList(start, end));
-//            unCompleteAdapter.notifyDataSetChanged();
-//        } else {
-            generateData(index);
-//        }
+        generateData(index);
     }
 
     private void refreshCompletedTask(int index) {
         currentCompletedTasks.clear();
         currentCompletedPage = index;
-//        if (completeSparseArray.get(index) != null) {
-//            int start = index * MAX_PAGE_COUNT;
-//            int end = start + MAX_PAGE_COUNT;
-//            if (index == binding.completedPageBarTask.getPageBarAdapter().getPageBtnCount() - 1) {
-//                end = completedTasks.size();
-//            }
-//            currentCompletedTasks.addAll(completedTasks.subList(start, end));
-//            completedAdapter.notifyDataSetChanged();
-//        } else {
-            generateData(index);
-//        }
+        generateData(index);
     }
 
 
@@ -276,19 +238,20 @@ public class TaskListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 10000) {
             LogUtils.e(tag, "onActivityResult............");
-            unCompleteTasks.remove(clickedTask);
-            currentUnCompleteTasks.clear();
-            if (unCompleteTasks.size() > 0) {
-                int start = currentUnCompletePage * MAX_PAGE_COUNT;
-                int end = start + MAX_PAGE_COUNT;
-                if (end > unCompleteTasks.size() - 1) {
-                    end = unCompleteTasks.size();
-                }
-                currentUnCompleteTasks.addAll(unCompleteTasks.subList(start, end));
-            }
-            unCompleteAdapter.notifyDataSetChanged();
-            uncompleteTasksCount--;
-            binding.uncompletePageBarTask.refreshPageBar();
+//            unCompleteTasks.remove(clickedTask);
+//            currentUnCompleteTasks.clear();
+//            if (unCompleteTasks.size() > 0) {
+//                int start = currentUnCompletePage * MAX_PAGE_COUNT;
+//                int end = start + MAX_PAGE_COUNT;
+//                if (end > unCompleteTasks.size() - 1) {
+//                    end = unCompleteTasks.size();
+//                }
+//                currentUnCompleteTasks.addAll(unCompleteTasks.subList(start, end));
+//            }
+//            unCompleteAdapter.notifyDataSetChanged();
+//            uncompleteTasksCount--;
+//            binding.uncompletePageBarTask.refreshPageBar();
+            generateData(currentUnCompletePage);
         }
     }
 
@@ -312,7 +275,7 @@ public class TaskListActivity extends BaseActivity {
         binding.uncompleteTasksRecycler.setVisibility(View.GONE);
         binding.completedPageBarTask.setVisibility(View.VISIBLE);
         binding.completedTasksRecycler.setVisibility(View.VISIBLE);
-        if (completeSparseArray.get(currentCompletedPage) == null) {
+        if (currentCompletedTasks.size() == 0) {
             generateData(currentCompletedPage);
         }
     }

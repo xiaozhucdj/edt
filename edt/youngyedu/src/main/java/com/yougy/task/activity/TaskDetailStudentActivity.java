@@ -269,7 +269,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
     }
 
     private void back() {
-        setResult(10000);
         if (isHadCommit) {//已经提交
             if (isSignatureTask && !hadSignature) {
                 DialogManager.newInstance().showSubmitConfirmDialog(this, getString(R.string.unable_sign_temporary),
