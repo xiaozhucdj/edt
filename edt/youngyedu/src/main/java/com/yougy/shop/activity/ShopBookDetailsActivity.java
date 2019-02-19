@@ -317,11 +317,20 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
         //跳转在线试读
 //        String probationUrl = FileUtils.getProbationBookFilesDir() + ShopGloble.probationToken + mBookInfo.getBookId() + ".pdf";
 
-        if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookProbation))) {
-            jumpProbationActivity();
+        if (SpUtils.getStudent().getSchoolLevel() > 0) {
+            if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
+                jumpToControlFragmentActivity();
+            } else {
+                LogUtils.i("试读文件不存在");
+                downBookTask(mBookInfo.getBookId());
+            }
         } else {
-            LogUtils.i("试读文件不存在");
-            downBookDialog();
+            if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookProbation))) {
+                jumpProbationActivity();
+            } else {
+                LogUtils.i("试读文件不存在");
+                downBookDialog();
+            }
         }
     }
 
