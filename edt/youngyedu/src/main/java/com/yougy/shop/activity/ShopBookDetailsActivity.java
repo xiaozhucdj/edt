@@ -710,7 +710,18 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     private BookDetailsDialog mBookDetailsDialog;
+    private void resolveAfterAdd2BookCase(){
+        if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
+            jumpToControlFragmentActivity();
 
+        } else {
+            if (NetUtils.isNetConnected()) {
+                downBookTask(mBookInfo.getBookId());
+            } else {
+                showCancelAndDetermineDialog(R.string.jump_to_net);
+            }
+        }
+    }
     private void showReaderForPackage() {
         if (!NetUtils.isNetConnected()) {
             showTagCancelAndDetermineDialog(R.string.jump_to_net, mTagNoNet);
@@ -722,33 +733,27 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
 //                UIUtils.showToastSafe("添加图书成功");
                 BaseEvent baseEvent = new BaseEvent(EventBusConstant.need_refresh, null);
                 EventBus.getDefault().post(baseEvent);
-
-                if (mBookDetailsDialog == null) {
-                    mBookDetailsDialog = new BookDetailsDialog(ShopBookDetailsActivity.this);
-                    mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
-                        @Override
-                        public void onCancelListener() {
-                            mBookDetailsDialog.dismiss();
-                            ShopBookDetailsActivity.this.finish();
-                        }
-
-                        @Override
-                        public void onConfirmListener() {
-                            mBookDetailsDialog.dismiss();
-                            if (!StringUtils.isEmpty(FileUtils.getBookFileName(mBookInfo.getBookId(), FileUtils.bookDir))) {
-                                jumpToControlFragmentActivity();
-
-                            } else {
-                                if (NetUtils.isNetConnected()) {
-                                    downBookTask(mBookInfo.getBookId());
-                                } else {
-                                    showCancelAndDetermineDialog(R.string.jump_to_net);
-                                }
+                if (SpUtils.getStudent().getSchoolLevel()>0){
+                    resolveAfterAdd2BookCase();
+                }else {
+                    if (mBookDetailsDialog == null) {
+                        mBookDetailsDialog = new BookDetailsDialog(ShopBookDetailsActivity.this);
+                        mBookDetailsDialog.setBookDetailsListener(new BookDetailsDialog.BookDetailsListener() {
+                            @Override
+                            public void onCancelListener() {
+                                mBookDetailsDialog.dismiss();
+                                ShopBookDetailsActivity.this.finish();
                             }
-                        }
-                    });
+
+                            @Override
+                            public void onConfirmListener() {
+                                mBookDetailsDialog.dismiss();
+                                resolveAfterAdd2BookCase();
+                            }
+                        });
+                    }
+                    mBookDetailsDialog.show();
                 }
-                mBookDetailsDialog.show();
             }
         }, new Action1<Throwable>() {
             @Override
