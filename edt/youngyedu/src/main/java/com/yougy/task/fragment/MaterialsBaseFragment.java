@@ -246,7 +246,9 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         if (sStageTaskBean.getStageContent().size() > 0 ) {
             String stageFormat = sStageTaskBean.getStageContent().get(0).getFormat();
             if (stageFormat.contains("pdf") || stageFormat.contains("PDF")  || stageFormat.contains("PNG")
-                    || stageFormat.contains("png") || stageFormat.contains("txt")) {
+                    || stageFormat.contains("png") || stageFormat.contains("jpg")
+                    || stageFormat.contains("JPG") || stageFormat.contains("bmp")
+                    || stageFormat.contains("jpeg") || stageFormat.contains("JPEG")||stageFormat.contains("txt")) {
                 flag = false;
             }
         }
@@ -257,7 +259,7 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         Intent intent = new Intent(mTaskDetailStudentActivity, MaterialActivity2.class);
         intent.putExtra("isHadComplete", mTaskDetailStudentActivity.isHadCommit());
         intent.putExtra("mTaskId", mTaskDetailStudentActivity.mTaskId);
-        intent.putExtra("mCurrentPosition", position);
+        intent.putExtra("mCurrentPosition", position );
 //        intent.putExtra("stageTaskBean", stageTaskBean);
 //        String remote = stageTaskBean.getStageScene().get(0).getSceneContents().get(0).getRemote();
 //        LogUtils.i("TaskTest : " + remote +

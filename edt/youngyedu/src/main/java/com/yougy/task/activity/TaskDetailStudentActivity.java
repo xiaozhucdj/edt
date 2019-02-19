@@ -553,8 +553,8 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     if (!isHadCommit) {
                         isHadCommit = true;
                         mTextFinish.setText(R.string.parent_sign);
-//                        loadData();
-                        showContentFragment(mPracticeFragment, TAB_PRACTICE, true);
+//                        showContentFragment(mPracticeFragment, TAB_PRACTICE, true);
+                        loadData();
                         EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
                     } else {
                         //上传后清理掉本地图片文件
