@@ -68,7 +68,7 @@ public class LogUtils {
     }
 
     /**
-     * 以级别为 d 的形式输出LOG
+     * 以级别为 v 的形式输出LOG
      *
      * @param msg 需要输出的msg
      */
@@ -78,6 +78,13 @@ public class LogUtils {
         }
     }
 
+    public static void v(String tag, String msg) {
+        if (DEBUG && mDebuggable >= LEVEL_VERBOSE) {
+            Log.v(tag, msg);
+        }
+    }
+
+
     /**
      * 以级别为 d 的形式输出LOG
      *
@@ -86,6 +93,12 @@ public class LogUtils {
     public static void d(String msg) {
         if (DEBUG && mDebuggable >= LEVEL_DEBUG) {
             Log.d(mTag, msg);
+        }
+    }
+
+    public static void d(String tag , String msg) {
+        if (DEBUG && mDebuggable >= LEVEL_DEBUG) {
+            Log.d(tag, msg);
         }
     }
 
@@ -100,6 +113,12 @@ public class LogUtils {
         }
     }
 
+    public static void i(String tag , String msg) {
+        if (DEBUG && mDebuggable >= LEVEL_INFO) {
+            Log.i(tag , msg);
+        }
+    }
+
     /**
      * 以级别为 w 的形式输出LOG
      *
@@ -108,6 +127,12 @@ public class LogUtils {
     public static void w(String msg) {
         if (DEBUG && mDebuggable >= LEVEL_WARN) {
             Log.w(mTag, msg);
+        }
+    }
+
+    public static void w(String tag , String msg) {
+        if (DEBUG && mDebuggable >= LEVEL_WARN) {
+            Log.w(tag , msg);
         }
     }
 

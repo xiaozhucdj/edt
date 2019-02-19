@@ -97,7 +97,7 @@
     <string name="jump_to_net">当前没有网络,是否连接网络?</string>
     <string name="delete_note_fail">删除笔记失败</string>
     <string name="updata_note_fail">更新笔记失败</string>
-    <string name="note_name_null">请填写笔记昵称</string>
+    <string name="note_name_null">请填写笔记名称</string>
     <string name="add_note_fail">添加笔记失败</string>
     <string name="books_already_buy">您已经购买过该图书</string>
     <string name="books_already_add_car">已在购物车</string>
