@@ -314,7 +314,7 @@ public final class NetWorkManager {
 
     public static Observable<List<QuestionReplyDetail>> queryReplyDetail2(Integer examId, Integer itemId, String replyCommentator, long replyCreator) {
         LogUtils.e("FH", "!!!!!调用ServerApi查询学生互评解答详情:queryReplyDetail");
-        return getInstance().getServerApi().reviewComment2(examId, itemId, replyCommentator, replyCreator)
+        return getInstance().getServerApi().reviewComment2(examId, itemId, replyCommentator, replyCreator, replyCreator)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog))
                 .compose(RxResultHelper.parseReplyDetail());
@@ -359,7 +359,7 @@ public final class NetWorkManager {
     }
 
     public static Observable<Object> setMistakeExcerpt(Integer homeworkId, String replyId, String key, int value) {
-        LogUtils.e("FH", "!!!!!调用ServerApi设置错题新增参数key"+key);
+        LogUtils.e("FH", "!!!!!调用ServerApi设置错题新增参数key" + key);
         return getInstance().getServerApi().modifyHomeworkExcerpt(homeworkId
                 , "{\"reply\":" + replyId + ",\"extra\":{\"" + key + "\":" + value + "}}")
                 .compose(RxSchedulersHelper.io_main())
@@ -684,8 +684,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
-    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentBookLink, int pn, int ps,String contentStatusCode) {
-        return getInstance().getServerApi().queryTasks(homeworkId, contentBookLink, pn, ps,contentStatusCode)
+    public static Observable<BaseResult<List<Task>>> queryTasks(int homeworkId, int contentBookLink, int pn, int ps, String contentStatusCode) {
+        return getInstance().getServerApi().queryTasks(homeworkId, contentBookLink, pn, ps, contentStatusCode)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
     }
