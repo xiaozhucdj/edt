@@ -186,7 +186,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m", "extraParameter"}, values = {"reviewComment", "1"})
+    @DefaultField(keys = {"m", "extraParameter", "ps", "pn"}, values = {"reviewComment", "1", "100", "1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("userId") String userId);
 
@@ -195,7 +195,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m", "extraParameter"}, values = {"reviewComment", "1"})
+    @DefaultField(keys = {"m", "extraParameter", "ps", "pn"}, values = {"reviewComment", "1", "100", "1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator, @Field("replyCreator") long replyCreator, @Field("userId") long userId);
 
@@ -618,7 +618,7 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"queryStage"})
     Observable<BaseResult<List<StageTaskBean>>> queryStageTask(
             @Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode
-            ,@Field("userId") Integer userId);
+            , @Field("userId") Integer userId);
 
     @FormUrlEncoded
     @POST("classRoom")
