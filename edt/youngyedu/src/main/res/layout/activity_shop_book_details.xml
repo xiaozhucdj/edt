@@ -186,7 +186,7 @@
                 android:id="@+id/try_read_btn"
                 style="@style/bookOperateStyle"
                 android:text="@string/read_online"
-                android:onClick="read"
+                android:onClick="tryRead"
                 />
 
             <Button

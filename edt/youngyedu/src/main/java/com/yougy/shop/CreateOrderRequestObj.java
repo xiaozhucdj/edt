@@ -10,10 +10,12 @@ import java.util.List;
 
 public class CreateOrderRequestObj {
     private Integer orderOwner;
+    private Integer schoolLevel;
     private List<BookIdObj> data;
 
-    public CreateOrderRequestObj(Integer orderOwner, List<BookIdObj> data) {
+    public CreateOrderRequestObj(Integer orderOwner, List<BookIdObj> data , Integer schoolLevel) {
         this.orderOwner = orderOwner;
         this.data = data;
+        this.schoolLevel = schoolLevel;
     }
 }

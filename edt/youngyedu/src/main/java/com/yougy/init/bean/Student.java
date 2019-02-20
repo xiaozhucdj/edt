@@ -80,6 +80,7 @@ public class Student {
     }
 
     public void setSchoolLevel(int schoolLevel) {
+//        schoolLevel = 1;//测试用,记得注掉
         this.schoolLevel = schoolLevel;
     }
 

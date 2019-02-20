@@ -37,7 +37,6 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="30px"
             android:background="@null"
-            android:onClick="toCart"
             android:src="@drawable/icon_gengduo" />
 
 

@@ -216,7 +216,7 @@ public class ShopCartActivity extends ShopBaseActivity {
                     public void call(Object o) {
                         LogUtils.v("订单查重成功,未查到重复订单");
                         //新建订单
-                        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList)).subscribe(new Action1<List<OrderIdObj>>() {
+                        NetWorkManager.createOrder(new CreateOrderRequestObj(SpUtils.getUserId(), bookIdList , SpUtils.getStudent().getSchoolLevel())).subscribe(new Action1<List<OrderIdObj>>() {
                             @Override
                             public void call(List<OrderIdObj> orders) {
                                 OrderIdObj orderIdObj = orders.get(0);
