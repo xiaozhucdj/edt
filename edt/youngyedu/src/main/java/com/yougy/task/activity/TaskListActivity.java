@@ -217,7 +217,7 @@ public class TaskListActivity extends BaseActivity {
             binding.taskChapter.setText(task.getContentCourseLinkName());
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));
             binding.taskExerciseCount.setText(String.valueOf(task.getExerciseCount()));
-            binding.taskCompleteTime.setText(getString(R.string.task_complete_time, "2018-11-28 17:48", "2018-11-29 17:00"));
+            binding.taskCompleteTime.setText(getString(R.string.task_complete_time, task.getPerformStartTime(), task.getPerformEndTime()));
             itemView.setOnClickListener(v -> {
                 clickedTask = task;
                 Intent intent = new Intent(TaskListActivity.this, TaskDetailStudentActivity.class);
