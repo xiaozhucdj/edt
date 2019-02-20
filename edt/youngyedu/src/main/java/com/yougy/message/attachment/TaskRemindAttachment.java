@@ -10,7 +10,10 @@ public class TaskRemindAttachment extends CustomAttachment{
     public static final String KEY_TASK_NAME = "taskName";
     public static final String IS_SIGN = "isSign";
     public static final String SCENE_STATUS_CODE = "SceneStatusCode";
+    public static final String KEY_DRAMA_ID = "dramaId";
+
     public int taskId;
+    public int dramaId;
     public String taskName;
     public boolean isSign;
     public String sceneStatusCode;
@@ -19,9 +22,10 @@ public class TaskRemindAttachment extends CustomAttachment{
         super(clue, version);
     }
 
-    public TaskRemindAttachment(int taskId,String taskName,boolean isSign,String sceneStatusCode){
+    public TaskRemindAttachment(int taskId,int dramaId,String taskName,boolean isSign,String sceneStatusCode){
         super(CustomAttachParser.CLUE_TASK_REMIND,0.1);
         this.taskId = taskId;
+        this.dramaId = dramaId;
         this.taskName = taskName;
         this.isSign = isSign;
         this.sceneStatusCode = sceneStatusCode;
@@ -31,6 +35,7 @@ public class TaskRemindAttachment extends CustomAttachment{
     protected void parseData(JSONObject data) throws JSONException {
         JSONObject introJsonObj = data.getJSONObject(CustomAttachParser.KEY_INTRO);
         taskId = introJsonObj.getInt(KEY_TASK_ID);
+        dramaId = introJsonObj.getInt(KEY_DRAMA_ID);
         taskName = introJsonObj.getString(KEY_TASK_NAME);
         try {
             isSign = introJsonObj.getBoolean(IS_SIGN);
@@ -46,6 +51,7 @@ public class TaskRemindAttachment extends CustomAttachment{
         JSONObject introJsonObj = new JSONObject();
         try{
             introJsonObj.put(KEY_TASK_ID,taskId);
+            introJsonObj.put(KEY_DRAMA_ID,dramaId);
             introJsonObj.put(KEY_TASK_NAME,taskName);
             introJsonObj.put(IS_SIGN,isSign);
             introJsonObj.put(SCENE_STATUS_CODE,sceneStatusCode);

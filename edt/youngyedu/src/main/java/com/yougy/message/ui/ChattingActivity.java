@@ -579,6 +579,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     public void onClick(@NonNull View widget) {
                         Intent intent = new Intent(ChattingActivity.this,TaskDetailStudentActivity.class);
                         intent.putExtra(TaskRemindAttachment.KEY_TASK_ID,attachment.taskId);
+                        intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID,attachment.dramaId);
                         intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME,attachment.taskName);
                         intent.putExtra(TaskRemindAttachment.IS_SIGN,attachment.isSign);
                         intent.putExtra(TaskRemindAttachment.SCENE_STATUS_CODE,attachment.sceneStatusCode);
