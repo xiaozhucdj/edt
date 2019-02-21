@@ -629,6 +629,12 @@ public interface ServerApi {
 
     @FormUrlEncoded
     @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"updateHomeworkContent"})
+    Observable<BaseResult<Object>> updateHomeworkContent(@Field("userId") Integer userId, @Field("perform") Integer perform,
+                                                        @Field("contentStatusCode") String contentStatusCode);
+
+    @FormUrlEncoded
+    @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"postSceneRequest"})
     Observable<BaseResult<STSbean>> uploadTaskPracticeOOS(@Field("userId") Integer userId);
 
