@@ -125,6 +125,29 @@
             app:layout_constraintTop_toTopOf="@+id/task_data_count"
             app:layout_constraintBottom_toBottomOf="@+id/task_data_count"
             />
+        <TextView
+            android:id="@+id/signature_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="家长签字"
+            app:layout_constraintTop_toTopOf="@+id/task_exercise_count_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/task_exercise_count_tv"
+            app:layout_constraintLeft_toRightOf="@+id/task_exercise_count_tv"
+            android:layout_marginLeft="@dimen/x150"
+            android:textSize="@dimen/x22"
+            />
+        <TextView
+            android:id="@+id/signature"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:text="是"
+            android:textSize="@dimen/x22"
+            android:gravity="center"
+            app:layout_constraintLeft_toLeftOf="@+id/signature_text"
+            app:layout_constraintRight_toRightOf="@+id/signature_text"
+            app:layout_constraintTop_toTopOf="@+id/task_data_count"
+            app:layout_constraintBottom_toBottomOf="@+id/task_data_count"
+            />
 
 
     </android.support.constraint.ConstraintLayout>
