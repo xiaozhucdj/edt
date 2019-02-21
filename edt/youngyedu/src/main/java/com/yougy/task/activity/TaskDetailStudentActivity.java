@@ -282,7 +282,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             @Override
                             public void cancel() {
                                 super.cancel();
-                                saveTaskToBitmap ();
                                 setResult(10000);
                                 finish();
                             }
@@ -292,7 +291,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
                 finish();
             }
         } else { //未提交返回
-            saveTaskToBitmap ();
             finish();
         }
     }
@@ -384,15 +382,12 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     private void oosUpload () {
         NetWorkManager.uploadTaskPracticeOOS(SpUtils.getUserId())
-                .subscribe(new Action1<STSbean>() {
-                    @Override
-                    public void call(STSbean stSbean) {
-                        if (stSbean == null) {
-                            ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getApplicationContext(), "获取上传信息失败");
-                        } else {
-                            LogUtils.d("TaskTest upload oos success.");
-                            TaskDetailStudentActivity.this.uploadPic(stSbean);
-                        }
+                .subscribe(stSbean -> {
+                    if (stSbean == null) {
+                        ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getApplicationContext(), "获取上传信息失败");
+                    } else {
+                        LogUtils.d("TaskTest upload oos success.");
+                        TaskDetailStudentActivity.this.uploadPic(stSbean);
                     }
                 }, throwable -> LogUtils.e("TaskTest 获取上传信息失败!"));
     }
@@ -423,9 +418,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
         Observable.create(subscriber -> {
             File file = new File(SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir() + "/" + mTaskId);
             if (!file.exists()) {
-                LogUtils.e("not exits.");
+                LogUtils.e("TaskTest not exits.");
                 boolean mkdirs = file.mkdirs();
-                File fi = new File(file.getAbsolutePath() +"/" + dramaId + "/" + mTaskId + "_" + dramaId
+                File fi = new File(file.getAbsolutePath() +"/" + mTaskId + "/" + mTaskId + "_" + dramaId
                             + "_empty.png");
                 boolean mkdir = fi.mkdir();
                 LogUtils.d("TaskTest empty mkdirs." + mkdirs + "  mkdir = " + mkdir);
@@ -460,25 +455,24 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         Log.e("TaskTest UPLOAD OOS", "call: error Code:  " + e.getErrorCode() + " message:" + e.getRawMessage());
                     }
                 }
-                int size = picContent.size();
-                LogUtils.d("TaskTest picContent " + size);
-                for (int j = 0; j < size; j ++ ) {
-                    SubmitTaskBean.SubmitTask submitTask = new SubmitTaskBean.SubmitTask();
-                    submitTask.setPicContent(picContent);
+//                int size = picContent.size();
+                int stageId = 0;
+                if (picContent.size() > 0) {
                     String remote = picContent.get(0).getRemote();
                     LogUtils.d("TaskTest remote :" + remote);//138201/10000002607/2019/569_4274_task_practice_bitmap_0_0.png
                     String[] strings = remote.split("_");
                     if (strings.length > 1) {
-                        int stageId = Integer.parseInt(strings[1]);
-                        LogUtils.d(  "TaskTest stageId = " + stageId);
-                        submitTask.setPerformId(mTaskId);
-                        submitTask.setStageId(stageId);
-                        submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
-                        submitTasks.add(submitTask);
-                    } else {
-                        LogUtils.e("TaskTest remote :" + remote);
+                        stageId = Integer.parseInt(strings[1]);
                     }
+                    SubmitTaskBean.SubmitTask submitTask = new SubmitTaskBean.SubmitTask();
+                    submitTask.setPicContent(picContent);
+                    LogUtils.d(  "TaskTest stageId = " + stageId);
+                    submitTask.setPerformId(mTaskId);
+                    submitTask.setStageId(stageId);
+                    submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
+                    submitTasks.add(submitTask);
                 }
+                LogUtils.d("TaskTest submitTasks size = "  + submitTasks.size());
             }
             submitTaskBean.setSubmitTasks(submitTasks);
             subscriber.onNext(new Object());//将执行结果返回
@@ -550,10 +544,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             + "/" + dramaId);
                     boolean delete = file.delete();
                     LogUtils.d("task upload success, file delete." + delete);
-                    if (!isHadCommit) {
+                    if (!isHadCommit && isSignatureTask) {
                         isHadCommit = true;
                         mTextFinish.setText(R.string.parent_sign);
-//                        showContentFragment(mPracticeFragment, TAB_PRACTICE, true);
                         loadData();
                         EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
                     } else {
@@ -567,20 +560,14 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     if (throwable instanceof ApiException) {
                         String errorCode = ((ApiException) throwable).getCode();
                         if (errorCode.equals("400")) {
+                            setResult(10000);
+                            TaskDetailStudentActivity.this.finish();
                             ToastUtil.showCustomToast(getBaseContext(), "已经提交");
                         }
                     } else {
                         ToastUtil.showCustomToast(getBaseContext(), "提交失败，请重试");
                     }
                 });
-    }
-
-    /**
-     * 保存到本地 bitmap
-     */
-    private void saveTaskToBitmap () {
-
-
     }
 
     public String getStageTypeCode () {

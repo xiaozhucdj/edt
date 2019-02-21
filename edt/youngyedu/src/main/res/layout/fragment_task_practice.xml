@@ -192,7 +192,28 @@
             android:layout_height="@dimen/y420"
             android:layout_marginTop="@dimen/y2"/>
     </LinearLayout>
-    
+
+    <LinearLayout
+        android:id="@+id/layout_select_question"
+        android:layout_width="@dimen/x960"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/view_line"
+        android:layout_marginTop="@dimen/y2"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/select_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/y2"
+            android:background="@android:color/black"
+            android:layout_marginTop="@dimen/y5"/>
+
+    </LinearLayout>
     <ViewStub
         android:id="@+id/task_practice_viewStub"
         android:layout_width="match_parent"

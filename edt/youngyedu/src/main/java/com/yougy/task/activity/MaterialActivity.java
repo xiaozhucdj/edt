@@ -92,7 +92,7 @@ public class MaterialActivity extends BaseActivity {
         mPageIndex = 0;
         ContentDisPlayerAdapter contentAdapter = mMaterialContentDisplay.getContentAdapter();
         contentAdapter.updateDataList(PAGE_TYPE_KEY, testUrl.get(0).getValue(), "IMG");
-        mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
+        mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, false, mStatusChangeListener);
         mMaterialPageBar.selectPageBtn(mPageIndex, false);
         for (int i = 0; i < mMeterialCount; i++) {
             pathLists.add(null);
@@ -163,7 +163,7 @@ public class MaterialActivity extends BaseActivity {
                     SaveNoteUtils.getInstance(MaterialActivity.this).saveNoteViewData(mNoteBookView2, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),mMaterialId + CACHE_KEY + mPageIndex
                             , mMaterialId + BITMAP_KEY + mPageIndex, String.valueOf(taskID), mMaterialId);
                 mPageIndex = btnIndex;
-                mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, true, mStatusChangeListener);
+                mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, false, mStatusChangeListener);
                 mNoteBookView2.clearAll();
                 mNoteBookView2.leaveScribbleMode(true);
             }

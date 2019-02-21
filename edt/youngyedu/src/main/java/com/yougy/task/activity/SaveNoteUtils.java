@@ -163,6 +163,14 @@ public class SaveNoteUtils {
         }
     }
 
+    public boolean isExists (String fileDir, String fileName) {
+        File f = new File(fileDir, URLEncoder.encode(fileName));
+        if (f.exists()) {
+            return true;
+        }
+        return false;
+    }
+
     public void resetNoteView (NoteBookView noteBookView2, String cacheKey, String bitmapKey, String fileDir) {
         if (noteBookView2 == null) {
             throw new NullPointerException("NoteView is NullPoint Exception, please init.");

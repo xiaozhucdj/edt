@@ -41,6 +41,7 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.bean.ReadTimeBean;
 import com.yougy.task.bean.StageTaskBean;
 import com.yougy.task.bean.SubmitReplyBean;
 import com.yougy.task.bean.Task;
@@ -186,7 +187,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m", "extraParameter"}, values = {"reviewComment", "1"})
+    @DefaultField(keys = {"m", "extraParameter", "ps", "pn"}, values = {"reviewComment", "1", "100", "1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("userId") String userId);
 
@@ -195,7 +196,7 @@ public interface ServerApi {
      */
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m", "extraParameter"}, values = {"reviewComment", "1"})
+    @DefaultField(keys = {"m", "extraParameter", "ps", "pn"}, values = {"reviewComment", "1", "100", "1"})
     Observable<BaseResult<List<QuestionReplyDetail>>> reviewComment2(@Field("examId") Integer examId
             , @Field("itemId") Integer itemId, @Field("replyCommentator") String replyCommentator, @Field("replyCreator") long replyCreator, @Field("userId") long userId);
 
@@ -618,7 +619,13 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"queryStage"})
     Observable<BaseResult<List<StageTaskBean>>> queryStageTask(
             @Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode
-            ,@Field("userId") Integer userId);
+            , @Field("userId") Integer userId);
+
+    @FormUrlEncoded
+    @POST("teacher/v1")
+    @DefaultField(keys = {"m"}, values = {"studentReply"})
+    Observable<BaseResult<ReadTimeBean>> readMaterialTime(@Field("studentId") String userId,
+                    @Field("stageId") String dramaId, @Field("status") String status, @Field("readTime") String readTime);
 
     @FormUrlEncoded
     @POST("classRoom")

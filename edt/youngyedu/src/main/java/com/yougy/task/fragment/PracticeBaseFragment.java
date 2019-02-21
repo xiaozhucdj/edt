@@ -28,9 +28,10 @@ import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.yougy.common.eventbus.BaseEvent;
-import com.yougy.common.utils.AliyunUtil;
+import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.RefreshUtil;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.task.ContentDisPlayer;
@@ -45,10 +46,6 @@ import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomItemDecoration;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,8 +89,13 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     ImageView mImageAddPage;
     @BindView(R.id.task_practice_pageBar2)
     PageBtnBarV2 mPageBtnBarV2;
+    @BindView(R.id.select_recycler_view)
+    RecyclerView mSelectRecyclerView;
+    @BindView(R.id.layout_select_question)
+    LinearLayout layoutSelect;
 
-    private PopupWindow mPopupWindow;
+
+//    private PopupWindow mPopupWindow;
 
     public static final String CACHE_KEY = "_task_practice_cache_";
     public static final String BITMAP_KEY = "_task_practice_bitmap_";
@@ -107,7 +109,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     /*添加页数*/
     private int mAddPageCaoGao = 0;
     /*练习页数加上添加的页数*/
-    private int mPageCount = 0;
+//    private int mPageCount = 0;
     private int prevPage = 0;
     private int currentPage = 0;
 
@@ -164,6 +166,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         initContentDisPlayer();
         initPageBar();
         initNoteView(mNoteBookView);
+        initSelectRecycView();
         return mRootView;
     }
 
@@ -213,8 +216,11 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     protected void handlerRequestSuccess() {
         super.handlerRequestSuccess();
         LogUtils.d("TaskTest handlerRequestSuccess...");
-        showDataEmpty(View.GONE);
-        practiceTotalCount = mStageTaskBeans.size();
+        if (mStageTaskBeans.size() == 0) {
+            showDataEmpty(View.VISIBLE);
+        } else {
+            showDataEmpty(View.GONE);
+            practiceTotalCount = mStageTaskBeans.size();
 //        if (practiceTotalCount > 0 ) {
 //            List<StageTaskBean.StageContent> stageContents = new ArrayList<>();
 ////            stageContents.add(new StageTaskBean.StageContent("http://pre-global-questions.oss-cn-beijing.aliyuncs.com/2018/107020002/2bef61b7-6bae-443d-ac00-890713ecb723/abc.pdf", 1000, "PDF", null,
@@ -226,8 +232,9 @@ public class PracticeBaseFragment extends TaskBaseFragment {
 //            mStageTaskBeans.add(stageTaskBean);
 //            practiceTotalCount ++;
 //        }
-        change(currentSelectPosition);
-        if (!isCommited()) UIUtils.postDelayed(() -> PracticeBaseFragment.this.leaveScribbleMode(true, false), 500);
+            change(currentSelectPosition);
+            if (!isCommited()) UIUtils.postDelayed(() -> PracticeBaseFragment.this.leaveScribbleMode(true, false), 500);
+        }
     }
 
     @Override
@@ -290,8 +297,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         mPageBtnBarV2.setPageBarAdapter(new PageBtnBarAdapterV2(mContext) {
             @Override
             public int getPageBtnCount() {
-                setIsMultiPage ();
-                return mPageCount;
+                return singlePracticePage + mAddPageCaoGao;
             }
 
             @Override
@@ -299,7 +305,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
                 dismissPopupWindow();
                 currentPage = btnIndex;
                 mNoteBookView2.clearAll();
-                mContentDisplayer.toPage(TAG_KEY, btnIndex, true, mStatusChangeListener);
+                mContentDisplayer.toPage(TAG_KEY, btnIndex, false, mStatusChangeListener);
             }
 
             @Override
@@ -341,8 +347,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
 
         @Override
         public int getItemCount() {
-            setIsMultiPage ();
-            return mPageCount;
+            return singlePracticePage + mAddPageCaoGao;
         }
 
     }
@@ -369,7 +374,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             mContentDisplayer.setVisibility(View.GONE);
         } else {
             mContentDisplayer.setVisibility(View.VISIBLE);
-            mContentDisplayer.toPage(TAG_KEY, page, true, mStatusChangeListener);
+            mContentDisplayer.toPage(TAG_KEY, page, false, mStatusChangeListener);
         }
     }
 
@@ -395,7 +400,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         @Override
         public void afterPageCountChanged(String typeKey) {
             singlePracticePage = getPageCount(typeKey);
-            mPageCount = mAddPageCaoGao + singlePracticePage;
+//            mPageCount = mAddPageCaoGao + singlePracticePage;
             if (isBottomBtnShow()) setRecyclerViewWidth();
             else mPageBtnBarV2.refreshPageBar();
         }
@@ -508,8 +513,9 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         prevPage = currentPage;
         currentPage = mAddPageCaoGao + singlePracticePage;
         mAddPageCaoGao ++;
-        pathLists.add(null);
-        mPageCount = mAddPageCaoGao + singlePracticePage;
+        SpUtils.putTaskPracticeAddPages(mTaskDetailStudentActivity.mTaskId + "_" + mStageTaskBeans.get(currentSelectPosition).getStageId()
+                + "_" + currentSelectPosition, mAddPageCaoGao);
+//        pathLists.add(null);
         clickPageIndex();
         autoScrollRecyclerView ((LinearLayoutManager) mTaskPracticePageBar.getLayoutManager(), true);
         setRecyclerViewWidth();
@@ -647,7 +653,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     private synchronized void change(int position) {
         dismissPopupWindow();
         currentPage = 0;
-        mAddPageCaoGao = 0;
+//        mAddPageCaoGao = 0;
         currentSelectPosition = position;
         showOrHideCaoGaoLayout(false, false);
         if (checkCurrentPosition(currentSelectPosition, mStageTaskBeans)){
@@ -680,11 +686,18 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         LogUtils.d("isHandPaintedPattern = " + TaskDetailStudentActivity.isHandPaintedPattern);
         leaveScribbleMode(false, true);
         mSelectPractice.setText(format(mContext.getString(R.string.str_select_practice) + "(" + (currentSelectPosition + 1) + "/" + practiceTotalCount + ")" ));
+        if (isCommited()) {
+            mAddPageCaoGao = mLoadAnswer.getCurrentPositionPages(mStageTaskBeans.get(currentSelectPosition)) - singlePracticePage;
+            if (mAddPageCaoGao < 0 ) mAddPageCaoGao = 0;
+        } else {
+            mAddPageCaoGao = SpUtils.getTaskPracticeAddPages(mTaskDetailStudentActivity.mTaskId + "_" + mStageTaskBeans.get(currentSelectPosition).getStageId()
+                    + "_" + currentSelectPosition);
+        }
         mContentDisplayer.getContentAdapter().deleteDataList(TAG_KEY);
         mContentDisplayer.getContentAdapter().updateDataList(TAG_KEY, mStageTaskBeans.get(currentSelectPosition).getStageContent().get(0)
                         .getValue(), mStageTaskBeans.get(currentSelectPosition).getStageContent().get(0).getFormat() );
         mContentDisplayer.setVisibility(View.VISIBLE);
-        mContentDisplayer.toPage(TAG_KEY, currentPage, true, mStatusChangeListener);
+        mContentDisplayer.toPage(TAG_KEY, currentPage, false, mStatusChangeListener);
         mTaskPageAdapter.notifyDataSetChanged();
     }
 
@@ -693,7 +706,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
      * @param isShow
      */
     private void showSelectItem (boolean isShow) {
-        LogUtils.i("show select item popup window : " + isShow);
         mSelectPractice.setSelected(isShow);
         if (isShow) {
             showPopupWindow();
@@ -701,48 +713,40 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             dismissPopupWindow();
         }
         mCurrentShowItems = isShow;
+        LogUtils.i("show select item popup window : " + isShow + "   mCurrentShowItems = " + mCurrentShowItems);
     }
 
-    /**
-     *  显示选择练习选项
-     */
-    private void showPopupWindow () {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.select_practice_popupwindow, null);
-        mPopupWindow = new PopupWindow(mContext);
-        mPopupWindow.setWidth(960);
-        mPopupWindow.setContentView(view);
-        mPopupWindow.setOutsideTouchable(false);
-        mPopupWindow.setTouchable(true);
 
-        RecyclerView recyclerView = view.findViewById(R.id.item_practice_recycler);
-
+    private void initSelectRecycView () {
         CustomGridLayoutManager customGridLayoutManager = new  CustomGridLayoutManager(mContext, 8);
         customGridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        if (mPageCount < 104) customGridLayoutManager.setScrollEnabled(false);
-        recyclerView.setLayoutManager(customGridLayoutManager);
+        if (practiceTotalCount < 104) customGridLayoutManager.setScrollEnabled(false);
+        mSelectRecyclerView.setLayoutManager(customGridLayoutManager);
 
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+        mSelectRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 int childAdapterPosition = parent.getChildAdapterPosition(view);
                 int index = childAdapterPosition % 8;
-                if (index == 0 || index == 2 || index == 5 || index == 7) {
-                    outRect.left = 31;
-                    outRect.right = 30;
-                } else if (index == 1 || index == 3) {
-                    outRect.left = 30;
-                    outRect.right = 30;
-                } else {
-                    outRect.left = 30;
-                    outRect.right = 31;
-                }
+//                if (index == 0 || index == 2 || index == 5 || index == 7) {
+//                    outRect.left = 31;
+//                    outRect.right = 30;
+//                } else if (index == 1 || index == 3) {
+//                    outRect.left = 30;
+//                    outRect.right = 30;
+//                } else {
+//                    outRect.left = 30;
+//                    outRect.right = 31;
+//                }
+                outRect.left = 30;
+                outRect.right = 30;
                 outRect.top = 10;
                 outRect.bottom = 10;
             }
         });
 
 
-        recyclerView.setAdapter(new RecyclerView.Adapter<ViewHolder>() {
+        mSelectRecyclerView.setAdapter(new RecyclerView.Adapter<ViewHolder>() {
             @NonNull
             @Override
             public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -772,15 +776,34 @@ public class PracticeBaseFragment extends TaskBaseFragment {
                 }
             }
         });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mPopupWindow.showAsDropDown(mViewLine, 0 , 2);
-            mPopupWindow.setOnDismissListener(() -> {
-                mCurrentShowItems = false;
-                mSelectPractice.setSelected(mCurrentShowItems);
-                LogUtils.d("TaskLog mCurrentShowItems = " + mCurrentShowItems + "   isShowing: " + mPopupWindow.isShowing());
-                leaveScribbleMode(true, false);
-            });
-        }
+    }
+
+    /**
+     *  显示选择练习选项
+     */
+    private void showPopupWindow () {
+//        View view = LayoutInflater.from(mContext).inflate(R.layout.select_practice_popupwindow, null);
+//        mPopupWindow = new PopupWindow(mContext);
+//        mPopupWindow.setWidth(960);
+//        mPopupWindow.setContentView(view);
+//        mPopupWindow.setOutsideTouchable(false);
+//        mPopupWindow.setTouchable(true);
+
+//        RecyclerView recyclerView = view.findViewById(R.id.select_recycler_view);
+
+
+//        mSelectRecyclerView.setVisibility(View.VISIBLE);
+        mSelectRecyclerView.getAdapter().notifyDataSetChanged();
+        layoutSelect.setVisibility(View.VISIBLE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            mPopupWindow.showAsDropDown(mViewLine, 0 , 2);
+//            mPopupWindow.setOnDismissListener(() -> {
+//                mCurrentShowItems = false;
+//                mSelectPractice.setSelected(mCurrentShowItems);
+//                LogUtils.d("TaskLog mCurrentShowItems = " + mCurrentShowItems + "   isShowing: " + mPopupWindow.isShowing());
+//                leaveScribbleMode(true, false);
+//            });
+//        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -796,13 +819,16 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     }
 
     public void dismissPopupWindow () {
-        if (mPopupWindow != null) mPopupWindow.dismiss();
-        mPopupWindow = null;
+//        if (mPopupWindow != null) mPopupWindow.dismiss();
+//        mPopupWindow = null;
+        if (mCurrentShowItems)
+            leaveScribbleMode(true, false);
+        layoutSelect.setVisibility(View.GONE);
+        mCurrentShowItems = false;
+        mSelectPractice.setSelected(mCurrentShowItems);
+
     }
 
-    public void setIsMultiPage () {
-        isMultiPage = mPageCount > 1;
-    }
 
     private String[] getCacheBitmapKey (int position, int page) {
         if(checkCurrentPosition(position, mStageTaskBeans)){

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
@@ -30,6 +31,8 @@ public class SignatureFragment extends TaskBaseFragment {
 
     @BindView(R.id.signature_noteView)
     NoteBookView2 mNoteBookViewSignature;
+    @BindView(R.id.image_quxiao)
+    ImageView mImageView;
 
     private int stageId;
 
@@ -51,19 +54,27 @@ public class SignatureFragment extends TaskBaseFragment {
     @Override
     public void loadData() {
         super.loadData();
-        NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04", SpUtils.getUserId()).subscribe(stageTaskBeans -> {
-            Log.i(TAG, "call: " + stageTaskBeans.size());
-            if (stageTaskBeans.size() > 0) {
-                StageTaskBean stageTaskBean = stageTaskBeans.get(0);
-                stageId = stageTaskBean.getStageId();
-                if (stageTaskBean.getStageScene().size() > 0) {
-                    mLoadAnswer.loadAnswer(mNoteBookViewSignature, stageTaskBean,0 , 0 );
-                }
-            }
-        }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
+
+        String[] cacheBitmapKey = getCacheBitmapKey(0, 0);
+//        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
+//                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId), stageId);
+        SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookViewSignature,cacheBitmapKey[0] , cacheBitmapKey[1]
+                    , SaveNoteUtils.getInstance(mContext).getTaskFileDir());
+
+
+//        NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04", SpUtils.getUserId()).subscribe(stageTaskBeans -> {
+//            Log.i(TAG, "call: " + stageTaskBeans.size());
+//            if (stageTaskBeans.size() > 0) {
+//                StageTaskBean stageTaskBean = stageTaskBeans.get(0);
+//                stageId = stageTaskBean.getStageId();
+//                if (stageTaskBean.getStageScene().size() > 0) {
+//                    mLoadAnswer.loadAnswer(mNoteBookViewSignature, stageTaskBean,0 , 0 );
+//                }
+//            }
+//        }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
     }
 
-    @OnClick({R.id.btn_submit, R.id.btn_cancel})
+    @OnClick({R.id.btn_submit, R.id.btn_cancel, R.id.image_quxiao})
     public void onClick (View view){
         switch (view.getId()) {
             case R.id.btn_submit:
@@ -71,6 +82,9 @@ public class SignatureFragment extends TaskBaseFragment {
                 mTaskDetailStudentActivity.signatureSubmit();
                 break;
             case R.id.btn_cancel:
+                mTaskDetailStudentActivity.signatureCancel();
+                break;
+            case R.id.image_quxiao:
                 mTaskDetailStudentActivity.signatureCancel();
                 break;
         }

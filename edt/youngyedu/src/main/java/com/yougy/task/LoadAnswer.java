@@ -17,6 +17,7 @@ import com.yougy.view.NoteBookView;
 import com.yougy.view.NoteBookView2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -56,6 +57,33 @@ public class LoadAnswer {
         mNoteBookView = noteView;
         mHandler.removeCallbacks(mLoadAnswerRunnable);
         mHandler.post(mLoadAnswerRunnable);
+    }
+
+
+    public int getCurrentPositionPages (StageTaskBean stageTaskBean) {
+        int pageCount = 1;
+        List<StageTaskBean.StageScene> stageScenes = stageTaskBean.getStageScene();
+        if (stageScenes != null) {
+            int size2 = stageScenes.size();
+            for (int j = 0; j < size2; j++) {
+                List<StageTaskBean.StageScene.SceneContent> sceneContents = stageScenes.get(j).getSceneContents();
+                int sizek = sceneContents.size();
+                for (int k = 0; k < sizek; k++) {
+                    String remote = sceneContents.get(k).getRemote();
+                    String[] split = remote.split("_");
+                    int length = split.length;
+                    String[] split1 = split[length - 1].split("\\.");
+                    int page ;
+                    try {
+                        page = Integer.parseInt(split1[0]);
+                        pageCount = Math.max(page, pageCount);
+                    } catch (Exception e) {
+                        LogUtils.e("" + e.getMessage());
+                    }
+                }
+            }
+        }
+        return pageCount + 1;
     }
 
     protected List<StageTaskBean.StageScene> mStageScenes = new ArrayList<>();

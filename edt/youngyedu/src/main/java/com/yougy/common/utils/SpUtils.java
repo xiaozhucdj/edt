@@ -32,6 +32,7 @@ public class SpUtils {
     private static final String STUDENT_SCHOOL = "student_school";
     private static final String STUDENT_SUBJECT = "student_subject";
     private static final String STUDENT_CODE = "student_code";
+    private static final String TASK_MATERIAL_READ_TIME = "task_material_read_time";
 
     private static final String SP_MSG_UNREAD_COUNT_FILE_NAME = "message_unread_count";
     private static final String SP_DIALOG_NOT_SHOW_AGAIN_TAG_FILE_NAME = "dialog_not_show_again_tag";
@@ -64,6 +65,7 @@ public class SpUtils {
      */
     private static final String SUBJECT_NAMES = "subjectNames";
     private static final String HISTORY_RECORD = "history_record";
+    private static final String TASK_PRACTICE_ADD_PAGES = "task_practice_add_pages";
 
     private static final String UUID = "UUID";
 
@@ -196,6 +198,17 @@ public class SpUtils {
         return sp.getString(key, "");
     }
 
+    public static void putInt(String key, int value) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
+    public static int getInt(String key) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
+        return sp.getInt(key, 0);
+    }
 
     /***
      * @param values
@@ -517,5 +530,17 @@ public class SpUtils {
     public static String getMediaString(String key) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences("media", Context.MODE_PRIVATE);
         return sp.getString(key, "");
+    }
+
+    public static int getTaskPracticeAddPages (String key) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(TASK_PRACTICE_ADD_PAGES, Context.MODE_PRIVATE);
+        return sp.getInt(key, 0);
+    }
+
+    public static void putTaskPracticeAddPages (String key, int value) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(TASK_PRACTICE_ADD_PAGES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(key, value);
+        editor.commit();
     }
 }

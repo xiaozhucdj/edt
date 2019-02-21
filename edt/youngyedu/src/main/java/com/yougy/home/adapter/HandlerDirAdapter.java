@@ -81,7 +81,8 @@ public class HandlerDirAdapter extends BaseAdapter {
             holder.rl_manger.setLayoutParams(rlParams);
         }
         holder.tv_title.setText(mItems.get(position).getTitle());
-        holder.tv_page.setText(mItems.get(position).getPosition() + "页");
+        holder.tv_page.setText((Integer.valueOf(mItems.get(position).getPosition())+1) + "页");
+
         return convertView;
     }
 
