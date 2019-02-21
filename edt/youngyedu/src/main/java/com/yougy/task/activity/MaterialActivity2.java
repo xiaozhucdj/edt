@@ -12,13 +12,17 @@ import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.AliyunUtil;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.task.ContentDisPlayer;
 import com.yougy.task.ContentDisPlayerAdapter;
 import com.yougy.task.LoadAnswer;
+import com.yougy.task.bean.ReadTimeBean;
 import com.yougy.task.bean.StageTaskBean;
 import com.yougy.task.fragment.MaterialsBaseFragment;
 import com.yougy.ui.activity.R;
@@ -28,6 +32,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.functions.Action1;
 
 public class MaterialActivity2 extends BaseActivity {
 
@@ -78,6 +83,10 @@ public class MaterialActivity2 extends BaseActivity {
 
     private int mCurrentPosition;
 
+    private long readTimeStart = 0;
+    private int readTime = 0;
+    private String saveTimeKey;
+
     @Override
     public void loadIntent(Context packageContext, Class<?> cls) {
         super.loadIntent(packageContext, cls);
@@ -118,6 +127,7 @@ public class MaterialActivity2 extends BaseActivity {
         String remote = this.stageContent.getRemote();
         mCurrentUrl = "http://" + bucket + AliyunUtil.ANSWER_PIC_HOST + remote;
         LogUtils.d("TaskTest bucket = " + bucket + "  remote = " + remote + "  mCurrentUrl = " + mCurrentUrl);
+        saveTimeKey = taskID + "_" + stageId +"_readTime_" + mCurrentPosition;
         initContentDisPlayer ();
         initPageBar();
     }
@@ -144,15 +154,25 @@ public class MaterialActivity2 extends BaseActivity {
             }
             LogUtils.d("TaskTest format = " + format  + "  mCurrentUrl = " + mCurrentUrl);
             contentAdapter.updateDataList(PAGE_TYPE_KEY, mCurrentUrl, format);
-            mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
+            mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, false, mStatusChangeListener);
             mMaterialPageBar.selectPageBtn(mPageIndex, false);
         }
+        readTime = 0;
+        readTimeStart = System.currentTimeMillis();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         LogUtils.d("NoteView onResume.");
+        if (readTime > 0) {
+            readTime = readTime / 1000;
+            NetWorkManager.readMaterialTime(String.valueOf(SpUtils.getUserId()),String.valueOf(stageId),
+                    null, String.valueOf(readTime)).subscribe(readTimeBean -> LogUtils.i("TaskTest task material time update success!" + readTime),
+                    throwable -> LogUtils.d("TaskTest interface studentReply return error!"));
+        } else {
+            LogUtils.e("TaskTest system time is error.");
+        }
         if (!isHadComplete)
             UIUtils.postDelayed(() -> mNoteBookView.setIntercept(false), 300);
     }
@@ -164,6 +184,21 @@ public class MaterialActivity2 extends BaseActivity {
         String[] cacheBitmapKey = getCacheBitmapKey(mCurrentPosition, mPageIndex);
         SaveNoteUtils.getInstance(getApplicationContext()).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),
                 cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID), stageId);
+        if (NetUtils.isNetConnected()) {
+            readTime = (int) ((System.currentTimeMillis() - readTimeStart) / 1000);
+            if (readTime > 0) {
+                NetWorkManager.readMaterialTime(String.valueOf(SpUtils.getUserId()),String.valueOf(stageId),
+                        null, String.valueOf(readTime)).subscribe(readTimeBean -> {
+                            LogUtils.i("TaskTest task material time update success!" + readTime);
+                            SpUtils.putInt(saveTimeKey, readTime + SpUtils.getInt(saveTimeKey));
+                        },
+                        throwable -> LogUtils.d("TaskTest interface studentReply return error!"));
+            } else {
+                LogUtils.e("TaskTest system time is error.");
+            }
+        } else {
+            readTime = (int) ((System.currentTimeMillis() - readTimeStart) / 1000);
+        }
     }
 
 
@@ -303,7 +338,7 @@ public class MaterialActivity2 extends BaseActivity {
                             cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID),stageId);
                 }
                 mPageIndex = btnIndex;
-                mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, true, mStatusChangeListener);
+                mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, false, mStatusChangeListener);
                 mNoteBookView.clear();
                 mNoteBookView.leaveScribbleMode();
             }

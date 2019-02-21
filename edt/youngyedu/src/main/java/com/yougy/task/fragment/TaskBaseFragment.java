@@ -32,10 +32,10 @@ public class TaskBaseFragment extends BFragment {
 
     public NoteBookView2 mNoteBookView2;
 
-    public ArrayList<String> getPathLists() {
-        return pathLists;
-    }
-    protected ArrayList<String> pathLists = new ArrayList<>();//path  用'#'连接多页
+//    public ArrayList<String> getPathLists() {
+//        return pathLists;
+//    }
+//    protected ArrayList<String> pathLists = new ArrayList<>();//path  用'#'连接多页
 //    protected String mCurrentCacheName = ""; //当前路径是否有本地轨迹文件，判断。
     protected boolean isMultiPage = false;
 

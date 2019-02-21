@@ -51,6 +51,7 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.bean.ReadTimeBean;
 import com.yougy.task.bean.StageTaskBean;
 import com.yougy.task.bean.SubmitReplyBean;
 import com.yougy.task.bean.Task;
@@ -708,6 +709,12 @@ public final class NetWorkManager {
      */
     public static Observable<List<StageTaskBean>> queryStageTask(String dramaId, String stageTypeCode, int userId) {
         return getInstance().getServerApi().queryStageTask(dramaId, stageTypeCode, userId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
+    public static Observable<ReadTimeBean> readMaterialTime(String  userId, String dramaId, String status,String readTime) {
+        return getInstance().getServerApi().readMaterialTime(userId, dramaId, status, readTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }

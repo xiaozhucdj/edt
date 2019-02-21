@@ -41,6 +41,7 @@ import com.yougy.shop.bean.OrderInfo;
 import com.yougy.shop.bean.OrderSummary;
 import com.yougy.shop.bean.PromotionResult;
 import com.yougy.shop.bean.RemoveRequestObj;
+import com.yougy.task.bean.ReadTimeBean;
 import com.yougy.task.bean.StageTaskBean;
 import com.yougy.task.bean.SubmitReplyBean;
 import com.yougy.task.bean.Task;
@@ -619,6 +620,12 @@ public interface ServerApi {
     Observable<BaseResult<List<StageTaskBean>>> queryStageTask(
             @Field("dramaId") String dramaId, @Field("stageTypeCode") String stageTypeCode
             , @Field("userId") Integer userId);
+
+    @FormUrlEncoded
+    @POST("teacher/v1")
+    @DefaultField(keys = {"m"}, values = {"studentReply"})
+    Observable<BaseResult<ReadTimeBean>> readMaterialTime(@Field("studentId") String userId,
+                    @Field("stageId") String dramaId, @Field("status") String status, @Field("readTime") String readTime);
 
     @FormUrlEncoded
     @POST("classRoom")

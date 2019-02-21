@@ -163,9 +163,13 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
     @Override
     protected void handlerRequestSuccess() {
         super.handlerRequestSuccess();
-        showDataEmpty(View.GONE);
-        mMyRecyclerAdapter.notifyDataSetChanged();
-        mPageBtnBarV2.selectPageBtn(0, false);
+        if (mStageTaskBeans.size() == 0) {
+            showDataEmpty(View.VISIBLE);
+        } else {
+            showDataEmpty(View.GONE);
+            mMyRecyclerAdapter.notifyDataSetChanged();
+            mPageBtnBarV2.selectPageBtn(0, false);
+        }
     }
 
     @Override
