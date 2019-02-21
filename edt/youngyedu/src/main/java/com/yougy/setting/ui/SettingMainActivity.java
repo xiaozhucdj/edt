@@ -12,6 +12,7 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.jd.BroadcastHelper;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.ThreadManager;
@@ -260,6 +261,7 @@ public class SettingMainActivity extends BaseActivity {
                     deleteDatabase(JOURNAL_NAME);
                     FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
                     showCenterDetermineDialog(R.string.unbind_success);
+                    BroadcastHelper.unBindJdReader(SettingMainActivity.this);
                     YXClient.getInstance().logout();
                     ThreadManager.getSinglePool().execute(new Runnable() {
                         @Override

@@ -33,8 +33,8 @@ android {
         applicationId "com.youngy.ui"
         minSdkVersion 15
         targetSdkVersion 22
-        versionName "student_20-v4"
-        versionCode 20
+        versionName "student_20-v4_rom测试"
+        versionCode 21
         multiDexEnabled true
 
 //        ndk {
