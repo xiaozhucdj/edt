@@ -20,7 +20,6 @@ import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.BookInfo;
 import com.yougy.ui.activity.R;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class DownFileManager {
     //（默认BM04为图书，BM06为音频zip包，BM07为音频位置文件包）
     private String mType;
 
-    private String mBookStatusCode;
+    private String mBookAudioStatusCode;
 
     private String mBookAudio;
 
@@ -68,17 +67,17 @@ public class DownFileManager {
 
 
     public void requestDownFile(BookInfo info) {
-        requestDownFile(info.getBookId(), info.getBookStatusCode(), info.getBookAudio(), info.getBookAudioConfig());
+        requestDownFile(info.getBookId(), info.getBookAudioStatusCode(), info.getBookAudio(), info.getBookAudioConfig());
     }
 
-    public void requestDownFile(int booId, String bookStatusCode, String bookAudio, String bookAudioConfig) {
+    public void requestDownFile(int booId, String bookAudioStatusCode, String bookAudio, String bookAudioConfig) {
         mOssBean = null;
         mBookId = booId;
-        mBookStatusCode = bookStatusCode;
+        mBookAudioStatusCode = bookAudioStatusCode;
         mBookAudio = bookAudio;
         mBookAudioConfig = bookAudioConfig;
         //判断语音文件是否有更新：
-        LogUtils.e(TAG, "bookStatusCode  bookStatusCode...." + bookStatusCode);
+        LogUtils.e(TAG, "bookStatusCode  bookStatusCode...." + bookAudioStatusCode);
         LogUtils.e(TAG, "图书path" + FileUtils.getBookFileName(booId, FileUtils.bookDir));
         LogUtils.e(TAG, "  图书是否存在." + StringUtils.isEmpty(FileUtils.getBookFileName(booId, FileUtils.bookDir)));
 
@@ -91,7 +90,7 @@ public class DownFileManager {
             }
         }
 
-        if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(bookStatusCode)) {
+        if (!StringUtils.isEmpty(bookAudioStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(bookAudioStatusCode)) {
             LogUtils.e(TAG, "判断语音文件是否有更新：");
 
             String localAudio = SpUtils.getMediaString(booId + AUDIO_TAG);
@@ -121,7 +120,7 @@ public class DownFileManager {
             LogUtils.e(TAG, "下载图书：");
             showDownFileDialog();
 
-        } else if (!StringUtils.isEmpty(bookStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(bookStatusCode)) {
+        } else if (!StringUtils.isEmpty(bookAudioStatusCode) && FileContonst.SERVER_BOOK_STATU_SCODE.contains(bookAudioStatusCode)) {
             if (!FileUtils.exists(FileUtils.getMediaMp3Path() + mBookId + "/") && !StringUtils.isEmpty(mBookAudio)) {
                 LogUtils.e(TAG, "下载音频：");
                 mType = FILE_AUDIO; //下载音频
@@ -239,6 +238,7 @@ public class DownFileManager {
                         LogUtils.e("没有支持的设备型号。。。" + mType);
                         mDialog.dismiss();
                         switch (mType) {
+
                             case FILE_BOOK:
                                 mListener.onDownFileListenerCallBack(mListener.STATE_NO_SUPPORT_BOOK);
                                 break;
@@ -352,7 +352,7 @@ public class DownFileManager {
                 LogUtils.e("下载....onFinish");
                 if (mType.equals(FILE_BOOK)) {
                     LogUtils.e("下载....FILE_BOOK");
-                    requestDownFile(mBookId, mBookStatusCode, mBookAudio, mBookAudioConfig);
+                    requestDownFile(mBookId, mBookAudioStatusCode, mBookAudio, mBookAudioConfig);
                 } else {
                     //解压文件
                     LogUtils.e("....解压文件");
@@ -392,10 +392,12 @@ public class DownFileManager {
                                 public void run() {
                                     if (result) {
                                         SpUtils.putMediaString(key, value);
-                                        requestDownFile(mBookId, mBookStatusCode, mBookAudio, mBookAudioConfig);
+                                        requestDownFile(mBookId, mBookAudioStatusCode, mBookAudio, mBookAudioConfig);
                                     } else {
                                         //解压失败
-                                        mDialog.dismiss() ;
+                                        if (mDialog != null && mDialog.isShowing()) {
+                                            mDialog.dismiss();
+                                        }
                                         mListener.onDownFileListenerCallBack(mType.equals(FILE_AUDIO) ? mListener.STATE_ERROR_AUDIO_ZIP : mListener.STATE_ERROR_CONFIG_ZIP);
                                     }
                                 }
