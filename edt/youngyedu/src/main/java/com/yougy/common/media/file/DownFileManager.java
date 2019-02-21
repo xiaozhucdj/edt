@@ -349,8 +349,6 @@ public class DownFileManager {
 
             @Override
             public void onFinish() {
-
-
                 LogUtils.e("下载....onFinish");
                 if (mType.equals(FILE_BOOK)) {
                     LogUtils.e("下载....FILE_BOOK");
@@ -397,6 +395,7 @@ public class DownFileManager {
                                         requestDownFile(mBookId, mBookStatusCode, mBookAudio, mBookAudioConfig);
                                     } else {
                                         //解压失败
+                                        mDialog.dismiss() ;
                                         mListener.onDownFileListenerCallBack(mType.equals(FILE_AUDIO) ? mListener.STATE_ERROR_AUDIO_ZIP : mListener.STATE_ERROR_CONFIG_ZIP);
                                     }
                                 }
