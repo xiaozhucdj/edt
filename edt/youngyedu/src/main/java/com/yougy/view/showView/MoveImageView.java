@@ -24,6 +24,18 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
     private static final String TAG = "MoveImageView";
     private int screenHeight;
     private int screenWidth;
+
+
+    private Position mOldPosition;
+
+    public void setOldPosition(Position oldPosition) {
+        mOldPosition = oldPosition;
+    }
+
+    public Position getOldPosition() {
+        return mOldPosition;
+    }
+
     public MoveImageView(Context context) {
         super(context);
         init();
@@ -62,15 +74,17 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
     public void setFlag() {
         flag = true;
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             mStartX = event.getRawX();
             mStartY = event.getRawY();
         }
         if (event.getAction() == MotionEvent.ACTION_UP && null != updateImageViewMapListener) {
             updateWindowPosition();
-            updateImageViewMapListener.updateImageViewMap(new Position(params.leftMargin, params.topMargin), type,MoveImageView.this);
+            updateImageViewMapListener.updateImageViewMap(new Position(params.leftMargin, params.topMargin), type, MoveImageView.this);
         }
         return true;
     }
@@ -95,10 +109,8 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
     public static final int TYPE_PHOTO = 2;
 
     private FrameLayout.LayoutParams params;
-    private FrameLayout viewGroup;
 
     private void updateWindowPosition() {
-        viewGroup = (FrameLayout) getParent();
         params = (FrameLayout.LayoutParams) getLayoutParams();
         int y = screenHeight - 61;
         LogUtils.e(getClass().getName(), "leftmargin : " + mStartX + ",topmargin : " + mStartY + ",Y:" + y);
@@ -116,7 +128,6 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
         } else {
             params.topMargin = (int) mStartY;
         }
-
         setLayoutParams(params);
         if (null != label) {
             label.setLeftMargin(params.leftMargin);
@@ -142,7 +153,7 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
     }
 
     public interface UpdateImageViewMapListener {
-        void updateImageViewMap(Position position, int type,MoveImageView imageView);
+        void updateImageViewMap(Position position, int type, MoveImageView imageView);
     }
 
     private class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -176,7 +187,7 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             updateWindowPosition();
             if (null != updateImageViewMapListener) {
-                updateImageViewMapListener.updateImageViewMap(new Position(params.leftMargin, params.topMargin), type,MoveImageView.this);
+                updateImageViewMapListener.updateImageViewMap(new Position(params.leftMargin, params.topMargin), type, MoveImageView.this);
             }
             return true;
         }

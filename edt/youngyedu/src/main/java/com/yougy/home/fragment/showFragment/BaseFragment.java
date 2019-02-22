@@ -1552,14 +1552,17 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
                 EpdController.leaveScribbleMode(mNoteBookView);
                 flag = false;
                 useNote(label);
-                FrameLayout.LayoutParams tmp = (FrameLayout.LayoutParams) imageView.getLayoutParams();
-                curImgViewPosition = new Position(tmp.leftMargin, tmp.topMargin);
+                curImgViewPosition = imageView.getOldPosition();
 
             }
         });
         imageView.setUpdateImageViewMapListener(this);
+
         mFrameLayout.addView(imageView, params);
-        imageViews.put(new Position(params.leftMargin, params.topMargin), imageView);
+//        imageViews.put(new Position(params.leftMargin, params.topMargin), imageView);
+        Position position = new Position(params.leftMargin, params.topMargin);
+        imageView.setOldPosition(position);
+        imageViews.put(position, imageView);
     }
 
     /**
@@ -1584,7 +1587,13 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     @Override
     public void updateImageViewMap(final Position position, int type, MoveImageView imageView) {
         leaveScribbleMode(true);
+
+        if (imageView.getOldPosition() != null) {
+            imageViews.remove(imageView.getOldPosition());
+        }
+        imageView.setOldPosition(position);
         imageViews.put(position, imageView);
+
         Observable.create(new Observable.OnSubscribe<Object>() {
             @Override
             public void call(Subscriber<? super Object> subscriber) {
