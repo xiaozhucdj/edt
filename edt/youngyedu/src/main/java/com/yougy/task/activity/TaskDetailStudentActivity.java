@@ -223,6 +223,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
                                 .subscribe(stageTaskBeans2 -> {
                                             mStageTaskBeans.clear();
                                             mStageTaskBeans.addAll(stageTaskBeans2);
+                                            if (mCurrentFragment != null) {
+                                                mCurrentFragment.setServerFail(false);
+                                            }
                                             EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA));
                                         },
                                         throwable -> {
@@ -240,6 +243,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     .subscribe(stageTaskBeans2 -> {
                                 mStageTaskBeans.clear();
                                 mStageTaskBeans.addAll(stageTaskBeans2);
+                                if (mCurrentFragment != null) {
+                                    mCurrentFragment.setServerFail(false);
+                                }
                                 EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA));
                             },
                             throwable -> {
@@ -311,6 +317,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
     }
 
+    private TaskBaseFragment mCurrentFragment;
     private void showContentFragment(TaskBaseFragment fragment, String tag, boolean isLoadData) {
         if (currentTab == TAB_PRACTICE && tag != TAB_PRACTICE) {
             mPracticeFragment.dismissPopupWindow();
@@ -321,7 +328,11 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
         LogUtils.d("task current show Fragment : " + tag + "   currentTab = " + currentTab);
         currentTab = tag;
-        if (isLoadData) loadData();
+        mCurrentFragment= fragment;
+        if (isLoadData) {
+            mStageTaskBeans.clear();
+            loadData();
+        }
         setTabSelectState();
         replaceFragment(fragment, R.id.task_content, tag);
     }

@@ -47,6 +47,10 @@ public class TaskBaseFragment extends BFragment {
     protected boolean mIsServerFail = true;//服务器请求失败
     protected String mServerFailMsg = "加载中...";//失败信息
 
+    public void setServerFail (boolean isServerFail) {
+        mIsServerFail = isServerFail;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

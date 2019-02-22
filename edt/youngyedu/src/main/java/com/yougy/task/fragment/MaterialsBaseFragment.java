@@ -66,8 +66,6 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         String type = event.getType();
         if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
             mIsServerFail = false;
-            mStageTaskBeans.clear();
-            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
             mIsServerFail = true;
@@ -155,6 +153,8 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         if (mIsServerFail) {
             handlerRequestFail();
         } else {
+            mStageTaskBeans.clear();
+            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
             calculateCurrentLists(0);
             handlerRequestSuccess();
         }

@@ -120,8 +120,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         String type = event.getType();
         if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
             mIsServerFail = false;
-            mStageTaskBeans.clear();
-            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
+
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
             mIsServerFail = true;
@@ -173,6 +172,8 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         super.loadData();
         dismissPopupWindow();
         LogUtils.d("TaskTest Practice loadData.");
+        mStageTaskBeans.clear();
+        mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
         if (checkCurrentPosition(currentSelectPosition, mStageTaskBeans)){
             handlerRequestSuccess();
         } else {
