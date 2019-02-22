@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/x60"
+        android:layout_marginTop="@dimen/x70"
         android:layout_marginRight="20px">
 
         <ImageButton
@@ -165,7 +165,7 @@
         android:background="@drawable/img_btn_hide"
         android:gravity="center"
         android:text="隐藏菜单栏"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="18px" />
 
 </RelativeLayout>
