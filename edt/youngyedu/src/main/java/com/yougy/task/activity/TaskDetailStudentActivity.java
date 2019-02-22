@@ -235,6 +235,22 @@ public class TaskDetailStudentActivity extends BaseActivity {
                                             }
                                         });
                     }, throwable -> hadSignature = false);
+        } else {
+            NetWorkManager.queryStageTask(String.valueOf(dramaId), getStageTypeCode(), SpUtils.getUserId())
+                    .subscribe(stageTaskBeans2 -> {
+                                mStageTaskBeans.clear();
+                                mStageTaskBeans.addAll(stageTaskBeans2);
+                                EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA));
+                            },
+                            throwable -> {
+                                mStageTaskBeans.clear();
+                                if (throwable!=null) {
+                                    String errorMsg = throwable.getMessage();
+                                    if (!NetUtils.isNetConnected()) errorMsg = "网络连接不正常，请检查您的网络!";
+                                    EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA_FAIL, errorMsg));
+                                    LogUtils.e("server reply error:" + throwable.getMessage());
+                                }
+                            });
         }
 
     }
