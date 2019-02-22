@@ -138,6 +138,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             if (extraData) {
                 mImageAddPage.setVisibility(View.GONE);
                 mTextCaoGao.setVisibility(View.GONE);
+                ((LinearLayoutManager) mTaskPracticePageBar.getLayoutManager()).scrollToPosition(0);
             }
         }
     }
