@@ -144,24 +144,30 @@ public class TaskListActivity extends BaseActivity {
                         currentCompletedTasks.clear();
                         currentCompletedTasks.addAll(taskList);
                         completedTasksCount = taskSummary.getCount();
-                        completedAdapter.notifyDataSetChanged();
+
                         if (currentCompletedTasks.size() == 0) {
                             binding.textDataEmpty.setText(R.string.no_completed_task);
                             binding.textDataEmpty.setVisibility(View.VISIBLE);
+                            binding.completedTasksRecycler.setVisibility(View.GONE);
                         } else {
                             binding.textDataEmpty.setVisibility(View.GONE);
+                            completedAdapter.notifyDataSetChanged();
+                            binding.completedPageBarTask.refreshPageBar();
+                            binding.completedTasksRecycler.setVisibility(View.VISIBLE);
                         }
                     } else {
                         currentUnCompleteTasks.clear();
                         currentUnCompleteTasks.addAll(taskList);
                         uncompleteTasksCount = taskSummary.getCount();
-                        unCompleteAdapter.notifyDataSetChanged();
-                        binding.uncompletePageBarTask.refreshPageBar();
                         if (currentUnCompleteTasks.size() == 0) {
                             binding.textDataEmpty.setText(R.string.no_uncomplete_task);
                             binding.textDataEmpty.setVisibility(View.VISIBLE);
+                            binding.uncompleteTasksRecycler.setVisibility(View.GONE);
                         } else {
                             binding.textDataEmpty.setVisibility(View.GONE);
+                            unCompleteAdapter.notifyDataSetChanged();
+                            binding.uncompletePageBarTask.refreshPageBar();
+                            binding.uncompleteTasksRecycler.setVisibility(View.VISIBLE);
                         }
                     }
                 }, throwable -> {
@@ -280,6 +286,7 @@ public class TaskListActivity extends BaseActivity {
         binding.completedTasksRecycler.setVisibility(View.GONE);
         binding.uncompletePageBarTask.setVisibility(View.VISIBLE);
         binding.uncompleteTasksRecycler.setVisibility(View.VISIBLE);
+        binding.textDataEmpty.setText(R.string.no_uncomplete_task);
     }
 
     public void complete(View view) {
@@ -291,6 +298,7 @@ public class TaskListActivity extends BaseActivity {
         binding.uncompleteTasksRecycler.setVisibility(View.GONE);
         binding.completedPageBarTask.setVisibility(View.VISIBLE);
         binding.completedTasksRecycler.setVisibility(View.VISIBLE);
+        binding.textDataEmpty.setText(R.string.no_completed_task);
         if (currentCompletedTasks.size() == 0) {
             generateData(currentCompletedPage);
         }
