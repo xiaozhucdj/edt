@@ -145,12 +145,24 @@ public class TaskListActivity extends BaseActivity {
                         currentCompletedTasks.addAll(taskList);
                         completedTasksCount = taskSummary.getCount();
                         completedAdapter.notifyDataSetChanged();
+                        if (currentCompletedTasks.size() == 0) {
+                            binding.textDataEmpty.setText("您还没有已完成的任务！");
+                            binding.textDataEmpty.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.textDataEmpty.setVisibility(View.GONE);
+                        }
                     } else {
                         currentUnCompleteTasks.clear();
                         currentUnCompleteTasks.addAll(taskList);
                         uncompleteTasksCount = taskSummary.getCount();
                         unCompleteAdapter.notifyDataSetChanged();
                         binding.uncompletePageBarTask.refreshPageBar();
+                        if (currentCompletedTasks.size() == 0) {
+                            binding.textDataEmpty.setText("您还没有未完成的任务！");
+                            binding.textDataEmpty.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.textDataEmpty.setVisibility(View.GONE);
+                        }
                     }
                 }, throwable -> {
                     throwable.printStackTrace();
