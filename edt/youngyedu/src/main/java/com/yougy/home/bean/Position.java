@@ -6,6 +6,7 @@ package com.yougy.home.bean;
 public class Position {
     private int leftMargin;
     private int topMargin;
+    private long cutterTime;
 
     public int getLeftMargin() {
         return leftMargin;
@@ -15,11 +16,32 @@ public class Position {
         return topMargin;
     }
 
-    public Position(int leftMargin, int topMargin){
+    public Position(int leftMargin, int topMargin) {
+        cutterTime = System.currentTimeMillis();
         this.leftMargin = leftMargin;
         this.topMargin = topMargin;
     }
 
+    //    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        Position position = (Position) o;
+//
+//        if (leftMargin != position.leftMargin) return false;
+//        return topMargin == position.topMargin;
+//
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = leftMargin;
+//        result = 31 * result + topMargin;
+//        return result;
+//    }
+//
+//
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -28,14 +50,15 @@ public class Position {
         Position position = (Position) o;
 
         if (leftMargin != position.leftMargin) return false;
-        return topMargin == position.topMargin;
-
+        if (topMargin != position.topMargin) return false;
+        return cutterTime == position.cutterTime;
     }
 
     @Override
     public int hashCode() {
         int result = leftMargin;
         result = 31 * result + topMargin;
+        result = 31 * result + (int) (cutterTime ^ (cutterTime >>> 32));
         return result;
     }
 
@@ -47,3 +70,4 @@ public class Position {
                 '}';
     }
 }
+
