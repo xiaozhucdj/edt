@@ -18,15 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
-import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.task.activity.MaterialActivity;
 import com.yougy.task.activity.MaterialActivity2;
 import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.task.bean.StageTaskBean;

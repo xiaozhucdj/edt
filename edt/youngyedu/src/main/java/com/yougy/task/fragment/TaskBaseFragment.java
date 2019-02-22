@@ -37,12 +37,12 @@ public class TaskBaseFragment extends BFragment {
 //    }
 //    protected ArrayList<String> pathLists = new ArrayList<>();//path  用'#'连接多页
 //    protected String mCurrentCacheName = ""; //当前路径是否有本地轨迹文件，判断。
-    protected boolean isMultiPage = false;
+//    protected boolean isMultiPage = false;
 
     protected List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
 
-    protected List<StageTaskBean.StageScene> mStageScenes = new ArrayList<>();
-    protected List<StageTaskBean.StageScene.SceneContent> mSceneContents = new ArrayList<>();
+//    protected List<StageTaskBean.StageScene> mStageScenes = new ArrayList<>();
+//    protected List<StageTaskBean.StageScene.SceneContent> mSceneContents = new ArrayList<>();
 
     protected boolean mIsServerFail = true;//服务器请求失败
     protected String mServerFailMsg = "加载中...";//失败信息
@@ -187,7 +187,4 @@ public class TaskBaseFragment extends BFragment {
         return mTaskDetailStudentActivity.isHadCommit();
     }
 
-    protected boolean isFirstPage (int page){
-        return page == 0;
-    }
 }

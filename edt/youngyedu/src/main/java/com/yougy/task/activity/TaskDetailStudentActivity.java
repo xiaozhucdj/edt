@@ -24,13 +24,11 @@ import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSFederationCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
-import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.google.gson.Gson;
 import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
-import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.DialogManager;
 import com.yougy.common.manager.YoungyApplicationManager;
@@ -42,13 +40,9 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.message.attachment.TaskRemindAttachment;
-import com.yougy.task.bean.OOSReplyBean;
 import com.yougy.task.bean.StageTaskBean;
-import com.yougy.task.bean.SubmitReplyBean;
 import com.yougy.task.bean.SubmitTaskBean;
-import com.yougy.task.bean.Task;
 import com.yougy.task.fragment.MaterialsBaseFragment;
 import com.yougy.task.fragment.PracticeBaseFragment;
 import com.yougy.task.fragment.SignatureFragment;
@@ -70,7 +64,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class TaskDetailStudentActivity extends BaseActivity {
@@ -134,7 +127,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public String currentTab = "";
 
     private Unbinder mUnbinder;
-    private boolean isNetConnected = true;
+//    private boolean isNetConnected = true;
 
     private List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
 
@@ -319,7 +312,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     private TaskBaseFragment mCurrentFragment;
     private void showContentFragment(TaskBaseFragment fragment, String tag, boolean isLoadData) {
-        if (currentTab == TAB_PRACTICE && tag != TAB_PRACTICE) {
+        if (currentTab.equals(TAB_PRACTICE) && !tag.equals(TAB_PRACTICE)) {
             mPracticeFragment.dismissPopupWindow();
         }
         if (tag.equals(currentTab)) {

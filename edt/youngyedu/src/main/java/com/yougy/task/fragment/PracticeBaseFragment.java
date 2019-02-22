@@ -648,10 +648,30 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         currentPage = 0;
 //        mAddPageCaoGao = 0;
         currentSelectPosition = position;
+        setPrevNextBtnVisibility();
         showOrHideCaoGaoLayout(false, false);
         if (checkCurrentPosition(currentSelectPosition, mStageTaskBeans)){
             setCurrentPracticeInfo();
         }
+    }
+
+    private void setPrevNextBtnVisibility () {
+        if (practiceTotalCount == 0) {
+            mNextPractice.setVisibility(View.INVISIBLE);
+            mPrevPractice.setVisibility(View.INVISIBLE);
+        } else {
+            if (currentSelectPosition == practiceTotalCount - 1) {
+                mNextPractice.setVisibility(View.INVISIBLE);
+            } else {
+                mNextPractice.setVisibility(View.VISIBLE);
+            }
+            if (currentSelectPosition == 0) {
+                mPrevPractice.setVisibility(View.INVISIBLE);
+            } else {
+                mPrevPractice.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
 
     /**
