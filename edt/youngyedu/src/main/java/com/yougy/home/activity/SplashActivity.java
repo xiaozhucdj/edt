@@ -15,6 +15,8 @@ import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.jd.BroadcastHelper;
+import com.yougy.common.jd.JdReaderBindBean;
 import com.yougy.common.manager.ThreadManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
@@ -30,6 +32,7 @@ import com.yougy.init.activity.LocalLockActivity;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
 import com.yougy.message.YXClient;
+import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
@@ -216,6 +219,13 @@ public class SplashActivity extends BaseActivity {
                     } else {
                         LogUtils.e("FH", "自动登录成功");
                         SpUtils.saveStudent(student);
+                        JdReaderBindBean bean = new JdReaderBindBean() ;
+                        bean.set_id(student.getUserId()+"");
+                        bean.setToken(student.getUserId()+"");
+                        bean.setName(student.getUserRealName());
+                        bean.setRole(student.getUserRole());
+                        bean.setGroups(new String []{ student.getSchoolName()+student.getClassName()});
+                        BroadcastHelper.bindJdReader(SplashActivity.this,bean);
                         //此处先注释掉,因为现在进主界面会自动登录云信,不用在此处登,以后如果改了在放开注释
 //                        YXClient.getInstance().getTokenAndLogin(String.valueOf(SpUtils.getUserId()), null);
                         checkLocalLockAndJump();
@@ -227,6 +237,7 @@ public class SplashActivity extends BaseActivity {
                                 && ("401".equals(((ApiException) throwable).getCode()))) {
                             //登录失败,可能是在pc端被解绑了.
                             //删除本端的缓存数据并且跳转到login界面
+                            BroadcastHelper.unBindJdReader(SplashActivity.this);
                             SpUtils.clearSP();
                             SpUtils.changeInitFlag(false);
                             Connector.resetHelper();

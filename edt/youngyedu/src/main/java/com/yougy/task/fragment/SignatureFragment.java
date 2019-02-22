@@ -62,16 +62,16 @@ public class SignatureFragment extends TaskBaseFragment {
                     , SaveNoteUtils.getInstance(mContext).getTaskFileDir());
 
 
-//        NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04", SpUtils.getUserId()).subscribe(stageTaskBeans -> {
-//            Log.i(TAG, "call: " + stageTaskBeans.size());
-//            if (stageTaskBeans.size() > 0) {
-//                StageTaskBean stageTaskBean = stageTaskBeans.get(0);
-//                stageId = stageTaskBean.getStageId();
+        NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04", SpUtils.getUserId()).subscribe(stageTaskBeans -> {
+            Log.i(TAG, "call: " + stageTaskBeans.size());
+            if (stageTaskBeans.size() > 0) {
+                StageTaskBean stageTaskBean = stageTaskBeans.get(0);
+                stageId = stageTaskBean.getStageId();
 //                if (stageTaskBean.getStageScene().size() > 0) {
 //                    mLoadAnswer.loadAnswer(mNoteBookViewSignature, stageTaskBean,0 , 0 );
 //                }
-//            }
-//        }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
+            }
+        }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
     }
 
     @OnClick({R.id.btn_submit, R.id.btn_cancel, R.id.image_quxiao})

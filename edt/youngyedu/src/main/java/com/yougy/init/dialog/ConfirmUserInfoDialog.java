@@ -12,6 +12,8 @@ import android.view.View;
 
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.global.Commons;
+import com.yougy.common.jd.BroadcastHelper;
+import com.yougy.common.jd.JdReaderBindBean;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.protocol.request.NewBindDeviceReq;
@@ -21,6 +23,7 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.activity.MainActivity;
+import com.yougy.home.activity.SplashActivity;
 import com.yougy.init.bean.Student;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ConfirmUserinfoDialogLayoutBinding;
@@ -132,6 +135,14 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                     public void call(Object o) {
                         LogUtils.e("FH", "绑定成功");
                         SpUtils.saveStudent(student);
+                        JdReaderBindBean bean = new JdReaderBindBean() ;
+                        bean.set_id(student.getUserId()+"");
+                        bean.setToken(student.getUserId()+"");
+                        bean.setName(student.getUserRealName());
+                        bean.setRole(student.getUserRole());
+                        bean.setGroups(new String []{ student.getSchoolName()+student.getClassName()});
+                        BroadcastHelper.bindJdReader(mActivity,bean);
+
                         File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
                         if (!file.exists()) {
                             ConfirmUserInfoDialog.this.getContext().startService(new Intent(ConfirmUserInfoDialog.this.getContext(), DownloadService.class));

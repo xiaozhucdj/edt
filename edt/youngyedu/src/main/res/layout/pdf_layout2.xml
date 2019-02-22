@@ -19,13 +19,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="30px"
+        android:layout_marginTop="@dimen/x60"
         android:layout_marginRight="20px">
 
         <ImageButton
             android:id="@+id/btn_reader_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
             android:background="@null"
             android:src="@drawable/img_continu_select"
             android:text="连读"

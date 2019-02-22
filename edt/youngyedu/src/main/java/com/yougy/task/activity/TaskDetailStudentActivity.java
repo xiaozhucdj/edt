@@ -393,132 +393,150 @@ public class TaskDetailStudentActivity extends BaseActivity {
     }
 
     private void uploadPic (STSbean stSbean) {
-        String endpoint = Commons.ENDPOINT;
-
-        LogUtils.d("TaskTest uploadPic  :" + stSbean.getAccessKeyId() );
-
-        OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {
-            @Override
-            public OSSFederationToken getFederationToken() {
-                return new OSSFederationToken(stSbean.getAccessKeyId(), stSbean.getAccessKeySecret(), stSbean.getSecurityToken(), stSbean.getExpiration());
-            }
-        };
-        //该配置类如果不设置，会有默认配置，具体可看该类
-        ClientConfiguration conf = new ClientConfiguration();
-        conf.setConnectionTimeout(15 * 10000); // 连接超时，默认15秒
-        conf.setSocketTimeout(15 * 10000); // socket超时，默认15秒
-        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
-        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        OSSLog.enableLog();
-        OSS oss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, credentialProvider, conf);
-
         LogUtils.d("TaskTest submit server.");
 
-        SubmitTaskBean submitTaskBean = new SubmitTaskBean();
-        Observable.create(subscriber -> {
-            File file = new File(SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir() + "/" + mTaskId);
-            if (!file.exists()) {
-                LogUtils.e("TaskTest not exits.");
-                boolean mkdirs = file.mkdirs();
-                File fi = new File(file.getAbsolutePath() +"/" + mTaskId + "/" + mTaskId + "_" + dramaId
-                            + "_empty.png");
-                boolean mkdir = fi.mkdir();
-                LogUtils.d("TaskTest empty mkdirs." + mkdirs + "  mkdir = " + mkdir);
-            }
-            File[] files = file.listFiles();
-            List<File> fileLists = Arrays.asList(files);
-            LogUtils.d("TaskTest path :" + file.getAbsolutePath() + "  size = " + fileLists.size() + "files length = " + files.length);
-            ArrayList<SubmitTaskBean.SubmitTask> submitTasks = new ArrayList<>();
-            for (int i = 0; i < fileLists.size(); i++) {
-                File f1 = fileLists.get(i);
-                File[] files1 = f1.listFiles();
-                List<File> files2 = Arrays.asList(files1);
+        File file = new File(SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir() + "/" + mTaskId);
+        if (!file.exists() || file.listFiles().length == 0) {
+            LogUtils.e("TaskTest not exits note.");
+            NetWorkManager.updateHomeworkContent(SpUtils.getUserId(), mTaskId, "SV02")
+                    .subscribe(o -> {
+                        if (!isHadCommit && isSignatureTask) {
+                            isHadCommit = true;
+                            mTextFinish.setText(R.string.parent_sign);
+                            EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
+                        } else {
+                            //上传后清理掉本地图片文件
+                            setResult(10000);
+                            TaskDetailStudentActivity.this.finish();
+                        }
+                        ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
+                    }, throwable -> ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交失败，请重试！"));
 
-                ArrayList<STSResultbean> picContent = new ArrayList<>();
-                for (File file1 : files2) {
-                    String picPath = file1.getAbsolutePath();
-                    String picName = picPath.substring(picPath.lastIndexOf("/"));
-                    LogUtils.d("TaskTest picName = " + picName);
-                    PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
-                    try {
-                        oss.putObject(put);
-                        STSResultbean stsResultbean = new STSResultbean();
-                        stsResultbean.setBucket(stSbean.getBucketName());
-                        stsResultbean.setRemote(stSbean.getPath() + picName);
-                        stsResultbean.setSize(file1.length());
-                        picContent.add(stsResultbean);
-                    } catch (ClientException e) {
-                        e.printStackTrace();
-                        Log.e("TaskTest UPLOAD OOS", "call: error message:  " + e.getMessage());
-                    } catch (ServiceException e) {
-                        e.printStackTrace();
-                        Log.e("TaskTest UPLOAD OOS", "call: error Code:  " + e.getErrorCode() + " message:" + e.getRawMessage());
-                    }
+//                boolean mkdirs = file.mkdirs();
+//                File fi = new File(file.getAbsolutePath() +"/" + mTaskId + "/" + mTaskId + "_" + dramaId
+//                            + "_empty.png");
+//                boolean mkdir = fi.mkdir();
+//                LogUtils.d("TaskTest empty mkdirs." + mkdirs + "  mkdir = " + mkdir);
+        } else {//存在笔记要提交
+
+            String endpoint = Commons.ENDPOINT;
+
+            LogUtils.d("TaskTest uploadPic  :" + stSbean.getAccessKeyId() );
+
+            OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {
+                @Override
+                public OSSFederationToken getFederationToken() {
+                    return new OSSFederationToken(stSbean.getAccessKeyId(), stSbean.getAccessKeySecret(), stSbean.getSecurityToken(), stSbean.getExpiration());
                 }
+            };
+            //该配置类如果不设置，会有默认配置，具体可看该类
+            ClientConfiguration conf = new ClientConfiguration();
+            conf.setConnectionTimeout(15 * 10000); // 连接超时，默认15秒
+            conf.setSocketTimeout(15 * 10000); // socket超时，默认15秒
+            conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
+            conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+            OSSLog.enableLog();
+            OSS oss = new OSSClient(YoungyApplicationManager.getContext(), endpoint, credentialProvider, conf);
+
+
+            SubmitTaskBean submitTaskBean = new SubmitTaskBean();
+            Observable.create(subscriber -> {
+                File[] files = file.listFiles();
+                List<File> fileLists = Arrays.asList(files);
+                LogUtils.d("TaskTest path :" + file.getAbsolutePath() + "  size = " + fileLists.size() + "files length = " + files.length);
+                ArrayList<SubmitTaskBean.SubmitTask> submitTasks = new ArrayList<>();
+                for (int i = 0; i < fileLists.size(); i++) {
+                    File f1 = fileLists.get(i);
+                    File[] files1 = f1.listFiles();
+                    List<File> files2 = Arrays.asList(files1);
+
+                    ArrayList<STSResultbean> picContent = new ArrayList<>();
+                    for (File file1 : files2) {
+                        String picPath = file1.getAbsolutePath();
+                        String picName = picPath.substring(picPath.lastIndexOf("/"));
+                        LogUtils.d("TaskTest picName = " + picName);
+                        PutObjectRequest put = new PutObjectRequest(stSbean.getBucketName(), stSbean.getPath() + picName, picPath);
+                        try {
+                            oss.putObject(put);
+                            STSResultbean stsResultbean = new STSResultbean();
+                            stsResultbean.setBucket(stSbean.getBucketName());
+                            stsResultbean.setRemote(stSbean.getPath() + picName);
+                            stsResultbean.setSize(file1.length());
+                            picContent.add(stsResultbean);
+                        } catch (ClientException e) {
+                            e.printStackTrace();
+                            Log.e("TaskTest UPLOAD OOS", "call: error message:  " + e.getMessage());
+                        } catch (ServiceException e) {
+                            e.printStackTrace();
+                            Log.e("TaskTest UPLOAD OOS", "call: error Code:  " + e.getErrorCode() + " message:" + e.getRawMessage());
+                        }
+                    }
 //                int size = picContent.size();
-                int stageId = 0;
-                if (picContent.size() > 0) {
-                    String remote = picContent.get(0).getRemote();
-                    LogUtils.d("TaskTest remote :" + remote);//138201/10000002607/2019/569_4274_task_practice_bitmap_0_0.png
-                    String[] strings = remote.split("_");
-                    if (strings.length > 1) {
-                        stageId = Integer.parseInt(strings[1]);
+                    int stageId = 0;
+                    if (picContent.size() > 0) {
+                        String remote = picContent.get(0).getRemote();
+                        LogUtils.d("TaskTest remote :" + remote);//138201/10000002607/2019/569_4274_task_practice_bitmap_0_0.png
+                        String[] strings = remote.split("_");
+                        if (strings.length > 1) {
+                            stageId = Integer.parseInt(strings[1]);
+                        }
+                        SubmitTaskBean.SubmitTask submitTask = new SubmitTaskBean.SubmitTask();
+                        submitTask.setPicContent(picContent);
+                        LogUtils.d(  "TaskTest stageId = " + stageId);
+                        submitTask.setPerformId(mTaskId);
+                        submitTask.setStageId(stageId);
+                        submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
+                        submitTasks.add(submitTask);
                     }
-                    SubmitTaskBean.SubmitTask submitTask = new SubmitTaskBean.SubmitTask();
-                    submitTask.setPicContent(picContent);
-                    LogUtils.d(  "TaskTest stageId = " + stageId);
-                    submitTask.setPerformId(mTaskId);
-                    submitTask.setStageId(stageId);
-                    submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
-                    submitTasks.add(submitTask);
+                    LogUtils.d("TaskTest submitTasks size = "  + submitTasks.size());
                 }
-                LogUtils.d("TaskTest submitTasks size = "  + submitTasks.size());
-            }
-            submitTaskBean.setSubmitTasks(submitTasks);
-            subscriber.onNext(new Object());//将执行结果返回
-            subscriber.onCompleted();//结束异步任务
+                submitTaskBean.setSubmitTasks(submitTasks);
+                subscriber.onNext(new Object());//将执行结果返回
+                subscriber.onCompleted();//结束异步任务
 
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Object>() {
-                    LoadingProgressDialog loadingProgressDialog;
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                        if (loadingProgressDialog == null) {
-                            loadingProgressDialog = new LoadingProgressDialog(TaskDetailStudentActivity.this);
-                            loadingProgressDialog.show();
-                            loadingProgressDialog.setTitle("任务提交中...");
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Object>() {
+                        LoadingProgressDialog loadingProgressDialog;
+                        @Override
+                        public void onStart() {
+                            super.onStart();
+                            if (loadingProgressDialog == null) {
+                                loadingProgressDialog = new LoadingProgressDialog(TaskDetailStudentActivity.this);
+                                loadingProgressDialog.show();
+                                loadingProgressDialog.setTitle("任务提交中...");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCompleted() {
-                       LogUtils.d("TaskTest submitToServer.");
-                        if (loadingProgressDialog != null) {
-                            loadingProgressDialog.dismiss();
-                            loadingProgressDialog = null;
+                        @Override
+                        public void onCompleted() {
+                            LogUtils.d("TaskTest submitToServer.");
+                            if (loadingProgressDialog != null) {
+                                loadingProgressDialog.dismiss();
+                                loadingProgressDialog = null;
+                            }
+                            TaskDetailStudentActivity.this.submitToServer(submitTaskBean);
                         }
-                       TaskDetailStudentActivity.this.submitToServer(submitTaskBean);
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("OOS", "onError: oos upload fail. " + e.getMessage());
-                        if (loadingProgressDialog != null) {
-                            loadingProgressDialog.dismiss();
-                            loadingProgressDialog = null;
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("OOS", "onError: oos upload fail. " + e.getMessage());
+                            if (loadingProgressDialog != null) {
+                                loadingProgressDialog.dismiss();
+                                loadingProgressDialog = null;
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onNext(Object o) {
-                        if (loadingProgressDialog != null) {
-                            loadingProgressDialog.dismiss();
-                            loadingProgressDialog = null;
+                        @Override
+                        public void onNext(Object o) {
+                            if (loadingProgressDialog != null) {
+                                loadingProgressDialog.dismiss();
+                                loadingProgressDialog = null;
+                            }
                         }
-                    }
-               });
+                    });
+        }
+
 
     }
 
@@ -560,12 +578,12 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     if (throwable instanceof ApiException) {
                         String errorCode = ((ApiException) throwable).getCode();
                         if (errorCode.equals("400")) {
-                            setResult(10000);
-                            TaskDetailStudentActivity.this.finish();
-                            ToastUtil.showCustomToast(getBaseContext(), "已经提交");
+//                            setResult(10000);
+//                            TaskDetailStudentActivity.this.finish();
+                            ToastUtil.showCustomToast(getBaseContext(), "提交失败！");
                         }
                     } else {
-                        ToastUtil.showCustomToast(getBaseContext(), "提交失败，请重试");
+                        ToastUtil.showCustomToast(getBaseContext(), "提交失败，请重试！");
                     }
                 });
     }

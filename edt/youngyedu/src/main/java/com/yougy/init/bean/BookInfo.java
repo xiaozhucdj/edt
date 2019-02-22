@@ -302,10 +302,17 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookPublisherName = bookPublisherName;
         return this;
     }
-    /**小图*/
-    private String bookCoverS ;
-    /**大图*/
+
+    /**
+     * 小图
+     */
+    private String bookCoverS;
+    /**
+     * 大图
+     */
     private String bookCoverL;
+
+    private String bookAudioStatusCode ;
 
     ///////////////////////////////////////////////////////////
 
@@ -465,89 +472,6 @@ public class BookInfo extends DataSupport implements Parcelable {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BookInfo info = (BookInfo) o;
-
-        if (bookId != info.bookId) return false;
-        if (bookCategory != info.bookCategory) return false;
-        if (bookPublisher != info.bookPublisher) return false;
-        if (Double.compare(info.bookSalePrice, bookSalePrice) != 0) return false;
-        if (bookInCart != info.bookInCart) return false;
-        if (bookInFavor != info.bookInFavor) return false;
-        if (bookFitGradeId != info.bookFitGradeId) return false;
-        if (bookFitSubjectId != info.bookFitSubjectId) return false;
-        if (bookFitNoteId != info.bookFitNoteId) return false;
-        if (bookFitNoteStyle != info.bookFitNoteStyle) return false;
-        if (isCheck != info.isCheck) return false;
-        if (bookTitle != null ? !bookTitle.equals(info.bookTitle) : info.bookTitle != null)
-            return false;
-        if (bookAuthor != null ? !bookAuthor.equals(info.bookAuthor) : info.bookAuthor != null)
-            return false;
-        if (bookISBN != null ? !bookISBN.equals(info.bookISBN) : info.bookISBN != null)
-            return false;
-        if (bookPublishTime != null ? !bookPublishTime.equals(info.bookPublishTime) : info.bookPublishTime != null)
-            return false;
-        if (bookSummary != null ? !bookSummary.equals(info.bookSummary) : info.bookSummary != null)
-            return false;
-        if (bookCoverSize != null ? !bookCoverSize.equals(info.bookCoverSize) : info.bookCoverSize != null)
-            return false;
-        if (bookPreview != null ? !bookPreview.equals(info.bookPreview) : info.bookPreview != null)
-            return false;
-        if (bookPreviewSize != null ? !bookPreviewSize.equals(info.bookPreviewSize) : info.bookPreviewSize != null)
-            return false;
-        if (bookDownload != null ? !bookDownload.equals(info.bookDownload) : info.bookDownload != null)
-            return false;
-        if (bookDownloadSize != null ? !bookDownloadSize.equals(info.bookDownloadSize) : info.bookDownloadSize != null)
-            return false;
-        if (bookFitGradeName != null ? !bookFitGradeName.equals(info.bookFitGradeName) : info.bookFitGradeName != null)
-            return false;
-        if (bookFitSubjectName != null ? !bookFitSubjectName.equals(info.bookFitSubjectName) : info.bookFitSubjectName != null)
-            return false;
-        return bookFitNoteTitle != null ? bookFitNoteTitle.equals(info.bookFitNoteTitle) : info.bookFitNoteTitle == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = bookId;
-        result = 31 * result + (bookTitle != null ? bookTitle.hashCode() : 0);
-        result = 31 * result + (bookAuthor != null ? bookAuthor.hashCode() : 0);
-        result = 31 * result + bookCategory;
-        result = 31 * result + (bookISBN != null ? bookISBN.hashCode() : 0);
-        result = 31 * result + bookPublisher;
-        result = 31 * result + (bookPublishTime != null ? bookPublishTime.hashCode() : 0);
-        result = (int) (31 * result + (bookSalePrice != +0.0f ? Double.doubleToLongBits(bookSalePrice) : 0));
-        result = 31 * result + (bookSummary != null ? bookSummary.hashCode() : 0);
-        result = 31 * result + (bookCoverSize != null ? bookCoverSize.hashCode() : 0);
-        result = 31 * result + (bookPreview != null ? bookPreview.hashCode() : 0);
-        result = 31 * result + (bookPreviewSize != null ? bookPreviewSize.hashCode() : 0);
-        result = 31 * result + (bookDownload != null ? bookDownload.hashCode() : 0);
-        result = 31 * result + (bookDownloadSize != null ? bookDownloadSize.hashCode() : 0);
-        result = 31 * result + (bookInCart ? 1 : 0);
-        result = 31 * result + (bookInFavor ? 1 : 0);
-        result = 31 * result + bookFitGradeId;
-        result = 31 * result + (bookFitGradeName != null ? bookFitGradeName.hashCode() : 0);
-        result = 31 * result + bookFitSubjectId;
-        result = 31 * result + (bookFitSubjectName != null ? bookFitSubjectName.hashCode() : 0);
-        result = 31 * result + bookFitNoteId;
-        result = 31 * result + (bookFitNoteTitle != null ? bookFitNoteTitle.hashCode() : 0);
-        result = 31 * result + bookFitNoteStyle;
-        result = 31 * result + (isCheck ? 1 : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "BookInfo{" +
-                "bookId=" + bookId +
-                ", bookTitle='" + bookTitle + '\'' +
-                '}';
-    }
-
     /**
      * 作业ID
      */
@@ -579,7 +503,199 @@ public class BookInfo extends DataSupport implements Parcelable {
         return bookStatusCode;
     }
 
-    /////////////////////////////////序列化 start ///////////////////////////
+    public String getBookAudioStatusCode() {
+        return bookAudioStatusCode;
+    }
+
+    public void setBookAudioStatusCode(String bookAudioStatusCode) {
+        this.bookAudioStatusCode = bookAudioStatusCode;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BookInfo bookInfo = (BookInfo) o;
+
+        if (bookId != bookInfo.bookId) return false;
+        if (bookCategory != bookInfo.bookCategory) return false;
+        if (bookPublisher != bookInfo.bookPublisher) return false;
+        if (Double.compare(bookInfo.bookSalePrice, bookSalePrice) != 0) return false;
+        if (bookInCart != bookInfo.bookInCart) return false;
+        if (bookInShelf != bookInfo.bookInShelf) return false;
+        if (bookInFavor != bookInfo.bookInFavor) return false;
+        if (bookFitGradeId != bookInfo.bookFitGradeId) return false;
+        if (bookFitSubjectId != bookInfo.bookFitSubjectId) return false;
+        if (bookFitNoteId != bookInfo.bookFitNoteId) return false;
+        if (Double.compare(bookInfo.bookOriginalPrice, bookOriginalPrice) != 0) return false;
+        if (bookFitNoteStyle != bookInfo.bookFitNoteStyle) return false;
+        if (bookVersion != bookInfo.bookVersion) return false;
+        if (courseId != bookInfo.courseId) return false;
+        if (isCheck != bookInfo.isCheck) return false;
+        if (bookFitHomeworkId != bookInfo.bookFitHomeworkId) return false;
+        if (bookTitle != null ? !bookTitle.equals(bookInfo.bookTitle) : bookInfo.bookTitle != null)
+            return false;
+        if (bookSubtitle != null ? !bookSubtitle.equals(bookInfo.bookSubtitle) : bookInfo.bookSubtitle != null)
+            return false;
+        if (bookAuthor != null ? !bookAuthor.equals(bookInfo.bookAuthor) : bookInfo.bookAuthor != null)
+            return false;
+        if (bookVol != null ? !bookVol.equals(bookInfo.bookVol) : bookInfo.bookVol != null)
+            return false;
+        if (bookISBN != null ? !bookISBN.equals(bookInfo.bookISBN) : bookInfo.bookISBN != null)
+            return false;
+        if (bookPublishTime != null ? !bookPublishTime.equals(bookInfo.bookPublishTime) : bookInfo.bookPublishTime != null)
+            return false;
+        if (bookSummary != null ? !bookSummary.equals(bookInfo.bookSummary) : bookInfo.bookSummary != null)
+            return false;
+        if (bookCoverSize != null ? !bookCoverSize.equals(bookInfo.bookCoverSize) : bookInfo.bookCoverSize != null)
+            return false;
+        if (bookPreview != null ? !bookPreview.equals(bookInfo.bookPreview) : bookInfo.bookPreview != null)
+            return false;
+        if (bookPreviewSize != null ? !bookPreviewSize.equals(bookInfo.bookPreviewSize) : bookInfo.bookPreviewSize != null)
+            return false;
+        if (bookDownload != null ? !bookDownload.equals(bookInfo.bookDownload) : bookInfo.bookDownload != null)
+            return false;
+        if (bookDownloadSize != null ? !bookDownloadSize.equals(bookInfo.bookDownloadSize) : bookInfo.bookDownloadSize != null)
+            return false;
+        if (bookFitGradeName != null ? !bookFitGradeName.equals(bookInfo.bookFitGradeName) : bookInfo.bookFitGradeName != null)
+            return false;
+        if (bookFitSubjectName != null ? !bookFitSubjectName.equals(bookInfo.bookFitSubjectName) : bookInfo.bookFitSubjectName != null)
+            return false;
+        if (bookFitNoteTitle != null ? !bookFitNoteTitle.equals(bookInfo.bookFitNoteTitle) : bookInfo.bookFitNoteTitle != null)
+            return false;
+        if (bookCategoryName != null ? !bookCategoryName.equals(bookInfo.bookCategoryName) : bookInfo.bookCategoryName != null)
+            return false;
+        if (bookPublisherName != null ? !bookPublisherName.equals(bookInfo.bookPublisherName) : bookInfo.bookPublisherName != null)
+            return false;
+        if (bookVersionName != null ? !bookVersionName.equals(bookInfo.bookVersionName) : bookInfo.bookVersionName != null)
+            return false;
+        if (bookStatus != null ? !bookStatus.equals(bookInfo.bookStatus) : bookInfo.bookStatus != null)
+            return false;
+        if (bookStatusCode != null ? !bookStatusCode.equals(bookInfo.bookStatusCode) : bookInfo.bookStatusCode != null)
+            return false;
+        if (bookDownloadKey != null ? !bookDownloadKey.equals(bookInfo.bookDownloadKey) : bookInfo.bookDownloadKey != null)
+            return false;
+        if (bookCoupon != null ? !bookCoupon.equals(bookInfo.bookCoupon) : bookInfo.bookCoupon != null)
+            return false;
+        if (bookAudio != null ? !bookAudio.equals(bookInfo.bookAudio) : bookInfo.bookAudio != null)
+            return false;
+        if (bookAudioConfig != null ? !bookAudioConfig.equals(bookInfo.bookAudioConfig) : bookInfo.bookAudioConfig != null)
+            return false;
+        if (bookCoverS != null ? !bookCoverS.equals(bookInfo.bookCoverS) : bookInfo.bookCoverS != null)
+            return false;
+        if (bookCoverL != null ? !bookCoverL.equals(bookInfo.bookCoverL) : bookInfo.bookCoverL != null)
+            return false;
+        if (bookAudioStatusCode != null ? !bookAudioStatusCode.equals(bookInfo.bookAudioStatusCode) : bookInfo.bookAudioStatusCode != null)
+            return false;
+        return bookFitHomeworkTitle != null ? bookFitHomeworkTitle.equals(bookInfo.bookFitHomeworkTitle) : bookInfo.bookFitHomeworkTitle == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = bookId;
+        result = 31 * result + (bookTitle != null ? bookTitle.hashCode() : 0);
+        result = 31 * result + (bookSubtitle != null ? bookSubtitle.hashCode() : 0);
+        result = 31 * result + (bookAuthor != null ? bookAuthor.hashCode() : 0);
+        result = 31 * result + (bookVol != null ? bookVol.hashCode() : 0);
+        result = 31 * result + bookCategory;
+        result = 31 * result + (bookISBN != null ? bookISBN.hashCode() : 0);
+        result = 31 * result + bookPublisher;
+        result = 31 * result + (bookPublishTime != null ? bookPublishTime.hashCode() : 0);
+        temp = Double.doubleToLongBits(bookSalePrice);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (bookSummary != null ? bookSummary.hashCode() : 0);
+        result = 31 * result + (bookCoverSize != null ? bookCoverSize.hashCode() : 0);
+        result = 31 * result + (bookPreview != null ? bookPreview.hashCode() : 0);
+        result = 31 * result + (bookPreviewSize != null ? bookPreviewSize.hashCode() : 0);
+        result = 31 * result + (bookDownload != null ? bookDownload.hashCode() : 0);
+        result = 31 * result + (bookDownloadSize != null ? bookDownloadSize.hashCode() : 0);
+        result = 31 * result + (bookInCart ? 1 : 0);
+        result = 31 * result + (bookInShelf ? 1 : 0);
+        result = 31 * result + (bookInFavor ? 1 : 0);
+        result = 31 * result + bookFitGradeId;
+        result = 31 * result + (bookFitGradeName != null ? bookFitGradeName.hashCode() : 0);
+        result = 31 * result + bookFitSubjectId;
+        result = 31 * result + (bookFitSubjectName != null ? bookFitSubjectName.hashCode() : 0);
+        result = 31 * result + bookFitNoteId;
+        result = 31 * result + (bookFitNoteTitle != null ? bookFitNoteTitle.hashCode() : 0);
+        temp = Double.doubleToLongBits(bookOriginalPrice);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + bookFitNoteStyle;
+        result = 31 * result + (bookCategoryName != null ? bookCategoryName.hashCode() : 0);
+        result = 31 * result + (bookPublisherName != null ? bookPublisherName.hashCode() : 0);
+        result = 31 * result + bookVersion;
+        result = 31 * result + (bookVersionName != null ? bookVersionName.hashCode() : 0);
+        result = 31 * result + (bookStatus != null ? bookStatus.hashCode() : 0);
+        result = 31 * result + (bookStatusCode != null ? bookStatusCode.hashCode() : 0);
+        result = 31 * result + courseId;
+        result = 31 * result + (bookDownloadKey != null ? bookDownloadKey.hashCode() : 0);
+        result = 31 * result + (bookCoupon != null ? bookCoupon.hashCode() : 0);
+        result = 31 * result + (bookAudio != null ? bookAudio.hashCode() : 0);
+        result = 31 * result + (bookAudioConfig != null ? bookAudioConfig.hashCode() : 0);
+        result = 31 * result + (bookCoverS != null ? bookCoverS.hashCode() : 0);
+        result = 31 * result + (bookCoverL != null ? bookCoverL.hashCode() : 0);
+        result = 31 * result + (bookAudioStatusCode != null ? bookAudioStatusCode.hashCode() : 0);
+        result = 31 * result + (isCheck ? 1 : 0);
+        result = 31 * result + bookFitHomeworkId;
+        result = 31 * result + (bookFitHomeworkTitle != null ? bookFitHomeworkTitle.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BookInfo{" +
+                "bookId=" + bookId +
+                ", bookTitle='" + bookTitle + '\'' +
+                ", bookSubtitle='" + bookSubtitle + '\'' +
+                ", bookAuthor='" + bookAuthor + '\'' +
+                ", bookVol='" + bookVol + '\'' +
+                ", bookCategory=" + bookCategory +
+                ", bookISBN='" + bookISBN + '\'' +
+                ", bookPublisher=" + bookPublisher +
+                ", bookPublishTime='" + bookPublishTime + '\'' +
+                ", bookSalePrice=" + bookSalePrice +
+                ", bookSummary='" + bookSummary + '\'' +
+                ", bookCoverSize='" + bookCoverSize + '\'' +
+                ", bookPreview='" + bookPreview + '\'' +
+                ", bookPreviewSize='" + bookPreviewSize + '\'' +
+                ", bookDownload='" + bookDownload + '\'' +
+                ", bookDownloadSize='" + bookDownloadSize + '\'' +
+                ", bookInCart=" + bookInCart +
+                ", bookInShelf=" + bookInShelf +
+                ", bookInFavor=" + bookInFavor +
+                ", bookFitGradeId=" + bookFitGradeId +
+                ", bookFitGradeName='" + bookFitGradeName + '\'' +
+                ", bookFitSubjectId=" + bookFitSubjectId +
+                ", bookFitSubjectName='" + bookFitSubjectName + '\'' +
+                ", bookFitNoteId=" + bookFitNoteId +
+                ", bookFitNoteTitle='" + bookFitNoteTitle + '\'' +
+                ", bookOriginalPrice=" + bookOriginalPrice +
+                ", bookFitNoteStyle=" + bookFitNoteStyle +
+                ", bookCategoryName='" + bookCategoryName + '\'' +
+                ", bookPublisherName='" + bookPublisherName + '\'' +
+                ", bookVersion=" + bookVersion +
+                ", bookVersionName='" + bookVersionName + '\'' +
+                ", bookStatus='" + bookStatus + '\'' +
+                ", bookStatusCode='" + bookStatusCode + '\'' +
+                ", courseId=" + courseId +
+                ", bookDownloadKey='" + bookDownloadKey + '\'' +
+                ", bookCoupon=" + bookCoupon +
+                ", bookAudio='" + bookAudio + '\'' +
+                ", bookAudioConfig='" + bookAudioConfig + '\'' +
+                ", bookCoverS='" + bookCoverS + '\'' +
+                ", bookCoverL='" + bookCoverL + '\'' +
+                ", bookAudioStatusCode='" + bookAudioStatusCode + '\'' +
+                ", isCheck=" + isCheck +
+                ", bookFitHomeworkId=" + bookFitHomeworkId +
+                ", bookFitHomeworkTitle='" + bookFitHomeworkTitle + '\'' +
+                '}';
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -612,6 +728,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeString(this.bookFitSubjectName);
         dest.writeInt(this.bookFitNoteId);
         dest.writeString(this.bookFitNoteTitle);
+        dest.writeDouble(this.bookOriginalPrice);
         dest.writeInt(this.bookFitNoteStyle);
         dest.writeString(this.bookCategoryName);
         dest.writeString(this.bookPublisherName);
@@ -621,8 +738,12 @@ public class BookInfo extends DataSupport implements Parcelable {
         dest.writeString(this.bookStatusCode);
         dest.writeInt(this.courseId);
         dest.writeString(this.bookDownloadKey);
+        dest.writeParcelable((Parcelable) this.bookCoupon, flags);
+        dest.writeString(this.bookAudio);
+        dest.writeString(this.bookAudioConfig);
         dest.writeString(this.bookCoverS);
         dest.writeString(this.bookCoverL);
+        dest.writeString(this.bookAudioStatusCode);
         dest.writeByte(this.isCheck ? (byte) 1 : (byte) 0);
         dest.writeInt(this.bookFitHomeworkId);
         dest.writeString(this.bookFitHomeworkTitle);
@@ -654,6 +775,7 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookFitSubjectName = in.readString();
         this.bookFitNoteId = in.readInt();
         this.bookFitNoteTitle = in.readString();
+        this.bookOriginalPrice = in.readDouble();
         this.bookFitNoteStyle = in.readInt();
         this.bookCategoryName = in.readString();
         this.bookPublisherName = in.readString();
@@ -663,14 +785,18 @@ public class BookInfo extends DataSupport implements Parcelable {
         this.bookStatusCode = in.readString();
         this.courseId = in.readInt();
         this.bookDownloadKey = in.readString();
+        this.bookCoupon = in.readParcelable(PromotionResult.class.getClassLoader());
+        this.bookAudio = in.readString();
+        this.bookAudioConfig = in.readString();
         this.bookCoverS = in.readString();
         this.bookCoverL = in.readString();
+        this.bookAudioStatusCode = in.readString();
         this.isCheck = in.readByte() != 0;
         this.bookFitHomeworkId = in.readInt();
         this.bookFitHomeworkTitle = in.readString();
     }
 
-    public static final Parcelable.Creator<BookInfo> CREATOR = new Parcelable.Creator<BookInfo>() {
+    public static final Creator<BookInfo> CREATOR = new Creator<BookInfo>() {
         @Override
         public BookInfo createFromParcel(Parcel source) {
             return new BookInfo(source);
@@ -681,7 +807,6 @@ public class BookInfo extends DataSupport implements Parcelable {
             return new BookInfo[size];
         }
     };
-    /////////////////////////////////序列化 end ////////////////////////////
 }
 
 
