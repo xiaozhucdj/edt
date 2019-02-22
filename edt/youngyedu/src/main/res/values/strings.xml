@@ -168,6 +168,10 @@
     <string name="read_promptly">立即阅读</string>
     <string name="add2bookshelf">加入书架</string>
     <string name="already_in_bookshelf">已在书架</string>
+    <string name="no_completed_task">您还没有已完成的任务！</string>
+    <string name="no_uncomplete_task">您还没有未完成的任务！</string>
+    <string name="get_task_failed">获取任务失败</string>
+    <string name="task_chapter">所属教材章节：%1$s</string>
 
 
     <string-array name="titles">

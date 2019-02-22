@@ -146,7 +146,7 @@ public class TaskListActivity extends BaseActivity {
                         completedTasksCount = taskSummary.getCount();
                         completedAdapter.notifyDataSetChanged();
                         if (currentCompletedTasks.size() == 0) {
-                            binding.textDataEmpty.setText("您还没有已完成的任务！");
+                            binding.textDataEmpty.setText(R.string.no_completed_task);
                             binding.textDataEmpty.setVisibility(View.VISIBLE);
                         } else {
                             binding.textDataEmpty.setVisibility(View.GONE);
@@ -158,7 +158,7 @@ public class TaskListActivity extends BaseActivity {
                         unCompleteAdapter.notifyDataSetChanged();
                         binding.uncompletePageBarTask.refreshPageBar();
                         if (currentUnCompleteTasks.size() == 0) {
-                            binding.textDataEmpty.setText("您还没有未完成的任务！");
+                            binding.textDataEmpty.setText(R.string.no_uncomplete_task);
                             binding.textDataEmpty.setVisibility(View.VISIBLE);
                         } else {
                             binding.textDataEmpty.setVisibility(View.GONE);
@@ -166,7 +166,7 @@ public class TaskListActivity extends BaseActivity {
                     }
                 }, throwable -> {
                     throwable.printStackTrace();
-                    ToastUtil.showCustomToast(TaskListActivity.this, "获取任务失败");
+                    ToastUtil.showCustomToast(TaskListActivity.this, R.string.get_task_failed);
                 });
     }
 
@@ -230,7 +230,7 @@ public class TaskListActivity extends BaseActivity {
             binding.signature.setVisibility(isComplete ? View.VISIBLE : View.GONE);
             binding.signatureText.setVisibility(isComplete ? View.VISIBLE : View.GONE);
 
-            binding.taskChapter.setText("所属教材章节：" + task.getContentCourseLinkName());
+            binding.taskChapter.setText(getString(R.string.task_chapter,task.getContentCourseLinkName()));
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));
             binding.taskExerciseCount.setText(String.valueOf(task.getExerciseCount()));
             binding.taskCompleteTime.setText(getString(R.string.task_complete_time, task.getPerformStartTime(), task.getPerformEndTime()));
