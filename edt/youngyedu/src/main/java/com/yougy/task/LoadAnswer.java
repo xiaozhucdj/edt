@@ -17,7 +17,6 @@ import com.yougy.view.NoteBookView;
 import com.yougy.view.NoteBookView2;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -61,7 +60,7 @@ public class LoadAnswer {
 
 
     public int getCurrentPositionPages (StageTaskBean stageTaskBean) {
-        int pageCount = 1;
+        int pageCount = 0;
         List<StageTaskBean.StageScene> stageScenes = stageTaskBean.getStageScene();
         if (stageScenes != null) {
             int size2 = stageScenes.size();
