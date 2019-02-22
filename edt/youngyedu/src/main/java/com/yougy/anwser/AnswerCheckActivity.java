@@ -153,7 +153,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                                @Override
                                public void call(List<QuestionReplyDetail> questionReplyDetails) {
                                    if (questionReplyDetails == null || questionReplyDetails.size() == 0) {
-                                       ToastUtil.showCustomToast(getBaseContext(), "已经没有需要批改的问答");
+//                                       ToastUtil.showCustomToast(getBaseContext(), "已经没有需要批改的问答");
                                        finish();
                                        return;
                                    }
