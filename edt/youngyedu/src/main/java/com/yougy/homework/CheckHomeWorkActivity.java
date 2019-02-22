@@ -1863,7 +1863,13 @@ public class CheckHomeWorkActivity extends BaseActivity {
      */
     public void refreshLastAndNextQuestionBtns() {
 
-        RefreshUtil.invalidate(llControlBottom);
+        UIUtils.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RefreshUtil.invalidate(llControlBottom);
+            }
+        }, 800);
+
         titleTextview.setText(questionReplyDetail.getReplyExamName() + "(" + (currentShowQuestionIndex + 1) + "/" + pageSize + ")");
 
         if (currentShowQuestionIndex > 0) {
