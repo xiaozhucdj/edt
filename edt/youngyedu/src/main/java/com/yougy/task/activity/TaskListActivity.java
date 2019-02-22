@@ -157,7 +157,7 @@ public class TaskListActivity extends BaseActivity {
                         uncompleteTasksCount = taskSummary.getCount();
                         unCompleteAdapter.notifyDataSetChanged();
                         binding.uncompletePageBarTask.refreshPageBar();
-                        if (currentCompletedTasks.size() == 0) {
+                        if (currentUnCompleteTasks.size() == 0) {
                             binding.textDataEmpty.setText("您还没有未完成的任务！");
                             binding.textDataEmpty.setVisibility(View.VISIBLE);
                         } else {
@@ -230,7 +230,7 @@ public class TaskListActivity extends BaseActivity {
             binding.signature.setVisibility(isComplete ? View.VISIBLE : View.GONE);
             binding.signatureText.setVisibility(isComplete ? View.VISIBLE : View.GONE);
 
-            binding.taskChapter.setText(task.getContentCourseLinkName());
+            binding.taskChapter.setText("所属教材章节：" + task.getContentCourseLinkName());
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));
             binding.taskExerciseCount.setText(String.valueOf(task.getExerciseCount()));
             binding.taskCompleteTime.setText(getString(R.string.task_complete_time, task.getPerformStartTime(), task.getPerformEndTime()));
