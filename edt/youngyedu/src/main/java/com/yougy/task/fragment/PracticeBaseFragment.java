@@ -120,8 +120,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         String type = event.getType();
         if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
             mIsServerFail = false;
-            mStageTaskBeans.clear();
-            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
+
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
             mIsServerFail = true;
@@ -138,6 +137,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             if (extraData) {
                 mImageAddPage.setVisibility(View.GONE);
                 mTextCaoGao.setVisibility(View.GONE);
+                ((LinearLayoutManager) mTaskPracticePageBar.getLayoutManager()).scrollToPosition(0);
             }
         }
     }
@@ -172,6 +172,8 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         super.loadData();
         dismissPopupWindow();
         LogUtils.d("TaskTest Practice loadData.");
+        mStageTaskBeans.clear();
+        mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
         if (checkCurrentPosition(currentSelectPosition, mStageTaskBeans)){
             handlerRequestSuccess();
         } else {
@@ -646,10 +648,30 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         currentPage = 0;
 //        mAddPageCaoGao = 0;
         currentSelectPosition = position;
+        setPrevNextBtnVisibility();
         showOrHideCaoGaoLayout(false, false);
         if (checkCurrentPosition(currentSelectPosition, mStageTaskBeans)){
             setCurrentPracticeInfo();
         }
+    }
+
+    private void setPrevNextBtnVisibility () {
+        if (practiceTotalCount == 0) {
+            mNextPractice.setVisibility(View.INVISIBLE);
+            mPrevPractice.setVisibility(View.INVISIBLE);
+        } else {
+            if (currentSelectPosition == practiceTotalCount - 1) {
+                mNextPractice.setVisibility(View.INVISIBLE);
+            } else {
+                mNextPractice.setVisibility(View.VISIBLE);
+            }
+            if (currentSelectPosition == 0) {
+                mPrevPractice.setVisibility(View.INVISIBLE);
+            } else {
+                mPrevPractice.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
 
     /**

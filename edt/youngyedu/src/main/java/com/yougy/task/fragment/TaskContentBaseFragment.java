@@ -4,7 +4,6 @@ package com.yougy.task.fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.Log;
@@ -51,8 +50,6 @@ public class TaskContentBaseFragment extends TaskBaseFragment {
         String type = event.getType();
         if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
             mIsServerFail = false;
-            mStageTaskBeans.clear();
-            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
             mIsServerFail = true;
@@ -73,6 +70,8 @@ public class TaskContentBaseFragment extends TaskBaseFragment {
     @Override
     public void loadData() {
         Log.i(TAG, "loadData: ");
+        mStageTaskBeans.clear();
+        mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
         if (mStageTaskBeans.size() > 0) {
             if (mStageTaskBeans.get(0).getStageContent() != null)
                 mTaskContent = mStageTaskBeans.get(0).getStageContent().get(0).getValue();
