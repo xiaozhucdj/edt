@@ -156,7 +156,7 @@ public class TextBookFragment extends BFragment {
         extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
         extras.putString(FileContonst.NOTE_TITLE, info.getBookFitNoteTitle());
 
-        extras.putString(FileContonst.LOACL_BOOK_STATU_SCODE, info.getBookStatusCode());
+        extras.putString(FileContonst.LOACL_BOOK_STATU_SCODE, info.getBookAudioStatusCode());
         extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO, info.getBookAudio());
         extras.putString(FileContonst.LOACL_BOOK_BOOK_AUDIO_CONFIG, info.getBookAudioConfig());
 

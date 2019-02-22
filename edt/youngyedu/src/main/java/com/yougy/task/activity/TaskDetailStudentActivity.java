@@ -24,13 +24,11 @@ import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSFederationCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSFederationToken;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
-import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.google.gson.Gson;
 import com.yougy.anwser.STSResultbean;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
-import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.DialogManager;
 import com.yougy.common.manager.YoungyApplicationManager;
@@ -42,13 +40,9 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
-import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.message.attachment.TaskRemindAttachment;
-import com.yougy.task.bean.OOSReplyBean;
 import com.yougy.task.bean.StageTaskBean;
-import com.yougy.task.bean.SubmitReplyBean;
 import com.yougy.task.bean.SubmitTaskBean;
-import com.yougy.task.bean.Task;
 import com.yougy.task.fragment.MaterialsBaseFragment;
 import com.yougy.task.fragment.PracticeBaseFragment;
 import com.yougy.task.fragment.SignatureFragment;
@@ -70,7 +64,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class TaskDetailStudentActivity extends BaseActivity {
@@ -134,7 +127,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public String currentTab = "";
 
     private Unbinder mUnbinder;
-    private boolean isNetConnected = true;
+//    private boolean isNetConnected = true;
 
     private List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
 
@@ -223,6 +216,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
                                 .subscribe(stageTaskBeans2 -> {
                                             mStageTaskBeans.clear();
                                             mStageTaskBeans.addAll(stageTaskBeans2);
+                                            if (mCurrentFragment != null) {
+                                                mCurrentFragment.setServerFail(false);
+                                            }
                                             EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA));
                                         },
                                         throwable -> {
@@ -235,6 +231,25 @@ public class TaskDetailStudentActivity extends BaseActivity {
                                             }
                                         });
                     }, throwable -> hadSignature = false);
+        } else {
+            NetWorkManager.queryStageTask(String.valueOf(dramaId), getStageTypeCode(), SpUtils.getUserId())
+                    .subscribe(stageTaskBeans2 -> {
+                                mStageTaskBeans.clear();
+                                mStageTaskBeans.addAll(stageTaskBeans2);
+                                if (mCurrentFragment != null) {
+                                    mCurrentFragment.setServerFail(false);
+                                }
+                                EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA));
+                            },
+                            throwable -> {
+                                mStageTaskBeans.clear();
+                                if (throwable!=null) {
+                                    String errorMsg = throwable.getMessage();
+                                    if (!NetUtils.isNetConnected()) errorMsg = "网络连接不正常，请检查您的网络!";
+                                    EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA_FAIL, errorMsg));
+                                    LogUtils.e("server reply error:" + throwable.getMessage());
+                                }
+                            });
         }
 
     }
@@ -295,8 +310,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
     }
 
+    private TaskBaseFragment mCurrentFragment;
     private void showContentFragment(TaskBaseFragment fragment, String tag, boolean isLoadData) {
-        if (currentTab == TAB_PRACTICE && tag != TAB_PRACTICE) {
+        if (currentTab.equals(TAB_PRACTICE) && !tag.equals(TAB_PRACTICE)) {
             mPracticeFragment.dismissPopupWindow();
         }
         if (tag.equals(currentTab)) {
@@ -305,7 +321,11 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
         LogUtils.d("task current show Fragment : " + tag + "   currentTab = " + currentTab);
         currentTab = tag;
-        if (isLoadData) loadData();
+        mCurrentFragment= fragment;
+        if (isLoadData) {
+            mStageTaskBeans.clear();
+            loadData();
+        }
         setTabSelectState();
         replaceFragment(fragment, R.id.task_content, tag);
     }

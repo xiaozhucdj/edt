@@ -1499,6 +1499,11 @@ public class YXClient {
         pullUserInfo(id, new RequestCallback<List<NimUserInfo>>() {
             @Override
             public void onSuccess(List<NimUserInfo> param) {
+                if (param.size() == 0){
+                    le("后台网络更新用户资料失败,id=" + id + " 获取到的用户资料为null");
+                    changeUserInfoFetchingStatus(id, false);
+                    return;
+                }
                 String userName = param.get(0).getName();
                 String userAvatarPath = param.get(0).getAvatar();
                 GenderEnum userGender = param.get(0).getGenderEnum();

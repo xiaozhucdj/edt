@@ -1154,7 +1154,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     ///////////////////////////////////voice///////////////////////////////////////////////////////////
     private NewMediaHelper getMediaHelper() {
         if (mMediaHelper == null) {
-            new AudioHelper(getActivity()).setMaxVolume();
+           new AudioHelper(getActivity()).setMaxVolume();
             mMediaHelper = new NewMediaHelper();
             mMediaHelper.setCompletionListener(this);
             mMediaHelper.init(getActivity());

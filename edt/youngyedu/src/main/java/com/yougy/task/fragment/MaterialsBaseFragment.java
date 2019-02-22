@@ -18,15 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
-import com.yougy.home.activity.ControlFragmentActivity;
-import com.yougy.task.activity.MaterialActivity;
 import com.yougy.task.activity.MaterialActivity2;
 import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.task.bean.StageTaskBean;
@@ -66,8 +63,6 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         String type = event.getType();
         if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA)) {
             mIsServerFail = false;
-            mStageTaskBeans.clear();
-            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
             loadData();
         } else if (type.equals(TaskDetailStudentActivity.EVENT_TYPE_LOAD_DATA_FAIL)){
             mIsServerFail = true;
@@ -155,6 +150,8 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
         if (mIsServerFail) {
             handlerRequestFail();
         } else {
+            mStageTaskBeans.clear();
+            mStageTaskBeans.addAll(mTaskDetailStudentActivity.getStageTaskBeans());
             calculateCurrentLists(0);
             handlerRequestSuccess();
         }

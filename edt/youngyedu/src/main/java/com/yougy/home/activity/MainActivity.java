@@ -1472,6 +1472,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.finish();
         YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
         checkRunnable.activity = null;
+        lastCheckTimeMill = 0;
     }
 
 
