@@ -1684,7 +1684,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (throwable instanceof ApiException) {
                             String errorCode = ((ApiException) throwable).getCode();
                             if (errorCode.equals("400")) {
-
+                                //FIXME 这里会有问题
+                                //理论上这里被拒绝可能有两种情况,一是之前已经提交成功,但是pad端没有收到成功的返回消息,这时点击重试,就会走到这里,这种情况下,pad端没有走过之前提交成功的逻辑.
+                                //二是,按得太快发了两次请求,第一次成功了,并且已经走了上面提交成功的逻辑,第二次提交直接走了这里.
+                                //对于第一种情况,我们应该手动转到和上面提交成功一样的逻辑.而对于第二种情况,我们应该直接提示成功,跳过上面提交成功的逻辑(因为之前已经走了一次了)
+                                //而现在的情况是,我们无法区分是第一种情况还是第二种情况导致走到这里,所以统一只采用对应第二种情况的处理办法,直接提示成功.
                                 HintDialog hintDialog = new HintDialog(WriteHomeWorkActivity.this, "该作业已经完成提交", "确定", new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {

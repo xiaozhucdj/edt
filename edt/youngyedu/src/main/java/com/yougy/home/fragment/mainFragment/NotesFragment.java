@@ -30,6 +30,7 @@ import com.yougy.common.utils.DataCacheUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
@@ -141,7 +142,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
     private void notifyDataSetChanged() {
         LogUtils.i("notes ..." + mNotes.size());
         mNotesAdapter.notifyDataSetChanged();
-        EpdController.invalidate(mRootView, UpdateMode.GC);
+        RefreshUtil.invalidate(mRootView);
     }
 
     private void noteItemClick(int position) {
