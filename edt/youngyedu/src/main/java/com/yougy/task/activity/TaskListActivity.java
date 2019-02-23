@@ -313,9 +313,7 @@ public class TaskListActivity extends BaseActivity {
             binding.textDataEmpty.setText(R.string.no_completed_task);
             binding.textDataEmpty.setVisibility(View.VISIBLE);
         }
-        if (currentCompletedTasks.size() == 0) {
-            generateData(currentCompletedPage);
-        }
+        generateData(currentCompletedPage);
     }
 
 }
