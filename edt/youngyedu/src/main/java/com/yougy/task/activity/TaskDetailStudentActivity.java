@@ -571,10 +571,10 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         @Override
                         public void onCompleted() {
                             LogUtils.d("TaskTest submitToServer.");
-                            if (loadingProgressDialog != null) {
-                                loadingProgressDialog.dismiss();
-                                loadingProgressDialog = null;
-                            }
+//                            if (loadingProgressDialog != null) {
+//                                loadingProgressDialog.dismiss();
+//                                loadingProgressDialog = null;
+//                            }
                             TaskDetailStudentActivity.this.submitToServer(submitTaskBean);
                         }
 
@@ -589,10 +589,10 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
                         @Override
                         public void onNext(Object o) {
-                            if (loadingProgressDialog != null) {
-                                loadingProgressDialog.dismiss();
-                                loadingProgressDialog = null;
-                            }
+//                            if (loadingProgressDialog != null) {
+//                                loadingProgressDialog.dismiss();
+//                                loadingProgressDialog = null;
+//                            }
                         }
                     });
         }
