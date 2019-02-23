@@ -351,13 +351,12 @@ public class YoungyApplicationManager extends LitePalApplication {
                     }
                 }
             });*/
-        }
-//        checkAnr();
-        LogUtils.setOpenLog(BuildConfig.DEBUG);
-        changeSystemConfigIntegerValue();
-         mHolder = new WakeLockHolder() ;
-         mHolder.acquireWakeLock(mContext,"onyx-framework");
 
+            changeSystemConfigIntegerValue();
+            mHolder = new WakeLockHolder() ;
+            mHolder.acquireWakeLock(mContext,"onyx-framework");
+            LogUtils.setOpenLog(BuildConfig.DEBUG) ;
+        }
     }
 
     @Override
