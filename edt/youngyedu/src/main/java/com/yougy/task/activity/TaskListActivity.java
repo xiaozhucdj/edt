@@ -232,10 +232,11 @@ public class TaskListActivity extends BaseActivity {
 
             binding.taskTitle.setText(task.getContentTitle());
             binding.taskSignature.setVisibility(task.isNeedSignature() ? View.VISIBLE : View.GONE);
-            binding.signature.setText(task.isNeedSignature() ? "是" : "否");
-            binding.signature.setVisibility(isComplete ? View.VISIBLE : View.GONE);
-            binding.signatureText.setVisibility(isComplete ? View.VISIBLE : View.GONE);
-
+            if (task.isNeedSignature()) {
+                binding.signature.setText(task.isSigned());
+                binding.signature.setVisibility(isComplete ? View.VISIBLE : View.GONE);
+                binding.signatureText.setVisibility(isComplete ? View.VISIBLE : View.GONE);
+            }
             binding.taskChapter.setText(getString(R.string.task_chapter, task.getContentCourseLinkName()));
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));
             binding.taskExerciseCount.setText(String.valueOf(task.getExerciseCount()));
