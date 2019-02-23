@@ -1739,7 +1739,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        throwable.printStackTrace();
+//                        throwable.printStackTrace();
                         //如果不是分组作业这里获取的话服务器返回400，
                         YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
                                 , SessionTypeEnum.P2P

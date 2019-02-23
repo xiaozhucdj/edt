@@ -140,6 +140,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
     //保存当前题目页面分页，默认从0开始
     private int saveQuestionPage = 0;
 
+    //是否用户手动提交了问答（用来做手动提交时，老师强制收取到时的学生结果为空）
+    private boolean isUpByUser;
+
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answering, null, false);
@@ -218,6 +221,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         }
                                     }).show();*/
 
+                                    //如果学生已经手动点击了提交，这时如果收到老师的强制收取消息，则不再执行提交逻辑。
+                                    if (isUpByUser) {
+                                        return;
+                                    }
                                     //  这里因为要做问答自评互评功能，这里需要当老师结束问答时，强制提交学生问答结果。 （这里有个问题，选择判断题，学生提交时会判断，但是当前自动提交时不能判断）
                                     saveHomeWorkData();
                                     getUpLoadInfo();
@@ -387,6 +394,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     }
                 }
 
+                isUpByUser = true;
                 saveHomeWorkData();
                 getUpLoadInfo();
 
