@@ -295,7 +295,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         LogUtils.i("updatePage");
         position = page;
         mBookMarkerIv.setSelected(mBookMarks.containsKey(mCurrentMarksPage));
-        EpdController.invalidate(mRoot, UpdateMode.GC);
+        RefreshUtil.invalidate(mRoot);
         mOnyxImgView.setImageBitmap(bitmap);
         restViewState();
 
