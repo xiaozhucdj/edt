@@ -236,6 +236,9 @@ public class TaskListActivity extends BaseActivity {
                 binding.signature.setText(task.isSigned());
                 binding.signature.setVisibility(isComplete ? View.VISIBLE : View.GONE);
                 binding.signatureText.setVisibility(isComplete ? View.VISIBLE : View.GONE);
+            }else{
+                binding.signature.setVisibility(View.GONE);
+                binding.signatureText.setVisibility(View.GONE);
             }
             binding.taskChapter.setText(getString(R.string.task_chapter, task.getContentCourseLinkName()));
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));

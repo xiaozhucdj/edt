@@ -736,27 +736,26 @@ public final class NetWorkManager {
      * @return
      */
     public static Observable<Object> updateHomeworkContent(int  userId, int perform, String contentStatusCode) {
-        return getInstance().getServerApi().updateHomeworkContent(userId, perform, contentStatusCode)
+        return getInstance(false).getServerApi().updateHomeworkContent(userId, perform, contentStatusCode)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(null));
     }
 
     /**
      * OOS 上传
-     *
      * @param userId
      * @return
      */
     public static Observable<STSbean> uploadTaskPracticeOOS(Integer userId) {
-        return getInstance().getServerApi().uploadTaskPracticeOOS(userId)
+        return getInstance(false).getServerApi().uploadTaskPracticeOOS(userId)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(null));
     }
 
     public static Observable<List<SubmitReplyBean>> submitTaskPracticeServer(Integer userId, String data) {
-        return getInstance().getServerApi().submitTaskPracticeServer(userId, data)
+        return getInstance(false).getServerApi().submitTaskPracticeServer(userId, data)
                 .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+                .compose(RxResultHelper.handleResult(null));
     }
 
     /**
