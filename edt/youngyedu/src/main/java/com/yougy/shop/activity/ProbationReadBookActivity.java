@@ -25,6 +25,7 @@ import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -401,7 +402,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
 
     @Override
     public void updatePage(int page, Bitmap bitmap, BookVoiceBean bean) {
-        EpdController.invalidate(mRootView, UpdateMode.GC);
+        RefreshUtil.invalidate(mRootView);
         mOnyxImgView.setImageBitmap(bitmap);
         mImgPageBack.setEnabled(true);
         mImgPageNext.setEnabled(true);

@@ -11,7 +11,7 @@ import com.onyx.android.sdk.api.device.epd.UpdateMode;
  */
 
 public class RefreshUtil {
-    private static boolean flag = true;
+    private static boolean flag = false;
 
     /**全局刷新*/
     public static void invalidate(View view) {

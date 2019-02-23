@@ -34,6 +34,7 @@ import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.GsonUtil;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
@@ -489,7 +490,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
     private void notifyDataSetChanged() {
         mBookAdapter.notifyDataSetChanged();
-        EpdController.invalidate(mRootView, UpdateMode.GC);
+        RefreshUtil.invalidate(mRootView);
     }
 
     @Override
