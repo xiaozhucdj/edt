@@ -236,7 +236,7 @@ public class TaskListActivity extends BaseActivity {
             binding.signature.setVisibility(isComplete ? View.VISIBLE : View.GONE);
             binding.signatureText.setVisibility(isComplete ? View.VISIBLE : View.GONE);
 
-            binding.taskChapter.setText(getString(R.string.task_chapter,task.getContentCourseLinkName()));
+            binding.taskChapter.setText(getString(R.string.task_chapter, task.getContentCourseLinkName()));
             binding.taskDataCount.setText(String.valueOf(task.getDataCount()));
             binding.taskExerciseCount.setText(String.valueOf(task.getExerciseCount()));
             binding.taskCompleteTime.setText(getString(R.string.task_complete_time, task.getPerformStartTime(), task.getPerformEndTime()));
@@ -286,7 +286,12 @@ public class TaskListActivity extends BaseActivity {
         binding.completedTasksRecycler.setVisibility(View.GONE);
         binding.uncompletePageBarTask.setVisibility(View.VISIBLE);
         binding.uncompleteTasksRecycler.setVisibility(View.VISIBLE);
-        binding.textDataEmpty.setText(R.string.no_uncomplete_task);
+        if (currentUnCompleteTasks.size() > 0) {
+            binding.textDataEmpty.setVisibility(View.GONE);
+        } else {
+            binding.textDataEmpty.setText(R.string.no_uncomplete_task);
+            binding.textDataEmpty.setVisibility(View.VISIBLE);
+        }
     }
 
     public void complete(View view) {
@@ -298,7 +303,12 @@ public class TaskListActivity extends BaseActivity {
         binding.uncompleteTasksRecycler.setVisibility(View.GONE);
         binding.completedPageBarTask.setVisibility(View.VISIBLE);
         binding.completedTasksRecycler.setVisibility(View.VISIBLE);
-        binding.textDataEmpty.setText(R.string.no_completed_task);
+        if (currentCompletedTasks.size() > 0) {
+            binding.textDataEmpty.setVisibility(View.GONE);
+        } else {
+            binding.textDataEmpty.setText(R.string.no_completed_task);
+            binding.textDataEmpty.setVisibility(View.VISIBLE);
+        }
         if (currentCompletedTasks.size() == 0) {
             generateData(currentCompletedPage);
         }
