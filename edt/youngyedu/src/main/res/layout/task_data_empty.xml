@@ -16,7 +16,7 @@
         android:layout_marginRight="@dimen/x8"
         android:layout_marginStart="@dimen/x8"
         android:layout_marginTop="@dimen/y280"
-        android:textSize="@dimen/x32"
+        android:textSize="@dimen/x24"
         android:textColor="@android:color/black"
         android:text="@string/str_task_materials_empty"
         app:layout_constraintTop_toBottomOf="parent"
