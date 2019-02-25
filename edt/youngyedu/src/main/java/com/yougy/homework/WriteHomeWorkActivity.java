@@ -244,6 +244,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private YXClient.OnMessageListener receiverMsg;
     private boolean isUpload = false;
 
+    //是否用户手动提交了问答（用来做手动提交时，老师强制收取到时的学生结果为空）
+    private boolean isUpByUser;
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_homework);
@@ -307,6 +310,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     LogUtils.d("examId = " + examId + "   collectHomeworkAttachment.examId = " + collectHomeworkAttachment.examId);
                     if (examId.equals(collectHomeworkAttachment.examId)) {
                         LogUtils.w("teacher receive homework , auto submit.");
+                        //如果学生已经手动点击了提交，这时如果收到老师的强制收取消息，则不再执行提交逻辑。
+                        if (isUpByUser) {
+                            return;
+                        }
                         WriteHomeWorkActivity.this.autoSubmitHomeWork();
                     } else {
                         LogUtils.w("current examId is not receive examId. not submit.");
@@ -1141,7 +1148,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void onFastClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
-                        // 去提交
+                        // 去提交,学生手动点击提交按钮后,屏蔽老师的自动收取消息,防止多次提交的错误.今后只能手动提交(只对本次作业生效)
+                        isUpByUser = true;
                         getUpLoadInfo();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
