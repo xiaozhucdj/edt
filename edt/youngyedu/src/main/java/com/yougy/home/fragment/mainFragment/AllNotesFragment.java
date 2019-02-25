@@ -326,7 +326,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mServerInfos.size() == 0) {
+        if (!hidden && mServerInfos.size() == 0) {
             loadData();
         }
     }
@@ -358,7 +358,7 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         NewUpdateNoteReq req = new NewUpdateNoteReq();
         req.setUserId(SpUtils.getAccountId());
         req.setData(fromNotes(mUpdataStr));
-        NetWorkManager.updateNote(req).compose(((BaseActivity)context).bindToLifecycle())
+        NetWorkManager.updateNote(req).compose(((BaseActivity) context).bindToLifecycle())
                 .subscribe(o -> {
                     mUpdataStr = "";
                     DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA, "");
@@ -376,24 +376,24 @@ public class AllNotesFragment extends BFragment implements View.OnClickListener 
         req.setUserId(SpUtils.getAccountId());
         req.setData(fromNotes(mAddStr));
         NetWorkManager.insertAllNote(req).compose(((BaseActivity) context).bindToLifecycle()).filter(Objects::nonNull).subscribe(insertNoteIds -> {
-                    if (!StringUtils.isEmpty(mUpdataStr)) {
-                        LogUtils.i("网络请求 离线更新笔记");
-                        requestOffLineUpdataNote();
-                    } else {
-                        LogUtils.i("获取本学期笔记列表");
-                        getNotes();
-                    }
-                }, throwable -> {
-                    mAddStr = "";
-                    DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, "");
-                    if (!StringUtils.isEmpty(mUpdataStr)) {
-                        LogUtils.i("网络请求 离线更新笔记");
-                        requestOffLineUpdataNote();
-                    } else {
-                        LogUtils.i("获取本学期笔记列表");
-                        getNotes();
-                    }
-                });
+            if (!StringUtils.isEmpty(mUpdataStr)) {
+                LogUtils.i("网络请求 离线更新笔记");
+                requestOffLineUpdataNote();
+            } else {
+                LogUtils.i("获取本学期笔记列表");
+                getNotes();
+            }
+        }, throwable -> {
+            mAddStr = "";
+            DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_ADD, "");
+            if (!StringUtils.isEmpty(mUpdataStr)) {
+                LogUtils.i("网络请求 离线更新笔记");
+                requestOffLineUpdataNote();
+            } else {
+                LogUtils.i("获取本学期笔记列表");
+                getNotes();
+            }
+        });
     }
 
     /***

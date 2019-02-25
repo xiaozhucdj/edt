@@ -191,7 +191,7 @@ public class TextBookFragment extends BFragment {
             if (mCountBooks.size() > 0) {
                 mBookAdapter.notifyDataSetChanged();
             }
-            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+            if ( mCountBooks.size() == 0|| mIsRefresh) {
                 loadData();
             }
         }

@@ -95,7 +95,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     private String mSearchKey;
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
-    private boolean mIsFist;
     /***
      * 搜索顶部显示
      */
@@ -166,8 +165,8 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
                 LogUtils.i("onItemDownClickL");
                 if (mBooks.get(position).getBookId() == -1) {
                     if (NetUtils.isNetConnected()) {
-                        Intent intent = new Intent(getActivity(),BookShopActivityDB.class);
-                        intent.putExtra(BookShopActivityDB.CLASSIFY_POSITION,BookShopActivityDB.CLASSIFY_POSITION_EXTRA);
+                        Intent intent = new Intent(getActivity(), BookShopActivityDB.class);
+                        intent.putExtra(BookShopActivityDB.CLASSIFY_POSITION, BookShopActivityDB.CLASSIFY_POSITION_EXTRA);
                         startActivity(intent);
 
                     } else {
@@ -204,9 +203,6 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     }
 
     private void itemClick(int position) {
-
-
-
 
 
         mDownPosition = position;
@@ -269,14 +265,13 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mIsFist = true;
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+            if (mCountBooks.size() == 0 || mIsRefresh) {
                 loadData();
             }
         }
@@ -284,7 +279,7 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
 
 
     private void loadData() {
-        LogUtils.e("loadData ..."+tag);
+        LogUtils.e("loadData ..." + tag);
         if (YoungyApplicationManager.isWifiAvailable()) {
             mLoadingNull.setVisibility(View.GONE);
             NewBookShelfReq req = new NewBookShelfReq();
@@ -294,16 +289,16 @@ public class ReferenceBooksFragment extends BFragment implements View.OnClickLis
             req.setCacheId(Integer.parseInt(NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK));
             //设置年级
             req.setBookCategoryMatch(30000);
-            NetWorkManager.getBookShelf(req).compose(((BaseActivity)context).bindToLifecycle())
+            NetWorkManager.getBookShelf(req).compose(((BaseActivity) context).bindToLifecycle())
                     .subscribe(new Action1<List<BookInfo>>() {
                         @Override
                         public void call(List<BookInfo> bookInfos) {
                             ReferenceBooksFragment.this.freshUI(bookInfos);
 
-                            if (bookInfos!=null && bookInfos.size()>0){
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK,  GsonUtil.toJson(bookInfos));
-                            }else{
-                                DataCacheUtils.putString(getActivity(),NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK, "");
+                            if (bookInfos != null && bookInfos.size() > 0) {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK, GsonUtil.toJson(bookInfos));
+                            } else {
+                                DataCacheUtils.putString(getActivity(), NewProtocolManager.NewCacheId.CODE_REFERENCE_BOOK, "");
                             }
                         }
                     }, new Action1<Throwable>() {
