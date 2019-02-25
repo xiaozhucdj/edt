@@ -516,7 +516,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     public void onClick(View view) {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
-        if (0 < timeD && timeD < 1000) {
+        if (0 < timeD && timeD < 2000) {
             return;
         }
         lastClickTime = time;
