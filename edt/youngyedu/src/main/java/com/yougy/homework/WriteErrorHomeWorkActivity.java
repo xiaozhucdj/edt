@@ -511,9 +511,16 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     }
 
-
+    private static long lastClickTime;
     @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left, R.id.tv_caogao_text, R.id.tv_dismiss_caogao})
     public void onClick(View view) {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 1000) {
+            return;
+        }
+        lastClickTime = time;
+
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }

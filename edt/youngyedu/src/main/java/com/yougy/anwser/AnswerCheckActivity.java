@@ -259,9 +259,16 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-
+    private static long lastClickTime;
     @Override
     public void onClick(View view) {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 1000) {
+            return;
+        }
+        lastClickTime = time;
+
         myLeaveScribbleMode();
 
         switch (view.getId()) {

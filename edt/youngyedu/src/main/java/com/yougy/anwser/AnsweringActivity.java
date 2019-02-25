@@ -59,7 +59,6 @@ import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
 import com.yougy.view.dialog.ConfirmDialog;
-import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -359,8 +358,15 @@ public class AnsweringActivity extends AnswerBaseActivity {
         return f.getAbsolutePath();
     }
 
-
+    private static long lastClickTime;
     public void onClick(View view) {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 1000) {
+            return;
+        }
+        lastClickTime = time;
+
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
