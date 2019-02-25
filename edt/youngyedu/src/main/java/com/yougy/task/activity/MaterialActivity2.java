@@ -154,7 +154,7 @@ public class MaterialActivity2 extends BaseActivity {
             }
             LogUtils.d("TaskTest format = " + format  + "  mCurrentUrl = " + mCurrentUrl);
             contentAdapter.updateDataList(PAGE_TYPE_KEY, mCurrentUrl, format);
-            mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, false, mStatusChangeListener);
+            mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, mPageIndex, true, mStatusChangeListener);
             mMaterialPageBar.selectPageBtn(mPageIndex, false);
         }
         readTime = 0;
@@ -173,8 +173,7 @@ public class MaterialActivity2 extends BaseActivity {
         } else {
             LogUtils.e("TaskTest system time is error.");
         }
-        if (!isHadComplete)
-            UIUtils.postDelayed(() -> mNoteBookView.setIntercept(false), 300);
+
     }
 
     @Override
@@ -357,7 +356,9 @@ public class MaterialActivity2 extends BaseActivity {
                 mMaterialContentDisplay.setHintText("加载中...");
                 break;
             case ERROR:
-                mMaterialContentDisplay.setHintText("错误：" + errorMsg);
+                LogUtils.e("NoteView mStatusChangeListener 错误："  + errorMsg);
+                mMaterialContentDisplay.setHintText("加载失败,点击刷新重试！");
+                mMaterialContentDisplay.setOnClickListener(view -> loadData());
                 break;
             case SUCCESS:
                 LogUtils.d("NoteView mStatusChangeListener SUCCESS.");
@@ -366,6 +367,7 @@ public class MaterialActivity2 extends BaseActivity {
                 if (isHadComplete) {
                     mLoadAnswer.loadAnswer(mNoteBookView, mStageTaskBean, 0 , mPageIndex);
                 } else {
+                    UIUtils.postDelayed(() -> mNoteBookView.setIntercept(false), 20);
                     String[] cacheBitmapKey = getCacheBitmapKey(mCurrentPosition, mPageIndex);
                     SaveNoteUtils.getInstance(getApplicationContext()).resetNoteView(mNoteBookView, cacheBitmapKey[0], cacheBitmapKey[1],
                         SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir());
