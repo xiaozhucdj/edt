@@ -249,7 +249,7 @@ public class MaterialsBaseFragment extends TaskBaseFragment {
             String stageFormat = sStageTaskBean.getStageContent().get(0).getFormat();
             if (stageFormat.contains("pdf") || stageFormat.contains("PDF")  || stageFormat.contains("PNG")
                     || stageFormat.contains("png") || stageFormat.contains("jpg")
-                    || stageFormat.contains("JPG") || stageFormat.contains("bmp")
+                    || stageFormat.contains("JPG") || stageFormat.contains("bmp") || stageFormat.contains("BMP")
                     || stageFormat.contains("jpeg") || stageFormat.contains("JPEG")||stageFormat.contains("txt")) {
                 flag = false;
             }
