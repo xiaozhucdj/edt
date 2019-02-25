@@ -11,7 +11,7 @@ public class Task implements Serializable {
     private int contentElement;
     private int contentBookLink;
     private int contentCourseLink;
-    private String  contentStatusCode;
+    private String contentStatusCode;
     private int contentDrama;
     private String contentTitle;
     private int homeworkOwner;
@@ -26,6 +26,7 @@ public class Task implements Serializable {
     private int exerciseCount;
     @SerializedName("SR02")
     private int dataCount;
+    //SR04 如果是1 就是需要签字，但还没签 如果大于1 那就是需要签字并且已签字  0 就是不需要签字
     @SerializedName("SR04")
     private int signCount;
 
@@ -87,7 +88,11 @@ public class Task implements Serializable {
     }
 
     public boolean isNeedSignature() {
-        return signCount == 1;
+        return signCount >= 1;
+    }
+
+    public String isSigned() {
+        return signCount > 1 ? "是" : "否";
     }
 
     public void setContentCourseLinkName(String contentCourseLinkName) {

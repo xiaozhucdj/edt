@@ -81,12 +81,12 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onNewMessage(IMMessage message) {
                 if (message.getAttachment() instanceof ExitAnswerCheckAttachment){
+                    myLeaveScribbleMode();
                     finish();
                 }
             }
         });
 
-        binding.tvTitle.setText("问答自评、互评");
 
         binding.pageBtnBar.setPageBarAdapter(new PageBtnBarAdapter(getApplicationContext()) {
             @Override
@@ -206,7 +206,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                                    }
 
 
-                                   binding.tvTitle.setText("问答由" + SpUtils.getAccountName() + "批改");
+//                                   binding.tvTitle.setText("问答由" + SpUtils.getAccountName() + "批改");
                                    int replyScore = questionReplyDetail.getReplyScore();
 
                                    /*//是否批改过了
