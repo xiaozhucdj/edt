@@ -213,12 +213,15 @@ public class MaterialActivity2 extends BaseActivity {
 
     }
 
-    @OnClick({R.id.image_back, R.id.paint_draw, R.id.eraser, R.id.undo, R.id.redo})
+    @OnClick({R.id.image_back, R.id.image_refresh, R.id.paint_draw, R.id.eraser, R.id.undo, R.id.redo})
     public void onClick (View view) {
         leaveScribbleMode (true);
         switch (view.getId()) {
             case R.id.image_back:
                 finish();
+                break;
+            case R.id.image_refresh:
+                loadData();
                 break;
             case R.id.paint_draw:
                 clickPen();
