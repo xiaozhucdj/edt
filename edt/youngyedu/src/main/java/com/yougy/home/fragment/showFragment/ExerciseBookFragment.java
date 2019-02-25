@@ -489,7 +489,7 @@ public class ExerciseBookFragment extends BFragment {
      */
     private boolean isMutualEvaluation (HomeworkSummary uncheckedHomeworkSummary) {
         if (IKCODE_02.equals(uncheckedHomeworkSummary.getExtra().getEval())
-                || IJCODE_03.equals(uncheckedHomeworkSummary.getExtra().getEval())) {
+                || IKCODE_03.equals(uncheckedHomeworkSummary.getExtra().getEval())) {
             return true;
         }
         return false;
