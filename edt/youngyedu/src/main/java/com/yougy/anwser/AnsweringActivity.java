@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -319,6 +320,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
+
                 }
             }
         });
@@ -574,12 +576,49 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                     if (position < binding.contentDisplayer.getContentAdapter().getPageCount("question")) {
                         //切换当前题目的分页
+                        ContentDisplayerV2.StatusChangeListener specificListener = null;
+                        if (questionList.get(0) != null
+                                && ("问答".equals(questionList.get(0).getExtraData()))){
+                            specificListener = new ContentDisplayerV2.StatusChangeListener() {
+                                @Override
+                                public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
+                                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS){
+                                        if (position + 1 == binding.contentDisplayer.getContentAdapter().getPageCount("question")){
+                                            Bitmap bitmap = ((BitmapDrawable) binding.contentDisplayer.getPdfImageView().getDrawable()).getBitmap();
+                                            for (int y = bitmap.getHeight() - 1 ; y >= 0; y--) {
+                                                for (int x = 0; x < bitmap.getWidth(); x++) {
+                                                    if (bitmap.getPixel(x , y) != -1){
+                                                        binding.linesBgImv.setVisibility(View.VISIBLE);
+                                                        binding.linesBgImv.setPadding(30 , y + 1 , 0 , 0);
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            binding.linesBgImv.setVisibility(View.GONE);
+                                        }
+                                    }
+                                }
+                            };
+                        }
+                        else {
+                            binding.linesBgImv.setVisibility(View.GONE);
+                        }
                         binding.contentDisplayer.getContentAdapter().toPage("question", position, false);
                         binding.contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
                         binding.contentDisplayer.setVisibility(View.GONE);
-
+                        //新需求:在问答题加白纸上需要显示横线背景
+                        if (questionList.get(0) != null
+                                && ("问答".equals(questionList.get(0).getExtraData()))){
+                            binding.linesBgImv.setVisibility(View.VISIBLE);
+                            binding.linesBgImv.setPadding(30 , 0 , 0 , 0);
+                        }
+                        else {
+                            binding.linesBgImv.setVisibility(View.GONE);
+                        }
                     }
                     if (questionList.get(0) != null) {
                         if ("选择".equals(questionList.get(0).getExtraData())) {
