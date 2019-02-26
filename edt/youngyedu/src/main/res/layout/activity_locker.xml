@@ -6,6 +6,8 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:focusable="true"
+        android:clickable="true"
         android:id="@+id/ll_check_msg"
         android:layout_marginTop="20px"
         android:gravity="center_vertical"
