@@ -1422,7 +1422,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
-                        LogUtils.e("FH", "call ");
                         if (stSbean != null) {
                             upLoadPic(stSbean);
                         } else {
