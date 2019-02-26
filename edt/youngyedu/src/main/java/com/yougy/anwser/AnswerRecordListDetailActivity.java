@@ -564,6 +564,7 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
                                                 }
                                                 binding.bottomText.setVisibility(View.GONE);
                                             } else {
+                                                binding.startPracticeBtn.setVisibility(View.GONE);
                                                 //说明是未提交的问答
                                                 binding.mainContentDisplay.getContentAdapter().updateDataList("analysis", 0, parsedQuestionItem.analysisContentList);
                                                 binding.mainContentDisplay.getContentAdapter().updateDataList("question", 0, parsedQuestionItem.questionContentList);
