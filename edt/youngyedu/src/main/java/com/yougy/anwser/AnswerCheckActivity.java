@@ -296,19 +296,16 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                 }
                 break;
             case R.id.correct_btn:
-                saveCheckData(currentShowReplyPageIndex);
                 score = 100;
-                getUpLoadInfo();
+                saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
                 break;
             case R.id.half_correct_btn:
-                saveCheckData(currentShowReplyPageIndex);
                 score = 50;
-                getUpLoadInfo();
+                saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
                 break;
             case R.id.wrong_btn:
-                saveCheckData(currentShowReplyPageIndex);
                 score = 0;
-                getUpLoadInfo();
+                saveCheckDataAndgetUpLoadInfo(currentShowReplyPageIndex);
                 break;
             case R.id.image_refresh:
                 setData();
@@ -477,6 +474,74 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
             pathList.set(index, filePath);
             //清除当前页面笔记
             binding.contentDisplayer.getLayer2().clearAll();
+        }
+    }
+
+    private void saveCheckDataAndgetUpLoadInfo(int index) {
+
+        synchronized (this) {
+            Observable.create(new Observable.OnSubscribe<Object>() {
+                @Override
+                public void call(Subscriber<? super Object> subscriber) {
+
+                    if (bytesList.size() == 0) {
+                        return;
+                    }
+                    if (pathList.size() == 0) {
+                        return;
+                    }
+                    //保存笔记
+                    bytesList.set(index, binding.contentDisplayer.getLayer2().bitmap2Bytes());
+                    //保存图片
+                    String fileName = pathList.get(index);
+                    if (!TextUtils.isEmpty(fileName) && fileName.contains("/")) {
+                        fileName = fileName.substring(fileName.lastIndexOf("/"));
+                    } else {
+                        fileName = System.currentTimeMillis() + ".png";
+                    }
+                    String filePath = saveBitmapToFile(binding.contentDisplayer.getLayer2().getBitmap(), fileName);
+                    pathList.set(index, filePath);
+
+                    subscriber.onNext(new Object());//将执行结果返回
+                    subscriber.onCompleted();//结束异步任务
+                }
+            })
+                    .subscribeOn(Schedulers.io())//异步任务在IO线程执行
+                    .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
+                    .subscribe(new Subscriber<Object>() {
+                        LoadingProgressDialog loadingProgressDialog;
+
+                        @Override
+                        public void onStart() {
+                            super.onStart();
+                            if (loadingProgressDialog == null) {
+                                loadingProgressDialog = new LoadingProgressDialog(getBaseContext());
+                                loadingProgressDialog.show();
+                                loadingProgressDialog.setTitle("手写轨迹保存中...");
+                            }
+
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            if (loadingProgressDialog != null) {
+                                loadingProgressDialog.dismiss();
+                                loadingProgressDialog = null;
+                            }
+                            //清除当前页面笔记
+                            binding.contentDisplayer.getLayer2().clearAll();
+                            getUpLoadInfo();
+                        }
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            LogUtils.e("笔记轨迹保存失败");
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                        }
+                    });
         }
     }
 
