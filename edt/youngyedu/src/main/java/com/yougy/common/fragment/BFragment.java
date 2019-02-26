@@ -508,15 +508,6 @@ public abstract class BFragment extends Fragment implements UiPromptDialog.Liste
 
     }
 
-    //按键上一页
-    public void prevPageForKey() {
-
-    }
-
-    //按键下一页
-    public void nextPageForKey() {
-
-    }
 
 
     private Runnable mRefreshRun;

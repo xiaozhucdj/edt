@@ -334,7 +334,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        LogUtils.i("yuanye ..mJump==" + keyCode);
+        LogUtils.i("onKeyDown ..mJump==" + keyCode);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mFragment != null) {
                 if (mFragment instanceof HandleOnyxReaderFragment) {
@@ -345,6 +345,13 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
                     mExerciseBookFragment.onBackListener();
                 }
             }
+            return true;
+        }else if(mHandleOnyxReader!=null && keyCode == KeyEvent.KEYCODE_PAGE_DOWN && (mFragment instanceof HandleOnyxReaderFragment)){
+            //next
+            mHandleOnyxReader.nextPageForKey();
+            return true;
+        }else if(mHandleOnyxReader!=null && keyCode == KeyEvent.KEYCODE_PAGE_UP && (mFragment instanceof HandleOnyxReaderFragment)){
+            mHandleOnyxReader.prevPageForKey();
             return true;
         }
         return super.onKeyDown(keyCode, event);

@@ -1058,9 +1058,8 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     }
 
 
-    @Override
+
     public void prevPageForKey() {
-        super.prevPageForKey();
         if (!mHide) {
             if (mBackPageBack.isEnabled() && mBackPageNext.isEnabled() && mSeekbarPage.isClickable() && mBackPageBack != null) {
                 mBackPageBack.callOnClick();
@@ -1068,9 +1067,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         }
     }
 
-    @Override
     public void nextPageForKey() {
-        super.nextPageForKey();
         if (!mHide) {
             if (mBackPageBack.isEnabled() && mBackPageNext.isEnabled() && mSeekbarPage.isClickable() && mBackPageNext != null) {
                 mBackPageNext.callOnClick();
@@ -1161,4 +1158,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         }
         return mMediaHelper;
     }
+
+
 }

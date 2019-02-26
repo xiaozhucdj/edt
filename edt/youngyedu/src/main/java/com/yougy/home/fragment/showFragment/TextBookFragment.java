@@ -852,26 +852,6 @@ public class TextBookFragment extends BaseFragment implements AdapterView.OnItem
     }
 
 
-    @Override
-    public void prevPageForKey() {
-        super.prevPageForKey();
-        if (!mHide) {
-            if (mBackPageBack.isEnabled() && mBackPageNext.isEnabled() && mSeekbarPage.isClickable() && mBackPageBack!=null) {
-                mBackPageBack.callOnClick();
-            }
-        }
-    }
-
-    @Override
-    public void nextPageForKey() {
-        super.nextPageForKey();
-        if (!mHide) {
-            if (mBackPageBack.isEnabled() && mBackPageNext.isEnabled() && mSeekbarPage.isClickable() && mBackPageNext!=null) {
-                mBackPageNext.callOnClick();
-            }
-        }
-    }
-
 
     /**
      * 重新UI 状态
