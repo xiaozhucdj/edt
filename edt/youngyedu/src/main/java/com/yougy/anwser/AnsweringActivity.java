@@ -226,8 +226,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         return;
                                     }
                                     //  这里因为要做问答自评互评功能，这里需要当老师结束问答时，强制提交学生问答结果。 （这里有个问题，选择判断题，学生提交时会判断，但是当前自动提交时不能判断）
-                                    saveHomeWorkData();
-                                    getUpLoadInfo();
+                                    saveDataAndgetUpLoadInfo();
 
                                 }
                             }
@@ -403,9 +402,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }
 
                 isUpByUser = true;
-                saveHomeWorkData();
-                getUpLoadInfo();
-
+                saveDataAndgetUpLoadInfo();
                 break;
             case R.id.tv_clear_write:
 
@@ -507,6 +504,70 @@ public class AnsweringActivity extends AnswerBaseActivity {
         bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
         pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
         mNbvAnswerBoard.clearAll();
+    }
+
+
+    /**
+     * 保存之前操作题目结果数据
+     */
+    private void saveDataAndgetUpLoadInfo() {
+
+        synchronized (this) {
+            Observable.create(new Observable.OnSubscribe<Object>() {
+                @Override
+                public void call(Subscriber<? super Object> subscriber) {
+
+                    if (bytesList.size() == 0) {
+                        return;
+                    }
+                    if (pathList.size() == 0) {
+                        return;
+                    }
+                    //刷新最后没有保存的数据
+                    bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
+                    pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
+
+                    subscriber.onNext(new Object());//将执行结果返回
+                    subscriber.onCompleted();//结束异步任务
+                }
+            })
+                    .subscribeOn(Schedulers.io())//异步任务在IO线程执行
+                    .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
+                    .subscribe(new Subscriber<Object>() {
+                        LoadingProgressDialog loadingProgressDialog;
+
+                        @Override
+                        public void onStart() {
+                            super.onStart();
+                            if (loadingProgressDialog == null) {
+                                loadingProgressDialog = new LoadingProgressDialog(getBaseContext());
+                                loadingProgressDialog.show();
+                                loadingProgressDialog.setTitle("手写轨迹保存中...");
+                            }
+
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            if (loadingProgressDialog != null) {
+                                loadingProgressDialog.dismiss();
+                                loadingProgressDialog = null;
+                            }
+                            //清除当前页面笔记
+                            mNbvAnswerBoard.clearAll();
+                            getUpLoadInfo();
+                        }
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            LogUtils.e("笔记轨迹保存失败");
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                        }
+                    });
+        }
     }
 
     //填充数据
