@@ -560,28 +560,28 @@ public class NoteBookFragment extends BaseFragment implements ControlView.PagerC
         super.onHiddenChanged(hidden);
     }
 
-
-    /**
-     * 按键翻页
-     */
-    @Override
-    public void prevPageForKey() {
-        super.prevPageForKey();
-        if (!mHide && mBackPageBack != null) {
-            mBackPageBack.callOnClick();
-        }
-    }
-
-    /**
-     * 按键翻页
-     */
-    @Override
-    public void nextPageForKey() {
-        super.nextPageForKey();
-        if (!mHide && mPageNext != null) {
-            mPageNext.callOnClick();
-        }
-    }
+//
+//    /**
+//     * 按键翻页
+//     */
+//    @Override
+//    public void prevPageForKey() {
+//        super.prevPageForKey();
+//        if (!mHide && mBackPageBack != null) {
+//            mBackPageBack.callOnClick();
+//        }
+//    }
+//
+//    /**
+//     * 按键翻页
+//     */
+//    @Override
+//    public void nextPageForKey() {
+//        super.nextPageForKey();
+//        if (!mHide && mPageNext != null) {
+//            mPageNext.callOnClick();
+//        }
+//    }
 
 
     /**
