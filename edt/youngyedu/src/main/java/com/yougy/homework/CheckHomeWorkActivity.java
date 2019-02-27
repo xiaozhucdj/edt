@@ -1348,7 +1348,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                             if (loadingProgressDialog == null) {
                                 loadingProgressDialog = new LoadingProgressDialog(getBaseContext());
                                 loadingProgressDialog.show();
-                                loadingProgressDialog.setTitle("手写轨迹保存中...");
+                                loadingProgressDialog.setTitle(R.string.loading_text);
                             }
 
                         }
@@ -1636,7 +1636,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         if (loadingProgressDialog == null) {
                             loadingProgressDialog = new LoadingProgressDialog(CheckHomeWorkActivity.this);
                             loadingProgressDialog.show();
-                            loadingProgressDialog.setTitle("批改上传中...");
+                            loadingProgressDialog.setTitle(R.string.loading_text);
                         }
 
                     }
