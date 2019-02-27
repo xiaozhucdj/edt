@@ -1,8 +1,10 @@
 package com.yougy.common.manager;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -355,6 +357,9 @@ public class YoungyApplicationManager extends LitePalApplication {
             changeSystemConfigIntegerValue();
             mHolder = new WakeLockHolder() ;
             mHolder.acquireWakeLock(mContext,"onyx-framework");
+
+            registerScreenReceiver();
+
             LogUtils.setOpenLog(BuildConfig.DEBUG) ;
         }
     }
@@ -362,6 +367,7 @@ public class YoungyApplicationManager extends LitePalApplication {
     @Override
     public void onTerminate() {
         super.onTerminate();
+        unRegisterScreenReceiver();
         NetManager.getInstance().unregisterReceiver(this);
         PowerManager.getInstance().unregisterReceiver(this);
         if (mHolder!=null){
@@ -541,6 +547,42 @@ public class YoungyApplicationManager extends LitePalApplication {
             e.printStackTrace();
             return false;
         }
+    }
+
+
+    private ScreenBroadcastReceiver mScreenReceiver;
+    /**
+     * screen状态广播接收者
+     */
+    private class ScreenBroadcastReceiver extends BroadcastReceiver {
+        private String action = null;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            action = intent.getAction();
+            LogUtils.w("ScreenBroadcastReceiver", action);
+            if (Intent.ACTION_SCREEN_ON.equals(action)) { // 开屏
+                mHolder.acquireWakeLock(YoungyApplicationManager.this,"onyx-framework");
+            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) { // 锁屏
+                if (mHolder!=null){
+                    mHolder.releaseWakeLock();
+                }
+            } else if (Intent.ACTION_USER_PRESENT.equals(action)) { // 解锁
+            }
+        }
+    }
+
+    private void registerScreenReceiver () {
+        mScreenReceiver = new ScreenBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(mScreenReceiver, filter);
+    }
+
+    private void unRegisterScreenReceiver () {
+        if (mScreenReceiver != null) unregisterReceiver(mScreenReceiver);
     }
 
 }
