@@ -542,7 +542,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             if (loadingProgressDialog == null) {
                                 loadingProgressDialog = new LoadingProgressDialog(getBaseContext());
                                 loadingProgressDialog.show();
-                                loadingProgressDialog.setTitle("手写轨迹保存中...");
+                                loadingProgressDialog.setTitle(R.string.loading_text);
                             }
 
                         }
@@ -1074,7 +1074,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         if (loadingProgressDialog == null) {
                             loadingProgressDialog = new LoadingProgressDialog(AnsweringActivity.this);
                             loadingProgressDialog.show();
-                            loadingProgressDialog.setTitle("答案上传中...");
+                            loadingProgressDialog.setTitle(R.string.loading_text);
                         }
                     }
 
