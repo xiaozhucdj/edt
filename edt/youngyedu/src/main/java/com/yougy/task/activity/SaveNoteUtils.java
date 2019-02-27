@@ -124,10 +124,10 @@ public class SaveNoteUtils {
         try {
             f.createNewFile();
             fOut = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
         try {
             fOut.flush();
         } catch (IOException e) {
