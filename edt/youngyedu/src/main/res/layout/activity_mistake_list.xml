@@ -354,12 +354,13 @@
                     <TextView
                         android:id="@+id/tv_xuehui"
                         android:layout_width="46px"
-                        android:layout_height="106px"
+                        android:layout_height="116px"
                         android:background="@drawable/img_answer_status_bg_green"
-                        android:gravity="center"
+                        android:padding="2dp"
+                        android:gravity="center_horizontal"
                         android:text="我\n已\n学\n会"
                         android:textColor="@color/white"
-                        android:textSize="20px" />
+                        android:textSize="18px" />
 
 
                 </RelativeLayout>
