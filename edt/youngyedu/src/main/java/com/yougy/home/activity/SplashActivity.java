@@ -160,6 +160,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        SplashActivity.this.finishAll(SplashActivity.this);
         onCheckLogIn();
     }
 
