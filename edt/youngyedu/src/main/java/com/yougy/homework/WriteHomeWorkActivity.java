@@ -592,7 +592,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                         chooesePoint = 0;
                         saveHomeWorkPage = showHomeWorkPosition;
-                        onClick(findViewById(R.id.ll_chooese_homework));
+
+                        if (allHomeWorkPage.getVisibility() == View.VISIBLE) {
+                            allHomeWorkPage.setVisibility(View.GONE);
+                            ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+                            UIUtils.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mNbvAnswerBoard != null) {
+                                        mNbvAnswerBoard.setIntercept(false);
+                                    }
+                                }
+                            }, 600);
+                        }
 
                     } else if (COMEIN_HOMEWORK_PAGE_MODE == 1) {
                         saveHomeWorkPage = position + 1;
