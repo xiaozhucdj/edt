@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,7 +21,7 @@ public class UiPromptDialog extends BaseDialog implements View.OnClickListener {
     private Button mBtnCancel;
     private Button mBtnConfirm;
     private Button mBtnCenterConfirm;
-    private RelativeLayout mRlCancelAndConfirm;
+    private LinearLayout mRlCancelAndConfirm;
     private RelativeLayout mRlCenter;
 
     public UiPromptDialog(Context context) {
