@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -59,7 +60,6 @@ import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
 import com.yougy.view.dialog.ConfirmDialog;
-import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -140,6 +140,9 @@ public class AnsweringActivity extends AnswerBaseActivity {
     //保存当前题目页面分页，默认从0开始
     private int saveQuestionPage = 0;
 
+    //是否用户手动提交了问答（用来做手动提交时，老师强制收取到时的学生结果为空）
+    private boolean isUpByUser;
+
     @Override
     protected void setContentView() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_answering, null, false);
@@ -218,9 +221,12 @@ public class AnsweringActivity extends AnswerBaseActivity {
                                         }
                                     }).show();*/
 
+                                    //如果学生已经手动点击了提交，这时如果收到老师的强制收取消息，则不再执行提交逻辑。
+                                    if (isUpByUser) {
+                                        return;
+                                    }
                                     //  这里因为要做问答自评互评功能，这里需要当老师结束问答时，强制提交学生问答结果。 （这里有个问题，选择判断题，学生提交时会判断，但是当前自动提交时不能判断）
-                                    saveHomeWorkData();
-                                    getUpLoadInfo();
+                                    saveDataAndgetUpLoadInfo();
 
                                 }
                             }
@@ -313,6 +319,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     } else {
                         mNbvAnswerBoard.setVisibility(View.GONE);
                     }
+
                 }
             }
         });
@@ -352,8 +359,15 @@ public class AnsweringActivity extends AnswerBaseActivity {
         return f.getAbsolutePath();
     }
 
-
+    private static long lastClickTime;
     public void onClick(View view) {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 2000) {
+            return;
+        }
+        lastClickTime = time;
+
         if (mNbvAnswerBoard != null) {
             mNbvAnswerBoard.leaveScribbleMode(true);
         }
@@ -387,9 +401,8 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     }
                 }
 
-                saveHomeWorkData();
-                getUpLoadInfo();
-
+                isUpByUser = true;
+                saveDataAndgetUpLoadInfo();
                 break;
             case R.id.tv_clear_write:
 
@@ -493,6 +506,70 @@ public class AnsweringActivity extends AnswerBaseActivity {
         mNbvAnswerBoard.clearAll();
     }
 
+
+    /**
+     * 保存之前操作题目结果数据
+     */
+    private void saveDataAndgetUpLoadInfo() {
+
+        synchronized (this) {
+            Observable.create(new Observable.OnSubscribe<Object>() {
+                @Override
+                public void call(Subscriber<? super Object> subscriber) {
+
+                    if (bytesList.size() == 0) {
+                        return;
+                    }
+                    if (pathList.size() == 0) {
+                        return;
+                    }
+                    //刷新最后没有保存的数据
+                    bytesList.set(saveQuestionPage, mNbvAnswerBoard.bitmap2Bytes());
+                    pathList.set(saveQuestionPage, saveBitmapToFile(mNbvAnswerBoard.getBitmap()));
+
+                    subscriber.onNext(new Object());//将执行结果返回
+                    subscriber.onCompleted();//结束异步任务
+                }
+            })
+                    .subscribeOn(Schedulers.io())//异步任务在IO线程执行
+                    .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
+                    .subscribe(new Subscriber<Object>() {
+                        LoadingProgressDialog loadingProgressDialog;
+
+                        @Override
+                        public void onStart() {
+                            super.onStart();
+                            if (loadingProgressDialog == null) {
+                                loadingProgressDialog = new LoadingProgressDialog(getBaseContext());
+                                loadingProgressDialog.show();
+                                loadingProgressDialog.setTitle(R.string.loading_text);
+                            }
+
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            if (loadingProgressDialog != null) {
+                                loadingProgressDialog.dismiss();
+                                loadingProgressDialog = null;
+                            }
+                            //清除当前页面笔记
+                            mNbvAnswerBoard.clearAll();
+                            getUpLoadInfo();
+                        }
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            LogUtils.e("笔记轨迹保存失败");
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                        }
+                    });
+        }
+    }
+
     //填充数据
     private void fillData() {
 
@@ -560,12 +637,49 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
                     if (position < binding.contentDisplayer.getContentAdapter().getPageCount("question")) {
                         //切换当前题目的分页
+                        ContentDisplayerV2.StatusChangeListener specificListener = null;
+                        if (questionList.get(0) != null
+                                && ("问答".equals(questionList.get(0).getExtraData()))){
+                            specificListener = new ContentDisplayerV2.StatusChangeListener() {
+                                @Override
+                                public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
+                                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS){
+                                        if (position + 1 == binding.contentDisplayer.getContentAdapter().getPageCount("question")){
+                                            Bitmap bitmap = ((BitmapDrawable) binding.contentDisplayer.getPdfImageView().getDrawable()).getBitmap();
+                                            for (int y = bitmap.getHeight() - 1 ; y >= 0; y--) {
+                                                for (int x = 0; x < bitmap.getWidth(); x++) {
+                                                    if (bitmap.getPixel(x , y) != -1){
+                                                        binding.linesBgImv.setVisibility(View.VISIBLE);
+                                                        binding.linesBgImv.setPadding(30 , y + 1 , 0 , 0);
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            binding.linesBgImv.setVisibility(View.GONE);
+                                        }
+                                    }
+                                }
+                            };
+                        }
+                        else {
+                            binding.linesBgImv.setVisibility(View.GONE);
+                        }
                         binding.contentDisplayer.getContentAdapter().toPage("question", position, false);
                         binding.contentDisplayer.setVisibility(View.VISIBLE);
                     } else {
                         //加白纸
                         binding.contentDisplayer.setVisibility(View.GONE);
-
+                        //新需求:在问答题加白纸上需要显示横线背景
+                        if (questionList.get(0) != null
+                                && ("问答".equals(questionList.get(0).getExtraData()))){
+                            binding.linesBgImv.setVisibility(View.VISIBLE);
+                            binding.linesBgImv.setPadding(30 , 0 , 0 , 0);
+                        }
+                        else {
+                            binding.linesBgImv.setVisibility(View.GONE);
+                        }
                     }
                     if (questionList.get(0) != null) {
                         if ("选择".equals(questionList.get(0).getExtraData())) {
@@ -960,7 +1074,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         if (loadingProgressDialog == null) {
                             loadingProgressDialog = new LoadingProgressDialog(AnsweringActivity.this);
                             loadingProgressDialog.show();
-                            loadingProgressDialog.setTitle("答案上传中...");
+                            loadingProgressDialog.setTitle(R.string.loading_text);
                         }
                     }
 

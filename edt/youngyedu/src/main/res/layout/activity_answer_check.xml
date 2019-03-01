@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="学生XXX"
+                android:text="问答批改"
                 android:textColor="#000000"
                 android:textSize="28px" />
 

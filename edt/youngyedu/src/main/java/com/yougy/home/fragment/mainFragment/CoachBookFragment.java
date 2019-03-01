@@ -187,14 +187,14 @@ public class CoachBookFragment extends BFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         LogUtils.i("yuanye ....coach");
-        if (!hidden) {
-            if (mCountBooks.size() > 0) {
-                mBookAdapter.notifyDataSetChanged();
-            }
-            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
-                loadData();
-            }
-        }
+//        if (!hidden) {
+//            if (mCountBooks.size() > 0) {
+//                mBookAdapter.notifyDataSetChanged();
+//            }
+//            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+//                loadData();
+//            }
+//        }
     }
 
     private void loadData() {

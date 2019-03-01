@@ -4,6 +4,7 @@ public class HomeworkSummarySumInfo {
 
     private double scoreAvg;
     private int correctCount;
+    private double score;
 
     public double getScoreAvg() {
         return scoreAvg;
@@ -20,6 +21,15 @@ public class HomeworkSummarySumInfo {
 
     public HomeworkSummarySumInfo setCorrectCount(int correctCount) {
         this.correctCount = correctCount;
+        return this;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public HomeworkSummarySumInfo setScore(double score) {
+        this.score = score;
         return this;
     }
 }

@@ -12,6 +12,7 @@ import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.utils.DateUtils;
+import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
@@ -125,6 +126,7 @@ public class LockerActivity extends BaseActivity {
             jumpTonet();
             return;
         }
+        LogUtils.e("checkNetAndRefreshLogin");
         YXClient.getInstance().checkIfNotLoginThenDoIt(this, new RequestCallback() {
             @Override
             public void onSuccess(Object param) {
@@ -132,6 +134,8 @@ public class LockerActivity extends BaseActivity {
                     SpUtils.setOrder(NO_LOCK_SCREEN);
                     BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
                     onEventMainThread(baseEvent);
+                }else{
+                    UIUtils.showToastSafe("老师还未下课,不能解锁");
                 }
             }
 

@@ -974,7 +974,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
     public void onClick(View view) {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
-        if (0 < timeD && timeD < 1000) {
+        if (0 < timeD && timeD < 2000) {
             return;
         }
         lastClickTime = time;
@@ -1309,26 +1309,73 @@ public class CheckHomeWorkActivity extends BaseActivity {
     private void saveCheckDataAndgetUpLoadInfo(int index) {
 
         synchronized (this) {
-            if (bytesList.size() == 0) {
-                return;
-            }
-            if (pathList.size() == 0) {
-                return;
-            }
-            //保存笔记
-            bytesList.set(index, wcdContentDisplayer.getLayer2().bitmap2Bytes());
-            //保存图片
-            String fileName = pathList.get(index);
-            if (!TextUtils.isEmpty(fileName) && fileName.contains("/")) {
-                fileName = fileName.substring(fileName.lastIndexOf("/"));
-            } else {
-                fileName = System.currentTimeMillis() + ".png";
-            }
-            String filePath = saveBitmapToFile(wcdContentDisplayer.getLayer2().getBitmap(), fileName);
-            pathList.set(index, filePath);
-            //清除当前页面笔记
-            wcdContentDisplayer.getLayer2().clearAll();
-            getUpLoadInfo();
+
+            Observable.create(new Observable.OnSubscribe<Object>() {
+                @Override
+                public void call(Subscriber<? super Object> subscriber) {
+
+                    if (bytesList.size() == 0) {
+                        return;
+                    }
+                    if (pathList.size() == 0) {
+                        return;
+                    }
+                    //保存笔记
+                    bytesList.set(index, wcdContentDisplayer.getLayer2().bitmap2Bytes());
+                    //保存图片
+                    String fileName = pathList.get(index);
+                    if (!TextUtils.isEmpty(fileName) && fileName.contains("/")) {
+                        fileName = fileName.substring(fileName.lastIndexOf("/"));
+                    } else {
+                        fileName = System.currentTimeMillis() + ".png";
+                    }
+                    String filePath = saveBitmapToFile(wcdContentDisplayer.getLayer2().getBitmap(), fileName);
+                    pathList.set(index, filePath);
+
+
+                    subscriber.onNext(new Object());//将执行结果返回
+                    subscriber.onCompleted();//结束异步任务
+                }
+            })
+                    .subscribeOn(Schedulers.io())//异步任务在IO线程执行
+                    .observeOn(AndroidSchedulers.mainThread())//执行结果在主线程运行
+                    .subscribe(new Subscriber<Object>() {
+                        LoadingProgressDialog loadingProgressDialog;
+
+                        @Override
+                        public void onStart() {
+                            super.onStart();
+                            if (loadingProgressDialog == null) {
+                                loadingProgressDialog = new LoadingProgressDialog(getBaseContext());
+                                loadingProgressDialog.show();
+                                loadingProgressDialog.setTitle(R.string.loading_text);
+                            }
+
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            if (loadingProgressDialog != null) {
+                                loadingProgressDialog.dismiss();
+                                loadingProgressDialog = null;
+                            }
+                            //清除当前页面笔记
+                            wcdContentDisplayer.getLayer2().clearAll();
+                            getUpLoadInfo();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            LogUtils.e("笔记轨迹保存失败");
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                        }
+                    });
+
+
         }
     }
 
@@ -1589,7 +1636,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
                         if (loadingProgressDialog == null) {
                             loadingProgressDialog = new LoadingProgressDialog(CheckHomeWorkActivity.this);
                             loadingProgressDialog.show();
-                            loadingProgressDialog.setTitle("批改上传中...");
+                            loadingProgressDialog.setTitle(R.string.loading_text);
                         }
 
                     }

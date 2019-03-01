@@ -244,6 +244,9 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private YXClient.OnMessageListener receiverMsg;
     private boolean isUpload = false;
 
+    //是否用户手动提交了问答（用来做手动提交时，老师强制收取到时的学生结果为空）
+    private boolean isUpByUser;
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_write_homework);
@@ -307,6 +310,10 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     LogUtils.d("examId = " + examId + "   collectHomeworkAttachment.examId = " + collectHomeworkAttachment.examId);
                     if (examId.equals(collectHomeworkAttachment.examId)) {
                         LogUtils.w("teacher receive homework , auto submit.");
+                        //如果学生已经手动点击了提交，这时如果收到老师的强制收取消息，则不再执行提交逻辑。
+                        if (isUpByUser) {
+                            return;
+                        }
                         WriteHomeWorkActivity.this.autoSubmitHomeWork();
                     } else {
                         LogUtils.w("current examId is not receive examId. not submit.");
@@ -585,7 +592,19 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         }
                         chooesePoint = 0;
                         saveHomeWorkPage = showHomeWorkPosition;
-                        onClick(findViewById(R.id.ll_chooese_homework));
+
+                        if (allHomeWorkPage.getVisibility() == View.VISIBLE) {
+                            allHomeWorkPage.setVisibility(View.GONE);
+                            ivChooeseTag.setImageResource(R.drawable.img_timu_down);
+                            UIUtils.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mNbvAnswerBoard != null) {
+                                        mNbvAnswerBoard.setIntercept(false);
+                                    }
+                                }
+                            }, 600);
+                        }
 
                     } else if (COMEIN_HOMEWORK_PAGE_MODE == 1) {
                         saveHomeWorkPage = position + 1;
@@ -1024,7 +1043,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
-        if (0 < timeD && timeD < 1000) {
+        if (0 < timeD && timeD < 2000) {
             return;
         }
         lastClickTime = time;
@@ -1141,7 +1160,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     @Override
                     public void onFastClick(DialogInterface dialogInterface, int i) {
                         fullScreenHintDialog.dismiss();
-                        // 去提交
+                        // 去提交,学生手动点击提交按钮后,屏蔽老师的自动收取消息,防止多次提交的错误.今后只能手动提交(只对本次作业生效)
+                        isUpByUser = true;
                         getUpLoadInfo();
                     }
                 }, false).setShowNoMoreAgainHint(false).show();
@@ -1414,7 +1434,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 .subscribe(new Action1<STSbean>() {
                     @Override
                     public void call(STSbean stSbean) {
-                        LogUtils.e("FH", "call ");
                         if (stSbean != null) {
                             upLoadPic(stSbean);
                         } else {
@@ -1589,7 +1608,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                         if (loadingProgressDialog == null) {
                             loadingProgressDialog = new LoadingProgressDialog(WriteHomeWorkActivity.this);
                             loadingProgressDialog.show();
-                            loadingProgressDialog.setTitle("答案上传中...");
+                            loadingProgressDialog.setTitle(R.string.loading_text);
                         }
                     }
 
@@ -1743,7 +1762,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        throwable.printStackTrace();
+//                        throwable.printStackTrace();
                         //如果不是分组作业这里获取的话服务器返回400，
                         YXClient.getInstance().sendSubmitHomeworkMsg(Integer.parseInt(examId)
                                 , SessionTypeEnum.P2P

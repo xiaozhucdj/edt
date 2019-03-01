@@ -472,6 +472,14 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
                         public void call(List<HomeworkDetail> homeworkDetails) {
                             HomeworkDetail homeworkDetail = homeworkDetails.get(0);
                             parsedQuestionItem = homeworkDetail.getExamPaper().getPaperContent().get(0).getParsedQuestionItemList().get(0);
+                            if (parsedQuestionItem == null){
+                                //如果此处获取题目为null,显示获取题目失败
+                                binding.questionErrorHintLayout.setVisibility(View.VISIBLE);
+                                binding.questionErrorHintTv.setText("获取题目错误");
+                                //questionErrorHintLayout show表示错误提示由它接管,它上层的globalErrorHintLayout需要隐藏
+                                binding.globalErrorHintLayout.setVisibility(View.GONE);
+                                return;
+                            }
                             binding.startTimeTv.setText("问答开始时间 : " + homeworkDetail.getExamStartTime());
                             binding.questionBodyBtn.setText("题干(" + parsedQuestionItem.questionContentList.get(0).getExtraData().toString() + ")");
                             NetWorkManager.queryReplyDetail(currentBookExamCountInfoList.get(currentSelectedNodeIndex).getExams().get(currentSelectedQuestionIndex), null, SpUtils.getUserId() + "")
@@ -556,6 +564,7 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
                                                 }
                                                 binding.bottomText.setVisibility(View.GONE);
                                             } else {
+                                                binding.startPracticeBtn.setVisibility(View.GONE);
                                                 //说明是未提交的问答
                                                 binding.mainContentDisplay.getContentAdapter().updateDataList("analysis", 0, parsedQuestionItem.analysisContentList);
                                                 binding.mainContentDisplay.getContentAdapter().updateDataList("question", 0, parsedQuestionItem.questionContentList);

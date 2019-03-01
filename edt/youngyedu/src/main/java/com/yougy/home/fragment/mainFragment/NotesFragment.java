@@ -287,7 +287,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (mIsFist && !hidden && mServerInfos.size() == 0) {
+        if (!hidden && mServerInfos.size() == 0) {
             loadData();
         }
     }
@@ -319,7 +319,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         NewUpdateNoteReq req = new NewUpdateNoteReq();
         req.setUserId(SpUtils.getAccountId());
         req.setData(fromNotes(mUpdataStr));
-        NetWorkManager.updateNote(req).compose(((BaseActivity)context).bindToLifecycle())
+        NetWorkManager.updateNote(req).compose(((BaseActivity) context).bindToLifecycle())
                 .subscribe(o -> {
                     mUpdataStr = "";
                     DataCacheUtils.putString(getActivity(), NewProtocolManager.OffLineId.OFF_LINE_UPDATA, "");
@@ -334,7 +334,7 @@ public class NotesFragment extends BFragment {//, BookMarksDialog.DialogClickFin
         NewInsertAllNoteReq req = new NewInsertAllNoteReq();
         req.setUserId(SpUtils.getAccountId());
         req.setData(fromNotes(mAddStr));
-        NetWorkManager.insertAllNote(req).compose(((BaseActivity)context).bindToLifecycle())
+        NetWorkManager.insertAllNote(req).compose(((BaseActivity) context).bindToLifecycle())
                 .filter(Objects::nonNull)
                 .subscribe(insertNoteIds -> {
                     mAddStr = "";

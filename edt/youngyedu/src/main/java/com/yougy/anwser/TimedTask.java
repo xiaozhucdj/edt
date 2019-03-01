@@ -4,6 +4,8 @@ package com.yougy.anwser;
  * Created by FH on 2017/4/13.
  */
 
+import com.yougy.common.utils.LogUtils;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -68,7 +70,13 @@ public class TimedTask {
             if (subscription == null){
                 subscription = observable.subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(action);
+                        .subscribe(action, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                LogUtils.e("FH_TimedTask" , "TimedTask 订阅出错,错误打印:" + throwable.getMessage());
+                                throwable.printStackTrace();
+                            }
+                        });
             }
         }
         return this;

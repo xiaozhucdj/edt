@@ -84,6 +84,10 @@ public class ContentDisplayer extends RelativeLayout {
         init();
     }
 
+    public ImageView getPdfImageView() {
+        return pdfImageView;
+    }
+
     /**
      * 获取为本ContentDisplayer提供数据的adapter,可能为空
      * @return

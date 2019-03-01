@@ -362,7 +362,7 @@ public class AllTextBookFragment extends BFragment implements OnClickListener {
                 mAdaptetFragmentAllTextBook.notifyDataSetChanged();
             }
 
-            if ((mIsFist && mCountBooks.size() == 0) || mIsRefresh) {
+            if (mCountBooks.size() == 0 || mIsRefresh) {
                 loadData();
             }
         }

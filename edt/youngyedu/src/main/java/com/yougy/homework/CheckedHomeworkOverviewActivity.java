@@ -48,11 +48,12 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     private boolean isScoring = false;// 是否计分作业
     private int examTotalPoints;//exam 总分
-    private double scoreAvg;//平均总得分
+    private double scoreAvg;//平均正确率
     private int itemCount;//总题数
     private int correctCount;//正确的题目
     private int currentSelectCommentIndex = 0;
     private int isStudentCheck = 0;
+    private double score;//总得分
 
     @Override
     protected void setContentView() {
@@ -206,10 +207,12 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                                     }
                                 }
                                 if (!allChecked) {
-                                    commentatorValidMap.remove(commentator);
+                                    keyIterator.remove();
+//                                    commentatorValidMap.remove(commentator);
                                 }
                             } else if (commentatorValidMap.get(commentator) == -1) {
-                                commentatorValidMap.remove(commentator);
+                                keyIterator.remove();
+//                                commentatorValidMap.remove(commentator);
                             }
                         }
                         if (commentatorValidMap.size() > 1) {
@@ -242,6 +245,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                             ToastUtil.showCustomToast(getApplicationContext(), "获取总分失败,查不到数据");
                         } else {
                             scoreAvg = homeworkSummarySumInfos.get(0).getScoreAvg();
+                            score = homeworkSummarySumInfos.get(0).getScore();
                             correctCount = homeworkSummarySumInfos.get(0).getCorrectCount();
                             refreshCircleProgressBar();
                         }
@@ -292,10 +296,10 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             if (examTotalPoints <= 0) {
                 binding.circleProgressBar.setProgress(0);
             } else {
-                binding.circleProgressBar.setProgress(((int) (scoreAvg * 100 / examTotalPoints)));
+                binding.circleProgressBar.setProgress(((int) (score * 100 / examTotalPoints)));
             }
             binding.circleProgressBar.setIsDrawCenterText(false);
-            binding.textScore.setText(scoreAvg + "分");
+            binding.textScore.setText(score + "分");
         } else { //不计分作业
             binding.textScoreTitle.setText("正确率");
             if (isStudentCheck == 2) {//互评
@@ -307,7 +311,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             }
             binding.circleProgressBar.setIsDrawCenterText(false);
         }
-
     }
 
     @Override

@@ -23,11 +23,12 @@
             android:textSize="30px"
             android:textStyle="bold" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/rl_cancelAndConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="68px">
+            android:layout_marginTop="68px"
+            android:gravity="center">
 
 
             <Button
@@ -35,7 +36,6 @@
                 android:layout_width="200px"
                 android:layout_height="48px"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="40px"
                 android:background="@drawable/bind_cancel_btn_bg"
                 android:gravity="center"
                 android:text="取消"
@@ -48,7 +48,7 @@
                 android:layout_width="200px"
                 android:layout_height="48px"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="40px"
+                android:layout_marginLeft="60px"
                 android:background="@drawable/bind_confirm_btn_bg"
                 android:gravity="center"
                 android:text="确定"
@@ -56,7 +56,7 @@
                 android:textSize="24px"
                 android:textStyle="bold" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
 
         <RelativeLayout
@@ -64,8 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="42dp"
-            android:layout_marginRight="42dp"
             android:layout_marginTop="40dp"
+            android:layout_marginRight="42dp"
             android:visibility="gone">
 
             <Button

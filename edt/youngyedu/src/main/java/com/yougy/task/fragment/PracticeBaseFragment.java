@@ -241,6 +241,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     protected void showDataEmpty(int visibility) {
         super.showDataEmpty(visibility);
         String textStr = mContext.getString(R.string.str_task_practice_empty);
+        if (mTaskDetailStudentActivity.isLoading) return;
         if (mIsServerFail) {
             if (!TextUtils.isEmpty(mServerFailMsg))
                 textStr = mServerFailMsg;

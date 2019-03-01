@@ -344,12 +344,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
-        btn_deviceSize.setVisibility(View.VISIBLE);
-        if (BuildConfig.DEBUG) {
-//            testVersion.setVisibility(View.VISIBLE);
-//            testVersion.setText(UIUtils.getString(R.string.app_name));
-//            btn_deviceSize.setVisibility(View.VISIBLE);
-        }
+
 
         String sex = SpUtils.getSex();
         if ("男".equalsIgnoreCase(sex)) {

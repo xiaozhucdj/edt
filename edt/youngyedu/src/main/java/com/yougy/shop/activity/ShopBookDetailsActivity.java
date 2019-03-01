@@ -330,6 +330,9 @@ public class ShopBookDetailsActivity extends ShopBaseActivity implements DownBoo
     }
 
     public void tryRead(View view) {
+        if (mBookInfo == null){
+            return;
+        }
         if (mBookInfo.isBookInShelf()) {
             showReaderForPackage(true);
             return;
