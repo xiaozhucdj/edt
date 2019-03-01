@@ -159,7 +159,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
 //        mTask = (Task) getIntent().getSerializableExtra("taskBean");
         currentTitleStr = getIntent().getStringExtra(TaskRemindAttachment.KEY_TASK_NAME);
         mTaskId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID, 0);
-        dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID_DEST, 0);
+        dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_DRAMA_ID, 0);
         mTopTitle.setText(currentTitleStr);
         // SV01 进行中   SV02 已完成   SV03 已检查
         isHadCommit = ("SV02").equals(getIntent().getStringExtra("ContentStatusCode"));

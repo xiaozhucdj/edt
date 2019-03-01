@@ -37,8 +37,6 @@ public class TaskListActivity extends BaseActivity {
     private int completedTasksCount;
     private int uncompleteTasksCount;
 
-    //    private List<Task> completedTasks = new ArrayList<>();
-//    private List<Task> unCompleteTasks = new ArrayList<>();
     private boolean isComplete = false;
     private int contentBookLink;
     private String courseBookTitle;
@@ -248,7 +246,7 @@ public class TaskListActivity extends BaseActivity {
                 clickedTask = task;
                 Intent intent = new Intent(TaskListActivity.this, TaskDetailStudentActivity.class);
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, task.getContentElement());
-                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID_DEST, task.getContentDrama());
+                intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID, task.getContentDrama());
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
                 intent.putExtra("isSign", task.isNeedSignature());
                 intent.putExtra("ContentStatusCode", task.getContentStatusCode());
@@ -264,19 +262,6 @@ public class TaskListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 10000) {
             LogUtils.e(tag, "onActivityResult............");
-//            unCompleteTasks.remove(clickedTask);
-//            currentUnCompleteTasks.clear();
-//            if (unCompleteTasks.size() > 0) {
-//                int start = currentUnCompletePage * MAX_PAGE_COUNT;
-//                int end = start + MAX_PAGE_COUNT;
-//                if (end > unCompleteTasks.size() - 1) {
-//                    end = unCompleteTasks.size();
-//                }
-//                currentUnCompleteTasks.addAll(unCompleteTasks.subList(start, end));
-//            }
-//            unCompleteAdapter.notifyDataSetChanged();
-//            uncompleteTasksCount--;
-//            binding.uncompletePageBarTask.refreshPageBar();
             generateData(currentUnCompletePage);
         }
     }

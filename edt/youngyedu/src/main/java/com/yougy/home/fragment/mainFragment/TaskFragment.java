@@ -37,7 +37,6 @@ public class TaskFragment extends BFragment {
     private FragmentTaskBinding binding;
     private PageableRecyclerView.Adapter<TaskHolder> adapter;
 
-    //    private List<Task> tasks = new ArrayList<>();
     private List<HomeworkBookSummary> bookList = new ArrayList<>();
 
     @Nullable
@@ -49,12 +48,6 @@ public class TaskFragment extends BFragment {
     }
 
     private void loadData() {
-//        for(int i =0;i<50;i++){
-//            Task task = new Task();
-//            task.setTaskName("语文 "+i);
-//            tasks.add(task);
-//        }
-//        binding.pageableRecycler.notifyDataSetChanged();
         LogUtils.e(tag,"TaskFragment load data ........ ");
         if (NetUtils.isNetConnected()) {
             NetWorkManager.queryHomeworkBookList(SpUtils.getUserId() + "", SpUtils.getGradeName())
@@ -75,11 +68,6 @@ public class TaskFragment extends BFragment {
 
     private void freshUI(List<HomeworkBookSummary> beans) {
         if (beans != null && beans.size() > 0) {
-//            for (HomeworkBookSummary bean : beans) {
-//                Task task = new Task();
-//                task.setTaskName(bean.getHomeworkFitSubjectName());
-//                tasks.add(task);
-//            }
             bookList = beans;
             binding.pageableRecycler.notifyDataSetChanged();
             binding.resultEmpty.setVisibility(View.GONE);
