@@ -1243,19 +1243,19 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
     }
 
     @Override
-    public void deleteLabel() {
+    public void deleteLabel(Label label) {
         mFrameLayout.removeView(imageViews.remove(curImgViewPosition));
         Observable.create(new Observable.OnSubscribe<Object>() {
             @Override
             public void call(Subscriber<? super Object> subscriber) {
                 if (curImgViewPosition != null) {
                     labelCount--;
-                    int leftmargin = curImgViewPosition.getLeftMargin();
-                    int topmargin = curImgViewPosition.getTopMargin();
-                    Label tmp = getCurrentLabel(leftmargin, topmargin);
-                    if (null != tmp) {
-                        mNote.getLabelList().remove(tmp);
-                        int rowsNum = tmp.delete();
+//                    int leftmargin = curImgViewPosition.getLeftMargin();
+//                    int topmargin = curImgViewPosition.getTopMargin();
+//                    Label tmp = getCurrentLabel(leftmargin, topmargin);
+                    if (null != label) {
+                        mNote.getLabelList().remove(label);
+                        int rowsNum = label.delete();
                         LogUtils.e(TAG, "rowsNum is : " + rowsNum);
                     }
                 }

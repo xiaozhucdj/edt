@@ -226,7 +226,7 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
             public void clickListener() {
                 mShortNoteBookView.clear();
                 if (null != deleteLabelListener) {
-                    deleteLabelListener.deleteLabel();
+                    deleteLabelListener.deleteLabel(label);
                 }
                 hideInputMethodWindow();
                 hideView();
@@ -339,7 +339,7 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
     }
 
     public interface DeleteLabelListener {
-        void deleteLabel();
+        void deleteLabel(Label label);
     }
 
     public interface AddLabelListener {
