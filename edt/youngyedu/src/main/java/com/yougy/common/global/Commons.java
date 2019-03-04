@@ -10,8 +10,10 @@ import com.yougy.ui.activity.BuildConfig;
  */
 
 public class Commons {
-
-    public static boolean isRelase = true;
+    /**
+     * 如果isRelase 为true 测试人员 无法切地址 为了防止 打包出错
+     */
+    public static boolean isRelase = false;
 
     //全部接口
     public static String NEW_URL;
@@ -28,7 +30,7 @@ public class Commons {
     public static String YUNXING_APP_KEY;
 
 
-    private static int testCase = 1;
+    private static int testCase = 2;
 
     static {
         if (isRelase) {

@@ -224,6 +224,11 @@ public class SettingMainActivity extends BaseActivity {
                 break;
 
             case R.id.btn_chckUrl0:
+                if (  Commons.isRelase){
+                    UIUtils.showToastSafe("打包的地址为正式 地址 无法切换 环境");
+                    return;
+                }
+
                 SharedPreferences sharedPreferences1 = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
                 SharedPreferences.Editor editor1 = sharedPreferences1.edit();
                 editor1.putInt("ulr", 0);
@@ -232,6 +237,11 @@ public class SettingMainActivity extends BaseActivity {
                 restartApplication(this);
                 break;
             case R.id.btn_chckUrl1:
+                if (  Commons.isRelase){
+                    UIUtils.showToastSafe("打包的地址为正式 地址 无法切换 环境");
+                    return;
+                }
+
                 SharedPreferences sharedPreferences2 = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
                 SharedPreferences.Editor editor2 = sharedPreferences2.edit();
                 editor2.putInt("ulr", 1);
@@ -240,6 +250,11 @@ public class SettingMainActivity extends BaseActivity {
                 restartApplication(this);
                 break;
             case R.id.btn_chckUrl2:
+                if (  Commons.isRelase){
+                    UIUtils.showToastSafe("打包的地址为正式 地址 无法切换 环境");
+                    return;
+                }
+
                 SharedPreferences sharedPreferences3 = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
                 SharedPreferences.Editor editor3 = sharedPreferences3.edit();
                 editor3.putInt("ulr", 2);
