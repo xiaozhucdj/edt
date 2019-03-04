@@ -2,6 +2,8 @@ package com.yougy.plide.pipe;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
+import android.widget.ImageView;
 
 import com.onyx.android.sdk.common.request.BaseCallback;
 import com.onyx.android.sdk.common.request.BaseRequest;
@@ -98,6 +100,78 @@ public class PlideReaderPresenter{
             else {
                 int h = 920;
                 int w = 960;
+                try {
+                    Result<Integer> tempResult = setDocumentViewRect(w , h);
+                    if (tempResult.getResultCode() == 0){
+                        result.setResultCode(0);
+                        result.setData(tempResult.getData());
+                        result.setErrorMsg(null);
+                        return result;
+                    }
+                    else{
+                        result.setResultCode(-1);
+                        result.setErrorMsg(tempResult.getErrorMsg());
+                        return result;
+                    }
+                } catch (InterruptedException e) {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    public Result<Integer> openDocument(String documentPath, String bookId, boolean isAutoResize, ImageView imageView) throws InterruptedException {
+        mIsInit = false;
+        path = documentPath;
+        DrmCertificateFactory factory = new DrmCertificateFactory(mContext);
+        if (!StringUtils.isEmpty(bookId)) {
+            String keys = DataCacheUtils.getBookString(UIUtils.getContext(), FileContonst.DOWN_LOAD_BOOKS_KEY);
+            if (!StringUtils.isEmpty(keys) && keys.contains(bookId)) {
+                try {
+                    JSONObject object = new JSONObject(keys);
+                    factory.setKey(object.getString(bookId));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        OpenRequest openRequest = new OpenRequest(documentPath, new BaseOptions(),
+                factory, false);
+        Result<Integer> result = new Result<Integer>();
+        result.setResultCode(-999);
+        getReader().submitRequest(getContext(), openRequest, new BaseCallback() {
+            @Override
+            public void done(BaseRequest baseRequest, Throwable throwable) {
+                if (throwable == null) {
+                    synchronized (result){
+                        result.setResultCode(0);
+                        result.notify();
+                    }
+                } else {
+                    synchronized (result){
+                        result.setResultCode(-1);
+                        result.setErrorMsg(throwable.getMessage());
+                        result.notify();
+                    }
+                }
+            }
+        });
+        synchronized (result){
+            if (result.getResultCode() == -999){
+                result.wait();
+            }
+            if (result.getResultCode() == -1){
+                return result;
+            }
+            else {
+                int h = 920;
+                int w = 960;
+                if (isAutoResize) {
+                    h = imageView.getHeight();
+                    w = imageView.getWidth();
+                }
+                Log.d("ContentDisplay", "openDocument: w = " + w + "  h = " + h);
                 try {
                     Result<Integer> tempResult = setDocumentViewRect(w , h);
                     if (tempResult.getResultCode() == 0){
