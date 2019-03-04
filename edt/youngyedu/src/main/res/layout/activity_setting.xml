@@ -20,13 +20,13 @@
             android:paddingRight="36px">
 
             <ImageView
-                android:onClick="onClick"
                 android:id="@+id/img_wifi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:background="@null" />
+                android:background="@null"
+                android:onClick="onClick" />
 
             <ImageView
                 android:id="@+id/img_electricity"
@@ -96,17 +96,17 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_marginTop="120px"
                 android:id="@+id/avatar_imv"
                 android:layout_width="162px"
                 android:layout_height="162px"
-                android:background="@null"
-                />
+                android:layout_marginTop="120px"
+                android:background="@null" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/school_tv"
                     android:layout_width="wrap_content"
@@ -150,7 +150,7 @@
             android:layout_width="match_parent"
             android:layout_height="2px"
             android:background="#666666"
-            android:visibility="gone"/>
+            android:visibility="gone" />
         <!--需求变更:取消解绑功能-->
         <TextView
             android:id="@+id/unbind_btn"
@@ -163,28 +163,27 @@
             android:text="将该账号与设备解绑"
             android:textColor="@color/black"
             android:textSize="24px"
-            android:visibility="visible"
-            />
+            android:visibility="visible" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2px"
             android:background="@color/black"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <!--需求变更:取消本地锁功能,因此取消密码修改功能-->
         <TextView
-            android:background="@drawable/change_pwd_btn_bg_normal"
             android:id="@+id/change_pwd_btn"
             android:layout_width="match_parent"
             android:layout_height="60px"
+            android:background="@drawable/change_pwd_btn_bg_normal"
             android:clickable="true"
             android:gravity="center"
             android:onClick="changePwd"
             android:text="修改开机密码"
             android:textColor="@color/white"
             android:textSize="24px"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
 
         <View
@@ -192,5 +191,52 @@
             android:layout_height="2px"
             android:background="@color/black" />
 
+
+        <LinearLayout
+            android:id="@+id/ll_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="切换环境后需要重启应用。。3S后自动重启 " />
+            <Button
+                android:onClick="onClick"
+                android:id="@+id/btn_chckUrl0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="切换生产环境" />
+
+            <Button
+                android:onClick="onClick"
+                android:id="@+id/btn_chckUrl1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="切换开发环境" />
+
+            <Button
+                android:onClick="onClick"
+                android:id="@+id/btn_chckUrl2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="切换测试环境" />
+
+            <TextView
+                android:id="@+id/tv_urlState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="当前URL" />
+
+            <TextView
+                android:id="@+id/tv_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="当前版本" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

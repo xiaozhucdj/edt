@@ -1,5 +1,10 @@
 package com.yougy.common.global;
 
+import android.content.SharedPreferences;
+
+import com.yougy.common.manager.YoungyApplicationManager;
+import com.yougy.ui.activity.BuildConfig;
+
 /**
  * Created by jiangliang on 2016/10/8.
  */
@@ -71,5 +76,42 @@ public class Commons {
     public final static String LOAD_APP_STUDENT = "2";
 
     public final static String LOAD_APP_RESET = "0";
+
+
+    public static void seetingUrl() {
+
+        if (BuildConfig.DEBUG || !Commons.isRelase) {
+            System.out.println("seetingUrlseetingUrlseetingUrlseetingUrlseetingUrlseetingUrl");
+            SharedPreferences sharedPreferences = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
+            int urlKey = sharedPreferences.getInt("ulr", 2);
+            switch (urlKey) {
+                case 0:
+                    NEW_URL = "http://api.edu-pad.com.cn/";
+                    ENDPOINT = "http://oss-cn-beijing.aliyuncs.com";
+                    ANSWER_PIC_HOST = ".oss-cn-beijing.aliyuncs.com/";
+                    BUCKET_NAME = "bj-b00k";
+                    YUNXING_APP_KEY = "6ba4e97ff40a1720bb4c193bfd6580ba";
+                    break;
+
+                case 1://开发环境
+                    NEW_URL = "https://api.learningpad.cn/";
+                    ENDPOINT = "http://oss-cn-shanghai.aliyuncs.com";
+                    ANSWER_PIC_HOST = ".oss-cn-shanghai.aliyuncs.com/";
+                    BUCKET_NAME = "b00k";
+                    YUNXING_APP_KEY = "88d269fbc1d49219764c826de8e54d91";
+                    break;
+
+                case 2:// 预发布环境
+                    NEW_URL = "https://api.schoolpad.cn/";
+                    ENDPOINT = "http://oss-cn-beijing.aliyuncs.com";
+                    ANSWER_PIC_HOST = ".oss-cn-beijing.aliyuncs.com/";
+                    BUCKET_NAME = "pre-b00k";
+                    YUNXING_APP_KEY = "dfc509a65dca2b658b7cf8e825df9cd6";
+                    break;
+            }
+            SHOP_URL = NEW_URL + "bookStore";
+            ALIYUNDATE_URL = NEW_URL + "device";
+        }
+    }
 }
 

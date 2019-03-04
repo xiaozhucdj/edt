@@ -1,5 +1,8 @@
 package com.yougy.setting.ui;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -25,8 +28,10 @@ import com.yougy.common.utils.DeviceScreensaverUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
+import com.yougy.common.utils.PackageUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
+import com.yougy.common.utils.SystemUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -71,11 +76,27 @@ public class SettingMainActivity extends BaseActivity {
         setSysWifi();
         setSysTime();
         setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
+
+        SharedPreferences sharedPreferences3 = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
+        String str = "";
+
+        switch (sharedPreferences3.getInt("ulr", -1)) {
+            case 0:
+                str = "生产" ;
+                break;
+            case 1:
+                str = "开发" ;
+                break;
+            case 2:
+                str = "测试" ;
+                break;
+        }
+        binding.tvUrlState.setText("当前URL地址为"+str);
+        binding.tvVersion.setText(PackageUtils.getVersionCode()+":"+PackageUtils.getVersionName());
     }
 
     private void setSysTime() {
         binding.tvTime.setText(DateUtils.getTimeHHMMString());
-
     }
 
     private void setSysWifi() {
@@ -157,8 +178,10 @@ public class SettingMainActivity extends BaseActivity {
 
         if (BuildConfig.DEBUG) {
             binding.unbindBtn.setVisibility(View.VISIBLE);
+            binding.llMsg.setVisibility(View.VISIBLE);
         } else {
             binding.unbindBtn.setVisibility(View.GONE);
+            binding.llMsg.setVisibility(View.GONE);
         }
     }
 
@@ -198,6 +221,31 @@ public class SettingMainActivity extends BaseActivity {
                 boolean isConnected = false;
                 NetManager.getInstance().changeWiFi(this, !isConnected);
                 binding.imgWifi.setImageDrawable(UIUtils.getDrawable(isConnected ? R.drawable.img_wifi_1 : R.drawable.img_wifi_0));
+                break;
+
+            case R.id.btn_chckUrl0:
+                SharedPreferences sharedPreferences1 = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
+                SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                editor1.putInt("ulr", 0);
+                editor1.commit();
+                binding.tvUrlState.setText("当前URL地址为 生产环境");
+                restartApplication(this);
+                break;
+            case R.id.btn_chckUrl1:
+                SharedPreferences sharedPreferences2 = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
+                SharedPreferences.Editor editor2 = sharedPreferences2.edit();
+                editor2.putInt("ulr", 1);
+                editor2.commit();
+                binding.tvUrlState.setText("当前URL地址为 开发环境");
+                restartApplication(this);
+                break;
+            case R.id.btn_chckUrl2:
+                SharedPreferences sharedPreferences3 = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
+                SharedPreferences.Editor editor3 = sharedPreferences3.edit();
+                editor3.putInt("ulr", 2);
+                editor3.commit();
+                binding.tvUrlState.setText("当前URL地址为 测试环境");
+                restartApplication(this);
                 break;
         }
     }
@@ -307,4 +355,17 @@ public class SettingMainActivity extends BaseActivity {
             setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());
         }
     }
+
+    public void restartApplication(Context context) {
+        UIUtils.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        }, 3000) ;
+    }
+
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.global.Commons;
 import com.yougy.common.manager.NetManager;
 import com.yougy.common.manager.PowerManager;
 import com.yougy.common.new_network.NetWorkManager;
@@ -21,6 +22,8 @@ import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.bean.Student;
 import com.yougy.init.dialog.ConfirmUserInfoDialog;
+import com.yougy.setting.ui.SettingMainActivity;
+import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityLoginBinding;
 import com.yougy.view.dialog.HintDialog;
@@ -118,6 +121,16 @@ public class LoginActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
+        if (BuildConfig.DEBUG || !Commons.isRelase) {
+            binding.imgLoginStudent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadIntent(SettingMainActivity.class);
+                }
+            });
+        }
+
     }
 
     @Override
