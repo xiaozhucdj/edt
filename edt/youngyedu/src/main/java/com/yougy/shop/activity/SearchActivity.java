@@ -384,7 +384,7 @@ public class SearchActivity extends ShopBaseActivity {
     public void confirm(View view) {
         LogUtils.e(tag, "subject : " + mSubject + ", version : " + mVersion);
         LogUtils.e(tag, "book title : " + bookTitle + ", bookVersion : " + bookVersion + ", bookCategory : " + bookCategory + ",bookCategoryMatch : " + bookCategoryMatch);
-        hideFiltrateLayout();
+
         //TODO:集合数据中，根据条件进行筛选
         bookVersion = preChoosedBookVersion;
         bookCategory = preChoosedBookCategory;
@@ -406,7 +406,9 @@ public class SearchActivity extends ShopBaseActivity {
             LogUtils.e(tag, "bookInfos' size : " + result.getData().size());
             totalCount = result.getCount();
             SearchActivity.this.refreshResultView(result.getData());
+            hideFiltrateLayout();
         }, throwable -> {
+            hideFiltrateLayout();
             LogUtils.e(tag,"throwable is : " + throwable.getMessage());
         });
     }
