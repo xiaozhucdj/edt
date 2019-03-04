@@ -99,6 +99,7 @@
             android:background="@color/black" />
 
         <ImageView
+            android:id="@+id/img_login_student"
             android:layout_width="200px"
             android:layout_height="200px"
             android:layout_gravity="center_horizontal"

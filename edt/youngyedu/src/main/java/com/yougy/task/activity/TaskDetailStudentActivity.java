@@ -127,7 +127,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
     public String currentTab = "";
 
     private Unbinder mUnbinder;
-//    private boolean isNetConnected = true;
     public boolean isLoading = false;
 
     private List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
@@ -471,16 +470,8 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         }
                         ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交失败，请重试！");
                     });
-
-//                boolean mkdirs = file.mkdirs();
-//                File fi = new File(file.getAbsolutePath() +"/" + mTaskId + "/" + mTaskId + "_" + dramaId
-//                            + "_empty.png");
-//                boolean mkdir = fi.mkdir();
-//                LogUtils.d("TaskTest empty mkdirs." + mkdirs + "  mkdir = " + mkdir);
         } else {//存在笔记要提交
-
             String endpoint = Commons.ENDPOINT;
-
             LogUtils.d("TaskTest uploadPic  :" + stSbean.getAccessKeyId() );
 
             OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {

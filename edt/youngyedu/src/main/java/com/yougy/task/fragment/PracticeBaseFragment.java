@@ -385,7 +385,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         initDisplayChildScaleType(ImageView.ScaleType.FIT_XY);
         mMyContentDisPlayerAdapter = new MyContentDisPlayerAdapter();
         mContentDisplayer.setContentAdapter(mMyContentDisPlayerAdapter);
-//        mContentDisplayer.setOnClickListener(v -> loadData());
     }
 
     private MyContentDisPlayerAdapter mMyContentDisPlayerAdapter;
@@ -394,7 +393,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         @Override
         public void afterPageCountChanged(String typeKey) {
             singlePracticePage = getPageCount(typeKey);
-//            mPageCount = mAddPageCaoGao + singlePracticePage;
             if (isBottomBtnShow()) setRecyclerViewWidth();
             else mPageBtnBarV2.refreshPageBar();
         }
@@ -740,18 +738,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         mSelectRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                int childAdapterPosition = parent.getChildAdapterPosition(view);
-                int index = childAdapterPosition % 8;
-//                if (index == 0 || index == 2 || index == 5 || index == 7) {
-//                    outRect.left = 31;
-//                    outRect.right = 30;
-//                } else if (index == 1 || index == 3) {
-//                    outRect.left = 30;
-//                    outRect.right = 30;
-//                } else {
-//                    outRect.left = 30;
-//                    outRect.right = 31;
-//                }
                 outRect.left = 30;
                 outRect.right = 30;
                 outRect.top = 10;
@@ -796,28 +782,8 @@ public class PracticeBaseFragment extends TaskBaseFragment {
      *  显示选择练习选项
      */
     private void showPopupWindow () {
-//        View view = LayoutInflater.from(mContext).inflate(R.layout.select_practice_popupwindow, null);
-//        mPopupWindow = new PopupWindow(mContext);
-//        mPopupWindow.setWidth(960);
-//        mPopupWindow.setContentView(view);
-//        mPopupWindow.setOutsideTouchable(false);
-//        mPopupWindow.setTouchable(true);
-
-//        RecyclerView recyclerView = view.findViewById(R.id.select_recycler_view);
-
-
-//        mSelectRecyclerView.setVisibility(View.VISIBLE);
         mSelectRecyclerView.getAdapter().notifyDataSetChanged();
         layoutSelect.setVisibility(View.VISIBLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            mPopupWindow.showAsDropDown(mViewLine, 0 , 2);
-//            mPopupWindow.setOnDismissListener(() -> {
-//                mCurrentShowItems = false;
-//                mSelectPractice.setSelected(mCurrentShowItems);
-//                LogUtils.d("TaskLog mCurrentShowItems = " + mCurrentShowItems + "   isShowing: " + mPopupWindow.isShowing());
-//                leaveScribbleMode(true, false);
-//            });
-//        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -833,8 +799,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     }
 
     public void dismissPopupWindow () {
-//        if (mPopupWindow != null) mPopupWindow.dismiss();
-//        mPopupWindow = null;
         if (mCurrentShowItems)
             leaveScribbleMode(true, false);
         layoutSelect.setVisibility(View.GONE);

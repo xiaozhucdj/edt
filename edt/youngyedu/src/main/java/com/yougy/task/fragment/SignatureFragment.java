@@ -36,7 +36,6 @@ public class SignatureFragment extends TaskBaseFragment {
 
     private int stageId;
 
-    private LoadAnswer mLoadAnswer;
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,28 +47,21 @@ public class SignatureFragment extends TaskBaseFragment {
 
     @Override
     protected void init() {
-        mLoadAnswer = new LoadAnswer(mTaskDetailStudentActivity);
+
     }
 
     @Override
     public void loadData() {
         super.loadData();
-
         String[] cacheBitmapKey = getCacheBitmapKey(0, 0);
-//        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
-//                cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId), stageId);
         SaveNoteUtils.getInstance(mContext).resetNoteView(mNoteBookViewSignature,cacheBitmapKey[0] , cacheBitmapKey[1]
                     , SaveNoteUtils.getInstance(mContext).getTaskFileDir());
-
 
         NetWorkManager.queryStageTask(String.valueOf(mTaskDetailStudentActivity.dramaId), "SR04", SpUtils.getUserId()).subscribe(stageTaskBeans -> {
             Log.i(TAG, "call: " + stageTaskBeans.size());
             if (stageTaskBeans.size() > 0) {
                 StageTaskBean stageTaskBean = stageTaskBeans.get(0);
                 stageId = stageTaskBean.getStageId();
-//                if (stageTaskBean.getStageScene().size() > 0) {
-//                    mLoadAnswer.loadAnswer(mNoteBookViewSignature, stageTaskBean,0 , 0 );
-//                }
             }
         }, throwable -> LogUtils.e("TaskTest sign error :" + throwable.getMessage()));
     }
@@ -119,12 +111,6 @@ public class SignatureFragment extends TaskBaseFragment {
         SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature, SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
                 cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(mTaskDetailStudentActivity.mTaskId), stageId);
         LogUtils.d("TaskTest bitmap path : " + cacheBitmapKey[1]);
-
-//        String cacheKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + CACHE_KEY ;
-//        String bitmapKey = mTaskDetailStudentActivity.dramaId + "_" + stageId + BITMAP_KEY ;
-//        SaveNoteUtils.getInstance(mContext).saveNoteViewData(mNoteBookViewSignature,
-//                SaveNoteUtils.getInstance(mContext).getTaskFileDir(),
-//                cacheKey, bitmapKey , String.valueOf(mTaskDetailStudentActivity.dramaId), stageId);
     }
 
     private String[] getCacheBitmapKey (int position, int page) {
