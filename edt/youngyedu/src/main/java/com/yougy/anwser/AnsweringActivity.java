@@ -479,7 +479,14 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     binding.tvCaogaoText.setText("草稿纸");
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     binding.llCaogaoControl.setVisibility(View.GONE);
-                    mNbvAnswerBoard.setIntercept(false);
+                    UIUtils.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mNbvAnswerBoard != null) {
+                                mNbvAnswerBoard.setIntercept(false);
+                            }
+                        }
+                    }, 600);
                 }
 
                 break;

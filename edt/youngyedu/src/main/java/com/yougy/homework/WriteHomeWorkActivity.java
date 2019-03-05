@@ -1267,7 +1267,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     //TDO
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
-                    mNbvAnswerBoard.setIntercept(false);
+                    UIUtils.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mNbvAnswerBoard != null) {
+                                mNbvAnswerBoard.setIntercept(false);
+                            }
+                        }
+                    }, 600);
                 }
                 break;
 
