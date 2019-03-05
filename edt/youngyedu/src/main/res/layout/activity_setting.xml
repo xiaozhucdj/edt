@@ -202,7 +202,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="切换环境后需要重启应用。。3S后自动重启 " />
+                android:text="切换环境后请“强行停止”或“结束运行”程序" />
+
             <Button
                 android:onClick="onClick"
                 android:id="@+id/btn_chckUrl0"

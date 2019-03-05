@@ -115,6 +115,7 @@ public class YoungyApplicationManager extends LitePalApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Commons.seetingUrl(this);
 
         //由于云信除了运行在app主进程之外,还会另外开几个其他的进程用于保活和云信core代码的运行.
         //这导致application的onCreate会在每个进程运行时都被调用一次,导致多次调用,所以以下application的初始化工作区分进程进行.
@@ -137,7 +138,6 @@ public class YoungyApplicationManager extends LitePalApplication {
             mMainThreadId = android.os.Process.myTid();
             mMainThread = Thread.currentThread();
             mMainLooper = getMainLooper();
-            Commons.seetingUrl();
             rxBus = new RxBus();
 
             NetManager.getInstance().registerReceiver(this);
