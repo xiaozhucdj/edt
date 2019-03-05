@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -32,6 +34,7 @@ import com.yougy.common.utils.PackageUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.SystemUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.init.activity.LoginActivity;
 import com.yougy.init.bean.Student;
@@ -372,15 +375,21 @@ public class SettingMainActivity extends BaseActivity {
     }
 
     public void restartApplication(Context context) {
-        UIUtils.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                android.os.Process.killProcess(android.os.Process.myPid());
-            }
-        }, 3000) ;
+        ToastUtil.showCustomToast(this , "切换环境后请“强行停止”或“结束运行”程序");
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+        intent.setData(uri);
+        context.startActivity(intent);
+//        UIUtils.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                final Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(intent);
+//                android.os.Process.killProcess(android.os.Process.myPid());
+//            }
+//        }, 3000) ;
     }
 
 }
