@@ -297,9 +297,11 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             @Override
             public void onPageBtnClick(View btn, int btnIndex, String textInBtn, int lastSelectPageBtnIndex) {
                 dismissPopupWindow();
-                currentPage = btnIndex;
-                mNoteBookView2.clearAll();
-                mContentDisplayer.toPage(TAG_KEY, btnIndex, false, mStatusChangeListener);
+                if (currentPage != btnIndex) {
+                    currentPage = btnIndex;
+                    mNoteBookView2.clearAll();
+                    mContentDisplayer.toPage(TAG_KEY, btnIndex, false, mStatusChangeListener);
+                }
             }
 
             @Override
@@ -368,7 +370,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             mContentDisplayer.setVisibility(View.GONE);
         } else {
             mContentDisplayer.setVisibility(View.VISIBLE);
-            mContentDisplayer.toPage(TAG_KEY, page, false, mStatusChangeListener);
+            mContentDisplayer.toPage(TAG_KEY, page, true, mStatusChangeListener);
         }
     }
 
@@ -709,7 +711,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         mContentDisplayer.getContentAdapter().updateDataList(TAG_KEY, mStageTaskBeans.get(currentSelectPosition).getStageContent().get(0)
                         .getValue(), mStageTaskBeans.get(currentSelectPosition).getStageContent().get(0).getFormat() );
         mContentDisplayer.setVisibility(View.VISIBLE);
-        mContentDisplayer.toPage(TAG_KEY, currentPage, false, mStatusChangeListener);
+        mContentDisplayer.toPage(TAG_KEY, currentPage, true, mStatusChangeListener);
         mTaskPageAdapter.notifyDataSetChanged();
     }
 
