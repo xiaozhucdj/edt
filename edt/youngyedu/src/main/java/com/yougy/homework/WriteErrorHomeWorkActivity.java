@@ -1,5 +1,6 @@
 package com.yougy.homework;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -37,6 +38,7 @@ import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.io.File;
@@ -512,6 +514,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
     }
 
     private static long lastClickTime;
+
     @OnClick({R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.btn_left, R.id.tv_caogao_text, R.id.tv_dismiss_caogao})
     public void onClick(View view) {
         long time = System.currentTimeMillis();
@@ -540,8 +543,25 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_clear_write:
-                mNbvAnswerBoard.clearAll();
-                RefreshUtil.invalidate(rlAnswer);
+
+                new ConfirmDialog(WriteErrorHomeWorkActivity.this, "是否清空作答笔记？",
+                        "确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                mNbvAnswerBoard.clearAll();
+                                RefreshUtil.invalidate(rlAnswer);
+                            }
+                        },
+                        "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+
                 break;
             case R.id.tv_add_page:
                 if (questionPageSize - contentDisplayer.getContentAdapter().getPageCount("question") > 5) {
