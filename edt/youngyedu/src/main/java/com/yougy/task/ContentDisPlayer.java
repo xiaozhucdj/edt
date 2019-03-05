@@ -560,7 +560,7 @@ public class ContentDisPlayer <T> extends RelativeLayout{
                         }
                     }
                 })
-                .into(pdfImageView, null)
+                .into(pdfImageView, null, true)
                 .toPage(subPageIndex, null);
     }
 

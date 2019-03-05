@@ -137,7 +137,7 @@ public class YoungyApplicationManager extends LitePalApplication {
             mMainThreadId = android.os.Process.myTid();
             mMainThread = Thread.currentThread();
             mMainLooper = getMainLooper();
-
+            Commons.seetingUrl();
             rxBus = new RxBus();
 
             NetManager.getInstance().registerReceiver(this);
