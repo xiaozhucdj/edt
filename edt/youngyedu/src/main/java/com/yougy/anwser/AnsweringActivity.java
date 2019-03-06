@@ -406,7 +406,22 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 break;
             case R.id.tv_clear_write:
 
-                mNbvAnswerBoard.clearAll();
+                new ConfirmDialog(AnsweringActivity.this, "是否清空作答笔记？",
+                        "确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                mNbvAnswerBoard.clearAll();
+                            }
+                        },
+                        "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
 //                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
 
                 break;
@@ -464,7 +479,14 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     binding.tvCaogaoText.setText("草稿纸");
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     binding.llCaogaoControl.setVisibility(View.GONE);
-                    mNbvAnswerBoard.setIntercept(false);
+                    UIUtils.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mNbvAnswerBoard != null) {
+                                mNbvAnswerBoard.setIntercept(false);
+                            }
+                        }
+                    }, 600);
                 }
 
                 break;

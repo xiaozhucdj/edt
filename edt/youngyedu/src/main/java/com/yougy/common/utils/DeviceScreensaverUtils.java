@@ -63,7 +63,7 @@ public class DeviceScreensaverUtils {
     }
 
     private static Bitmap getNewBitMap(String text) {
-        Bitmap newBitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_4444);
+        Bitmap newBitmap = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_4444);
         Canvas canvas = new Canvas(newBitmap);
         canvas.drawBitmap(newBitmap, 0, 0, null);
         TextPaint textPaint = new TextPaint();

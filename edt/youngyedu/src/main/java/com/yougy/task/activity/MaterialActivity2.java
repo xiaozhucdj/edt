@@ -338,9 +338,9 @@ public class MaterialActivity2 extends BaseActivity {
                     String[] cacheBitmapKey = getCacheBitmapKey(mCurrentPosition, mPageIndex);
                     SaveNoteUtils.getInstance(getApplicationContext()).saveNoteViewData(mNoteBookView, SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir(),
                             cacheBitmapKey[0], cacheBitmapKey[1], String.valueOf(taskID),stageId);
+                    mPageIndex = btnIndex;
+                    mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, true, mStatusChangeListener);
                 }
-                mPageIndex = btnIndex;
-                mMaterialContentDisplay.toPage(PAGE_TYPE_KEY, btnIndex, false, mStatusChangeListener);
                 mNoteBookView.clear();
                 mNoteBookView.leaveScribbleMode();
             }

@@ -76,6 +76,7 @@ import com.yougy.ui.activity.databinding.ItemAnswerChooseGridviewBinding;
 import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.HintDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -1170,8 +1171,24 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 break;
             case R.id.tv_clear_write:
-                mNbvAnswerBoard.clearAll();
-                RefreshUtil.invalidate(rlAnswer);
+
+                new ConfirmDialog(WriteHomeWorkActivity.this, "是否清空作答笔记？",
+                        "确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                mNbvAnswerBoard.clearAll();
+                                RefreshUtil.invalidate(rlAnswer);
+                            }
+                        },
+                        "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
             case R.id.tv_add_page:
                 if (btnLocked == false) {
@@ -1250,7 +1267,14 @@ public class WriteHomeWorkActivity extends BaseActivity {
                     //TDO
                     cgBytes.set(saveQuestionPage, mCaogaoNoteBoard.bitmap2Bytes());
                     llCaogaoControl.setVisibility(View.GONE);
-                    mNbvAnswerBoard.setIntercept(false);
+                    UIUtils.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mNbvAnswerBoard != null) {
+                                mNbvAnswerBoard.setIntercept(false);
+                            }
+                        }
+                    }, 600);
                 }
                 break;
 

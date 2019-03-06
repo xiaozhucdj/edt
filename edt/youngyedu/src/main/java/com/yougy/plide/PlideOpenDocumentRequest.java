@@ -14,6 +14,15 @@ public class PlideOpenDocumentRequest extends PlideRequest {
         }
     }
 
+    protected boolean isAutoResize = false;
+    protected PlideOpenDocumentRequest(ImageView imageView, String mUrl , PlideDownloadRequest preRequest, boolean isAutoReSize) {
+        super(imageView, mUrl);
+        this.mPreRequest = preRequest;
+        if (mPreRequest != null){
+        }
+        this.isAutoResize = isAutoReSize;
+    }
+
     @Override
     public void run() throws InterruptedException{
         PlideRequestProcessor.runOnUiThread(new Runnable() {
@@ -39,7 +48,13 @@ public class PlideOpenDocumentRequest extends PlideRequest {
 //            });
 //            throw new PlideRunTimeException("执行close失败");
 //        }
-        Result<Integer> result = getProcessor().getPresenter().openDocument(CommonDownloader.getSavePath(mUrl) , null);
+        Result<Integer> result;
+        if (isAutoResize) {
+            result = getProcessor().getPresenter().openDocument(CommonDownloader.getSavePath(mUrl) , null, true,  mImageView);
+        } else {
+            result = getProcessor().getPresenter().openDocument(CommonDownloader.getSavePath(mUrl) , null);
+        }
+//        Result<Integer> result = getProcessor().getPresenter().openDocument(CommonDownloader.getSavePath(mUrl) , null);
         if (result.getResultCode() == 0){
             PlideRequestProcessor.runOnUiThread(new Runnable() {
                 @Override

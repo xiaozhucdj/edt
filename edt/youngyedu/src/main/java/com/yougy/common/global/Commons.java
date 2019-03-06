@@ -1,5 +1,6 @@
 package com.yougy.common.global;
 
+import android.app.Application;
 import android.content.SharedPreferences;
 
 import com.yougy.common.manager.YoungyApplicationManager;
@@ -80,11 +81,11 @@ public class Commons {
     public final static String LOAD_APP_RESET = "0";
 
 
-    public static void seetingUrl() {
+    public static void seetingUrl(Application application) {
 
         if (BuildConfig.DEBUG || !Commons.isRelase) {
             System.out.println("seetingUrlseetingUrlseetingUrlseetingUrlseetingUrlseetingUrl");
-            SharedPreferences sharedPreferences = YoungyApplicationManager.getApp().getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = application.getSharedPreferences("date", YoungyApplicationManager.MODE_PRIVATE);
             int urlKey = sharedPreferences.getInt("ulr", 2);
             switch (urlKey) {
                 case 0:
