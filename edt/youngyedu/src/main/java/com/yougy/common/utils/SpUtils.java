@@ -543,4 +543,11 @@ public class SpUtils {
         editor.putInt(key, value);
         editor.commit();
     }
+    private static final String TASK_PROMOTIONS = "task_promotions";
+    public static void putTaskPromotions(){
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(TASK_PROMOTIONS,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+    }
+
 }

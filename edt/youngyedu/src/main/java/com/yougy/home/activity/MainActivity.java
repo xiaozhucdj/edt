@@ -72,6 +72,7 @@ import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
 import com.yougy.view.dialog.AppUpdateDialog;
 import com.yougy.view.dialog.DownProgressDialog;
+import com.zhy.autolayout.utils.L;
 
 import org.litepal.tablemanager.Connector;
 
@@ -189,8 +190,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private View line_currentBook;
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onResume() {   super.onResume();
+        LogUtils.e("JiangLiang","onresume..........................");
         long timeTolastCheck = System.currentTimeMillis() - lastCheckTimeMill;
         LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck / 1000) + "秒");
         if (System.currentTimeMillis() - lastCheckTimeMill > 60 * 60 * 1000) {
@@ -201,6 +202,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间在可允许范围内,本次不验证是否解绑");
         }
+
+        YoungyApplicationManager.getMainThreadHandler().postDelayed(() -> EventBus.getDefault().post(new BaseEvent(EventBusConstant.EVENT_PROMOTION)),2000);
     }
 
     /***************************************************************************/

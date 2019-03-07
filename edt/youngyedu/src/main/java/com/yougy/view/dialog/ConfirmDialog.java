@@ -63,6 +63,14 @@ public class ConfirmDialog extends BaseDialog {
 
     }
 
+    public void setTitleSize(int size){
+        binding.titleTv.setTextSize(size);
+    }
+
+    public void setContentSize(int size){
+        binding.contentTv.setTextSize(size);
+    }
+
     @Override
     protected void initLayout() {
         binding = DataBindingUtil.inflate(LayoutInflater.from(mContext) , R.layout.confirm_dialog_layout , null , false);

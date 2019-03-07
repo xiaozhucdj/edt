@@ -1,15 +1,20 @@
 package com.yougy.common.manager;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
@@ -29,6 +34,7 @@ import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.OnClickFastListener;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.message.ListUtil;
@@ -39,8 +45,11 @@ import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.PullAnswerCheckAttachment;
 import com.yougy.message.attachment.SeatWorkAttachment;
+import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.order.LockerActivity;
 import com.yougy.ui.activity.BuildConfig;
+import com.yougy.ui.activity.R;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
 
@@ -52,6 +61,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -97,7 +107,8 @@ public class YoungyApplicationManager extends LitePalApplication {
 //    private static RefWatcher watcher;
 
     private static YoungyApplicationManager mContext;
-
+    public static boolean NEED_PROMOTION = true;
+    public static boolean IN_CHATTING = false;
     ANRWatchDog anrWatchDog = new ANRWatchDog(9000);
 
     private long lastReceiverTime;
@@ -112,6 +123,7 @@ public class YoungyApplicationManager extends LitePalApplication {
             startActivity(intent);
         }
     };
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -254,15 +266,14 @@ public class YoungyApplicationManager extends LitePalApplication {
                                     }
                                 }
                             }
-                        } , 1000);
-                    }
-                    else if (message.getAttachment() instanceof EndQuestionAttachment) {
+                        }, 1000);
+                    } else if (message.getAttachment() instanceof EndQuestionAttachment) {
                         if (!ListUtil.conditionalContains(AnsweringActivity.handledExamIdList, new ListUtil.ConditionJudger<Integer>() {
                             @Override
                             public boolean isMatchCondition(Integer nodeInList) {
                                 return nodeInList.intValue() == ((EndQuestionAttachment) message.getAttachment()).examID;
                             }
-                        })){
+                        })) {
                             AnsweringActivity.handledExamIdList.add(((EndQuestionAttachment) message.getAttachment()).examID);
                         }
                         rxBus.send(message);
@@ -285,7 +296,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_CLEAR_ACTIIVTY_ORDER, "");
                             EventBus.getDefault().post(baseEvent);
                         }
-                    }  else if (message.getAttachment() instanceof SeatWorkAttachment) {
+                    } else if (message.getAttachment() instanceof SeatWorkAttachment) {
                         //判断是否在写作业界面
                         SeatWorkAttachment attachment = (SeatWorkAttachment) message.getAttachment();
                         if (BaseActivity.getForegroundActivity() instanceof WriteHomeWorkActivity) {
@@ -316,12 +327,11 @@ public class YoungyApplicationManager extends LitePalApplication {
                         intent.putExtra("isOnClass", true);
                         intent.putExtra("isStudentCheck", attachment.isStudentCheck);
                         startActivity(intent);
-                    }
-                    else if (message.getAttachment() instanceof PullAnswerCheckAttachment){
+                    } else if (message.getAttachment() instanceof PullAnswerCheckAttachment) {
                         if (!(BaseActivity.getForegroundActivity() instanceof AnswerCheckActivity)) {
                             getMainThreadHandler().removeCallbacks(pullAnswerCheckRunnable);
                             //此处延迟3000可以避免多个pullAnswerCheck消息同时到来拉起多次
-                            getMainThreadHandler().postDelayed(pullAnswerCheckRunnable , 3000);
+                            getMainThreadHandler().postDelayed(pullAnswerCheckRunnable, 3000);
                         }
                     }
                 }
@@ -354,13 +364,52 @@ public class YoungyApplicationManager extends LitePalApplication {
                 }
             });*/
 
+            YXClient.getInstance().with(this).addOnNewMessageListener(message -> {
+                if (IN_CHATTING){
+                    return;
+                }
+                if (message.getAttachment() instanceof TaskRemindAttachment) {
+                    TaskRemindAttachment attachment = (TaskRemindAttachment) message.getAttachment();
+                    if (!reminds.contains(attachment)){
+                        reminds.add(attachment);
+                    }
+                    BaseEvent event = new BaseEvent(EventBusConstant.EVENT_PROMOTION);
+                    EventBus.getDefault().post(event);
+                    LogUtils.e("JiangLiang","触发......");
+                }
+            });
+
             changeSystemConfigIntegerValue();
-            mHolder = new WakeLockHolder() ;
-            mHolder.acquireWakeLock(mContext,"onyx-framework");
+            mHolder = new WakeLockHolder();
+            mHolder.acquireWakeLock(mContext, "onyx-framework");
 
             registerScreenReceiver();
 
-            LogUtils.setOpenLog(BuildConfig.DEBUG) ;
+            LogUtils.setOpenLog(BuildConfig.DEBUG);
+        }
+    }
+
+    public static final List<TaskRemindAttachment> reminds = new ArrayList<>();
+
+    public static TaskRemindAttachment getRemind(){
+        if (reminds.size() == 0){
+            return null;
+        }
+        LogUtils.e("JiangLiang","remids' size is : " + reminds.size());
+        return reminds.get(0);
+    }
+
+    public static void removeRemind(TaskRemindAttachment attachment){
+        reminds.remove(attachment);
+        LogUtils.e("JiangLiang","after remove reminds'size is : " + reminds.size());
+    }
+
+    public static void removeRemind(int taskId){
+        for (TaskRemindAttachment attachment:reminds){
+            if (taskId == attachment.taskId){
+                reminds.remove(attachment);
+                break;
+            }
         }
     }
 
@@ -370,7 +419,7 @@ public class YoungyApplicationManager extends LitePalApplication {
         unRegisterScreenReceiver();
         NetManager.getInstance().unregisterReceiver(this);
         PowerManager.getInstance().unregisterReceiver(this);
-        if (mHolder!=null){
+        if (mHolder != null) {
             mHolder.releaseWakeLock();
         }
     }
@@ -551,6 +600,7 @@ public class YoungyApplicationManager extends LitePalApplication {
 
 
     private ScreenBroadcastReceiver mScreenReceiver;
+
     /**
      * screen状态广播接收者
      */
@@ -562,9 +612,9 @@ public class YoungyApplicationManager extends LitePalApplication {
             action = intent.getAction();
             LogUtils.w("ScreenBroadcastReceiver", action);
             if (Intent.ACTION_SCREEN_ON.equals(action)) { // 开屏
-                mHolder.acquireWakeLock(YoungyApplicationManager.this,"onyx-framework");
+                mHolder.acquireWakeLock(YoungyApplicationManager.this, "onyx-framework");
             } else if (Intent.ACTION_SCREEN_OFF.equals(action)) { // 锁屏
-                if (mHolder!=null){
+                if (mHolder != null) {
                     mHolder.releaseWakeLock();
                 }
             } else if (Intent.ACTION_USER_PRESENT.equals(action)) { // 解锁
@@ -572,7 +622,7 @@ public class YoungyApplicationManager extends LitePalApplication {
         }
     }
 
-    private void registerScreenReceiver () {
+    private void registerScreenReceiver() {
         mScreenReceiver = new ScreenBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
@@ -581,7 +631,7 @@ public class YoungyApplicationManager extends LitePalApplication {
         registerReceiver(mScreenReceiver, filter);
     }
 
-    private void unRegisterScreenReceiver () {
+    private void unRegisterScreenReceiver() {
         if (mScreenReceiver != null) unregisterReceiver(mScreenReceiver);
     }
 

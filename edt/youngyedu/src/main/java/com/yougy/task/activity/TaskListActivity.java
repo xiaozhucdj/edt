@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.eventbus.BaseEvent;
+import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -25,6 +28,8 @@ import org.litepal.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 public class TaskListActivity extends BaseActivity {
     private TaskListLayoutBinding binding;
@@ -52,10 +57,17 @@ public class TaskListActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         Intent intent = getIntent();
         contentBookLink = intent.getIntExtra("contentBookLink", -1);
         courseBookTitle = intent.getStringExtra("courseBookTitle");
         homeworkId = intent.getIntExtra("homeworkId", -1);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 
     @Override
@@ -248,8 +260,8 @@ public class TaskListActivity extends BaseActivity {
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, task.getContentElement());
                 intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID, task.getContentDrama());
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, task.getContentTitle());
-                intent.putExtra("isSign", task.isNeedSignature());
-                intent.putExtra("ContentStatusCode", task.getContentStatusCode());
+                intent.putExtra(TaskRemindAttachment.IS_SIGN, task.isNeedSignature());
+                intent.putExtra(TaskRemindAttachment.SCENE_STATUS_CODE, task.getContentStatusCode());
                 startActivityForResult(intent, REQUEST_CODE);
             });
         }
