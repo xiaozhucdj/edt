@@ -182,7 +182,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private DeviceYxMsgErrorDialog mDeviceYxMsgErrorDialog;
 
 
-    private static long lastCheckTimeMill = 0;
+    public static long lastCheckTimeMill = 0;
     private static CheckRunnable checkRunnable = new CheckRunnable();
     private boolean initializationNeedNetFinished = false;
     private View line_allBook;
@@ -194,7 +194,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         long timeTolastCheck = System.currentTimeMillis() - lastCheckTimeMill;
         LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证是否被解绑过了" + (timeTolastCheck / 1000) + "秒");
         if (System.currentTimeMillis() - lastCheckTimeMill > 60 * 60 * 1000) {
-//        if (System.currentTimeMillis() - lastCheckTimeMill > 5*1000){
             LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间过长,启动验证是否解绑流程");
             YoungyApplicationManager.getMainThreadHandler().removeCallbacks(checkRunnable);
             YoungyApplicationManager.getMainThreadHandler().post(checkRunnable.setActivity(this));

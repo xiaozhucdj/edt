@@ -92,6 +92,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
             @Override
             public boolean onLongClick(View v) {
                 if (!Commons.isRelase){
+                    LogUtils.e("FH", "测试用!!!强制跳过绑定进入程序!!");
                     SpUtils.saveStudent(student);
                     File file = new File(ConfirmUserInfoDialog.this.getContext().getDatabasePath(student.getUserId() + ".db").getAbsolutePath());
                     if (!file.exists()) {
@@ -104,6 +105,8 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                     binding.startUseBtn.setVisibility(View.VISIBLE);
                     binding.titleTv.setText("恭喜,用户与设备绑定成功");
                     SpUtils.setLocalLockPwd("123456");
+                    LogUtils.e("FH", "由于强制跳过绑定进入程序!!强制把MainActivity中的lastCheckTime改为现在时间,以便于跳过主界面的解绑检查");
+                    MainActivity.lastCheckTimeMill = System.currentTimeMillis();
                 }
                 return false;
             }
@@ -159,7 +162,7 @@ public class ConfirmUserInfoDialog extends BaseDialog {
                     @Override
                     public void call(Throwable throwable) {
                         ConfirmUserInfoDialog.this.dismiss();
-                        new HintDialog(mActivity, "绑定失败 : 可能是设备已经被绑定过").show();
+                        new HintDialog(mActivity, "绑定失败!原因:\n1.您要绑定的账号可能已经被其他设备绑定\n2.本设备可能已经被其他账号绑定").show();
                     }
                 });
     }
