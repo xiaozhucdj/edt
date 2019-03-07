@@ -301,7 +301,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     @Override
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
         rightBtn.setVisibility(View.GONE);
-        titleTv.setText(id + "  " + name);
+        titleTv.setText(name);
     }
 
     /**
