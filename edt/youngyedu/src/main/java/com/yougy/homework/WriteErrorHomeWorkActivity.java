@@ -544,7 +544,14 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                 break;
             case R.id.tv_clear_write:
 
-                new ConfirmDialog(WriteErrorHomeWorkActivity.this, "是否清空作答笔记？",
+                new ConfirmDialog(WriteErrorHomeWorkActivity.this, "是否清空作答笔迹？",
+                        "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        },
                         "确定",
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -552,13 +559,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
                                 dialog.dismiss();
                                 mNbvAnswerBoard.clearAll();
                                 RefreshUtil.invalidate(rlAnswer);
-                            }
-                        },
-                        "取消",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
                             }
                         }).show();
 
