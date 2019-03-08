@@ -632,6 +632,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
 //                        deleteDirWihtFile(file);
 //                        loadData();
                         EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_COMMIT_STATE, true));
+                        SpUtils.putBoolean("task_" + mTaskId, true);
                     } else {
                         //上传后清理掉本地图片文件
                         deleteDirWihtFile(mCurrentFile);
