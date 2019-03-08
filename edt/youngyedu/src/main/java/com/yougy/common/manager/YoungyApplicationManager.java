@@ -365,17 +365,16 @@ public class YoungyApplicationManager extends LitePalApplication {
             });*/
 
             YXClient.getInstance().with(this).addOnNewMessageListener(message -> {
-                if (IN_CHATTING){
+                if (IN_CHATTING) {
                     return;
                 }
                 if (message.getAttachment() instanceof TaskRemindAttachment) {
                     TaskRemindAttachment attachment = (TaskRemindAttachment) message.getAttachment();
-                    if (!reminds.contains(attachment)){
+                    if (!SpUtils.getBoolean("task_" + attachment.taskId) && !reminds.contains(attachment)) {
                         reminds.add(attachment);
                     }
                     BaseEvent event = new BaseEvent(EventBusConstant.EVENT_PROMOTION);
                     EventBus.getDefault().post(event);
-                    LogUtils.e("JiangLiang","触发......");
                 }
             });
 
@@ -391,22 +390,22 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     public static final List<TaskRemindAttachment> reminds = new ArrayList<>();
 
-    public static TaskRemindAttachment getRemind(){
-        if (reminds.size() == 0){
+    public static TaskRemindAttachment getRemind() {
+        if (reminds.size() == 0) {
             return null;
         }
-        LogUtils.e("JiangLiang","remids' size is : " + reminds.size());
+        LogUtils.e("JiangLiang", "remids' size is : " + reminds.size());
         return reminds.get(0);
     }
 
-    public static void removeRemind(TaskRemindAttachment attachment){
+    public static void removeRemind(TaskRemindAttachment attachment) {
         reminds.remove(attachment);
-        LogUtils.e("JiangLiang","after remove reminds'size is : " + reminds.size());
+        LogUtils.e("JiangLiang", "after remove reminds'size is : " + reminds.size());
     }
 
-    public static void removeRemind(int taskId){
-        for (TaskRemindAttachment attachment:reminds){
-            if (taskId == attachment.taskId){
+    public static void removeRemind(int taskId) {
+        for (TaskRemindAttachment attachment : reminds) {
+            if (taskId == attachment.taskId) {
                 reminds.remove(attachment);
                 break;
             }
