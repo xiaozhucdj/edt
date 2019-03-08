@@ -476,6 +476,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
+                        SpUtils.putBoolean("task_" + mTaskId, true);
                         ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
                     }, throwable -> {
                         if (loadingProgressDialog != null) {
