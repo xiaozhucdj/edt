@@ -397,7 +397,9 @@ public class SearchActivity extends ShopBaseActivity {
     private void queryBookBaseOnFiltration(int pageNo) {
         BookStoreQueryBookInfoReq req = new BookStoreQueryBookInfoReq();
         req.setBookTitleMatch(bookTitle);
-        req.setBookCategoryMatch(bookCategoryMatch);
+        if (bookCategory == -1) {
+            req.setBookCategoryMatch(bookCategoryMatch);
+        }
         req.setBookCategory(bookCategory);
         req.setBookVersion(bookVersion);
         req.setPs(COUNT_PER_PAGE);

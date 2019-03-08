@@ -94,7 +94,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     FrameLayout mFrameSignature;
 
     public int dramaId = 160;
-    public int mTaskId ;
+    public int mTaskId;
 
     public static boolean isIntercept = false;//是否可写状态
     public static boolean isHandPaintedPattern = false;//是否手绘模式
@@ -131,7 +131,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     private List<StageTaskBean> mStageTaskBeans = new ArrayList<>();
 
-    public List<StageTaskBean> getStageTaskBeans () {
+    public List<StageTaskBean> getStageTaskBeans() {
         return mStageTaskBeans;
     }
 
@@ -154,17 +154,21 @@ public class TaskDetailStudentActivity extends BaseActivity {
         mUnbinder = ButterKnife.bind(R.layout.top_title_bar, mTopLayout);
     }
 
+    TaskRemindAttachment attachment;
+
     @Override
     public void init() {
 //        mTask = (Task) getIntent().getSerializableExtra("taskBean");
+        YoungyApplicationManager.NEED_PROMOTION = false;
         currentTitleStr = getIntent().getStringExtra(TaskRemindAttachment.KEY_TASK_NAME);
         mTaskId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID, 0);
         dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_DRAMA_ID, 0);
         mTopTitle.setText(currentTitleStr);
         // SV01 进行中   SV02 已完成   SV03 已检查
-        isHadCommit = ("SV02").equals(getIntent().getStringExtra("ContentStatusCode"));
-        isSignatureTask = getIntent().getBooleanExtra("isSign", false);
-        LogUtils.e(tag,"dramaId : " + dramaId);
+        isHadCommit = ("SV02").equals(getIntent().getStringExtra(TaskRemindAttachment.SCENE_STATUS_CODE));
+        isSignatureTask = getIntent().getBooleanExtra(TaskRemindAttachment.IS_SIGN, false);
+        attachment = (TaskRemindAttachment) getIntent().getSerializableExtra("attachment");
+        LogUtils.e(tag, "dramaId : " + dramaId);
         initContentFragment();
     }
 
@@ -183,7 +187,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
     }
 
-    public boolean isBottomBtnShow () {
+    public boolean isBottomBtnShow() {
         return mTextFinish.getVisibility() == View.VISIBLE;
     }
 
@@ -199,7 +203,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     @Override
     public void loadData() {
-        Log.i(TaskBaseFragment.TAG, "loadData: activity : "  + currentTab);
+        Log.i(TaskBaseFragment.TAG, "loadData: activity : " + currentTab);
         isLoading = true;
         if (isSignatureTask) {
             NetWorkManager.queryStageTask(String.valueOf(dramaId), "SR04", SpUtils.getUserId())
@@ -208,7 +212,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         LogUtils.d("TaskTest  hadSignature :" + stageTaskBeans.size());
                         if (stageTaskBeans.size() > 0) {
                             StageTaskBean stageTaskBean = stageTaskBeans.get(0);
-                            if (stageTaskBean.getStageScene().size() > 0 ) {
+                            if (stageTaskBean.getStageScene().size() > 0) {
                                 LogUtils.d("TaskTest hadSignature : " + stageTaskBean.toString());
                                 hadSignature = true;
                             }
@@ -227,9 +231,10 @@ public class TaskDetailStudentActivity extends BaseActivity {
                                         throwable -> {
                                             isLoading = false;
                                             mStageTaskBeans.clear();
-                                            if (throwable!=null) {
+                                            if (throwable != null) {
                                                 String errorMsg = throwable.getMessage();
-                                                if (!NetUtils.isNetConnected()) errorMsg = "网络连接不正常，请检查您的网络!";
+                                                if (!NetUtils.isNetConnected())
+                                                    errorMsg = "网络连接不正常，请检查您的网络!";
                                                 EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA_FAIL, errorMsg));
                                                 LogUtils.e("server reply error:" + throwable.getMessage());
                                             }
@@ -237,7 +242,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     }, throwable -> {
                         isLoading = false;
                         hadSignature = false;
-                            });
+                    });
         } else {
             NetWorkManager.queryStageTask(String.valueOf(dramaId), getStageTypeCode(), SpUtils.getUserId())
                     .subscribe(stageTaskBeans2 -> {
@@ -252,7 +257,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             throwable -> {
                                 isLoading = false;
                                 mStageTaskBeans.clear();
-                                if (throwable!=null) {
+                                if (throwable != null) {
                                     String errorMsg = throwable.getMessage();
                                     if (!NetUtils.isNetConnected()) errorMsg = "网络连接不正常，请检查您的网络!";
                                     EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_LOAD_DATA_FAIL, errorMsg));
@@ -268,7 +273,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.image_back, R.id.image_refresh, R.id.tab_content, R.id.tab_materials, R.id.tab_practice , R.id.btn_confirm})
+    @OnClick({R.id.image_back, R.id.image_refresh, R.id.tab_content, R.id.tab_materials, R.id.tab_practice, R.id.btn_confirm})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.image_back:
@@ -287,7 +292,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                 showContentFragment(mPracticeFragment, TAB_PRACTICE, true);
                 break;
             case R.id.btn_confirm:
-                finishedTask ();
+                finishedTask();
                 break;
         }
     }
@@ -320,6 +325,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     }
 
     private TaskBaseFragment mCurrentFragment;
+
     private void showContentFragment(TaskBaseFragment fragment, String tag, boolean isLoadData) {
         if (currentTab.equals(TAB_PRACTICE) && !tag.equals(TAB_PRACTICE)) {
             mPracticeFragment.dismissPopupWindow();
@@ -330,7 +336,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
         LogUtils.d("task current show Fragment : " + tag + "   currentTab = " + currentTab);
         currentTab = tag;
-        mCurrentFragment= fragment;
+        mCurrentFragment = fragment;
         setTabSelectState();
         replaceFragment(fragment, R.id.task_content, tag);
         if (isLoadData) {
@@ -339,7 +345,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
     }
 
-    private void replaceFragment (TaskBaseFragment fragment, int containerId, String tag) {
+    private void replaceFragment(TaskBaseFragment fragment, int containerId, String tag) {
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         if (tag != null) fragmentTransaction.replace(containerId, fragment, tag);
         else fragmentTransaction.replace(containerId, fragment);
@@ -348,7 +354,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         fragmentTransaction.commit();
     }
 
-    private void removeFragment (int containerId) {
+    private void removeFragment(int containerId) {
         Fragment fragmentById = mFragmentManager.findFragmentById(containerId);
         if (fragmentById != null) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
@@ -357,7 +363,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
     }
 
-    private void setTabSelectState () {
+    private void setTabSelectState() {
         mTabContent.setSelected(false);
         mTabMaterials.setSelected(false);
         mTabPractice.setSelected(false);
@@ -374,12 +380,12 @@ public class TaskDetailStudentActivity extends BaseActivity {
         }
     }
 
-    protected void finishedTask () {
-        if (currentTab.equals(TAB_PRACTICE)){
+    protected void finishedTask() {
+        if (currentTab.equals(TAB_PRACTICE)) {
             mPracticeFragment.dismissPopupWindow();
         }
         LogUtils.d("TaskTest finishedTask, isHadCommit  = " + isHadCommit
-                    + "   isSignatureTask = " + isSignatureTask + "  hadSignature = " + hadSignature);
+                + "   isSignatureTask = " + isSignatureTask + "  hadSignature = " + hadSignature);
         if (getString(R.string.parent_sign).equals(mTextFinish.getText().toString()) && isSignatureTask) {
             replaceFragment(mSignatureFragment, R.id.frame_signature, null);
             return;
@@ -388,18 +394,23 @@ public class TaskDetailStudentActivity extends BaseActivity {
 //            replaceFragment(mSignatureFragment, R.id.frame_signature, null);
 //            return;
 //        }
-        showDialog (getString(R.string.is_finished_task), R.string.confirm, R.string.cancel);
+        showDialog(getString(R.string.is_finished_task), R.string.confirm, R.string.cancel);
     }
 
-    private void showDialog (String title, int confirm , int cancel) {
+    private void showDialog(String title, int confirm, int cancel) {
         EventBus.getDefault().post(new BaseEvent(EVENT_TYPE_SCRIBBLE_MODE, false));
         DialogManager.newInstance().showSubmitConfirmDialog(this, title, confirm, cancel
-                , new DialogManager.DialogCallBack(){
+                , new DialogManager.DialogCallBack() {
 
                     @Override
                     public void confirm() {
                         if (currentTab.equals(TAB_PRACTICE)) {
                             mPracticeFragment.saveCurrentPractice();
+                        }
+                        if (attachment != null) {
+                            YoungyApplicationManager.removeRemind(attachment);
+                        }else{
+                            YoungyApplicationManager.removeRemind(mTaskId);
                         }
                         oosUpload();
                     }
@@ -412,8 +423,10 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     }
                 });
     }
+
     LoadingProgressDialog loadingProgressDialog;
-    private void oosUpload () {
+
+    private void oosUpload() {
         if (loadingProgressDialog == null) {
             loadingProgressDialog = new LoadingProgressDialog(TaskDetailStudentActivity.this);
             loadingProgressDialog.show();
@@ -438,10 +451,11 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         loadingProgressDialog = null;
                     }
                     ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getApplicationContext(), "获取上传信息失败");
-                    LogUtils.e("TaskTest 获取上传信息失败!");} );
+                    LogUtils.e("TaskTest 获取上传信息失败!");
+                });
     }
 
-    private void uploadPic (STSbean stSbean) {
+    private void uploadPic(STSbean stSbean) {
         LogUtils.d("TaskTest submit server.");
 
         File file = new File(SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir() + "/" + mTaskId);
@@ -462,6 +476,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
+                        SpUtils.putBoolean("task_" + mTaskId, true);
                         ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
                     }, throwable -> {
                         if (loadingProgressDialog != null) {
@@ -472,7 +487,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                     });
         } else {//存在笔记要提交
             String endpoint = Commons.ENDPOINT;
-            LogUtils.d("TaskTest uploadPic  :" + stSbean.getAccessKeyId() );
+            LogUtils.d("TaskTest uploadPic  :" + stSbean.getAccessKeyId());
 
             OSSCredentialProvider credentialProvider = new OSSFederationCredentialProvider() {
                 @Override
@@ -533,13 +548,13 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         }
                         SubmitTaskBean.SubmitTask submitTask = new SubmitTaskBean.SubmitTask();
                         submitTask.setPicContent(picContent);
-                        LogUtils.d(  "TaskTest stageId = " + stageId);
+                        LogUtils.d("TaskTest stageId = " + stageId);
                         submitTask.setPerformId(mTaskId);
                         submitTask.setStageId(stageId);
                         submitTask.setSceneCreateTime(DateUtils.getCalendarAndTimeString());
                         submitTasks.add(submitTask);
                     }
-                    LogUtils.d("TaskTest submitTasks size = "  + submitTasks.size());
+                    LogUtils.d("TaskTest submitTasks size = " + submitTasks.size());
                 }
                 submitTaskBean.setSubmitTasks(submitTasks);
                 subscriber.onNext(new Object());//将执行结果返回
@@ -604,10 +619,11 @@ public class TaskDetailStudentActivity extends BaseActivity {
     }
 
     private File mCurrentFile;
-    private void submitToServer (SubmitTaskBean submitTaskBean) {
+
+    private void submitToServer(SubmitTaskBean submitTaskBean) {
         String toJson = new Gson().toJson(submitTaskBean.getSubmitTasks());
         LogUtils.d("TaskTest  json : " + toJson);
-        NetWorkManager.submitTaskPracticeServer(SpUtils.getUserId(),toJson)
+        NetWorkManager.submitTaskPracticeServer(SpUtils.getUserId(), toJson)
                 .subscribe(submitReplyBeans -> {
                     LogUtils.d(" size = " + submitReplyBeans.size());
                     mCurrentFile = new File(SaveNoteUtils.getInstance(getApplicationContext()).getTaskFileDir() + "/" + dramaId);
@@ -627,6 +643,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         loadingProgressDialog.dismiss();
                         loadingProgressDialog = null;
                     }
+                    SpUtils.putBoolean("task_" + mTaskId, true);
                     ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
                 }, throwable -> {
                     if (loadingProgressDialog != null) {
@@ -646,7 +663,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                 });
     }
 
-    public String getStageTypeCode () {
+    public String getStageTypeCode() {
         String srId = "SR01";
         switch (currentTab) {
             case TAB_CONTENT:
@@ -662,14 +679,14 @@ public class TaskDetailStudentActivity extends BaseActivity {
         return srId;
     }
 
-    public void signatureCancel (){
+    public void signatureCancel() {
         LogUtils.d("signatureCancel");
         removeFragment(R.id.frame_signature);
         mFrameSignature.setVisibility(View.GONE);
         UIUtils.postDelayed(this::invalidate, 300);
     }
 
-    public void signatureSubmit () {
+    public void signatureSubmit() {
         LogUtils.d("TaskTest signatureSubmit");
         //提交 家长签字
         removeFragment(R.id.frame_signature);
@@ -686,6 +703,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         deleteDirWihtFile(mCurrentFile);
-        if (mUnbinder != null)  mUnbinder.unbind();
+        if (mUnbinder != null) mUnbinder.unbind();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

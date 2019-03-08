@@ -3,6 +3,8 @@ package com.yougy.message.attachment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class TaskRemindAttachment extends CustomAttachment{
 
     public static final String KEY_TASK_ID = "taskId";
@@ -59,5 +61,22 @@ public class TaskRemindAttachment extends CustomAttachment{
             e.printStackTrace();
         }
         return returnJsonObj;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaskRemindAttachment that = (TaskRemindAttachment) o;
+        return taskId == that.taskId &&
+                dramaId == that.dramaId &&
+                isSign == that.isSign &&
+                Objects.equals(taskName, that.taskName) &&
+                Objects.equals(sceneStatusCode, that.sceneStatusCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(taskId, dramaId, taskName, isSign, sceneStatusCode);
     }
 }

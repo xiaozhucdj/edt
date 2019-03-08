@@ -94,6 +94,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_chatting));
         initChattingListview();
         initInputEdittext();
+        YoungyApplicationManager.IN_CHATTING = true;
         binding.messageEdittext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +113,12 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     protected void onStart() {
         super.onStart();
         YXClient.getInstance().checkIfNotLoginThenDoIt(this , null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        YoungyApplicationManager.IN_CHATTING = true;
     }
 
     @Override
@@ -301,7 +308,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     @Override
     protected void initTitleBar(RelativeLayout titleBarLayout, Button leftBtn, TextView titleTv, Button rightBtn) {
         rightBtn.setVisibility(View.GONE);
-        titleTv.setText(id + "  " + name);
+        titleTv.setText(name);
     }
 
     /**

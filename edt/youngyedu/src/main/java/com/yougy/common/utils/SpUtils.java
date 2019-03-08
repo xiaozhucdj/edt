@@ -210,6 +210,18 @@ public class SpUtils {
         return sp.getInt(key, 0);
     }
 
+    public static void putBoolean(String key, boolean value) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    public static boolean getBoolean(String key) {
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(LABEL_LOCATION, Context.MODE_PRIVATE);
+        return sp.getBoolean(key, false);
+    }
+
     /***
      * @param values
      */
@@ -543,4 +555,11 @@ public class SpUtils {
         editor.putInt(key, value);
         editor.commit();
     }
+    private static final String TASK_PROMOTIONS = "task_promotions";
+    public static void putTaskPromotions(){
+        SharedPreferences sp = UIUtils.getContext().getSharedPreferences(TASK_PROMOTIONS,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+    }
+
 }

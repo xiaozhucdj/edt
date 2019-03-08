@@ -1,6 +1,8 @@
 package com.yougy.common.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,9 +40,13 @@ import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.message.attachment.TaskRemindAttachment;
+import com.yougy.message.ui.ChattingActivity;
 import com.yougy.shop.bean.DownloadInfo;
+import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;
+import com.yougy.view.dialog.ConfirmDialog;
 import com.yougy.view.dialog.DownBookDialog;
 import com.yougy.view.dialog.LoadingProgressDialog;
 import com.yougy.view.dialog.UiPromptDialog;
@@ -147,13 +153,50 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
         loadData();
     }
 
+    private boolean isShowing;
 
     public void onEventMainThread(BaseEvent event) {
         if (event != null) {
             if (event.getType().equals(EventBusConstant.EVENT_NETDIALOG_DISMISS)) {
                 invalidateDelayed(); //半透明层强制刷新
             }
+            if (event.getType().equals(EventBusConstant.EVENT_PROMOTION) && YoungyApplicationManager.NEED_PROMOTION) {
+                TaskRemindAttachment attachment = YoungyApplicationManager.getRemind();
+                if (attachment == null) {
+                    return;
+                }
+                if (!isShowing && isTopActivity()) {
+                    ConfirmDialog dialog = new ConfirmDialog(this, getString(R.string.task_title_prompt), getString(R.string.task_content, attachment.taskName), getString(R.string.go_to_task), getString(R.string.I_knew), (dialog12, which) -> {
+                        dialog12.dismiss();
+                        isShowing = false;
+                        Intent intent = new Intent(BaseActivity.this, TaskDetailStudentActivity.class);
+                        intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, attachment.taskId);
+                        intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID, attachment.dramaId);
+                        intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, attachment.taskName);
+                        intent.putExtra(TaskRemindAttachment.IS_SIGN, attachment.isSign);
+                        intent.putExtra(TaskRemindAttachment.SCENE_STATUS_CODE, attachment.sceneStatusCode);
+                        intent.putExtra("attachment", attachment);
+                        startActivity(intent);
+                    }, (dialog1, which) -> {
+                        dialog1.dismiss();
+                        YoungyApplicationManager.removeRemind(attachment);
+                        isShowing = false;
+                    });
+                    dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+                    dialog.show();
+                    dialog.setTitleSize(24);
+                    dialog.setContentSize(20);
+                    isShowing = true;
+                }
+            }
         }
+    }
+
+
+    private boolean isTopActivity() {
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+        return cn.getClassName().contains(getClass().getName());
     }
 
     /**
@@ -430,11 +473,11 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 
     }
 
-    public void back(View view){
+    public void back(View view) {
         finish();
     }
 
-    public void refresh(View view){
+    public void refresh(View view) {
 
     }
 
@@ -1160,6 +1203,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
     }
 
     public boolean mIsCheckStartNet = true;
+
     @Override
     protected void onStart() {
         super.onStart();

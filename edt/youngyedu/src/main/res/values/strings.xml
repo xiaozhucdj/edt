@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">pre_student_22_v1</string>
+    <string name="app_name">pre_student_22_v2</string>
     <string name="give_up_paper">确定扔掉这张纸吗？</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
@@ -172,6 +172,10 @@
     <string name="no_uncomplete_task">您还没有未完成的任务！</string>
     <string name="get_task_failed">获取任务失败</string>
     <string name="task_chapter">所属教材章节：%1$s</string>
+    <string name="task_title_prompt">今天的任务还没有完成，请尽快完成！</string>
+    <string name="task_content">任务名称：%1$s</string>
+    <string name="go_to_task">前往任务</string>
+    <string name="I_knew">我已知晓</string>
 
 
     <string-array name="titles">
