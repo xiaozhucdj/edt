@@ -118,7 +118,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        YoungyApplicationManager.IN_CHATTING = false;
+        YoungyApplicationManager.IN_CHATTING = true;
     }
 
     @Override

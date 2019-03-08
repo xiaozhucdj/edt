@@ -108,7 +108,7 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     private static YoungyApplicationManager mContext;
     public static boolean NEED_PROMOTION = true;
-    public static boolean IN_CHATTING = false;
+    public static boolean IN_CHATTING = true;
     ANRWatchDog anrWatchDog = new ANRWatchDog(9000);
 
     private long lastReceiverTime;
