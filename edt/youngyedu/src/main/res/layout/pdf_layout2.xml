@@ -46,6 +46,59 @@
             android:text="暂停"
             android:textColor="@android:color/black"
             android:textSize="20px" />
+
+        <LinearLayout
+            android:id="@+id/ll_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_reader_pause"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20px"
+            android:background="@drawable/img_voice_bg"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:paddingBottom="4px"
+                android:paddingTop="10px"
+                android:id="@+id/img_btn_reduce"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9px"
+                android:background="@null"
+                android:src="@drawable/img_voice_reduce_select" />
+
+            <EditText
+                android:id="@+id/et_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10px"
+                android:background="@drawable/et_voice"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:maxLength="2"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textSize="24px" />
+
+            <ImageButton
+                android:id="@+id/img_btn_enlarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12px"
+                android:background="@null"
+                android:src="@drawable/img_voice_enlarge_select" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18px"
+                android:text="音量"
+                android:textColor="@android:color/black"
+                android:textSize="20px" />
+
+        </LinearLayout>
     </RelativeLayout>
 
 

@@ -10,11 +10,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.onyx.android.sdk.api.device.epd.EpdController;
@@ -41,6 +46,7 @@ import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.RefreshUtil;
+import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.UIUtils;
 import com.yougy.home.adapter.BookMarkAdapter;
 import com.yougy.home.adapter.HandlerDirAdapter;
@@ -65,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
@@ -136,6 +143,12 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     private BookVoiceBean mVoiceBean;
     private Map<Integer, ImageView> mImgVoices = new HashMap<>();
     private boolean mIsPageReader;
+    private boolean mIsVoicePause = false;
+    private ImageButton imgBtnReduce;
+    private EditText et_voice;
+    private ImageButton imgBtnEnlarge;
+    private LinearLayout llVoice;
+    private AudioHelper mAudioHelper;
 
     @Nullable
     @Override
@@ -232,6 +245,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         btn_reader_pause = (ImageButton) mRoot.findViewById(R.id.btn_reader_pause);
         btn_reader_pause.setOnClickListener(this);
         btn_reader_pause.setVisibility(View.GONE);
+        llVoice.setVisibility(View.GONE);
 
         fm_voice = (FrameLayout) mRoot.findViewById(R.id.fm_voice);
         fm_voice.setVisibility(View.GONE);
@@ -244,10 +258,55 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
 
         btn_reader_pause.setTag("是否暂停");
         btn_reader_pause.setSelected(false);
+
+        imgBtnReduce = (ImageButton) mRoot.findViewById(R.id.img_btn_reduce);
+        imgBtnReduce.setOnClickListener(this);
+        et_voice = (EditText) mRoot.findViewById(R.id.et_voice);
+        imgBtnEnlarge = (ImageButton) mRoot.findViewById(R.id.img_btn_enlarge);
+        imgBtnEnlarge.setOnClickListener(this);
+        llVoice = (LinearLayout) mRoot.findViewById(R.id.ll_voice);
+
+        et_voice.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+
+                    String str = et_voice.getText().toString().trim();
+                    if (!StringUtils.isEmpty(str)) {
+                        int voice = (Integer.parseInt(str) - 1);
+                        getAudioHelper().setCutterVoice(voice);
+                        setVoiceUiState();
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+        setVoiceUiState();
+
         //解析PDF
         initPDF();
     }
 
+    private void setVoiceUiState() {
+        et_voice.setText(getAudioHelper().getCurVolume() + "");
+        if (getAudioHelper().getCurVolume() == 0) {
+            imgBtnReduce.setEnabled(false);
+        } else if (getAudioHelper().getCurVolume() >= getAudioHelper().getMaxVolume()) {
+            imgBtnEnlarge.setEnabled(false);
+        } else {
+            imgBtnReduce.setEnabled(true);
+            imgBtnEnlarge.setEnabled(true);
+        }
+    }
+
+    private AudioHelper getAudioHelper() {
+        if (mAudioHelper == null) {
+            mAudioHelper = new AudioHelper(getActivity());
+        }
+        return mAudioHelper;
+    }
 
     /**
      * 初始化 pdf
@@ -310,6 +369,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 rl_reader.setVisibility(View.VISIBLE);
                 btn_reader_page.setVisibility(View.VISIBLE);
                 btn_reader_pause.setVisibility(View.GONE);
+                llVoice.setVisibility(View.GONE);
                 addVoiceItem();
             }
         }
@@ -340,6 +400,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                                 entry.getValue().setSelected(false);
                             }
                         }
+                        mIsVoicePause = false;
                         leaveScribbleMode(true);
                         imageView.setSelected(true);
                         LogUtils.e("bean.toString() ===" + bean.toString());
@@ -368,8 +429,11 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 btn_reader_page.setTag("连读");
                 btn_reader_page.setSelected(false);
                 btn_reader_pause.setVisibility(View.GONE);
+                llVoice.setVisibility(View.GONE);
                 btn_reader_pause.setTag("是否暂停");
                 btn_reader_pause.setSelected(false);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
             } else {
 
                 btn_reader_pause.setTag("是否暂停");
@@ -662,6 +726,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             btn_reader_pause.setTag("是否暂停");
             btn_reader_pause.setSelected(false);
             getMediaHelper().reset();
+            mIsVoicePause = false;
         }
 
         getReaderPresenter().gotoPage(position);
@@ -704,6 +769,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                     btn_reader_page.setTag("停止");
                     btn_reader_page.setSelected(true);
                     btn_reader_pause.setVisibility(View.VISIBLE);
+                    llVoice.setVisibility(View.VISIBLE);
                     btn_reader_pause.setTag("是否暂停");
                     btn_reader_pause.setSelected(false);
                     if (mImgVoices.size() != 0) {
@@ -732,8 +798,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                     btn_reader_page.setTag("连读");
                     btn_reader_page.setSelected(false);
                     btn_reader_pause.setVisibility(View.GONE);
+                    llVoice.setVisibility(View.GONE);
                     getMediaHelper().reset();
                     btn_reader_pause.setTag("是否暂停");
+                    mIsVoicePause = false;
                     btn_reader_pause.setSelected(false);
                 }
                 break;
@@ -743,11 +811,22 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                     btn_reader_pause.setTag("已暂停");
                     btn_reader_pause.setSelected(true);
                     getMediaHelper().pause();
+                    mIsVoicePause = true;
                 } else {
                     btn_reader_pause.setTag("是否暂停");
                     btn_reader_pause.setSelected(false);
+                    mIsVoicePause = false;
                     getMediaHelper().continuePlay();
                 }
+                break;
+
+            case R.id.img_btn_reduce:
+                getAudioHelper().setReduceVoice();
+                setVoiceUiState();
+                break;
+            case R.id.img_btn_enlarge:
+                getAudioHelper().setEnlargeVoice();
+                setVoiceUiState();
                 break;
         }
     }
@@ -950,7 +1029,9 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             UIUtils.getMainThreadHandler().removeCallbacks(mRunThread);
         }
         mRunThread = null;
-        getMediaHelper().playerRelease();
+        if (mMediaHelper != null) {
+            getMediaHelper().playerRelease();
+        }
         Runtime.getRuntime().gc();
     }
 
@@ -1058,7 +1139,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     }
 
 
-
     public void prevPageForKey() {
         if (!mHide) {
             if (mBackPageBack.isEnabled() && mBackPageNext.isEnabled() && mSeekbarPage.isClickable() && mBackPageBack != null) {
@@ -1151,7 +1231,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
     ///////////////////////////////////voice///////////////////////////////////////////////////////////
     private NewMediaHelper getMediaHelper() {
         if (mMediaHelper == null) {
-           new AudioHelper(getActivity()).setMaxVolume();
             mMediaHelper = new NewMediaHelper();
             mMediaHelper.setCompletionListener(this);
             mMediaHelper.init(getActivity());
