@@ -27,8 +27,6 @@ import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.DialogManager;
-import com.yougy.common.manager.NetManager;
-import com.yougy.common.manager.PowerManager;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.ApiException;
 import com.yougy.common.new_network.NetWorkManager;
@@ -39,9 +37,12 @@ import com.yougy.common.utils.NetUtils;
 import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
+import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.homework.WriteHomeWorkActivity;
+import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.message.attachment.HomeworkRemindAttachment;
 import com.yougy.message.attachment.TaskRemindAttachment;
-import com.yougy.message.ui.ChattingActivity;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.task.activity.TaskDetailStudentActivity;
 import com.yougy.ui.activity.R;
@@ -157,39 +158,111 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 
     public void onEventMainThread(BaseEvent event) {
         if (event != null) {
-            if (event.getType().equals(EventBusConstant.EVENT_NETDIALOG_DISMISS)) {
+            if (EventBusConstant.EVENT_NETDIALOG_DISMISS.equals(event.getType())) {
                 invalidateDelayed(); //半透明层强制刷新
             }
-            if (event.getType().equals(EventBusConstant.EVENT_PROMOTION) && YoungyApplicationManager.NEED_PROMOTION) {
-                TaskRemindAttachment attachment = YoungyApplicationManager.getRemind();
-                if (attachment == null) {
-                    return;
-                }
-                if (!isShowing && isTopActivity()) {
-                    ConfirmDialog dialog = new ConfirmDialog(this, getString(R.string.task_title_prompt), getString(R.string.task_content, attachment.taskName), getString(R.string.go_to_task), getString(R.string.I_knew), (dialog12, which) -> {
-                        dialog12.dismiss();
-                        isShowing = false;
-                        Intent intent = new Intent(BaseActivity.this, TaskDetailStudentActivity.class);
-                        intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, attachment.taskId);
-                        intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID, attachment.dramaId);
-                        intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, attachment.taskName);
-                        intent.putExtra(TaskRemindAttachment.IS_SIGN, attachment.isSign);
-                        intent.putExtra(TaskRemindAttachment.SCENE_STATUS_CODE, attachment.sceneStatusCode);
-                        intent.putExtra("attachment", attachment);
-                        startActivity(intent);
-                    }, (dialog1, which) -> {
-                        dialog1.dismiss();
-                        YoungyApplicationManager.removeRemind(attachment);
-                        isShowing = false;
-                    });
-                    dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-                    dialog.show();
-                    dialog.setTitleSize(24);
-                    dialog.setContentSize(20);
-                    isShowing = true;
-                }
+            else if (EventBusConstant.EVENT_REMIND.equals(event.getType())){
+                handleTaskRemind();
             }
         }
+    }
+
+    private void handleTaskRemind(){
+        if (isTopActivity()
+                && !isShowing
+                && YoungyApplicationManager.NEED_PROMOTION){
+            TaskRemindAttachment attachment = YoungyApplicationManager.getTaskRemind();
+            if (attachment == null) {
+                handleHomeworkRemind();
+                return;
+            }
+            ConfirmDialog dialog = new ConfirmDialog(this, getString(R.string.task_title_prompt), getString(R.string.task_content, attachment.taskName), getString(R.string.go_to_task), getString(R.string.I_knew), (dialog12, which) -> {
+                dialog12.dismiss();
+                isShowing = false;
+                Intent intent = new Intent(BaseActivity.this, TaskDetailStudentActivity.class);
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, attachment.taskId);
+                intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID, attachment.dramaId);
+                intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, attachment.taskName);
+                intent.putExtra(TaskRemindAttachment.IS_SIGN, attachment.isSign);
+                intent.putExtra(TaskRemindAttachment.SCENE_STATUS_CODE, attachment.sceneStatusCode);
+                intent.putExtra("attachment", attachment);
+                startActivity(intent);
+            }, (dialog1, which) -> {
+                dialog1.dismiss();
+                YoungyApplicationManager.removeTaskRemind(attachment);
+                isShowing = false;
+                handleTaskRemind();
+            });
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+            dialog.show();
+            dialog.setTitleSize(24);
+            dialog.setContentSize(20);
+            isShowing = true;
+        }
+    }
+
+    private void handleHomeworkRemind(){
+        HomeworkRemindAttachment attachment = YoungyApplicationManager.getHomeworkRemind();
+        if (attachment == null) {
+            return;
+        }
+        ConfirmDialog dialog = new ConfirmDialog(this, "今天的家庭作业还没有完成哦!"
+                , "作业名称 : " + attachment.examName
+                , "前往作业"
+                , "我已知晓"
+                , (dialog12, which) -> {
+            NetWorkManager.queryReply(Integer.parseInt(attachment.examId), SpUtils.getUserId(), null)
+                    .subscribe(new Action1<List<QuestionReplySummary>>() {
+                        @Override
+                        public void call(List<QuestionReplySummary> questionReplySummaries) {
+                            if (questionReplySummaries.size() == 0) {
+                                Intent intent = new Intent(getThisActivity(), WriteHomeWorkActivity.class);
+                                intent.putExtra("examId", attachment.examId);
+                                intent.putExtra("examName", attachment.examName);
+                                intent.putExtra("isTimerWork", attachment.isTimeWork);
+                                intent.putExtra("lifeTime", attachment.lifeTime);
+                                intent.putExtra("isStudentCheck", attachment.isStudentCheck);
+                                if ("onClass".equals(attachment.examOccasion)) {
+                                    intent.putExtra("isOnClass", true);
+                                } else {
+                                    intent.putExtra("isOnClass", false);
+                                }
+                                intent.putExtra("teacherID", attachment.teacherId);
+                                startActivity(intent);
+                                YoungyApplicationManager.removeHomeworkRemind(attachment);
+                                dialog12.dismiss();
+                                isShowing = false;
+                            } else {
+                                ToastUtil.showCustomToast(getApplicationContext() , "作业已经提交！");
+                                dialog12.dismiss();
+                                YoungyApplicationManager.removeHomeworkRemind(attachment);
+                                isShowing = false;
+                                handleHomeworkRemind();
+                            }
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            ToastUtil.showCustomToast(getApplicationContext() , "获取该封作业信息失败!");
+                            dialog12.dismiss();
+                            YoungyApplicationManager.removeHomeworkRemind(attachment);
+                            isShowing = false;
+                            handleHomeworkRemind();
+                        }
+                    });
+        }
+                , (dialog1, which) -> {
+            dialog1.dismiss();
+            YoungyApplicationManager.removeHomeworkRemind(attachment);
+            isShowing = false;
+            handleHomeworkRemind();
+        });
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+        dialog.show();
+        dialog.setTitleSize(24);
+        dialog.setContentSize(20);
+        isShowing = true;
     }
 
 
@@ -203,10 +276,6 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
      * 设置界面布局文件
      */
     protected abstract void setContentView();
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -227,7 +296,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 //                        | PowerManager.ON_AFTER_RELEASE, BaseActivity.this.getClass().getName());
 //        mWakeLock.acquire();
         invalidateDelayed();
-
+        handleTaskRemind();
     }
 
     public void invalidateDelayed() {

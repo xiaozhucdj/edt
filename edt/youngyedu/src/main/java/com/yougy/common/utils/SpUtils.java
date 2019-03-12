@@ -532,6 +532,15 @@ public class SpUtils {
     }
 
 
+    public static boolean isHomeworkOrTaskfinished(String key){
+        return othersSp.getBoolean(key , false);
+    }
+
+    public static void setHomeworkOrTaskFinished(String key){
+        othersSp.edit().putBoolean(key , true).apply();
+    }
+
+
     public static void putMediaString(String key, String value) {
         SharedPreferences sp = UIUtils.getContext().getSharedPreferences("media", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -561,5 +570,7 @@ public class SpUtils {
         SharedPreferences.Editor editor = sp.edit();
 
     }
+
+
 
 }

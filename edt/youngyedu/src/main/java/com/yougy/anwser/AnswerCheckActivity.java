@@ -27,6 +27,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.manager.DialogManager;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -77,6 +78,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage message) {
@@ -793,5 +795,11 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         binding.contentDisplayer.clearCache();
         Runtime.getRuntime().gc();
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

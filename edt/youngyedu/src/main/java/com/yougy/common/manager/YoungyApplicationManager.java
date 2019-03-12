@@ -1,20 +1,15 @@
 package com.yougy.common.manager;
 
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
@@ -34,13 +29,13 @@ import com.yougy.common.rx.RxBus;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.OnClickFastListener;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.message.ListUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.AskQuestionAttachment;
 import com.yougy.message.attachment.EndQuestionAttachment;
+import com.yougy.message.attachment.HomeworkRemindAttachment;
 import com.yougy.message.attachment.OverallLockAttachment;
 import com.yougy.message.attachment.OverallUnlockAttachment;
 import com.yougy.message.attachment.PullAnswerCheckAttachment;
@@ -48,8 +43,6 @@ import com.yougy.message.attachment.SeatWorkAttachment;
 import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.order.LockerActivity;
 import com.yougy.ui.activity.BuildConfig;
-import com.yougy.ui.activity.R;
-import com.yougy.view.dialog.ConfirmDialog;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 import com.zhy.autolayout.utils.ScreenUtils;
 
@@ -108,7 +101,7 @@ public class YoungyApplicationManager extends LitePalApplication {
 
     private static YoungyApplicationManager mContext;
     public static boolean NEED_PROMOTION = true;
-    public static boolean IN_CHATTING = true;
+    public static boolean IN_CHATTING = false;
     ANRWatchDog anrWatchDog = new ANRWatchDog(9000);
 
     private long lastReceiverTime;
@@ -364,16 +357,25 @@ public class YoungyApplicationManager extends LitePalApplication {
                 }
             });*/
 
+            //
             YXClient.getInstance().with(this).addOnNewMessageListener(message -> {
                 if (IN_CHATTING) {
                     return;
                 }
                 if (message.getAttachment() instanceof TaskRemindAttachment) {
                     TaskRemindAttachment attachment = (TaskRemindAttachment) message.getAttachment();
-                    if (!SpUtils.getBoolean("task_" + attachment.taskId) && !reminds.contains(attachment)) {
-                        reminds.add(attachment);
+                    if (!SpUtils.isHomeworkOrTaskfinished("task_" + attachment.taskId) && !taskReminds.contains(attachment)) {
+                        taskReminds.add(attachment);
                     }
-                    BaseEvent event = new BaseEvent(EventBusConstant.EVENT_PROMOTION);
+                    BaseEvent event = new BaseEvent(EventBusConstant.EVENT_REMIND);
+                    EventBus.getDefault().post(event);
+                }
+                else if (message.getAttachment() instanceof HomeworkRemindAttachment){
+                    HomeworkRemindAttachment attachment = (HomeworkRemindAttachment) message.getAttachment();
+                    if (!SpUtils.isHomeworkOrTaskfinished("homework_" + attachment.examId) && !homeworkReminds.contains(attachment)) {
+                        homeworkReminds.add(attachment);
+                    }
+                    BaseEvent event = new BaseEvent(EventBusConstant.EVENT_REMIND);
                     EventBus.getDefault().post(event);
                 }
             });
@@ -388,25 +390,49 @@ public class YoungyApplicationManager extends LitePalApplication {
         }
     }
 
-    public static final List<TaskRemindAttachment> reminds = new ArrayList<>();
+    public static final List<TaskRemindAttachment> taskReminds = new ArrayList<>();
 
-    public static TaskRemindAttachment getRemind() {
-        if (reminds.size() == 0) {
+    public static TaskRemindAttachment getTaskRemind() {
+        if (taskReminds.size() == 0) {
             return null;
         }
-        LogUtils.e("JiangLiang", "remids' size is : " + reminds.size());
-        return reminds.get(0);
+        LogUtils.e("JiangLiang", "taskReminds' size is : " + taskReminds.size());
+        return taskReminds.get(0);
     }
 
-    public static void removeRemind(TaskRemindAttachment attachment) {
-        reminds.remove(attachment);
-        LogUtils.e("JiangLiang", "after remove reminds'size is : " + reminds.size());
+    public static void removeTaskRemind(TaskRemindAttachment attachment) {
+        taskReminds.remove(attachment);
+        LogUtils.e("JiangLiang", "after remove taskReminds'size is : " + taskReminds.size());
     }
 
-    public static void removeRemind(int taskId) {
-        for (TaskRemindAttachment attachment : reminds) {
+    public static void removeTaskRemind(int taskId) {
+        for (TaskRemindAttachment attachment : taskReminds) {
             if (taskId == attachment.taskId) {
-                reminds.remove(attachment);
+                taskReminds.remove(attachment);
+                break;
+            }
+        }
+    }
+
+    public static final List<HomeworkRemindAttachment> homeworkReminds = new ArrayList<>();
+
+    public static HomeworkRemindAttachment getHomeworkRemind() {
+        if (homeworkReminds.size() == 0) {
+            return null;
+        }
+        LogUtils.e("FH_YoungyApplicationManager", "homeworkReminds' size is : " + homeworkReminds.size());
+        return homeworkReminds.get(0);
+    }
+
+    public static void removeHomeworkRemind(HomeworkRemindAttachment attachment) {
+        homeworkReminds.remove(attachment);
+        LogUtils.e("FH_YoungyApplicationManager", "after remove homeworkReminds'size is : " + homeworkReminds.size());
+    }
+
+    public static void removeHomeworkRemind(String examId) {
+        for (HomeworkRemindAttachment attachment : homeworkReminds) {
+            if (examId != null && examId.equals(attachment.examId)) {
+                homeworkReminds.remove(attachment);
                 break;
             }
         }

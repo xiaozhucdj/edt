@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Constant;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -86,6 +87,7 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         bookId = getIntent().getIntExtra("bookId", -1);
         homeworkId = getIntent().getIntExtra("homeworkId", -1);
     }
@@ -804,5 +806,11 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
             }
             loadData();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

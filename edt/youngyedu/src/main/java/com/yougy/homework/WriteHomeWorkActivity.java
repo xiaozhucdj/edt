@@ -255,7 +255,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void init() {
-
+        YoungyApplicationManager.NEED_PROMOTION = false;
         examId = getIntent().getStringExtra("examId");
         isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
         if (TextUtils.isEmpty(examId)) {
@@ -1694,6 +1694,8 @@ public class WriteHomeWorkActivity extends BaseActivity {
                             timingTask.stop();
                         }
                         ToastUtil.showCustomToast(getBaseContext(), "提交完毕");
+                        YoungyApplicationManager.removeHomeworkRemind(examId);
+                        SpUtils.setHomeworkOrTaskFinished("homework_" + examId);
                         //发送消息
                         if (teacherId != 0) {
                             sendFinishMsgToTeacher();
@@ -2214,5 +2216,11 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     public String getExam_id() {
         return examId;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

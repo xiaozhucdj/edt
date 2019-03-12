@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
@@ -121,6 +122,7 @@ public class AnswerRecordDetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         examId = getIntent().getIntExtra("examId", -1);
         if (examId == -1) {
             ToastUtil.showCustomToast(getApplicationContext(), "exam获取失败!");
@@ -369,5 +371,11 @@ public class AnswerRecordDetailActivity extends BaseActivity {
         Glide.get(this).clearMemory();
         binding.contentDisplayer.clearCache();
         Runtime.getRuntime().gc();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

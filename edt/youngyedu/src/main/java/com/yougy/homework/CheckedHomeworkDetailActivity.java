@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.common.activity.BaseActivity;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.new_network.RxResultHelper;
 import com.yougy.common.utils.SpUtils;
@@ -49,6 +50,7 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         isScoring = getIntent().getBooleanExtra("isScoring", false);
         if (isScoring) {
             binding.scoreLayout.setVisibility(View.VISIBLE);
@@ -342,5 +344,11 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

@@ -152,6 +152,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
 
     @Override
     public void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         LogUtils.e("FH", "AnsweringActivity init " + this.toString());
         itemId = getIntent().getStringExtra("itemId");
 //        itemId = "2499";//填空
@@ -1478,5 +1479,11 @@ public class AnsweringActivity extends AnswerBaseActivity {
         }
         BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_ANSWERING_PUASE, "");
         EventBus.getDefault().post(baseEvent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

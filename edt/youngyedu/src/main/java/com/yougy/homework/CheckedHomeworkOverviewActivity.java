@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.SpUtils;
@@ -64,6 +65,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     @Override
     protected void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         examId = getIntent().getIntExtra("examId", -1);
         if (examId == -1) {
             ToastUtil.showCustomToast(getApplicationContext(), "examId 为空");
@@ -380,5 +382,11 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
             }
             return this;
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

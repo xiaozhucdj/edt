@@ -408,9 +408,9 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             mPracticeFragment.saveCurrentPractice();
                         }
                         if (attachment != null) {
-                            YoungyApplicationManager.removeRemind(attachment);
+                            YoungyApplicationManager.removeTaskRemind(attachment);
                         }else{
-                            YoungyApplicationManager.removeRemind(mTaskId);
+                            YoungyApplicationManager.removeTaskRemind(mTaskId);
                         }
                         oosUpload();
                     }
@@ -476,7 +476,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                             loadingProgressDialog.dismiss();
                             loadingProgressDialog = null;
                         }
-                        SpUtils.putBoolean("task_" + mTaskId, true);
+                        SpUtils.setHomeworkOrTaskFinished("task_" + mTaskId);
                         ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
                     }, throwable -> {
                         if (loadingProgressDialog != null) {
@@ -643,7 +643,7 @@ public class TaskDetailStudentActivity extends BaseActivity {
                         loadingProgressDialog.dismiss();
                         loadingProgressDialog = null;
                     }
-                    SpUtils.putBoolean("task_" + mTaskId, true);
+                    SpUtils.setHomeworkOrTaskFinished("task_" + mTaskId);
                     ToastUtil.showCustomToast(TaskDetailStudentActivity.this.getBaseContext(), "提交完毕");
                 }, throwable -> {
                     if (loadingProgressDialog != null) {

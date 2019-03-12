@@ -12,7 +12,7 @@ public class EventBusConstant {
     public static final String EVENT_NETDIALOG_DISMISS = "event_netdialog_dismiss";
     public static final String EVENTBUS_POWER= "eventbus_power";
 
-    public static final String EVENT_PROMOTION = "event_promotion";
+    public static final String EVENT_REMIND = "event_remind";
 
     public static final String  current_text_book = "current_text_book" ;
 

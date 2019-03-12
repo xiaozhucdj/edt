@@ -25,7 +25,6 @@ import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.yougy.TestImgActivity;
-import com.yougy.anwser.AnswerCheckActivity;
 import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
@@ -66,13 +65,11 @@ import com.yougy.message.ui.RecentContactListActivity;
 import com.yougy.order.LockerActivity;
 import com.yougy.setting.ui.SettingMainActivity;
 import com.yougy.shop.activity.BookShopActivityDB;
-import com.yougy.ui.activity.BuildConfig;
 import com.yougy.ui.activity.R;
 import com.yougy.update.DownloadManager;
 import com.yougy.update.VersionUtils;
 import com.yougy.view.dialog.AppUpdateDialog;
 import com.yougy.view.dialog.DownProgressDialog;
-import com.zhy.autolayout.utils.L;
 
 import org.litepal.tablemanager.Connector;
 
@@ -202,7 +199,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             LogUtils.e("FH", "主界面onResume验证是否被解绑-------距离上一次验证解绑时间在可允许范围内,本次不验证是否解绑");
         }
 
-        YoungyApplicationManager.getMainThreadHandler().postDelayed(() -> EventBus.getDefault().post(new BaseEvent(EventBusConstant.EVENT_PROMOTION)),2000);
+        YoungyApplicationManager.getMainThreadHandler().postDelayed(() -> EventBus.getDefault().post(new BaseEvent(EventBusConstant.EVENT_REMIND)),2000);
     }
 
     /***************************************************************************/

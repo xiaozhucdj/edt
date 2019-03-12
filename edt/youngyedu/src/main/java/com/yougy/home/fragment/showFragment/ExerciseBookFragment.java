@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.fragment.BFragment;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -343,6 +344,10 @@ public class ExerciseBookFragment extends BFragment {
     public void onHiddenChanged(boolean hidden) {
         if (!hidden) {
             refreshData();
+            YoungyApplicationManager.NEED_PROMOTION = false;
+        }
+        else {
+            YoungyApplicationManager.NEED_PROMOTION = true;
         }
         super.onHiddenChanged(hidden);
     }
@@ -351,8 +356,14 @@ public class ExerciseBookFragment extends BFragment {
     public void onResume() {
         super.onResume();
         refreshData();
+        YoungyApplicationManager.NEED_PROMOTION = false;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
+    }
 
     private void refreshData() {
         binding.switch2homeworkBtn.setEnabled(false);

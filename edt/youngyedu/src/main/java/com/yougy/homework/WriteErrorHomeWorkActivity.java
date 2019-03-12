@@ -23,6 +23,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
@@ -142,6 +143,7 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        YoungyApplicationManager.NEED_PROMOTION = false;
         homeworkId = getIntent().getIntExtra("HOMEWORKID", -1);
         bookTitle = getIntent().getStringExtra("BOOKTITLE");
         lastScore = getIntent().getIntExtra("LASTSCORE", -1);
@@ -924,5 +926,11 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }
