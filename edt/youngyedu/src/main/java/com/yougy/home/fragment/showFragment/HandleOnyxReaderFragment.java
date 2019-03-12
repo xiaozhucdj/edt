@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import android.widget.TextView;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.onyx.android.sdk.api.device.epd.EpdController;
-import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContentEntry;
 import com.onyx.reader.ReaderContract;
@@ -40,7 +38,6 @@ import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.media.AudioHelper;
 import com.yougy.common.media.BookVoiceBean;
-import com.yougy.common.media.MediaHelper;
 import com.yougy.common.media.NewMediaHelper;
 import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
@@ -71,7 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
@@ -245,7 +241,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         btn_reader_pause = (ImageButton) mRoot.findViewById(R.id.btn_reader_pause);
         btn_reader_pause.setOnClickListener(this);
         btn_reader_pause.setVisibility(View.GONE);
-        llVoice.setVisibility(View.GONE);
+
 
         fm_voice = (FrameLayout) mRoot.findViewById(R.id.fm_voice);
         fm_voice.setVisibility(View.GONE);
@@ -262,29 +258,32 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         imgBtnReduce = (ImageButton) mRoot.findViewById(R.id.img_btn_reduce);
         imgBtnReduce.setOnClickListener(this);
         et_voice = (EditText) mRoot.findViewById(R.id.et_voice);
+//        et_voice.setEnabled(false);
         imgBtnEnlarge = (ImageButton) mRoot.findViewById(R.id.img_btn_enlarge);
         imgBtnEnlarge.setOnClickListener(this);
         llVoice = (LinearLayout) mRoot.findViewById(R.id.ll_voice);
-
-        et_voice.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_NEXT) {
-
-                    String str = et_voice.getText().toString().trim();
-                    if (!StringUtils.isEmpty(str)) {
-                        int voice = (Integer.parseInt(str) - 1);
-                        getAudioHelper().setCutterVoice(voice);
-                        setVoiceUiState();
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
-                    }
-                    return true;
+        llVoice.setVisibility(View.GONE);
+        et_voice.setOnEditorActionListener((v, actionId, event) -> {
+            LogUtils.e("actionId..." + actionId);
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                String str = et_voice.getText().toString().trim();
+                if (!StringUtils.isEmpty(str)) {
+                    int voice = (Integer.parseInt(str));
+                    getAudioHelper().setCutterVoice(voice);
+                    setVoiceUiState();
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
                 }
-                return false;
+                return true;
+            }
+            return false;
+        });
+        et_voice.setOnFocusChangeListener((view, b) -> {
+            if (b) {
+                leaveScribbleMode(true);
             }
         });
         setVoiceUiState();
-
         //解析PDF
         initPDF();
     }
@@ -293,8 +292,10 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         et_voice.setText(getAudioHelper().getCurVolume() + "");
         if (getAudioHelper().getCurVolume() == 0) {
             imgBtnReduce.setEnabled(false);
+            imgBtnEnlarge.setEnabled(true);
         } else if (getAudioHelper().getCurVolume() >= getAudioHelper().getMaxVolume()) {
             imgBtnEnlarge.setEnabled(false);
+            imgBtnReduce.setEnabled(true);
         } else {
             imgBtnReduce.setEnabled(true);
             imgBtnEnlarge.setEnabled(true);
@@ -435,12 +436,13 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
             } else {
-
-                btn_reader_pause.setTag("是否暂停");
-                btn_reader_pause.setSelected(false);
-                mImgVoices.get(voicePs).setSelected(true);
-                BookVoiceBean.VoiceBean bean = mVoiceBean.getVoiceInfos().get(voicePs - 1);
-                getMediaHelper().start(mVoiceBaseURL + bean.getUrl(), bean.getPostion());
+                if (!mIsVoicePause) {
+                    btn_reader_pause.setTag("是否暂停");
+                    btn_reader_pause.setSelected(false);
+                    mImgVoices.get(voicePs).setSelected(true);
+                    BookVoiceBean.VoiceBean bean = mVoiceBean.getVoiceInfos().get(voicePs - 1);
+                    getMediaHelper().start(mVoiceBaseURL + bean.getUrl(), bean.getPostion());
+                }
             }
         }
     }
