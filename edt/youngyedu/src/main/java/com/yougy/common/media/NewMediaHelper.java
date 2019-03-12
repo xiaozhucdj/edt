@@ -56,7 +56,7 @@ public class NewMediaHelper {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 isPrepare = false;
-                mp.reset();
+//                mp.reset();
                 if (mListener != null) {
                     mListener.onCompletionPlayerListener(mVoicePs);
                 }
