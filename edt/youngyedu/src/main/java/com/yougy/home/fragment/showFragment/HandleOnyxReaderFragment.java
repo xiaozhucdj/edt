@@ -258,31 +258,31 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
         imgBtnReduce = (ImageButton) mRoot.findViewById(R.id.img_btn_reduce);
         imgBtnReduce.setOnClickListener(this);
         et_voice = (EditText) mRoot.findViewById(R.id.et_voice);
-//        et_voice.setEnabled(false);
+       et_voice.setEnabled(false);
         imgBtnEnlarge = (ImageButton) mRoot.findViewById(R.id.img_btn_enlarge);
         imgBtnEnlarge.setOnClickListener(this);
         llVoice = (LinearLayout) mRoot.findViewById(R.id.ll_voice);
         llVoice.setVisibility(View.GONE);
-        et_voice.setOnEditorActionListener((v, actionId, event) -> {
-            LogUtils.e("actionId..." + actionId);
-            if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                String str = et_voice.getText().toString().trim();
-                if (!StringUtils.isEmpty(str)) {
-                    int voice = (Integer.parseInt(str));
-                    getAudioHelper().setCutterVoice(voice);
-                    setVoiceUiState();
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
-                }
-                return true;
-            }
-            return false;
-        });
-        et_voice.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                leaveScribbleMode(true);
-            }
-        });
+//        et_voice.setOnEditorActionListener((v, actionId, event) -> {
+//            LogUtils.e("actionId..." + actionId);
+//            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+//                String str = et_voice.getText().toString().trim();
+//                if (!StringUtils.isEmpty(str)) {
+//                    int voice = (Integer.parseInt(str));
+//                    getAudioHelper().setCutterVoice(voice);
+//                    setVoiceUiState();
+//                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+//                }
+//                return true;
+//            }
+//            return false;
+//        });
+//        et_voice.setOnFocusChangeListener((view, b) -> {
+//            if (b) {
+//                leaveScribbleMode(true);
+//            }
+//        });
         setVoiceUiState();
         //解析PDF
         initPDF();
