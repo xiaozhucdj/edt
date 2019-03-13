@@ -19,9 +19,10 @@ import android.widget.TextView;
 
 import com.frank.etude.pageable.PageBtnBarAdapterV2;
 import com.frank.etude.pageable.PageBtnBarV2;
+import com.onyx.android.sdk.api.device.epd.EpdController;
+import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
-import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -37,6 +38,7 @@ import com.yougy.view.CustomGridLayoutManager;
 import com.yougy.view.CustomItemDecoration;
 import com.yougy.view.CustomLinearLayoutManager;
 import com.yougy.view.NoteBookView2;
+import com.yougy.view.dialog.ConfirmDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,16 +48,12 @@ import static java.lang.String.format;
 
 public class PracticeBaseFragment extends TaskBaseFragment {
 
-    @BindView(R.id.practice_constrain_layout)
-    ConstraintLayout mConstraintLayout;
     @BindView(R.id.task_practice_viewStub)
     ViewStub mTaskPracticeViewStub;
     @BindView(R.id.prev_practice)
     TextView mPrevPractice;
     @BindView(R.id.next_practice)
     TextView mNextPractice;
-    @BindView(R.id.view_line)
-    View mViewLine;
     @BindView(R.id.task_practice_pageBar)
     RecyclerView mTaskPracticePageBar;
     @BindView(R.id.content_disPlayer)
@@ -74,8 +72,6 @@ public class PracticeBaseFragment extends TaskBaseFragment {
     NoteBookView2 mNoteBookView;
     @BindView(R.id.noteView_caoGao)
     NoteBookView2 mCaoGaoNoteView;
-    @BindView(R.id.view_line2)
-    View mViewLine2;
     @BindView(R.id.img_add_page)
     ImageView mImageAddPage;
     @BindView(R.id.task_practice_pageBar2)
@@ -112,6 +108,8 @@ public class PracticeBaseFragment extends TaskBaseFragment {
 
     private LoadAnswer mLoadAnswer;
 
+
+    private ConfirmDialog clearConfirmDialog;
 
     @Override
     public void onEventMainThread(BaseEvent event) {
@@ -472,14 +470,37 @@ public class PracticeBaseFragment extends TaskBaseFragment {
      * 清空
      */
     private void clickClear () {
-        if (showTaskCommittedTips()) return;
-        NoteBookView2 noteBookView2 = mNoteBookView2;
-        if (isCaoGaoShow) noteBookView2 = mCaoGaoNoteView;
-        clear(noteBookView2);
+        LogUtils.d("TaskTest isCaoGaoShow = " + isCaoGaoShow);
+        if (isCaoGaoShow) {
+            mCaoGaoNoteView.leaveScribbleMode();
+        } else {
+            mNoteBookView2.leaveScribbleMode();
+        }
+        if (clearConfirmDialog == null) {
+            clearConfirmDialog = new ConfirmDialog(mContext, "是否清空作答笔迹？", "确定",
+                    (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        if (showTaskCommittedTips()) return;
+                        if (isCaoGaoShow) {
+                            clear(mCaoGaoNoteView);
+                        } else {
+                            clear(mNoteBookView2);
+                        }
+                    }, "取消",
+                    (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        if (isCaoGaoShow) {
+                            mCaoGaoNoteView.leaveScribbleMode(true);
+                        } else {
+                            mNoteBookView2.leaveScribbleMode(true);
+                        }
+                    });
+        }
+        clearConfirmDialog.show();
     }
 
     private void clear (NoteBookView2 noteBookView2){
-        noteBookView2.leaveScribbleMode();
+//        noteBookView2.leaveScribbleMode();
         noteBookView2.clearAll();
         noteBookView2.leaveScribbleMode(true);
     }
@@ -562,6 +583,7 @@ public class PracticeBaseFragment extends TaskBaseFragment {
      */
     private void showOrHideCaoGaoLayout (boolean isVisibility, boolean isClearCaoGao) {
         if (mTaskDetailStudentActivity.isHadCommit()) return;
+        LogUtils.d("TaskTest isVisibility = " + isVisibility);
         if (isVisibility) {
             mTextCaoGao.setText("扔掉草稿纸");
             mTextCaoGao.setTextSize(20);
@@ -579,7 +601,8 @@ public class PracticeBaseFragment extends TaskBaseFragment {
             mCaoGaoNoteView.leaveScribbleMode();
             mLayoutCaoGao.setVisibility(View.GONE);
         }
-        RefreshUtil.invalidate(mTextCaoGao);
+//        mTextCaoGao.setVisibility(View.VISIBLE);
+        EpdController.invalidate(mTextCaoGao, UpdateMode.GC);
         isCaoGaoShow = isVisibility;
     }
 

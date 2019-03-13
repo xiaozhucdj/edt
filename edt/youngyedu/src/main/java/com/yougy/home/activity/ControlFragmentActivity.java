@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.global.FileContonst;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.SpUtils;
@@ -113,6 +114,7 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
 
     @Override
     protected void init() {
+        YoungyApplicationManager.NEED_PROMOTION = true;
         mIsCheckStartNet = false;
         if (getIntent() != null && getIntent().getExtras() != null) {
             LogUtils.i("yuanye ..init");
@@ -435,5 +437,11 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
             }
             transaction.commit();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }
