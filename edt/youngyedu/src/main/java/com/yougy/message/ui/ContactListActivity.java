@@ -180,15 +180,17 @@ public class ContactListActivity extends MessageBaseActivity{
         Iterator<String> iterator = allTeamMemberMap.keySet().iterator();
         while (iterator.hasNext()){
             List<TeamMember> teamMemberList = allTeamMemberMap.get(iterator.next());
-            for (final TeamMember teamMember : teamMemberList) {
-                if (isTeacher(teamMember) && !teamMember.getAccount().equals(String.valueOf(SpUtils.getUserId()))){
-                    if (!ListUtil.conditionalContains(mainAdapter.idList, new ListUtil.ConditionJudger<String>() {
-                        @Override
-                        public boolean isMatchCondition(String nodeInList) {
-                            return nodeInList.equals(teamMember.getAccount());
+            if (teamMemberList != null){
+                for (final TeamMember teamMember : teamMemberList) {
+                    if (isTeacher(teamMember) && !teamMember.getAccount().equals(String.valueOf(SpUtils.getUserId()))){
+                        if (!ListUtil.conditionalContains(mainAdapter.idList, new ListUtil.ConditionJudger<String>() {
+                            @Override
+                            public boolean isMatchCondition(String nodeInList) {
+                                return nodeInList.equals(teamMember.getAccount());
+                            }
+                        })){
+                            mainAdapter.idList.add(teamMember.getAccount());
                         }
-                    })){
-                        mainAdapter.idList.add(teamMember.getAccount());
                     }
                 }
             }

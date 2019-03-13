@@ -344,10 +344,6 @@ public class ExerciseBookFragment extends BFragment {
     public void onHiddenChanged(boolean hidden) {
         if (!hidden) {
             refreshData();
-            YoungyApplicationManager.NEED_PROMOTION = false;
-        }
-        else {
-            YoungyApplicationManager.NEED_PROMOTION = true;
         }
         super.onHiddenChanged(hidden);
     }
@@ -356,13 +352,11 @@ public class ExerciseBookFragment extends BFragment {
     public void onResume() {
         super.onResume();
         refreshData();
-        YoungyApplicationManager.NEED_PROMOTION = false;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 
     private void refreshData() {
