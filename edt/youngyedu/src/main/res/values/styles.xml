@@ -67,7 +67,7 @@
         <item name="android:textColor">@drawable/textcolor_black_write</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/x24</item>
-        <item name="android:background">@drawable/background_green_null</item>
+        <item name="android:background">@drawable/background_black_null</item>
     </style>
 
 

@@ -691,6 +691,12 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
     }
 
+    public static Observable<BaseResult<List<Task>>> queryTaskStatus(int taskid,int studentId){
+        return getInstance().getServerApi().queryTaskStatus(taskid,studentId)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
+    }
+
     public static Observable<TeamBean> querySchoolTeamByStudentAndExam(String studentId, String examId) {
         return getInstance().getServerApi().querySchoolTeamByStudentAndExam(studentId, examId)
                 .compose(RxSchedulersHelper.io_main())
