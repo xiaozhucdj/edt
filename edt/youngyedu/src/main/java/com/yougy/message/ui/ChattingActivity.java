@@ -32,6 +32,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
+import com.yougy.anwser.BaseResult;
 import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
@@ -53,6 +54,7 @@ import com.yougy.message.attachment.TaskRemindAttachment;
 import com.yougy.shop.activity.ShopBookDetailsActivity;
 import com.yougy.shop.globle.ShopGloble;
 import com.yougy.task.activity.TaskDetailStudentActivity;
+import com.yougy.task.bean.Task;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.ActivityChattingBinding;
 import com.yougy.ui.activity.databinding.ItemChattingBinding;
@@ -94,7 +96,6 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         binding = DataBindingUtil.bind(setLayoutRes(R.layout.activity_chatting));
         initChattingListview();
         initInputEdittext();
-        YoungyApplicationManager.IN_CHATTING = true;
         binding.messageEdittext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,9 +111,15 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        YoungyApplicationManager.IN_CHATTING = true;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-        YXClient.getInstance().checkIfNotLoginThenDoIt(this , null);
+        YXClient.getInstance().checkIfNotLoginThenDoIt(this, null);
     }
 
     @Override
@@ -250,8 +257,8 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
         YXClient.getInstance().checkIfNotLoginThenDoIt(this, new RequestCallback() {
             @Override
             public void onSuccess(Object param) {
-                if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")){
-                    YXClient.getInstance().sendTestMessage(id, type, "109010001", "2", new ArrayList<String>(){{
+                if (!TextUtils.isEmpty(binding.messageEdittext.getText()) && binding.messageEdittext.getText().toString().startsWith("test")) {
+                    YXClient.getInstance().sendTestMessage(id, type, "109010001", "2", new ArrayList<String>() {{
                         add("1420");
                         add("1421");
                     }}, new RequestCallback<Void>() {
@@ -285,7 +292,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
 
             @Override
             public void onFailed(int code) {
-                ToastUtil.showCustomToast(getApplicationContext() , "连接消息服务器失败!");
+                ToastUtil.showCustomToast(getApplicationContext(), "连接消息服务器失败!");
             }
 
             @Override
@@ -464,7 +471,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                     } else if (imMessage.getAttachment() instanceof TaskRemindAttachment) {
                         chattingItembinding.rightTextTv.setVisibility(View.VISIBLE);
                         chattingItembinding.rightFileDialogLayout.setVisibility(View.GONE);
-                        receiveTaskRemind(chattingItembinding,imMessage);
+                        receiveTaskRemind(chattingItembinding, imMessage);
                     }
                 }
             } else {
@@ -531,7 +538,7 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                 } else if (imMessage.getMsgType() == MsgTypeEnum.custom) {
                     chattingItembinding.leftTextTv.setVisibility(View.VISIBLE);
                     chattingItembinding.leftFileDialogLayout.setVisibility(View.GONE);
-                    LogUtils.e(tag,"attach ment is : " + imMessage.getAttachment());
+                    LogUtils.e(tag, "attach ment is : " + imMessage.getAttachment());
                     if (imMessage.getAttachment() instanceof BookRecommandAttachment) {
                         final BookRecommandAttachment attachment = (BookRecommandAttachment) imMessage.getAttachment();
                         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
@@ -567,37 +574,56 @@ public class ChattingActivity extends MessageBaseActivity implements YXClient.On
                         spannableStringBuilder.append("尽快完成作业作答！");
                         chattingItembinding.leftTextTv.setText(spannableStringBuilder);
                         chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
-                    }else if (imMessage.getAttachment() instanceof TaskRemindAttachment){
-                        receiveTaskRemind(chattingItembinding,imMessage);
+                    } else if (imMessage.getAttachment() instanceof TaskRemindAttachment) {
+                        receiveTaskRemind(chattingItembinding, imMessage);
                     }
 
                 }
             }
             return convertView;
         }
-        private void receiveTaskRemind(ItemChattingBinding chattingItembinding,IMMessage imMessage){
+
+        private void receiveTaskRemind(ItemChattingBinding chattingItembinding, IMMessage imMessage) {
             final TaskRemindAttachment attachment = (TaskRemindAttachment) imMessage.getAttachment();
-            if (attachment != null) {
-                SpannableStringBuilder ssb = new SpannableStringBuilder();
-                ssb.append("今天的任务还没有完成哦！请点击：");
-                SpannableString ss = new SpannableString(attachment.taskName);
-                ss.setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(@NonNull View widget) {
-                        Intent intent = new Intent(ChattingActivity.this,TaskDetailStudentActivity.class);
-                        intent.putExtra(TaskRemindAttachment.KEY_TASK_ID,attachment.taskId);
-                        intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID,attachment.dramaId);
-                        intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME,attachment.taskName);
-                        intent.putExtra(TaskRemindAttachment.IS_SIGN,attachment.isSign);
-                        intent.putExtra(TaskRemindAttachment.SCENE_STATUS_CODE,attachment.sceneStatusCode);
-                        startActivity(intent);
-                    }
-                }, 0, ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                ssb.append(ss);
-                ssb.append("。尽快完成任务！");
-                chattingItembinding.leftTextTv.setText(ssb);
-                chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
+
+            if (attachment == null) {
+                return;
             }
+
+            SpannableStringBuilder ssb = new SpannableStringBuilder();
+            ssb.append("今天的任务还没有完成哦！请点击：");
+            SpannableString ss = new SpannableString(attachment.taskName);
+            ss.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(@NonNull View widget) {
+                    NetWorkManager.queryTaskStatus(attachment.taskId,SpUtils.getUserId())
+                            .subscribe(listBaseResult -> {
+                                List<Task> tasks = listBaseResult.getData();
+                                Task task = tasks.get(0);
+                                if (task.isComplete()){
+                                    ToastUtil.showCustomToast(ChattingActivity.this, "任务已经提交！");
+                                }else {
+                                    Intent intent = new Intent(ChattingActivity.this, TaskDetailStudentActivity.class);
+                                    intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, attachment.taskId);
+                                    intent.putExtra(TaskRemindAttachment.KEY_DRAMA_ID, attachment.dramaId);
+                                    intent.putExtra(TaskRemindAttachment.KEY_TASK_NAME, attachment.taskName);
+                                    intent.putExtra(TaskRemindAttachment.IS_SIGN, attachment.isSign);
+                                    intent.putExtra(TaskRemindAttachment.SCENE_STATUS_CODE, attachment.sceneStatusCode);
+                                    startActivity(intent);
+                                }
+                            }, new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+
+                                }
+                            });
+
+                }
+            }, 0, ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            ssb.append(ss);
+            ssb.append("。尽快完成任务！");
+            chattingItembinding.leftTextTv.setText(ssb);
+            chattingItembinding.leftTextTv.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 

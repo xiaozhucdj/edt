@@ -605,6 +605,12 @@ public interface ServerApi {
     @DefaultField(keys = {"m"}, values = {"queryTaskContent"})
     Observable<BaseResult<List<Task>>> queryTasks(@Field("homeworkId") int homeworkId, @Field("contentBookLink") int contentBookLink, @Field("pn") int pn, @Field("ps") int ps, @Field("contentStatusCode") String contentStatusCode);
 
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"},values = {"queryTaskContent"})
+    Observable<BaseResult<List<Task>>> queryTaskStatus(@Field("contentElement") int taskId,@Field("homeworkOwner") int studentId);
+
+
     /**
      * 获取组信息
      */
