@@ -124,9 +124,9 @@
 
     <TextView
         android:id="@+id/text_practice_caoGao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/img_press_tm_bg"
+        android:layout_width="@dimen/x120"
+        android:layout_height="@dimen/y40"
+        android:background="@color/black"
         android:gravity="center"
         android:text="草稿纸"
         android:textColor="@color/white"
