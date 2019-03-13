@@ -30,12 +30,14 @@ import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.mistake_note.MistakeListActivity;
+import com.yougy.message.SizeUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FragmentExerciseBookBinding;
 import com.yougy.ui.activity.databinding.ItemHomeworkListBinding;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,7 +136,9 @@ public class ExerciseBookFragment extends BFragment {
 //                            if (isMutualEvaluation(homeworkSummary)){
                             //需求变更,现在统一显示正确率xx%
                             holder.binding.statusTv.setVisibility(View.GONE);
-                            holder.binding.textRateScore.setText("正确率：" + (int)(extraBean.getAccuracy()*100) + "%");
+                            holder.binding.textRateScore.setText("正确率："
+                                    + SizeUtil.doScale(extraBean.getAccuracy()*100 , 0 , BigDecimal.ROUND_HALF_EVEN)
+                                    + "%");
 //                            }
 //                            else {
 //                                holder.binding.statusTv.setVisibility(View.GONE);
