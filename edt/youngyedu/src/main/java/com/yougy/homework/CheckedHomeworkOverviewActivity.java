@@ -226,7 +226,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                         binding.questionNumTv.setText("习题数量 : " + replyList.size());
                         long allUseTime = 0;
                         for (QuestionReplySummary questionReplySummary : replyList) {
-                            long detailUseTime = DateUtils.transformToTime(questionReplySummary.getReplyUseTime());
+                            long detailUseTime = DateUtils.transformToTime_second(questionReplySummary.getReplyUseTime());
                             allUseTime += detailUseTime;
                         }
                         binding.timeTv.setText(DateUtils.converLongTimeToString(allUseTime * 1000));
