@@ -1698,6 +1698,9 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         // 失去焦点的时候存储数据
         saveContent(false);
         SpUtils.putPaintDrawStates(mPaintDrawState);
+        if (null != mNoteBookView) {
+            EpdController.leaveScribbleMode(mNoteBookView);
+        }
     }
 
     /**
@@ -2045,4 +2048,6 @@ public class BaseFragment extends BFragment implements View.OnClickListener, Not
         super.onDownBookFinish();
         toTextBookFragment();
     }
+
+
 }

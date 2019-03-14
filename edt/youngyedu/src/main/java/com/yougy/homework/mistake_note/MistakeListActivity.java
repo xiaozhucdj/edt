@@ -894,4 +894,12 @@ public class MistakeListActivity extends HomeworkBaseActivity {
         }
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (binding.wcdContentDisplayer != null) {
+            binding.wcdContentDisplayer.leaveScribbleMode();
+        }
+    }
 }
