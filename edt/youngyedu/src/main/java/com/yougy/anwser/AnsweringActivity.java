@@ -408,19 +408,25 @@ public class AnsweringActivity extends AnswerBaseActivity {
             case R.id.tv_clear_write:
 
                 new ConfirmDialog(AnsweringActivity.this, "是否清空作答笔迹？",
-                        "取消",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        },
                         "确定",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                mNbvAnswerBoard.clearAll();
+
+                                UIUtils.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mNbvAnswerBoard.clearAll();
+                                    }
+                                }, 600);
+                            }
+                        },
+                        "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
                             }
                         }).show();
 //                saveBitmapToFile1(mNbvAnswerBoard.getBitmap());
