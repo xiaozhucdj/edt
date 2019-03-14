@@ -80,10 +80,11 @@ public class DateUtils {
     }
 
     /**
+     * 给定一个形如hh:mm:ss的总用时时间格式,转换成总用时时间的总秒数,例如transformToTime(00:01:00)返回60
      * @param time 待转换时间
      * @return 转换后的时间单位：秒
      */
-    public static long transformToTime(String time) {
+    public static long transformToTime_second(String time) {
         long allSeconds = 0;
         if (!TextUtils.isEmpty(time) && time.contains(":")) {
             String temp[] = time.split(":");
@@ -91,6 +92,23 @@ public class DateUtils {
             int minutes = Integer.valueOf(temp[1]);
             long seconds = Long.valueOf(temp[2]);
             allSeconds = hours * 60 * 60 + minutes * 60 + seconds;
+        }
+        return allSeconds;
+    }
+
+    /**
+     * 给定一个形如hh:mm:ss的总用时时间格式,转换成总用时时间的总分钟数,忽略秒数,例如transformToTime(00:13:10)返回13
+     * @param time 待转换时间
+     * @return 转换后的时间单位：分
+     */
+    public static long transformToTime_minute(String time) {
+        long allSeconds = 0;
+        if (!TextUtils.isEmpty(time) && time.contains(":")) {
+            String temp[] = time.split(":");
+            int hours = Integer.valueOf(temp[0]);
+            int minutes = Integer.valueOf(temp[1]);
+            long seconds = Long.valueOf(temp[2]);
+            allSeconds = hours * 60 + minutes;
         }
         return allSeconds;
     }

@@ -82,7 +82,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage message) {
-                if (message.getAttachment() instanceof ExitAnswerCheckAttachment){
+                if (message.getAttachment() instanceof ExitAnswerCheckAttachment) {
                     myLeaveScribbleMode();
                     finish();
                 }
@@ -262,6 +262,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
     }
 
     private static long lastClickTime;
+
     @Override
     public void onClick(View view) {
         long time = System.currentTimeMillis();
@@ -534,6 +535,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
                             binding.contentDisplayer.getLayer2().clearAll();
                             getUpLoadInfo();
                         }
+
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
@@ -801,5 +803,13 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
     protected void onStop() {
         super.onStop();
         YoungyApplicationManager.NEED_PROMOTION = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (binding.contentDisplayer != null) {
+            binding.contentDisplayer.leaveScribbleMode();
+        }
     }
 }

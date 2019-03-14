@@ -1123,7 +1123,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     long allUseTime = 0;
                     for (QuestionReplyDetail detail : mQuestionReplyDetails) {
-                        long detailUseTime = DateUtils.transformToTime(detail.getReplyUseTime());
+                        long detailUseTime = DateUtils.transformToTime_second(detail.getReplyUseTime());
                         allUseTime += detailUseTime;
                     }
                     if (pageSize != 0)

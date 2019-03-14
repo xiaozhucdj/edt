@@ -682,7 +682,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 long alreadyUseTime = 0;
                 if (!TextUtils.isEmpty(useTime)) {
-                    alreadyUseTime = DateUtils.transformToTime(useTime) * 1000;
+                    alreadyUseTime = DateUtils.transformToTime_second(useTime) * 1000;
                 }
 
                 startTimeMill = System.currentTimeMillis() - alreadyUseTime;
@@ -777,45 +777,42 @@ public class WriteHomeWorkActivity extends BaseActivity {
             //切换当前题目的分页
             ContentDisplayerV2.StatusChangeListener specificListener = null;
             if (questionList.get(0) != null
-                    && ("问答".equals(questionList.get(0).getExtraData()))){
+                    && ("问答".equals(questionList.get(0).getExtraData()))) {
                 specificListener = new ContentDisplayerV2.StatusChangeListener() {
                     @Override
                     public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
-                        if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS){
-                            if (position + 1 == contentDisplayer.getContentAdapter().getPageCount("question")){
+                        if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS) {
+                            if (position + 1 == contentDisplayer.getContentAdapter().getPageCount("question")) {
                                 Bitmap bitmap = ((BitmapDrawable) contentDisplayer.getPdfImageView().getDrawable()).getBitmap();
-                                for (int y = bitmap.getHeight() - 1 ; y >= 0; y--) {
+                                for (int y = bitmap.getHeight() - 1; y >= 0; y--) {
                                     for (int x = 0; x < bitmap.getWidth(); x++) {
-                                        if (bitmap.getPixel(x , y) != -1){
+                                        if (bitmap.getPixel(x, y) != -1) {
                                             lineImgview.setVisibility(View.VISIBLE);
-                                            lineImgview.setPadding(30 , y + 1 , 0 , 0);
+                                            lineImgview.setPadding(30, y + 1, 0, 0);
                                             return;
                                         }
                                     }
                                 }
-                            }
-                            else {
+                            } else {
                                 lineImgview.setVisibility(View.GONE);
                             }
                         }
                     }
                 };
-            }
-            else {
+            } else {
                 lineImgview.setVisibility(View.GONE);
             }
-            contentDisplayer.toPage("question", position, false , specificListener);
+            contentDisplayer.toPage("question", position, false, specificListener);
             contentDisplayer.setVisibility(View.VISIBLE);
         } else {
             //加白纸
             contentDisplayer.setVisibility(View.GONE);
             //新需求:在问答题加白纸上需要显示横线背景
             if (questionList.get(0) != null
-                    && ("问答".equals(questionList.get(0).getExtraData()))){
+                    && ("问答".equals(questionList.get(0).getExtraData()))) {
                 lineImgview.setVisibility(View.VISIBLE);
-                lineImgview.setPadding(30 , 0 , 0 , 0);
-            }
-            else {
+                lineImgview.setPadding(30, 0, 0, 0);
+            } else {
                 lineImgview.setVisibility(View.GONE);
             }
         }
@@ -1039,7 +1036,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
     private static long lastClickTime;
 
     @OnClick({R.id.tv_dismiss_caogao, R.id.tv_caogao_text, R.id.btn_left, R.id.tv_last_homework, R.id.tv_next_homework, R.id.tv_save_homework,
-            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title,R.id.image_refresh})
+            R.id.tv_submit_homework, R.id.tv_clear_write, R.id.tv_add_page, R.id.ll_chooese_homework, R.id.rb_error, R.id.rb_right, R.id.tv_title, R.id.image_refresh})
     public void onClick(View view) {
 
         long time = System.currentTimeMillis();
@@ -1173,20 +1170,25 @@ public class WriteHomeWorkActivity extends BaseActivity {
             case R.id.tv_clear_write:
 
                 new ConfirmDialog(WriteHomeWorkActivity.this, "是否清空作答笔迹？",
-                        "取消",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        },
                         "确定",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                mNbvAnswerBoard.clearAll();
-                                RefreshUtil.invalidate(rlAnswer);
+                                UIUtils.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mNbvAnswerBoard.clearAll();
+                                        RefreshUtil.invalidate(rlAnswer);
+                                    }
+                                }, 600);
+                            }
+                        },
+                        "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
                             }
                         }).show();
                 break;
@@ -2167,6 +2169,13 @@ public class WriteHomeWorkActivity extends BaseActivity {
         }
         if (isTimerWork) {
             saveLastHomeWorkData(showHomeWorkPosition, false);
+        }
+
+        if (mNbvAnswerBoard != null) {
+            mNbvAnswerBoard.leaveScribbleMode();
+        }
+        if (mCaogaoNoteBoard != null) {
+            mCaogaoNoteBoard.leaveScribbleMode();
         }
     }
 

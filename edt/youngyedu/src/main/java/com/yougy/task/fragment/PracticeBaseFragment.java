@@ -5,7 +5,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,6 +22,7 @@ import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.utils.LogUtils;
+import com.yougy.common.utils.RefreshUtil;
 import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -201,6 +201,9 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         if (isCommited()) return; //未提交，保存
         saveCurrentPractice();
         leaveScribbleMode(false, true);
+        if (mCaoGaoNoteView!=null){
+            mCaoGaoNoteView.leaveScribbleMode();
+        }
     }
 
     @Override
@@ -501,8 +504,14 @@ public class PracticeBaseFragment extends TaskBaseFragment {
 
     private void clear (NoteBookView2 noteBookView2){
 //        noteBookView2.leaveScribbleMode();
-        noteBookView2.clearAll();
-        noteBookView2.leaveScribbleMode(true);
+        UIUtils.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                noteBookView2.clearAll();
+                noteBookView2.leaveScribbleMode(true);
+            }
+        }, 600);
+
     }
 
     private boolean showTaskCommittedTips () {

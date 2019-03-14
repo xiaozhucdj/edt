@@ -198,6 +198,11 @@ public class MaterialActivity2 extends BaseActivity {
         } else {
             readTime = (int) ((System.currentTimeMillis() - readTimeStart) / 1000);
         }
+
+
+        if (mNoteBookView!=null){
+            EpdController.leaveScribbleMode(mNoteBookView);
+        }
     }
 
 

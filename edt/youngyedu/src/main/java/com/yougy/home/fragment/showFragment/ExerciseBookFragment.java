@@ -10,11 +10,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.yougy.common.fragment.BFragment;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
+import com.yougy.common.utils.DateUtils;
 import com.yougy.common.utils.FileUtils;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.NetUtils;
@@ -30,12 +32,14 @@ import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.HomeworkBookDetail;
 import com.yougy.homework.bean.HomeworkSummary;
 import com.yougy.homework.mistake_note.MistakeListActivity;
+import com.yougy.message.SizeUtil;
 import com.yougy.message.YXClient;
 import com.yougy.message.attachment.NeedRefreshHomeworkAttachment;
 import com.yougy.ui.activity.R;
 import com.yougy.ui.activity.databinding.FragmentExerciseBookBinding;
 import com.yougy.ui.activity.databinding.ItemHomeworkListBinding;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,33 +95,11 @@ public class ExerciseBookFragment extends BFragment {
                 switch (currentStatus) {
                     case DOING:
                         homeworkSummary = doingList.get(position);
-                        if (!StringUtils.isEmpty(homeworkSummary.getExtra().getLifeTime())) {
-                            holder.binding.statusTv.setText("限\n时");
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
-                            holder.binding.statusTv.setVisibility(View.VISIBLE);
-                            holder.binding.textLifetime.setText("限时：" + homeworkSummary.getExtra().getLifeTime());
-                            holder.binding.textLifetime.setVisibility(View.VISIBLE);
-                        } else {
-                            holder.binding.statusTv.setVisibility(View.GONE);
-                            holder.binding.textLifetime.setVisibility(View.GONE);
-                        }
                         holder.binding.textRateScore.setVisibility(View.GONE);
                         holder.setData(homeworkSummary);
                         break;
                     case WAIT_FOR_CHECK:
                         homeworkSummary = waitForCheckList.get(position);
-                        if (IKCODE_01.equals(homeworkSummary.getExtra().getEval())){
-                            holder.binding.statusTv.setText("自\n评");
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
-                            holder.binding.statusTv.setVisibility(View.VISIBLE);
-                        } else if (isMutualEvaluation(homeworkSummary)) {
-                            holder.binding.statusTv.setText("互\n评");
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
-                            holder.binding.statusTv.setVisibility(View.VISIBLE);
-                        } else {
-                            holder.binding.statusTv.setVisibility(View.GONE);
-                        }
-                        holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.GONE);
                         holder.setData(homeworkSummary);
                         break;
@@ -127,21 +109,11 @@ public class ExerciseBookFragment extends BFragment {
                         if (extraBean.getExamTotalPoints() > 0) {
                             //计分作业
                             holder.binding.textRateScore.setText("分数：" + extraBean.getTotalPoints());
-                            holder.binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
-                            holder.binding.statusTv.setText("计\n分");
-                            holder.binding.statusTv.setVisibility(View.VISIBLE);
                         } else {
-//                            if (isMutualEvaluation(homeworkSummary)){
-                            //需求变更,现在统一显示正确率xx%
-                            holder.binding.statusTv.setVisibility(View.GONE);
-                            holder.binding.textRateScore.setText("正确率：" + (int)(extraBean.getAccuracy()*100) + "%");
-//                            }
-//                            else {
-//                                holder.binding.statusTv.setVisibility(View.GONE);
-//                                holder.binding.textRateScore.setText("正确率：" + extraBean.getCorrectCount() + "/" + extraBean.getItemCount());
-//                            }
+                            holder.binding.textRateScore.setText("正确率："
+                                    + SizeUtil.doScale(extraBean.getAccuracy()*100 , 0 , BigDecimal.ROUND_HALF_EVEN)
+                                    + "%");
                         }
-                        holder.binding.textLifetime.setVisibility(View.GONE);
                         holder.binding.textRateScore.setVisibility(View.VISIBLE);
                         holder.setData(homeworkSummary);
                         break;
@@ -450,6 +422,17 @@ public class ExerciseBookFragment extends BFragment {
         public void setData(HomeworkSummary data) {
             this.data = data;
             binding.homeworkNameTv.setText(data.getExtra().getName());
+            if (IKCODE_01.equals(data.getExtra().getEval())){
+                binding.statusTv.setText("自\n评");
+                binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
+                binding.statusTv.setVisibility(View.VISIBLE);
+            } else if (isMutualEvaluation(data)) {
+                binding.statusTv.setText("互\n评");
+                binding.statusTv.setBackgroundResource(R.drawable.img_homework_status_bg_red);
+                binding.statusTv.setVisibility(View.VISIBLE);
+            } else {
+                binding.statusTv.setVisibility(View.GONE);
+            }
             String startTime = data.getExtra().getStartTime();
             String endTime = data.getExtra().getEndTime();
             if (!StringUtils.isEmpty(startTime) && !StringUtils.isEmpty(endTime)) {
@@ -470,6 +453,22 @@ public class ExerciseBookFragment extends BFragment {
                 binding.timeTv.setVisibility(View.VISIBLE);
             } else {
                 binding.timeTv.setVisibility(View.GONE);
+            }
+            if (data.getExtra().getExamTotalPoints() == -1){
+                binding.totalScoreTv.setVisibility(View.GONE);
+            }
+            else {
+                binding.totalScoreTv.setVisibility(View.VISIBLE);
+                binding.totalScoreTv.setText(data.getExtra().getExamTotalPoints() + "分");
+            }
+            if (StringUtils.isEmpty(data.getExtra().getLifeTime())){
+                binding.lifetimeTv.getLayoutParams().width = 0;
+                ((RelativeLayout.LayoutParams) binding.lifetimeTv.getLayoutParams()).leftMargin = 0;
+            }
+            else {
+                binding.lifetimeTv.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                ((RelativeLayout.LayoutParams) binding.lifetimeTv.getLayoutParams()).leftMargin = 10;
+                binding.lifetimeTv.setText(DateUtils.transformToTime_minute(data.getExtra().getLifeTime()) + "分钟");
             }
             if (!TextUtils.isEmpty(data.getExtra().getTeamName())){
                 binding.groupNameTv.setVisibility(View.VISIBLE);
