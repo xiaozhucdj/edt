@@ -117,9 +117,7 @@ public class NetManager {
                 LogUtils.e("YUANYE 当前网络状态 ."+isConnected);
                 if (isConnected) {//当前是已连接状态的时，若网络Dialog打开则关闭
                     DialogManager.newInstance().dissMissUiPromptDialog();
-                    isNetOutage = false;
                 } else {
-                    isNetOutage = true;
                     YoungyApplicationManager.end_net =  YoungyApplicationManager.end_net+":"+DateUtils.getTimeHHMMString() ;
                     NetManager.getInstance().changeWiFi(context, true);//自动重连成功，对话框自动消失
                     YoungyApplicationManager.getMainThreadHandler().removeCallbacks(netRetryConnRunnable);
