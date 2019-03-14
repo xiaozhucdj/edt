@@ -939,4 +939,16 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
         super.onStop();
         YoungyApplicationManager.NEED_PROMOTION = true;
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mNbvAnswerBoard != null) {
+            mNbvAnswerBoard.leaveScribbleMode();
+        }
+
+        if (mCaogaoNoteBoard != null) {
+            mCaogaoNoteBoard.leaveScribbleMode();
+        }
+    }
 }

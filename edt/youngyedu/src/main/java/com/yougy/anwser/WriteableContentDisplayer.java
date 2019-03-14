@@ -711,4 +711,14 @@ public class WriteableContentDisplayer extends RelativeLayout {
         void onStatusChanged(LOADING_STATUS newStatus, String typeKey
                 , int pageIndex, ERROR_TYPE errorType, String errorMsg);
     }
+
+    public void leaveScribbleMode(){
+        if (layer1!=null){
+            layer1.leaveScribbleMode();
+        }
+
+        if (layer2!=null){
+            layer2.leaveScribbleMode();
+        }
+    }
 }

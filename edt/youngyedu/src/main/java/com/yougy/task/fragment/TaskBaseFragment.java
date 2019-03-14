@@ -85,6 +85,9 @@ public class TaskBaseFragment extends BFragment {
     public void onPause() {
         super.onPause();
         Log.i(TAG, "onPause: ");
+        if (mNoteBookView2!=null){
+            mNoteBookView2.leaveScribbleMode();
+        }
     }
 
     @Override
