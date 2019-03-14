@@ -378,4 +378,12 @@ public class AnswerRecordDetailActivity extends BaseActivity {
         super.onStop();
         YoungyApplicationManager.NEED_PROMOTION = true;
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (binding.contentDisplayer != null) {
+            binding.contentDisplayer.leaveScribbleMode();
+        }
+    }
 }

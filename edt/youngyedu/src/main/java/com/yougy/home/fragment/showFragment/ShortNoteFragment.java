@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.fragment.BFragment;
@@ -382,6 +383,14 @@ public class ShortNoteFragment extends BFragment implements View.OnClickListener
             }
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (null != mShortNoteBookView) {
+            EpdController.leaveScribbleMode(mShortNoteBookView);
         }
     }
 }

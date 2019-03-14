@@ -33,6 +33,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.onyx.android.sdk.api.device.epd.EpdController;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
 import com.yougy.common.global.Commons;
@@ -361,6 +362,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
     }
 
     private static long lastClickTime;
+
     public void onClick(View view) {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
@@ -580,6 +582,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                             mNbvAnswerBoard.clearAll();
                             getUpLoadInfo();
                         }
+
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
@@ -662,31 +665,29 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         //切换当前题目的分页
                         ContentDisplayerV2.StatusChangeListener specificListener = null;
                         if (questionList.get(0) != null
-                                && ("问答".equals(questionList.get(0).getExtraData()))){
+                                && ("问答".equals(questionList.get(0).getExtraData()))) {
                             specificListener = new ContentDisplayerV2.StatusChangeListener() {
                                 @Override
                                 public void onStatusChanged(ContentDisplayerV2.LOADING_STATUS newStatus, String typeKey, int pageIndex, String url, ContentDisplayerV2.ERROR_TYPE errorType, String errorMsg) {
-                                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS){
-                                        if (position + 1 == binding.contentDisplayer.getContentAdapter().getPageCount("question")){
+                                    if (newStatus == ContentDisplayerV2.LOADING_STATUS.SUCCESS) {
+                                        if (position + 1 == binding.contentDisplayer.getContentAdapter().getPageCount("question")) {
                                             Bitmap bitmap = ((BitmapDrawable) binding.contentDisplayer.getPdfImageView().getDrawable()).getBitmap();
-                                            for (int y = bitmap.getHeight() - 1 ; y >= 0; y--) {
+                                            for (int y = bitmap.getHeight() - 1; y >= 0; y--) {
                                                 for (int x = 0; x < bitmap.getWidth(); x++) {
-                                                    if (bitmap.getPixel(x , y) != -1){
+                                                    if (bitmap.getPixel(x, y) != -1) {
                                                         binding.linesBgImv.setVisibility(View.VISIBLE);
-                                                        binding.linesBgImv.setPadding(30 , y + 1 , 0 , 0);
+                                                        binding.linesBgImv.setPadding(30, y + 1, 0, 0);
                                                         return;
                                                     }
                                                 }
                                             }
-                                        }
-                                        else {
+                                        } else {
                                             binding.linesBgImv.setVisibility(View.GONE);
                                         }
                                     }
                                 }
                             };
-                        }
-                        else {
+                        } else {
                             binding.linesBgImv.setVisibility(View.GONE);
                         }
                         binding.contentDisplayer.getContentAdapter().toPage("question", position, false);
@@ -696,11 +697,10 @@ public class AnsweringActivity extends AnswerBaseActivity {
                         binding.contentDisplayer.setVisibility(View.GONE);
                         //新需求:在问答题加白纸上需要显示横线背景
                         if (questionList.get(0) != null
-                                && ("问答".equals(questionList.get(0).getExtraData()))){
+                                && ("问答".equals(questionList.get(0).getExtraData()))) {
                             binding.linesBgImv.setVisibility(View.VISIBLE);
-                            binding.linesBgImv.setPadding(30 , 0 , 0 , 0);
-                        }
-                        else {
+                            binding.linesBgImv.setPadding(30, 0, 0, 0);
+                        } else {
                             binding.linesBgImv.setVisibility(View.GONE);
                         }
                     }
@@ -1194,7 +1194,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                     public void call(Throwable throwable) {
                         if (throwable instanceof ApiException) {
                             if (((ApiException) throwable).getCode().equals("400")) {
-                                LogUtils.e("FH" , "问答提交被拒绝,可能是之前已经提交过该问答");
+                                LogUtils.e("FH", "问答提交被拒绝,可能是之前已经提交过该问答");
                                 //FIXME 这里会有问题
                                 //理论上这里被拒绝可能有两种情况,一是之前已经提交成功,但是pad端没有收到成功的返回消息,这时点击重试,就会走到这里,这种情况下,pad端没有走过之前提交成功的逻辑.
                                 //二是,按得太快发了两次请求,第一次成功了,并且已经走了上面提交成功的逻辑,第二次提交直接走了这里.
@@ -1464,6 +1464,13 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (mNbvAnswerBoard != null) {
+            EpdController.leaveScribbleMode(mNbvAnswerBoard);
+        }
+
+        if (mCaogaoNoteBoard != null) {
+            EpdController.leaveScribbleMode(mCaogaoNoteBoard);
+        }
     }
 
     private void myFinish() {

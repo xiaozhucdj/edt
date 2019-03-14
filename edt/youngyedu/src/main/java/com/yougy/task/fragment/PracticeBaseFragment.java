@@ -201,6 +201,9 @@ public class PracticeBaseFragment extends TaskBaseFragment {
         if (isCommited()) return; //未提交，保存
         saveCurrentPractice();
         leaveScribbleMode(false, true);
+        if (mCaoGaoNoteView!=null){
+            mCaoGaoNoteView.leaveScribbleMode();
+        }
     }
 
     @Override
