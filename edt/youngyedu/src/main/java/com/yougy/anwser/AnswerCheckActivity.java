@@ -78,7 +78,6 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage message) {
@@ -797,12 +796,6 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         binding.contentDisplayer.clearCache();
         Runtime.getRuntime().gc();
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 
     @Override

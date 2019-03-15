@@ -114,7 +114,6 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         mIsCheckStartNet = false;
         if (getIntent() != null && getIntent().getExtras() != null) {
             LogUtils.i("yuanye ..init");
@@ -439,9 +438,4 @@ public class ControlFragmentActivity extends BaseActivity implements BaseFragmen
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
-    }
 }

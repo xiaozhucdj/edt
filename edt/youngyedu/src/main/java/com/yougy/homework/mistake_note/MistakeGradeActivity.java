@@ -11,6 +11,7 @@ import com.frank.etude.pageable.PageBtnBarAdapter;
 import com.yougy.anwser.ContentDisplayer;
 import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.LogUtils;
 import com.yougy.common.utils.ToastUtil;
@@ -235,4 +236,5 @@ public class MistakeGradeActivity extends HomeworkBaseActivity {
         binding.contentDisplayer.clearPdfCache();
         Runtime.getRuntime().gc();
     }
+
 }

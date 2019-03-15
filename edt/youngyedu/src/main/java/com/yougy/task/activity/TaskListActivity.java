@@ -57,7 +57,6 @@ public class TaskListActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         Intent intent = getIntent();
         contentBookLink = intent.getIntExtra("contentBookLink", -1);
         courseBookTitle = intent.getStringExtra("courseBookTitle");
@@ -67,7 +66,6 @@ public class TaskListActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 
     @Override

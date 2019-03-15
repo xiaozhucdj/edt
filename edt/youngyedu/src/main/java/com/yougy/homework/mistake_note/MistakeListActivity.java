@@ -17,6 +17,7 @@ import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.WriteableContentDisplayer;
 import com.yougy.anwser.WriteableContentDisplayerAdapter;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -902,4 +903,5 @@ public class MistakeListActivity extends HomeworkBaseActivity {
             binding.wcdContentDisplayer.leaveScribbleMode();
         }
     }
+
 }

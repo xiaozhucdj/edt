@@ -143,7 +143,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         homeworkId = getIntent().getIntExtra("HOMEWORKID", -1);
         bookTitle = getIntent().getStringExtra("BOOKTITLE");
         lastScore = getIntent().getIntExtra("LASTSCORE", -1);
@@ -932,12 +931,6 @@ public class WriteErrorHomeWorkActivity extends BaseActivity {
             BaseEvent baseEvent = new BaseEvent(EventBusConstant.EVENT_START_ACTIIVTY_ORDER_RESULT, "");
             EventBus.getDefault().post(baseEvent);
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 
     @Override
