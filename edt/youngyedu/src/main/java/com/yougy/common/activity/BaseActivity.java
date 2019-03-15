@@ -194,6 +194,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
             }
             ConfirmDialog dialog = new ConfirmDialog(this, getString(R.string.task_title_prompt), getString(R.string.task_content, attachment.taskName), getString(R.string.go_to_task), getString(R.string.I_knew), (dialog12, which) -> {
                 dialog12.dismiss();
+                YoungyApplicationManager.removeTaskRemind(attachment);
                 isShowing = false;
                 Intent intent = new Intent(BaseActivity.this, TaskDetailStudentActivity.class);
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, attachment.taskId);

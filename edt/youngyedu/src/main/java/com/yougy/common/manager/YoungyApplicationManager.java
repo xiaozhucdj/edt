@@ -369,8 +369,7 @@ public class YoungyApplicationManager extends LitePalApplication {
                     }
                     BaseEvent event = new BaseEvent(EventBusConstant.EVENT_REMIND);
                     EventBus.getDefault().post(event);
-                }
-                else if (message.getAttachment() instanceof HomeworkRemindAttachment){
+                } else if (message.getAttachment() instanceof HomeworkRemindAttachment) {
                     HomeworkRemindAttachment attachment = (HomeworkRemindAttachment) message.getAttachment();
                     if (!SpUtils.isHomeworkOrTaskfinished("homework_" + attachment.examId) && !homeworkReminds.contains(attachment)) {
                         homeworkReminds.add(attachment);
