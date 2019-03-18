@@ -69,6 +69,7 @@
                 android:src="@drawable/img_voice_reduce_select" />
 
             <EditText
+                android:visibility="gone"
                 android:id="@+id/et_voice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
