@@ -87,7 +87,6 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         bookId = getIntent().getIntExtra("bookId", -1);
         homeworkId = getIntent().getIntExtra("homeworkId", -1);
     }
@@ -809,15 +808,9 @@ public class AnswerRecordListDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
-        if (  binding.mainContentDisplay!=null){
+        if (binding.mainContentDisplay!=null){
             binding.mainContentDisplay.leaveScribbleMode();
         }
     }

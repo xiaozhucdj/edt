@@ -255,7 +255,6 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         examId = getIntent().getStringExtra("examId");
         isStudentCheck = getIntent().getIntExtra("isStudentCheck", 0);
         if (TextUtils.isEmpty(examId)) {
@@ -682,7 +681,7 @@ public class WriteHomeWorkActivity extends BaseActivity {
 
                 long alreadyUseTime = 0;
                 if (!TextUtils.isEmpty(useTime)) {
-                    alreadyUseTime = DateUtils.transformToTime(useTime) * 1000;
+                    alreadyUseTime = DateUtils.transformToTime_second(useTime) * 1000;
                 }
 
                 startTimeMill = System.currentTimeMillis() - alreadyUseTime;
@@ -2227,9 +2226,4 @@ public class WriteHomeWorkActivity extends BaseActivity {
         return examId;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
-    }
 }

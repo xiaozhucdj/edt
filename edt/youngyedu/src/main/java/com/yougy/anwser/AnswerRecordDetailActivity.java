@@ -122,7 +122,6 @@ public class AnswerRecordDetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         examId = getIntent().getIntExtra("examId", -1);
         if (examId == -1) {
             ToastUtil.showCustomToast(getApplicationContext(), "exam获取失败!");
@@ -371,12 +370,6 @@ public class AnswerRecordDetailActivity extends BaseActivity {
         Glide.get(this).clearMemory();
         binding.contentDisplayer.clearCache();
         Runtime.getRuntime().gc();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 
     @Override

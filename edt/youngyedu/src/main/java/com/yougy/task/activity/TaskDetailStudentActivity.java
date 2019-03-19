@@ -159,7 +159,6 @@ public class TaskDetailStudentActivity extends BaseActivity {
     @Override
     public void init() {
 //        mTask = (Task) getIntent().getSerializableExtra("taskBean");
-        YoungyApplicationManager.NEED_PROMOTION = false;
         currentTitleStr = getIntent().getStringExtra(TaskRemindAttachment.KEY_TASK_NAME);
         mTaskId = getIntent().getIntExtra(TaskRemindAttachment.KEY_TASK_ID, 0);
         dramaId = getIntent().getIntExtra(TaskRemindAttachment.KEY_DRAMA_ID, 0);
@@ -704,6 +703,5 @@ public class TaskDetailStudentActivity extends BaseActivity {
         super.onDestroy();
         deleteDirWihtFile(mCurrentFile);
         if (mUnbinder != null) mUnbinder.unbind();
-        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 }

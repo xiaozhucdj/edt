@@ -65,7 +65,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         examId = getIntent().getIntExtra("examId", -1);
         if (examId == -1) {
             ToastUtil.showCustomToast(getApplicationContext(), "examId 为空");
@@ -226,7 +225,7 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
                         binding.questionNumTv.setText("习题数量 : " + replyList.size());
                         long allUseTime = 0;
                         for (QuestionReplySummary questionReplySummary : replyList) {
-                            long detailUseTime = DateUtils.transformToTime(questionReplySummary.getReplyUseTime());
+                            long detailUseTime = DateUtils.transformToTime_second(questionReplySummary.getReplyUseTime());
                             allUseTime += detailUseTime;
                         }
                         binding.timeTv.setText(DateUtils.converLongTimeToString(allUseTime * 1000));
@@ -384,9 +383,4 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
-    }
 }

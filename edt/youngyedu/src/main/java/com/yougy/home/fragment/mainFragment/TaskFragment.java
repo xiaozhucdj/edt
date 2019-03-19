@@ -56,7 +56,7 @@ public class TaskFragment extends BFragment {
                         throwable.printStackTrace();
                     });
         } else {
-            showCancelAndDetermineDialog(R.string.jump_to_net);
+//          showCancelAndDetermineDialog(R.string.jump_to_net);
         }
     }
 

@@ -214,7 +214,6 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
     @Override
     public void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         studentId = SpUtils.getUserId();
         examId = getIntent().getIntExtra("examId", 0);
         teamId = getIntent().getIntExtra("teamId", 0);
@@ -1123,7 +1122,7 @@ public class CheckHomeWorkActivity extends BaseActivity {
 
                     long allUseTime = 0;
                     for (QuestionReplyDetail detail : mQuestionReplyDetails) {
-                        long detailUseTime = DateUtils.transformToTime(detail.getReplyUseTime());
+                        long detailUseTime = DateUtils.transformToTime_second(detail.getReplyUseTime());
                         allUseTime += detailUseTime;
                     }
                     if (pageSize != 0)
@@ -1953,9 +1952,4 @@ public class CheckHomeWorkActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
-    }
 }

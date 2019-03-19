@@ -50,7 +50,6 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         isScoring = getIntent().getBooleanExtra("isScoring", false);
         if (isScoring) {
             binding.scoreLayout.setVisibility(View.VISIBLE);
@@ -340,15 +339,4 @@ public class CheckedHomeworkDetailActivity extends BaseActivity {
         Runtime.getRuntime().gc();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
-    }
 }

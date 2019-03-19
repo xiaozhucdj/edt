@@ -46,6 +46,7 @@ public class LoginActivity extends BaseActivity {
 
 
     private void initSysIcon() {
+        mIsCheckStartNet = false;
         setSysWifi();
         setSysTime();
         setSysPower(PowerManager.getInstance().getlevelPercent(), PowerManager.getInstance().getBatteryStatus());

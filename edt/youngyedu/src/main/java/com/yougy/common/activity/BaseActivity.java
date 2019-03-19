@@ -19,6 +19,11 @@ import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.yougy.anwser.AnswerBookNodeChooseActivity;
+import com.yougy.anwser.AnswerCheckActivity;
+import com.yougy.anwser.AnswerRecordDetailActivity;
+import com.yougy.anwser.AnswerRecordListDetailActivity;
+import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.dialog.BaseDialog;
 import com.yougy.common.down.DownloadBookListener;
 import com.yougy.common.down.NewDownBookInfo;
@@ -39,12 +44,23 @@ import com.yougy.common.utils.SpUtils;
 import com.yougy.common.utils.StringUtils;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
+import com.yougy.home.activity.ControlFragmentActivity;
+import com.yougy.home.fragment.mainFragment.AnswerBookChooseFragment;
+import com.yougy.homework.CheckHomeWorkActivity;
+import com.yougy.homework.CheckedHomeworkDetailActivity;
+import com.yougy.homework.CheckedHomeworkOverviewActivity;
+import com.yougy.homework.WriteErrorHomeWorkActivity;
 import com.yougy.homework.WriteHomeWorkActivity;
 import com.yougy.homework.bean.QuestionReplySummary;
+import com.yougy.homework.mistake_note.BookStructureActivity;
+import com.yougy.homework.mistake_note.MistakeGradeActivity;
+import com.yougy.homework.mistake_note.MistakeListActivity;
 import com.yougy.message.attachment.HomeworkRemindAttachment;
 import com.yougy.message.attachment.TaskRemindAttachment;
+import com.yougy.shop.activity.ProbationReadBookActivity;
 import com.yougy.shop.bean.DownloadInfo;
 import com.yougy.task.activity.TaskDetailStudentActivity;
+import com.yougy.task.activity.TaskListActivity;
 import com.yougy.ui.activity.R;
 import com.yougy.view.Toaster;
 import com.yougy.view.dialog.ConfirmDialog;
@@ -178,6 +194,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
             }
             ConfirmDialog dialog = new ConfirmDialog(this, getString(R.string.task_title_prompt), getString(R.string.task_content, attachment.taskName), getString(R.string.go_to_task), getString(R.string.I_knew), (dialog12, which) -> {
                 dialog12.dismiss();
+                YoungyApplicationManager.removeTaskRemind(attachment);
                 isShowing = false;
                 Intent intent = new Intent(BaseActivity.this, TaskDetailStudentActivity.class);
                 intent.putExtra(TaskRemindAttachment.KEY_TASK_ID, attachment.taskId);
@@ -297,6 +314,41 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
 //        mWakeLock.acquire();
         invalidateDelayed();
         handleTaskRemind();
+    }
+
+    /**
+     * activity级别的----任务作业的强提醒过滤器.
+     * 现在采用[黑名单!!!]模式,在名单中的Activity不会弹出强提醒dialog.
+     * 如果想采用更加灵活的过滤模式,例如一个activity中某些fragment要弹出强提醒dialog另一些fragment不想弹出强提醒dialog
+     * ,就需要在这里先将该activity移出黑名单,然后再在具体的类(例如fragment的onstart)中自行添加过滤机制.
+     */
+    private void remindFilter(){
+        //黑名单
+        if (this instanceof AnswerCheckActivity
+                || this instanceof AnsweringActivity
+                || this instanceof AnswerRecordDetailActivity
+                || this instanceof AnswerRecordListDetailActivity
+                || this instanceof AnswerBookNodeChooseActivity
+                || this instanceof ControlFragmentActivity
+                || this instanceof CheckedHomeworkDetailActivity
+                || this instanceof CheckedHomeworkOverviewActivity
+                || this instanceof CheckHomeWorkActivity
+                || this instanceof WriteErrorHomeWorkActivity
+                || this instanceof WriteHomeWorkActivity
+                || this instanceof BookStructureActivity
+                || this instanceof MistakeGradeActivity
+                || this instanceof MistakeListActivity
+                || this instanceof ProbationReadBookActivity
+                || this instanceof TaskDetailStudentActivity
+                || this instanceof TaskListActivity
+        ){
+            //黑名单中的activity不弹出强提醒dialog
+            YoungyApplicationManager.NEED_PROMOTION = false;
+        }
+        else {
+            //非黑名单中的activity可以弹出强提醒dialog
+            YoungyApplicationManager.NEED_PROMOTION = true;
+        }
     }
 
     public void invalidateDelayed() {
@@ -1276,6 +1328,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements UiProm
     @Override
     protected void onStart() {
         super.onStart();
+        remindFilter();
         if (mIsCheckStartNet) {
             DialogManager.newInstance().showNetConnDialog(this);
         }

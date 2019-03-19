@@ -9,7 +9,9 @@
         android:background="@drawable/shape_rectangle_black_border"
         android:layout_marginLeft="20px"
         android:layout_marginRight="20px"
-        android:layout_marginTop="20px">
+        android:layout_marginTop="20px"
+        android:paddingRight="10px"
+        >
         <TextView
             android:id="@+id/status_tv"
             android:layout_width="36px"
@@ -55,6 +57,31 @@
             android:layout_marginLeft="50px"
             />
         <TextView
+            android:id="@+id/lifetime_tv"
+            android:layout_width="76px"
+            android:layout_height="28px"
+            android:background="@drawable/bg_time_limit"
+            android:text="xx分钟"
+            android:textSize="18px"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10px"
+            android:layout_marginLeft="10px"
+            />
+        <TextView
+            android:id="@+id/total_score_tv"
+            android:layout_width="60px"
+            android:layout_height="28px"
+            android:background="@drawable/bg_score"
+            android:text="xx分"
+            android:textSize="18px"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_toLeftOf="@id/lifetime_tv"
+            android:layout_alignTop="@id/lifetime_tv"
+            />
+        <TextView
             android:id="@+id/clock_icon_tv"
             android:layout_width="20px"
             android:layout_height="20px"
@@ -75,18 +102,6 @@
             android:layout_marginLeft="10px"
             android:layout_marginTop="-6px"
             />
-
-        <TextView
-            android:id="@+id/text_lifetime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/time_tv"
-            android:layout_alignTop="@id/time_tv"
-            android:layout_marginLeft="50px"
-            android:textSize="20px"
-            android:textColor="@color/black"
-            android:text="限时: 15分钟"
-            android:visibility="visible"/>
 
         <TextView
             android:id="@+id/text_rate_score"
