@@ -512,6 +512,16 @@ public interface ServerApi {
             , @Field("comment") String content, @Field("replyCommentator") String replyCommentator, @Field("originalReplyCommentator") String originalReplyCommentator);
 
     /**
+     *问答教师批改学生自评互评上传
+     */
+    @FormUrlEncoded
+    @POST("classRoom")
+    @DefaultField(keys = {"m"}, values = {"postComment4Question"})
+    Observable<BaseResult<Object>> postComment4Question(@Field("replyId") String replyId, @Field("score") String score
+            , @Field("comment") String content, @Field("replyCommentator") String replyCommentator, @Field("originalReplyCommentator") String originalReplyCommentator);
+
+
+    /**
      * 添加单个收藏夹
      *
      * @param userId
