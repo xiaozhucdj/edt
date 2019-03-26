@@ -276,8 +276,8 @@ public class SearchActivity extends ShopBaseActivity {
             binding.resultRecycler.setVisibility(View.VISIBLE);
             binding.noResult.noResultRemind.setVisibility(View.GONE);
             mAdapter.notifyDataSetChanged();
-            binding.pageBtnBar.refreshPageBar();
         }
+        binding.pageBtnBar.refreshPageBar();
     }
 
     private boolean isSearch = true;
@@ -422,10 +422,7 @@ public class SearchActivity extends ShopBaseActivity {
     private int currentItem = -1;
 
     public void clickTextBookTv(View view) {
-        resetSubjectTv();
-        binding.subjectLayout.setVisibility(View.GONE);
-        resetVersionTv();
-        binding.versionLayout.setVisibility(View.GONE);
+        resetView();
 
         currentItem = 0;
         binding.textBookTv.setSelected(true);
@@ -435,10 +432,7 @@ public class SearchActivity extends ShopBaseActivity {
     }
 
     public void clickGuideBookTv(View view) {
-        resetSubjectTv();
-        binding.subjectLayout.setVisibility(View.GONE);
-        resetVersionTv();
-        binding.versionLayout.setVisibility(View.GONE);
+        resetView();
 
         currentItem = 1;
         binding.textBookTv.setSelected(false);
@@ -448,10 +442,7 @@ public class SearchActivity extends ShopBaseActivity {
     }
 
     public void clickExtraBookTv(View view) {
-        resetSubjectTv();
-        binding.subjectLayout.setVisibility(View.GONE);
-        resetVersionTv();
-        binding.versionLayout.setVisibility(View.GONE);
+        resetView();
 
         currentItem = 2;
         binding.textBookTv.setSelected(false);
@@ -459,7 +450,14 @@ public class SearchActivity extends ShopBaseActivity {
         binding.extraBookTv.setSelected(true);
         showGradeLayout();
     }
-
+    private void resetView() {
+        preChoosedBookCategory = -1;
+        preChoosedBookVersion = -1;
+        resetSubjectTv();
+        binding.subjectLayout.setVisibility(View.GONE);
+        resetVersionTv();
+        binding.versionLayout.setVisibility(View.GONE);
+    }
     private void resetFiltration() {
         binding.subjectLayout.setVisibility(View.GONE);
         binding.versionLayout.setVisibility(View.GONE);

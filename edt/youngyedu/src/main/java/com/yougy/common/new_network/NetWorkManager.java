@@ -592,6 +592,12 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
     }
 
+    public static Observable<Object> postComment4Question(String replyId, String score, String content, String replyCommentator, String originalReplyCommentator) {
+        return getInstance().getServerApi().postComment4Question(replyId, score, content, replyCommentator, originalReplyCommentator)
+                .compose(RxSchedulersHelper.io_main())
+                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+    }
+
     public static Observable<STSbean> postCommentRequest(String replyId, String userId) {
         return getInstance().getServerApi().postCommentRequest(replyId, userId)
                 .compose(RxSchedulersHelper.io_main())

@@ -17,7 +17,6 @@ import com.yougy.anwser.Content_new;
 import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.WriteableContentDisplayer;
 import com.yougy.anwser.WriteableContentDisplayerAdapter;
-import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.ToastUtil;
 import com.yougy.common.utils.UIUtils;
@@ -524,7 +523,8 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 }
             }
         }
-        binding.tvMistakeFrom.setText("来源于：" + questionReplyDetail.getHomeworkExcerpt().getExtra().getName());
+        String mistakeFromName = questionReplyDetail.getHomeworkExcerpt().getExtra().getName();
+        binding.tvMistakeFrom.setText("来源于：" + (TextUtils.isEmpty(mistakeFromName) ? "问答" : mistakeFromName));
         binding.tvTitle.setText(questionReplyDetail.getHomeworkExcerpt().getCursorName());
 
         binding.wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);

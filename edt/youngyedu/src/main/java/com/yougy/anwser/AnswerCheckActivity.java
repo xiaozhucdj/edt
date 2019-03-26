@@ -758,7 +758,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         if (questionReplyDetail.getReplyCommentator() != 0) {
             originalReplyCommentator = questionReplyDetail.getReplyCommentator() + "";
         }
-        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", originalReplyCommentator)
+        NetWorkManager.postComment4Question(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", originalReplyCommentator)
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
