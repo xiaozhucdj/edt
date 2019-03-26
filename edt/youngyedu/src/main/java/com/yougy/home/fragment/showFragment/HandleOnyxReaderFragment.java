@@ -760,12 +760,6 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
                 onBackListener();
                 break;
 
-
-
-
-
-
-
             case R.id.btn_reader_page:
                 if (mVoiceBean == null || mVoiceBean.getVoiceInfos() == null || mVoiceBean.getVoiceInfos().size() == 0) {
                     UIUtils.showToastSafe("没有播放文件");
