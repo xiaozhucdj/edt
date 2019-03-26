@@ -78,7 +78,6 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         YXClient.getInstance().with(this).addOnNewCommandCustomMsgListener(new YXClient.OnMessageListener() {
             @Override
             public void onNewMessage(IMMessage message) {
@@ -759,7 +758,7 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         if (questionReplyDetail.getReplyCommentator() != 0) {
             originalReplyCommentator = questionReplyDetail.getReplyCommentator() + "";
         }
-        NetWorkManager.postComment(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", originalReplyCommentator)
+        NetWorkManager.postComment4Question(questionReplyDetail.getReplyId() + "", score + "", content, SpUtils.getUserId() + "", originalReplyCommentator)
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
@@ -797,12 +796,6 @@ public class AnswerCheckActivity extends BaseActivity implements View.OnClickLis
         binding.contentDisplayer.clearCache();
         Runtime.getRuntime().gc();
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
     }
 
     @Override

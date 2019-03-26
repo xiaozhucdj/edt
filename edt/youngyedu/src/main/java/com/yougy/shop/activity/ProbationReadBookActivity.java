@@ -20,6 +20,7 @@ import com.onyx.android.sdk.api.device.epd.UpdateMode;
 import com.onyx.android.sdk.reader.api.ReaderDocumentTableOfContent;
 import com.onyx.reader.ReaderContract;
 import com.onyx.reader.ReaderPresenter;
+import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.media.BookVoiceBean;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.utils.FileUtils;
@@ -520,4 +521,5 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
         }
         img_btn_hide.setLayoutParams(params);
     }
+
 }

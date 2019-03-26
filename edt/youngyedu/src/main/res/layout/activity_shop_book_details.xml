@@ -29,6 +29,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="30px"
                 android:background="@drawable/gouwuche_selector"
+                android:layout_centerVertical="true"
                 android:onClick="toCart" />
             <TextView
                 android:id="@+id/cart_count_tv"

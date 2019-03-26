@@ -65,7 +65,6 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
 
     @Override
     protected void init() {
-        YoungyApplicationManager.NEED_PROMOTION = false;
         examId = getIntent().getIntExtra("examId", -1);
         if (examId == -1) {
             ToastUtil.showCustomToast(getApplicationContext(), "examId 为空");
@@ -384,9 +383,4 @@ public class CheckedHomeworkOverviewActivity extends HomeworkBaseActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        YoungyApplicationManager.NEED_PROMOTION = true;
-    }
 }

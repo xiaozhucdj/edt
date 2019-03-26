@@ -523,7 +523,8 @@ public class MistakeListActivity extends HomeworkBaseActivity {
                 }
             }
         }
-        binding.tvMistakeFrom.setText("来源于：" + questionReplyDetail.getHomeworkExcerpt().getExtra().getName());
+        String mistakeFromName = questionReplyDetail.getHomeworkExcerpt().getExtra().getName();
+        binding.tvMistakeFrom.setText("来源于：" + (TextUtils.isEmpty(mistakeFromName) ? "问答" : mistakeFromName));
         binding.tvTitle.setText(questionReplyDetail.getHomeworkExcerpt().getCursorName());
 
         binding.wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(1);
@@ -902,4 +903,5 @@ public class MistakeListActivity extends HomeworkBaseActivity {
             binding.wcdContentDisplayer.leaveScribbleMode();
         }
     }
+
 }
