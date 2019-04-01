@@ -1389,6 +1389,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                     activity.deleteDatabase(JOURNAL_NAME);
                                     FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
                                     YXClient.getInstance().logout();
+                                    AnsweringActivity.handledExamIdList.clear();
                                     ThreadManager.getSinglePool().execute(new Runnable() {
                                         @Override
                                         public void run() {

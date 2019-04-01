@@ -12,6 +12,7 @@ import com.badoo.mobile.util.WeakHandler;
 import com.onyx.android.sdk.utils.NetworkUtil;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
+import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
 import com.yougy.common.global.FileContonst;
@@ -246,6 +247,7 @@ public class SplashActivity extends BaseActivity {
                             deleteDatabase(JOURNAL_NAME);
                             FileUtils.writeProperties(FileUtils.getSDCardPath() + "leke_init", FileContonst.LOAD_APP_RESET + "," + SpUtils.getVersion());
                             YXClient.getInstance().logout();
+                            AnsweringActivity.handledExamIdList.clear();
                             ThreadManager.getSinglePool().execute(new Runnable() {
                                 @Override
                                 public void run() {
