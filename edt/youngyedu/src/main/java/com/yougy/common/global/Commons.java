@@ -14,7 +14,7 @@ public class Commons {
     /**
      * 如果isRelase 为true 测试人员 无法切地址 为了防止 打包出错
      */
-    public static boolean isRelase = false;
+    public static boolean isRelase = true;
 
     //全部接口
     public static String NEW_URL;
