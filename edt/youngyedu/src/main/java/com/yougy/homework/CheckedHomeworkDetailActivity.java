@@ -27,7 +27,7 @@ import rx.functions.Action1;
 
 /**
  * Created by FH on 2017/9/6.
- * 已批改作业详情
+ * 已批改作业详情,已弃用
  */
 
 public class CheckedHomeworkDetailActivity extends BaseActivity {

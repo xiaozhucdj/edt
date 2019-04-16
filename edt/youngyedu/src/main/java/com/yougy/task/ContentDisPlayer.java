@@ -242,6 +242,7 @@ public class ContentDisPlayer <T> extends RelativeLayout{
             clickOrHintLayer.setBackgroundColor(Color.WHITE);
             clickOrHintLayer.setText(hintText);
         }
+        clickOrHintLayer.invalidate();
     }
 
     /**

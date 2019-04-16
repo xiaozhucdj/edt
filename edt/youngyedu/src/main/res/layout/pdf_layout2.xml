@@ -70,7 +70,6 @@
 
             <EditText
                 android:enabled="false"
-                android:visibility="invisible"
                 android:id="@+id/et_voice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
