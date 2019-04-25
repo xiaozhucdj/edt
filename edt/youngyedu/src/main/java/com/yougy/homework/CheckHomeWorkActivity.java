@@ -42,7 +42,6 @@ import com.yougy.anwser.WriteableContentDisplayer;
 import com.yougy.anwser.WriteableContentDisplayerAdapter;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.global.Commons;
-import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.new_network.NetWorkManager;
 import com.yougy.common.popupwindow.PopupMenuManager;
 import com.yougy.common.utils.DateUtils;
@@ -899,10 +898,11 @@ public class CheckHomeWorkActivity extends BaseActivity {
         } else {
             wcdContentDisplayer.getContentAdapter().deleteDataList("question", 2);
         }
-        if (imgReplyList.size() == 0) {
+        if (imgReplyList.size() != 0) {
+            wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
+        } else {
             wcdContentDisplayer.getContentAdapter().setPageCountBaseLayerIndex(0);
             wcdContentDisplayer.getContentAdapter().deleteDataList("question", 1);
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
             int newPageCount = wcdContentDisplayer.getContentAdapter().getPageCountBaseOnBaseLayer("question");
             //获取到最新的页码数后，刷新需要存储数据的集合（笔记，草稿笔记，图片地址），刷新该题的多页角标，展示显示选择页面题目。
             if (newPageCount > pathList.size()) {
@@ -914,10 +914,9 @@ public class CheckHomeWorkActivity extends BaseActivity {
                     pathList.add(null);
                 }
             }
-        } else {
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
-            wcdContentDisplayer.getContentAdapter().updateDataList("question", 1, imgReplyList);
         }
+        wcdContentDisplayer.getContentAdapter().updateDataList("question", 0, questionReplyDetail.getParsedQuestionItem().questionContentList);
+
         /***********填充所有需要展示的3层数据资源 end***************/
 
         //所有数据展示完毕将浏览模式置为false，当再次点击上一题，下一题时，会继续置为true；

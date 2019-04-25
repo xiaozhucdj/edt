@@ -239,9 +239,6 @@ public class AnsweringActivity extends AnswerBaseActivity {
     @Override
     public void loadData() {
         showNoNetDialog();
-        bytesList.clear();
-        pathList.clear();
-        cgBytes.clear();
         NetWorkManager.queryQuestionItemList(null, null, itemId, null)
                 .subscribe(new Action1<List<ParsedQuestionItem>>() {
                     @Override
@@ -515,6 +512,7 @@ public class AnsweringActivity extends AnswerBaseActivity {
                 }
                 break;
             case R.id.image_refresh:
+                saveHomeWorkData();
                 loadData();
                 break;
         }

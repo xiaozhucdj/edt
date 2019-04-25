@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
+import com.yougy.anwser.AnsweringActivity;
 import com.yougy.common.activity.BaseActivity;
 import com.yougy.common.eventbus.BaseEvent;
 import com.yougy.common.eventbus.EventBusConstant;
@@ -329,6 +330,7 @@ public class SettingMainActivity extends BaseActivity {
                     showCenterDetermineDialog(R.string.unbind_success);
                     BroadcastHelper.unBindJdReader(SettingMainActivity.this);
                     YXClient.getInstance().logout();
+                    AnsweringActivity.handledExamIdList.clear();
                     ThreadManager.getSinglePool().execute(new Runnable() {
                         @Override
                         public void run() {
