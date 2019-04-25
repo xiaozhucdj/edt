@@ -75,6 +75,7 @@ public class JdReaderBindBean {
     private String[] groups;
     private String phone;
     private String token ;
+    private String username ;
 
     public String get_id() {
         return _id;
@@ -82,6 +83,7 @@ public class JdReaderBindBean {
 
     public void set_id(String _id) {
         this._id = _id;
+        username = _id ;
     }
 
     public String getName() {
@@ -133,6 +135,7 @@ public class JdReaderBindBean {
                 ", groups=" + Arrays.toString(groups) +
                 ", phone='" + phone + '\'' +
                 ", token='" + token + '\'' +
+                ", username='" + username + '\'' +
                 '}';
     }
 }
