@@ -312,7 +312,7 @@ public class PlideReaderPresenter{
 //        int glyphEmbolden = 0; // ranges from [0, 5], 0 means no embolden, 5 is max embolden
         Result<Bitmap> result = new Result<Bitmap>();
         result.setResultCode(-999);
-        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(100, 100, 150, 0);
+        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(100, 100, 200, 1);
         getReader().submitRequest(getContext(), gammaRequest, new BaseCallback() {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
