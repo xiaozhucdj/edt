@@ -392,6 +392,7 @@ public class ProbationReadBookActivity extends ShopBaseActivity implements Reade
     private ReaderContract.ReaderPresenter getReaderPresenter() {
         if (mReaderPresenter == null) {
             mReaderPresenter = new ReaderPresenter(this);
+            mReaderPresenter.setmIsSetGama(false);
         }
         return mReaderPresenter;
     }

@@ -58,7 +58,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
     /**
      * 是否使用gama值
      */
-    private boolean mIsSetGama = false;
+    private boolean mIsSetGama  ;
     private RectF viewportInDoc;
 
     public ReaderPresenter(ReaderContract.ReaderView readerView) {
@@ -165,7 +165,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
                 if (throwable == null) {
                     if (isSelfAdapter) {
                         setCropPage(-0.02f);
-                    } else if (!mIsSetGama) {
+                    } else if (mIsSetGama) {
                         setGama(page);
                     } else {
                         readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(), getBookVice());
@@ -197,7 +197,7 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
                         @Override
                         public void done(BaseRequest baseRequest, Throwable throwable) {
                             if (throwable == null) {
-                                if (!mIsSetGama) {
+                                if (mIsSetGama) {
                                     setGama(mPage);
                                 } else {
                                     readerView.updatePage(mPage, getReader().getViewportBitmap().getBitmap(), getBookVice());
@@ -220,12 +220,12 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
         int imageGamma = 200; // imageGamma works only when textGamma is not set
         int textGamma = 200; // text gamma works for PDF texts
         int glyphEmbolden = 0; // ranges from [0, 5], 0 means no embolden, 5 is max embolden
-        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(100, 100, 150, 0);
+        GammaCorrectionRequest gammaRequest = new GammaCorrectionRequest(100, 100, 200, 1);
         getReader().submitRequest(getContext(), gammaRequest, new BaseCallback() {
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    mIsSetGama = true;
+                    mIsSetGama = false;
                     readerView.updatePage(page, getReader().getViewportBitmap().getBitmap(), getBookVice());
                 } else {
                     readerView.showThrowable(throwable);
@@ -357,6 +357,10 @@ public class ReaderPresenter implements ReaderContract.ReaderPresenter {
 
     public void setmIsUserVoice(boolean mIsUserVoice) {
         this.mIsUserVoice = mIsUserVoice;
+    }
+
+    public void setmIsSetGama(boolean mIsSetGama) {
+        this.mIsSetGama = mIsSetGama;
     }
 }
 

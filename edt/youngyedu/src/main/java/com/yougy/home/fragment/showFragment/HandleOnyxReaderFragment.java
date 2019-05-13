@@ -337,6 +337,7 @@ public class HandleOnyxReaderFragment extends BaseFragment implements AdapterVie
             //TODO: 设置  语音朗读 和 自身适应 大小 104010002
             mReaderPresenter.setmIsUserVoice(mIsOpenVoice);
             mReaderPresenter.setSelfAdapter(mIsOpenSelfAdapter);
+            mReaderPresenter.setmIsSetGama(false);
 
         }
         return mReaderPresenter;
