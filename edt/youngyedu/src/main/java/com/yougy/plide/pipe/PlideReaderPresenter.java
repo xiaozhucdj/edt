@@ -35,7 +35,7 @@ import org.json.JSONObject;
  * Created by ming on 2017/4/1.
  */
 
-public class PlideReaderPresenter{
+public class PlideReaderPresenter {
     Context mContext;
     private Reader reader = new Reader();
     private int mTotalPags;
@@ -77,12 +77,12 @@ public class PlideReaderPresenter{
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.notify();
                     }
                 } else {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -90,25 +90,23 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
-            if (result.getResultCode() == -1){
+            if (result.getResultCode() == -1) {
                 return result;
-            }
-            else {
+            } else {
                 int h = 920;
                 int w = 960;
                 try {
-                    Result<Integer> tempResult = setDocumentViewRect(w , h);
-                    if (tempResult.getResultCode() == 0){
+                    Result<Integer> tempResult = setDocumentViewRect(w, h);
+                    if (tempResult.getResultCode() == 0) {
                         result.setResultCode(0);
                         result.setData(tempResult.getData());
                         result.setErrorMsg(null);
                         return result;
-                    }
-                    else{
+                    } else {
                         result.setResultCode(-1);
                         result.setErrorMsg(tempResult.getErrorMsg());
                         return result;
@@ -144,12 +142,12 @@ public class PlideReaderPresenter{
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.notify();
                     }
                 } else {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -157,14 +155,13 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
-            if (result.getResultCode() == -1){
+            if (result.getResultCode() == -1) {
                 return result;
-            }
-            else {
+            } else {
                 int h = 920;
                 int w = 960;
                 if (isAutoResize) {
@@ -173,14 +170,13 @@ public class PlideReaderPresenter{
                 }
                 Log.d("ContentDisplay", "openDocument: w = " + w + "  h = " + h);
                 try {
-                    Result<Integer> tempResult = setDocumentViewRect(w , h);
-                    if (tempResult.getResultCode() == 0){
+                    Result<Integer> tempResult = setDocumentViewRect(w, h);
+                    if (tempResult.getResultCode() == 0) {
                         result.setResultCode(0);
                         result.setData(tempResult.getData());
                         result.setErrorMsg(null);
                         return result;
-                    }
-                    else{
+                    } else {
                         result.setResultCode(-1);
                         result.setErrorMsg(tempResult.getErrorMsg());
                         return result;
@@ -200,12 +196,12 @@ public class PlideReaderPresenter{
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.notify();
                     }
                 } else {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -213,23 +209,21 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
-            if (result.getResultCode() == -1){
+            if (result.getResultCode() == -1) {
                 return result;
-            }
-            else {
+            } else {
                 if (FileUtils.getDownBookSuffix(path).equalsIgnoreCase(FileUtils.epub)) {
                     try {
                         Result<Integer> tempResult = setChangeStyleReqest();
-                        if (tempResult.getResultCode() == 0){
+                        if (tempResult.getResultCode() == 0) {
                             result.setResultCode(0);
                             result.setData(tempResult.getData());
                             return result;
-                        }
-                        else {
+                        } else {
                             result.setResultCode(-1);
                             result.setErrorMsg(tempResult.getErrorMsg());
                             return result;
@@ -237,8 +231,7 @@ public class PlideReaderPresenter{
                     } catch (InterruptedException e) {
                         throw e;
                     }
-                }
-                else {
+                } else {
                     mTotalPags = getReader().getNavigator().getTotalPage();
                     result.setResultCode(0);
                     result.setData(mTotalPags);
@@ -257,13 +250,13 @@ public class PlideReaderPresenter{
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.notify();
                     }
                 } else {
                     throwable.printStackTrace();
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -271,35 +264,39 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
-            if (result.getResultCode() == -1){
+            if (result.getResultCode() == -1) {
                 return result;
-            }
-            else {
-                if (mIsInit) {
-                    result.setResultCode(0);
-                    result.setData(getReader().getViewportBitmap().getBitmap());
-                    return result;
-                } else {
-                    try {
-                        Result<Bitmap> tempResult = gamma(page);
-                        if (tempResult.getResultCode() == 0){
-                            result.setResultCode(0);
-                            result.setData(tempResult.getData());
-                            return result;
-                        }
-                        else{
-                            result.setResultCode(-1);
-                            result.setErrorMsg(tempResult.getErrorMsg());
-                            return result;
-                        }
-                    } catch (InterruptedException e) {
-                        throw e;
-                    }
-                }
+            } else {
+//                if (mIsInit) {
+//                    result.setResultCode(0);
+//                    result.setData(getReader().getViewportBitmap().getBitmap());
+//                    return result;
+//                } else {
+//                    try {
+//                        Result<Bitmap> tempResult = gamma(page);
+//                        if (tempResult.getResultCode() == 0){
+//                            result.setResultCode(0);
+//                            result.setData(tempResult.getData());
+//                            return result;
+//                        }
+//                        else{
+//                            result.setResultCode(-1);
+//                            result.setErrorMsg(tempResult.getErrorMsg());
+//                            return result;
+//                        }
+//                    } catch (InterruptedException e) {
+//                        throw e;
+//                    }
+//                }
+
+                result.setResultCode(0);
+                result.setData(getReader().getViewportBitmap().getBitmap());
+                return result;
+
             }
         }
     }
@@ -317,13 +314,13 @@ public class PlideReaderPresenter{
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.notify();
                     }
                 } else {
                     throwable.printStackTrace();
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -331,11 +328,11 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
-            if (result.getResultCode() == -1){
+            if (result.getResultCode() == -1) {
                 return result;
             } else {
                 if (mIsCropPage) {
@@ -380,7 +377,7 @@ public class PlideReaderPresenter{
 
         Result result = new Result();
         result.setResultCode(-999);
-        if (reader.getDocument() == null){
+        if (reader.getDocument() == null) {
             result.setResultCode(0);
             processor.setPresenter(null);
             return result;
@@ -390,14 +387,13 @@ public class PlideReaderPresenter{
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.notify();
                     }
-                }
-                else {
+                } else {
                     throwable.printStackTrace();
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -405,15 +401,14 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
         }
         processor.setPresenter(null);
         return result;
     }
-
 
 
     private Context getContext() {
@@ -456,15 +451,14 @@ public class PlideReaderPresenter{
             @Override
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 mTotalPags = getReader().getNavigator().getTotalPage();
-                if (throwable == null){
-                    synchronized (result){
+                if (throwable == null) {
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.setData(mTotalPags);
                         result.notify();
                     }
-                }
-                else {
-                    synchronized (result){
+                } else {
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -472,8 +466,8 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
         }
@@ -492,13 +486,13 @@ public class PlideReaderPresenter{
             public void done(BaseRequest baseRequest, Throwable throwable) {
                 if (throwable == null) {
                     mIsInit = true;
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(0);
                         result.notify();
                     }
                 } else {
                     throwable.printStackTrace();
-                    synchronized (result){
+                    synchronized (result) {
                         result.setResultCode(-1);
                         result.setErrorMsg(throwable.getMessage());
                         result.notify();
@@ -506,11 +500,11 @@ public class PlideReaderPresenter{
                 }
             }
         });
-        synchronized (result){
-            if (result.getResultCode() == -999){
+        synchronized (result) {
+            if (result.getResultCode() == -999) {
                 result.wait();
             }
-            if (result.getResultCode() == 0){
+            if (result.getResultCode() == 0) {
                 result.setData(getReader().getViewportBitmap().getBitmap());
             }
             return result;
