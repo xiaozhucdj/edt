@@ -418,7 +418,16 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST("version")
     @DefaultField(keys = {"m", "os"}, values = {"getAppVersion", "student"})
-    Observable<BaseResult<Version>> getVersion();
+    Observable<BaseResult<Version>> get_pl107_Version();
+
+
+    /**
+     * 获取版本
+     */
+    @FormUrlEncoded
+    @POST("version")
+    @DefaultField(keys = {"m", "os"}, values = {"getAppVersion", "student_edu"})
+    Observable<BaseResult<Version>> get_edu_Version();
 
     /**
      * 设备绑定
@@ -512,7 +521,7 @@ public interface ServerApi {
             , @Field("comment") String content, @Field("replyCommentator") String replyCommentator, @Field("originalReplyCommentator") String originalReplyCommentator);
 
     /**
-     *问答教师批改学生自评互评上传
+     * 问答教师批改学生自评互评上传
      */
     @FormUrlEncoded
     @POST("classRoom")
@@ -617,8 +626,8 @@ public interface ServerApi {
 
     @FormUrlEncoded
     @POST("classRoom")
-    @DefaultField(keys = {"m"},values = {"queryTaskContent"})
-    Observable<BaseResult<List<Task>>> queryTaskStatus(@Field("contentElement") int taskId,@Field("homeworkOwner") int studentId);
+    @DefaultField(keys = {"m"}, values = {"queryTaskContent"})
+    Observable<BaseResult<List<Task>>> queryTaskStatus(@Field("contentElement") int taskId, @Field("homeworkOwner") int studentId);
 
 
     /**
@@ -641,13 +650,13 @@ public interface ServerApi {
     @POST("teacher/v1")
     @DefaultField(keys = {"m"}, values = {"studentReply"})
     Observable<BaseResult<ReadTimeBean>> readMaterialTime(@Field("studentId") String userId,
-                    @Field("stageId") String dramaId, @Field("status") String status, @Field("readTime") String readTime);
+                                                          @Field("stageId") String dramaId, @Field("status") String status, @Field("readTime") String readTime);
 
     @FormUrlEncoded
     @POST("classRoom")
     @DefaultField(keys = {"m"}, values = {"updateHomeworkContent"})
     Observable<BaseResult<Object>> updateHomeworkContent(@Field("userId") Integer userId, @Field("perform") Integer perform,
-                                                        @Field("contentStatusCode") String contentStatusCode);
+                                                         @Field("contentStatusCode") String contentStatusCode);
 
     @FormUrlEncoded
     @POST("classRoom")

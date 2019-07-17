@@ -10,6 +10,7 @@ import com.yougy.anwser.ParsedQuestionItem;
 import com.yougy.anwser.STSbean;
 import com.yougy.common.bean.AliyunData;
 import com.yougy.common.global.Commons;
+import com.yougy.common.global.FileContonst;
 import com.yougy.common.manager.YoungyApplicationManager;
 import com.yougy.common.media.file.OssInfoBean;
 import com.yougy.common.model.Version;
@@ -540,9 +541,16 @@ public final class NetWorkManager {
      */
     public static Observable<Version> getVersion() {
         LogUtils.e("FH", "!!!!!调用ServerApi获取版本号:getVersion");
-        return getInstance().getServerApi().getVersion()
-                .compose(RxSchedulersHelper.io_main())
-                .compose(RxResultHelper.handleResult(loadingProgressDialog));
+
+        if (SystemUtils.getDeviceModel().contains(FileContonst.DEVICE_TYPE_EDU)) { //edu
+            return getInstance().getServerApi().get_edu_Version()
+                    .compose(RxSchedulersHelper.io_main())
+                    .compose(RxResultHelper.handleResult(loadingProgressDialog));
+        } else {
+            return getInstance().getServerApi().get_pl107_Version()
+                    .compose(RxSchedulersHelper.io_main())
+                    .compose(RxResultHelper.handleResult(loadingProgressDialog));
+        }
     }
 
     /**
@@ -697,8 +705,8 @@ public final class NetWorkManager {
                 .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
     }
 
-    public static Observable<BaseResult<List<Task>>> queryTaskStatus(int taskid,int studentId){
-        return getInstance().getServerApi().queryTaskStatus(taskid,studentId)
+    public static Observable<BaseResult<List<Task>>> queryTaskStatus(int taskid, int studentId) {
+        return getInstance().getServerApi().queryTaskStatus(taskid, studentId)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.dismissDialog(loadingProgressDialog));
     }
@@ -727,13 +735,14 @@ public final class NetWorkManager {
 
     /**
      * 阅读的时间
+     *
      * @param userId
      * @param dramaId
      * @param status
      * @param readTime
      * @return
      */
-    public static Observable<ReadTimeBean> readMaterialTime(String  userId, String dramaId, String status,String readTime) {
+    public static Observable<ReadTimeBean> readMaterialTime(String userId, String dramaId, String status, String readTime) {
         return getInstance().getServerApi().readMaterialTime(userId, dramaId, status, readTime)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(loadingProgressDialog));
@@ -742,12 +751,13 @@ public final class NetWorkManager {
 
     /**
      * 更新任务的状态   任务不存在资料练习笔记提交时调用
+     *
      * @param userId
      * @param perform
      * @param contentStatusCode
      * @return
      */
-    public static Observable<Object> updateHomeworkContent(int  userId, int perform, String contentStatusCode) {
+    public static Observable<Object> updateHomeworkContent(int userId, int perform, String contentStatusCode) {
         return getInstance(false).getServerApi().updateHomeworkContent(userId, perform, contentStatusCode)
                 .compose(RxSchedulersHelper.io_main())
                 .compose(RxResultHelper.handleResult(null));
@@ -755,6 +765,7 @@ public final class NetWorkManager {
 
     /**
      * OOS 上传
+     *
      * @param userId
      * @return
      */
